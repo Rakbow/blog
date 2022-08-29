@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+
+
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
+    <script th:src="@{/js/primevue/components/slider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
+    <script th:src="@{/js/primevue/components/autocomplete.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
+    <script th:src="@{/js/primevue/components/quill.min.js}"></script>
+    <script th:src="@{/js/primevue/components/editor.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <!-- 头部 -->
+    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
+
+    <div class="main">
+        <div id="app">
+            <!--            <div class="card">-->
+            <!--            <p-fieldset legend="专辑列表" :toggleable="true">-->
+            <p-panel header="专辑列表" :toggleable="true">
+                <p-toast></p-toast>
+                <p-toolbar class="mb-4" th:if="${loginUser.type==1}">
+                    <template #start>
+                        <p-button icon="pi pi-refresh" class="p-button-rounded mr-4" @click="init"></p-button>
+                        <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
+                                  @click="openNewDialog"></p-button>
+                        <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
+                                  :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;
+                    </template>
+
+                    <template #end>
+                        <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help"
+                                  @click="exportCSV($event)"></p-button>
+                    </template>
+                </p-toolbar>
+                <p-datatable ref="dt" :value="albums" class="p-datatable-customers p-datatable-sm"
+                             :paginator="true" :rows="10" :loading="loading"
+                             v-model:selection="selectedAlbums" dataKey="id"
+                             :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
+                             paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
+                             LastPageLink CurrentPageReport RowsPerPageDropdown"
+                             current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
+                             v-model:filters="filters" filter-display="row" responsive-layout="scroll"
+                             :global-filter-fields="['nameJp', 'publishPrice']">
+                    <template #header>
+                        <div class="grid">
+                            <div class="col-4" style="text-align:center">
+                                <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
+                                               @update:model-value="onToggle"
+                                               placeholder="可选显示项目" style="width: 20em"></p-multiselect>
+                            </div>
+                            <div class="col-4" style="text-align:right">
+                            <span class="p-input-icon-left ">
+                                <i class="pi pi-search"></i>
+                                <p-inputtext v-model="filters['global'].value" placeholder="输入关键字"></p-inputtext>
+                            </span>
+                            </div>
+                        </div>
+                    </template>
+                    <template #empty>
+                        没找到相关数据
+                    </template>
+                    <template #loading>
+                        加载中，别急~
+                    </template>
+                    <p-column selection-mode="multiple" header-style="width: 1rem" :exportable="false"></p-column>
+                    <p-column header="Id" exportHeader="Album Id">
+                        <template #body="slotProps">
+                            <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
+                                {{slotProps.data.id}}
+                            </p-button>
+                        </template>
+                    </p-column>
+
+                    <p-column field="catalogNo" header="专辑编号" :sortable="true"></p-column>
+                    <p-column field="barcode" header="商品条形码" :sortable="true"></p-column>
+                    <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
+                    <p-column field="nameJp" header="专辑原名"></p-column>
+                    <p-column field="publishPrice" header="发售价格（含税）" :sortable="true">
+                        <template #body="slotProps">
+                            {{formatCurrency(slotProps.data.publishPrice)}}
+                        </template>
+                        <!--                <template #filter="{filterModel}">-->
+                        <!--                    <p-inputnumber v-model="filterModel.value" mode="currency" currency="JPY" locale="ja-JP"></p-inputnumber>-->
+                        <!--                </template>-->
+                    </p-column>
+                    <p-column field="series" header="所属系列" :sortable="true"></p-column>
+                    <p-column header="所属产品">
+                        <template #body="slotProps">
+                            <ul>
+                                <li v-for="data in slotProps.data.product">
+                                    {{data}}
+                                </li>
+                            </ul>
+                        </template>
+                    </p-column>
+                    <p-column header="出版形式">
+                        <template #body="slotProps">
+                            <ul>
+                                <li v-for="data in slotProps.data.publishFormat">
+                                    {{data}}
+                                </li>
+                            </ul>
+                        </template>
+                    </p-column>
+                    <p-column header="专辑分类">
+                        <template #body="slotProps">
+                            <ul>
+                                <li v-for="data in slotProps.data.albumFormat">
+                                    {{data}}
+                                </li>
+                            </ul>
+                        </template>
+                    </p-column>
+                    <p-column header="媒体类型">
+                        <template #body="slotProps">
+                            <ul>
+                                <li v-for="data in slotProps.data.mediaFormat">
+                                    {{data}}
+                                </li>
+                            </ul>
+                        </template>
+                    </p-column>
+
+                    <!--                    <p-column field="type" header="专辑类型" :show-filter-menu="false" style="min-width:12rem">-->
+                    <!--                        <template #body="slotProps">-->
+                    <!--                            {{slotProps.data.type}}-->
+                    <!--                        </template>-->
+                    <!--                        <template #filter="{filterModel,filterCallback}">-->
+                    <!--                            <p-dropdown v-model="filterModel.value" @change="filterCallback()" :options="albumType"-->
+                    <!--                                        placeholder="All" class="p-column-filter" :show-clear="true">-->
+                    <!--                                <template #value="slotProps">-->
+                    <!--                                    <span :class="slotProps.value" v-if="slotProps.value">{{slotProps.value}}</span>-->
+                    <!--                                    <span v-else>{{slotProps.placeholder}}</span>-->
+                    <!--                                </template>-->
+                    <!--                                <template #option="slotProps">-->
+                    <!--                                    <span :class="slotProps.option">{{slotProps.option}}</span>-->
+                    <!--                                </template>-->
+                    <!--                            </p-dropdown>-->
+                    <!--                        </template>-->
+                    <!--                    </p-column>-->
+                    <p-column v-for="(col, index) of selectedColumns" :field="col.field"
+                              :header="col.header" :key="col.field + '_' + index" :sortable="true">
+                    </p-column>
+                    <template #paginatorstart>
+                        <p-button icon="pi pi-refresh" class="p-button-text"></p-button>
+                    </template>
+                </p-datatable>
+            </p-panel>
+            <!--            </div>-->
+            <!--            </p-fieldset>-->
+            <p-dialog v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据" :modal="true"
+                      class="p-fluid">
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="nameZh">专辑名称(中文)</label>
+                        <p-inputtext id="nameZh" v-model.trim="album.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="nameJp">专辑名称(日语)</label>
+                        <p-inputtext id="nameJp" v-model.trim="album.nameJp"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="nameEn">专辑名称(英语)</label>
+                        <p-inputtext id="nameEn" v-model.trim="album.nameEn"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="catalogNo">专辑编号</label>
+                        <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="barcode">商品条形码</label>
+                        <p-inputtext id="barcode" v-model.trim="album.barcode"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="releaseDate">发行时间</label>
+                        <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
+                                    :show-button-bar="true"
+                                    :show-icon="true"></p-calendar>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="publishPrice">发行价格(含税)</label>
+                        <p-inputnumber id="publishPrice" v-model="album.publishPrice" mode="currency" currency="JPY"
+                                       locale="ja-JP"></p-inputnumber>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="seriesId" class="mb-3">所属系列</label>
+                        <p-dropdown id="seriesId" v-model="album.seriesId" :options="seriesSet"
+                                    placeholder="选择所属系列" option-label="label" option-value="value"
+                                    @change="getProducts">
+                        </p-dropdown>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="productId" class="mb-3">所属产品</label>
+                        <p-multiselect id="productId" v-model="album.productId" :options="productSet"
+                                       option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                       display="chip" :filter="true" :disabled="productSelect">
+                            <template #value="slotProps">
+                                <template v-for="option of slotProps.value" :key="option.label">
+                                    {{option.label}}
+                                </template>
+                                <template v-if="!slotProps.value || slotProps.value.length === 0">
+                                    {{slotProps.placeholder}}
+                                </template>
+                            </template>
+                        </p-multiselect>
+
+                    </div>
+                    <div class="field col">
+                        <div class="col-12">
+                            <label htmlFor="hasLimited" class="mb-3">限定版</label>
+                        </div>
+                        <div class="col-12">
+                            <p-inputswitch v-model="album.hasLimited" :true-value="1" :false-value="0"></p-inputswitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="publishFormat" class="mb-3">出版形式</label>
+                        <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
+                                       option-label="label" option-value="value" placeholder="选择出版形式"
+                                       display="chip" :filter="true">
+                            <template #value="slotProps">
+                                <template v-for="option of slotProps.value" :key="option.label">
+                                    {{option.label}}
+                                </template>
+                                <template v-if="!slotProps.value || slotProps.value.length === 0">
+                                    {{slotProps.placeholder}}
+                                </template>
+                            </template>
+                        </p-multiselect>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="albumFormat" class="mb-3">专辑分类</label>
+                        <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
+                                       option-label="label" option-value="value" placeholder="选择专辑分类"
+                                       display="chip" :filter="true">
+                            <template #value="slotProps">
+                                <template v-for="option of slotProps.value" :key="option.label">
+                                    {{option.label}}
+                                </template>
+                                <template v-if="!slotProps.value || slotProps.value.length === 0">
+                                    {{slotProps.placeholder}}
+                                </template>
+                            </template>
+                        </p-multiselect>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="mediaFormat" class="mb-3">媒体类型</label>
+                        <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
+                                       option-label="label" option-value="value" placeholder="选择媒体类型"
+                                       display="chip" :filter="true">
+                            <template #value="slotProps">
+                                <template v-for="option of slotProps.value" :key="option.label">
+                                    {{option.label}}
+                                </template>
+                                <template v-if="!slotProps.value || slotProps.value.length === 0">
+                                    {{slotProps.placeholder}}
+                                </template>
+                            </template>
+                        </p-multiselect>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="label">唱片公司</label>
+                        <p-inputtext id="label" v-model.trim="album.label"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="publisher">发行商</label>
+                        <p-inputtext id="publisher" v-model.trim="album.publisher"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="distributor">经销商</label>
+                        <p-inputtext id="distributor" v-model.trim="album.distributor"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="copyright">版权方</label>
+                        <p-inputtext id="copyright" v-model.trim="album.copyright"></p-inputtext>
+                    </div>
+                </div>
+                <p-divider align="center">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-list mr-2"></i>
+                        <b>音轨信息</b>
+                    </div>
+                </p-divider>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="discNum">唱片数</label>
+                        <p-inputnumber id="discNum" v-model="album.discNum" integeronly></p-inputnumber>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="trackNum">曲目数</label>
+                        <p-inputnumber id="trackNum" v-model="album.trackNum" integeronly></p-inputnumber>
+                    </div>
+                </div>
+                <div class="field">
+                    <label htmlFor="trackList">曲目列表</label>
+                    <p-textarea id="trackList" v-model="album.trackList" rows="3" cols="20"
+                                :auto-resize="true"></p-textarea>
+                </div>
+                <p-divider align="center">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-images mr-2"></i>
+                        <b>图片列表</b>
+                    </div>
+                </p-divider>
+                <div class="field">
+                    <!--                    <label htmlFor="imgUrl">图片url地址</label>-->
+                    <!--                    <p-textarea id="imgUrl" v-model="album.imgUrl" rows="3" cols="20" :auto-resize="true"></p-textarea>-->
+                </div>
+                <p-divider></p-divider>
+                <div class="field">
+                    <label htmlFor="description">描述</label>
+                    <p-editor id="description" v-model.trim="albumEdit.description"
+                              editor-style="height: 320px"></p-editor>
+                    <!--                    <p-textarea id="description" v-model.trim="album.description" rows="3" cols="20"-->
+                    <!--                                :auto-resize="true"></p-textarea>-->
+                </div>
+                <div class="field">
+                    <label htmlFor="remark">备注</label>
+                    <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                </div>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
+                </template>
+            </p-dialog>
+
+            <p-dialog v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据" :modal="true"
+                      class="p-fluid">
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="nameZh">专辑名称(中文)</label>
+                        <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="nameJp">专辑名称(日语)</label>
+                        <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="nameEn">专辑名称(英语)</label>
+                        <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="catalogNo">专辑编号</label>
+                        <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="barcode">商品条形码</label>
+                        <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="releaseDate">发行时间</label>
+                        <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
+                                    :show-button-bar="true"
+                                    :show-icon="true"></p-calendar>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="publishPrice">发行价格(含税)</label>
+                        <p-inputnumber id="publishPrice" v-model="albumEdit.publishPrice" mode="currency" currency="JPY"
+                                       locale="ja-JP"></p-inputnumber>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="seriesId" class="mb-3">所属系列</label>
+                        <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
+                                    placeholder="选择所属系列" option-label="label" option-value="value" @change="getProducts">
+                        </p-dropdown>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="productId" class="mb-3">所属产品</label>
+                        <p-multiselect id="productId" v-model="albumEdit.productId" :options="productSet"
+                                       option-label="label" option-value="value" placeholder="选择所属产品"
+                                       display="chip" :filter="true">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col">
+                        <div class="col-12">
+                            <label htmlFor="hasLimited" class="mb-3">限定版</label>
+                        </div>
+                        <div class="col-12">
+                            <p-inputswitch v-model="albumEdit.hasLimited" :true-value="1"
+                                           :false-value="0"></p-inputswitch>
+                        </div>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="publishFormat" class="mb-3">出版形式</label>
+                        <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
+                                       option-label="label" option-value="value" placeholder="选择出版形式"
+                                       display="chip">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="albumFormat" class="mb-3">专辑分类</label>
+                        <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
+                                       option-label="label" option-value="value" placeholder="选择专辑分类"
+                                       display="chip">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="mediaFormat" class="mb-3">媒体类型</label>
+                        <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
+                                       option-label="label" option-value="value" placeholder="选择媒体类型"
+                                       display="chip">
+                        </p-multiselect>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="label">唱片公司</label>
+                        <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="publisher">发行商</label>
+                        <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="distributor">经销商</label>
+                        <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="copyright">版权方</label>
+                        <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
+                    </div>
+                </div>
+                <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="discNum">唱片数</label>
+                        <p-inputnumber id="discNum" v-model="albumEdit.discNum" integeronly></p-inputnumber>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="trackNum">曲目数</label>
+                        <p-inputnumber id="trackNum" v-model="albumEdit.trackNum" integeronly></p-inputnumber>
+                    </div>
+                </div>
+                <div class="field">
+                    <label htmlFor="trackList">曲目列表</label>
+                    <p-textarea id="trackList" v-model="album.trackList" rows="3" cols="20"
+                                :auto-resize="true"></p-textarea>
+                </div>
+                <p-divider></p-divider>
+                <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                <div class="field">
+                    <label htmlFor="imgUrl">图片url地址</label>
+                    <p-textarea id="imgUrl" v-model="albumEdit.imgUrl" rows="3" cols="20"
+                                :auto-resize="true"></p-textarea>
+                </div>
+                <p-divider></p-divider>
+                <div class="field">
+                    <label htmlFor="description">描述</label>
+                    <p-editor id="description" v-model.trim="albumEdit.description"
+                              editor-style="height: 320px"></p-editor>
+                    <!--                    <p-textarea id="description" v-model.trim="albumEdit.description" rows="3" cols="20"-->
+                    <!--                                :auto-resize="true"></p-textarea>-->
+                </div>
+                <div class="field">
+                    <label htmlFor="remark">备注</label>
+                    <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
+                                :auto-resize="true"></p-textarea>
+                </div>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeEditDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitEditAlbum"></p-button>
+                </template>
+            </p-dialog>
+
+            <p-dialog v-model:visible="deleteAlbumsDialog" :style="{width: '450px'}" header="删除数据" :modal="true">
+                <div class="confirmation-content">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span v-if="album">确定删除所选的数据？</span>
+                </div>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                              @click="deleteAlbumsDialog = false"></p-button>
+                    <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                              @click="deleteSelectedAlbums"></p-button>
+                </template>
+            </p-dialog>
+        </div>
+    </div>
+
+    <!-- 尾部 -->
+    <footer th:insert="~{footer :: site_footer}"></footer>
+</div>
+
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+    const App = {
+        setup() {
+            onMounted(() => {
+                init();
+            });
+
+            const displayEditDialog = ref(false);
+            const deleteAlbumsDialog = ref(false);
+            const displayNewDialog = ref(false);
+
+            const selectedAlbums = ref();
+
+            const album = ref({});
+            const albums = ref();
+
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const publishFormatSet = ref([[${publishFormatSet}]]);
+            const productSet = ref([]);
+            const productSelect = ref(true);
+            const seriesSet = ref([[${seriesSet}]]);
+
+            const albumEdit = ref({});
+            const submitted = ref(false);
+            const toast = useToast();
+            const dt = ref();
+            const loading = ref(true);
+            const columns = ref([
+                {field: 'nameZh', header: '专辑名称（中文）'},
+                {field: 'nameEn', header: '专辑名称（英文）'},
+                {field: 'remark', header: '备注'},
+                {field: 'description', header: '描述'},
+                {field: 'label', header: '唱片公司'},
+                {field: 'publisher', header: '发行商'},
+                {field: 'distributor', header: '经销商'},
+                {field: 'copyright', header: '版权方'},
+                {field: 'discNum', header: '唱片数'},
+                {field: 'trackNum', header: '曲目数'},
+            ]);
+            const selectedColumns = ref();
+
+            const formatCurrency = (value) => {
+                return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
+            };
+            const filters = ref({
+                'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                'nameJp': {value: null, matchMode: FilterMatchMode.STARTS_WITH},
+                // 'type': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'publishPrice': {value: null, matchMode: FilterMatchMode.EQUALS},
+            });
+            const onToggle = (val) => {
+                selectedColumns.value = columns.value.filter(col => val.includes(col));
+            };
+            const exportCSV = () => {
+                dt.value.exportCSV();
+            };
+
+            //初始化
+            const init = () => {
+                loading.value = true;
+                getAllAlbum();
+                loading.value = false;
+            };
+            //获取所有专辑信息
+            const getAllAlbum = () => {
+                axiosGetRequest(DOMIANURL + '/album/getAll', null)
+                    .then(res => {
+                        albums.value = res;
+                    }).catch(err => {
+                    console.log(err);
+                });
+            }
+
+            const label2value = (xFormat, xFormatSet) => {
+                let tmp = new Array();
+                for (let item1 of xFormat) {
+                    for (let item2 of xFormatSet) {
+                        if (item1 == item2.label) {
+                            tmp.push(item2.value);
+                        }
+                    }
+                }
+                return tmp;
+            };
+
+            //打开删除确认面板
+            const confirmDeleteSelected = () => {
+                if ([[${loginUser}]] != null) {
+                    if ([[${loginUser.type}]] == 1) {
+                        deleteAlbumsDialog.value = true;
+                    } else {
+                        toast.add({severity: 'error', summary: 'Error', detail: '当前用户无权限！', life: 3000});
+                    }
+                } else {
+                    toast.add({severity: 'error', summary: 'Error', detail: '请登录管理员账户！', life: 3000});
+                }
+            };
+            //删除数据
+            const deleteSelectedAlbums = () => {
+                axiosDeleteRequest(DOMIANURL + '/album/delete', selectedAlbums.value)
+                    .then(res => {
+                        toast.add({severity: 'success', summary: 'Successful', detail: '数据删除成功！', life: 3000});
+                        deleteAlbumsDialog.value = false;
+                        selectedAlbums.value = null;
+                        init();
+                    }).catch(err => {
+                    console.log(err);
+                    toast.add({severity: 'error', summary: 'Error', detail: '数据删除失败！', life: 3000});
+                });
+            };
+
+            //打开编辑数据面板
+            const openEditDialog = (data) => {
+                if ([[${loginUser}]] != null) {
+                    if ([[${loginUser.type}]] == 1) {
+                        let dataTmp = JSON.parse(JSON.stringify(data));
+                        albumEdit.value = dataTmp;
+                        axiosGetRequest(DOMIANURL + "/common/getProducts/" + dataTmp.seriesId, null)
+                            .then(res => {
+                                productSet.value = res;
+                                albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                                albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                                albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                                albumEdit.value.productId = label2value(dataTmp.product, productSet.value).concat();
+                                displayEditDialog.value = true;
+                            });
+                    } else {
+                        toast.add({severity: 'error', summary: 'Error', detail: '当前用户无权限！', life: 3000});
+                    }
+                } else {
+                    toast.add({severity: 'error', summary: 'Error', detail: '请登录管理员账户！', life: 3000});
+                }
+            };
+            //关闭编辑数据面板
+            const closeEditDialog = () => {
+                displayEditDialog.value = false;
+                albumEdit.value = {};
+                init();
+            };
+            //保存编辑数据
+            const submitEditAlbum = () => {
+                if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
+                    albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
+                }
+                albumEdit.value.publishFormat = albumEdit.value.publishFormat.join(",");
+                albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
+                albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
+                albumEdit.value.productId = albumEdit.value.productId.join(",");
+                axiosPostRequest(DOMIANURL + '/album/update', albumEdit.value)
+                    .then(res => {
+                        albumEdit.value = {};
+                        toast.add({severity: 'success', summary: 'Successful', detail: '更新数据成功！', life: 3000});
+                        closeEditDialog();
+                        init();
+                    }).catch(err => {
+                    console.log(err);
+                    toast.add({severity: 'error', summary: 'Error', detail: '更新数据失败！', life: 3000});
+                });
+            }
+
+            //打开新增数据面板
+            const openNewDialog = () => {
+                if ([[${loginUser}]] != null) {
+                    if ([[${loginUser.type}]] == 1) {
+                        album.value = {};
+                        submitted.value = false;
+                        productSelect.value = true;
+                        displayNewDialog.value = true;
+                    } else {
+                        toast.add({severity: 'error', summary: 'Error', detail: '当前用户无权限！', life: 3000});
+                    }
+                } else {
+                    toast.add({severity: 'error', summary: 'Error', detail: '请登录管理员账户！', life: 3000});
+                }
+            };
+            //关闭新增数据面板
+            const closeNewDialog = () => {
+                album.value = {};
+                displayNewDialog.value = false;
+                submitted.value = false;
+            };
+            //提交新增数据
+            const submitNewAlbum = () => {
+                if (album.value.seriesId != null && album.value.productId != null) {
+                    if (album.value.releaseDate != null) {
+                        album.value.releaseDate = dateToString(album.value.releaseDate);
+                    }
+                    album.value.publishFormat = album.value.publishFormat.join(",");
+                    album.value.albumFormat = album.value.albumFormat.join(",");
+                    album.value.mediaFormat = album.value.mediaFormat.join(",");
+                    axiosPostRequest(DOMIANURL + '/album/insert', album.value)
+                        .then(res => {
+                            album.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: '新增数据成功！',
+                                life: 3000
+                            });
+                            closeNewDialog();
+                            init();
+                        }).catch(err => {
+                        console.log(err);
+                        toast.add({severity: 'error', summary: 'Error', detail: '新增数据失败！', life: 3000});
+                    });
+                } else {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择系列或产品！', life: 3000});
+                }
+            };
+
+            //根据系列id获取该系列所有产品
+            const getProducts = (ev) => {
+                axiosGetRequest(DOMIANURL + "/common/getProducts/" + ev.value, null)
+                    .then(res => {
+                        productSet.value = res;
+                        productSelect.value = false;
+                    })
+            };
+
+            return {
+                album, albums, formatCurrency, columns, selectedColumns, onToggle,
+                loading, filters, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
+                submitNewAlbum, confirmDeleteSelected, deleteAlbumsDialog, deleteSelectedAlbums,
+                selectedAlbums, displayEditDialog, init,
+                openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
+                mediaFormatSet, publishFormatSet, albumFormatSet, productSet, seriesSet,
+                getProducts, productSelect
+            }
+        },
+        components: {
+            "p-datatable": primevue.datatable,
+            "p-column": primevue.column,
+            "p-inputtext": primevue.inputtext,
+            "p-button": primevue.button,
+            "p-multiselect": primevue.multiselect,
+            "p-calendar": primevue.calendar,
+            "p-inputnumber": primevue.inputnumber,
+            "p-dropdown": primevue.dropdown,
+            "p-progressbar": primevue.progressbar,
+            "p-slider": primevue.slider,
+            "p-tristatecheckbox": primevue.tristatecheckbox,
+            "p-dialog": primevue.dialog,
+            "p-textarea": primevue.textarea,
+            "p-toolbar": primevue.toolbar,
+            "p-toast": primevue.toast,
+            "p-scrolltop": primevue.scrolltop,
+            "p-fieldset": primevue.fieldset,
+            "p-panel": primevue.panel,
+            "p-divider": primevue.divider,
+            "p-inputswitch": primevue.inputswitch,
+            "p-autocomplete": primevue.autocomplete,
+            "p-multiselect": primevue.multiselect,
+            "p-fileupload": primevue.fileupload,
+            "p-editor": primevue.editor
+        }
+    };
+
+    const app = createApp(App);
+    app.use(primevue.config.default);
+    app.directive('tooltip', Tooltip);
+    app.use(primevue.toastservice);
+    app.mount("#app");
+</script>
+<style>
+    #imgbox img {
+        width: 300px;
+    }
+
+    .p-multiselect {
+        width: 16rem;
+    }
+
+    .custom-scrolltop {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 4px;
+        background-color: var(--primary-color) !important;
+    }
+
+    .custom-scrolltop:hover {
+        background-color: var(--primary-color);
+    }
+
+    .custom-scrolltop .p-scrolltop-icon {
+        font-size: 1rem;
+        color: var(--primary-color-text);
+    }
+
+    .p-paginator .p-paginator-current {
+        margin-left: auto;
+    }
+
+    .p-progressbar {
+        height: .5rem;
+        background-color: #D8DADC;
+    }
+
+    .p-progressbar .p-progressbar-value {
+        background-color: #607D8B;
+    }
+
+    .p-datepicker {
+        min-width: 25rem;
+    }
+
+    .p-datepicker td {
+        font-weight: 400;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-header {
+        padding: 1rem;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .p-datatable.p-datatable-customers .p-paginator {
+        padding: 1rem;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-thead > tr > th {
+        text-align: left;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td {
+        cursor: auto;
+    }
+
+    .p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
+        text-transform: uppercase;
+    }
+
+    @media screen and (max-width: 640px) {
+        .p-multiselect {
+            width: 100%;
+        }
+    }
+
+    /*.sizes .p-inputtext {*/
+    /*    display: block;*/
+    /*    margin-bottom: .5rem;*/
+    /*}*/
+
+    /*.sizes:last-child {*/
+    /*    margin-bottom: 0;*/
+    /*}*/
+
+    /*.field * {*/
+    /*    display: block;*/
+    /*}*/
+</style>
+</body>
+</html>

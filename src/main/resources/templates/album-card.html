@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
+    <script th:src="@{/js/primevue/components/slider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <!-- 头部 -->
+    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
+
+    <div class="main">
+        <div id="app">
+            <div class="card">
+                <p-toast></p-toast>
+                <p-toolbar class="mb-4">
+                    <template #start>
+                        <p-button icon="pi pi-refresh" class="p-button-rounded mr-4" @click="init"></p-button>
+                        <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
+                                  @click="openNewDialog"></p-button>
+                        <!--          <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;-->
+                    </template>
+                </p-toolbar>
+                <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
+                            :sort-field="sortField">
+                    <template #header>
+                        <div class="grid grid-nogutter">
+                            <div class="col-6" style="text-align: left">
+                                <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
+                                            placeholder="按发行时间排序" @change="onSortChange($event)"></p-dropdown>
+                            </div>
+                            <div class="col-6" style="text-align: right">
+                                <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                            </div>
+                        </div>
+                    </template>
+                    <template #grid="slotProps">
+                        <div class="col-12 lg:col-3 md:col-4 sm:col-6 xs:col-12">
+                            <!--            <div class="container-grid">-->
+                            <div class="container-grid-item card">
+                                <!--                    <img :src="slotProps.data.imgUrl" :alt="slotProps.data.name">-->
+                                <div class="img" :style=" 'background-image:url('+ slotProps.data.coverUrl +');' ">
+                                    <div class="catalog">
+                                        <!--                                <i class="pi pi-tag"></i>-->
+                                        <p-tag class="mr-2" style="background: #795548!important;color: #ffffff">
+                                            {{slotProps.data.catalogNo}}
+                                        </p-tag>
+                                    </div>
+                                </div>
+                                <div class="name px-2 mt-2">{{slotProps.data.name}}</div>
+                                <div class="artist px-2 mt-2">{{slotProps.data.artist}}</div>
+                                <div class="rating px-2 mt-2">
+                                    <div class="grid">
+                                        <div class="flex-row">
+                                            <p-rating :disabled="true" :model-value="slotProps.data.rating"
+                                                      :cancel="false"></p-rating>
+                                        </div>&nbsp;&nbsp;
+                                        <div class="flex-row" style="color: #f44336">
+                                            {{slotProps.data.rating}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="price px-2 mt-2">
+                                    {{slotProps.data.price}}&nbsp;&nbsp;JPY
+                                </div>
+                                <div class="px-2 mt-2">
+                                    {{slotProps.data.tags}}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </p-dataview>
+            </div>
+            <p-dialog v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据" :modal="true"
+                      class="p-fluid">
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="catalogNo">专辑编号</label>
+                        <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="name">专辑原名</label>
+                        <p-inputtext id="name" v-model.trim="album.name"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label htmlFor="releaseDate">发行时间</label>
+                        <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd" :show-button-bar="true"
+                                    :show-icon="true"></p-calendar>
+                    </div>
+                    <div class="field col">
+                        <label htmlFor="price">发行价格(日元)</label>
+                        <p-inputnumber id="price" v-model="album.price" mode="currency" currency="JPY" locale="ja-JP"
+                                       suffix=" 円(税込)"></p-inputnumber>
+                    </div>
+                    <!--            <div class="field col">-->
+                    <!--                <label htmlFor="rating">评分</label>-->
+                    <!--                <p-inputnumber id="rating" v-model="album.rating" mode="decimal" :min-fraction-digits="2"-->
+                    <!--                               :max-fraction-digits="2"></p-inputnumber>-->
+                    <!--            </div>-->
+                </div>
+                <!--        <div class="field">-->
+                <!--            <label htmlFor="tag">标签</label>-->
+                <!--            <p-inputtext id="tag" v-model.trim="album.tag"></p-inputtext>-->
+                <!--        </div>-->
+                <div class="field">
+                    <label htmlFor="description">描述</label>
+                    <p-textarea id="description" v-model="album.description" rows="3" cols="20"
+                                :auto-resize="true"></p-textarea>
+                </div>
+                <div class="field">
+                    <label htmlFor="imgUrl">图片路径</label>
+                    <p-inputtext id="imgUrl" v-model.trim="album.imgUrl"></p-inputtext>
+                </div>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewData"></p-button>
+                </template>
+            </p-dialog>
+        </div>
+    </div>
+
+    <!-- 尾部 -->
+    <footer th:insert="~{footer :: site_footer}"></footer>
+</div>
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+    const App = {
+        setup() {
+            onMounted(() => {
+                init();
+            });
+
+            const loading = ref(true);
+            const album = ref({});
+            const albums = ref();
+            const tags = ref();
+            const ratings = ref([]);
+
+            const layout = ref('grid');
+            const sortKey = ref();
+            const sortOrder = ref();
+            const sortField = ref();
+            const sortOptions = ref([
+                {label: '按价格降序', value: '!price'},
+                {label: '按价格升序', value: 'price'},
+            ]);
+
+            const submitted = ref(false);
+
+            const displayNewDialog = ref(false);
+
+            const toast = useToast();
+
+            const onSortChange = (event) => {
+                const value = event.value.value;
+                const sortValue = event.value;
+
+                if (value.indexOf('!') === 0) {
+                    sortOrder.value = -1;
+                    sortField.value = value.substring(1, value.length);
+                    sortKey.value = sortValue;
+                } else {
+                    sortOrder.value = 1;
+                    sortField.value = value;
+                    sortKey.value = sortValue;
+                }
+            };
+
+            //初始化
+            const init = () => {
+                loading.value = true;
+                getAllAlbum();
+                // getAllTag();
+                getRatings();
+                loading.value = false;
+            };
+            //获取所有专辑信息
+            const getAllAlbum = () => {
+                axiosGetRequest(DOMIANURL + '/getAllAlbum', null)
+                    .then(res => {
+                        albums.value = res;
+                    }).catch(err => {
+                    console.log(err);
+                });
+            }
+            //获取所有标签
+            const getAllTag = () => {
+                axiosGetRequest(DOMIANURL + '/getAllTag', null)
+                    .then(res => {
+                    tags.value = res.data;
+                }).catch(err => {
+                    console.log(err);
+                });
+            };
+
+            //打开新增数据面板
+            const openNewDialog = () => {
+                album.value = {};
+                submitted.value = false;
+                displayNewDialog.value = true;
+            };
+            //关闭新增数据面板
+            const closeNewDialog = () => {
+                album.value = {};
+                displayNewDialog.value = false;
+                submitted.value = false;
+            };
+            //提交新增数据
+            const submitNewData = () => {
+                if (album.value.releaseDate != null) {
+                    if (album.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
+                        album.value.releaseDate = dateToString(album.value.releaseDate);
+                    }
+                }
+                axiosPostRequest(DOMIANURL + '/insertAlbum', album.value)
+                    .then(res => {
+                    console.log(res.data)
+                    album.value = {};
+                    toast.add({severity: 'success', summary: 'Successful', detail: '新增数据成功！', life: 3000});
+                    closeNewDialog();
+                    init();
+                }).catch(err => {
+                    console.log(err);
+                    toast.add({severity: 'error', summary: 'Error', detail: '新增数据失败！', life: 3000});
+                });
+            };
+
+            //生成rating
+            const getRatings = () => {
+                for(let i = 0;i < 41;i++){
+                    ratings.value.push(parseFloat(Math.random()*5,10).toFixed(2));
+                }
+                console.log(ratings.value);
+            }
+
+            return {
+                album, albums, tags, loading, toast, init, getAllAlbum,getRatings,ratings,
+                openNewDialog, closeNewDialog, submitNewData, submitted, displayNewDialog,
+                layout, sortKey, sortOrder, sortField, sortOptions, onSortChange
+            }
+        },
+        components: {
+            "p-toolbar": primevue.toolbar,
+            "p-toast": primevue.toast,
+            "p-button": primevue.button,
+            "p-dialog": primevue.dialog,
+            "p-inputtext": primevue.inputtext,
+            "p-inputnumber": primevue.inputnumber,
+            "p-textarea": primevue.textarea,
+            "p-calendar": primevue.calendar,
+            "p-dataview": primevue.dataview,
+            "p-rating": primevue.rating,
+            "p-image": primevue.image,
+            "p-dropdown": primevue.dropdown,
+            "p-dataviewlayoutoptions": primevue.dataviewlayoutoptions,
+            "p-card": primevue.card,
+            "p-tag": primevue.tag,
+        }
+    };
+
+    const app = createApp(App);
+    app.use(primevue.config.default);
+    app.directive('tooltip', Tooltip);
+    app.use(primevue.toastservice);
+    app.mount("#app");
+</script>
+<style>
+    div .img {
+        background-size: contain;
+        background-repeat:no-repeat;
+        width: 100%;
+        height: 300px;
+        border: 1px solid red;
+    }
+
+    .card {
+        background: #424242;
+        padding: 0rem;
+        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+        border-radius: 4px;
+        margin-bottom: 2rem;
+        margin-right: 0.5rem;
+        margin-left: 1rem;
+    }
+
+    .container-grid {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: flex-start;
+        background-color: #000000;
+        border-radius: 16px;
+    }
+
+    /*.container-grid-item img {*/
+    /*    height: 300px;*/
+    /*    max-width: 100%;*/
+    /*    object-fit: cover;*/
+    /*    width: 100%;*/
+    /*}*/
+
+    .product-category {
+        font-weight: 600;
+        vertical-align: middle;
+    }
+    .container-grid-item .catalog{
+        /*display: flex;*/
+        align-items: flex-start;
+        justify-content: space-around;
+    }
+    .container-grid-item .name {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-lines: 2;
+    }
+    /*.container-grid-item .p-rating {*/
+    /*    margin: 0 0 .5rem 0;*/
+    /*}*/
+
+    .container-grid-item .artist {
+        color: #9E9E9E;
+        font-size: 16px;
+        font-weight: 300;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .container-grid-item .rating {
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .container-grid-item .price {
+        color: #f44336;
+        font-size: 1.25rem;
+        font-weight: 500;
+        line-height: 2rem;
+        letter-spacing: .0125em;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .container-grid-item .tags {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .container-grid-item .tags .item {
+        padding: 4px 8px;
+        background-color: #3f51b5;
+        margin-top: 4px;
+        margin-right: 12px;
+        border-radius: 24px;
+        font-size: 12px;
+    }
+
+    .mt-1 {
+        margin-top: 4px;
+    }
+
+    .mt-2 {
+        margin-top: 6px;
+    }
+
+    .mb-2 {
+        margin-bottom: 8px;
+    }
+
+    .px-2 {
+        padding: 0 8px;
+    }
+
+    .p-4 {
+        padding: 16px;
+    }
+</style>
+</body>
+</html>

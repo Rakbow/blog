@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-cn"  xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//unpkg.com/vue@3"></script>
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <script src="//unpkg.com/element-plus"></script>
+</head>
+
+<body>
+
+<div id="app">
+</div>
+
+<style>
+    #app {
+        width: 100vw;
+        overflow: hidden;
+    }
+</style>
+<script th:inline="javascript">
+    const { createApp } = Vue
+
+    createApp({
+        template:
+            `<el-table :data="albums" border style="width: 100%" table-layout="fixed"  height="600">
+                <el-table-column fixed prop="catalogNo" label="专辑编号" width="150" />
+                <el-table-column prop="name" label="专辑原名" width="500" />
+                <el-table-column prop="nameZh" label="专辑译名" width="100" />
+                <el-table-column prop="releaseDate" label="发行时间" width="120" />
+                <el-table-column prop="artist" label="艺术家" width="100" />
+                <el-table-column prop="series" label="所属系列" width="120" />
+                <el-table-column prop="type" label="专辑类型" width="100" />
+                <el-table-column prop="discNum" label="唱片数" />
+                <el-table-column prop="trackNum" label="曲目数" />
+                <el-table-column prop="publisher" label="发行商" width="100" />
+                <el-table-column prop="price" label="价格（日元）" />
+                <el-table-column prop="remark" label="备注" width="100" />
+                <el-table-column prop="description" label="描述" width="100" />
+            </el-table>`,
+        setup() {
+            const albums = [[${albumInfoList}]]
+            return {
+                albums
+            }
+        }
+    }).use(ElementPlus).mount('#app')
+</script>
+</body>
+</html>

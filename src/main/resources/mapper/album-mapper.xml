@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.blog.dao.AlbumMapper">
+
+    <sql id="selectFields">
+        id, catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format,
+        publish_price, album_format, media_format, label, publisher, distributor, copyright,
+        disc_num, track_num, has_limited, description, remark, series_id, product_id, img_url,
+        track_list, added_time, edited_time, _s
+    </sql>
+
+    <sql id="insertFields">
+        catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format, publish_price,
+        album_format, media_format, label, publisher, distributor, copyright, disc_num, track_num,
+        has_limited, description, remark, series_id, product_id, img_url, track_list, added_time, edited_time, _s
+    </sql>
+
+    <select id="selectAlbumById" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where id = #{id} and _s = 1
+    </select>
+
+    <select id="getAll" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where _s = 1
+        order by id desc
+        <!-- order by release_date asc-->
+        <!-- limit #{offset}, #{limit} -->
+    </select>
+
+    <select id="selectAlbumRows" resultType="int">
+        select count(id)
+        from album
+    </select>
+
+    <insert id="insertAlbum" parameterType="Album" keyProperty="id">
+        insert into album (<include refid="insertFields"></include>)
+        values (#{catalogNo}, #{nameJp}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
+        #{publishPrice}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
+        #{discNum}, #{trackNum}, #{hasLimited}, #{description}, #{remark}, #{seriesId}, #{productId}, #{imgUrl},
+        #{trackList}, #{addedTime}, #{editedTime}, #{_s})
+    </insert>
+
+    <update id="updateAlbum" parameterType="Album" keyProperty="id">
+        update album
+        set
+        catalog_no = #{album.catalogNo}, name_jp = #{album.nameJp}, name_zh = #{album.nameZh}, name_en = #{album.nameEn},
+        barcode = #{album.barcode}, release_date = #{album.releaseDate}, publish_format = #{album.publishFormat},
+        publish_price = #{album.publishPrice}, album_format = #{album.albumFormat}, media_format = #{album.mediaFormat},
+        label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright = #{album.copyright},
+        disc_num = #{album.discNum}, track_num = #{album.trackNum}, has_limited = #{album.hasLimited}, description = #{album.description},
+        remark = #{album.remark}, series_id = #{album.seriesId}, product_id = #{album.productId}, img_url = #{album.imgUrl},
+        track_list = #{album.trackList}, edited_time=#{album.editedTime}, _s=#{album._s}
+        where id = #{album.id}
+    </update>
+
+    <delete id="deleteAlbumById">
+        delete
+        from album
+        where id = #{id}
+    </delete>
+
+    <update id="updateAlbumImgUrl" keyProperty="id">
+        update album
+        set
+        img_url = #{imgUrl}
+        where id = #{id}
+    </update>
+</mapper>

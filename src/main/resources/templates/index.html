@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css" />
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript" ></script>
+    <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript" ></script>
+
+    <!-- Demo -->
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
+    <script th:src="@{/js/primevue/components/slider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+</head>
+<body>
+<!-- 头部 -->
+<header class="bg-dark sticky-top">
+    <div th:insert="~{header :: site_header}"></div>
+</header>
+
+<h1>首页</h1>
+
+<!-- 尾部 -->
+<footer class="bg-dark">
+    <div th:insert="~{footer :: site_footer}"></div>
+</footer>
+</body>
+</html>

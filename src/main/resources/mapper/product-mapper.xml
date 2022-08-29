@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.blog.dao.ProductMapper">
+
+    <sql id="selectFields">
+        id, series_id, name_zh, name_jp, name_en, release_date, classification,
+        added_time, edited_time, description, remark, img_url
+    </sql>
+
+    <sql id="insertFields">
+        series_id, name_zh, name_jp, name_en, release_date, classification,
+        added_time, edited_time, description, remark, img_url
+    </sql>
+
+    <select id="selectProductById" resultType="Product">
+        select
+        <include refid="selectFields"></include>
+        from product
+        where id = #{id}
+    </select>
+
+    <insert id="insertProduct" parameterType="Product" keyProperty="id">
+        insert into product (<include refid="insertFields"></include>)
+        values (#{seriesId}, #{nameZh}, #{nameJp}, #{nameEn}, #{releaseDate}, #{classification},
+                #{addedTime}, #{editedTime}, #{description}, #{remark}, #{imgUrl})
+    </insert>
+
+    <update id="updateProduct" parameterType="Product" keyProperty="id">
+        update product
+        set
+        series_id = #{seriesId}, name_zh = #{nameZh}, name_jp = #{nameJp}, name_en = #{nameEn},
+        release_date = #{releaseDate}, classification = #{classification}, added_time = #{addedTime},
+        edited_time = #{editedTime}, description = #{description}, remark = #{remark}, img_url = #{imgUrl}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductById">
+        delete
+        from product
+        where id = #{id}
+    </delete>
+
+    <select id="selectAllProductsBySeriesId" resultType="Product">
+        select
+        <include refid="selectFields"></include>
+        from product
+        where series_id = #{seriesId}
+        order by release_date desc
+    </select>
+
+</mapper>

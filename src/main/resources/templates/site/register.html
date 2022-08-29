@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>注册</title>
+
+    <link rel="icon" th:href="@{/img/favicon.ico}">
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/font.css}">
+
+    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+
+    <!-- JQuery -->
+    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}" crossorigin="anonymous"></script>
+
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <!-- 头部 -->
+    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
+
+    <div class="main">
+        <div id="app">
+            <div class="card">
+                <div class="grid">
+                    <p-toast></p-toast>
+                    <div class="col"></div>
+                    <div class="col">
+                        <p-panel :style="{width: '600px'}" header="注&nbsp;&nbsp;册" class="p-fluid">
+                            <div class="formgrid grid">
+                                <div class="field col">
+                                    <label htmlFor="username">账号</label>
+                                    <p-inputtext id="username" v-model.trim="user.username"
+                                                 th:class="|form-control ${usernameMsg!=null?'is-invalid':''}|"
+                                                 th:value="${user!=null?user.username:''}"></p-inputtext>
+                                    <div class="invalid-feedback" th:text="${usernameMsg}"></div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col">
+                                    <label htmlFor="password">密码</label>
+                                    <p-inputtext id="password" v-model.trim="user.password"
+                                                 th:class="|form-control ${passwordMsg!=null?'is-invalid':''}|"
+                                                 th:value="${user!=null?user.password:''}"></p-inputtext>
+                                    <div class="invalid-feedback" th:text="${passwordMsg}"></div>
+                                </div>
+                            </div>
+                            <!--                    <div class="formgrid grid">-->
+                            <!--                        <div class="field col">-->
+                            <!--                            <label htmlFor="password">确认密码</label>-->
+                            <!--                            <p-inputtext id="confirm-password" th:value="${user!=null?user.password:''}"></p-inputtext>-->
+                            <!--                        </div>-->
+                            <!--                    </div>-->
+                            <div class="formgrid grid">
+                                <div class="field col">
+                                    <label htmlFor="email">邮箱</label>
+                                    <p-inputtext id="email" v-model.trim="user.email"
+                                                 th:class="|form-control ${emailMsg!=null?'is-invalid':''}|"
+                                                 th:value="${user!=null?user.email:''}"></p-inputtext>
+                                    <div class="invalid-feedback" th:text="${emailMsg}"></div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col">
+                                    <p-button label="立即注册" class="p-button-rounded" @click="register"></p-button>
+                                </div>
+                            </div>
+                        </p-panel>
+                    </div>
+                    <div class="col"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 尾部 -->
+    <footer th:insert="~{footer :: site_footer}"></footer>
+</div>
+
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+    const App = {
+        setup() {
+            onMounted(() => {
+                user.value = {};
+                registerDialog.value = true;
+            });
+
+            const user = ref({});
+            const toast = useToast();
+            const registerDialog = ref(true);
+
+            //提交注册信息
+            const register = () => {
+                axiosPostRequest(DOMIANURL + '/register', user.value)
+                    .then(res => {
+                        toast.add({severity: 'success', summary: 'Successful', detail: '注册成功！', life: 3000});
+                    }).catch(err => {
+                    console.log(err);
+                    toast.add({severity: 'error', summary: 'Error', detail: '注册失败！', life: 3000});
+                });
+            }
+
+            return {user, register, registerDialog}
+        },
+        components: {
+            "p-button": primevue.button,
+            "p-inputtext": primevue.inputtext,
+            "p-card": primevue.card,
+            "p-toast": primevue.toast,
+            "p-dialog": primevue.dialog,
+            "p-panel": primevue.panel,
+        }
+    };
+
+    const app = createApp(App);
+    app.use(primevue.config.default);
+    app.directive('tooltip', Tooltip);
+    app.use(primevue.toastservice);
+    app.mount("#app");
+</script>
+<style>
+</style>
+</body>
+</html>
