@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -113,6 +114,20 @@ public class UserController {
             }
         } catch (IOException e) {
             logger.error("读取头像失败: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(path = "/isRoot", method = RequestMethod.GET)
+    @ResponseBody
+    public String isRoot() {
+        if (hostHolder.getUser() != null) {
+            if (hostHolder.getUser().getType() != 1) {
+                return "当前用户无权限！";
+            }else {
+                return "有权限";
+            }
+        } else {
+            return "未登录！";
         }
     }
 

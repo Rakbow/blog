@@ -20,51 +20,35 @@ function JPY2CNY(jpy) {
         })
 }
 
+/**
+ * 根据图片url转为png文件对象
+ * @param url
+ * @param imageName
+ * @returns {Promise<unknown>}
+ */
+function getImageFileFromUrl(url, imageName) {
+    return new Promise((resolve, reject) => {
+        let blob = null;
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.setRequestHeader('Accept', 'image/png');
+        xhr.responseType = "blob";
+        // 加载时处理
+        xhr.onload = () => {
+            // 获取返回结果
+            blob = xhr.response;
+            let imgFile = new File([blob], imageName, { type: 'image/png' });
+            // 返回结果
+            resolve(imgFile);
+        };
+        xhr.onerror = (e) => {
+            reject(e)
+        };
+        // 发送
+        xhr.send();
+    });
+}
 
-var track_info = {
-    "total_disc": 2,
-    "total_tracks": 4,
-    "disc_list": [
-        {
-            "catalog": "USSW-0310-1",
-            "media_format": "CD",
-            "album_format": "Vocal",
-            "track_list": [
-                {
-                    "name": "Missing Promise",
-                    "track_length": "4:17"
-                },
-                {
-                    "name": "Reset",
-                    "track_length": "4:00"
-                },
-                {
-                    "name": "Missing Promise (instrumental)",
-                    "track_length": "4:17"
-                },
-                {
-                    "name": "Reset (instrumental)",
-                    "track_length": "4:00"
-                }
-            ]
-        },
-        {
-            "catalog": "USSW-0310-2",
-            "media_format": "DVD",
-            "album_format": "Vocal, Video",
-            "track_list": [
-                {
-                    "name": "Missing Promise Music Video",
-                    "track_length": "4:15"
-                },
-                {
-                    "name": "Missing Promise メイキング映像",
-                    "track_length": "18:21"
-                }
-            ]
-        }
-    ]
-};
 
 function countTime(time1, time2) {
     res = second2time(parseInt(time2second(time1)) + parseInt(time2second(time2)));

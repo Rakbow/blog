@@ -39,6 +39,8 @@
     <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
     <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
     <script th:src="@{/js/primevue/components/image.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -56,7 +58,7 @@
     <div class="main">
         <div id="app">
             <div class="grid">
-                <div class="col-10 card">
+                <div class="col-10">
                     <p-toolbar class="mb-4">
                         <template #start>
                             <p-button label="编辑图片" icon="pi pi-images" class="p-button-success mr-4"
@@ -65,64 +67,98 @@
                         <template #end>
                         </template>
                     </p-toolbar>
-                    <p-fieldset>
-                        <template #legend>
-                            {{album.nameJp}}
-                        </template>
+                    <p-panel header="Album Info">
                         <div class="grid">
-                            <div class="col-4">
-                                <p-image :src="cover.url" alt="cover.name" width="250" preview></p-image>
+                            <div class="col-4" style="width: 300px;padding: 0">
+                                <p-image :src="cover.url" :alt="cover.name" imageClass="img"></p-image>
                             </div>
-                            <div class="col-8">
-                                <div class="row">
-                                    <div class="col-3"><b>专辑编号</b></div>
-                                    <div class="col-9">{{album.catalogNo?album.catalogNo:"N/A"}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3"><b>商品条形码</b></div>
-                                    <div class="col-9">{{album.barcode?album.barcode:"N/A"}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3"><b>发售日期</b></div>
-                                    <div class="col-9">{{album.releaseDate?album.releaseDate:"N/A"}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3"><b>发售价格</b></div>
-                                    <div class="col-9">{{album.publishPrice?album.publishPrice:"N/A"}} 日元(含税)</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3"><b>出版形式</b></div>
-                                    <div class="col-9">{{album.publishFormat}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3"><b>媒体类型</b></div>
-                                    <div class="col-9">{{album.mediaFormat}}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3"><b>专辑分类</b></div>
-                                    <div class="col-9">{{album.albumFormat}}</div>
-                                </div>
-                                <div class="row">
-                                </div>
-                                <div class="row">
-                                </div>
-                                <div class="row">
-                                </div>
-
+                            <div class="col-fixed" style="padding: 0">
                             </div>
                         </div>
+                    </p-panel>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-users mr-2"></i>
+                            <b>Credits</b>
+                        </template>
+                    </p-fieldset>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-list mr-2"></i>
+                            <b>Tracklist</b>
+                        </template>
+                    </p-fieldset>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-bookmark mr-2"></i>
+                            <b>Description</b>
+                        </template>
+                    </p-fieldset>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-images mr-2"></i>
+                            <b>Images</b>
+                        </template>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-box mr-2"></i>
+                            <b>Bonus</b>
+                        </template>
                     </p-fieldset>
                 </div>
                 <div class="col-2">
-
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2"></i>
+                            <b>Album Stats</b>
+                        </template>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2"></i>
+                            <b>Related Albums</b>
+                        </template>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2"></i>
+                            <b>Page Info</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-fixed">
+                                <i class="pi pi-plus mr-2"></i><b>Added</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                {{album.addedTime}}
+                            </div>
+                            <div class="col-fixed">
+                                <i class="pi pi-pencil mr-2"></i><b>Edited</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                {{album.editedTime}}
+                            </div>
+                            <div class="col-fixed">
+                                <i class="pi pi-chart-bar mr-2"></i><b>Page Traffic</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                <i class="pi pi-eye mr-2"></i><b>Visitors</b>1685
+                            </div>
+                        </div>
+                    </p-panel>
                 </div>
             </div>
-
 
             <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="编辑图片"
                       :modal="true">
                 <div style="width:500px">
-                    <p-fileupload name="imageSetJson[]" :custom-upload="true" :multiple="true" accept="image/*"
+                    <p-fileupload name="imageSetJson[]" ref="fileupload" :custom-upload="true" :multiple="true" accept="image/*"
                                   :max-file-size="1000000" :preview-width="100"
                                   invalid-file-size-message="{0}大小已超过{1}"
                                   @uploader="myUploader"
@@ -166,14 +202,19 @@
     const App = {
         setup() {
             onMounted(() => {
-                if(album.value.imgUrl != null){
+                imageObject.value = {
+                    url: "https://www.primefaces.org/primevue/demo/images/galleria/galleria1.jpg",
+                    name: "galleria1"
+                };
+
+                if (album.value.imgUrl != null) {
                     JSON.parse(album.value.imgUrl).forEach((img) => {
                         if (img.name.toString() == "cover") {
                             cover.value.url = img.url;
                             cover.value.name = img.name;
                         }
                     })
-                }else {
+                } else {
                     cover.value.url = "http://localhost:8080/blog/img/404.jpg";
                     cover.value.name = "no image";
                 }
@@ -189,6 +230,7 @@
             const imageName = ref();
             const imageNum = ref(0);
             const cover = ref({});
+            const imageObject = ref({});
 
             const arr2String = (arr) => {
                 return arr.join("/");
@@ -227,6 +269,7 @@
             };
 
             const selectFile = (ev) => {
+                console.log(this.$refs.fileupload);
                 showImage(ev.files);
                 imageNum.value = ev.files.length;
                 console.log(imageNum.value);
@@ -250,10 +293,11 @@
                 init();
             };
 
+
             return {
                 album, myUploader, selectFile, removeFile, html,
                 displayImageEditDialog, openImageEditDialog, imageName,
-                imageNum, cover
+                imageNum, cover, imageObject
             }
         },
         components: {
@@ -265,7 +309,8 @@
             "p-dialog": primevue.dialog,
             "p-toolbar": primevue.toolbar,
             "p-fieldset": primevue.fieldset,
-            "p-image": primevue.image
+            "p-image": primevue.image,
+            "p-card": primevue.card,
         }
     };
 
@@ -286,6 +331,17 @@
         width: 100%;
         height: 250px;
         border: 1px solid red;
+    }
+
+    img {
+        width: 250px;
+        position: relative;
+        left: 8.33%;
+        /* margin-right: 0.5rem; */
+    }
+
+    .p-panel .p-panel-content {
+        padding: 0.5rem;
     }
 </style>
 </body>

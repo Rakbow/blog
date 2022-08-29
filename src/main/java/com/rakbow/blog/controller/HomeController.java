@@ -50,7 +50,6 @@ public class HomeController {
         return "/index_temp";
     }
 
-    @LoginRequired
     @RequestMapping(path = "/album-list", method = RequestMethod.GET)
     public String getAlbumList(Model model) {
         model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
@@ -60,7 +59,7 @@ public class HomeController {
         return "/album-list";
     }
 
-    @LoginRequired
+
     @RequestMapping(path = "/album-card", method = RequestMethod.GET)
     public String getAlbumCard(Model model) {
         List<Tag> albumTags = albumTagService.getAll();

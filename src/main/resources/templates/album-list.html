@@ -54,6 +54,8 @@
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
     <script th:src="@{/js/primevue/components/quill.min.js}"></script>
     <script th:src="@{/js/primevue/components/editor.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/image.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -74,7 +76,7 @@
             <!--            <p-fieldset legend="专辑列表" :toggleable="true">-->
             <p-panel header="专辑列表" :toggleable="true">
                 <p-toast></p-toast>
-                <p-toolbar class="mb-4" th:if="${loginUser.type==1}">
+                <p-toolbar class="mb-4">
                     <template #start>
                         <p-button icon="pi pi-refresh" class="p-button-rounded mr-4" @click="init"></p-button>
                         <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
@@ -433,7 +435,8 @@
                     <div class="field col">
                         <label htmlFor="seriesId" class="mb-3">所属系列</label>
                         <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
-                                    placeholder="选择所属系列" option-label="label" option-value="value" @change="getProducts">
+                                    placeholder="选择所属系列" option-label="label" option-value="value"
+                                    @change="getProducts">
                         </p-dropdown>
                     </div>
                     <div class="field col">
@@ -513,9 +516,14 @@
                 <p-divider></p-divider>
                 <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                 <div class="field">
-                    <label htmlFor="imgUrl">图片url地址</label>
-                    <p-textarea id="imgUrl" v-model="albumEdit.imgUrl" rows="3" cols="20"
-                                :auto-resize="true"></p-textarea>
+                    <div v-if="imgData.length != 0" v-for="img of imgData">
+                        <p-image :src="img.url" :alt="img.name" width="250"></p-image>
+                        <p-inputtext type="text" class="p-inputtext-sm" :placeholder="img.name"></p-inputtext>
+                        <p>{{img.name}}</p>
+                    </div>
+                    <div v-if="imgData.length == 0">
+                        无图片
+                    </div>
                 </div>
                 <p-divider></p-divider>
                 <div class="field">
@@ -531,8 +539,10 @@
                                 :auto-resize="true"></p-textarea>
                 </div>
                 <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeEditDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitEditAlbum"></p-button>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                              @click="closeEditDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                              @click="submitEditAlbum"></p-button>
                 </template>
             </p-dialog>
 
@@ -601,6 +611,9 @@
             ]);
             const selectedColumns = ref();
 
+            const imgData = ref([]);
+            const imgArr = ref([]);
+
             const formatCurrency = (value) => {
                 return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
             };
@@ -614,7 +627,14 @@
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const exportCSV = () => {
-                dt.value.exportCSV();
+                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                    .then(res => {
+                        if (res != "有权限") {
+                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        } else {
+                            dt.value.exportCSV();
+                        }
+                    })
             };
 
             //初始化
@@ -647,15 +667,14 @@
 
             //打开删除确认面板
             const confirmDeleteSelected = () => {
-                if ([[${loginUser}]] != null) {
-                    if ([[${loginUser.type}]] == 1) {
-                        deleteAlbumsDialog.value = true;
-                    } else {
-                        toast.add({severity: 'error', summary: 'Error', detail: '当前用户无权限！', life: 3000});
-                    }
-                } else {
-                    toast.add({severity: 'error', summary: 'Error', detail: '请登录管理员账户！', life: 3000});
-                }
+                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                    .then(res => {
+                        if (res != "有权限") {
+                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        } else {
+                            deleteAlbumsDialog.value = true;
+                        }
+                    })
             };
             //删除数据
             const deleteSelectedAlbums = () => {
@@ -673,25 +692,39 @@
 
             //打开编辑数据面板
             const openEditDialog = (data) => {
-                if ([[${loginUser}]] != null) {
-                    if ([[${loginUser.type}]] == 1) {
-                        let dataTmp = JSON.parse(JSON.stringify(data));
-                        albumEdit.value = dataTmp;
-                        axiosGetRequest(DOMIANURL + "/common/getProducts/" + dataTmp.seriesId, null)
-                            .then(res => {
-                                productSet.value = res;
-                                albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                                albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                                albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                                albumEdit.value.productId = label2value(dataTmp.product, productSet.value).concat();
-                                displayEditDialog.value = true;
-                            });
-                    } else {
-                        toast.add({severity: 'error', summary: 'Error', detail: '当前用户无权限！', life: 3000});
-                    }
-                } else {
-                    toast.add({severity: 'error', summary: 'Error', detail: '请登录管理员账户！', life: 3000});
-                }
+                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                    .then(res => {
+                        if (res != "有权限") {
+                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        } else {
+                            let dataTmp = JSON.parse(JSON.stringify(data));
+                            if (dataTmp.imgUrl != null) {
+                                imgData.value = [];
+                                imgArr.value = [];
+                                imgData.value = JSON.parse(dataTmp.imgUrl);
+                                for(let img of imgData.value){
+                                    getImageFileFromUrl(img.url, img.name)
+                                        .then((res) => {
+                                            // 返回的是文件对象，使用变量接收即可
+                                            imgArr.value.push(res);
+                                        }).catch((e) => {
+                                        console.log(e)
+                                    });
+                                }
+                                console.log(imgArr.value);
+                            }
+                            albumEdit.value = dataTmp;
+                            axiosGetRequest(DOMIANURL + "/common/getProducts/" + dataTmp.seriesId, null)
+                                .then(res => {
+                                    productSet.value = res;
+                                    albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                                    albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                                    albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                                    albumEdit.value.productId = label2value(dataTmp.product, productSet.value).concat();
+                                    displayEditDialog.value = true;
+                                });
+                        }
+                    })
             };
             //关闭编辑数据面板
             const closeEditDialog = () => {
@@ -722,18 +755,17 @@
 
             //打开新增数据面板
             const openNewDialog = () => {
-                if ([[${loginUser}]] != null) {
-                    if ([[${loginUser.type}]] == 1) {
-                        album.value = {};
-                        submitted.value = false;
-                        productSelect.value = true;
-                        displayNewDialog.value = true;
-                    } else {
-                        toast.add({severity: 'error', summary: 'Error', detail: '当前用户无权限！', life: 3000});
-                    }
-                } else {
-                    toast.add({severity: 'error', summary: 'Error', detail: '请登录管理员账户！', life: 3000});
-                }
+                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                    .then(res => {
+                        if (res != "有权限") {
+                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        } else {
+                            album.value = {};
+                            submitted.value = false;
+                            productSelect.value = true;
+                            displayNewDialog.value = true;
+                        }
+                    })
             };
             //关闭新增数据面板
             const closeNewDialog = () => {
@@ -786,7 +818,7 @@
                 selectedAlbums, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
                 mediaFormatSet, publishFormatSet, albumFormatSet, productSet, seriesSet,
-                getProducts, productSelect
+                getProducts, productSelect, imgData, imgArr
             }
         },
         components: {
@@ -813,7 +845,9 @@
             "p-autocomplete": primevue.autocomplete,
             "p-multiselect": primevue.multiselect,
             "p-fileupload": primevue.fileupload,
-            "p-editor": primevue.editor
+            "p-editor": primevue.editor,
+            "p-card": primevue.card,
+            "p-image": primevue.image,
         }
     };
 
