@@ -1,5 +1,10 @@
 package com.rakbow.blog.entity;
 
+
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -20,6 +25,8 @@ public class Album {
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
+    @DateTimeFormat(pattern="yyyy/MM/dd")//存到数据库
+    @JSONField(format = "yyyy/MM/dd") //从数据库读出
     private Date releaseDate;//发行日期
     private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
@@ -31,16 +38,53 @@ public class Album {
     private String copyright;//版权方
     private int discNum;//唱片数
     private int trackNum;//曲目数
-    private int hasLimited;//是否为限定版
+    private int hasBonus;//是否包含特典内容 0-无 1-有
+    private String bonus;//特典信息
     private int seriesId;//所属系列id
     private String productId;//所属产品id 在mysql中以数组字符串形式存储
     private String description;//描述
     private String remark;//备注
     private String imgUrl;//图片列表（JSON字符串）
     private String trackList;//曲目列表（JSON字符串）
+    @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
+    @JSONField(format="yyyy/MM/dd HH:mm:ss")
     private Timestamp addedTime;//数据新增时间
+    @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
+    @JSONField(format="yyyy/MM/dd HH:mm:ss")
     private Timestamp editedTime;//数据更新时间
     private int _s;//激活状态
+
+    public Album() {
+
+        this.id = 0;
+        this.catalogNo = "";
+        this.nameJp = "";
+        this.nameZh = "";
+        this.nameEn = "";
+        this.barcode = "";
+        this.releaseDate = null;
+        this.publishFormat = "";
+        this.albumFormat = "";
+        this.mediaFormat = "";
+        this.publishPrice = 0;
+        this.label = "";
+        this.publisher = "";
+        this.distributor = "";
+        this.copyright = "";
+        this.discNum = 0;
+        this.trackNum = 0;
+        this.hasBonus = 0;
+        this.bonus = "";
+        this.productId = "";
+        this.description = "";
+        this.remark = "";
+        this.imgUrl = "[]";
+        this.trackList = "[]";
+        this.addedTime = null;
+        this.editedTime = null;
+        this._s = 1;
+
+    }
 
     public int getId() {
         return id;
@@ -178,12 +222,20 @@ public class Album {
         this.trackNum = trackNum;
     }
 
-    public int getHasLimited() {
-        return hasLimited;
+    public int getHasBonus() {
+        return hasBonus;
     }
 
-    public void setHasLimited(int hasLimited) {
-        this.hasLimited = hasLimited;
+    public void setHasBonus(int hasBonus) {
+        this.hasBonus = hasBonus;
+    }
+
+    public String getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(String bonus) {
+        this.bonus = bonus;
     }
 
     public int getSeriesId() {
@@ -278,7 +330,8 @@ public class Album {
                 ", copyright='" + copyright + '\'' +
                 ", discNum=" + discNum +
                 ", trackNum=" + trackNum +
-                ", hasLimited=" + hasLimited +
+                ", hasBonus=" + hasBonus +
+                ", bonus='" + bonus + '\'' +
                 ", seriesId=" + seriesId +
                 ", productId='" + productId + '\'' +
                 ", description='" + description + '\'' +

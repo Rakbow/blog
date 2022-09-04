@@ -1,13 +1,13 @@
 package com.rakbow.blog.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.blog.annotation.LoginRequired;
 import com.rakbow.blog.entity.Album;
-import com.rakbow.blog.entity.AlbumInfo;
 import com.rakbow.blog.service.AlbumService;
+import com.rakbow.blog.service.ProductService;
 import com.rakbow.blog.service.TagService;
-import com.rakbow.blog.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,31 +61,30 @@ public class AlbumController {
     //获得所有专辑
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     @ResponseBody
-    public List<JSONObject> getAllAlbum() {
-        List<JSONObject> albums = new ArrayList<>();
+    public String getAllAlbum() {
+        JSONArray albums = new JSONArray();
         List<Album> tmp = albumService.getAll();
-        if(tmp == null || tmp.size() == 0){
+        if (tmp == null || tmp.size() == 0) {
         }
         for (Album album : tmp) {
             albums.add(albumService.album2Json(album));
         }
-        return albums;
+        return albums.toJSONString();
     }
 
-    //获取单个专辑信息
-    @RequestMapping(value = "/getAlbum/{albumId}", method = RequestMethod.GET)
-    @ResponseBody
-    public JSONObject getAlbum(@PathVariable("albumId") int albumId) {
-        System.out.println(albumService.findAlbumById(albumId));
-        System.out.println(albumService.album2Json(albumService.findAlbumById(albumId)));
-        return albumService.album2Json(albumService.findAlbumById(albumId));
-    }
+    // //获取单个专辑信息
+    // @RequestMapping(value = "/getAlbum/{albumId}", method = RequestMethod.GET)
+    // @ResponseBody
+    // public JSONObject getAlbum(@PathVariable("albumId") int albumId) {
+    //     return albumService.album2Json(albumService.findAlbumById(albumId));
+    // }
 
     //获取单个专辑详细信息页面
     @LoginRequired
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int album_id, Model model) {
-        model.addAttribute("album", albumService.album2Json(albumService.findAlbumById(album_id)));
+    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
+        model.addAttribute("album", albumService.album2Json(albumService.findAlbumById(albumId)));
+        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
         return "/album-detail";
     }
 
@@ -92,16 +92,7 @@ public class AlbumController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
     public void insertAlbum(@RequestBody JSONObject albumJson) throws ParseException {
-        Album album = albumService.json2Album(albumJson);
-        album.setAddedTime(new Timestamp(System.currentTimeMillis()));
-        album.setEditedTime(new Timestamp(System.currentTimeMillis()));
-        if (StringUtils.isBlank(album.getDescription())) {
-            album.setDescription("Noting");
-        }
-        if (StringUtils.isBlank(album.getRemark())) {
-            album.setRemark("Noting");
-        }
-        albumService.insertAlbum(album);
+        albumService.insertAlbum(albumService.json2Album(albumJson));
     }
 
     //删除专辑(单个/多个)
@@ -120,12 +111,13 @@ public class AlbumController {
         if (albumJson != null) {
             Album album = albumService.json2Album(albumJson);
             album.setEditedTime(new Timestamp(System.currentTimeMillis()));
-            if (StringUtils.isBlank(album.getDescription())) {
-                album.setDescription("Noting");
+            if (StringUtils.isBlank(album.getImgUrl())) {
+                album.setImgUrl("[]");
             }
-            if (StringUtils.isBlank(album.getRemark())) {
-                album.setRemark("Noting");
+            if (StringUtils.isBlank(album.getTrackList())) {
+                album.setTrackList("[]");
             }
+            System.out.println(album);
             albumService.updateAlbum(album.getId(), album);
         }
     }
@@ -187,11 +179,11 @@ public class AlbumController {
             }
 
             JSONObject jo = new JSONObject();
-            jo.put("name",fileName.substring(0,fileName.lastIndexOf(".")));
+            jo.put("name", fileName.substring(0, fileName.lastIndexOf(".")));
             jo.put("url", domain + contextPath + "/album/" + albumId + "/" + fileName);
             imgJson.add(jo);
         }
-        albumService.updateAlbumImgUrl(albumId, JSONArray.toJSONString(imgJson));
+        albumService.updateAlbumImgUrl(albumId, imgJson.toJSONString());
         return "redirect:/index";
     }
 
@@ -216,5 +208,17 @@ public class AlbumController {
         } catch (IOException e) {
             logger.error("读取图片失败: " + e.getMessage());
         }
+    }
+
+    //获取相关专辑
+    @RequestMapping(path = "/getRelatedAlbums", method = RequestMethod.GET)
+    @ResponseBody
+    public List<String> getRelatedAlbums(String json) {
+
+        JSONObject param = JSON.parseObject(json);
+        Album album = albumService.findAlbumById(param.getInteger("id"));
+        List<String> tmp = Arrays.asList(album.getProductId());
+
+        return tmp;
     }
 }

@@ -132,7 +132,14 @@
                     <p-column field="catalogNo" header="专辑编号" :sortable="true"></p-column>
                     <p-column field="barcode" header="商品条形码" :sortable="true"></p-column>
                     <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
-                    <p-column field="nameJp" header="专辑原名"></p-column>
+                    <p-column header="专辑原名">
+                        <template #body="slotProps">
+                            <a @click="setDetailId(slotProps.data.id)"
+                               :href="'http://localhost:8080/blog/album/' + detailId">
+                                {{slotProps.data.nameJp}}
+                            </a>
+                        </template>
+                    </p-column>
                     <p-column field="publishPrice" header="发售价格（含税）" :sortable="true">
                         <template #body="slotProps">
                             {{formatCurrency(slotProps.data.publishPrice)}}
@@ -258,23 +265,15 @@
                         <p-multiselect id="productId" v-model="album.productId" :options="productSet"
                                        option-label="label" option-value="value" placeholder="请先选择所属系列"
                                        display="chip" :filter="true" :disabled="productSelect">
-                            <template #value="slotProps">
-                                <template v-for="option of slotProps.value" :key="option.label">
-                                    {{option.label}}
-                                </template>
-                                <template v-if="!slotProps.value || slotProps.value.length === 0">
-                                    {{slotProps.placeholder}}
-                                </template>
-                            </template>
                         </p-multiselect>
 
                     </div>
                     <div class="field col">
                         <div class="col-12">
-                            <label htmlFor="hasLimited" class="mb-3">限定版</label>
+                            <label htmlFor="hasBonus" class="mb-3">特典</label>
                         </div>
                         <div class="col-12">
-                            <p-inputswitch v-model="album.hasLimited" :true-value="1" :false-value="0"></p-inputswitch>
+                            <p-inputswitch v-model="album.hasBonus" :true-value="1" :false-value="0"></p-inputswitch>
                         </div>
                     </div>
                 </div>
@@ -284,13 +283,6 @@
                         <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
                                        option-label="label" option-value="value" placeholder="选择出版形式"
                                        display="chip" :filter="true">
-                            <template #value="slotProps">
-                                <template v-for="option of slotProps.value" :key="option.label">
-                                    {{option.label}}
-                                </template>
-                                <template v-if="!slotProps.value || slotProps.value.length === 0">
-                                    {{slotProps.placeholder}}
-                                </template>
                             </template>
                         </p-multiselect>
                     </div>
@@ -299,14 +291,6 @@
                         <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
                                        option-label="label" option-value="value" placeholder="选择专辑分类"
                                        display="chip" :filter="true">
-                            <template #value="slotProps">
-                                <template v-for="option of slotProps.value" :key="option.label">
-                                    {{option.label}}
-                                </template>
-                                <template v-if="!slotProps.value || slotProps.value.length === 0">
-                                    {{slotProps.placeholder}}
-                                </template>
-                            </template>
                         </p-multiselect>
                     </div>
                     <div class="field col">
@@ -314,14 +298,6 @@
                         <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
                                        option-label="label" option-value="value" placeholder="选择媒体类型"
                                        display="chip" :filter="true">
-                            <template #value="slotProps">
-                                <template v-for="option of slotProps.value" :key="option.label">
-                                    {{option.label}}
-                                </template>
-                                <template v-if="!slotProps.value || slotProps.value.length === 0">
-                                    {{slotProps.placeholder}}
-                                </template>
-                            </template>
                         </p-multiselect>
                     </div>
                 </div>
@@ -386,6 +362,11 @@
                     <label htmlFor="remark">备注</label>
                     <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
                 </div>
+                <div class="field">
+                    <label htmlFor="bonus">特典信息</label>
+                    <p-editor id="bonus" v-model.trim="album.bonus"
+                              editor-style="height: 320px"></p-editor>
+                </div>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
                     <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
@@ -448,10 +429,10 @@
                     </div>
                     <div class="field col">
                         <div class="col-12">
-                            <label htmlFor="hasLimited" class="mb-3">限定版</label>
+                            <label htmlFor="hasBonus" class="mb-3">特典</label>
                         </div>
                         <div class="col-12">
-                            <p-inputswitch v-model="albumEdit.hasLimited" :true-value="1"
+                            <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
                                            :false-value="0"></p-inputswitch>
                         </div>
                     </div>
@@ -530,13 +511,16 @@
                     <label htmlFor="description">描述</label>
                     <p-editor id="description" v-model.trim="albumEdit.description"
                               editor-style="height: 320px"></p-editor>
-                    <!--                    <p-textarea id="description" v-model.trim="albumEdit.description" rows="3" cols="20"-->
-                    <!--                                :auto-resize="true"></p-textarea>-->
                 </div>
                 <div class="field">
                     <label htmlFor="remark">备注</label>
                     <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
                                 :auto-resize="true"></p-textarea>
+                </div>
+                <div class="field">
+                    <label htmlFor="bonus">特典信息</label>
+                    <p-editor id="bonus" v-model.trim="albumEdit.bonus"
+                              editor-style="height: 320px"></p-editor>
                 </div>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -602,6 +586,7 @@
                 {field: 'nameEn', header: '专辑名称（英文）'},
                 {field: 'remark', header: '备注'},
                 {field: 'description', header: '描述'},
+                {field: 'bonus', header: '特典信息'},
                 {field: 'label', header: '唱片公司'},
                 {field: 'publisher', header: '发行商'},
                 {field: 'distributor', header: '经销商'},
@@ -613,6 +598,7 @@
 
             const imgData = ref([]);
             const imgArr = ref([]);
+            const detailId = ref();
 
             const formatCurrency = (value) => {
                 return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
@@ -627,10 +613,10 @@
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const exportCSV = () => {
-                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
-                        if (res != "有权限") {
-                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
                         } else {
                             dt.value.exportCSV();
                         }
@@ -645,7 +631,7 @@
             };
             //获取所有专辑信息
             const getAllAlbum = () => {
-                axiosGetRequest(DOMIANURL + '/album/getAll', null)
+                axiosGetRequest(GET_ALL_ALBUM_URL, null)
                     .then(res => {
                         albums.value = res;
                     }).catch(err => {
@@ -665,12 +651,13 @@
                 return tmp;
             };
 
+            //删除相关操作
             //打开删除确认面板
             const confirmDeleteSelected = () => {
-                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
-                        if (res != "有权限") {
-                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
                         } else {
                             deleteAlbumsDialog.value = true;
                         }
@@ -678,7 +665,7 @@
             };
             //删除数据
             const deleteSelectedAlbums = () => {
-                axiosDeleteRequest(DOMIANURL + '/album/delete', selectedAlbums.value)
+                axiosDeleteRequest(DELETE_ALBUM_URL, selectedAlbums.value)
                     .then(res => {
                         toast.add({severity: 'success', summary: 'Successful', detail: '数据删除成功！', life: 3000});
                         deleteAlbumsDialog.value = false;
@@ -690,19 +677,20 @@
                 });
             };
 
+            //编辑相关操作
             //打开编辑数据面板
             const openEditDialog = (data) => {
-                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
-                        if (res != "有权限") {
-                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            if (dataTmp.imgUrl != null) {
-                                imgData.value = [];
-                                imgArr.value = [];
+                            imgData.value = [];
+                            imgArr.value = [];
+                            if (dataTmp.imgUrl != null && dataTmp.imgUrl.length != 0) {
                                 imgData.value = JSON.parse(dataTmp.imgUrl);
-                                for(let img of imgData.value){
+                                for (let img of imgData.value) {
                                     getImageFileFromUrl(img.url, img.name)
                                         .then((res) => {
                                             // 返回的是文件对象，使用变量接收即可
@@ -711,10 +699,9 @@
                                         console.log(e)
                                     });
                                 }
-                                console.log(imgArr.value);
                             }
                             albumEdit.value = dataTmp;
-                            axiosGetRequest(DOMIANURL + "/common/getProducts/" + dataTmp.seriesId, null)
+                            axiosGetRequest(GET_ALL_PRODUCT_URL + dataTmp.seriesId, null)
                                 .then(res => {
                                     productSet.value = res;
                                     albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
@@ -741,7 +728,7 @@
                 albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
                 albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
                 albumEdit.value.productId = albumEdit.value.productId.join(",");
-                axiosPostRequest(DOMIANURL + '/album/update', albumEdit.value)
+                axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
                     .then(res => {
                         albumEdit.value = {};
                         toast.add({severity: 'success', summary: 'Successful', detail: '更新数据成功！', life: 3000});
@@ -755,10 +742,10 @@
 
             //打开新增数据面板
             const openNewDialog = () => {
-                axiosGetRequest(DOMIANURL + "/user/isRoot", null)
+                axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
-                        if (res != "有权限") {
-                            toast.add({severity: 'error', summary: 'Error', detail: res, life: 3000});
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
                         } else {
                             album.value = {};
                             submitted.value = false;
@@ -778,25 +765,28 @@
                 if (album.value.seriesId != null && album.value.productId != null) {
                     if (album.value.releaseDate != null) {
                         album.value.releaseDate = dateToString(album.value.releaseDate);
+                        album.value.publishFormat = album.value.publishFormat.join(",");
+                        album.value.albumFormat = album.value.albumFormat.join(",");
+                        album.value.mediaFormat = album.value.mediaFormat.join(",");
+                        album.value.productId = album.value.productId.join(",");
+                        axiosPostRequest(INSERT_ALBUM_URL, album.value)
+                            .then(res => {
+                                album.value = {};
+                                toast.add({
+                                    severity: 'success',
+                                    summary: 'Successful',
+                                    detail: '新增数据成功！',
+                                    life: 3000
+                                });
+                                closeNewDialog();
+                                init();
+                            }).catch(err => {
+                            console.log(err);
+                            toast.add({severity: 'error', summary: 'Error', detail: '新增数据失败！', life: 3000});
+                        });
+                    }else {
+                        toast.add({severity: 'error', summary: 'Error', detail: '未填写发行时间！', life: 3000});
                     }
-                    album.value.publishFormat = album.value.publishFormat.join(",");
-                    album.value.albumFormat = album.value.albumFormat.join(",");
-                    album.value.mediaFormat = album.value.mediaFormat.join(",");
-                    axiosPostRequest(DOMIANURL + '/album/insert', album.value)
-                        .then(res => {
-                            album.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: '新增数据成功！',
-                                life: 3000
-                            });
-                            closeNewDialog();
-                            init();
-                        }).catch(err => {
-                        console.log(err);
-                        toast.add({severity: 'error', summary: 'Error', detail: '新增数据失败！', life: 3000});
-                    });
                 } else {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择系列或产品！', life: 3000});
                 }
@@ -804,11 +794,15 @@
 
             //根据系列id获取该系列所有产品
             const getProducts = (ev) => {
-                axiosGetRequest(DOMIANURL + "/common/getProducts/" + ev.value, null)
+                axiosGetRequest(GET_ALL_PRODUCT_URL + ev.value, null)
                     .then(res => {
                         productSet.value = res;
                         productSelect.value = false;
                     })
+            };
+
+            const setDetailId = (id) => {
+                detailId.value = id;
             };
 
             return {
@@ -818,7 +812,7 @@
                 selectedAlbums, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
                 mediaFormatSet, publishFormatSet, albumFormatSet, productSet, seriesSet,
-                getProducts, productSelect, imgData, imgArr
+                getProducts, productSelect, imgData, imgArr, setDetailId, detailId
             }
         },
         components: {

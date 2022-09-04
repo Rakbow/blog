@@ -1,22 +1,24 @@
 package com.rakbow.blog.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.blog.dao.AlbumMapper;
 import com.rakbow.blog.data.ProductClass;
 import com.rakbow.blog.data.album.AlbumFormat;
 import com.rakbow.blog.data.album.MediaFormat;
 import com.rakbow.blog.data.album.PublishFormat;
 import com.rakbow.blog.entity.Album;
-import com.rakbow.blog.entity.Product;
-import com.rakbow.blog.util.AlbumUtil;
 import com.rakbow.blog.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Project_name: blog
@@ -44,6 +46,16 @@ public class AlbumService {
         return albumMapper.getAll();
     }
 
+    //根据具体搜索条件查询
+    public List<Album> selectAlbumByFilter(String queryParam) {
+        JSONObject param = JSON.parseObject(queryParam);
+        String publishFormat = (param.get("publishFormat") == null) ? null : param.get("publishFormat").toString();
+        String albumFormat = (param.get("albumFormat") == null) ? null : param.get("albumFormat").toString();
+        String mediaFormat = (param.get("mediaFormat") == null) ? null : param.get("mediaFormat").toString();
+        String productId = (param.get("productId") == null) ? null : param.get("productId").toString();
+        return albumMapper.selectAlbumByFilter(publishFormat, albumFormat, mediaFormat, productId);
+    }
+
     public int findAlbumRows() {
         return albumMapper.selectAlbumRows();
     }
@@ -63,34 +75,12 @@ public class AlbumService {
         return albumMapper.updateAlbum(id, album);
     }
 
-    //Album转json对象，以便前端展示
+    //Album转Json对象，以便前端展示
     public JSONObject album2Json(Album album) {
-        JSONObject albumJson = (JSONObject) JSON.toJSON(album);
-        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
 
-        // List<JSONObject> publishFormat = new ArrayList<>();
-        // for(String s : album.getPublishFormat().split(",")){
-        //     JSONObject jo = new JSONObject();
-        //     jo.put("index", Integer.parseInt(s));
-        //     jo.put("name", PublishFormat.getNameByIndex(Integer.parseInt(s)));
-        //     publishFormat.add(jo);
-        // }
-        //
-        // List<JSONObject> mediaFormat = new ArrayList<>();
-        // for(String s : album.getMediaFormat().split(",")){
-        //     JSONObject jo = new JSONObject();
-        //     jo.put("index", Integer.parseInt(s));
-        //     jo.put("name", MediaFormat.getNameByIndex(Integer.parseInt(s)));
-        //     mediaFormat.add(jo);
-        // }
-        //
-        // List<JSONObject> albumFormat = new ArrayList<>();
-        // for(String s : album.getAlbumFormat().split(",")){
-        //     JSONObject jo = new JSONObject();
-        //     jo.put("index", Integer.parseInt(s));
-        //     jo.put("name", AlbumFormat.getNameByIndex(Integer.parseInt(s)));
-        //     albumFormat.add(jo);
-        // }
+        JSONObject albumJson = (JSONObject) JSON.toJSON(album);
+
+        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
 
         List<String> publishFormat = new ArrayList();
         Arrays.stream(album.getPublishFormat().split(","))
@@ -108,22 +98,36 @@ public class AlbumService {
         Arrays.stream(album.getProductId().split(","))
                 .forEach(i -> product.add(productService.selectProductById(Integer.parseInt(i)).getNameZh() + "(" +
                         ProductClass.getNameByIndex(productService.selectProductById(Integer.parseInt(i)).getClassification()) + ")"));
+        List<JSONObject> productMap = new ArrayList<>();
+        Arrays.stream(album.getProductId().split(","))
+                .forEach(i -> {
+                    JSONObject jo = new JSONObject();
+                    jo.put("id", Integer.parseInt(i));
+                    jo.put("name", productService.selectProductById(Integer.parseInt(i)).getNameZh() + "(" +
+                            ProductClass.getNameByIndex(productService.selectProductById(Integer.parseInt(i)).getClassification()) + ")");
+                    productMap.add(jo);
+                });
 
+        albumJson.put("publishFormat", publishFormat);
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
         albumJson.put("series", seriesService.selectSeriesById(album.getSeriesId()).getNameZh());
         albumJson.put("product", product);
+        albumJson.put("products", productMap);
         albumJson.put("addedTime", CommonUtil.dateToString(album.getAddedTime(), "yyyy/MM/dd hh:mm:ss"));
         albumJson.put("editedTime", CommonUtil.dateToString(album.getEditedTime(), "yyyy/MM/dd hh:mm:ss"));
-
         return albumJson;
     }
 
     //json对象转Album，以便保存到数据库
     public Album json2Album(JSONObject albumJson) throws ParseException {
         albumJson.put("releaseDate", CommonUtil.stringToDate(albumJson.getString("releaseDate"), "yyyy/MM/dd"));
-        return albumJson.toJavaObject(Album.class);
+        Album album = albumJson.toJavaObject(Album.class);
+        album.setAddedTime(new Timestamp(System.currentTimeMillis()));
+        album.setEditedTime(new Timestamp(System.currentTimeMillis()));
+        System.out.println(album);
+        return album;
     }
 
     //设置所有字段信息
@@ -137,8 +141,48 @@ public class AlbumService {
     }
 
     //更新专辑图片
-    public void updateAlbumImgUrl(int id, String imgUrl){
+    public void updateAlbumImgUrl(int id, String imgUrl) {
         albumMapper.updateAlbumImgUrl(id, imgUrl);
     }
 
+    //获取相关专辑
+    public List<JSONObject> getRelatedAlbums(int id) {
+        String[] productId = findAlbumById(id).getProductId().split(",");
+        List<JSONObject> relatedAlbums = new ArrayList<>();
+        if (productId.length == 1) {
+            List<Album> tmp = selectAlbumByFilter("{\"productId\":\"" + productId[0] + "\"}");
+            for (int i = 0; i < 4; i++) {
+                relatedAlbums.add(album2Json(tmp.get(i)));
+            }
+        } else if (productId.length > 1 && productId.length <= 4) {
+            relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productId[0] + "\"}").get(0)));
+            relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productId[0] + "\"}").get(1)));
+            relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productId[1] + "\"}").get(0)));
+            relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productId[1] + "\"}").get(1)));
+        } else {
+            for (int i = 0; i < 4; i++) {
+                relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productId[i] + "\"}").get(i)));
+            }
+        }
+        for (JSONObject album : relatedAlbums) {
+
+
+            JSONArray imgUrl = JSONArray.parseArray(album.get("imgUrl").toString());
+
+            if (imgUrl.isEmpty()) {
+                JSONObject tmp = new JSONObject();
+                tmp.put("url", "http://localhost:8080/blog/img/404.jpg");
+                tmp.put("name", "Cover");
+                album.put("imgUrl", tmp);
+            } else {
+                for (int i = 0; i < imgUrl.size(); i++) {
+                    JSONObject img = imgUrl.getJSONObject(i);
+                    if (img.get("name").toString().equals("Cover") || img.get("name").toString().equals("Front")) {
+                        album.put("imgUrl",img);
+                    }
+                }
+            }
+        }
+        return relatedAlbums;
+    }
 }

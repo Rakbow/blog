@@ -1,5 +1,6 @@
 package com.rakbow.blog.util;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
@@ -46,11 +47,6 @@ public class CommonUtil {
     //字符串转为时间(自定义格式)，例如：yyyy/MM/dd
     public static Date stringToDate(String dateString, String dateFormat) throws ParseException {
         SimpleDateFormat ft = new SimpleDateFormat(dateFormat);
-        // Date date = ft.parse(dateString);
-        // Calendar calendar = Calendar.getInstance();
-        // calendar.setTime(date);
-        // calendar.add(Calendar.DATE, 1);
-        // return calendar.getTime();
         return ft.parse(dateString);
     }
 
@@ -65,6 +61,45 @@ public class CommonUtil {
             }
         }
         return json.toJSONString();
+    }
+
+    //递归获取jsonObject的所有value
+    public static String getAllContentFromJson(Object object) {
+        StringBuffer mStringBuffer = new StringBuffer();
+        if(object instanceof JSONObject) {
+            JSONObject jsonObject = (JSONObject) object;
+            for (Map.Entry<String, Object> entry: jsonObject.entrySet()) {
+                Object o = entry.getValue();
+                if(o instanceof Integer){
+                    mStringBuffer.append(" "+entry.getValue());
+                }else if(o instanceof Double){
+                    mStringBuffer.append(" "+entry.getValue());
+                }else if(o instanceof Float){
+                    mStringBuffer.append(" "+entry.getValue());
+                }else if(o instanceof Byte){
+                    mStringBuffer.append(" "+entry.getValue());
+                }else if(o instanceof Long){
+                    mStringBuffer.append(" "+entry.getValue());
+                }else if(o instanceof String) {
+                    try{
+                        object= JSONObject.parseObject((String)o);
+                        getAllContentFromJson(object);
+                    }catch (Exception e){
+                        mStringBuffer.append(" "+entry.getValue());
+                    }
+                }
+                else {
+                    getAllContentFromJson(o);
+                }
+            }
+        }
+        if(object instanceof JSONArray) {
+            JSONArray jsonArray = (JSONArray) object;
+            for(int i = 0; i < jsonArray.size(); i ++) {
+                getAllContentFromJson(jsonArray.get(i));
+            }
+        }
+        return mStringBuffer.toString();
     }
 
     public static String getJSONString(int code, String msg) {

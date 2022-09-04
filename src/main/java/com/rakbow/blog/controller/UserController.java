@@ -1,6 +1,7 @@
 package com.rakbow.blog.controller;
 
 import com.rakbow.blog.annotation.LoginRequired;
+import com.rakbow.blog.entity.ApiResult;
 import com.rakbow.blog.entity.User;
 import com.rakbow.blog.service.UserService;
 import com.rakbow.blog.util.CommonUtil;
@@ -119,16 +120,18 @@ public class UserController {
 
     @RequestMapping(path = "/isRoot", method = RequestMethod.GET)
     @ResponseBody
-    public String isRoot() {
+    public ApiResult isRoot() {
+        ApiResult res = new ApiResult();
         if (hostHolder.getUser() != null) {
             if (hostHolder.getUser().getType() != 1) {
-                return "当前用户无权限！";
-            }else {
-                return "有权限";
+                res.state = 0;
+                res.errorMessage = "当前用户无权限！";
             }
         } else {
-            return "未登录！";
+            res.state = 0;
+            res.errorMessage = "未登录！";
         }
+        return res;
     }
 
 }

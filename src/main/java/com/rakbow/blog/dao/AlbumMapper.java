@@ -3,6 +3,7 @@ package com.rakbow.blog.dao;
 import com.rakbow.blog.entity.Album;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public interface AlbumMapper {
 
     //根据id查询专辑信息
     Album selectAlbumById(int id);
+
+    //根据查询条件查询专辑
+    List<Album> selectAlbumByFilter(String publishFormat, String albumFormat, String mediaFormat, String productId);
 
     //插入新专辑
     int insertAlbum(Album album);

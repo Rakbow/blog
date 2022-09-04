@@ -13,7 +13,8 @@ public enum AlbumFormat {
     CHARACTER_SONG(3, "角色曲"),
     DRAMA(4, "广播剧"),
     DOUJIN_MUSIC(5,"同人歌曲"),
-    VIDEO(6,"影像");
+    VIDEO(6,"影像"),
+    ARRANGEMENT(7,"改编曲");
 
     private int index;
     private String name;

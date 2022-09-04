@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+
+
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/image.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <!-- 头部 -->
+    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
+
+    <div class="main">
+        <div id="app">
+            <div class="grid">
+                <div class="col-10">
+                    <p-toolbar class="mb-4">
+                        <template #start>
+                            <p-button label="编辑图片" icon="pi pi-images" class="p-button-success mr-4"
+                                      @click="openImageEditDialog"></p-button>
+                        </template>
+                        <template #end>
+                        </template>
+                    </p-toolbar>
+                    <p-panel header="Album Info">
+                        <div class="grid">
+                            <div class="col-4" style="width: 300px;padding: 0">
+                                <p-image :src="cover.url" :alt="cover.name" imageClass="img"></p-image>
+                            </div>
+                            <div class="col-fixed" style="padding: 0">
+                            </div>
+                        </div>
+                    </p-panel>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-users mr-2"></i>
+                            <b>Credits</b>
+                        </template>
+                    </p-fieldset>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-list mr-2"></i>
+                            <b>Tracklist</b>
+                        </template>
+                    </p-fieldset>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-bookmark mr-2"></i>
+                            <b>Description</b>
+                        </template>
+                    </p-fieldset>
+                    <br>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-images mr-2"></i>
+                            <b>Images</b>
+                        </template>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true">
+                        <template #legend>
+                            <i class="pi pi-box mr-2"></i>
+                            <b>Bonus</b>
+                        </template>
+                    </p-fieldset>
+                </div>
+                <div class="col-2">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2"></i>
+                            <b>Album Stats</b>
+                        </template>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2"></i>
+                            <b>Related Albums</b>
+                        </template>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2"></i>
+                            <b>Page Info</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-fixed">
+                                <i class="pi pi-plus mr-2"></i><b>Added</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                {{album.addedTime}}
+                            </div>
+                            <div class="col-fixed">
+                                <i class="pi pi-pencil mr-2"></i><b>Edited</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                {{album.editedTime}}
+                            </div>
+                            <div class="col-fixed">
+                                <i class="pi pi-chart-bar mr-2"></i><b>Page Traffic</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                <i class="pi pi-eye mr-2"></i><b>Visitors</b>1685
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+
+            <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="编辑图片"
+                      :modal="true">
+                <div style="width:500px">
+                    <p-fileupload name="imageSetJson[]" ref="fileupload" :custom-upload="true" :multiple="true" accept="image/*"
+                                  :max-file-size="1000000" :preview-width="100"
+                                  invalid-file-size-message="{0}大小已超过{1}"
+                                  @uploader="myUploader"
+                                  @remove="removeFile"
+                                  @select="selectFile">
+                        <template #empty>
+                            <p>Drag and drop files to here to upload.</p>
+                        </template>
+                    </p-fileupload>
+                    <div style="width:500px">
+                        <p-panel>
+                            <template #icons>
+                                <i class="pi pi-images"></i>
+                                <span>Image List</span>
+                            </template>
+                            <div class="field">
+                                <label htmlFor="imageName">编辑图片名称</label>
+                                <p-chips v-model="imageName" separator="," :max="imageNum"></p-chips>
+                            </div>
+                            <p-divider></p-divider>
+                            <div class="field">
+                                <section>
+                                    <div id="imgBox" v-html="html"></div>
+                                </section>
+                            </div>
+                        </p-panel>
+                    </div>
+                </div>
+            </p-dialog>
+        </div>
+    </div>
+
+    <!-- 尾部 -->
+    <footer th:insert="~{footer :: site_footer}"></footer>
+</div>
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+    const App = {
+        setup() {
+            onMounted(() => {
+                imageObject.value = {
+                    url: "https://www.primefaces.org/primevue/demo/images/galleria/galleria1.jpg",
+                    name: "galleria1"
+                };
+
+                if (album.value.imgUrl != null) {
+                    JSON.parse(album.value.imgUrl).forEach((img) => {
+                        if (img.name.toString() == "cover") {
+                            cover.value.url = img.url;
+                            cover.value.name = img.name;
+                        }
+                    })
+                } else {
+                    cover.value.url = "http://localhost:8080/blog/img/404.jpg";
+                    cover.value.name = "no image";
+                }
+
+                album.value.albumFormat = arr2String(album.value.albumFormat);
+                album.value.mediaFormat = arr2String(album.value.mediaFormat);
+                album.value.publishFormat = arr2String(album.value.publishFormat);
+            });
+
+            const displayImageEditDialog = ref(false);
+            const album = ref([[${album}]]);
+            const html = ref("");
+            const imageName = ref();
+            const imageNum = ref(0);
+            const cover = ref({});
+            const imageObject = ref({});
+
+            const arr2String = (arr) => {
+                return arr.join("/");
+            }
+
+            const init = () => {
+                axiosGetRequest(DOMIANURL + '/album/getAlbum/?id=' + album.value.id, null)
+                    .then(res => {
+                        album.value = res;
+                    }).catch(err => {
+                    console.log(err);
+                });
+            }
+
+            const openImageEditDialog = () => {
+                displayImageEditDialog.value = true;
+                imageName.value = false;
+            };
+
+            const showImage = (imageSet) => {
+                html.value = "";
+                //<![CDATA[
+                for (const img of imageSet) {
+                    html.value += '<img src="' + img.objectURL + '"/>';
+                    html.value += '<p>' + img.name + '</p>';
+                    html.value += '<p-divider></p-divider>';
+                }
+                //]]>
+                document.getElementById("imgBox").innerHTML = html;
+            };
+
+            const removeFile = (ev) => {
+                showImage(ev.files);
+                imageNum.value = ev.files.length;
+                console.log(imageNum.value);
+            };
+
+            const selectFile = (ev) => {
+                console.log(this.$refs.fileupload);
+                showImage(ev.files);
+                imageNum.value = ev.files.length;
+                console.log(imageNum.value);
+            };
+
+            function myUploader(ev) {
+                const formData = new FormData();
+                let images = Array.from(ev.files);
+                images.forEach((image) => {
+                    formData.append('images', image);
+                })
+                formData.append("albumId", album.value.id);
+                formData.append("imageName", imageName.value);
+                axiosRequest(DOMIANURL + "/album/upload", formData)
+                    .then(res => {
+                        console.log(res);
+                    }).catch(err => {
+                    console.log(err);
+                });
+                displayImageEditDialog.value = false;
+                init();
+            };
+
+
+            return {
+                album, myUploader, selectFile, removeFile, html,
+                displayImageEditDialog, openImageEditDialog, imageName,
+                imageNum, cover, imageObject
+            }
+        },
+        components: {
+            "p-panel": primevue.panel,
+            "p-fileupload": primevue.fileupload,
+            "p-button": primevue.button,
+            "p-divider": primevue.divider,
+            "p-chips": primevue.chips,
+            "p-dialog": primevue.dialog,
+            "p-toolbar": primevue.toolbar,
+            "p-fieldset": primevue.fieldset,
+            "p-image": primevue.image,
+            "p-card": primevue.card,
+        }
+    };
+
+    const app = createApp(App);
+    app.use(primevue.config.default);
+    app.directive('tooltip', Tooltip);
+    app.use(primevue.toastservice);
+    app.mount("#app");
+</script>
+<style>
+    #imgBox img {
+        height: 200px;
+    }
+
+    p-image {
+        background-size: contain;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 250px;
+        border: 1px solid red;
+    }
+
+    img {
+        width: 250px;
+        position: relative;
+        left: 8.33%;
+        /* margin-right: 0.5rem; */
+    }
+
+    .p-panel .p-panel-content {
+        padding: 0.5rem;
+    }
+</style>
+</body>
+</html>

@@ -1,5 +1,8 @@
 package com.rakbow.blog;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.blog.data.album.PublishFormat;
 import com.rakbow.blog.entity.Album;
 import com.rakbow.blog.service.AlbumService;
@@ -11,7 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Project_name: blog
@@ -50,5 +55,31 @@ public class AlbumUtilTests {
         }
         System.out.println(publishFormat.substring(1));
     }
+
+    @Test
+    public void albumTest() throws ParseException {
+        JSONObject jo = new JSONObject();
+        jo.put("id",1);
+        jo.put("releaseDate", "2002/01/09");
+        System.out.println(albumService.json2Album(jo));
+    }
+
+    @Test
+    public void test2(){
+        albumService.getRelatedAlbums(3).stream().forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void test3(){
+        JSONObject album = albumService.album2Json(albumService.findAlbumById(110));
+        JSONArray imgUrl = JSONArray.parseArray(album.get("imgUrl").toString());
+        for(int i=0;i<imgUrl.size();i++){
+            JSONObject img = imgUrl.getJSONObject(i);
+            if(img.get("name").toString().equals("Cover") || img.get("name").toString().equals("Front")){
+                System.out.println(img.get("url").toString());
+            }
+        }
+    }
+
 
 }
