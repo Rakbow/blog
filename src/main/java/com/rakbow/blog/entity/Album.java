@@ -44,6 +44,7 @@ public class Album {
     private String productId;//所属产品id 在mysql中以数组字符串形式存储
     private String description;//描述
     private String remark;//备注
+    private String credits;//staff
     private String imgUrl;//图片列表（JSON字符串）
     private String trackList;//曲目列表（JSON字符串）
     @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
@@ -78,6 +79,7 @@ public class Album {
         this.productId = "";
         this.description = "";
         this.remark = "";
+        this.credits = "[]";
         this.imgUrl = "[]";
         this.trackList = "[]";
         this.addedTime = null;
@@ -270,6 +272,14 @@ public class Album {
         this.remark = remark;
     }
 
+    public String getCredits() {
+        return credits;
+    }
+
+    public void setCredits(String credits) {
+        this.credits = credits;
+    }
+
     public String getImgUrl() {
         return imgUrl;
     }
@@ -336,6 +346,7 @@ public class Album {
                 ", productId='" + productId + '\'' +
                 ", description='" + description + '\'' +
                 ", remark='" + remark + '\'' +
+                ", credits='" + credits + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", trackList='" + trackList + '\'' +
                 ", addedTime=" + addedTime +

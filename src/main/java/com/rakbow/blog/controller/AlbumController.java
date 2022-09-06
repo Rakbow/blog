@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.blog.annotation.LoginRequired;
 import com.rakbow.blog.entity.Album;
+import com.rakbow.blog.entity.ApiResult;
 import com.rakbow.blog.service.AlbumService;
 import com.rakbow.blog.service.ProductService;
 import com.rakbow.blog.service.TagService;
@@ -207,6 +208,28 @@ public class AlbumController {
             }
         } catch (IOException e) {
             logger.error("读取图片失败: " + e.getMessage());
+        }
+    }
+
+    //更新专辑Staff
+    @RequestMapping(path = "/updateAlbumCredits", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateAlbumCredits(@RequestBody String param) {
+        ApiResult res = new ApiResult();
+        try{
+            int id = JSON.parseObject(param).getInteger("id");
+            String credits = JSON.parseObject(param).get("credits").toString();
+            if(StringUtils.isBlank(credits)){
+                res.state = 0;
+                res.msg = "输入信息为空";
+                return JSON.toJSONString(res);
+            }
+            albumService.updateAlbumCredits(id, credits);
+            return JSON.toJSONString(res);
+        }catch (Exception e) {
+            res.state = 0;
+            res.msg = e.getMessage();
+            return JSON.toJSONString(res);
         }
     }
 

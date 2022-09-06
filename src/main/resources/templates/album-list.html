@@ -495,6 +495,9 @@
                                 :auto-resize="true"></p-textarea>
                 </div>
                 <p-divider></p-divider>
+                <div class="field">
+
+                </div>
                 <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                 <div class="field">
                     <div v-if="imgData.length != 0" v-for="img of imgData">
@@ -616,7 +619,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
                         } else {
                             dt.value.exportCSV();
                         }
@@ -657,7 +660,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
                         } else {
                             deleteAlbumsDialog.value = true;
                         }
@@ -683,7 +686,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             imgData.value = [];
@@ -745,7 +748,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.errorMessage, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
                         } else {
                             album.value = {};
                             submitted.value = false;

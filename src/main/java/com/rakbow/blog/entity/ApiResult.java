@@ -11,11 +11,11 @@ public class ApiResult {
     public int code;//操作代码
     public int state;//操作状态 0-失败
     public String data;//响应数据
-    public String errorMessage;//错误信息
+    public String msg;//错误信息
 
     public ApiResult(){
         this.state = 1;
-        this.errorMessage = "";
+        this.msg = "";
     }
 
 }

@@ -7,14 +7,15 @@
     <sql id="selectFields">
         id, catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format,
         publish_price, album_format, media_format, label, publisher, distributor, copyright,
-        disc_num, track_num, has_bonus, bonus, description, remark, series_id, product_id, img_url,
-        track_list, added_time, edited_time, _s
+        disc_num, track_num, has_bonus, bonus, description, remark, series_id, product_id,
+        credits, img_url, track_list, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format, publish_price,
         album_format, media_format, label, publisher, distributor, copyright, disc_num, track_num,
-        has_bonus, bonus, description, remark, series_id, product_id, img_url, track_list, added_time, edited_time, _s
+        has_bonus, bonus, description, remark, series_id, product_id, credits, img_url, track_list,
+        added_time, edited_time, _s
     </sql>
 
     <select id="selectAlbumById" resultType="Album">
@@ -65,9 +66,16 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{nameJp}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{publishPrice}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
-        #{discNum}, #{trackNum}, #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId}, #{imgUrl},
-        #{trackList}, #{addedTime}, #{editedTime}, #{_s})
+        #{discNum}, #{trackNum}, #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId},
+        #{credits}, #{imgUrl}, #{trackList}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
+
+    <update id="updateAlbumCredits" keyProperty="id">
+        update album
+        set
+        credits = #{credits}
+        where id = #{id}
+    </update>
 
     <update id="updateAlbum" parameterType="Album" keyProperty="id">
         update album
@@ -78,7 +86,7 @@
         label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright = #{album.copyright},
         disc_num = #{album.discNum}, track_num = #{album.trackNum}, has_bonus = #{album.hasBonus}, bonus = #{album.bonus},
         description = #{album.description}, remark = #{album.remark}, series_id = #{album.seriesId}, product_id = #{album.productId},
-        img_url = #{album.imgUrl}, track_list = #{album.trackList}, edited_time=#{album.editedTime}, _s=#{album._s}
+        credits = #{album.credits}, img_url = #{album.imgUrl}, track_list = #{album.trackList}, edited_time=#{album.editedTime}, _s=#{album._s}
         where id = #{album.id}
     </update>
 

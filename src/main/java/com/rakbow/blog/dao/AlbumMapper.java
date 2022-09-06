@@ -42,4 +42,7 @@ public interface AlbumMapper {
 
     //更新专辑图片
     int updateAlbumImgUrl(int id, String imgUrl);
+
+    //更新专辑Staff
+    int updateAlbumCredits(int id, String credits);
 }

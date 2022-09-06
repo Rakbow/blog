@@ -1,6 +1,5 @@
 package com.rakbow.blog;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.blog.data.album.PublishFormat;
@@ -15,8 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Project_name: blog

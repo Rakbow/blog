@@ -3,6 +3,7 @@ package com.rakbow.blog.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.mysql.cj.xdevapi.JsonArray;
 import com.rakbow.blog.dao.AlbumMapper;
 import com.rakbow.blog.data.ProductClass;
 import com.rakbow.blog.data.album.AlbumFormat;
@@ -108,10 +109,13 @@ public class AlbumService {
                     productMap.add(jo);
                 });
 
+        JSONArray credits = JSONArray.parseArray(album.getCredits());
+
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
+        albumJson.put("credits",credits);
         albumJson.put("series", seriesService.selectSeriesById(album.getSeriesId()).getNameZh());
         albumJson.put("product", product);
         albumJson.put("products", productMap);
@@ -143,6 +147,11 @@ public class AlbumService {
     //更新专辑图片
     public void updateAlbumImgUrl(int id, String imgUrl) {
         albumMapper.updateAlbumImgUrl(id, imgUrl);
+    }
+
+    //更新专辑Staff
+    public void updateAlbumCredits(int id, String credits) {
+        albumMapper.updateAlbumCredits(id, credits);
     }
 
     //获取相关专辑

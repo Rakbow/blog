@@ -6,6 +6,7 @@ const DELETE_ALBUM_URL = DOMIAN_URL + "/album/delete";
 const UPDATE_ALBUM_URL = DOMIAN_URL + "/album/update";
 const INSERT_ALBUM_URL = DOMIAN_URL + "/album/insert";
 const GET_ALBUM_URL = DOMIAN_URL + "/album/getAlbum";
+const UPDATE_ALBUM_CREDITS_URL = DOMIAN_URL + "/album/updateAlbumCredits";
 
 const UPLOAD_ALBUM_URL = DOMIAN_URL + "/album/upload";
 

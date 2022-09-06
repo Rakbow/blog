@@ -125,11 +125,11 @@ public class UserController {
         if (hostHolder.getUser() != null) {
             if (hostHolder.getUser().getType() != 1) {
                 res.state = 0;
-                res.errorMessage = "当前用户无权限！";
+                res.msg = "当前用户无权限！";
             }
         } else {
             res.state = 0;
-            res.errorMessage = "未登录！";
+            res.msg = "未登录！";
         }
         return res;
     }
