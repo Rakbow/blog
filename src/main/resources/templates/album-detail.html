@@ -172,7 +172,7 @@
                             <div class="grid">
                                 <table class="table table-borderless table-sm ml-10">
                                     <tbody>
-                                    <tr v-for="item in album.credits">
+                                    <tr v-for="item in album.artists">
                                         <td><strong>{{item.position}}</strong></td>
                                         <td>
                                             {{item.staff.split(",").join("/")}}
@@ -416,18 +416,17 @@
                 document.getElementById("staffBox").innerHTML = staffHtml;
             };
             const submitStaff = () => {
-                let param = {
+                let json = {
                     id:album.value.id,
-                    credits:staff.value
+                    artists:staff.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_CREDITS_URL, param)
+                axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
                     .then(res => {
                         if(res.state != 0){
-                            console.log("success!");
                             displayStaffEditDialog.value = false;
                             staff.value = [];
                         }else {
-                            console.log(res.errorMessage);
+                            console.log(res.message);
                         }
                     })
             };
@@ -460,8 +459,7 @@
             const imageNum = ref(0);
 
             const init = () => {
-                if (album.value.imgUrl != "") {
-                    album.value.imgUrl = JSON.parse(album.value.imgUrl);
+                if (album.value.imgUrl != null) {
                     if (album.value.imgUrl.length != 0) {
                         for (let img of album.value.imgUrl) {
                             if (img.name == "Cover" || img.name == "Front") {
@@ -495,7 +493,6 @@
             const openImageEditDialog = () => {
                 const param = ref({});
                 param.value.id = album.value.id;
-                console.log(JSON.stringify(param.value));
                 displayImageEditDialog.value = true;
                 imageName.value = false;
             };

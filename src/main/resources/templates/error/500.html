@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+
+
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <!-- 头部 -->
+    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
+
+    <div class="main">
+        <div id="app">
+            <div class="card">
+                <img src="http://localhost:8080/db/img/404.jpg">
+            </div>
+        </div>
+    </div>
+
+    <!-- 尾部 -->
+    <footer th:insert="~{footer :: site_footer}"></footer>
+</div>
+
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const App = {
+        setup() {
+
+            return {}
+        },
+        components: {
+            "p-datatable": primevue.datatable,
+        }
+    };
+
+    const app = createApp(App);
+    app.use(primevue.config.default);
+    app.mount("#app");
+</script>
+<style>
+    #imgbox img {
+        width: 300px;
+    }
+
+    .p-multiselect {
+        width: 16rem;
+    }
+
+    .custom-scrolltop {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 4px;
+        background-color: var(--primary-color) !important;
+    }
+
+    .custom-scrolltop:hover {
+        background-color: var(--primary-color);
+    }
+
+    .custom-scrolltop .p-scrolltop-icon {
+        font-size: 1rem;
+        color: var(--primary-color-text);
+    }
+
+    .p-paginator .p-paginator-current {
+        margin-left: auto;
+    }
+
+    .p-progressbar {
+        height: .5rem;
+        background-color: #D8DADC;
+    }
+
+    .p-progressbar .p-progressbar-value {
+        background-color: #607D8B;
+    }
+
+    .p-datepicker {
+        min-width: 25rem;
+    }
+
+    .p-datepicker td {
+        font-weight: 400;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-header {
+        padding: 1rem;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .p-datatable.p-datatable-customers .p-paginator {
+        padding: 1rem;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-thead > tr > th {
+        text-align: left;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td {
+        cursor: auto;
+    }
+
+    .p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
+        text-transform: uppercase;
+    }
+
+    @media screen and (max-width: 640px) {
+        .p-multiselect {
+            width: 100%;
+        }
+    }
+
+    /*.sizes .p-inputtext {*/
+    /*    display: block;*/
+    /*    margin-bottom: .5rem;*/
+    /*}*/
+
+    /*.sizes:last-child {*/
+    /*    margin-bottom: 0;*/
+    /*}*/
+
+    /*.field * {*/
+    /*    display: block;*/
+    /*}*/
+</style>
+</body>
+</html>

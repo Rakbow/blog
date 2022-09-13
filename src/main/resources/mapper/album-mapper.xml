@@ -2,21 +2,24 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rakbow.blog.dao.AlbumMapper">
+<mapper namespace="com.rakbow.database.dao.AlbumMapper">
 
     <sql id="selectFields">
         id, catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format,
         publish_price, album_format, media_format, label, publisher, distributor, copyright,
         disc_num, track_num, has_bonus, bonus, description, remark, series_id, product_id,
-        credits, img_url, track_list, added_time, edited_time, _s
+        artists, img_url, track_list, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format, publish_price,
         album_format, media_format, label, publisher, distributor, copyright, disc_num, track_num,
-        has_bonus, bonus, description, remark, series_id, product_id, credits, img_url, track_list,
+        has_bonus, bonus, description, remark, series_id, product_id, artists, img_url, track_list,
         added_time, edited_time, _s
     </sql>
+
+
+    <!--  -->
 
     <select id="selectAlbumById" resultType="Album">
         select
@@ -67,13 +70,13 @@
         values (#{catalogNo}, #{nameJp}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{publishPrice}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
         #{discNum}, #{trackNum}, #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId},
-        #{credits}, #{imgUrl}, #{trackList}, #{addedTime}, #{editedTime}, #{_s})
+        #{artists}, #{imgUrl}, #{trackList}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
-    <update id="updateAlbumCredits" keyProperty="id">
+    <update id="updateAlbumArtists" keyProperty="id">
         update album
         set
-        credits = #{credits}
+        artists = #{artists}
         where id = #{id}
     </update>
 
@@ -86,7 +89,7 @@
         label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright = #{album.copyright},
         disc_num = #{album.discNum}, track_num = #{album.trackNum}, has_bonus = #{album.hasBonus}, bonus = #{album.bonus},
         description = #{album.description}, remark = #{album.remark}, series_id = #{album.seriesId}, product_id = #{album.productId},
-        credits = #{album.credits}, img_url = #{album.imgUrl}, track_list = #{album.trackList}, edited_time=#{album.editedTime}, _s=#{album._s}
+        artists = #{album.artists}, img_url = #{album.imgUrl}, track_list = #{album.trackList}, edited_time=#{album.editedTime}, _s=#{album._s}
         where id = #{album.id}
     </update>
 

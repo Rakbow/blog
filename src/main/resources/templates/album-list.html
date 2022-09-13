@@ -134,8 +134,7 @@
                     <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
                     <p-column header="专辑原名">
                         <template #body="slotProps">
-                            <a @click="setDetailId(slotProps.data.id)"
-                               :href="'http://localhost:8080/blog/album/' + detailId">
+                            <a :href="'http://localhost:8080/db/album/' + slotProps.data.id">
                                 {{slotProps.data.nameJp}}
                             </a>
                         </template>
@@ -241,7 +240,7 @@
                 </div>
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label htmlFor="releaseDate">发行时间</label>
+                        <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
                         <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
                                     :show-button-bar="true"
                                     :show-icon="true"></p-calendar>
@@ -254,14 +253,14 @@
                 </div>
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label htmlFor="seriesId" class="mb-3">所属系列</label>
+                        <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
                         <p-dropdown id="seriesId" v-model="album.seriesId" :options="seriesSet"
                                     placeholder="选择所属系列" option-label="label" option-value="value"
                                     @change="getProducts">
                         </p-dropdown>
                     </div>
                     <div class="field col">
-                        <label htmlFor="productId" class="mb-3">所属产品</label>
+                        <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
                         <p-multiselect id="productId" v-model="album.productId" :options="productSet"
                                        option-label="label" option-value="value" placeholder="请先选择所属系列"
                                        display="chip" :filter="true" :disabled="productSelect">
@@ -279,7 +278,7 @@
                 </div>
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label htmlFor="publishFormat" class="mb-3">出版形式</label>
+                        <label htmlFor="publishFormat" class="mb-3">出版形式<span style="color: red">*</span></label>
                         <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
                                        option-label="label" option-value="value" placeholder="选择出版形式"
                                        display="chip" :filter="true">
@@ -287,14 +286,14 @@
                         </p-multiselect>
                     </div>
                     <div class="field col">
-                        <label htmlFor="albumFormat" class="mb-3">专辑分类</label>
+                        <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
                         <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
                                        option-label="label" option-value="value" placeholder="选择专辑分类"
                                        display="chip" :filter="true">
                         </p-multiselect>
                     </div>
                     <div class="field col">
-                        <label htmlFor="mediaFormat" class="mb-3">媒体类型</label>
+                        <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
                         <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
                                        option-label="label" option-value="value" placeholder="选择媒体类型"
                                        display="chip" :filter="true">
@@ -325,20 +324,9 @@
                         <b>音轨信息</b>
                     </div>
                 </p-divider>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="discNum">唱片数</label>
-                        <p-inputnumber id="discNum" v-model="album.discNum" integeronly></p-inputnumber>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="trackNum">曲目数</label>
-                        <p-inputnumber id="trackNum" v-model="album.trackNum" integeronly></p-inputnumber>
-                    </div>
-                </div>
                 <div class="field">
                     <label htmlFor="trackList">曲目列表</label>
-                    <p-textarea id="trackList" v-model="album.trackList" rows="3" cols="20"
-                                :auto-resize="true"></p-textarea>
+                    <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
                 </div>
                 <p-divider align="center">
                     <div class="inline-flex align-items-center">
@@ -347,8 +335,7 @@
                     </div>
                 </p-divider>
                 <div class="field">
-                    <!--                    <label htmlFor="imgUrl">图片url地址</label>-->
-                    <!--                    <p-textarea id="imgUrl" v-model="album.imgUrl" rows="3" cols="20" :auto-resize="true"></p-textarea>-->
+                    <span style="text-align: center">添加和编辑图片等操作，请到专辑详情页面进行</span>
                 </div>
                 <p-divider></p-divider>
                 <div class="field">
@@ -401,7 +388,7 @@
                 </div>
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label htmlFor="releaseDate">发行时间</label>
+                        <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
                         <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
                                     :show-button-bar="true"
                                     :show-icon="true"></p-calendar>
@@ -414,14 +401,14 @@
                 </div>
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label htmlFor="seriesId" class="mb-3">所属系列</label>
+                        <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
                         <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
                                     placeholder="选择所属系列" option-label="label" option-value="value"
                                     @change="getProducts">
                         </p-dropdown>
                     </div>
                     <div class="field col">
-                        <label htmlFor="productId" class="mb-3">所属产品</label>
+                        <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
                         <p-multiselect id="productId" v-model="albumEdit.productId" :options="productSet"
                                        option-label="label" option-value="value" placeholder="选择所属产品"
                                        display="chip" :filter="true">
@@ -439,21 +426,21 @@
                 </div>
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label htmlFor="publishFormat" class="mb-3">出版形式</label>
+                        <label htmlFor="publishFormat" class="mb-3">出版形式<span style="color: red">*</span></label>
                         <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
                                        option-label="label" option-value="value" placeholder="选择出版形式"
                                        display="chip">
                         </p-multiselect>
                     </div>
                     <div class="field col">
-                        <label htmlFor="albumFormat" class="mb-3">专辑分类</label>
+                        <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
                         <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
                                        option-label="label" option-value="value" placeholder="选择专辑分类"
                                        display="chip">
                         </p-multiselect>
                     </div>
                     <div class="field col">
-                        <label htmlFor="mediaFormat" class="mb-3">媒体类型</label>
+                        <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
                         <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
                                        option-label="label" option-value="value" placeholder="选择媒体类型"
                                        display="chip">
@@ -619,7 +606,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             dt.value.exportCSV();
                         }
@@ -660,7 +647,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             deleteAlbumsDialog.value = true;
                         }
@@ -670,14 +657,15 @@
             const deleteSelectedAlbums = () => {
                 axiosDeleteRequest(DELETE_ALBUM_URL, selectedAlbums.value)
                     .then(res => {
-                        toast.add({severity: 'success', summary: 'Successful', detail: '数据删除成功！', life: 3000});
-                        deleteAlbumsDialog.value = false;
-                        selectedAlbums.value = null;
-                        init();
-                    }).catch(err => {
-                    console.log(err);
-                    toast.add({severity: 'error', summary: 'Error', detail: '数据删除失败！', life: 3000});
-                });
+                        if(res.state == 1){
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            deleteAlbumsDialog.value = false;
+                            selectedAlbums.value = null;
+                            init();
+                        }else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
             };
 
             //编辑相关操作
@@ -686,7 +674,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             imgData.value = [];
@@ -748,7 +736,7 @@
                 axiosGetRequest(CHECK_USER_ROOT_URL, null)
                     .then(res => {
                         if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.msg, life: 3000});
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             album.value = {};
                             submitted.value = false;
@@ -763,35 +751,51 @@
                 displayNewDialog.value = false;
                 submitted.value = false;
             };
+
+            //检测数据
+            const checkAlbum = (data) => {
+                let flag = true;
+                if (data.value.releaseDate == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未填写发行时间！', life: 3000});
+                    flag = false;
+                } else if (data.value.publishFormat == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择出版形式！', life: 3000});
+                    flag = false;
+                } else if (data.value.albumFormat == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择专辑分类！', life: 3000});
+                    flag = false;
+                } else if (data.value.mediaFormat == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择媒体类型！', life: 3000});
+                    flag = false;
+                } else if (data.value.productId == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
+                    flag = false;
+                } else if (data.value.seriesId == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择所属产品！', life: 3000});
+                    flag = false;
+                }
+                return flag;
+            };
+
             //提交新增数据
             const submitNewAlbum = () => {
-                if (album.value.seriesId != null && album.value.productId != null) {
-                    if (album.value.releaseDate != null) {
-                        album.value.releaseDate = dateToString(album.value.releaseDate);
-                        album.value.publishFormat = album.value.publishFormat.join(",");
-                        album.value.albumFormat = album.value.albumFormat.join(",");
-                        album.value.mediaFormat = album.value.mediaFormat.join(",");
-                        album.value.productId = album.value.productId.join(",");
-                        axiosPostRequest(INSERT_ALBUM_URL, album.value)
-                            .then(res => {
+                if (checkAlbum(album)) {
+                    album.value.releaseDate = dateToString(album.value.releaseDate);
+                    album.value.publishFormat = album.value.publishFormat.join(",");
+                    album.value.albumFormat = album.value.albumFormat.join(",");
+                    album.value.mediaFormat = album.value.mediaFormat.join(",");
+                    album.value.productId = album.value.productId.join(",");
+                    axiosPostRequest(INSERT_ALBUM_URL, album.value)
+                        .then(res => {
+                            if(res.state == 1){
                                 album.value = {};
-                                toast.add({
-                                    severity: 'success',
-                                    summary: 'Successful',
-                                    detail: '新增数据成功！',
-                                    life: 3000
-                                });
+                                toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                                 closeNewDialog();
                                 init();
-                            }).catch(err => {
-                            console.log(err);
-                            toast.add({severity: 'error', summary: 'Error', detail: '新增数据失败！', life: 3000});
+                            }else {
+                                toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                            }
                         });
-                    }else {
-                        toast.add({severity: 'error', summary: 'Error', detail: '未填写发行时间！', life: 3000});
-                    }
-                } else {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择系列或产品！', life: 3000});
                 }
             };
 
@@ -804,10 +808,6 @@
                     })
             };
 
-            const setDetailId = (id) => {
-                detailId.value = id;
-            };
-
             return {
                 album, albums, formatCurrency, columns, selectedColumns, onToggle,
                 loading, filters, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
@@ -815,7 +815,7 @@
                 selectedAlbums, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
                 mediaFormatSet, publishFormatSet, albumFormatSet, productSet, seriesSet,
-                getProducts, productSelect, imgData, imgArr, setDetailId, detailId
+                getProducts, productSelect, imgData, imgArr, detailId
             }
         },
         components: {
