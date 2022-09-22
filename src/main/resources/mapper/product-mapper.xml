@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rakbow.database.dao.ProductMapper">
+<mapper namespace="com.rakbow.website.dao.ProductMapper">
 
     <sql id="selectFields">
         id, series_id, name_zh, name_jp, name_en, release_date, classification,

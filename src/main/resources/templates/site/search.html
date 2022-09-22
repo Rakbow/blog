@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>搜索结果</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+    <!-- bootstrap -->
+    <!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+
+
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+
+
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <script th:src="@{/assets/js/script.min.js}"></script>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/image.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <!-- 头部 -->
+    <!--    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>-->
+
+    <div class="main">
+        <div class="container">
+            <div id="app">
+                <div class="card">
+                    <p>关键词： {{keyword}}</p>
+                    <p>数据共{{totals}}条</p>
+
+                    <div v-for="album in searchResult">
+                        <a :href="'http://localhost:8080/db/album/' + album.id">{{album.nameJp}}</a>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 尾部 -->
+    <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
+</div>
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+            })
+            const searchResult = [[${searchResult}]];
+            const totals = [[${totals}]];
+            const keyword = [[${keyword}]];
+
+            return {searchResult, totals, keyword}
+        },
+        components: {
+            "p-panel": primevue.panel,
+            "p-image": primevue.image,
+            "p-fieldset": primevue.fieldset,
+            "p-button": primevue.button,
+            "p-dialog": primevue.dialog,
+            "p-fileupload": primevue.fileupload,
+            "p-toolbar": primevue.toolbar,
+            "p-chips": primevue.chips,
+            "p-divider": primevue.divider,
+            "p-inputtext": primevue.inputtext,
+        }
+    };
+
+    createApp(App)
+        .use(primevue.config.default)
+        .mount("#app");
+</script>
+</body>
+</html>

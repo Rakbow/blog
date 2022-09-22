@@ -94,7 +94,7 @@
 <link rel="stylesheet" th:href="@{/css/login.css}">
 <script type="module" th:inline="javascript">
     function refresh_kaptcha() {
-        const path = DOMIANURL + "/kaptcha?p=" + Math.random();
+        const path = DOMIAN_URL + "/kaptcha?p=" + Math.random();
         $("#kaptcha").attr("src", path);
     }
 </script>

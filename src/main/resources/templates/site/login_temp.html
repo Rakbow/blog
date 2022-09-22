@@ -1,181 +1,173 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="utf-8"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-	<title>登录</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>登录</title>
 
-	<link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-	<!-- bootstrap -->
-	<link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
-	<link rel="stylesheet"
-		  href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
-	<link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
-	<link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-	<link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
-	<script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
-	<script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-	<script th:src="@{/assets/js/script.min.js}"></script>
-	<!-- PrimeVue -->
-	<link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-	<link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-	<link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-	<link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
 
-	<!-- Dependencies -->
-	<script th:src="@{/js/primevue/vue.min.js}" type="text/javascript"></script>
-	<script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript"></script>
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript"></script>
 
-	<!-- PrimeVue Components -->
-	<script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
-	<script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
-	<script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
-	<script th:src="@{/js/primevue/components/toast.min.js}"></script>
-	<script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
-	<script th:src="@{/js/primevue/components/panel.min.js}"></script>
-	<script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/password.min.js}"></script>
+    <script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
 
-	<!-- Axios -->
-	<script th:src="@{/js/axios/axios.min.js}"></script>
-	<script th:src="@{/js/basic/httpRequest.js}"></script>
-	<script th:src="@{/js/basic/basicParam.js}"></script>
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
 
-	<!-- JQuery -->
-	<script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
+    <!-- JQuery -->
+    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
 </head>
 <body>
-<div class="nk-container">
-	<!-- 头部 -->
-	<header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
-
-	<div class="main">
-		<div id="app">
-			<div class="card">
-				<div class="grid">
-					<p-toast></p-toast>
-					<div class="col"></div>
-					<div class="col">
-						<p-panel :style="{width: '600px'}" header="登&nbsp;&nbsp;录" class="p-fluid">
-							<div class="formgrid grid">
-								<div class="field col">
-									<label htmlFor="username">账号</label>
-<!--									<p-inputtext id="username" v-model.trim="loginParam.username"-->
-<!--												 placeholder="请输入您的账号!" required-->
-<!--												 th:class="|form-control ${usernameMsg!=null?'is-invalid':''}|"-->
-<!--												 th:value="${loginParam!=null?loginParam.username:''}"></p-inputtext>-->
-									<p-inputtext id="username" v-model.trim="loginParam.username"
-												 placeholder="请输入您的账号!" required></p-inputtext>
-<!--									<div class="invalid-feedback" th:text="${usernameMsg}"></div>-->
-								</div>
-							</div>
-							<div class="formgrid grid">
-								<div class="field col">
-									<label htmlFor="password">密码</label>
-<!--									<p-inputtext id="password" v-model.trim="loginParam.password"-->
-<!--												 placeholder="请输入您的密码!" required-->
-<!--												 th:class="|form-control ${passwordMsg!=null?'is-invalid':''}|"-->
-<!--												 th:value="${loginParam!=null?loginParam.password:''}"></p-inputtext>-->
-									<p-inputtext id="password" v-model.trim="loginParam.password"
-												 placeholder="请输入您的密码!" required></p-inputtext>
-<!--									<div class="invalid-feedback" th:text="${passwordMsg}"></div>-->
-								</div>
-							</div>
-							<div class="formgrid grid">
-								<div class="field col">
-									<label htmlFor="verifyCode">验证码</label>
-<!--									<p-inputtext id="verifyCode" v-model.trim="loginParam.verifyCode"-->
-<!--												 placeholder="请输入验证码!"-->
-<!--												 th:class="|form-control ${emailMsg!=null?'is-invalid':''}|"-->
-<!--												 th:value="${loginParam!=null?loginParam.verifyCode:''}"></p-inputtext>-->
-									<p-inputtext id="verifyCode" v-model.trim="loginParam.verifyCode"
-												 placeholder="请输入验证码!" required></p-inputtext>
-<!--									<div class="invalid-feedback" th:text="${codeMsg}"></div>-->
-								</div>
-								<div class="field col">
-									<label htmlFor="verifyCodeImg"></label>
-									<img th:src="@{/kaptcha}" id="kaptcha" style="width:100px;height:40px;" class="mr-2"/>
-									<p-button icon="pi pi-refresh" class="p-button-rounded p-button-text"
-											  @click="refreshKaptcha"></p-button>
-								</div>
-							</div>
-							<div class="formgrid grid">
-								<div class="field-checkbox">
-									<p-checkbox inputId="binary" v-model="loginParam.rememberMe" :binary="true"></p-checkbox>
-									<label htmlFor="binary">记住我</label>
-								</div>
-							</div>
-							<div class="formgrid grid">
-								<div class="field col">
-									<p-button label="立即登录" class="p-button-rounded" @click="login"></p-button>
-								</div>
-							</div>
-						</p-panel>
-					</div>
-					<div class="col"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- 尾部 -->
-	<footer th:insert="~{footer :: site_footer}"></footer>
+<!-- 头部 -->
+<!--	<header th:insert="~{header :: site_header}"></header>-->
+<div id="app">
+    <div class="form-demo">
+        <p-toast></p-toast>
+        <!--    <div class="surface-ground px-2 py-4 md:px-6 lg:px-8 sm:px-4">-->
+        <!--        <div class="grid">-->
+        <!--            <div class="col-12 lg:col-6 lg:col-offset-3 sm:col-10 sm:col-offset-1">-->
+        <!--                <div class="p-3 h-full">-->
+        <div class="flex justify-content-center">
+            <div class="card">
+                <h5 class="text-center">登 录</h5>
+                <form class="p-fluid">
+                    <div class="field">
+                        <div class="p-float-label">
+                            <p-inputtext id="name" v-model="param.username"></p-inputtext>
+                            <label htmlFor="name">用户名<span style="color: red">*</span></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="p-float-label">
+                            <p-password id="password" v-model="param.password"
+                                        :feedback="false"></p-password>
+                            <label htmlFor="password">密码<span style="color: red">*</span></label>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <div class="p-float-label">
+                                <p-inputtext id="verifyCode" v-model="param.verifyCode"></p-inputtext>
+                                <label htmlFor="verifyCode">验证码<span style="color: red">*</span></label>
+                            </div>
+                        </div>
+                        <div class="field col">
+                            <img th:src="@{/kaptcha}" id="kaptcha" style="width:100px;height:40px;"
+                                 class="mr-2"/>
+                        </div>
+                        <div class="field col">
+                            <p-button @click="refreshKaptcha" label="刷新验证码"
+                                      class="p-button-link"></p-button>
+                        </div>
+                    </div>
+                    <div class="field-checkbox">
+                        <p-checkbox inputId="binary" v-model="param.rememberMe" :binary="true"></p-checkbox>
+                        <label htmlFor="binary">记住我</label>
+                    </div>
+                    <p-button label="登录" class="mt-2" @click="login"></p-button>
+                </form>
+            </div>
+        </div>
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
+    </div>
 </div>
-	<script type="module" th:inline="javascript">
-		const {createApp, onMounted, ref} = Vue;
-		const {FilterMatchMode, FilterOperator} = primevue.api;
-		const Tooltip = primevue.tooltip;
-		const {useToast} = primevue.usetoast;
-		const App = {
-			setup() {
-				onMounted(() => {
 
-				});
+<!-- 尾部 -->
+<!--	<footer th:insert="~{footer :: site_footer}"></footer>-->
 
-				const loginParam = ref({
-					username:"",
-					password:"",
-					verifyCode:"",
-					rememberMe:false,
-				});
-				const toast = useToast();
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+    const App = {
+        setup() {
+            onMounted(() => {
+            });
 
-				//提交登陆信息
-				const login = () => {
-					axiosPostRequest(DOMIANURL + '/login', JSON.stringify(loginParam.value))
-							.then(res => {
-								console.log(res.data);
-								//toast.add({severity: 'success', summary: 'Successful', detail: res.data, life: 3000});
-							}).catch(err => {
-						console.log(err);
-						//toast.add({severity: 'error', summary: 'Error', detail: res.data, life: 3000});
-					});
-				}
+            const param = ref({
+                username: "",
+                password: "",
+                verifyCode: "",
+                rememberMe: false,
+            });
+            const toast = useToast();
 
-				//刷新验证码
-				const refreshKaptcha = () => {
-					const path = DOMIANURL + "/kaptcha?p=" + Math.random();
-					$("#kaptcha").attr("src", path);
-				}
+            //提交登陆信息
+            const login = () => {
+                axiosPostRequest(LOGIN_URL, param.value)
+                    .then(res => {
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }else {
+                            window.location.href = "http://localhost:8080";
+                        }
+                    }).catch(err => {
+                    console.log(err);
+                });
+            }
 
-				return {loginParam, login_temp, refreshKaptcha}
-			},
-			components: {
-				"p-button": primevue.button,
-				"p-inputtext": primevue.inputtext,
-				"p-card": primevue.card,
-				"p-toast": primevue.toast,
-				"p-dialog": primevue.dialog,
-				"p-panel": primevue.panel,
-				"p-checkbox": primevue.checkbox
-			}
-		};
+            //刷新验证码
+            const refreshKaptcha = () => {
+                const path = DOMIAN_URL + "/kaptcha?p=" + Math.random();
+                $("#kaptcha").attr("src", path);
+            }
 
-		const app = createApp(App);
-		app.use(primevue.config.default);
-		app.directive('tooltip', Tooltip);
-		app.use(primevue.toastservice);
-		app.mount("#app");
-	</script>
+            return {param, refreshKaptcha, login}
+        },
+        components: {
+            "p-button": primevue.button,
+            "p-dialog": primevue.dialog,
+            "p-inputtext": primevue.inputtext,
+            "p-password": primevue.password,
+            "p-toast": primevue.toast,
+            "p-checkbox": primevue.checkbox,
+        }
+    };
+
+    const app = createApp(App);
+    app.use(primevue.config.default);
+    app.directive('tooltip', Tooltip);
+    app.use(primevue.toastservice);
+    app.mount("#app");
+</script>
 </body>
+<style>
+    .card {
+        min-width: 500px;
+    }
+
+    form {
+        margin-top: 2rem;
+    }
+
+    .field {
+        margin-bottom: 1.5rem;
+    }
+
+    @media screen and (max-width: 960px) {
+        .card {
+            width: 80%;
+        }
+    }
+</style>
 </html>

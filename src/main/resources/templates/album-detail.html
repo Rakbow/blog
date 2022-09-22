@@ -4,9 +4,10 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Rakbow's Database</title>
 
     <!-- bootstrap -->
-    <!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
     <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
@@ -31,6 +32,7 @@
     <!-- Dependencies -->
     <script th:src="@{/js/primevue/vue.min.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
@@ -46,6 +48,10 @@
     <script th:src="@{/js/primevue/components/chips.min.js}"></script>
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/galleria.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -54,21 +60,26 @@
     <script th:src="@{/js/basic/httpRequest.js}"></script>
     <script th:src="@{/js/basic/basicParam.js}"></script>
     <script th:src="@{/js/basic/dataHandler.js}"></script>
+
+
 </head>
 <body>
 <div class="nk-container">
-    <!-- 头部 -->
-    <!--    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>-->
-
     <div class="main">
         <div class="container">
             <div id="app">
+
+                <!-- 头部 -->
+                <header class="sticky-top" th:insert="~{header :: site_header}"></header><br><br>
+
                 <p-toolbar class="mb-4">
                     <template #start>
                         <p-button label="编辑图片" icon="pi pi-images" class="p-button-success mr-4"
                                   @click="openImageEditDialog"></p-button>
-                        <p-button label="编辑Staff" icon="pi pi-users" class="p-button-success mr-4"
-                                  @click="openStaffEditDialog"></p-button>
+                        <p-button label="编辑音乐制作" icon="pi pi-users" class="p-button-success mr-4"
+                                  @click="openArtistEditDialog"></p-button>
+                        <p-button label="编辑音轨信息" icon="pi pi-list" class="p-button-success mr-4"
+                                  @click="openTrackEditDialog"></p-button>
                     </template>
                     <template #end>
                     </template>
@@ -87,14 +98,7 @@
                                      :style="'background-image: url(' + imgCover.url + ')'"
                                      :title="imgCover.name">
                                 </div>
-                                <table class="table table-borderless table-sm ml-5">
-                                    <!-- <thead>
-                                        <tr>
-                                            <th>Firstname</th>
-                                            <th>Lastname</th>
-                                            <th>Email</th>
-                                        </tr>
-                                    </thead> -->
+                                <table class="table-borderless table-sm ml-5">
                                     <tbody>
                                     <tr>
                                         <td><strong>专辑编号</strong></td>
@@ -167,15 +171,15 @@
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-users mr-2"></i>
-                                <b>专辑Staff</b>
+                                <b>音乐创作</b>
                             </template>
                             <div class="grid">
-                                <table class="table table-borderless table-sm ml-10">
+                                <table class="table-borderless table-sm ml-10">
                                     <tbody>
                                     <tr v-for="item in album.artists">
                                         <td><strong>{{item.position}}</strong></td>
                                         <td>
-                                            {{item.staff.split(",").join("/")}}
+                                            {{item.artist.join("/")}}
                                         </td>
                                     </tr>
                                     </tbody>
@@ -188,19 +192,64 @@
                                 <i class="pi pi-list mr-2"></i>
                                 <b>音轨信息</b>
                             </template>
-                        </p-fieldset>
-                        <br>
-                        <p-fieldset :toggleable="true">
-                            <template #legend>
-                                <i class="pi pi-bookmark mr-2"></i>
-                                <b>描述</b>
-                            </template>
+                            <div v-if="album.trackInfo == null || JSON.stringify(album.trackInfo) == '{}' ">
+                                <span>暂无音轨信息</span>
+                            </div>
+                            <div v-else v-for="disc in album.trackInfo.disc_list">
+                                <table class="table table-sm table-hover table-striped">
+                                    <thead>
+                                    <h5>
+                                        Disc {{disc.serial}} ({{disc.media_format}}) [{{disc.catalog_no}}]
+                                        {{disc.album_format}}
+                                    </h5>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="track in disc.track_list">
+                                        <th scope="row">{{track.serial}}</th>
+                                        <td>{{track.name}}</td>
+                                        <td>{{track.length}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                Disc length <b>{{disc.disc_length}}</b>
+                                <br>
+                            </div>
+                            <span class="text-end"
+                               v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
+                                Total tracks <b>{{album.trackInfo.total_tracks}}</b>   Total length
+                                <b>{{album.trackInfo.total_length}}</b></span>
                         </p-fieldset>
                         <br>
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-images mr-2"></i>
                                 <b>图片</b>
+                            </template>
+                            <div v-if="album.imgUrl.length == 0">
+                                <span>暂无图片</span>
+                            </div>
+                            <div v-else>
+                                <p-galleria :value="album.imgUrl" :responsive-options="responsiveOptions" :num-visible="5" container-style="max-width: 640px">
+                                    <template #item="{item}">
+                                        <img :src="item.url" :alt="item.name" style="width: 100%; display: block;" />
+                                    </template>
+                                    <template #thumbnail="{item}">
+                                        <div class="grid grid-nogutter justify-content-center">
+                                            <img :src="item.url" :alt="item.name" style="display: block;" />
+                                        </div>
+                                    </template>
+                                    <template #caption="{item}">
+                                        <h4 style="margin-bottom: .5rem;">{{item.name}}</h4>
+                                        <p>{{item.name}}</p>
+                                    </template>
+                                </p-galleria>
+                            </div>
+                        </p-fieldset>
+                        <br>
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi pi-bookmark mr-2"></i>
+                                <b>描述</b>
                             </template>
                         </p-fieldset>
                         <br>
@@ -342,12 +391,12 @@
                         </div>
                     </div>
                 </p-dialog>
-                <p-dialog v-model:visible="displayStaffEditDialog" :style="{width: '800px'}" header="编辑Staff"
+                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑音乐制作"
                           :modal="true">
                     <p-panel>
                         <template #icons>
                             <i class="pi pi-users"></i>
-                            <span>Staff List</span>
+                            <span>Artist List</span>
                         </template>
                         <div class="grid">
                             <div class="col-3">
@@ -363,24 +412,89 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-users"></i>
                                     </span>
-                                    <p-chips v-model="positionStaff" placeholder="人员信息" separator=","></p-chips>
+                                    <p-chips v-model="positionArtist" placeholder="人员信息" separator=","></p-chips>
                                 </div>
                             </div>
                             <div class="col-2">
                                 <p-button label="保存" icon="pi pi-save" class="p-button-success"
-                                          @click="save2Local"></p-button>
+                                          @click="saveArtist"></p-button>
                             </div>
                         </div>
                         <p-divider></p-divider>
                         <div class="grid">
                             <section>
-                                <div id="staffBox" v-html="staffHtml"></div>
+                                <div id="artistBox" v-html="artistHtml"></div>
                             </section>
                         </div>
                     </p-panel>
                     <template #footer>
                         <p-button label="保存" icon="pi pi-save" class="p-button-success mr-4"
-                                  @click="submitStaff"></p-button>
+                                  @click="submitArtist"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayTrackEditDialog" :style="{width: '800px'}" header="编辑音轨信息"
+                          :modal="true">
+                    <p-panel>
+                        <template #icons>
+                            <i class="pi pi-list"></i>
+                            <span>Track Info</span>
+                        </template>
+                        <div class="grid">
+                            <div class="col-10">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                    <p-chips v-model="musicName" placeholder="曲目列表" separator=","></p-chips>
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                                    <p-chips v-model="musicLength" placeholder="曲目长度" separator=","></p-chips>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                    <p-multiselect id="mediaFormat" v-model="mediaFormat" :options="mediaFormatSet"
+                                                   option-label="label" option-value="labelEn" placeholder="媒体格式"
+                                                   display="chip">
+                                    </p-multiselect>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                    <p-multiselect id="albumFormat" v-model="albumFormat" :options="albumFormatSet"
+                                                   option-label="label" option-value="labelEn" placeholder="专辑分类"
+                                                   display="chip">
+                                    </p-multiselect>
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <p-button label="保存disc" icon="pi pi-save" class="p-button-success"
+                                          @click="saveDisc"></p-button>
+                            </div>
+                        </div>
+                        <p-divider></p-divider>
+                        <div class="grid">
+                            <section>
+                                <div id="trackBox" v-html="trackHtml"></div>
+                            </section>
+                        </div>
+                    </p-panel>
+                    <template #footer>
+                        <p-button label="保存" icon="pi pi-save" class="p-button-success mr-4"
+                                  @click="submitTrackInfo"></p-button>
                     </template>
                 </p-dialog>
             </div>
@@ -399,56 +513,136 @@
                 // getAlbum();
                 init();
             })
+            const user = ref([[${user}]]);
 
-            //staff相关组件
-            const positionName = ref("");
-            const positionStaff = ref("");
-            const displayStaffEditDialog = ref(false);
-            const staff = ref([]);
-            const staffHtml = ref("");
-            const showStaff = () => {
-                staffHtml.value = "";
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+
+            //图片展示
+            const responsiveOptions = [
+                {
+                    breakpoint: '1024px',
+                    numVisible: 5
+                },
+                {
+                    breakpoint: '768px',
+                    numVisible: 3
+                },
+                {
+                    breakpoint: '560px',
+                    numVisible: 1
+                }
+            ];
+            //
+
+            //音轨信息相关组件
+            const mediaFormat = ref();
+            const albumFormat = ref();
+            const trackHtml = ref("");
+            const musicName = ref([]);
+            const musicLength = ref([]);
+            const discList = ref([]);
+            const displayTrackEditDialog = ref(false);
+            const openTrackEditDialog = () => {
+                discList.value = [];
+                trackHtml.value = "";
+                displayTrackEditDialog.value = true;
+            };
+            const saveDisc = () => {
+                let disc = {track_list:null, media_format:null, album_format:null};
+                let trackList = [];
+                for (let i = 0; i < musicName.value.length; i++) {
+                    let param = {name: null, length: null};
+                    param.name = musicName.value[i];
+                    param.length = musicLength.value[i];
+                    trackList.push(param);
+                }
+                disc.track_list = trackList;
+                disc.album_format = albumFormat.value.join(",");
+                disc.media_format = mediaFormat.value.join(",");
+                discList.value.push(disc);
+                musicName.value = [];
+                musicLength.value = [];
+                albumFormat.value = "";
+                mediaFormat.value = "";
+                showTrackInfo();
+            };
+            const showTrackInfo = () => {
+                trackHtml.value = "";
                 //<![CDATA[
-                for (const s of staff.value) {
-                    staffHtml.value += '<p>' + s.position + ' : ' + s.staff.split(",").join("/") + '</p>';
+                for (const disc of discList.value) {
+                    for(let t of disc.track_list){
+                        trackHtml.value += '<p>' + t.name + ' : ' + t.length + '</p>';
+                    }
                 }
                 //]]>
-                document.getElementById("staffBox").innerHTML = staffHtml;
+                document.getElementById("trackBox").innerHTML = trackHtml;
             };
-            const submitStaff = () => {
+            const submitTrackInfo = () => {
                 let json = {
-                    id:album.value.id,
-                    artists:staff.value
+                    id: album.value.id,
+                    discList: discList.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
+                axiosPostRequest(UPDATE_ALBUM_TRACK_INFO_URL, json)
                     .then(res => {
-                        if(res.state != 0){
-                            displayStaffEditDialog.value = false;
-                            staff.value = [];
-                        }else {
+                        if (res.state != 0) {
+                            displayTrackEditDialog.value = false;
+                            discList.value = [];
+                        } else {
                             console.log(res.message);
                         }
                     })
             };
 
-            const openStaffEditDialog = () => {
-                staff.value = [];
+            //artists相关组件
+            const artistHtml = ref("");
+            const positionName = ref();
+            const positionArtist = ref();
+            const artists = ref([]);
+            const displayArtistEditDialog = ref(false);
+            const openArtistEditDialog = () => {
+                artists.value = [];
                 positionName.value = "";
-                positionStaff.value = "";
-                displayStaffEditDialog.value = true;
+                positionArtist.value = "";
+                displayArtistEditDialog.value = true;
             };
-            const save2Local = () => {
+            const saveArtist = () => {
                 let param = {
                     position: null,
-                    staff: null
+                    artist: null
                 };
                 param.position = positionName.value;
-                param.staff = positionStaff.value.join(",");
-                staff.value.push(param);
+                param.artist = positionArtist.value;
+                artists.value.push(param);
                 positionName.value = "";
-                positionStaff.value = "";
-                showStaff();
+                positionArtist.value = [];
+                showArtist();
             }
+            const showArtist = () => {
+                artistHtml.value = "";
+                //<![CDATA[
+                for (const a of artists.value) {
+                    artistHtml.value += '<p>' + a.position + ' : ' + a.artist.join("/") + '</p>';
+                }
+                //]]>
+                document.getElementById("artistBox").innerHTML = artistHtml;
+            };
+            const submitArtist = () => {
+                console.log(JSON.stringify(artists.value));
+                let json = {
+                    id: album.value.id,
+                    artists: artists.value
+                }
+                axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
+                    .then(res => {
+                        if (res.state != 0) {
+                            displayArtistEditDialog.value = false;
+                            artists.value = [];
+                        } else {
+                            console.log(res.message);
+                        }
+                    })
+            };
 
             const imgCover = ref({});
             const album = ref([[${album}]]);
@@ -539,13 +733,103 @@
                 console.log(imageNum.value);
             };
 
+            const navbarItems = ref([
+                {
+                    label:'Album',
+                    icon:'pi pi-fw pi-list',
+                    items:[
+                        {
+                            label:'Album List',
+                            icon:'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album-list'
+                        },
+                        {
+                            label:'Album Card',
+                            icon:'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album-card'
+                        }
+                    ]
+                },
+                {
+                    label:'Disc',
+                    icon:'pi pi-fw pi-video',
+                    items:[
+                        {
+                            label:'Develop',
+                            icon:'pi pi-fw pi-wrench'
+                        },
+                        {
+                            label:'Develop',
+                            icon:'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label:'Book',
+                    icon:'pi pi-fw pi-book',
+                    items:[
+                        {
+                            label:'Book List',
+                            icon:'pi pi-fw pi-book'
+                        },
+                        {
+                            label:'Develop',
+                            icon:'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label:'Users',
+                    icon:'pi pi-fw pi-user',
+                    items:[
+                        {
+                            label:'New',
+                            icon:'pi pi-fw pi-user-plus',
+                        },
+                        {
+                            label:'Delete',
+                            icon:'pi pi-fw pi-user-minus',
+                        },
+                        {
+                            label:'Search',
+                            icon:'pi pi-fw pi-users',
+                            items:[
+                                {
+                                    label:'Filter',
+                                    icon:'pi pi-fw pi-filter',
+                                    items:[
+                                        {
+                                            label:'Print',
+                                            icon:'pi pi-fw pi-print'
+                                        }
+                                    ]
+                                },
+                                {
+                                    icon:'pi pi-fw pi-bars',
+                                    label:'List'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    label:'Quit',
+                    icon:'pi pi-fw pi-power-off',
+                    url: "http://localhost:8080/logout"
+                }
+            ]);
+
             return {
                 album, relatedAlbums, imgCover,
                 myUploader, removeFile, selectFile,
                 html, displayImageEditDialog, openImageEditDialog,
-                imageName, imageNum, positionName, positionStaff,
-                openStaffEditDialog, displayStaffEditDialog, staff, save2Local,
-                staffHtml, submitStaff
+                imageName, imageNum,
+                positionName, positionArtist, openArtistEditDialog, displayArtistEditDialog,
+                artists, saveArtist, artistHtml, submitArtist,
+                openTrackEditDialog, displayTrackEditDialog,
+                musicName, musicLength, discList, saveDisc, trackHtml, submitTrackInfo,
+                mediaFormatSet, albumFormatSet, mediaFormat, albumFormat,
+                responsiveOptions, navbarItems, user
             }
         },
         components: {
@@ -559,15 +843,28 @@
             "p-chips": primevue.chips,
             "p-divider": primevue.divider,
             "p-inputtext": primevue.inputtext,
+            "p-multiselect": primevue.multiselect,
+            "p-galleria": primevue.galleria,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
         }
     };
 
+    const routes = [{ path: "/", component: App }];
+
+    const router = VueRouter.createRouter({
+        history: VueRouter.createWebHashHistory(),
+        routes
+    });
+
     createApp(App)
+        .use(router)
         .use(primevue.config.default)
         .mount("#app");
 </script>
 
 <style>
+
     #imgBox img {
         height: 200px;
     }

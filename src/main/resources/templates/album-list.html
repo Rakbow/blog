@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Album List</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -325,7 +326,7 @@
                     </div>
                 </p-divider>
                 <div class="field">
-                    <label htmlFor="trackList">曲目列表</label>
+                    <label htmlFor="trackInfo">曲目列表</label>
                     <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
                 </div>
                 <p-divider align="center">
@@ -466,20 +467,9 @@
                     </div>
                 </div>
                 <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="discNum">唱片数</label>
-                        <p-inputnumber id="discNum" v-model="albumEdit.discNum" integeronly></p-inputnumber>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="trackNum">曲目数</label>
-                        <p-inputnumber id="trackNum" v-model="albumEdit.trackNum" integeronly></p-inputnumber>
-                    </div>
-                </div>
                 <div class="field">
-                    <label htmlFor="trackList">曲目列表</label>
-                    <p-textarea id="trackList" v-model="album.trackList" rows="3" cols="20"
-                                :auto-resize="true"></p-textarea>
+                    <label htmlFor="trackInfo">曲目列表</label>
+                    <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
                 </div>
                 <p-divider></p-divider>
                 <div class="field">
@@ -487,14 +477,8 @@
                 </div>
                 <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                 <div class="field">
-                    <div v-if="imgData.length != 0" v-for="img of imgData">
-                        <p-image :src="img.url" :alt="img.name" width="250"></p-image>
-                        <p-inputtext type="text" class="p-inputtext-sm" :placeholder="img.name"></p-inputtext>
-                        <p>{{img.name}}</p>
-                    </div>
-                    <div v-if="imgData.length == 0">
-                        无图片
-                    </div>
+                    <label htmlFor="imgUrl">图片信息</label>
+                    <span style="text-align: center">添加和编辑图片等操作，请到专辑详情页面进行</span>
                 </div>
                 <p-divider></p-divider>
                 <div class="field">
@@ -581,8 +565,6 @@
                 {field: 'publisher', header: '发行商'},
                 {field: 'distributor', header: '经销商'},
                 {field: 'copyright', header: '版权方'},
-                {field: 'discNum', header: '唱片数'},
-                {field: 'trackNum', header: '曲目数'},
             ]);
             const selectedColumns = ref();
 
@@ -657,12 +639,12 @@
             const deleteSelectedAlbums = () => {
                 axiosDeleteRequest(DELETE_ALBUM_URL, selectedAlbums.value)
                     .then(res => {
-                        if(res.state == 1){
+                        if (res.state == 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             deleteAlbumsDialog.value = false;
                             selectedAlbums.value = null;
                             init();
-                        }else {
+                        } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     });
@@ -677,20 +659,6 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            imgData.value = [];
-                            imgArr.value = [];
-                            if (dataTmp.imgUrl != null && dataTmp.imgUrl.length != 0) {
-                                imgData.value = JSON.parse(dataTmp.imgUrl);
-                                for (let img of imgData.value) {
-                                    getImageFileFromUrl(img.url, img.name)
-                                        .then((res) => {
-                                            // 返回的是文件对象，使用变量接收即可
-                                            imgArr.value.push(res);
-                                        }).catch((e) => {
-                                        console.log(e)
-                                    });
-                                }
-                            }
                             albumEdit.value = dataTmp;
                             axiosGetRequest(GET_ALL_PRODUCT_URL + dataTmp.seriesId, null)
                                 .then(res => {
@@ -712,23 +680,33 @@
             };
             //保存编辑数据
             const submitEditAlbum = () => {
-                if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
-                    albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
+                if (checkAlbum(albumEdit)) {
+                    if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
+                        albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
+                    }
+                    albumEdit.value.publishFormat = albumEdit.value.publishFormat.join(",");
+                    albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
+                    albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
+                    albumEdit.value.productId = albumEdit.value.productId.join(",");
+                    if (true) {
+                        axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
+                            .then(res => {
+                                if (res.state == 1) {
+                                    albumEdit.value = {};
+                                    toast.add({
+                                        severity: 'success',
+                                        summary: 'Successful',
+                                        detail: res.message,
+                                        life: 3000
+                                    });
+                                    closeEditDialog();
+                                    init();
+                                } else {
+                                    toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                                }
+                            });
+                    }
                 }
-                albumEdit.value.publishFormat = albumEdit.value.publishFormat.join(",");
-                albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
-                albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
-                albumEdit.value.productId = albumEdit.value.productId.join(",");
-                axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
-                    .then(res => {
-                        albumEdit.value = {};
-                        toast.add({severity: 'success', summary: 'Successful', detail: '更新数据成功！', life: 3000});
-                        closeEditDialog();
-                        init();
-                    }).catch(err => {
-                    console.log(err);
-                    toast.add({severity: 'error', summary: 'Error', detail: '更新数据失败！', life: 3000});
-                });
             }
 
             //打开新增数据面板
@@ -758,16 +736,16 @@
                 if (data.value.releaseDate == null) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未填写发行时间！', life: 3000});
                     flag = false;
-                } else if (data.value.publishFormat == null) {
+                } else if (data.value.publishFormat == null || data.value.publishFormat.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择出版形式！', life: 3000});
                     flag = false;
-                } else if (data.value.albumFormat == null) {
+                } else if (data.value.albumFormat == null || data.value.albumFormat.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择专辑分类！', life: 3000});
                     flag = false;
-                } else if (data.value.mediaFormat == null) {
+                } else if (data.value.mediaFormat == null || data.value.mediaFormat.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择媒体类型！', life: 3000});
                     flag = false;
-                } else if (data.value.productId == null) {
+                } else if (data.value.productId == null || data.value.productId.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
                     flag = false;
                 } else if (data.value.seriesId == null) {
@@ -785,17 +763,24 @@
                     album.value.albumFormat = album.value.albumFormat.join(",");
                     album.value.mediaFormat = album.value.mediaFormat.join(",");
                     album.value.productId = album.value.productId.join(",");
-                    axiosPostRequest(INSERT_ALBUM_URL, album.value)
-                        .then(res => {
-                            if(res.state == 1){
-                                album.value = {};
-                                toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                                closeNewDialog();
-                                init();
-                            }else {
-                                toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                            }
-                        });
+                    if (true) {
+                        axiosPostRequest(INSERT_ALBUM_URL, album.value)
+                            .then(res => {
+                                if (res.state == 1) {
+                                    album.value = {};
+                                    toast.add({
+                                        severity: 'success',
+                                        summary: 'Successful',
+                                        detail: res.message,
+                                        life: 3000
+                                    });
+                                    closeNewDialog();
+                                    init();
+                                } else {
+                                    toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                                }
+                            });
+                    }
                 }
             };
 

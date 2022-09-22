@@ -1,48 +1,88 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/font.css}">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
-    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
-    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
-    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-    <script th:src="@{/assets/js/script.min.js}"></script>
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
 </head>
 <body>
-<nav class="navbar navbar-light navbar-expand-lg bg-white clean-navbar" th:fragment="site_header">
-    <div class="container"><a class="navbar-brand logo" href="#">Rakbow's Blog</a>
-        <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span
-                class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navcol-1">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" th:href="@{/index}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/album-list}">Album List</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/album-card}">Album Card</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/login}" th:if="${loginUser==null}"><strong>Login</strong><br></a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/logout}" th:if="${loginUser!=null}"><strong>Logout</strong><br></a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/user/setting}" th:if="${loginUser!=null}"><strong>Setting</strong><br></a></li>
-<!--                <li class="nav-item"><a class="nav-link" href="#" disabled>NOTHING</a></li>-->
-                <li class="nav-item btn-group-vertical dropdown" th:if="${loginUser!=null}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img th:src="${loginUser.headerUrl}" class="rounded-circle" style="width:30px;"/>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-<!--                        <a class="dropdown-item text-center" href="site/profile.html">个人主页</a>-->
-                        <a class="dropdown-item text-center" th:href="@{/user/setting}">账号设置</a>
-                        <a class="dropdown-item text-center" th:href="@{/logout}">logout</a>
-                        <div class="dropdown-divider"></div>
-                        <span class="dropdown-item text-center text-secondary" th:utext="${loginUser.username}"></span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div id="app">
+    <p-menubar :model="navbarItems" th:fragment="site_header">
+        <template #start>
+            <a href="http://localhost:8080">
+                <img alt="logo" src="/img/logo.png" height="30" class="mr-2">
+            </a>
+        </template>
+        <template #end>
+            <div class="grid mt-0 mb-0 pt-0 pb-0">
+                <div class="col-3 mt-0 mb-0 pt-0 pb-0">
+                    <p-avatar v-if="user != null" :image="user.headerUrl" size="small" shape="circle"></p-avatar>
+                </div>
+                <div class="col-9 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
+                    <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
+                    <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
+                </div>
+            </div>
+        </template>
+    </p-menubar>
+</div>
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+
+            })
+            return {}
+        },
+        components: {
+            "p-inputtext": primevue.inputtext,
+            "p-menubar": primevue.menubar,
+            "p-button": primevue.button,
+            "p-avatar": primevue.avatar
+        }
+    };
+
+    const routes = [{ path: "/", component: App }];
+
+    const router = VueRouter.createRouter({
+        history: VueRouter.createWebHashHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.config.default)
+        .mount("#app");
+</script>
+</script>
 <style>
     .user-header {
         width: 50px;

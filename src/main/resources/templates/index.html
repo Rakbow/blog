@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Rakbow's Blog</title>
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css" crossorigin="anonymous">
+<!--    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css" crossorigin="anonymous">-->
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css" />
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css" />
@@ -14,29 +16,165 @@
     <!-- Dependencies -->
     <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript" ></script>
     <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript" ></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- Demo -->
-    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
-    <script th:src="@{/js/primevue/components/column.min.js}"></script>
-    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
-    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
-    <script th:src="@{/js/primevue/components/slider.min.js}"></script>
-    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
 </head>
 <body>
 <!-- 头部 -->
-<header class="bg-dark sticky-top">
-    <div th:insert="~{header :: site_header}"></div>
-</header>
 
-<h1>首页</h1>
+
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top" th:insert="~{header :: site_header}"></header><br><br>
+
+    <div class="grid grid-nogutter surface-section text-800">
+        <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
+            <section>
+                <span class="block text-6xl font-bold mb-1">欢迎来到</span>
+                <div class="text-6xl text-primary font-bold mb-3">Rakbow的私人在线数据库</div>
+                <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
+
+                <p-button label="了解详情" type="button" @click.native="goUrl('http://localhost:8080/db/album-list')" class="mr-3 p-button-raised"></p-button>
+            </section>
+        </div>
+        <div class="col-12 md:col-6 overflow-hidden">
+            <img src="http://localhost:8080/img/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
+        </div>
+    </div>
+</div>
 
 <!-- 尾部 -->
-<footer class="bg-dark">
-    <div th:insert="~{footer :: site_footer}"></div>
-</footer>
+<!--<footer class="bg-dark">-->
+<!--    <div th:insert="~{footer :: site_footer}"></div>-->
+<!--</footer>-->
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+            })
+
+            const user = [[${user}]];
+
+            const goUrl = (url) => {
+                //跳转页面覆盖当前页面
+                window.location.href = url
+                //或者写为
+                // window.open(url,"_self")
+            };
+
+            const navbarItems = ref([
+                {
+                    label:'Album',
+                    icon:'pi pi-fw pi-list',
+                    items:[
+                        {
+                            label:'Album List',
+                            icon:'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album-list'
+                        },
+                        {
+                            label:'Album Card',
+                            icon:'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album-card'
+                        }
+                    ]
+                },
+                {
+                    label:'Disc',
+                    icon:'pi pi-fw pi-video',
+                    items:[
+                        {
+                            label:'Develop',
+                            icon:'pi pi-fw pi-wrench'
+                        },
+                        {
+                            label:'Develop',
+                            icon:'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label:'Book',
+                    icon:'pi pi-fw pi-book',
+                    items:[
+                        {
+                            label:'Book List',
+                            icon:'pi pi-fw pi-book'
+                        },
+                        {
+                            label:'Develop',
+                            icon:'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label:'Users',
+                    icon:'pi pi-fw pi-user',
+                    items:[
+                        {
+                            label:'New',
+                            icon:'pi pi-fw pi-user-plus',
+                        },
+                        {
+                            label:'Delete',
+                            icon:'pi pi-fw pi-user-minus',
+                        },
+                        {
+                            label:'Search',
+                            icon:'pi pi-fw pi-users',
+                            items:[
+                                {
+                                    label:'Filter',
+                                    icon:'pi pi-fw pi-filter',
+                                    items:[
+                                        {
+                                            label:'Print',
+                                            icon:'pi pi-fw pi-print'
+                                        }
+                                    ]
+                                },
+                                {
+                                    icon:'pi pi-fw pi-bars',
+                                    label:'List'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    label:'Quit',
+                    icon:'pi pi-fw pi-power-off',
+                    url:'http://localhost:8080/logout'
+                }
+            ]);
+
+            return { goUrl, navbarItems, user }
+        },
+        components: {
+            "p-button": primevue.button,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-inputtext": primevue.inputtext,
+        }
+    };
+
+    const routes = [{ path: "/", component: App }];
+
+    const router = VueRouter.createRouter({
+        history: VueRouter.createWebHashHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.config.default)
+        .mount("#app");
+</script>
 </body>
 </html>
