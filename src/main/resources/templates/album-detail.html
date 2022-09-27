@@ -14,8 +14,9 @@
     <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
     <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
 
-
+    <!-- other css -->
     <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
 
 
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
@@ -52,6 +53,8 @@
     <script th:src="@{/js/primevue/components/galleria.min.js}"></script>
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -70,7 +73,8 @@
             <div id="app">
 
                 <!-- 头部 -->
-                <header class="sticky-top" th:insert="~{header :: site_header}"></header><br><br>
+                <header class="sticky-top" th:insert="~{header :: site_header}"></header>
+                <br><br>
 
                 <p-toolbar class="mb-4">
                     <template #start>
@@ -85,9 +89,11 @@
                     </template>
                 </p-toolbar>
                 <div class="grid card">
+                    <p-toast></p-toast>
                     <div class="col-12 sm:col-12 md:col-6 lg:col-9">
                         <p-panel>
                             <template #header>
+                                <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
                                     <h4 class="text-start ml-2 mt-0 mb-0">{{album.nameJp}}</h4>
                                     <h4 class="text-start ml-2 mt-0 mb-0"><small>{{album.nameEn}}</small></h4>
@@ -101,64 +107,100 @@
                                 <table class="table-borderless table-sm ml-5">
                                     <tbody>
                                     <tr>
-                                        <td><strong>专辑编号</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-dingdanbianhao mr-1"
+                                               style="font-size: 1.3rem"></i>
+                                            <strong>专辑编号</strong>
+                                        </td>
                                         <td>
                                             {{album.catalogNo?album.catalogNo:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>商品条形码</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-bar-code mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>商品条形码</strong>
+                                        </td>
                                         <td>{{album.barcode?album.barcode:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>发行时间</strong></td>
+                                        <td>
+                                            <i class="pi pi-calendar mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>发行时间</strong>
+                                        </td>
                                         <td>
                                             {{album.releaseDate?album.releaseDate:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>发行价格</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-wuliaojiage mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>发行价格</strong>
+                                        </td>
                                         <td>
                                             {{album.publishPrice?album.publishPrice:"N/A"}} 日元(含税)
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>出版形式</strong></td>
+                                        <td>
+                                            <i class="pi pi-print mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>出版形式</strong>
+                                        </td>
                                         <td>
                                             {{album.publishFormat?album.publishFormat:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>媒体类型</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-zhuanjiguangpan mr-1"
+                                               style="font-size: 1.3rem"></i>
+                                            <strong>媒体类型</strong>
+                                        </td>
                                         <td>
                                             {{album.mediaFormat?album.mediaFormat:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>专辑类型</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-musicfill mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>专辑类型</strong>
+                                        </td>
                                         <td>
                                             {{album.albumFormat?album.albumFormat:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>唱片公司</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-tushuyinxiang mr-1"
+                                               style="font-size: 1.3rem"></i>
+                                            <strong>唱片公司</strong>
+                                        </td>
                                         <td>{{album.label?album.label:"N/A"}}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>出版商</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-gongsi mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>出版商</strong>
+                                        </td>
                                         <td>
                                             {{album.publisher?album.publisher:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>经销商</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-company mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>经销商</strong>
+                                        </td>
                                         <td>
                                             {{album.distributor?album.distributor:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>版权方</strong></td>
+                                        <td>
+                                            <i class="pi iconfont icon-copyright mr-1" style="font-size: 1.3rem"></i>
+                                            <strong>版权方</strong>
+                                        </td>
                                         <td>
                                             {{album.copyright?album.copyright:"N/A"}}
                                         </td>
@@ -170,7 +212,7 @@
                         <br>
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi pi-users mr-2"></i>
+                                <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
                                 <b>音乐创作</b>
                             </template>
                             <div class="grid">
@@ -189,7 +231,7 @@
                         <br>
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi pi-list mr-2"></i>
+                                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>
                                 <b>音轨信息</b>
                             </template>
                             <div v-if="album.trackInfo == null || JSON.stringify(album.trackInfo) == '{}' ">
@@ -207,35 +249,40 @@
                                     <tr v-for="track in disc.track_list">
                                         <th scope="row">{{track.serial}}</th>
                                         <td>{{track.name}}</td>
-                                        <td>{{track.length}}</td>
+                                        <td class="text-end">{{track.length}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
-                                Disc length <b>{{disc.disc_length}}</b>
-                                <br>
+                                <p class="text-end">
+                                    Disc length <b>{{disc.disc_length}}</b>
+                                </p>
                             </div>
-                            <span class="text-end"
-                               v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
-                                Total tracks <b>{{album.trackInfo.total_tracks}}</b>   Total length
-                                <b>{{album.trackInfo.total_length}}</b></span>
+                            <div>
+                                <p class="text-end"
+                                   v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
+                                    Total tracks <b>{{album.trackInfo.total_tracks}}</b> Total length
+                                    <b>{{album.trackInfo.total_length}}</b>
+                                </p>
+                            </div>
                         </p-fieldset>
                         <br>
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi pi-images mr-2"></i>
+                                <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
                                 <b>图片</b>
                             </template>
                             <div v-if="album.imgUrl.length == 0">
                                 <span>暂无图片</span>
                             </div>
                             <div v-else>
-                                <p-galleria :value="album.imgUrl" :responsive-options="responsiveOptions" :num-visible="5" container-style="max-width: 640px">
+                                <p-galleria :value="album.imgUrl" :responsive-options="responsiveOptions"
+                                            :num-visible="5" container-style="max-width: 640px">
                                     <template #item="{item}">
-                                        <img :src="item.url" :alt="item.name" style="width: 100%; display: block;" />
+                                        <img :src="item.url" :alt="item.name" style="width: 100%; display: block;"/>
                                     </template>
                                     <template #thumbnail="{item}">
                                         <div class="grid grid-nogutter justify-content-center">
-                                            <img :src="item.url" :alt="item.name" style="display: block;" />
+                                            <img :src="item.url" :alt="item.name" style="display: block;"/>
                                         </div>
                                     </template>
                                     <template #caption="{item}">
@@ -248,14 +295,14 @@
                         <br>
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi pi-bookmark mr-2"></i>
+                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
                                 <b>描述</b>
                             </template>
                         </p-fieldset>
                         <br>
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi pi-box mr-2"></i>
+                                <i class="pi iconfont icon-gift mr-2" style="font-size: 2rem"></i>
                                 <b>特典</b>
                             </template>
                             <div :v-if="album.hasBouns == 0">
@@ -266,7 +313,7 @@
                     <div class="col-12 sm:col-12 md:col-6 lg:col-3">
                         <p-panel>
                             <template #header>
-                                <i class="pi pi-info-circle mr-2"></i>
+                                <i class="pi iconfont icon-product_b mr-2" style="font-size: 2rem"></i>
                                 <b>专辑分类</b>
                             </template>
                             <div class="grid">
@@ -293,7 +340,7 @@
                         <br>
                         <p-panel>
                             <template #header>
-                                <i class="pi pi-info-circle mr-2"></i>
+                                <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
                                 <b>相关专辑</b>
                             </template>
                             <div class="grid">
@@ -331,7 +378,7 @@
                         <br>
                         <p-panel>
                             <template #header>
-                                <i class="pi pi-info-circle mr-2"></i>
+                                <i class="pi pi-info-circle mr-2" style="font-size: 2rem"></i>
                                 <b>页面信息</b>
                             </template>
                             <div class="grid">
@@ -506,6 +553,7 @@
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
+    const {useToast} = primevue.usetoast;
 
     const App = {
         setup() {
@@ -513,7 +561,8 @@
                 // getAlbum();
                 init();
             })
-            const user = ref([[${user}]]);
+
+            const toast = useToast();
 
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const albumFormatSet = ref([[${albumFormatSet}]]);
@@ -544,12 +593,19 @@
             const discList = ref([]);
             const displayTrackEditDialog = ref(false);
             const openTrackEditDialog = () => {
-                discList.value = [];
-                trackHtml.value = "";
-                displayTrackEditDialog.value = true;
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            discList.value = [];
+                            trackHtml.value = "";
+                            displayTrackEditDialog.value = true;
+                        }
+                    })
             };
             const saveDisc = () => {
-                let disc = {track_list:null, media_format:null, album_format:null};
+                let disc = {track_list: null, media_format: null, album_format: null};
                 let trackList = [];
                 for (let i = 0; i < musicName.value.length; i++) {
                     let param = {name: null, length: null};
@@ -571,7 +627,7 @@
                 trackHtml.value = "";
                 //<![CDATA[
                 for (const disc of discList.value) {
-                    for(let t of disc.track_list){
+                    for (let t of disc.track_list) {
                         trackHtml.value += '<p>' + t.name + ' : ' + t.length + '</p>';
                     }
                 }
@@ -601,10 +657,17 @@
             const artists = ref([]);
             const displayArtistEditDialog = ref(false);
             const openArtistEditDialog = () => {
-                artists.value = [];
-                positionName.value = "";
-                positionArtist.value = "";
-                displayArtistEditDialog.value = true;
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            artists.value = [];
+                            positionName.value = "";
+                            positionArtist.value = "";
+                            displayArtistEditDialog.value = true;
+                        }
+                    })
             };
             const saveArtist = () => {
                 let param = {
@@ -644,6 +707,7 @@
                     })
             };
 
+            //图片相关组件
             const imgCover = ref({});
             const album = ref([[${album}]]);
             const relatedAlbums = ref([[${relatedAlbums}]]);
@@ -651,6 +715,124 @@
             const html = ref("");
             const imageName = ref();
             const imageNum = ref(0);
+            const getAlbum = () => {
+                const param = {"id": album.value.id};
+                axiosGetRequest(GET_ALBUM_URL, param)
+                    .then(res => {
+                        album.value = res;
+                    }).catch(err => {
+                    console.log(err);
+                });
+            }
+            const openImageEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state == 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            const param = ref({});
+                            param.value.id = album.value.id;
+                            displayImageEditDialog.value = true;
+                            imageName.value = false;
+                        }
+                    })
+            };
+            function myUploader(ev) {
+                const formData = new FormData();
+                let images = Array.from(ev.files);
+                images.forEach((image) => {
+                    formData.append('images', image);
+                })
+                formData.append("albumId", album.value.id);
+                formData.append("imageName", imageName.value);
+                axiosRequest(UPDATE_ALBUM_IMAGES_URL, formData)
+                    .then(res => {
+                        console.log(res);
+                    }).catch(err => {
+                    console.log(err);
+                });
+                displayImageEditDialog.value = false;
+                getAlbum();
+            };
+            const showImage = (imageSet) => {
+                html.value = "";
+                //<![CDATA[
+                for (const img of imageSet) {
+                    html.value += '<img src="' + img.objectURL + '"/>';
+                    html.value += '<p>' + img.name + '</p>';
+                    html.value += '<p-divider></p-divider>';
+                }
+                //]]>
+                document.getElementById("imgBox").innerHTML = html;
+            };
+            const removeFile = (ev) => {
+                showImage(ev.files);
+                imageNum.value = ev.files.length;
+                console.log(imageNum.value);
+            };
+            const selectFile = (ev) => {
+                showImage(ev.files);
+                imageNum.value = ev.files.length;
+                console.log(imageNum.value);
+            };
+
+
+            const navbarItems = ref([
+                {
+                    label: 'Home',
+                    icon: 'pi pi-fw pi-home',
+                    url: "http://localhost:8080"
+                },
+                {
+                    label: 'DataBase',
+                    icon: 'pi pi-fw iconfont icon-database',
+                    url: "http://localhost:8080/db"
+                },
+                {
+                    label: 'Album',
+                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
+                    items: [
+                        {
+                            label: 'Album List',
+                            icon: 'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album/list'
+                        },
+                        {
+                            label: 'Album Card',
+                            icon: 'pi pi-fw pi-list',
+                            // url: 'http://localhost:8080/db/album/card'
+                        }
+                    ]
+                },
+                {
+                    label: 'Disc',
+                    icon: 'pi pi-fw iconfont icon-Video-Disc',
+                    items: [
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label: 'Book',
+                    icon: 'pi pi-fw pi-book',
+                    items: [
+                        {
+                            label: 'Book List',
+                            icon: 'pi pi-fw pi-book'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                }
+            ]);
 
             const init = () => {
                 if (album.value.imgUrl != null) {
@@ -674,151 +856,6 @@
                 album.value.albumFormat = album.value.albumFormat.join("/");
             };
 
-            const getAlbum = () => {
-                const param = {"id": album.value.id};
-                axiosGetRequest(GET_ALBUM_URL, param)
-                    .then(res => {
-                        album.value = res;
-                    }).catch(err => {
-                    console.log(err);
-                });
-            }
-
-            const openImageEditDialog = () => {
-                const param = ref({});
-                param.value.id = album.value.id;
-                displayImageEditDialog.value = true;
-                imageName.value = false;
-            };
-
-            function myUploader(ev) {
-                const formData = new FormData();
-                let images = Array.from(ev.files);
-                images.forEach((image) => {
-                    formData.append('images', image);
-                })
-                formData.append("albumId", album.value.id);
-                formData.append("imageName", imageName.value);
-                axiosRequest(UPLOAD_ALBUM_URL, formData)
-                    .then(res => {
-                        console.log(res);
-                    }).catch(err => {
-                    console.log(err);
-                });
-                displayImageEditDialog.value = false;
-                getAlbum();
-            };
-
-            const showImage = (imageSet) => {
-                html.value = "";
-                //<![CDATA[
-                for (const img of imageSet) {
-                    html.value += '<img src="' + img.objectURL + '"/>';
-                    html.value += '<p>' + img.name + '</p>';
-                    html.value += '<p-divider></p-divider>';
-                }
-                //]]>
-                document.getElementById("imgBox").innerHTML = html;
-            };
-
-            const removeFile = (ev) => {
-                showImage(ev.files);
-                imageNum.value = ev.files.length;
-                console.log(imageNum.value);
-            };
-
-            const selectFile = (ev) => {
-                showImage(ev.files);
-                imageNum.value = ev.files.length;
-                console.log(imageNum.value);
-            };
-
-            const navbarItems = ref([
-                {
-                    label:'Album',
-                    icon:'pi pi-fw pi-list',
-                    items:[
-                        {
-                            label:'Album List',
-                            icon:'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album-list'
-                        },
-                        {
-                            label:'Album Card',
-                            icon:'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album-card'
-                        }
-                    ]
-                },
-                {
-                    label:'Disc',
-                    icon:'pi pi-fw pi-video',
-                    items:[
-                        {
-                            label:'Develop',
-                            icon:'pi pi-fw pi-wrench'
-                        },
-                        {
-                            label:'Develop',
-                            icon:'pi pi-fw pi-wrench'
-                        }
-                    ]
-                },
-                {
-                    label:'Book',
-                    icon:'pi pi-fw pi-book',
-                    items:[
-                        {
-                            label:'Book List',
-                            icon:'pi pi-fw pi-book'
-                        },
-                        {
-                            label:'Develop',
-                            icon:'pi pi-fw pi-wrench'
-                        }
-                    ]
-                },
-                {
-                    label:'Users',
-                    icon:'pi pi-fw pi-user',
-                    items:[
-                        {
-                            label:'New',
-                            icon:'pi pi-fw pi-user-plus',
-                        },
-                        {
-                            label:'Delete',
-                            icon:'pi pi-fw pi-user-minus',
-                        },
-                        {
-                            label:'Search',
-                            icon:'pi pi-fw pi-users',
-                            items:[
-                                {
-                                    label:'Filter',
-                                    icon:'pi pi-fw pi-filter',
-                                    items:[
-                                        {
-                                            label:'Print',
-                                            icon:'pi pi-fw pi-print'
-                                        }
-                                    ]
-                                },
-                                {
-                                    icon:'pi pi-fw pi-bars',
-                                    label:'List'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    label:'Quit',
-                    icon:'pi pi-fw pi-power-off',
-                    url: "http://localhost:8080/logout"
-                }
-            ]);
-
             return {
                 album, relatedAlbums, imgCover,
                 myUploader, removeFile, selectFile,
@@ -829,7 +866,7 @@
                 openTrackEditDialog, displayTrackEditDialog,
                 musicName, musicLength, discList, saveDisc, trackHtml, submitTrackInfo,
                 mediaFormatSet, albumFormatSet, mediaFormat, albumFormat,
-                responsiveOptions, navbarItems, user
+                responsiveOptions, navbarItems
             }
         },
         components: {
@@ -847,10 +884,11 @@
             "p-galleria": primevue.galleria,
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
+            "p-toast": primevue.toast,
         }
     };
 
-    const routes = [{ path: "/", component: App }];
+    const routes = [{path: "/", component: App}];
 
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHashHistory(),
@@ -859,11 +897,22 @@
 
     createApp(App)
         .use(router)
+        .use(primevue.toastservice)
         .use(primevue.config.default)
         .mount("#app");
 </script>
 
 <style>
+
+    .p-galleria-item-wrapper {
+        height: 500px;
+        width: 500px;
+    }
+
+    .p-galleria-thumbnail-content {
+        height: 100px;
+        width: 100px;
+    }
 
     #imgBox img {
         height: 200px;

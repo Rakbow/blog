@@ -6,13 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <!-- bootstrap -->
-    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
-    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+<!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
+<!--    <link rel="stylesheet"-->
+<!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
+<!--    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">-->
     <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+<!--    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">-->
     <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/css/album-list.css}">
 
 
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
@@ -29,6 +31,7 @@
     <!-- Dependencies -->
     <script th:src="@{/js/primevue/vue.min.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
@@ -57,6 +60,8 @@
     <script th:src="@{/js/primevue/components/editor.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/image.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -68,13 +73,11 @@
 </head>
 <body>
 <div class="nk-container">
-    <!-- 头部 -->
-    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
-
     <div class="main">
         <div id="app">
-            <!--            <div class="card">-->
-            <!--            <p-fieldset legend="专辑列表" :toggleable="true">-->
+            <!-- 头部 -->
+            <header class="sticky-top" th:insert="~{header :: site_header}"></header><br>
+
             <p-panel header="专辑列表" :toggleable="true">
                 <p-toast></p-toast>
                 <p-toolbar class="mb-4">
@@ -518,9 +521,6 @@
             </p-dialog>
         </div>
     </div>
-
-    <!-- 尾部 -->
-    <footer th:insert="~{footer :: site_footer}"></footer>
 </div>
 
 <script type="module" th:inline="javascript">
@@ -585,7 +585,7 @@
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const exportCSV = () => {
-                axiosGetRequest(CHECK_USER_ROOT_URL, null)
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state == 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -626,7 +626,7 @@
             //删除相关操作
             //打开删除确认面板
             const confirmDeleteSelected = () => {
-                axiosGetRequest(CHECK_USER_ROOT_URL, null)
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state == 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -653,7 +653,7 @@
             //编辑相关操作
             //打开编辑数据面板
             const openEditDialog = (data) => {
-                axiosGetRequest(CHECK_USER_ROOT_URL, null)
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state == 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -711,7 +711,7 @@
 
             //打开新增数据面板
             const openNewDialog = () => {
-                axiosGetRequest(CHECK_USER_ROOT_URL, null)
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state == 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -793,6 +793,63 @@
                     })
             };
 
+            const navbarItems = ref([
+                {
+                    label: 'Home',
+                    icon: 'pi pi-fw pi-home',
+                    url: "http://localhost:8080"
+                },
+                {
+                    label: 'DataBase',
+                    icon: 'pi pi-fw iconfont icon-database',
+                    url: "http://localhost:8080/db"
+                },
+                {
+                    label: 'Album',
+                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
+                    items: [
+                        {
+                            label: 'Album List',
+                            icon: 'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album/list'
+                        },
+                        {
+                            label: 'Album Card',
+                            icon: 'pi pi-fw pi-list',
+                            // url: 'http://localhost:8080/db/album/card'
+                        }
+                    ]
+                },
+                {
+                    label: 'Disc',
+                    icon: 'pi pi-fw iconfont icon-Video-Disc',
+                    items: [
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label: 'Book',
+                    icon: 'pi pi-fw pi-book',
+                    items: [
+                        {
+                            label: 'Book List',
+                            icon: 'pi pi-fw pi-book'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                }
+            ]);
+
             return {
                 album, albums, formatCurrency, columns, selectedColumns, onToggle,
                 loading, filters, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
@@ -800,7 +857,7 @@
                 selectedAlbums, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
                 mediaFormatSet, publishFormatSet, albumFormatSet, productSet, seriesSet,
-                getProducts, productSelect, imgData, imgArr, detailId
+                getProducts, productSelect, imgData, imgArr, detailId, navbarItems
             }
         },
         components: {
@@ -830,101 +887,24 @@
             "p-editor": primevue.editor,
             "p-card": primevue.card,
             "p-image": primevue.image,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
         }
     };
+
+    const routes = [{ path: "/", component: App }];
+
+    const router = VueRouter.createRouter({
+        history: VueRouter.createWebHashHistory(),
+        routes
+    });
 
     const app = createApp(App);
     app.use(primevue.config.default);
     app.directive('tooltip', Tooltip);
     app.use(primevue.toastservice);
+    app.use(router);
     app.mount("#app");
 </script>
-<style>
-    #imgbox img {
-        width: 300px;
-    }
-
-    .p-multiselect {
-        width: 16rem;
-    }
-
-    .custom-scrolltop {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 4px;
-        background-color: var(--primary-color) !important;
-    }
-
-    .custom-scrolltop:hover {
-        background-color: var(--primary-color);
-    }
-
-    .custom-scrolltop .p-scrolltop-icon {
-        font-size: 1rem;
-        color: var(--primary-color-text);
-    }
-
-    .p-paginator .p-paginator-current {
-        margin-left: auto;
-    }
-
-    .p-progressbar {
-        height: .5rem;
-        background-color: #D8DADC;
-    }
-
-    .p-progressbar .p-progressbar-value {
-        background-color: #607D8B;
-    }
-
-    .p-datepicker {
-        min-width: 25rem;
-    }
-
-    .p-datepicker td {
-        font-weight: 400;
-    }
-
-    .p-datatable.p-datatable-customers .p-datatable-header {
-        padding: 1rem;
-        text-align: left;
-        font-size: 1rem;
-    }
-
-    .p-datatable.p-datatable-customers .p-paginator {
-        padding: 1rem;
-    }
-
-    .p-datatable.p-datatable-customers .p-datatable-thead > tr > th {
-        text-align: left;
-    }
-
-    .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td {
-        cursor: auto;
-    }
-
-    .p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
-        text-transform: uppercase;
-    }
-
-    @media screen and (max-width: 640px) {
-        .p-multiselect {
-            width: 100%;
-        }
-    }
-
-    /*.sizes .p-inputtext {*/
-    /*    display: block;*/
-    /*    margin-bottom: .5rem;*/
-    /*}*/
-
-    /*.sizes:last-child {*/
-    /*    margin-bottom: 0;*/
-    /*}*/
-
-    /*.field * {*/
-    /*    display: block;*/
-    /*}*/
-</style>
 </body>
 </html>

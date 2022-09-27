@@ -7,16 +7,20 @@ import com.rakbow.website.service.UserService;
 import com.rakbow.website.service.util.common.ApiResult;
 import com.rakbow.website.service.util.common.ApiResultInfo;
 import com.rakbow.website.service.util.common.CommonConstant;
+import com.rakbow.website.service.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+import javax.print.DocFlavor;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,7 +36,7 @@ import java.util.Map;
  * @Description:
  */
 @Controller
-public class LoginController{
+public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -52,7 +56,7 @@ public class LoginController{
     //获取登陆页面
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String getLoginPage() {
-        return "/site/login_temp";
+        return "/site/login";
     }
 
     //注册新用户
@@ -112,38 +116,34 @@ public class LoginController{
 
     //登录
     @RequestMapping(path = "/login", method = RequestMethod.POST)
-    @ResponseBody
-    public String login(@RequestBody String param, HttpSession session, HttpServletResponse response) {
-        ApiResult res = new ApiResult();
-        String username = JSON.parseObject(param).getString("username");
-        String password = JSON.parseObject(param).getString("password");
-        String code = JSON.parseObject(param).getString("verifyCode");
-        boolean rememberMe = JSON.parseObject(param).getBoolean("rememberMe");
+    public String login(String username, String password, String verifyCode, boolean rememberMe,
+                        Model model, HttpSession session, HttpServletResponse response) {
         // 检查验证码
         String kaptcha = (String) session.getAttribute("kaptcha");
-        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
-            res.setErrorMessage(ApiResultInfo.INCORRECT_VERIFY_CODE);
-            return JSON.toJSONString(res);
+        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
+            model.addAttribute("error", ApiResultInfo.INCORRECT_VERIFY_CODE);
+            return "/site/login";
         }
 
         // 检查账号,密码
         int expiredSeconds = rememberMe ? CommonConstant.REMEMBER_EXPIRED_SECONDS : CommonConstant.DEFAULT_EXPIRED_SECONDS;
         Map<String, String> map = userService.login(username, password, expiredSeconds);
         if (map.containsKey("ticket")) {
-            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+            Cookie cookie = new Cookie("ticket", map.get("ticket"));
             cookie.setPath(contextPath);
             cookie.setMaxAge(expiredSeconds);
             response.addCookie(cookie);
-            return JSON.toJSONString(res);
+            return "redirect:/";
         } else {
-            res.setErrorMessage(map.get("error"));
-            return JSON.toJSONString(res);
+            model.addAttribute("error", map.get("error"));
+            return "/site/login";
         }
     }
 
     @RequestMapping(path = "/logout", method = RequestMethod.GET)
     public String logout(@CookieValue("ticket") String ticket) {
         userService.logout(ticket);
+        SecurityContextHolder.clearContext();
         return "redirect:/login";
     }
 

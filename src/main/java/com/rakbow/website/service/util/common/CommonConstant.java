@@ -67,4 +67,11 @@ public class CommonConstant {
      * 系统用户ID
      */
     public static final int SYSTEM_USER_ID = 1;
+
+    //region 权限相关
+    //权限：普通用户
+    public static final String AUTHORITY_USER = "user ";
+    //权限：管理员
+    public static final String AUTHORITY_ADMIN = "admin";
+    //endregion
 }

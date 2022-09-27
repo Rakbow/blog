@@ -13,6 +13,9 @@
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css" />
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css" />
 
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
+
     <!-- Dependencies -->
     <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript" ></script>
     <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript" ></script>
@@ -29,7 +32,7 @@
 
 <div id="app">
     <!-- 头部 -->
-    <header class="sticky-top" th:insert="~{header :: site_header}"></header><br><br>
+    <header class="sticky-top" th:insert="~{header :: site_header}"></header><br>
 
     <div class="grid grid-nogutter surface-section text-800">
         <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
@@ -38,11 +41,11 @@
                 <div class="text-6xl text-primary font-bold mb-3">Rakbow的私人在线数据库</div>
                 <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
 
-                <p-button label="了解详情" type="button" @click.native="goUrl('http://localhost:8080/db/album-list')" class="mr-3 p-button-raised"></p-button>
+                <p-button label="了解详情" type="button" @click.native="goUrl('http://localhost:8080/db')" class="mr-3 p-button-raised"></p-button>
             </section>
         </div>
         <div class="col-12 md:col-6 overflow-hidden">
-            <img src="http://localhost:8080/img/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
+            <img src="/img/index.bmp" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
         </div>
     </div>
 </div>
@@ -59,8 +62,6 @@
             onMounted(() => {
             })
 
-            const user = [[${user}]];
-
             const goUrl = (url) => {
                 //跳转页面覆盖当前页面
                 window.location.href = url
@@ -70,91 +71,62 @@
 
             const navbarItems = ref([
                 {
-                    label:'Album',
-                    icon:'pi pi-fw pi-list',
-                    items:[
+                    label: 'Home',
+                    icon: 'pi pi-fw pi-home',
+                    url: "http://localhost:8080"
+                },
+                {
+                    label: 'DataBase',
+                    icon: 'pi pi-fw iconfont icon-database',
+                    url: "http://localhost:8080/db"
+                },
+                {
+                    label: 'Album',
+                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
+                    items: [
                         {
-                            label:'Album List',
-                            icon:'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album-list'
+                            label: 'Album List',
+                            icon: 'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album/list'
                         },
                         {
-                            label:'Album Card',
-                            icon:'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album-card'
+                            label: 'Album Card',
+                            icon: 'pi pi-fw pi-list',
+                            // url: 'http://localhost:8080/db/album/card'
                         }
                     ]
                 },
                 {
-                    label:'Disc',
-                    icon:'pi pi-fw pi-video',
-                    items:[
+                    label: 'Disc',
+                    icon: 'pi pi-fw iconfont icon-Video-Disc',
+                    items: [
                         {
-                            label:'Develop',
-                            icon:'pi pi-fw pi-wrench'
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
                         },
                         {
-                            label:'Develop',
-                            icon:'pi pi-fw pi-wrench'
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
                         }
                     ]
                 },
                 {
-                    label:'Book',
-                    icon:'pi pi-fw pi-book',
-                    items:[
+                    label: 'Book',
+                    icon: 'pi pi-fw pi-book',
+                    items: [
                         {
-                            label:'Book List',
-                            icon:'pi pi-fw pi-book'
+                            label: 'Book List',
+                            icon: 'pi pi-fw pi-book'
                         },
                         {
-                            label:'Develop',
-                            icon:'pi pi-fw pi-wrench'
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
                         }
                     ]
-                },
-                {
-                    label:'Users',
-                    icon:'pi pi-fw pi-user',
-                    items:[
-                        {
-                            label:'New',
-                            icon:'pi pi-fw pi-user-plus',
-                        },
-                        {
-                            label:'Delete',
-                            icon:'pi pi-fw pi-user-minus',
-                        },
-                        {
-                            label:'Search',
-                            icon:'pi pi-fw pi-users',
-                            items:[
-                                {
-                                    label:'Filter',
-                                    icon:'pi pi-fw pi-filter',
-                                    items:[
-                                        {
-                                            label:'Print',
-                                            icon:'pi pi-fw pi-print'
-                                        }
-                                    ]
-                                },
-                                {
-                                    icon:'pi pi-fw pi-bars',
-                                    label:'List'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    label:'Quit',
-                    icon:'pi pi-fw pi-power-off',
-                    url:'http://localhost:8080/logout'
                 }
             ]);
 
-            return { goUrl, navbarItems, user }
+            return { goUrl, navbarItems }
         },
         components: {
             "p-button": primevue.button,

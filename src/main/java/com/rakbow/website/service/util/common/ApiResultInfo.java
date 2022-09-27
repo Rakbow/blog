@@ -23,4 +23,10 @@ public class ApiResultInfo {
     public static final String USER_ARE_INACTIVATED = "该账号未激活!";
     public static final String INCORRECT_PASSWORD = "密码不正确!";
     //endregion
+
+    //region 权限相关
+    public static final String NOT_LOGIN = "未登录!";
+    public static final String NOT_AUTHORITY = "当前用户无权限!";
+    public static final String NOT_AUTHORITY_DENIED = "当前用户无权限访问此功能！";
+    //endregion
 }

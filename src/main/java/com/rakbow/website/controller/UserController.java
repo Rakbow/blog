@@ -1,6 +1,5 @@
 package com.rakbow.website.controller;
 
-import com.rakbow.website.annotation.LoginRequired;
 import com.rakbow.website.service.util.common.ApiResult;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
@@ -52,14 +51,12 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
-    @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getUserSettingPage() {
         return "/site/setting";
     }
 
     //更新用户头像
-    @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {

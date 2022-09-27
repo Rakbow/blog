@@ -1,11 +1,14 @@
 package com.rakbow.website.controller;
 
+import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Tag;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.SeriesService;
 import com.rakbow.website.service.TagService;
 import com.rakbow.website.service.util.AlbumUtil;
+import com.rakbow.website.service.util.common.ApiResult;
+import com.rakbow.website.service.util.common.ApiResultInfo;
 import com.rakbow.website.service.util.common.HostHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
@@ -47,31 +51,16 @@ public class HomeController {
 
     //获取首页
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public String getIndex(Model model) {
-        model.addAttribute("user", hostHolder.getUser());
+    public String getIndexPage() {
         return "/index";
     }
 
-    @RequestMapping(path = "/db/album-list", method = RequestMethod.GET)
-    public String getAlbumList(Model model) {
-        model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
-        model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
-        model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        return "/album-list";
-    }
-
-
-    @RequestMapping(path = "/db/album-card", method = RequestMethod.GET)
-    public String getAlbumCard(Model model) {
-        List<Tag> albumTags = albumTagService.getAll();
-        model.addAttribute("albumTags", albumTags);
-        return "/album-card";
-    }
-
-    @RequestMapping(path = "/test", method = RequestMethod.GET)
-    public String getTestPage(Model model) {
-        return "site/test";
+    //获取在线数据库首页
+    @RequestMapping(path = "/db", method = RequestMethod.GET)
+    public ModelAndView getDatabasePage() {
+        ModelAndView view = new ModelAndView();
+        view.setViewName("/database");
+        return view;
     }
 
     //获取图像
@@ -101,5 +90,12 @@ public class HomeController {
     @RequestMapping(path = "/error", method = RequestMethod.GET)
     public String getErrorPage(){
         return "/error/500";
+    }
+
+    //权限不足时
+    @RequestMapping(path = "/denied", method = RequestMethod.GET)
+    public String getDeniedPage(Model model) {
+        model.addAttribute("errorMessage", ApiResultInfo.NOT_AUTHORITY_DENIED);
+        return "/error/404";
     }
 }

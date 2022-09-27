@@ -1,7 +1,12 @@
-var navbarItems = [
+const navbarItems = [
+    {
+        label: 'Home',
+        icon: 'pi pi-fw pi-home',
+        url: "http://localhost:8080"
+    },
     {
         label: 'Album',
-        icon: 'pi pi-fw pi-list',
+        icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
         items: [
             {
                 label: 'Album List',
@@ -17,7 +22,7 @@ var navbarItems = [
     },
     {
         label: 'Disc',
-        icon: 'pi pi-fw pi-video',
+        icon: 'pi pi-fw iconfont icon-Video-Disc',
         items: [
             {
                 label: 'Develop',
@@ -48,12 +53,9 @@ var navbarItems = [
         icon: 'pi pi-fw pi-user',
         items: [
             {
-                label: 'New',
-                icon: 'pi pi-fw pi-user-plus',
-            },
-            {
-                label: 'Delete',
-                icon: 'pi pi-fw pi-user-minus',
+                label: 'Quit',
+                icon: 'pi pi-fw pi-power-off',
+                url: "http://localhost:8080/logout",
             },
             {
                 label: 'Search',
@@ -76,9 +78,5 @@ var navbarItems = [
                 ]
             }
         ]
-    },
-    {
-        label: 'Quit',
-        icon: 'pi pi-fw pi-power-off'
     }
 ];

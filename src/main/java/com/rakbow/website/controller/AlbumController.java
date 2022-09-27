@@ -3,10 +3,11 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.annotation.LoginRequired;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Album;
 // import com.rakbow.website.service.ElasticsearchService;
+import com.rakbow.website.entity.Tag;
+import com.rakbow.website.service.SeriesService;
 import com.rakbow.website.service.util.AlbumUtil;
 import com.rakbow.website.service.util.common.ApiResult;
 import com.rakbow.website.service.AlbumService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -46,17 +48,20 @@ import java.util.List;
 @RequestMapping("/db/album")
 public class AlbumController {
 
+    //region 引入实例
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private AlbumService albumService;
+    @Autowired
+    private SeriesService seriesService;
     // @Autowired
     // private ElasticsearchService elasticsearchService;
     @Autowired
     private TagService tagService;
     @Value("${website.path.upload}")
     private String uploadPath;
-
     @Value("${website.path.img}")
     private String imgPath;
     @Value("${website.path.domain}")
@@ -66,6 +71,48 @@ public class AlbumController {
 
     @Autowired
     private HostHolder hostHolder;
+    //endregion
+
+    //region 获取页面
+
+    @RequestMapping(path = "/list", method = RequestMethod.GET)
+    public ModelAndView getAlbumList(Model model) {
+        ModelAndView view = new ModelAndView();
+        model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
+        model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
+        model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        view.setViewName("/album-list");
+        return view;
+    }
+
+
+    // @RequestMapping(path = "/card", method = RequestMethod.GET)
+    // public String getAlbumCard(Model model) {
+    //     List<Tag> albumTags = albumTagService.getAll();
+    //     model.addAttribute("albumTags", albumTags);
+    //     return "/album-card";
+    // }
+
+    //获取单个专辑详细信息页面
+    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
+        if (albumService.findAlbumById(albumId) == null) {
+            model.addAttribute("errorMessage", String.format(ApiResultInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
+            return "/error/404";
+        }
+        model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
+        model.addAttribute("user", hostHolder.getUser());
+        model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
+        model.addAttribute("album", albumService.album2Json(albumService.findAlbumById(albumId)));
+        //获取相关专辑
+        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
+        return "/album-detail";
+    }
+
+    //endregion
+
+    //region 增删改查
 
     //获得所有专辑
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
@@ -100,22 +147,6 @@ public class AlbumController {
             res.message = ex.getMessage();
             return JSON.toJSONString(res);
         }
-    }
-
-    //获取单个专辑详细信息页面
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
-        if (albumService.findAlbumById(albumId) == null) {
-            model.addAttribute("errorMessage", String.format(ApiResultInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
-            return "/error/404";
-        }
-        model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
-        model.addAttribute("user", hostHolder.getUser());
-        model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
-        model.addAttribute("album", albumService.album2Json(albumService.findAlbumById(albumId)));
-        //获取相关专辑
-        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
-        return "/album-detail";
     }
 
     //新增专辑
@@ -231,10 +262,12 @@ public class AlbumController {
         return tmp;
     }
 
+    //endregion
+
     //region 新增图片、Artists和音轨信息等
     //新增专辑图片
-    @RequestMapping(path = "/upload", method = RequestMethod.POST)
-    public String uploadAlbumImageSet(MultipartFile[] images, int albumId, String[] imageName, Model model) {
+    @RequestMapping(path = "/updateAlbumImages", method = RequestMethod.POST)
+    public String uploadAlbumImages(MultipartFile[] images, int albumId, String[] imageName, Model model) {
         if (images.length == 0 || images == null) {
             model.addAttribute("error", "您还没有选择图片!");
             return null;
@@ -280,7 +313,7 @@ public class AlbumController {
         return "redirect:/index";
     }
 
-    //新增专辑Artists
+    //更新专辑音乐创作相关Artists
     @RequestMapping(path = "/updateAlbumArtists", method = RequestMethod.POST)
     @ResponseBody
     public String updateAlbumArtists(@RequestBody String json) {
@@ -302,6 +335,7 @@ public class AlbumController {
         }
     }
 
+    //更新专辑音轨信息TrackInfo
     @RequestMapping(path = "/updateAlbumTrackInfo", method = RequestMethod.POST)
     @ResponseBody
     public String updateAlbumTrackInfo(@RequestBody String json){
