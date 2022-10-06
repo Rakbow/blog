@@ -4,7 +4,7 @@ import com.rakbow.website.data.ProductClass;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.SeriesService;
-import com.rakbow.website.service.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

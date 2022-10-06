@@ -1,6 +1,6 @@
 package com.rakbow.website;
 
-import com.rakbow.website.service.util.MailClient;
+import com.rakbow.website.util.MailClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

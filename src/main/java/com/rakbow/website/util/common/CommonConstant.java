@@ -1,4 +1,4 @@
-package com.rakbow.website.service.util.common;
+package com.rakbow.website.util.common;
 
 /**
  * @Project_name: website

@@ -6,14 +6,15 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Album;
 // import com.rakbow.website.service.ElasticsearchService;
-import com.rakbow.website.entity.Tag;
 import com.rakbow.website.service.SeriesService;
-import com.rakbow.website.service.util.AlbumUtil;
-import com.rakbow.website.service.util.common.ApiResult;
+import com.rakbow.website.service.UserService;
+import com.rakbow.website.util.AlbumUtil;
+import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.TagService;
-import com.rakbow.website.service.util.common.ApiResultInfo;
-import com.rakbow.website.service.util.common.HostHolder;
+import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +35,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -48,12 +51,14 @@ import java.util.List;
 @RequestMapping("/db/album")
 public class AlbumController {
 
-    //region 引入实例
+    //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private AlbumService albumService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private SeriesService seriesService;
     // @Autowired
@@ -73,7 +78,7 @@ public class AlbumController {
     private HostHolder hostHolder;
     //endregion
 
-    //region 获取页面
+    //region ------获取页面------
 
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getAlbumList(Model model) {
@@ -98,7 +103,7 @@ public class AlbumController {
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
         if (albumService.findAlbumById(albumId) == null) {
-            model.addAttribute("errorMessage", String.format(ApiResultInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
             return "/error/404";
         }
         model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
@@ -112,7 +117,7 @@ public class AlbumController {
 
     //endregion
 
-    //region 增删改查
+    //region ------增删改查------
 
     //获得所有专辑
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
@@ -136,7 +141,7 @@ public class AlbumController {
         try {
             int id = JSONObject.parseObject(json).getInteger("id");
             if (albumService.findAlbumById(id) == null) {
-                res.setErrorMessage(String.format(ApiResultInfo.GET_DATA_FAILED, EntityType.ALBUM.getName()));
+                res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED, EntityType.ALBUM.getName()));
                 return JSON.toJSONString(res);
             }
             res.data = JSON.toJSONString(albumService.album2Json(albumService.findAlbumById(id)));
@@ -164,7 +169,7 @@ public class AlbumController {
             //将新增的专辑保存到Elasticsearch服务器索引中
             // elasticsearchService.saveAlbum(album);
 
-            res.message = String.format(ApiResultInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getName());
+            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getName());
             return JSON.toJSONString(res);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
@@ -185,7 +190,7 @@ public class AlbumController {
                 //从Elasticsearch服务器索引中删除专辑
                 // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
             }
-            res.message = String.format(ApiResultInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getName());
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getName());
             return JSON.toJSONString(res);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
@@ -203,8 +208,8 @@ public class AlbumController {
             Album album = albumService.json2Album(param);
             album.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-            if (StringUtils.isBlank(album.getImgUrl())) {
-                album.setImgUrl("[]");
+            if (StringUtils.isBlank(album.getImages())) {
+                album.setImages("[]");
             }
             if (StringUtils.isBlank(album.getArtists())) {
                 album.setArtists("[]");
@@ -213,7 +218,7 @@ public class AlbumController {
                 album.setTrackInfo("{}");
             }
             album.setTrackInfo(albumService.findAlbumById(album.getId()).getTrackInfo());
-            album.setImgUrl(albumService.findAlbumById(album.getId()).getImgUrl());
+            album.setImages(albumService.findAlbumById(album.getId()).getImages());
             album.setArtists(albumService.findAlbumById(album.getId()).getArtists());
 
             albumService.updateAlbum(album.getId(), album);
@@ -221,7 +226,7 @@ public class AlbumController {
             //将新增的专辑保存到Elasticsearch服务器索引中
             // elasticsearchService.saveAlbum(album);
 
-            res.message = String.format(ApiResultInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getName());
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getName());
             return JSON.toJSONString(res);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
@@ -265,72 +270,109 @@ public class AlbumController {
     //endregion
 
     //region 新增图片、Artists和音轨信息等
+
     //新增专辑图片
     @RequestMapping(path = "/updateAlbumImages", method = RequestMethod.POST)
-    public String uploadAlbumImages(MultipartFile[] images, int albumId, String[] imageName, Model model) {
-        if (images.length == 0 || images == null) {
-            model.addAttribute("error", "您还没有选择图片!");
-            return null;
-        }
-        //创建存储图片的文件夹
-        Path albumImgPath = Paths.get(imgPath + "/album/" + albumId);
+    @ResponseBody
+    // public String uploadAlbumImages(MultipartFile[] images, int id, String[] imageName, HttpServletRequest request) {
+    public String uploadAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
 
-        //存储图片链接的json
-        JSONArray imgJson = new JSONArray();
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
 
-        if (Files.notExists(albumImgPath)) {
-            try {
-                Files.createDirectory(albumImgPath);
-            } catch (Exception e) {
-                e.printStackTrace();
+                if (images.length == 0 || images == null) {
+                    res.setErrorMessage(ApiInfo.INPUT_IMAGE_EMPTY);
+                    return JSON.toJSONString(res);
+                }
+
+                JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
+
+                for (Object o : imageInfosTmp) {
+                    JSONObject jo = (JSONObject) o;
+                    System.out.println(jo.getString("nameZh"));
+                }
+
+                //创建存储专辑图片的文件夹
+                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
+
+                //存储图片链接的json
+                JSONArray imgJson = new JSONArray();
+
+                if (Files.notExists(albumImgPath)) {
+                    try {
+                        Files.createDirectory(albumImgPath);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < images.length; i++) {
+                    //获取json中的jo对象
+                    JSONObject imageInfo = imageInfosTmp.getJSONObject(i);
+
+                    String fileName = images[i].getOriginalFilename();
+                    String suffix = fileName.substring(fileName.lastIndexOf("."));
+                    if (StringUtils.isBlank(suffix)) {
+                        res.setErrorMessage(ApiInfo.INCORRECT_FILE_FORMAT);
+                        return JSON.toJSONString(res);
+                    }
+                    fileName = imageInfo.getString("nameEn") + suffix;
+                    // 确定文件存放的路径
+                    File dest = new File(albumImgPath + "/" + fileName);
+                    try {
+                        // 存储文件
+                        images[i].transferTo(dest);
+                    } catch (IOException e) {
+                        logger.error("上传文件失败: " + e.getMessage());
+                        // throw new RuntimeException("上传文件失败,服务器发生异常!", e);
+                        res.setErrorMessage(ApiInfo.UPLOAD_EXCEPTION);
+                        return JSON.toJSONString(res);
+                    }
+
+                    //将数据存至数据库
+                    JSONObject jo = new JSONObject();
+                    jo.put("url", "/db/album/" + id + "/" + fileName);
+                    jo.put("nameEn", imageInfo.getString("nameEn"));
+                    jo.put("nameZh", imageInfo.getString("nameZh"));
+                    jo.put("type", imageInfo.getString("type"));
+                    jo.put("description", imageInfo.getString("description"));
+                    imgJson.add(jo);
+                }
+                albumService.updateAlbumImages(id, imgJson.toJSONString());
+                res.message = ApiInfo.UPDATE_ALBUM_IMAGES_SUCCESS;
+
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
             }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
         }
-
-        for (int i = 0; i < images.length; i++) {
-            String fileName = images[i].getOriginalFilename();
-            String suffix = fileName.substring(fileName.lastIndexOf("."));
-            if (StringUtils.isBlank(suffix)) {
-                model.addAttribute("error", "文件的格式不正确!");
-                return null;
-            }
-            fileName = imageName[i] + suffix;
-            // 确定文件存放的路径
-            File dest = new File(albumImgPath + "/" + fileName);
-            try {
-                // 存储文件
-                images[i].transferTo(dest);
-            } catch (IOException e) {
-                logger.error("上传文件失败: " + e.getMessage());
-                throw new RuntimeException("上传文件失败,服务器发生异常!", e);
-            }
-
-            JSONObject jo = new JSONObject();
-            jo.put("name", fileName.substring(0, fileName.lastIndexOf(".")));
-            jo.put("url", contextPath + "/album/" + albumId + "/" + fileName);
-            imgJson.add(jo);
-        }
-        albumService.updateAlbumImgUrl(albumId, imgJson.toJSONString());
-        return "redirect:/index";
+        return JSON.toJSONString(res);
     }
 
     //更新专辑音乐创作相关Artists
     @RequestMapping(path = "/updateAlbumArtists", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbumArtists(@RequestBody String json) {
+    public String updateAlbumArtists(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String artists = JSON.parseObject(json).get("artists").toString();
-            if (StringUtils.isBlank(artists)) {
-                res.state = 0;
-                res.message = "输入信息为空";
-                return JSON.toJSONString(res);
+            if (userService.checkAuthority(request).state) {
+                System.out.println(json);
+                int id = JSON.parseObject(json).getInteger("id");
+                String artists = JSON.parseObject(json).getJSONArray("artists").toString();
+                if (StringUtils.isBlank(artists)) {
+                    res.state = 0;
+                    res.message = "输入信息为空";
+                    return JSON.toJSONString(res);
+                }
+                albumService.updateAlbumArtists(id, artists);
+                res.message = ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
             }
-            albumService.updateAlbumArtists(id, artists);
             return JSON.toJSONString(res);
         } catch (Exception e) {
-            res.state = 0;
-            res.message = e.getMessage();
+            res.setErrorMessage(e);
             return JSON.toJSONString(res);
         }
     }
@@ -338,23 +380,71 @@ public class AlbumController {
     //更新专辑音轨信息TrackInfo
     @RequestMapping(path = "/updateAlbumTrackInfo", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbumTrackInfo(@RequestBody String json){
+    public String updateAlbumTrackInfo(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String discList = JSON.parseObject(json).get("discList").toString();
-            if (StringUtils.isBlank(discList)) {
-                res.state = 0;
-                res.message = "输入信息为空";
-                return JSON.toJSONString(res);
+            System.out.println(json);
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String discList = JSON.parseObject(json).get("discList").toString();
+                if (StringUtils.isBlank(discList)) {
+                    res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+                    return JSON.toJSONString(res);
+                }
+                albumService.updateAlbumTrackInfo(id, discList);
+                res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
             }
-            albumService.updateAlbumTrackInfo(id, discList);
             return JSON.toJSONString(res);
         } catch (Exception e) {
-            res.setErrorMessage(e.getMessage());
-            System.out.println(e.getMessage());
+            res.setErrorMessage(e);
             return JSON.toJSONString(res);
         }
     }
+
+    //更新专辑描述信息
+    @RequestMapping(path = "/updateAlbumDescription", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateAlbumDescription(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String description = JSON.parseObject(json).get("description").toString();
+                System.out.println(description);
+                albumService.updateAlbumDescription(id, description);
+                res.message = ApiInfo.UPDATE_ALBUM_DESCRIPTION_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
+    }
+
+    //更新专辑特典信息
+    @RequestMapping(path = "/updateAlbumBonus", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateAlbumBonus(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String bonus = JSON.parseObject(json).get("bonus").toString();
+                albumService.updateAlbumBonus(id, bonus);
+                res.message = ApiInfo.UPDATE_ALBUM_BONUS_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
+    }
+
     //endregion
 }

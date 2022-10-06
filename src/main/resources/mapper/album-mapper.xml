@@ -7,14 +7,14 @@
     <sql id="selectFields">
         id, catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format,
         publish_price, album_format, media_format, label, publisher, distributor, copyright,
-        has_bonus, bonus, description, remark, series_id, product_id, artists, img_url, track_info,
+        has_bonus, bonus, description, remark, series_id, product_id, artists, images, track_info,
         added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format, publish_price,
         album_format, media_format, label, publisher, distributor, copyright, has_bonus, bonus, description,
-        remark, series_id, product_id, artists, img_url, track_info, added_time, edited_time, _s
+        remark, series_id, product_id, artists, images, track_info, added_time, edited_time, _s
     </sql>
 
 
@@ -68,7 +68,7 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{nameJp}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{publishPrice}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
-        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId}, #{artists}, #{imgUrl}, #{trackInfo},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId}, #{artists}, #{images}, #{trackInfo},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
@@ -80,7 +80,7 @@
         publish_price = #{album.publishPrice}, album_format = #{album.albumFormat}, media_format = #{album.mediaFormat},
         label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright = #{album.copyright},
         has_bonus = #{album.hasBonus}, bonus = #{album.bonus}, description = #{album.description}, remark = #{album.remark},
-        series_id = #{album.seriesId}, product_id = #{album.productId}, artists = #{album.artists}, img_url = #{album.imgUrl},
+        series_id = #{album.seriesId}, product_id = #{album.productId}, artists = #{album.artists}, images = #{album.images},
         track_info = #{album.trackInfo}, edited_time=#{album.editedTime}, _s=#{album._s}
         where id = #{album.id}
     </update>
@@ -91,10 +91,10 @@
         where id = #{id}
     </delete>
 
-    <update id="updateAlbumImgUrl" keyProperty="id">
+    <update id="updateAlbumImages" keyProperty="id">
         update album
         set
-        img_url = #{imgUrl}
+        images = #{images}
         where id = #{id}
     </update>
 
@@ -109,6 +109,20 @@
         update album
         set
         track_info = #{trackInfo}
+        where id = #{id}
+    </update>
+
+    <update id="updateAlbumDescription" keyProperty="id">
+        update album
+        set
+        description = #{description}
+        where id = #{id}
+    </update>
+
+    <update id="updateAlbumBonus " keyProperty="id">
+        update album
+        set
+        bonus = #{bonus}
         where id = #{id}
     </update>
 </mapper>

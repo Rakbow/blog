@@ -1,4 +1,4 @@
-package com.rakbow.website.service.util;
+package com.rakbow.website.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

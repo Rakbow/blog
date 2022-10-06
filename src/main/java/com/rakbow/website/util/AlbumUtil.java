@@ -1,4 +1,4 @@
-package com.rakbow.website.service.util;
+package com.rakbow.website.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.album.AlbumFormat;

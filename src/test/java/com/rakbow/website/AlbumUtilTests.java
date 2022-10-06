@@ -6,8 +6,8 @@ import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.service.AlbumService;
-import com.rakbow.website.service.util.AlbumUtil;
-import com.rakbow.website.service.util.common.CommonUtil;
+import com.rakbow.website.util.AlbumUtil;
+import com.rakbow.website.util.common.CommonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -92,9 +89,9 @@ public class AlbumUtilTests {
     @Test
     public void test4(){
         List<Album> albums = albumService.getAll();
-        albums.stream().forEach(album -> album.setImgUrl(album.getImgUrl().replaceAll("/album","/db/album")));
+        albums.stream().forEach(album -> album.setImages(album.getImages().replaceAll("/album","/db/album")));
         // albums.stream().forEach(i -> System.out.println(i.getImgUrl()));
-        albums.stream().forEach(album -> albumService.updateAlbumImgUrl(album.getId(), album.getImgUrl()));
+        albums.stream().forEach(album -> albumService.updateAlbumImages(album.getId(), album.getImages()));
     }
 
     @Test
@@ -129,5 +126,10 @@ public class AlbumUtilTests {
         System.out.println(CommonUtil.countTotalTime(times));
     }
 
+    @Test
+    public void test8(){
+        Arrays.stream(albumService.findAlbumById(100).getProductId().split(",")).forEach(i -> System.out.println(i));
+        // albumService.getRelatedAlbums(100).stream().forEach(i -> System.out.println(i));
+    }
 
 }

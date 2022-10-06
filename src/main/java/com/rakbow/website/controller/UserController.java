@@ -1,10 +1,13 @@
 package com.rakbow.website.controller;
 
-import com.rakbow.website.service.util.common.ApiResult;
+import com.rakbow.website.entity.LoginTicket;
+import com.rakbow.website.util.CookieUtil;
+import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.util.common.CommonUtil;
-import com.rakbow.website.service.util.common.HostHolder;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
 /**
  * @Project_name: website
@@ -115,19 +120,31 @@ public class UserController {
         }
     }
 
-    @RequestMapping(path = "/isRoot", method = RequestMethod.GET)
+    //执行操作时，检测用户权限
+    @RequestMapping(path = "/checkAuthority", method = RequestMethod.GET)
     @ResponseBody
-    public ApiResult isRoot() {
+    public ApiResult checkAuthority(HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        if (hostHolder.getUser() != null) {
-            if (hostHolder.getUser().getType() != 1) {
-                res.state = 0;
-                res.message = "当前用户无权限！";
+        // 从cookie中获取凭证
+        String ticket = CookieUtil.getValue(request, "ticket");
+
+        if (ticket != null) {
+            // 查询凭证
+            LoginTicket loginTicket = userService.findLoginTicket(ticket);
+            // 检查凭证是否有效
+            if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
+                // 根据凭证查询用户
+                User user = userService.findUserById(loginTicket.getUserId());
+                if (user.getType() == 0) {
+                    res.setErrorMessage(ApiInfo.NOT_AUTHORITY);
+                }
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_LOGIN);
             }
         } else {
-            res.state = 0;
-            res.message = "未登录！";
+            res.setErrorMessage(ApiInfo.NOT_LOGIN);
         }
+
         return res;
     }
 

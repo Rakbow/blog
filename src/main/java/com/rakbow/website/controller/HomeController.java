@@ -1,15 +1,11 @@
 package com.rakbow.website.controller;
 
-import com.rakbow.website.data.EntityType;
-import com.rakbow.website.entity.Tag;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.SeriesService;
 import com.rakbow.website.service.TagService;
-import com.rakbow.website.service.util.AlbumUtil;
-import com.rakbow.website.service.util.common.ApiResult;
-import com.rakbow.website.service.util.common.ApiResultInfo;
-import com.rakbow.website.service.util.common.HostHolder;
+import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.HostHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * @Project_name: website
@@ -95,7 +90,7 @@ public class HomeController {
     //权限不足时
     @RequestMapping(path = "/denied", method = RequestMethod.GET)
     public String getDeniedPage(Model model) {
-        model.addAttribute("errorMessage", ApiResultInfo.NOT_AUTHORITY_DENIED);
+        model.addAttribute("errorMessage", ApiInfo.NOT_AUTHORITY_DENIED);
         return "/error/404";
     }
 }

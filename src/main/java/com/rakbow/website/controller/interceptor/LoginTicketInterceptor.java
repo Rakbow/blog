@@ -3,8 +3,8 @@ package com.rakbow.website.controller.interceptor;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.util.CookieUtil;
-import com.rakbow.website.service.util.common.HostHolder;
+import com.rakbow.website.util.CookieUtil;
+import com.rakbow.website.util.common.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -68,10 +68,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
         User user = hostHolder.getUser();
         if (user != null && modelAndView != null) {
             modelAndView.addObject("loginUser", user);
-            System.out.println(String.format("当前登录用户：%s，当前凭证状态：%s", user.getUsername(),
-                    userService.findLoginTicket(CookieUtil.getValue(request, "ticket")).getStatus()));
-        } else if (user == null) {
-            System.out.println("当前已登出！");
         }
     }
 

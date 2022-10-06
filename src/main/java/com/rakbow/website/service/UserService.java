@@ -4,10 +4,12 @@ import com.rakbow.website.dao.LoginTicketMapper;
 import com.rakbow.website.dao.UserMapper;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.service.util.common.ApiResultInfo;
-import com.rakbow.website.service.util.common.CommonConstant;
-import com.rakbow.website.service.util.common.CommonUtil;
-import com.rakbow.website.service.util.MailClient;
+import com.rakbow.website.util.CookieUtil;
+import com.rakbow.website.util.common.ActionResult;
+import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonConstant;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -122,31 +125,31 @@ public class UserService{
         Map<String, String> map = new HashMap<>();
         // 空值处理
         if (StringUtils.isBlank(username)) {
-            map.put("error", ApiResultInfo.USERNAME_ARE_EMPTY);
+            map.put("error", ApiInfo.USERNAME_ARE_EMPTY);
             return map;
         }
         if (StringUtils.isBlank(password)) {
-            map.put("error", ApiResultInfo.PASSWORD_ARE_EMPTY);
+            map.put("error", ApiInfo.PASSWORD_ARE_EMPTY);
             return map;
         }
 
         // 验证账号
         User user = userMapper.selectUserByUsername(username);
         if (user == null) {
-            map.put("error", ApiResultInfo.USER_NOT_EXIST);
+            map.put("error", ApiInfo.USER_NOT_EXIST);
             return map;
         }
 
         // 验证状态
         if (user.getStatus() == 0) {
-            map.put("error", ApiResultInfo.USER_ARE_INACTIVATED);
+            map.put("error", ApiInfo.USER_ARE_INACTIVATED);
             return map;
         }
 
         // 验证密码
         password = CommonUtil.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
-            map.put("error", ApiResultInfo.INCORRECT_PASSWORD);
+            map.put("error", ApiInfo.INCORRECT_PASSWORD);
             return map;
         }
 
@@ -187,6 +190,30 @@ public class UserService{
             }
         });
         return list;
+    }
+
+    public ActionResult checkAuthority(HttpServletRequest request){
+        ActionResult res = new ActionResult();
+        // 从cookie中获取凭证
+        String ticket = CookieUtil.getValue(request, "ticket");
+
+        if (ticket != null) {
+            // 查询凭证
+            LoginTicket loginTicket = findLoginTicket(ticket);
+            // 检查凭证是否有效
+            if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
+                // 根据凭证查询用户
+                User user = findUserById(loginTicket.getUserId());
+                if (user.getType() == 0) {
+                    res.setErrorMessage(ApiInfo.NOT_AUTHORITY);
+                }
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_LOGIN);
+            }
+        } else {
+            res.setErrorMessage(ApiInfo.NOT_LOGIN);
+        }
+        return res;
     }
 
 }

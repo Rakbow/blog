@@ -2,7 +2,7 @@ package com.rakbow.website.service;
 
 import com.rakbow.website.dao.MessageMapper;
 import com.rakbow.website.entity.Message;
-import com.rakbow.website.service.util.common.SensitiveFilter;
+import com.rakbow.website.util.common.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;

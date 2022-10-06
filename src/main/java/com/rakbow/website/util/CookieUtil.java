@@ -1,4 +1,4 @@
-package com.rakbow.website.service.util;
+package com.rakbow.website.util;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

@@ -2,6 +2,7 @@ package com.rakbow.website.dao;
 
 import com.rakbow.website.entity.Album;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.kafka.clients.admin.ConsumerGroupListing;
 
 import java.util.List;
 
@@ -39,11 +40,17 @@ public interface AlbumMapper {
     int selectAlbumRows();
 
     //更新专辑图片
-    int updateAlbumImgUrl(int id, String imgUrl);
+    int updateAlbumImages(int id, String images);
 
     //更新专辑Artists
-    int updateAlbumArtists(int id, String credits);
+    int updateAlbumArtists(int id, String artists);
 
     //更新音轨信息
     int updateAlbumTrackInfo(int id, String trackInfo);
+
+    //更新描述信息
+    int updateAlbumDescription(int id, String description);
+
+    //更新特典信息
+    int updateAlbumBonus(int id, String bonus);
 }

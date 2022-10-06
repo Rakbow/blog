@@ -1,4 +1,4 @@
-package com.rakbow.website.service.util.common;
+package com.rakbow.website.util.common;
 
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;

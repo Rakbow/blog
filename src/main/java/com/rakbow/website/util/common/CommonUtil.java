@@ -1,10 +1,17 @@
-package com.rakbow.website.service.util.common;
+package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.entity.LoginTicket;
+import com.rakbow.website.entity.User;
+import com.rakbow.website.service.UserService;
+import com.rakbow.website.util.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.PushBuilder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

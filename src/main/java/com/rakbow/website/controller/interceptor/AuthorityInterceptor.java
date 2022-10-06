@@ -1,9 +1,8 @@
 package com.rakbow.website.controller.interceptor;
 
-import com.rakbow.website.annotation.LoginRequired;
+import com.rakbow.website.annotation.AdminAuthorityRequired;
 import com.rakbow.website.util.common.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -14,11 +13,10 @@ import java.lang.reflect.Method;
 /**
  * @Project_name: website
  * @Author: Rakbow
- * @Create: 2022-08-17 23:30
+ * @Create: 2022-09-30 9:51
  * @Description:
  */
-@Component
-public class LoginRequiredInterceptor implements HandlerInterceptor {
+public class AuthorityInterceptor implements HandlerInterceptor {
 
     @Autowired
     private HostHolder hostHolder;
@@ -28,13 +26,12 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
-            LoginRequired loginRequired = method.getAnnotation(LoginRequired.class);
-            if (loginRequired != null && hostHolder.getUser() == null) {
-                response.sendRedirect(request.getContextPath() + "/login");
+            AdminAuthorityRequired adminAuthorityRequired = method.getAnnotation(AdminAuthorityRequired.class);
+            if (adminAuthorityRequired != null && hostHolder.getUser() == null) {
+                // response.;
                 return false;
             }
         }
         return true;
     }
-
 }

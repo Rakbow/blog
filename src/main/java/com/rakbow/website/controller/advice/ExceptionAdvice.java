@@ -1,7 +1,7 @@
 package com.rakbow.website.controller.advice;
 
 import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.service.util.common.ApiResult;
+import com.rakbow.website.util.common.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

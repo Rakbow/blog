@@ -1,4 +1,4 @@
-package com.rakbow.website.service.util.common;
+package com.rakbow.website.util.common;
 
 /**
  * @Project_name: website
@@ -26,6 +26,11 @@ public class ApiResult {
     public void setErrorMessage(String error) {
         this.state = 0;
         this.message = error;
+    }
+
+    public void setErrorMessage(Exception e) {
+        this.state = 0;
+        this.message = e.getMessage();
     }
 
 }

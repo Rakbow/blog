@@ -3,7 +3,7 @@ package com.rakbow.website;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

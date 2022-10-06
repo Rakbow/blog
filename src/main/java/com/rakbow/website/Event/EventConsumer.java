@@ -4,13 +4,12 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.entity.Event;
 import com.rakbow.website.entity.Message;
 import com.rakbow.website.service.MessageService;
-import com.rakbow.website.service.util.common.CommonConstant;
+import com.rakbow.website.util.common.CommonConstant;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;

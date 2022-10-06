@@ -1,13 +1,10 @@
 package com.rakbow.website.controller;
 
-import com.alibaba.fastjson2.JSON;
 import com.google.code.kaptcha.Producer;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.util.common.ApiResult;
-import com.rakbow.website.service.util.common.ApiResultInfo;
-import com.rakbow.website.service.util.common.CommonConstant;
-import com.rakbow.website.service.util.common.HostHolder;
+import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
-import javax.print.DocFlavor;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -121,7 +117,7 @@ public class LoginController {
         // 检查验证码
         String kaptcha = (String) session.getAttribute("kaptcha");
         if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
-            model.addAttribute("error", ApiResultInfo.INCORRECT_VERIFY_CODE);
+            model.addAttribute("error", ApiInfo.INCORRECT_VERIFY_CODE);
             return "/site/login";
         }
 

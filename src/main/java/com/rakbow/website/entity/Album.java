@@ -57,7 +57,7 @@ public class Album {
     private String description;//描述
     private String remark;//备注
     private String artists;//staff
-    private String imgUrl;//图片列表（JSON字符串）
+    private String images;//图片列表（JSON字符串）
     private String trackInfo;//曲目列表（JSON字符串）
     @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
     @JSONField(format="yyyy/MM/dd HH:mm:ss")
@@ -90,7 +90,7 @@ public class Album {
         this.description = "";
         this.remark = "";
         this.artists = "[]";
-        this.imgUrl = "[]";
+        this.images = "[]";
         this.trackInfo = "{}";
         this.addedTime = null;
         this.editedTime = null;
@@ -274,12 +274,12 @@ public class Album {
         this.artists = credits;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getImages() {
+        return images;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void setImages(String images) {
+        this.images = images;
     }
 
     public String getTrackInfo() {
@@ -339,7 +339,7 @@ public class Album {
                 ", description='" + description + '\'' +
                 ", remark='" + remark + '\'' +
                 ", artists='" + artists + '\'' +
-                ", imgUrl='" + imgUrl + '\'' +
+                ", images='" + images + '\'' +
                 ", trackInfo='" + trackInfo + '\'' +
                 ", addedTime=" + addedTime +
                 ", editedTime=" + editedTime +
