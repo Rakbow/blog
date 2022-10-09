@@ -5,11 +5,11 @@
 <mapper namespace="com.rakbow.website.dao.SeriesMapper">
 
     <sql id="selectFields">
-        id, name_zh, name_jp, name_en, release_date, added_time, edited_time, description, remark
+        id, name_zh, name_jp, name_en, release_date, added_time, edited_time, description, remark, images
     </sql>
 
     <sql id="insertFields">
-        name_zh, name_jp, name_en, release_date, added_time, edited_time, description, remark
+        name_zh, name_jp, name_en, release_date, added_time, edited_time, description, remark, images
     </sql>
 
     <select id="selectSeriesById" resultType="Series">
@@ -28,14 +28,14 @@
 
     <insert id="insertSeries" parameterType="Series" keyProperty="id">
         insert into series (<include refid="insertFields"></include>)
-        values (#{nameZh}, #{nameJp}, #{nameEn}, #{releaseDate}, #{addedTime}, #{editedTime}, #{description}, #{remark})
+        values (#{nameZh}, #{nameJp}, #{nameEn}, #{releaseDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images})
     </insert>
 
     <update id="updateSeries" parameterType="Series" keyProperty="id">
         update series
         set
         name_zh = #{nameZh}, name_jp = #{nameJp}, name_en = #{nameEn}, release_date = #{releaseDate},
-        added_time = #{addedTime}, edited_time = #{editedTime}, description = #{description}, remark = #{remark}
+        added_time = #{addedTime}, edited_time = #{editedTime}, description = #{description}, remark = #{remark}, images = #{images}
         where id = #{id}
     </update>
 

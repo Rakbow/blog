@@ -81,14 +81,11 @@
     <div class="main">
         <div class="container">
             <div id="app">
-
                 <!-- 头部 -->
-                <header class="sticky-top" th:insert="~{header :: site_header}"></header>
-                <br><br>
-
+                <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
                 <p-toolbar>
                     <template #start>
-                        <p-button label="编辑图片" icon="pi pi-images" class="p-button-rounded mr-2"
+                        <p-button label="图片管理" icon="pi pi-images" class="p-button-rounded mr-2"
                                   @click="openImageEditDialog"></p-button>
                         <p-button label="编辑音乐制作" icon="pi pi-users" class="p-button-rounded mr-2"
                                   @click="openArtistEditDialog"></p-button>
@@ -114,7 +111,7 @@
                                 </div>
                             </template>
                             <div class="grid">
-                                <div class="ml-3" style="transform:translateY(20.7px);width: 250px; height: 250px">
+                                <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
                                     <img :src="album.cover.url" :alt="album.cover.name" id="coverart"/>
                                 </div>
                                 <table class="table-borderless table-sm ml-3">
@@ -154,6 +151,14 @@
                                         <td>
                                             {{album.publishPrice?album.publishPrice:"N/A"}} 日元(含税)
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <i class="pi iconfont icon-gift mr-1"
+                                               style="font-size: 1.3rem"></i>
+                                            <strong>特典</strong>
+                                        </td>
+                                        <td>{{(album.hasBonus=="1")?"有":"无"}}</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -269,14 +274,14 @@
                                     </tbody>
                                 </table>
                                 <p class="text-end">
-                                    Disc length <b>{{disc.disc_length}}</b>
+                                    碟片时长 <b>{{disc.disc_length}}</b>
                                 </p>
                             </div>
                             <div>
                                 <p class="text-end"
                                    v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
-                                    Total tracks <b>{{album.trackInfo.total_tracks}}</b> Total length
-                                    <b>{{album.trackInfo.total_length}}</b>
+                                    总曲目数 <b>{{album.trackInfo.total_tracks}}</b>
+                                    总时长 <b>{{album.trackInfo.total_length}}</b>
                                 </p>
                             </div>
                         </p-fieldset>
@@ -307,7 +312,8 @@
                                             :num-visible="5" container-style="width: 600px" :circular="true">
                                     <template #item="{item}">
                                         <div id="galleria-div">
-                                            <img :class="galleriaItemClass" :src="item.url" :alt="item.name" />
+                                            <img :class="galleriaItemClass" :src="item.url" :alt="item.name"
+                                                 :onload="initImageClass(item.url)"/>
                                         </div>
                                     </template>
                                     <template #caption="{item}">
@@ -321,8 +327,7 @@
                                     </template>
                                     <template #thumbnail="{item}">
                                         <div class="grid grid-nogutter justify-content-center">
-                                            <img id="galleria-item" :src="item.url" :alt="item.name" class="temp2"
-                                                 @click="initImageClass(item.url)"/>
+                                            <img id="galleria-item" :src="item.url" :alt="item.name" class="temp2"/>
                                         </div>
                                     </template>
                                 </p-galleria>
@@ -365,29 +370,31 @@
                             <div class="grid">
                                 <!-- <div style="width: 250px;"> -->
                                 <span class="smallfont">
-                                    <div class="album_infobit_small smallfont label" v-if="relatedAlbums.length != 0"
+                                    <div class="album_infobit_small smallfont label ml-0 grid" v-if="relatedAlbums.length != 0"
                                          v-for="relatedAlbum of relatedAlbums">
-                                        <div class="album_infobit_thumb">
-                                            <div :style="'background-image: url(' + relatedAlbum.images.url + ')'">
-                                                <a :href="'http://localhost:8080/blog/album/'+ relatedAlbum.id "
-                                                   :title="relatedAlbum.images.name"></a>
-                                            </div>
+                                        <div class="col-3 related-image-div mt-2">
+                                            <a :href="'http://localhost:8080/db/album/'+ relatedAlbum.id ">
+                                                <img id="related-image-img" :src="relatedAlbum.cover.url" style="border-radius: 20%;">
+                                            </a>
                                         </div>
-                                        <ul class="album_infobit_detail">
+                                        <div class="col-9">
+                                            <ul class="album_infobit_detail">
                                             <li>
                                                 <a class="albumtitle smallfont album-anime"
-                                                   :href="'http://localhost:8080/blog/album/'+ relatedAlbum.id ">
+                                                   :href="'http://localhost:8080/db/album/'+ relatedAlbum.id ">
                                                     <span class="albumtitle" lang="en" style="display:inline">
                                                         {{relatedAlbum.nameJp}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
-                                                <span
-                                                        class="catalog smallfont album-anime">{{relatedAlbum.catalogNo}}</span>
+                                                <span class="catalog smallfont album-anime">
+                                                    <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
+                                                </span>
                                             </li>
-                                            <li>{{relatedAlbum.relaseDate}}</li>
+
                                         </ul>
+                                        </div>
                                     </div>
                                 </span>
                                 <br>
@@ -417,13 +424,14 @@
                                     <i class="pi pi-chart-bar mr-2"></i><b>页面流量</b>
                                 </div>
                                 <div class="col-10 col-offset-1">
-                                    <i class="pi pi-eye mr-2"></i><b>访问数</b>1685
+                                    <i class="pi pi-eye mr-2"></i><b>访问数：</b>
+                                    <span class="text-center">{{visitNum}}</span>
                                 </div>
                             </div>
                         </p-panel>
                     </div>
                 </div>
-                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="编辑图片"
+                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="图片管理"
                           :modal="true">
                     <p-panel>
                         <p-fileupload
@@ -432,7 +440,7 @@
                                 accept="image/*"
                                 :auto="true"
                                 choose-label="上传图片"
-                                :max-file-size="1000000" :preview-width="100"
+                                :max-file-size="10000000" :preview-width="100"
                                 invalid-file-size-message="{0}大小已超过{1}"
                                 @uploader="onUpload"
                                 @select="selectFile">
@@ -481,10 +489,58 @@
                             </section>
                         </div>
                     </p-panel>
+                    <p-panel>
+                        <div class="grid" v-if="album.images.length != 0">
+                            <div class="col-4" v-for="image in album.images">
+                                <div class="grid">
+                                    <div class="edit-image-div">
+                                        <img id="edit-image-img" :src="image.url" :alt="image.nameZh"/>
+                                    </div>
+                                    <div class="col-12 mt-0 mb-0" align="center" style="width: 240px">
+                                        <table class="table table-sm table-hover table-striped">
+                                            <thead class="mt-0 mb-0">
+                                            <h6 class="mt-0">图片详情</h6>
+                                            </thead>
+                                            <tbody class="mt-0 mb-0">
+                                            <tr>
+                                                <th scope="row">图片路径</th>
+                                                <td>{{image.url}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">图片名（中）</th>
+                                                <td>{{image.nameZh}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">图片名（英）</th>
+                                                <td>{{image.nameEn}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">类型</th>
+                                                <td>{{image.type}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">描述</th>
+                                                <td>{{image.description}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-12 mt-0 mb-0" align="center">
+                                        <p-button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                                  @click="openDisplayImageSingleEdit(image)"></p-button>
+                                        <p-button icon="pi pi-times" class="p-button-rounded p-button-danger mr-2"
+                                                  @click="confirmDeleteSelectedImage(image)"></p-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <span>暂无图片</span>
+                        </div>
+                    </p-panel>
                 </p-dialog>
                 <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑音乐制作"
                           :modal="true">
-                    <!--                    <p-panel>-->
                     <div class="grid">
                         <div class="col-3">
                             <div class="p-inputgroup">
@@ -513,7 +569,6 @@
                             <div id="artistBox" v-html="artistHtml"></div>
                         </section>
                     </div>
-                    <!--                    </p-panel>-->
                     <template #footer>
                         <p-button label="提交更新" icon="pi pi-save" class="p-button-success mr-4"
                                   @click="submitArtist"></p-button>
@@ -604,6 +659,56 @@
                         <p-button label="save" icon="pi pi-save" @click="submitBonus" autofocus></p-button>
                     </template>
                 </p-dialog>
+                <p-dialog v-model:visible="deleteAlbumImageDialog" :breakpoints="{'960px': '75vw', '640px': '90vw'}"
+                          :style="{width: '50vw'}" header="删除图片" :modal="true">
+                    <div class="confirmation-content">
+                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                        <span v-if="album">确定删除所选的图片？</span>
+                    </div>
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                                  @click="cancelDeleteSelectedImage"></p-button>
+                        <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                                  @click="deleteImage"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayImageSingleEdit" header="编辑图片信息"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}"
+                          :style="{width: '50vw'}" :modal="true">
+                    <div class="formgrid grid mt-2">
+                        <div class="field col">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-image"></i>
+                                    </span>
+                                <p-inputtext v-model="selectedEditImage.nameZh" placeholder="图片名(中)"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="field col">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-image"></i>
+                                    </span>
+                                <p-inputtext v-model="selectedEditImage.nameEn" placeholder="图片名(英)"></p-inputtext>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formgrid grid mt-2">
+                        <div class="field col">
+                            <p-dropdown v-model="selectedEditImage.type" :options="imageTypes" option-label="label"
+                                        option-value="value" placeholder="选择图片类型"></p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <p-textarea v-model="selectedEditImage.description" rows="1" cols="20"
+                                        :auto-resize="true" placeholder="图片描述"></p-textarea>
+                        </div>
+                    </div>
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" @click="closeDisplayImageSingleEdit"
+                                  class="p-button-text"></p-button>
+                        <p-button label="保存更改" icon="pi pi-save" @click="updateImage" autofocus></p-button>
+                    </template>
+                </p-dialog>
             </div>
         </div>
     </div>
@@ -622,6 +727,8 @@
                 init();
             })
 
+            const visitNum = ref([[${visitNum}]]);
+
             const album = ref([[${album}]]);
 
             const toast = useToast();
@@ -629,24 +736,7 @@
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const albumFormatSet = ref([[${albumFormatSet}]]);
 
-            //region ------图片展示------
-            const galleriaItemClass = ref("");
-            const responsiveOptions = [
-                {
-                    breakpoint: '1024px',
-                    numVisible: 5
-                },
-                {
-                    breakpoint: '768px',
-                    numVisible: 3
-                },
-                {
-                    breakpoint: '560px',
-                    numVisible: 1
-                }
-            ];
-
-            //编辑描述
+            //region ------编辑描述------
             const descriptionMd = ref("");
             const displayDescriptionDialog = ref(false);
             const openDescriptionEditDialog = () => {
@@ -681,8 +771,9 @@
                         }
                     });
             }
+            //endregion
 
-            //编辑特典
+            //region ------编辑特典------
             const bonusMd = ref("");
             const displayBonusDialog = ref(false);
             const openBonusEditDialog = () => {
@@ -717,7 +808,6 @@
                         }
                     });
             }
-
             const text2marked = () => {
 
                 const description = album.value.description;
@@ -737,8 +827,9 @@
                     document.getElementById("bonus").innerHTML = "暂无特典信息";
                 }
             };
+            //endregion
 
-            //音轨信息相关组件
+            //region ------音轨信息相关组件------
             const mediaFormat = ref();
             const albumFormat = ref();
             const trackHtml = ref("");
@@ -805,8 +896,9 @@
                         }
                     })
             };
+            //endregion
 
-            //artists相关组件
+            //region ------artists相关组件------
             const artistHtml = ref("");
             const positionName = ref();
             const positionArtist = ref();
@@ -861,8 +953,86 @@
                         }
                     })
             };
+            //endregion
 
-            //图片相关组件
+            //region ------图片相关组件------
+            const selectedEditImage = ref({});
+            const displayImageSingleEdit = ref(false);
+            const openDisplayImageSingleEdit = (img) => {
+                selectedEditImage.value = img;
+                displayImageSingleEdit.value = true;
+            };
+            const closeDisplayImageSingleEdit = () => {
+                selectedEditImage.value = {};
+                displayImageSingleEdit.value = false;
+            };
+            const updateImage = () => {
+                let json = {
+                    id: album.value.id,
+                    image: selectedEditImage.value,
+                    action: "1"
+                };
+                axiosPostRequest(UPDATE_ALBUM_IMAGES_URL, json)
+                    .then(res => {
+                        if (res.state == 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            displayImageSingleEdit.value = false;
+                            closeImageEditDialog();
+                            selectedEditImage.value = {};
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.log(err);
+                });
+            };
+            const galleriaItemClass = ref("");
+            const responsiveOptions = [
+                {
+                    breakpoint: '1024px',
+                    numVisible: 5
+                },
+                {
+                    breakpoint: '768px',
+                    numVisible: 3
+                },
+                {
+                    breakpoint: '560px',
+                    numVisible: 1
+                }
+            ];
+            const selectedDeleteImage = ref({});
+            const confirmDeleteSelectedImage = (img) => {
+                selectedDeleteImage.value = img;
+                deleteAlbumImageDialog.value = true;
+            };
+            const cancelDeleteSelectedImage = () => {
+                selectedDeleteImage.value = {};
+                deleteAlbumImageDialog.value = false;
+            };
+            const deleteAlbumImageDialog = ref(false);
+            const deleteImage = () => {
+                let json = {
+                    id: album.value.id,
+                    image: selectedDeleteImage.value,
+                    action: "2"
+                };
+                axiosPostRequest(UPDATE_ALBUM_IMAGES_URL, json)
+                    .then(res => {
+                        if (res.state == 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            deleteAlbumImageDialog.value = false;
+                            closeImageEditDialog();
+                            selectedDeleteImage.value = {};
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.log(err);
+                });
+            };
             const imageTypes = ref([
                 {label: '展示', value: '0'},
                 {label: '封面', value: '1'},
@@ -870,10 +1040,10 @@
             ]);
             const imageInfo = ref({
                 image: null,
-                nameZh: null,
-                nameEn: null,
-                description: null,
-                type: null
+                nameZh: "",
+                nameEn: "",
+                description: "",
+                type: 0
             });
             const imageInfos = ref([]);
             const imgCover = ref({});
@@ -919,9 +1089,19 @@
                 toast.add({severity: 'info', summary: 'Success', detail: '图片已经选择', life: 3000});
             };
             const save2imageInfos = () => {
-                imageInfos.value.push(imageInfo.value);
-                showImage();
-                imageInfo.value = {};
+                if(typeof imageInfo.value.description == "undefined"){
+                    imageInfo.value.description = "";
+                }else if(typeof imageInfo.value.nameZh == "undefined"){
+                    toast.add({severity: 'error', summary: 'Error', detail: '未填写图片名（中）', life: 3000});
+                }else if(typeof imageInfo.value.nameEn == "undefined"){
+                    toast.add({severity: 'error', summary: 'Error', detail: '未填写图片名（英）', life: 3000});
+                }else if(typeof imageInfo.value.type == "undefined"){
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择图片类型', life: 3000});
+                }else {
+                    imageInfos.value.push(imageInfo.value);
+                    showImage();
+                    imageInfo.value = {};
+                }
             };
             const submitImages = () => {
                 const formData = new FormData();
@@ -930,9 +1110,10 @@
                 }
                 formData.append("id", album.value.id);
                 formData.append("imageInfos", JSON.stringify(imageInfos.value));
-                axiosRequest(UPDATE_ALBUM_IMAGES_URL, formData)
+                axiosRequest(INSERT_ALBUM_IMAGES_URL, formData)
                     .then(res => {
                         if (res.state == 1) {
+
                             closeImageEditDialog();
                             location.reload(true);
                         } else {
@@ -942,6 +1123,7 @@
                     console.log(err);
                 });
             };
+            //endregion
 
             const navbarItems = ref([
                 {
@@ -1017,15 +1199,18 @@
             }
 
             return {
+                visitNum,
+                updateImage,
+                selectedEditImage,
+                closeDisplayImageSingleEdit,
+                openDisplayImageSingleEdit,
+                displayImageSingleEdit,
+                cancelDeleteSelectedImage,
+                deleteImage,
+                confirmDeleteSelectedImage,
+                deleteAlbumImageDialog,
                 initImageClass,
                 galleriaItemClass,
-                // showThumbnails,
-                // fullScreen,
-                // onThumbnailButtonClick,
-                // toggleFullScreen,
-                // galleriaClass,
-                // fullScreenIcon,
-
 
                 onUpload,
                 save2imageInfos,
@@ -1091,14 +1276,15 @@
             "p-avatar": primevue.avatar,
             "p-toast": primevue.toast,
             "p-dropdown": primevue.dropdown,
-            "p-textarea": primevue.textarea,
+            "p-textarea": primevue.textarea
         }
     };
 
     const routes = [{path: "/", component: App}];
 
     const router = VueRouter.createRouter({
-        history: VueRouter.createWebHashHistory(),
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
         routes
     });
 
@@ -1109,8 +1295,38 @@
         .use(MdEditorV3)
         .mount("#app");
 </script>
-
 <style>
+
+    .related-image-div {
+        position: relative;
+        width: 60px;
+        height: 60px;
+    }
+
+    #related-image-img {
+        width: 50px;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .edit-image-div {
+        position: relative;
+        width: 240px;
+        height: 240px;
+        overflow: auto;
+        background-color: black;
+    }
+
+    #edit-image-img {
+        width: 200px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
 
     #galleria-div {
         position: relative;
@@ -1322,7 +1538,6 @@
         float: left;
         margin: 0 4px 0 0;
         padding: 8px;
-        /*background: transparent url(https://vgmdb.net/db/img/border_thumb.png) 0 0 no-repeat;*/
     }
 
     ul.album_infobit_detail {

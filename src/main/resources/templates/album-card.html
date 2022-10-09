@@ -6,12 +6,19 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
     <!-- bootstrap -->
-    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
     <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
     <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
     <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
+
+    <!-- other css -->
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
+
+
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
     <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
     <script th:src="@{/assets/js/script.min.js}"></script>
@@ -25,413 +32,419 @@
     <!-- Dependencies -->
     <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript"></script>
     <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
-    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
-    <script th:src="@{/js/primevue/components/column.min.js}"></script>
-    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
-    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
-    <script th:src="@{/js/primevue/components/slider.min.js}"></script>
-    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dataview.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dataviewlayoutoptions.min.js}"></script>
     <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
-    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
-    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
-    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
-    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
-    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/panel.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
     <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
     <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
 </head>
 <body>
 <div class="nk-container">
     <!-- 头部 -->
-    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
 
     <div class="main">
         <div id="app">
-            <div class="card">
-                <p-toast></p-toast>
-                <p-toolbar class="mb-4">
-                    <template #start>
-                        <p-button icon="pi pi-refresh" class="p-button-rounded mr-4" @click="init"></p-button>
-                        <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
-                                  @click="openNewDialog"></p-button>
-                        <!--          <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;-->
-                    </template>
-                </p-toolbar>
-                <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
-                            :sort-field="sortField">
-                    <template #header>
-                        <div class="grid grid-nogutter">
-                            <div class="col-6" style="text-align: left">
-                                <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
-                                            placeholder="按发行时间排序" @change="onSortChange($event)"></p-dropdown>
-                            </div>
-                            <div class="col-6" style="text-align: right">
-                                <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
-                            </div>
-                        </div>
-                    </template>
-                    <template #grid="slotProps">
-                        <div class="col-12 lg:col-3 md:col-4 sm:col-6 xs:col-12">
-                            <!--            <div class="container-grid">-->
-                            <div class="container-grid-item card">
-                                <!--                    <img :src="slotProps.data.imgUrl" :alt="slotProps.data.name">-->
-                                <div class="img" :style=" 'background-image:url('+ slotProps.data.coverUrl +');' ">
-                                    <div class="catalog">
-                                        <!--                                <i class="pi pi-tag"></i>-->
-                                        <p-tag class="mr-2" style="background: #795548!important;color: #ffffff">
-                                            {{slotProps.data.catalogNo}}
-                                        </p-tag>
-                                    </div>
+            <div class="grid card mt-2">
+                <div class="col-12 sm:col-12 md:col-6 lg:col-9">
+                    <p-toolbar class="mb-4">
+                        <template #start>
+                            <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"></p-button>
+                            <!--          <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;-->
+                        </template>
+                    </p-toolbar>
+                    <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
+                                :sort-field="sortField">
+                        <template #header>
+                            <div class="grid grid-nogutter">
+                                <div class="col-6" style="text-align: left">
+                                    <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
+                                                placeholder="按发行时间排序" @change="onSortChange($event)"></p-dropdown>
                                 </div>
-                                <div class="name px-2 mt-2">{{slotProps.data.name}}</div>
-                                <div class="artist px-2 mt-2">{{slotProps.data.artist}}</div>
-                                <div class="rating px-2 mt-2">
+                                <div class="col-6" style="text-align: right">
+                                    <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                                </div>
+                            </div>
+                        </template>
+                        <template #grid="slotProps">
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12 single-card ml-2">
+                                <p-card>
+                                <template #header>
+                                    <a :href="'http://localhost:8080/db/album/'+ slotProps.data.id">
+                                        <div class="cover-img"
+                                             :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                            <p-tag class="catalog ml-1 mt-1">
+                                                {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
+                                            </p-tag>
+                                            <div class="absolute releaseDate">
+                                                <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </template>
+                                <template #title>
+                                        <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
+                                            {{slotProps.data.nameJp}}
+                                        </span>
+                                </template>
+                                <template #subtitle>
                                     <div class="grid">
-                                        <div class="flex-row">
-                                            <p-rating :disabled="true" :model-value="slotProps.data.rating"
-                                                      :cancel="false"></p-rating>
-                                        </div>&nbsp;&nbsp;
-                                        <div class="flex-row" style="color: #f44336">
-                                            {{slotProps.data.rating}}
+                                        <div class="col-8">
+                                            <span class="ml-2 text-end" style="color: white">{{slotProps.data.albumFormat.join(" / ")}}</span>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="price px-2 mt-2">
-                                    {{slotProps.data.price}}&nbsp;&nbsp;JPY
-                                </div>
-                                <div class="px-2 mt-2">
-                                    {{slotProps.data.tags}}
-                                </div>
+                                </template>
+                                <template #content>
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item" v-for="product of slotProps.data.products">
+                                            <p-tag class="product-tag">{{product.name}}</p-tag>
+                                        </li>
+                                    </ul>
+                                </template>
+                            </p-card>
                             </div>
+                        </template>
+                    </p-dataview>
+                </div>
+                <div class="col-12 sm:col-12 md:col-6 lg:col-3">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>最新添加</b>
+                        </template>
+                        <div class="grid">
+                            <span class="smallfont">
+                                    <div class="album_infobit_small smallfont ml-0 grid" v-if="justAddedAlbums.length != 0"
+                                         v-for="addAlbum of justAddedAlbums">
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'http://localhost:8080/db/album/'+ addAlbum.id ">
+                                                <img class="small-image-img" :src="addAlbum.cover.url" style="border-radius: 20%;">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="albumtitle smallfont album-anime"
+                                                   :href="'http://localhost:8080/db/album/'+ addAlbum.id ">
+                                                    <span class="albumtitle" lang="en" style="display:inline">
+                                                        {{addAlbum.nameJp}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="smallfont album-anime">
+                                                    <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
                         </div>
-                    </template>
-                </p-dataview>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>最新编辑</b>
+                        </template>
+                        <div class="grid">
+                            <span class="smallfont">
+                                    <div class="album_infobit_small smallfont ml-0 grid" v-if="justEditedAlbums.length != 0"
+                                         v-for="editAlbum of justEditedAlbums">
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'http://localhost:8080/db/album/'+ editAlbum.id ">
+                                                <img class="small-image-img" :src="editAlbum.cover.url" style="border-radius: 20%;">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="albumtitle smallfont album-anime"
+                                                   :href="'http://localhost:8080/db/album/'+ editAlbum.id ">
+                                                    <span class="albumtitle" lang="en" style="display:inline">
+                                                        {{editAlbum.nameJp}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="smallfont album-anime">
+                                                    <b>{{editAlbum.catalogNo}}</b> {{editAlbum.releaseDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                </div>
             </div>
-            <p-dialog v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据" :modal="true"
-                      class="p-fluid">
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="catalogNo">专辑编号</label>
-                        <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="name">专辑原名</label>
-                        <p-inputtext id="name" v-model.trim="album.name"></p-inputtext>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="releaseDate">发行时间</label>
-                        <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd" :show-button-bar="true"
-                                    :show-icon="true"></p-calendar>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="price">发行价格(日元)</label>
-                        <p-inputnumber id="price" v-model="album.price" mode="currency" currency="JPY" locale="ja-JP"
-                                       suffix=" 円(税込)"></p-inputnumber>
-                    </div>
-                    <!--            <div class="field col">-->
-                    <!--                <label htmlFor="rating">评分</label>-->
-                    <!--                <p-inputnumber id="rating" v-model="album.rating" mode="decimal" :min-fraction-digits="2"-->
-                    <!--                               :max-fraction-digits="2"></p-inputnumber>-->
-                    <!--            </div>-->
-                </div>
-                <!--        <div class="field">-->
-                <!--            <label htmlFor="tag">标签</label>-->
-                <!--            <p-inputtext id="tag" v-model.trim="album.tag"></p-inputtext>-->
-                <!--        </div>-->
-                <div class="field">
-                    <label htmlFor="description">描述</label>
-                    <p-textarea id="description" v-model="album.description" rows="3" cols="20"
-                                :auto-resize="true"></p-textarea>
-                </div>
-                <div class="field">
-                    <label htmlFor="imgUrl">图片路径</label>
-                    <p-inputtext id="imgUrl" v-model.trim="album.imgUrl"></p-inputtext>
-                </div>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewData"></p-button>
-                </template>
-            </p-dialog>
         </div>
     </div>
 
     <!-- 尾部 -->
-    <footer th:insert="~{footer :: site_footer}"></footer>
+    <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
     const {FilterMatchMode, FilterOperator} = primevue.api;
     const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
+
     const App = {
         setup() {
             onMounted(() => {
-                init();
+
             });
 
-            const loading = ref(true);
-            const album = ref({});
-            const albums = ref();
-            const tags = ref();
-            const ratings = ref([]);
+            const justEditedAlbums = ref([[${justEditedAlbums}]]);
+            const justAddedAlbums = ref([[${justAddedAlbums}]]);
 
             const layout = ref('grid');
             const sortKey = ref();
             const sortOrder = ref();
             const sortField = ref();
             const sortOptions = ref([
-                {label: '按价格降序', value: '!price'},
-                {label: '按价格升序', value: 'price'},
+                {label: '按发售时间正序', value: '!releaseDate'},
+                {label: '按发售时间逆序', value: 'releaseDate'},
             ]);
 
-            const submitted = ref(false);
+            const albums = ref([[${albums}]]);
 
-            const displayNewDialog = ref(false);
-
-            const toast = useToast();
-
-            const onSortChange = (event) => {
-                const value = event.value.value;
-                const sortValue = event.value;
-
-                if (value.indexOf('!') === 0) {
-                    sortOrder.value = -1;
-                    sortField.value = value.substring(1, value.length);
-                    sortKey.value = sortValue;
-                } else {
-                    sortOrder.value = 1;
-                    sortField.value = value;
-                    sortKey.value = sortValue;
+            const navbarItems = ref([
+                {
+                    label: 'Home',
+                    icon: 'pi pi-fw pi-home',
+                    url: "http://localhost:8080"
+                },
+                {
+                    label: 'DataBase',
+                    icon: 'pi pi-fw iconfont icon-database',
+                    url: "http://localhost:8080/db"
+                },
+                {
+                    label: 'Album',
+                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
+                    items: [
+                        {
+                            label: 'Album List',
+                            icon: 'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album/list'
+                        },
+                        {
+                            label: 'Album Card',
+                            icon: 'pi pi-fw pi-list',
+                            // url: 'http://localhost:8080/db/album/card'
+                        }
+                    ]
+                },
+                {
+                    label: 'Disc',
+                    icon: 'pi pi-fw iconfont icon-Video-Disc',
+                    items: [
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label: 'Book',
+                    icon: 'pi pi-fw pi-book',
+                    items: [
+                        {
+                            label: 'Book List',
+                            icon: 'pi pi-fw pi-book'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
                 }
-            };
-
-            //初始化
-            const init = () => {
-                loading.value = true;
-                getAllAlbum();
-                // getAllTag();
-                getRatings();
-                loading.value = false;
-            };
-            //获取所有专辑信息
-            const getAllAlbum = () => {
-                axiosGetRequest(DOMIANURL + '/getAllAlbum', null)
-                    .then(res => {
-                        albums.value = res;
-                    }).catch(err => {
-                    console.log(err);
-                });
-            }
-            //获取所有标签
-            const getAllTag = () => {
-                axiosGetRequest(DOMIANURL + '/getAllTag', null)
-                    .then(res => {
-                    tags.value = res.data;
-                }).catch(err => {
-                    console.log(err);
-                });
-            };
-
-            //打开新增数据面板
-            const openNewDialog = () => {
-                album.value = {};
-                submitted.value = false;
-                displayNewDialog.value = true;
-            };
-            //关闭新增数据面板
-            const closeNewDialog = () => {
-                album.value = {};
-                displayNewDialog.value = false;
-                submitted.value = false;
-            };
-            //提交新增数据
-            const submitNewData = () => {
-                if (album.value.releaseDate != null) {
-                    if (album.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
-                        album.value.releaseDate = dateToString(album.value.releaseDate);
-                    }
-                }
-                axiosPostRequest(DOMIANURL + '/insertAlbum', album.value)
-                    .then(res => {
-                    console.log(res.data)
-                    album.value = {};
-                    toast.add({severity: 'success', summary: 'Successful', detail: '新增数据成功！', life: 3000});
-                    closeNewDialog();
-                    init();
-                }).catch(err => {
-                    console.log(err);
-                    toast.add({severity: 'error', summary: 'Error', detail: '新增数据失败！', life: 3000});
-                });
-            };
-
-            //生成rating
-            const getRatings = () => {
-                for(let i = 0;i < 41;i++){
-                    ratings.value.push(parseFloat(Math.random()*5,10).toFixed(2));
-                }
-                console.log(ratings.value);
-            }
+            ]);
 
             return {
-                album, albums, tags, loading, toast, init, getAllAlbum,getRatings,ratings,
-                openNewDialog, closeNewDialog, submitNewData, submitted, displayNewDialog,
-                layout, sortKey, sortOrder, sortField, sortOptions, onSortChange
+                justAddedAlbums, justEditedAlbums,
+                navbarItems, albums, layout,
+                sortKey, sortOrder, sortField, sortOptions
             }
         },
         components: {
-            "p-toolbar": primevue.toolbar,
-            "p-toast": primevue.toast,
-            "p-button": primevue.button,
-            "p-dialog": primevue.dialog,
-            "p-inputtext": primevue.inputtext,
-            "p-inputnumber": primevue.inputnumber,
-            "p-textarea": primevue.textarea,
-            "p-calendar": primevue.calendar,
             "p-dataview": primevue.dataview,
-            "p-rating": primevue.rating,
-            "p-image": primevue.image,
-            "p-dropdown": primevue.dropdown,
             "p-dataviewlayoutoptions": primevue.dataviewlayoutoptions,
-            "p-card": primevue.card,
+            "p-dropdown": primevue.dropdown,
+            "p-button": primevue.button,
+            "p-toolbar": primevue.toolbar,
             "p-tag": primevue.tag,
+            "p-card": primevue.card,
+            "p-panel": primevue.panel,
         }
     };
 
-    const app = createApp(App);
-    app.use(primevue.config.default);
-    app.directive('tooltip', Tooltip);
-    app.use(primevue.toastservice);
-    app.mount("#app");
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.toastservice)
+        .use(primevue.config.default)
+        .directive('tooltip', Tooltip)
+        .mount("#app");
 </script>
 <style>
-    div .img {
-        background-size: contain;
-        background-repeat:no-repeat;
-        width: 100%;
+
+    b.rbot {
+        background-position: 0 -8px;
+    }
+
+    .releaseDate {
+        bottom: 0;
+        right: 0;
+        padding: 5px;
+        background-color: rgba(0, 0, 0, .47);
+    }
+
+    .single-card {
+        position: relative;
+        width: 300px;
+        height: 500px;
+        margin: 5px;
+        background-color: #2F364F;
+        /*padding: 24px 0px 0px 16px;*/
+    }
+
+    .cover-img {
+        width: 300px;
         height: 300px;
-        border: 1px solid red;
+        position: relative;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        /*top: 50%;*/
+        /*left: 50%;*/
+        /*transform: translate(-50%, -50%);*/
     }
 
-    .card {
-        background: #424242;
-        padding: 0rem;
-        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
-        border-radius: 4px;
-        margin-bottom: 2rem;
-        margin-right: 0.5rem;
-        margin-left: 1rem;
-    }
-
-    .container-grid {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        align-items: flex-start;
-        background-color: #000000;
-        border-radius: 16px;
-    }
-
-    /*.container-grid-item img {*/
-    /*    height: 300px;*/
-    /*    max-width: 100%;*/
-    /*    object-fit: cover;*/
-    /*    width: 100%;*/
-    /*}*/
-
-    .product-category {
-        font-weight: 600;
-        vertical-align: middle;
-    }
-    .container-grid-item .catalog{
-        /*display: flex;*/
+    .catalog {
         align-items: flex-start;
         justify-content: space-around;
-    }
-    .container-grid-item .name {
+        background: #795548 !important;
         color: #ffffff;
-        font-size: 18px;
-        font-weight: bold;
-        text-overflow: ellipsis;
+    }
+
+    .text-truncate-2 {
+        /*text-overflow: -o-ellipsis-lastline;*/
         overflow: hidden;
-        max-lines: 2;
-    }
-    /*.container-grid-item .p-rating {*/
-    /*    margin: 0 0 .5rem 0;*/
-    /*}*/
-
-    .container-grid-item .artist {
-        color: #9E9E9E;
-        font-size: 16px;
-        font-weight: 300;
-        margin-left: 8px;
-        margin-right: 8px;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
-    .container-grid-item .rating {
-        margin-left: 8px;
-        margin-right: 8px;
+    .p-card .p-card-body {
+        background-color: #2F364F;
     }
 
-    .container-grid-item .price {
-        color: #f44336;
-        font-size: 1.25rem;
+    .p-card .p-card-title {
+        color: #ffffff;
+        font-size: 1.2rem;
         font-weight: 500;
-        line-height: 2rem;
-        letter-spacing: .0125em;
-        margin-left: 8px;
-        margin-right: 8px;
+        margin: 0.5rem;
     }
 
-    .container-grid-item .tags {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-start;
+    .p-card .p-card-subtitle {
+        margin: 0.5rem;
+    }
+
+    .p-card .p-card-content {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .product-tag {
         align-items: flex-start;
+        justify-content: space-around;
+        background: #788990 !important;
+        color: #ffffff;
     }
 
-    .container-grid-item .tags .item {
-        padding: 4px 8px;
-        background-color: #3f51b5;
-        margin-top: 4px;
-        margin-right: 12px;
-        border-radius: 24px;
-        font-size: 12px;
+    .list-inline {
+        padding-left: 0;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        list-style: none
     }
 
-    .mt-1 {
-        margin-top: 4px;
+    .list-inline-item {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block
     }
 
-    .mt-2 {
-        margin-top: 6px;
+    .smallfont {
+        font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
     }
 
-    .mb-2 {
-        margin-bottom: 8px;
+    .album_infobit_small {
+        clear: left;
+        height: 76px;
+        /* border-top: 1px solid #464A64; */
+        /* border-bottom: 1px solid #1B273D; */
+        padding: 4px 6px 4px 4px;
+        overflow: hidden;
     }
 
-    .px-2 {
-        padding: 0 8px;
+    .small-image-div {
+        position: relative;
+        width: 60px;
+        height: 60px;
     }
 
-    .p-4 {
-        padding: 16px;
+    .small-image-img {
+        width: 50px;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
+
+    ul.album_infobit_detail {
+        list-style-type: none;
+        margin: 6px 0 0 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
 </style>
 </body>
 </html>

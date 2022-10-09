@@ -92,8 +92,8 @@ public class Album {
         this.artists = "[]";
         this.images = "[]";
         this.trackInfo = "{}";
-        this.addedTime = null;
-        this.editedTime = null;
+        this.addedTime = new Timestamp(System.currentTimeMillis());
+        this.editedTime = new Timestamp(System.currentTimeMillis());
         this._s = 1;
 
     }

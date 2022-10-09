@@ -3,9 +3,12 @@ package com.rakbow.website;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
+import com.rakbow.website.data.EntityType;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.AlbumService;
+import com.rakbow.website.service.VisitService;
 import com.rakbow.website.util.AlbumUtil;
 import com.rakbow.website.util.common.CommonUtil;
 import org.junit.Test;
@@ -36,6 +39,9 @@ public class AlbumUtilTests {
 
     @Autowired
     private AlbumMapper albumMapper;
+
+    @Autowired
+    private VisitService visitService;
 
     @Test
     public void testGetAlbumFormatSet(){
@@ -87,14 +93,6 @@ public class AlbumUtilTests {
     }
 
     @Test
-    public void test4(){
-        List<Album> albums = albumService.getAll();
-        albums.stream().forEach(album -> album.setImages(album.getImages().replaceAll("/album","/db/album")));
-        // albums.stream().forEach(i -> System.out.println(i.getImgUrl()));
-        albums.stream().forEach(album -> albumService.updateAlbumImages(album.getId(), album.getImages()));
-    }
-
-    @Test
     public void test5(){
         System.out.println(albumService.album2Json(albumService.findAlbumById(110)).toJSONString());
     }
@@ -130,6 +128,12 @@ public class AlbumUtilTests {
     public void test8(){
         Arrays.stream(albumService.findAlbumById(100).getProductId().split(",")).forEach(i -> System.out.println(i));
         // albumService.getRelatedAlbums(100).stream().forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void test10(){
+        albumService.getJustAddedAlbums(5).forEach(i -> System.out.println(i));
+        // albumService.getJustEditedAlbums(5).forEach(i -> System.out.println(i.getString("editedTime")));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.rakbow.website.entity;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -19,6 +20,20 @@ public class Series {
     private Date editedTime;//更新时间
     private String description;//描述
     private String remark;//备注
+    private String images;//图片
+
+    public Series() {
+        this.id = 0;
+        this.nameZh = "";
+        this.nameJp = "";
+        this.nameEn = "";
+        this.releaseDate = null;
+        this.addedTime = new Timestamp(System.currentTimeMillis());
+        this.editedTime = new Timestamp(System.currentTimeMillis());
+        this.description = "";
+        this.remark = "";
+        this.images = "[]";
+    }
 
     public int getId() {
         return id;
@@ -92,6 +107,14 @@ public class Series {
         this.remark = remark;
     }
 
+    public String getImages() {
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
+    }
+
     @Override
     public String toString() {
         return "Series{" +
@@ -104,6 +127,7 @@ public class Series {
                 ", editedTime=" + editedTime +
                 ", description='" + description + '\'' +
                 ", remark='" + remark + '\'' +
+                ", images='" + images + '\'' +
                 '}';
     }
 }

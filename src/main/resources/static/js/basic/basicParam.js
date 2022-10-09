@@ -9,6 +9,7 @@ const GET_ALBUM_URL = DOMIAN_URL + "/db/album/getAlbum";
 
 const UPDATE_ALBUM_ARTISTS_URL = DOMIAN_URL + "/db/album/updateAlbumArtists";
 const UPDATE_ALBUM_TRACK_INFO_URL = DOMIAN_URL + "/db/album/updateAlbumTrackInfo";
+const INSERT_ALBUM_IMAGES_URL = DOMIAN_URL + "/db/album/insertAlbumImages";
 const UPDATE_ALBUM_IMAGES_URL = DOMIAN_URL + "/db/album/updateAlbumImages";
 const UPDATE_ALBUM_DESCRIPTION_URL = DOMIAN_URL + "/db/album/updateAlbumDescription";
 const UPDATE_ALBUM_BONUS_URL = DOMIAN_URL + "/db/album/updateAlbumBonus";

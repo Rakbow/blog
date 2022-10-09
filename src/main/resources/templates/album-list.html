@@ -125,14 +125,13 @@
                         加载中，别急~
                     </template>
                     <p-column selection-mode="multiple" header-style="width: 1rem" :exportable="false"></p-column>
-                    <p-column header="Id" exportHeader="Album Id">
+                    <p-column field="id" header="Id" exportHeader="Album Id" :sortable="true">
                         <template #body="slotProps">
                             <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                                 {{slotProps.data.id}}
                             </p-button>
                         </template>
                     </p-column>
-
                     <p-column field="catalogNo" header="专辑编号" :sortable="true"></p-column>
                     <p-column field="barcode" header="商品条形码" :sortable="true"></p-column>
                     <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
@@ -895,7 +894,8 @@
     const routes = [{ path: "/", component: App }];
 
     const router = VueRouter.createRouter({
-        history: VueRouter.createWebHashHistory(),
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
         routes
     });
 

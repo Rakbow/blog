@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.website.dao.VisitMapper">
+
+    <sql id="selectFields">
+        entity_type, entity_id, visit_num
+    </sql>
+
+    <sql id="insertFields">
+        entity_type, entity_id, visit_num
+    </sql>
+
+    <select id="getVisit" resultType="Visit">
+        select
+        <include refid="selectFields"></include>
+        from visit
+        where entity_type = #{entityType} and entity_id = #{entityId}
+    </select>
+
+    <select id="getAll" resultType="Visit">
+        select
+        <include refid="selectFields"></include>
+        from visit
+<!--        order by release_date desc-->
+    </select>
+
+    <insert id="insertVisit" parameterType="Visit">
+        insert into visit (<include refid="insertFields"></include>)
+        values (#{entityType}, #{entityId}, #{visitNum})
+    </insert>
+
+    <update id="updateVisit">
+        update visit
+        set
+        visit_num = #{visitNum}
+        where entity_type = #{entityType} and entity_id = #{entityId}
+    </update>
+
+    <delete id="deleteVisit">
+        delete
+        from visit
+        where entity_type = #{entityType} and entity_id = #{entityId}
+    </delete>
+
+</mapper>

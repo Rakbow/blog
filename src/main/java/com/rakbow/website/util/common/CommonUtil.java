@@ -12,6 +12,8 @@ import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.PushBuilder;
+import java.io.File;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +28,17 @@ import java.util.UUID;
  * @Description:
  */
 public class CommonUtil {
+
+    //删除服务器上的文件
+    //dir: 文件夹路径，fileName: 文件名（不包含后缀）
+    public static void deleteFile(Path dir, String fileName){
+        File[] files = new File(dir.toUri()).listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if(files[i].getName().substring(0, files[i].getName().lastIndexOf(".")).equals(fileName)){
+                files[i].delete();
+            }
+        }
+    }
 
     //计算时间总和（返回字符串形式）
     public static String countTotalTime(List<String> times){

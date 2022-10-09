@@ -21,7 +21,7 @@ public class Product {
     private String remark;
     private Date addedTime;
     private Date editedTime;
-    private String imgUrl;
+    private String images;
 
     public int getId() {
         return id;
@@ -111,12 +111,12 @@ public class Product {
         this.editedTime = editedTime;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getImages() {
+        return images;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void setImages(String images) {
+        this.images = images;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class Product {
                 ", remark='" + remark + '\'' +
                 ", addedTime=" + addedTime +
                 ", editedTime=" + editedTime +
-                ", imgUrl='" + imgUrl + '\'' +
+                ", images='" + images + '\'' +
                 '}';
     }
 }

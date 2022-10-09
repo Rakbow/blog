@@ -54,7 +54,7 @@
         <include refid="selectFields"></include>
         from album
         where _s = 1
-<!--        order by id desc-->
+        <!--        order by id desc-->
         order by release_date desc
         <!-- limit #{offset}, #{limit} -->
     </select>
@@ -68,20 +68,25 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{nameJp}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{publishPrice}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
-        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId}, #{artists}, #{images}, #{trackInfo},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId}, #{artists}, #{images},
+        #{trackInfo},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateAlbum" parameterType="Album" keyProperty="id">
         update album
         set
-        catalog_no = #{album.catalogNo}, name_jp = #{album.nameJp}, name_zh = #{album.nameZh}, name_en = #{album.nameEn},
+        catalog_no = #{album.catalogNo}, name_jp = #{album.nameJp}, name_zh = #{album.nameZh}, name_en =
+        #{album.nameEn},
         barcode = #{album.barcode}, release_date = #{album.releaseDate}, publish_format = #{album.publishFormat},
         publish_price = #{album.publishPrice}, album_format = #{album.albumFormat}, media_format = #{album.mediaFormat},
-        label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright = #{album.copyright},
-        has_bonus = #{album.hasBonus}, bonus = #{album.bonus}, description = #{album.description}, remark = #{album.remark},
-        series_id = #{album.seriesId}, product_id = #{album.productId}, artists = #{album.artists}, images = #{album.images},
-        track_info = #{album.trackInfo}, edited_time=#{album.editedTime}, _s=#{album._s}
+        label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright =
+        #{album.copyright},
+        has_bonus = #{album.hasBonus}, bonus = #{album.bonus}, description = #{album.description}, remark =
+        #{album.remark},
+        series_id = #{album.seriesId}, product_id = #{album.productId}, artists = #{album.artists}, images =
+        #{album.images},
+        track_info = #{album.trackInfo}, edited_time = #{album.editedTime}, _s = #{album._s}
         where id = #{album.id}
     </update>
 
@@ -91,38 +96,55 @@
         where id = #{id}
     </delete>
 
+    <update id="insertAlbumImages" keyProperty="id">
+        update album
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
     <update id="updateAlbumImages" keyProperty="id">
         update album
         set
-        images = #{images}
+        images = #{images}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 
     <update id="updateAlbumArtists" keyProperty="id">
         update album
         set
-        artists = #{artists}
+        artists = #{artists}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 
     <update id="updateAlbumTrackInfo" keyProperty="id">
         update album
         set
-        track_info = #{trackInfo}
+        track_info = #{trackInfo}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 
     <update id="updateAlbumDescription" keyProperty="id">
         update album
         set
-        description = #{description}
+        description = #{description}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 
-    <update id="updateAlbumBonus " keyProperty="id">
+    <update id="updateAlbumBonus" keyProperty="id">
         update album
         set
-        bonus = #{bonus}
+        bonus = #{bonus}, edited_time = #{editedTime}
         where id = #{id}
     </update>
+
+    <select id="selectAlbumByOrderAndLimit" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where _s = 1
+        order by #{order}
+        limit #{limit}
+    </select>
+
 </mapper>

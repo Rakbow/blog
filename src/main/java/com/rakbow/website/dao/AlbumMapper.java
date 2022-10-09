@@ -4,6 +4,7 @@ import com.rakbow.website.entity.Album;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -40,17 +41,23 @@ public interface AlbumMapper {
     int selectAlbumRows();
 
     //更新专辑图片
-    int updateAlbumImages(int id, String images);
+    int insertAlbumImages(int id, String images, Timestamp editedTime);
+
+    //删除专辑图片
+    int updateAlbumImages(int id, String images, Timestamp editedTime);
 
     //更新专辑Artists
-    int updateAlbumArtists(int id, String artists);
+    int updateAlbumArtists(int id, String artists, Timestamp editedTime);
 
     //更新音轨信息
-    int updateAlbumTrackInfo(int id, String trackInfo);
+    int updateAlbumTrackInfo(int id, String trackInfo, Timestamp editedTime);
 
     //更新描述信息
-    int updateAlbumDescription(int id, String description);
+    int updateAlbumDescription(int id, String description, Timestamp editedTime);
 
     //更新特典信息
-    int updateAlbumBonus(int id, String bonus);
+    int updateAlbumBonus(int id, String bonus, Timestamp editedTime);
+
+    //按条件搜索专辑order, limit
+    List<Album> selectAlbumByOrderAndLimit(String order, int limit);
 }

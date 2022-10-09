@@ -7,6 +7,8 @@ package com.rakbow.website.util.common;
  * @Description:
  */
 public class ApiInfo {
+
+    public static final String NOT_ACTION = "未进行任何操作！";
     public static final String INSERT_DATA_SUCCESS = "%s新增成功！";
     public static final String DELETE_DATA_SUCCESS = "%s删除成功！";
     public static final String UPDATE_DATA_SUCCESS = "%s更新成功！";
@@ -35,7 +37,9 @@ public class ApiInfo {
 
     //region 专辑相关
 
-     public static final String UPDATE_ALBUM_IMAGES_SUCCESS = "专辑图片更新成功！";
+     public static final String UPDATE_ALBUM_IMAGES_SUCCESS = "专辑图片更改成功！";
+     public static final String INSERT_ALBUM_IMAGES_SUCCESS = "专辑图片新增成功！";
+     public static final String DELETE_ALBUM_IMAGES_SUCCESS = "专辑图片删除成功！";
      public static final String UPDATE_ALBUM_TRACK_INFO_SUCCESS = "专辑音轨信息更新成功！";
      public static final String UPDATE_ALBUM_ARTISTS_SUCCESS = "专辑音乐创作信息更新成功！";
      public static final String UPDATE_ALBUM_DESCRIPTION_SUCCESS = "专辑描述更新成功！";

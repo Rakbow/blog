@@ -6,12 +6,12 @@
 
     <sql id="selectFields">
         id, series_id, name_zh, name_jp, name_en, release_date, classification,
-        added_time, edited_time, description, remark, img_url
+        added_time, edited_time, description, remark, images
     </sql>
 
     <sql id="insertFields">
         series_id, name_zh, name_jp, name_en, release_date, classification,
-        added_time, edited_time, description, remark, img_url
+        added_time, edited_time, description, remark, images
     </sql>
 
     <select id="selectProductById" resultType="Product">
@@ -24,7 +24,7 @@
     <insert id="insertProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
         values (#{seriesId}, #{nameZh}, #{nameJp}, #{nameEn}, #{releaseDate}, #{classification},
-                #{addedTime}, #{editedTime}, #{description}, #{remark}, #{imgUrl})
+                #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
@@ -32,7 +32,7 @@
         set
         series_id = #{seriesId}, name_zh = #{nameZh}, name_jp = #{nameJp}, name_en = #{nameEn},
         release_date = #{releaseDate}, classification = #{classification}, added_time = #{addedTime},
-        edited_time = #{editedTime}, description = #{description}, remark = #{remark}, img_url = #{imgUrl}
+        edited_time = #{editedTime}, description = #{description}, remark = #{remark}, images = #{images}
         where id = #{id}
     </update>
 

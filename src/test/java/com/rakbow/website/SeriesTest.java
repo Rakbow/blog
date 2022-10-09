@@ -30,24 +30,4 @@ public class SeriesTest {
     @Autowired
     private ProductService productService;
 
-    @Test
-    public void test() throws ParseException {
-        Product product = new Product();
-        product.setSeriesId(1);
-
-        product.setNameZh("寒蝉鸣泣之时卒");
-        product.setNameJp("ひぐらしのなく頃に卒");
-        product.setNameEn("Higurashi: When They Cry - SOTSU");
-        product.setClassification(ProductClass.ANIMATION.getIndex());
-        product.setReleaseDate(CommonUtil.stringToDate("2021/07/02","yyyy/MM/dd"));
-        product.setImgUrl("{\"\":\"\"}");
-        //product.setImgUrl("{\"0\":\"/img/product/3-01.png\"}");
-
-        product.setAddedTime(new Date());
-        product.setEditedTime(new Date());
-        product.setDescription("");
-        product.setRemark("");
-        productService.insertProduct(product);
-    }
-
 }
