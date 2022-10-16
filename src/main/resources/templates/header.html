@@ -44,11 +44,16 @@
         </template>
         <template #end>
             <div class="grid mt-0 mb-0 pt-0 pb-0">
-                <div class="col-3 mt-0 mb-0 pt-0 pb-0">
+                <div class="col-4 mt-0 mb-0 pt-0 pb-0">
                     <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small" shape="circle"></p-avatar>
-<!--                    <p-button th:if="${loginUser == null}" label=""></p-button>-->
+<!--                    <a th:if="${loginUser == null}"  href="http://localhost:8080/login">-->
+<!--                        <i class="pi iconfont icon-login mr-2" style="font-size: 2rem"></i>-->
+<!--                    </a>-->
+                    <a th:if="${loginUser != null}" href="http://localhost:8080/logout">
+                        <i class="pi iconfont icon-logout mr-2" style="font-size: 2rem"></i>
+                    </a>
                 </div>
-                <div class="col-9 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
+                <div class="col-8 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
                     <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
                     <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
                 </div>

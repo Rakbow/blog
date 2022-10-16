@@ -44,4 +44,13 @@
         where entity_type = #{entityType} and entity_id = #{entityId}
     </delete>
 
+    <select id="selectVisitOrderByVisitNum" resultType="Visit">
+        select
+        <include refid="selectFields"></include>
+        from visit
+        where entity_type = #{entityType}
+        order by visit_num desc
+        limit #{limit}
+    </select>
+
 </mapper>

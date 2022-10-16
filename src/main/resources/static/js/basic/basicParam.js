@@ -21,4 +21,4 @@ const LOGIN_URL = DOMIAN_URL + "/login";
 //endregion
 
 //common
-const GET_ALL_PRODUCT_URL = DOMIAN_URL + "/common/getProducts/";
+const GET_ALL_PRODUCT_URL = DOMIAN_URL + "/product/getProductsBySeriesId";

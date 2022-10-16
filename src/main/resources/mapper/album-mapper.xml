@@ -86,7 +86,7 @@
         #{album.remark},
         series_id = #{album.seriesId}, product_id = #{album.productId}, artists = #{album.artists}, images =
         #{album.images},
-        track_info = #{album.trackInfo}, edited_time = #{album.editedTime}, _s = #{album._s}
+        track_info = #{album.trackInfo}, added_time = #{album.addedTime}, edited_time = #{album.editedTime}, _s = #{album._s}
         where id = #{album.id}
     </update>
 
@@ -138,12 +138,21 @@
         where id = #{id}
     </update>
 
-    <select id="selectAlbumByOrderAndLimit" resultType="Album">
+    <select id="selectAlbumOrderByAddedTime" resultType="Album">
         select
         <include refid="selectFields"></include>
         from album
         where _s = 1
-        order by #{order}
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="selectAlbumOrderByEditedTime" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where _s = 1
+        order by edited_time desc
         limit #{limit}
     </select>
 

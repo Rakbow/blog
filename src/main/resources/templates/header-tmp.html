@@ -1,50 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/font.css}">
-
+    <title>Home - Brand</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+    <!--    <link rel="stylesheet"-->
+    <!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
     <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
-    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
-    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-    <script th:src="@{/assets/js/script.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/assets/css/vanilla-zoom.min.css}">
 </head>
 <body>
-<nav class="navbar navbar-light navbar-expand-lg bg-white clean-navbar">
-    <div class="container"><a class="navbar-brand logo" href="#">Rakbow's Blog</a>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar" th:fragment="header_tmp">
+    <div class="container"><a class="navbar-brand logo" href="#">Brand</a>
         <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span
                 class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" th:href="@{/}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/db/album-list}">Album List</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/db/album-card}">Album Card</a></li>
-                <li class="nav-item">
-                    <form class="nav-link form-inline mt-0 mb-0" method="get" th:action="@{/s}">
-                        <input class="form-control mr-sm-2" type="search" aria-label="Search" name="keyword" th:value="${keyword}"/>
-                        <button class="btn btn-outline-light" type="submit">Search</button>
-                    </form>
-                </li>
-<!--                <li class="nav-item"><a class="nav-link" th:href="@{/login}" th:if="${loginUser==null}"><strong>Login</strong><br></a></li>-->
-<!--                <li class="nav-item"><a class="nav-link" th:href="@{/logout}" th:if="${loginUser!=null}"><strong>Logout</strong><br></a></li>-->
-<!--                <li class="nav-item"><a class="nav-link" th:href="@{/user/setting}" th:if="${loginUser!=null}"><strong>Setting</strong><br></a></li>-->
-<!--                <li class="nav-item"><a class="nav-link" href="#" disabled>NOTHING</a></li>-->
-                <li class="nav-item btn-group-vertical dropdown" th:if="${loginUser!=null}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img th:src="${loginUser.headerUrl}" class="rounded-circle" style="width:30px;"/>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-<!--                        <a class="dropdown-item text-center" href="site/profile.html">个人主页</a>-->
-                        <a class="dropdown-item text-center" th:href="@{/user/setting}">账号设置</a>
-                        <a class="dropdown-item text-center" th:href="@{/logout}">logout</a>
-                        <div class="dropdown-divider"></div>
-                        <span class="dropdown-item text-center text-secondary" th:utext="${loginUser.username}"></span>
-                    </div>
-                </li>
+                <li class="nav-item"><a class="nav-link active" href="http://localhost:8080">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="http://localhost:8080">Test1</a></li>
+                <li class="nav-item"><a class="nav-link" href="http://localhost:8080">Test2</a></li>
+                <li class="nav-item"><a class="nav-link" href="http://localhost:8080">Test3</a></li>
+                <li class="nav-item"><a class="nav-link" href="http://localhost:8080">Test4</a></li>
             </ul>
         </div>
     </div>

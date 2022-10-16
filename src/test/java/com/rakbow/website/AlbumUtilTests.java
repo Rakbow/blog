@@ -136,4 +136,11 @@ public class AlbumUtilTests {
         // albumService.getJustEditedAlbums(5).forEach(i -> System.out.println(i.getString("editedTime")));
     }
 
+    @Test
+    public void test11() {
+        albumService.getPopularAlbums(10).forEach(i -> {
+            System.out.println(i.getInteger("visitNum"));
+        });
+    }
+
 }

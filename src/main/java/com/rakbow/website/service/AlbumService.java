@@ -5,11 +5,13 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.mysql.cj.xdevapi.JsonArray;
 import com.rakbow.website.dao.AlbumMapper;
+import com.rakbow.website.data.EntityType;
 import com.rakbow.website.data.ProductClass;
 import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.album.MediaFormat;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +47,8 @@ public class AlbumService {
     private SeriesService seriesService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private VisitService visitService;
     @Value("${website.path.img}")
     private String imgPath;
     //endregion
@@ -194,7 +198,6 @@ public class AlbumService {
 
 
         albumJson.put("publishFormat", publishFormat);
-        albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
         albumJson.put("artists", artists);
@@ -217,6 +220,10 @@ public class AlbumService {
         JSONObject json = (JSONObject) JSON.toJSON(album);
 
         JSONArray images = JSONArray.parseArray(album.getImages());
+
+        if(StringUtils.isBlank(json.getString("catalogNo"))){
+            json.put("catalogNo", "N/A");
+        }
 
         json.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
 
@@ -357,7 +364,7 @@ public class AlbumService {
     public List<JSONObject> getJustAddedAlbums(int limit){
         List<JSONObject> justAddedAlbums = new ArrayList<>();
 
-        albumMapper.selectAlbumByOrderAndLimit(" added_time asc ", limit)
+        albumMapper.selectAlbumOrderByAddedTime(limit)
                 .forEach(i -> justAddedAlbums.add(album2JsonDisplay(i)));
 
         return justAddedAlbums;
@@ -368,10 +375,25 @@ public class AlbumService {
     public List<JSONObject> getJustEditedAlbums(int limit){
         List<JSONObject> editedAlbums = new ArrayList<>();
 
-        albumMapper.selectAlbumByOrderAndLimit(" edited_time desc ", limit)
+        albumMapper.selectAlbumOrderByEditedTime(limit)
                 .forEach(i -> editedAlbums.add(album2JsonDisplay(i)));
 
         return editedAlbums;
+    }
+
+    //获取最新编辑的专辑
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getPopularAlbums(int limit){
+        List<JSONObject> popularAlbums = new ArrayList<>();
+
+        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.ALBUM.getId(), limit);
+
+        visits.forEach(visit -> {
+            JSONObject album = album2JsonDisplay(findAlbumById(visit.getEntityId()));
+            album.put("visitNum", visit.getVisitNum());
+            popularAlbums.add(album);
+        });
+        return popularAlbums;
     }
 
     //region ------更新专辑数据------

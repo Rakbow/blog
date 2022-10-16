@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <!-- bootstrap -->
-<!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
-<!--    <link rel="stylesheet"-->
-<!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
-<!--    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">-->
+    <!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
+    <!--    <link rel="stylesheet"-->
+    <!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
+    <!--    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">-->
     <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-<!--    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">-->
+    <!--    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">-->
     <link rel="stylesheet" th:href="@{/css/index.css}">
     <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
     <link rel="stylesheet" th:href="@{/css/album-list.css}">
@@ -20,7 +20,6 @@
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
     <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-    <script th:src="@{/assets/js/script.min.js}"></script>
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
@@ -76,7 +75,8 @@
     <div class="main">
         <div id="app">
             <!-- 头部 -->
-            <header class="sticky-top" th:insert="~{header :: site_header}"></header><br>
+            <header class="sticky-top" th:insert="~{header :: site_header}"></header>
+            <br>
 
             <p-panel header="专辑列表" :toggleable="true">
                 <p-toast></p-toast>
@@ -217,146 +217,138 @@
             <!--            </p-fieldset>-->
             <p-dialog v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据" :modal="true"
                       class="p-fluid">
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="nameZh">专辑名称(中文)</label>
-                        <p-inputtext id="nameZh" v-model.trim="album.nameZh"></p-inputtext>
+                <p-panel header="基础信息">
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="nameJp">专辑名称(日语)</label>
+                            <p-inputtext id="nameJp" v-model.trim="album.nameJp"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="nameEn">专辑名称(英语)</label>
+                            <p-inputtext id="nameEn" v-model.trim="album.nameEn"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="nameZh">专辑名称(中文)</label>
+                            <p-inputtext id="nameZh" v-model.trim="album.nameZh"></p-inputtext>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="nameJp">专辑名称(日语)</label>
-                        <p-inputtext id="nameJp" v-model.trim="album.nameJp"></p-inputtext>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="catalogNo">专辑编号</label>
+                            <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext id="barcode" v-model.trim="album.barcode"></p-inputtext>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="nameEn">专辑名称(英语)</label>
-                        <p-inputtext id="nameEn" v-model.trim="album.nameEn"></p-inputtext>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="publishPrice">发行价格(含税)</label>
+                            <p-inputnumber id="publishPrice" v-model="album.publishPrice" mode="currency" currency="JPY"
+                                           locale="ja-JP"></p-inputnumber>
+                        </div>
                     </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="catalogNo">专辑编号</label>
-                        <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="barcode">商品条形码</label>
-                        <p-inputtext id="barcode" v-model.trim="album.barcode"></p-inputtext>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                        <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
-                                    :show-button-bar="true"
-                                    :show-icon="true"></p-calendar>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="publishPrice">发行价格(含税)</label>
-                        <p-inputnumber id="publishPrice" v-model="album.publishPrice" mode="currency" currency="JPY"
-                                       locale="ja-JP"></p-inputnumber>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                        <p-dropdown id="seriesId" v-model="album.seriesId" :options="seriesSet"
-                                    placeholder="选择所属系列" option-label="label" option-value="value"
-                                    @change="getProducts">
-                        </p-dropdown>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
-                        <p-multiselect id="productId" v-model="album.productId" :options="productSet"
-                                       option-label="label" option-value="value" placeholder="请先选择所属系列"
-                                       display="chip" :filter="true" :disabled="productSelect">
-                        </p-multiselect>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown id="seriesId" v-model="album.seriesId" :options="seriesSet"
+                                        placeholder="选择所属系列" option-label="label" option-value="value"
+                                        @change="getProducts">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect id="productId" v-model="album.productId" :options="productSet"
+                                           option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                           display="chip" :filter="true" :disabled="productSelect">
+                            </p-multiselect>
 
-                    </div>
-                    <div class="field col">
-                        <div class="col-12">
-                            <label htmlFor="hasBonus" class="mb-3">特典</label>
                         </div>
-                        <div class="col-12">
-                            <p-inputswitch v-model="album.hasBonus" :true-value="1" :false-value="0"></p-inputswitch>
+                        <div class="field col">
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">特典</label>
+                            </div>
+                            <div class="col-12">
+                                <p-inputswitch v-model="album.hasBonus" :true-value="1" :false-value="0"></p-inputswitch>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="publishFormat" class="mb-3">出版形式<span style="color: red">*</span></label>
-                        <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
-                                       option-label="label" option-value="value" placeholder="选择出版形式"
-                                       display="chip" :filter="true">
-                            </template>
-                        </p-multiselect>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="publishFormat" class="mb-3">出版形式<span style="color: red">*</span></label>
+                            <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
+                                           option-label="label" option-value="value" placeholder="选择出版形式"
+                                           display="chip" :filter="true">
+                                </template>
+                            </p-multiselect>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
+                            <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
+                                           option-label="label" option-value="value" placeholder="选择专辑分类"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
+                            <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
+                                           option-label="label" option-value="value" placeholder="选择媒体类型"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
-                        <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
-                                       option-label="label" option-value="value" placeholder="选择专辑分类"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="label">唱片公司</label>
+                            <p-inputtext id="label" v-model.trim="album.label"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="publisher">发行商</label>
+                            <p-inputtext id="publisher" v-model.trim="album.publisher"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="distributor">经销商</label>
+                            <p-inputtext id="distributor" v-model.trim="album.distributor"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="copyright">版权方</label>
+                            <p-inputtext id="copyright" v-model.trim="album.copyright"></p-inputtext>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
-                        <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
-                                       option-label="label" option-value="value" placeholder="选择媒体类型"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
                     </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="label">唱片公司</label>
-                        <p-inputtext id="label" v-model.trim="album.label"></p-inputtext>
+                </p-panel>
+                <p-panel header="其他信息">
+                    <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需添加曲目，请到专辑详情页面进行</span>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="publisher">发行商</label>
-                        <p-inputtext id="publisher" v-model.trim="album.publisher"></p-inputtext>
+                    <p-divider align="center" type="dashed"><b>音乐创作</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需添加音乐创作信息，请到专辑详情页面进行</span>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="distributor">经销商</label>
-                        <p-inputtext id="distributor" v-model.trim="album.distributor"></p-inputtext>
+                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需添加图片，请到专辑详情页面进行</span>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="copyright">版权方</label>
-                        <p-inputtext id="copyright" v-model.trim="album.copyright"></p-inputtext>
+                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需图片描述信息，请到专辑详情页面进行</span>
                     </div>
-                </div>
-                <p-divider align="center">
-                    <div class="inline-flex align-items-center">
-                        <i class="pi pi-list mr-2"></i>
-                        <b>音轨信息</b>
+                    <p-divider align="center" type="dashed"><b>特典</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需图片特典信息，请到专辑详情页面进行</span>
                     </div>
-                </p-divider>
-                <div class="field">
-                    <label htmlFor="trackInfo">曲目列表</label>
-                    <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
-                </div>
-                <p-divider align="center">
-                    <div class="inline-flex align-items-center">
-                        <i class="pi pi-images mr-2"></i>
-                        <b>图片列表</b>
-                    </div>
-                </p-divider>
-                <div class="field">
-                    <span style="text-align: center">添加和编辑图片等操作，请到专辑详情页面进行</span>
-                </div>
-                <p-divider></p-divider>
-                <div class="field">
-                    <label htmlFor="description">描述</label>
-                    <p-editor id="description" v-model.trim="albumEdit.description"
-                              editor-style="height: 320px"></p-editor>
-                    <!--                    <p-textarea id="description" v-model.trim="album.description" rows="3" cols="20"-->
-                    <!--                                :auto-resize="true"></p-textarea>-->
-                </div>
-                <div class="field">
-                    <label htmlFor="remark">备注</label>
-                    <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-                </div>
-                <div class="field">
-                    <label htmlFor="bonus">特典信息</label>
-                    <p-editor id="bonus" v-model.trim="album.bonus"
-                              editor-style="height: 320px"></p-editor>
-                </div>
+                </p-panel>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
                     <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
@@ -365,139 +357,138 @@
 
             <p-dialog v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据" :modal="true"
                       class="p-fluid">
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="nameZh">专辑名称(中文)</label>
-                        <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="nameJp">专辑名称(日语)</label>
-                        <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="nameEn">专辑名称(英语)</label>
-                        <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="catalogNo">专辑编号</label>
-                        <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="barcode">商品条形码</label>
-                        <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                        <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
-                                    :show-button-bar="true"
-                                    :show-icon="true"></p-calendar>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="publishPrice">发行价格(含税)</label>
-                        <p-inputnumber id="publishPrice" v-model="albumEdit.publishPrice" mode="currency" currency="JPY"
-                                       locale="ja-JP"></p-inputnumber>
-                    </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                        <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
-                                    placeholder="选择所属系列" option-label="label" option-value="value"
-                                    @change="getProducts">
-                        </p-dropdown>
-                    </div>
-                    <div class="field col">
-                        <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
-                        <p-multiselect id="productId" v-model="albumEdit.productId" :options="productSet"
-                                       option-label="label" option-value="value" placeholder="选择所属产品"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
-                    </div>
-                    <div class="field col">
-                        <div class="col-12">
-                            <label htmlFor="hasBonus" class="mb-3">特典</label>
+                <p-panel header="基础信息">
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="nameJp">专辑名称(日语)</label>
+                            <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
                         </div>
-                        <div class="col-12">
-                            <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
-                                           :false-value="0"></p-inputswitch>
+                        <div class="field col">
+                            <label htmlFor="nameEn">专辑名称(英语)</label>
+                            <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="nameZh">专辑名称(中文)</label>
+                            <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
                         </div>
                     </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="publishFormat" class="mb-3">出版形式<span style="color: red">*</span></label>
-                        <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
-                                       option-label="label" option-value="value" placeholder="选择出版形式"
-                                       display="chip">
-                        </p-multiselect>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="catalogNo">专辑编号</label>
+                            <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
-                        <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
-                                       option-label="label" option-value="value" placeholder="选择专辑分类"
-                                       display="chip">
-                        </p-multiselect>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="publishPrice">发行价格(含税)</label>
+                            <p-inputnumber id="publishPrice" v-model="albumEdit.publishPrice" mode="currency" currency="JPY"
+                                           locale="ja-JP"></p-inputnumber>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
-                        <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
-                                       option-label="label" option-value="value" placeholder="选择媒体类型"
-                                       display="chip">
-                        </p-multiselect>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
+                                        placeholder="选择所属系列" option-label="label" option-value="value"
+                                        @change="getProducts">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect id="productId" v-model="albumEdit.productId" :options="productSet"
+                                           option-label="label" option-value="value" placeholder="选择所属产品"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                        <div class="field col">
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">特典</label>
+                            </div>
+                            <div class="col-12">
+                                <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label htmlFor="label">唱片公司</label>
-                        <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="publishFormat" class="mb-3">出版形式<span style="color: red">*</span></label>
+                            <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
+                                           option-label="label" option-value="value" placeholder="选择出版形式"
+                                           display="chip">
+                            </p-multiselect>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
+                            <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
+                                           option-label="label" option-value="value" placeholder="选择专辑分类"
+                                           display="chip">
+                            </p-multiselect>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
+                            <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
+                                           option-label="label" option-value="value" placeholder="选择媒体类型"
+                                           display="chip">
+                            </p-multiselect>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="publisher">发行商</label>
-                        <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="label">唱片公司</label>
+                            <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="publisher">发行商</label>
+                            <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="distributor">经销商</label>
+                            <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="copyright">版权方</label>
+                            <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
+                        </div>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="distributor">经销商</label>
-                        <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
+                                    :auto-resize="true"></p-textarea>
                     </div>
-                    <div class="field col">
-                        <label htmlFor="copyright">版权方</label>
-                        <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
+                </p-panel>
+                <p-panel header="其他信息">
+                    <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
                     </div>
-                </div>
-                <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
-                <div class="field">
-                    <label htmlFor="trackInfo">曲目列表</label>
-                    <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
-                </div>
-                <p-divider></p-divider>
-                <div class="field">
-
-                </div>
-                <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                <div class="field">
-                    <label htmlFor="images">图片信息</label>
-                    <span style="text-align: center">添加和编辑图片等操作，请到专辑详情页面进行</span>
-                </div>
-                <p-divider></p-divider>
-                <div class="field">
-                    <label htmlFor="description">描述</label>
-                    <p-editor id="description" v-model.trim="albumEdit.description"
-                              editor-style="height: 320px"></p-editor>
-                </div>
-                <div class="field">
-                    <label htmlFor="remark">备注</label>
-                    <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
-                                :auto-resize="true"></p-textarea>
-                </div>
-                <div class="field">
-                    <label htmlFor="bonus">特典信息</label>
-                    <p-editor id="bonus" v-model.trim="albumEdit.bonus"
-                              editor-style="height: 320px"></p-editor>
-                </div>
+                    <p-divider align="center" type="dashed"><b>音乐创作</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需添加音乐创作信息，请到专辑详情页面进行</span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">添加和编辑图片等操作，请到专辑详情页面进行</span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需编辑描述信息，请到专辑详情页面进行</span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>特典</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center">如需编辑特典信息，请到专辑详情页面进行</span>
+                    </div>
+                </p-panel>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text"
                               @click="closeEditDialog"></p-button>
@@ -659,7 +650,7 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             albumEdit.value = dataTmp;
-                            axiosGetRequest(GET_ALL_PRODUCT_URL + dataTmp.seriesId, null)
+                            axiosPostRequest(GET_ALL_PRODUCT_URL, {seriesId:dataTmp.seriesId})
                                 .then(res => {
                                     productSet.value = res;
                                     albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
@@ -785,7 +776,8 @@
 
             //根据系列id获取该系列所有产品
             const getProducts = (ev) => {
-                axiosGetRequest(GET_ALL_PRODUCT_URL + ev.value, null)
+                let json = {seriesId: ev.value};
+                axiosPostRequest(GET_ALL_PRODUCT_URL, json)
                     .then(res => {
                         productSet.value = res;
                         productSelect.value = false;
@@ -815,7 +807,7 @@
                         {
                             label: 'Album Card',
                             icon: 'pi pi-fw pi-list',
-                            // url: 'http://localhost:8080/db/album/card'
+                            url: 'http://localhost:8080/db/album/card'
                         }
                     ]
                 },
@@ -891,7 +883,7 @@
         }
     };
 
-    const routes = [{ path: "/", component: App }];
+    const routes = [{path: "/", component: App}];
 
     const router = VueRouter.createRouter({
         // history: VueRouter.createWebHashHistory(),

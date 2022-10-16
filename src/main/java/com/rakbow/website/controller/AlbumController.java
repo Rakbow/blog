@@ -57,9 +57,11 @@ public class AlbumController {
     @Autowired
     private SeriesService seriesService;
     @Autowired
+    private ProductService productService;
+    @Autowired
     private VisitService visitService;
-    // @Autowired
-    // private ElasticsearchService elasticsearchService;
+    @Autowired
+    private ElasticsearchService elasticsearchService;
     @Autowired
     private TagService tagService;
     @Value("${website.path.upload}")
@@ -98,6 +100,7 @@ public class AlbumController {
         model.addAttribute("albums", albums);
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
+        model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
         return "/album-card";
     }
 
@@ -121,10 +124,16 @@ public class AlbumController {
         //访问数+1
         visitService.increaseVisit(EntityType.ALBUM.getId(), albumId);
 
+        Album album = albumService.findAlbumById(albumId);
+
         model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
-        model.addAttribute("user", hostHolder.getUser());
         model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
-        model.addAttribute("album", albumService.album2Json(albumService.findAlbumById(albumId)));
+        model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
+        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(album.getSeriesId()));
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+
+        model.addAttribute("album", albumService.album2Json(album));
+        model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), albumId).getVisitNum());
         //获取相关专辑
@@ -184,7 +193,7 @@ public class AlbumController {
             albumService.insertAlbum(album);
 
             //将新增的专辑保存到Elasticsearch服务器索引中
-            // elasticsearchService.saveAlbum(album);
+            elasticsearchService.saveAlbum(album);
 
             //新增访问量实体
             visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
@@ -212,7 +221,7 @@ public class AlbumController {
                 albumService.deleteAlbumById(id);
 
                 //从Elasticsearch服务器索引中删除专辑
-                // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
+                elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
 
                 //删除访问量实体
                 visitService.deleteVisit(EntityType.ALBUM.getId(), id);
@@ -225,25 +234,32 @@ public class AlbumController {
         }
     }
 
-    //更新专辑
+    //列表界面的更新专辑操作
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbum(@RequestBody String json) throws ParseException {
+    public String updateAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
             Album album = albumService.json2Album(param);
 
+            Album originAlbum = albumService.findAlbumById(album.getId());
             //修改编辑时间
             album.setEditedTime(new Timestamp(System.currentTimeMillis()));
-            album.setTrackInfo(albumService.findAlbumById(album.getId()).getTrackInfo());
-            album.setImages(albumService.findAlbumById(album.getId()).getImages());
-            album.setArtists(albumService.findAlbumById(album.getId()).getArtists());
+
+            //列表编辑界面不涉及编辑的内容
+            album.setTrackInfo(originAlbum.getTrackInfo());
+            album.setImages(originAlbum.getImages());
+            album.setArtists(originAlbum.getArtists());
+            album.setBonus(originAlbum.getBonus());
+            album.setDescription(originAlbum.getDescription());
+
+            System.out.println(album);
 
             albumService.updateAlbum(album.getId(), album);
 
             //将更新的专辑保存到Elasticsearch服务器索引中
-            // elasticsearchService.saveAlbum(album);
+            elasticsearchService.saveAlbum(album);
 
             res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getName());
             return JSON.toJSONString(res);
@@ -360,6 +376,10 @@ public class AlbumController {
                 JSONArray imagesJson = JSON.parseArray(albumService.findAlbumById(id).getImages());
                 imagesJson.addAll(imgJson);
                 albumService.insertAlbumImages(id, imagesJson.toJSONString());
+
+                //更新elasticsearch中的专辑
+                elasticsearchService.saveAlbum(albumService.findAlbumById(id));
+
                 res.message = ApiInfo.INSERT_ALBUM_IMAGES_SUCCESS;
 
             } else {
@@ -386,10 +406,14 @@ public class AlbumController {
                 if(JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id){
                     String image = JSON.parseObject(json).getString("image");
                     res.message = albumService.updateAlbumImages(id, image);
+                    //更新elasticsearch中的专辑
+                    elasticsearchService.saveAlbum(albumService.findAlbumById(id));
                 }//删除
                 else if(JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id){
                     String imageUrl = JSON.parseObject(JSON.parseObject(json).getString("image")).getString("url");
                     res.message = albumService.deleteAlbumImages(id, imageUrl);
+                    //更新elasticsearch中的专辑
+                    elasticsearchService.saveAlbum(albumService.findAlbumById(id));
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
@@ -418,6 +442,8 @@ public class AlbumController {
                 }
                 albumService.updateAlbumArtists(id, artists);
                 res.message = ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
+                //更新elasticsearch中的专辑
+                elasticsearchService.saveAlbum(albumService.findAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }
@@ -444,6 +470,8 @@ public class AlbumController {
                 }
                 albumService.updateAlbumTrackInfo(id, discList);
                 res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
+                //更新elasticsearch中的专辑
+                elasticsearchService.saveAlbum(albumService.findAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }
@@ -466,6 +494,8 @@ public class AlbumController {
                 System.out.println(description);
                 albumService.updateAlbumDescription(id, description);
                 res.message = ApiInfo.UPDATE_ALBUM_DESCRIPTION_SUCCESS;
+                //更新elasticsearch中的专辑
+                elasticsearchService.saveAlbum(albumService.findAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }
@@ -487,6 +517,8 @@ public class AlbumController {
                 String bonus = JSON.parseObject(json).get("bonus").toString();
                 albumService.updateAlbumBonus(id, bonus);
                 res.message = ApiInfo.UPDATE_ALBUM_BONUS_SUCCESS;
+                //更新elasticsearch中的专辑
+                elasticsearchService.saveAlbum(albumService.findAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }

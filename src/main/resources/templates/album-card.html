@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Album Card</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-
     <!-- bootstrap -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
-    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
+    <!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
+    <!--    <link rel="stylesheet"-->
+    <!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
+    <!--    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">-->
     <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
-
-    <!-- other css -->
+    <!--    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">-->
     <link rel="stylesheet" th:href="@{/css/index.css}">
     <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
 
@@ -21,7 +19,6 @@
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
     <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-    <script th:src="@{/assets/js/script.min.js}"></script>
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
@@ -41,6 +38,9 @@
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -53,26 +53,27 @@
 </head>
 <body>
 <div class="nk-container">
-    <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
-
     <div class="main">
         <div id="app">
+            <!-- 头部 -->
+            <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+
             <div class="grid card mt-2">
                 <div class="col-12 sm:col-12 md:col-6 lg:col-9">
-                    <p-toolbar class="mb-4">
-                        <template #start>
-                            <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"></p-button>
-                            <!--          <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;-->
-                        </template>
-                    </p-toolbar>
+                    <!--                    <p-toolbar class="mb-4">-->
+                    <!--                        <template #start>-->
+                    <!--                            <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"></p-button>-->
+                    <!--                            &lt;!&ndash;          <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;&ndash;&gt;-->
+                    <!--                        </template>-->
+                    <!--                    </p-toolbar>-->
                     <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
                                 :sort-field="sortField">
                         <template #header>
                             <div class="grid grid-nogutter">
                                 <div class="col-6" style="text-align: left">
                                     <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
-                                                placeholder="按发行时间排序" @change="onSortChange($event)"></p-dropdown>
+                                                placeholder="按发行时间排序"
+                                                @change="onSortChange($event)"></p-dropdown>
                                 </div>
                                 <div class="col-6" style="text-align: right">
                                     <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
@@ -82,39 +83,39 @@
                         <template #grid="slotProps">
                             <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12 single-card ml-2">
                                 <p-card>
-                                <template #header>
-                                    <a :href="'http://localhost:8080/db/album/'+ slotProps.data.id">
-                                        <div class="cover-img"
-                                             :style="'background-image:url('+ slotProps.data.cover.url+');' ">
-                                            <p-tag class="catalog ml-1 mt-1">
-                                                {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
-                                            </p-tag>
-                                            <div class="absolute releaseDate">
-                                                <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                    <template #header>
+                                        <a :href="'http://localhost:8080/db/album/'+ slotProps.data.id">
+                                            <div class="cover-img"
+                                                 :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                                <p-tag class="catalog ml-1 mt-1">
+                                                    {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
+                                                </p-tag>
+                                                <div class="absolute releaseDate">
+                                                    <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </template>
-                                <template #title>
+                                        </a>
+                                    </template>
+                                    <template #title>
                                         <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
                                             {{slotProps.data.nameJp}}
                                         </span>
-                                </template>
-                                <template #subtitle>
-                                    <div class="grid">
-                                        <div class="col-8">
-                                            <span class="ml-2 text-end" style="color: white">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                    </template>
+                                    <template #subtitle>
+                                        <div class="grid">
+                                            <div class="col-8">
+                                                <span class="ml-2 text-end" style="color: white">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </template>
-                                <template #content>
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item" v-for="product of slotProps.data.products">
-                                            <p-tag class="product-tag">{{product.name}}</p-tag>
-                                        </li>
-                                    </ul>
-                                </template>
-                            </p-card>
+                                    </template>
+                                    <template #content>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item" v-for="product of slotProps.data.products">
+                                                <p-tag class="product-tag">{{product.name}}</p-tag>
+                                            </li>
+                                        </ul>
+                                    </template>
+                                </p-card>
                             </div>
                         </template>
                     </p-dataview>
@@ -127,19 +128,21 @@
                         </template>
                         <div class="grid">
                             <span class="smallfont">
-                                    <div class="album_infobit_small smallfont ml-0 grid" v-if="justAddedAlbums.length != 0"
+                                    <div class="album_infobit_small smallfont ml-0 grid"
+                                         v-if="justAddedAlbums.length != 0"
                                          v-for="addAlbum of justAddedAlbums">
                                         <div class="col-3 small-image-div mt-2">
                                             <a :href="'http://localhost:8080/db/album/'+ addAlbum.id ">
-                                                <img class="small-image-img" :src="addAlbum.cover.url" style="border-radius: 20%;">
+                                                <img class="small-image-img" :src="addAlbum.cover.url"
+                                                     style="border-radius: 20%;">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="album_infobit_detail">
                                             <li>
-                                                <a class="albumtitle smallfont album-anime"
+                                                <a class="smallfont album-anime"
                                                    :href="'http://localhost:8080/db/album/'+ addAlbum.id ">
-                                                    <span class="albumtitle" lang="en" style="display:inline">
+                                                    <span class="text-truncate-2" lang="ja">
                                                         {{addAlbum.nameJp}}
                                                     </span>
                                                 </a>
@@ -166,19 +169,21 @@
                         </template>
                         <div class="grid">
                             <span class="smallfont">
-                                    <div class="album_infobit_small smallfont ml-0 grid" v-if="justEditedAlbums.length != 0"
+                                    <div class="album_infobit_small smallfont ml-0 grid"
+                                         v-if="justEditedAlbums.length != 0"
                                          v-for="editAlbum of justEditedAlbums">
                                         <div class="col-3 small-image-div mt-2">
                                             <a :href="'http://localhost:8080/db/album/'+ editAlbum.id ">
-                                                <img class="small-image-img" :src="editAlbum.cover.url" style="border-radius: 20%;">
+                                                <img class="small-image-img" :src="editAlbum.cover.url"
+                                                     style="border-radius: 20%;">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="album_infobit_detail">
                                             <li>
-                                                <a class="albumtitle smallfont album-anime"
+                                                <a class="smallfont album-anime"
                                                    :href="'http://localhost:8080/db/album/'+ editAlbum.id ">
-                                                    <span class="albumtitle" lang="en" style="display:inline">
+                                                    <span class="text-truncate-2" lang="ja">
                                                         {{editAlbum.nameJp}}
                                                     </span>
                                                 </a>
@@ -193,6 +198,58 @@
                                         </div>
                                     </div>
                                 </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>浏览排名</b>
+                        </template>
+                        <div class="grid">
+                            <span class="smallfont">
+                                <div class="album_infobit_small smallfont ml-0 grid"
+                                     v-if="popularAlbums.length != 0"
+                                     v-for="(album, index) of popularAlbums">
+                                        <div class="col-2 ml-0 mr-0 mt-0 mb-0">
+                                            <div class="grid">
+                                                <div class="col-12 text-center">
+                                                    <b style="font-size: 20px">{{index+1}}</b>
+                                                </div>
+                                                <div class="col-12">
+                                                    <i class="pi pi-eye" style="font-size: 0.5rem"></i>
+                                                    {{album.visitNum}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'http://localhost:8080/db/album/'+ album.id ">
+                                                <img class="small-image-img" :src="album.cover.url"
+                                                     style="border-radius: 20%;">
+                                            </a>
+                                        </div>
+                                        <div class="col-7">
+                                            <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="smallfont album-anime"
+                                                   :href="'http://localhost:8080/db/album/'+ album.id ">
+                                                    <span class="text-truncate-2" lang="ja">
+                                                        {{album.nameJp}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="smallfont album-anime">
+                                                    <b>{{album.catalogNo}}</b> {{album.releaseDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                            </span>
                             <br>
                             <b class="rbot"><b></b></b>
                         </div>
@@ -219,6 +276,7 @@
 
             const justEditedAlbums = ref([[${justEditedAlbums}]]);
             const justAddedAlbums = ref([[${justAddedAlbums}]]);
+            const popularAlbums = ref([[${popularAlbums}]]);
 
             const layout = ref('grid');
             const sortKey = ref();
@@ -254,7 +312,7 @@
                         {
                             label: 'Album Card',
                             icon: 'pi pi-fw pi-list',
-                            // url: 'http://localhost:8080/db/album/card'
+                            url: 'http://localhost:8080/db/album/card'
                         }
                     ]
                 },
@@ -289,7 +347,7 @@
             ]);
 
             return {
-                justAddedAlbums, justEditedAlbums,
+                justAddedAlbums, justEditedAlbums, popularAlbums,
                 navbarItems, albums, layout,
                 sortKey, sortOrder, sortField, sortOptions
             }
@@ -303,6 +361,9 @@
             "p-tag": primevue.tag,
             "p-card": primevue.card,
             "p-panel": primevue.panel,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-inputtext": primevue.inputtext,
         }
     };
 

@@ -28,4 +28,7 @@ public interface VisitMapper {
     //删除访问量实体
     int deleteVisit(int entityType, int entityId);
 
+    //按实体类型获取浏览排行
+    List<Visit> selectVisitOrderByVisitNum(int entityType, int limit);
+
 }

@@ -54,4 +54,9 @@ public class VisitService {
         visitMapper.updateVisit(entityType, entityId, visit.getVisitNum());
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<Visit> selectVisitOrderByVisitNum(int entityType, int limit) {
+        return visitMapper.selectVisitOrderByVisitNum(entityType, limit);
+    }
+
 }

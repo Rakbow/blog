@@ -1,6 +1,6 @@
 package com.rakbow.website.service;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ProductClass;
 import com.rakbow.website.entity.Product;
@@ -49,15 +49,14 @@ public class ProductService {
 
     //通过系列Id获取所有产品的数组，供前端选项用
     public List<JSONObject> getAllProductSetBySeriesId(int seriesId) {
-        List<JSONObject> list = new ArrayList<>();
-        List<Product> list_temp = selectAllProductsBySeriesId(seriesId);
-        for (Product product : list_temp) {
+        List<JSONObject> productSet = new ArrayList<>();
+        selectAllProductsBySeriesId(seriesId).forEach(product -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("label", product.getNameZh() + "(" + ProductClass.getNameByIndex(product.getClassification()) + ")");
             jsonObject.put("value", product.getId());
-            list.add(jsonObject);
-        }
-        return list;
+            productSet.add(jsonObject);
+        });
+        return productSet;
     }
 
 }

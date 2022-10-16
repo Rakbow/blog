@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Rakbow's Database</title>
+
+    <!-- icon -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
+    <script th:src="@{/js/bootstrap/bootstrap.min.js}"></script>
+    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+
+    <!-- other css -->
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- Dependencies -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
+
+    <!-- md-editor-v3 -->
+    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
+
+    <!-- marked -->
+    <script th:src="@{/js/marked/marked.min.js}"></script>
+    <link th:href="@{/css/markdown/github-markdown.css}" rel="stylesheet">
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <div class="main">
+        <div class="container">
+            <div id="app">
+                <p-toast></p-toast>
+                <!-- 头部 -->
+                <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+
+                <!-- 尾部 -->
+                <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" th:inline="javascript">
+
+    const {createApp, onMounted, ref} = Vue;
+    const {useToast} = primevue.usetoast;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+            })
+            const toast = useToast();
+
+            const navbarItems = ref([
+                {
+                    label: 'Home',
+                    icon: 'pi pi-fw pi-home',
+                    url: "http://localhost:8080"
+                },
+                {
+                    label: 'DataBase',
+                    icon: 'pi pi-fw iconfont icon-database',
+                    url: "http://localhost:8080/db"
+                },
+                {
+                    label: 'Album',
+                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
+                    items: [
+                        {
+                            label: 'Album List',
+                            icon: 'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album/list'
+                        },
+                        {
+                            label: 'Album Card',
+                            icon: 'pi pi-fw pi-list',
+                            url: 'http://localhost:8080/db/album/card'
+                        }
+                    ]
+                },
+                {
+                    label: 'Disc',
+                    icon: 'pi pi-fw iconfont icon-Video-Disc',
+                    items: [
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                },
+                {
+                    label: 'Book',
+                    icon: 'pi pi-fw pi-book',
+                    items: [
+                        {
+                            label: 'Book List',
+                            icon: 'pi pi-fw pi-book'
+                        },
+                        {
+                            label: 'Develop',
+                            icon: 'pi pi-fw pi-wrench'
+                        }
+                    ]
+                }
+            ]);
+
+            return { navbarItems }
+        },
+        components: {
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-toast": primevue.toast,
+            "p-inputtext": primevue.inputtext,
+            "p-button": primevue.button
+        }
+    };
+
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.toastservice)
+        .use(primevue.config.default)
+        .mount("#app");
+</script>
+<style>
+
+
+</style>
+</body>
+</html>

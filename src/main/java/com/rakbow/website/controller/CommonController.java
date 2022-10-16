@@ -1,5 +1,6 @@
 package com.rakbow.website.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ProductClass;
 import com.rakbow.website.entity.Product;
@@ -20,25 +21,5 @@ import java.util.List;
 @Controller
 @RequestMapping(path = "/common")
 public class CommonController {
-
-    @Autowired
-    private ProductService productService;
-
-    /**
-     * 根据系列id获取该系列所有产品
-     * */
-    @RequestMapping(path = "/getProducts/{seriesId}", method = RequestMethod.GET)
-    @ResponseBody
-    public List<JSONObject> getAllProductBySeriesId(@PathVariable("seriesId") int seriesId){
-        List<JSONObject> productSet = new ArrayList<>();
-        for(Product product : productService.selectAllProductsBySeriesId(seriesId)){
-            JSONObject jo = new JSONObject();
-            jo.put("label",product.getNameZh() +
-                    "(" + ProductClass.getNameByIndex(product.getClassification()) + ")");
-            jo.put("value",product.getId());
-            productSet.add(jo);
-        }
-        return productSet;
-    }
 
 }

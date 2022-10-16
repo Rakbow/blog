@@ -58,6 +58,9 @@ public interface AlbumMapper {
     //更新特典信息
     int updateAlbumBonus(int id, String bonus, Timestamp editedTime);
 
-    //按条件搜索专辑order, limit
-    List<Album> selectAlbumByOrderAndLimit(String order, int limit);
+    //获取最新添加专辑, limit
+    List<Album> selectAlbumOrderByAddedTime(int limit);
+
+    //获取最新编辑专辑, limit
+    List<Album> selectAlbumOrderByEditedTime(int limit);
 }
