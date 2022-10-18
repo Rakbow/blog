@@ -242,6 +242,7 @@ public class AlbumController {
         JSONObject param = JSON.parseObject(json);
         try {
             Album album = albumService.json2Album(param);
+            System.out.println(album);
 
             Album originAlbum = albumService.findAlbumById(album.getId());
             //修改编辑时间

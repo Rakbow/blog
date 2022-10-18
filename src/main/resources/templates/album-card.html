@@ -41,6 +41,8 @@
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/badge.min.js}"></script>
+<!--    <script th:src="@{/js/primevue/components/badgedirective.min.js}"></script>-->
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -84,7 +86,7 @@
                             <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12 single-card ml-2">
                                 <p-card>
                                     <template #header>
-                                        <a :href="'http://localhost:8080/db/album/'+ slotProps.data.id">
+                                        <a :href="'/db/album/'+ slotProps.data.id">
                                             <div class="cover-img"
                                                  :style="'background-image:url('+ slotProps.data.cover.url+');' ">
                                                 <p-tag class="catalog ml-1 mt-1">
@@ -105,6 +107,11 @@
                                         <div class="grid">
                                             <div class="col-8">
                                                 <span class="ml-2 text-end" style="color: white">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                            </div>
+                                            <div class="col-2">
+                                            </div>
+                                            <div class="col-2" v-if="slotProps.data.hasBonus == 1">
+                                                <i class="pi iconfont icon-gift" style="font-size: 1.3rem" v-tooltip="'包含特典'"></i>
                                             </div>
                                         </div>
                                     </template>
@@ -132,7 +139,7 @@
                                          v-if="justAddedAlbums.length != 0"
                                          v-for="addAlbum of justAddedAlbums">
                                         <div class="col-3 small-image-div mt-2">
-                                            <a :href="'http://localhost:8080/db/album/'+ addAlbum.id ">
+                                            <a :href="'/db/album/'+ addAlbum.id ">
                                                 <img class="small-image-img" :src="addAlbum.cover.url"
                                                      style="border-radius: 20%;">
                                             </a>
@@ -141,7 +148,7 @@
                                             <ul class="album_infobit_detail">
                                             <li>
                                                 <a class="smallfont album-anime"
-                                                   :href="'http://localhost:8080/db/album/'+ addAlbum.id ">
+                                                   :href="'/db/album/'+ addAlbum.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{addAlbum.nameJp}}
                                                     </span>
@@ -173,7 +180,7 @@
                                          v-if="justEditedAlbums.length != 0"
                                          v-for="editAlbum of justEditedAlbums">
                                         <div class="col-3 small-image-div mt-2">
-                                            <a :href="'http://localhost:8080/db/album/'+ editAlbum.id ">
+                                            <a :href="'/db/album/'+ editAlbum.id ">
                                                 <img class="small-image-img" :src="editAlbum.cover.url"
                                                      style="border-radius: 20%;">
                                             </a>
@@ -182,7 +189,7 @@
                                             <ul class="album_infobit_detail">
                                             <li>
                                                 <a class="smallfont album-anime"
-                                                   :href="'http://localhost:8080/db/album/'+ editAlbum.id ">
+                                                   :href="'/db/album/'+ editAlbum.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{editAlbum.nameJp}}
                                                     </span>
@@ -216,7 +223,8 @@
                                         <div class="col-2 ml-0 mr-0 mt-0 mb-0">
                                             <div class="grid">
                                                 <div class="col-12 text-center">
-                                                    <b style="font-size: 20px">{{index+1}}</b>
+                                                    <p-badge :value="index+1" class="mr-2"></p-badge>
+<!--                                                    <b style="font-size: 20px">{{index+1}}</b>-->
                                                 </div>
                                                 <div class="col-12">
                                                     <i class="pi pi-eye" style="font-size: 0.5rem"></i>
@@ -225,7 +233,7 @@
                                             </div>
                                         </div>
                                         <div class="col-3 small-image-div mt-2">
-                                            <a :href="'http://localhost:8080/db/album/'+ album.id ">
+                                            <a :href="'/db/album/'+ album.id ">
                                                 <img class="small-image-img" :src="album.cover.url"
                                                      style="border-radius: 20%;">
                                             </a>
@@ -234,7 +242,7 @@
                                             <ul class="album_infobit_detail">
                                             <li>
                                                 <a class="smallfont album-anime"
-                                                   :href="'http://localhost:8080/db/album/'+ album.id ">
+                                                   :href="'/db/album/'+ album.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{album.nameJp}}
                                                     </span>
@@ -346,7 +354,23 @@
                 }
             ]);
 
-            return {
+            const onSortChange = (event) => {
+                const value = event.value.value;
+                const sortValue = event.value;
+
+                if (value.indexOf('!') === 0) {
+                    sortOrder.value = -1;
+                    sortField.value = value.substring(1, value.length);
+                    sortKey.value = sortValue;
+                }
+                else {
+                    sortOrder.value = 1;
+                    sortField.value = value;
+                    sortKey.value = sortValue;
+                }
+            };
+
+            return {onSortChange,
                 justAddedAlbums, justEditedAlbums, popularAlbums,
                 navbarItems, albums, layout,
                 sortKey, sortOrder, sortField, sortOptions
@@ -364,6 +388,7 @@
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
             "p-inputtext": primevue.inputtext,
+            "p-badge": primevue.badge,
         }
     };
 
@@ -383,6 +408,20 @@
         .mount("#app");
 </script>
 <style>
+    .card {
+        padding: 0rem;
+    }
+    .custom-error .p-tooltip-text {
+        background-color: var(--pink-800);
+        color: rgb(255, 255, 255);
+    }
+    .custom-error.p-tooltip-right .p-tooltip-arrow {
+        border-right-color: var(--pink-800);
+    }
+
+    .p-card .p-card-body {
+        padding: 0.5rem;
+    }
 
     b.rbot {
         background-position: 0 -8px;
@@ -397,16 +436,16 @@
 
     .single-card {
         position: relative;
-        width: 300px;
-        height: 500px;
+        width: 200px;
+        height: 330px;
         margin: 5px;
         background-color: #2F364F;
         /*padding: 24px 0px 0px 16px;*/
     }
 
     .cover-img {
-        width: 300px;
-        height: 300px;
+        width: 200px;
+        height: 200px;
         position: relative;
         background-repeat: no-repeat;
         background-size: 100% 100%;
@@ -438,13 +477,15 @@
 
     .p-card .p-card-title {
         color: #ffffff;
-        font-size: 1.2rem;
-        font-weight: 500;
-        margin: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin: 0rem;
     }
 
     .p-card .p-card-subtitle {
-        margin: 0.5rem;
+        color: #ffffff;
+        font-size: 0.5rem;
+        margin: 0rem;
     }
 
     .p-card .p-card-content {

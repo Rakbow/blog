@@ -71,6 +71,7 @@
     <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
+    <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
 </head>
 <body>
 <div class="nk-container">
@@ -79,26 +80,26 @@
             <div id="app">
                 <!-- 头部 -->
                 <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
-                <div th:if="${loginUser != null}">
-                    <p-toolbar th:if="${loginUser.type == 1}">
-                        <template #start>
-                            <p-button label="基础信息" icon="pi pi-pencil" class="p-button-rounded mr-2"
-                                      @click="openEditDialog"></p-button>
-                            <p-button label="图片管理" icon="pi pi-images" class="p-button-rounded mr-2"
-                                      @click="openImageEditDialog"></p-button>
-                            <p-button label="编辑音乐制作" icon="pi pi-users" class="p-button-rounded mr-2"
-                                      @click="openArtistEditDialog"></p-button>
-                            <p-button label="编辑音轨信息" icon="pi iconfont icon-playlist" class="p-button-rounded mr-2"
-                                      @click="openTrackEditDialog"></p-button>
-                            <p-button label="编辑描述" icon="pi iconfont icon-miaoshu" class="p-button-rounded mr-2"
-                                      @click="openDescriptionEditDialog"></p-button>
-                            <p-button label="编辑特典" icon="pi iconfont icon-gift" class="p-button-rounded mr-2"
-                                      @click="openBonusEditDialog"></p-button>
-                        </template>
-                        <template #end>
-                        </template>
-                    </p-toolbar>
-                </div>
+<!--                <div th:if="${loginUser != null}">-->
+<!--                    <p-toolbar th:if="${loginUser.type == 1}">-->
+<!--                        <template #start>-->
+<!--                            <p-button label="基础信息" icon="pi pi-pencil" class="p-button-rounded mr-2"-->
+<!--                                      @click="openEditDialog"></p-button>-->
+<!--                            <p-button label="图片管理" icon="pi pi-images" class="p-button-rounded mr-2"-->
+<!--                                      @click="openImageEditDialog"></p-button>-->
+<!--                            <p-button label="编辑音乐制作" icon="pi pi-users" class="p-button-rounded mr-2"-->
+<!--                                      @click="openArtistEditDialog"></p-button>-->
+<!--                            <p-button label="编辑音轨信息" icon="pi iconfont icon-playlist" class="p-button-rounded mr-2"-->
+<!--                                      @click="openTrackEditDialog"></p-button>-->
+<!--                            <p-button label="编辑描述" icon="pi iconfont icon-miaoshu" class="p-button-rounded mr-2"-->
+<!--                                      @click="openDescriptionEditDialog"></p-button>-->
+<!--                            <p-button label="编辑特典" icon="pi iconfont icon-gift" class="p-button-rounded mr-2"-->
+<!--                                      @click="openBonusEditDialog"></p-button>-->
+<!--                        </template>-->
+<!--                        <template #end>-->
+<!--                        </template>-->
+<!--                    </p-toolbar>-->
+<!--                </div>-->
                 <div class="grid card mt-2">
                     <p-toast></p-toast>
                     <div class="col-12 sm:col-12 md:col-6 lg:col-9">
@@ -109,6 +110,14 @@
                                     <h4 class="text-start ml-2 mt-0 mb-0">{{album.nameJp}}</h4>
                                     <h4 class="text-start ml-2 mt-0 mb-0"><small>{{album.nameEn}}</small></h4>
                                 </div>
+                            </template>
+                            <template #icons th:if="${loginUser != null}">
+                                <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2" th:if="${loginUser.type == 1}">
+                                    <p-button @click="openEditDialog">
+                                        <i class="pi pi-pencil"></i>
+                                        <span class="ml-2 flex align-items-center font-bold">编辑</span>
+                                    </p-button>
+                                </p-splitbutton>
                             </template>
                             <div class="grid">
                                 <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
@@ -858,6 +867,42 @@
             const productSet = ref([[${productSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
 
+            const edits = ref([
+                {
+                    label: '图片管理',
+                    icon: 'pi pi-images',
+                    command: () => {
+                        openImageEditDialog();
+                    }
+                },
+                {
+                    label: '音乐制作',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        openArtistEditDialog();
+                    }
+                },
+                {
+                    label: '音轨信息',
+                    icon: 'pi iconfont icon-playlist',
+                    command: () => {
+                        openArtistEditDialog();
+                    }
+                },
+                {   label: '描述信息',
+                    icon: 'pi iconfont icon-miaoshu',
+                    command: () => {
+                        openDescriptionEditDialog();
+                    }
+                },
+                {   label: '特典信息',
+                    icon: 'pi iconfont icon-gift',
+                    command: () => {
+                        openBonusEditDialog();
+                    }
+                }
+            ]);
+
             //region ------编辑专辑信息------
             const albumEdit = ref({});
             const displayEditDialog = ref(false);
@@ -902,7 +947,6 @@
                     axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
                         .then(res => {
                             if (res.state === 1) {
-                                console.log(albumEdit.value);
                                 albumEdit.value = {};
                                 toast.add({
                                     severity: 'success',
@@ -1422,6 +1466,7 @@
             }
 
             return {
+                edits,
                 seriesBool,
                 displayEditDialog,
                 albumEdit,
@@ -1459,16 +1504,13 @@
                 selectFile,
                 imageHtml,
                 displayImageEditDialog,
-                openImageEditDialog,
                 positionName,
                 positionArtist,
-                openArtistEditDialog,
                 displayArtistEditDialog,
                 artists,
                 saveArtist,
                 artistHtml,
                 submitArtist,
-                openTrackEditDialog,
                 displayTrackEditDialog,
                 musicName,
                 musicLength,
@@ -1482,12 +1524,10 @@
                 navbarItems,
                 descriptionMd,
                 displayDescriptionDialog,
-                openDescriptionEditDialog,
                 closeDescriptionEditDialog,
                 submitDescription,
                 bonusMd,
                 displayBonusDialog,
-                openBonusEditDialog,
                 closeBonusEditDialog,
                 submitBonus,
             }
@@ -1513,6 +1553,7 @@
             "p-calendar": primevue.calendar,
             "p-inputnumber": primevue.inputnumber,
             "p-inputswitch": primevue.inputswitch,
+            "p-splitbutton": primevue.splitbutton,
         }
     };
 
@@ -1532,6 +1573,9 @@
         .mount("#app");
 </script>
 <style>
+    .card {
+        padding: 0rem;
+    }
 
     .related-image-div {
         position: relative;
