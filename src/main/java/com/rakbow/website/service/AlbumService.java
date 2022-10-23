@@ -290,7 +290,6 @@ public class AlbumService {
     public Album json2Album(JSONObject albumJson) throws ParseException {
         albumJson.put("releaseDate", CommonUtil.stringToDate(albumJson.getString("releaseDate"), "yyyy/MM/dd"));
         Album album = albumJson.toJavaObject(Album.class);
-        album.setAddedTime(new Timestamp(System.currentTimeMillis()));
         album.setEditedTime(new Timestamp(System.currentTimeMillis()));
         return album;
     }

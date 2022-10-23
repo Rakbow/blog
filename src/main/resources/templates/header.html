@@ -31,35 +31,53 @@
 
     <!-- other -->
     <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/basicUrl.js}"></script>
     <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/basic/navbarParam.js}"></script>
 </head>
 <body>
 <div id="app">
-    <p-menubar :model="navbarItems" th:fragment="site_header">
-        <template #start>
-            <a href="http://localhost:8080">
-                <img alt="logo" src="/img/logo.png" height="30" class="mr-2">
-            </a>
-        </template>
-        <template #end>
-            <div class="grid mt-0 mb-0 pt-0 pb-0">
-                <div class="col-4 mt-0 mb-0 pt-0 pb-0">
-                    <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small" shape="circle"></p-avatar>
-<!--                    <a th:if="${loginUser == null}"  href="http://localhost:8080/login">-->
-<!--                        <i class="pi iconfont icon-login mr-2" style="font-size: 2rem"></i>-->
-<!--                    </a>-->
-                    <a th:if="${loginUser != null}" href="http://localhost:8080/logout">
-                        <i class="pi iconfont icon-logout mr-2" style="font-size: 2rem"></i>
+    <div th:fragment="site_header">
+        <div th:if="${loginUser == null}">
+            <p-menubar :model="notLoginNavbarItems">
+                <template #start>
+                    <a :href="domainUrl">
+                        <img alt="logo" src="/img/logo.png" height="30" class="mr-2">
                     </a>
-                </div>
-                <div class="col-8 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
-                    <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
-                    <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
-                </div>
-            </div>
-        </template>
-    </p-menubar>
+                </template>
+                <template #end>
+                    <div class="grid mt-0 mb-0 pt-0 pb-0">
+                        <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
+                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label" option-value="value" placeholder="类型"></p-dropdown>
+                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
+                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
+                        </div>
+                    </div>
+                </template>
+            </p-menubar>
+        </div>
+        <div th:if="${loginUser != null}">
+            <p-menubar :model="loginNavbarItems">
+                <template #start>
+                    <a :href="domainUrl">
+                        <img alt="logo" src="/img/logo.png" height="30" class="mr-2">
+                    </a>
+                </template>
+                <template #end>
+                    <div class="grid mt-0 mb-0 pt-0 pb-0">
+                        <div class="col-2 mt-0 mb-0 pt-0 pb-0">
+                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small" shape="circle"></p-avatar>
+                        </div>
+                        <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
+                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label" option-value="value" placeholder="类型"></p-dropdown>
+                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
+                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
+                        </div>
+                    </div>
+                </template>
+            </p-menubar>
+        </div>
+    </div>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
@@ -69,13 +87,24 @@
             onMounted(() => {
 
             })
-            return {}
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+
+            return { domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity }
         },
         components: {
+            "p-dropdown": primevue.dropdown,
             "p-inputtext": primevue.inputtext,
-            "p-menubar": primevue.menubar,
             "p-button": primevue.button,
-            "p-avatar": primevue.avatar
+            "p-avatar": primevue.avatar,
+            "p-menubar": primevue.menubar,
         }
     };
 

@@ -42,6 +42,7 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
     <script th:src="@{/js/primevue/components/badge.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
 <!--    <script th:src="@{/js/primevue/components/badgedirective.min.js}"></script>-->
 
     <!-- Axios -->
@@ -49,9 +50,10 @@
 
     <!-- other -->
     <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/basicUrl.js}"></script>
     <script th:src="@{/js/basic/dataHandler.js}"></script>
     <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
+    <script th:src="@{/js/basic/navbarParam.js}"></script>
 </head>
 <body>
 <div class="nk-container">
@@ -62,22 +64,34 @@
 
             <div class="grid card mt-2">
                 <div class="col-12 sm:col-12 md:col-6 lg:col-9">
-                    <!--                    <p-toolbar class="mb-4">-->
-                    <!--                        <template #start>-->
-                    <!--                            <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"></p-button>-->
-                    <!--                            &lt;!&ndash;          <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected" :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;&ndash;&gt;-->
-                    <!--                        </template>-->
-                    <!--                    </p-toolbar>-->
                     <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
                                 :sort-field="sortField">
                         <template #header>
                             <div class="grid grid-nogutter">
-                                <div class="col-6" style="text-align: left">
+                                <div class="col-2" style="text-align: left">
                                     <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
                                                 placeholder="按发行时间排序"
                                                 @change="onSortChange($event)"></p-dropdown>
                                 </div>
-                                <div class="col-6" style="text-align: right">
+                                <div class="col-2" style="text-align: left">
+                                    <p-dropdown v-model="selectParam.seriesId" :options="seriesSet"
+                                                placeholder="所属系列" option-label="label" option-value="value"
+                                                @change="getProducts">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-2" style="text-align: left">
+                                    <p-multiselect v-model="selectParam.productIds" :options="productSet"
+                                                   option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                                   display="chip" :filter="true" :disabled="productSelect">
+                                    </p-multiselect>
+                                </div>
+                                <div class="col-2" style="text-align: left">
+                                    <p-multiselect v-model="selectParam.albumFormats" :options="albumFormatSet"
+                                                   option-label="label" option-value="value" placeholder="选择专辑分类"
+                                                   display="chip" :filter="true">
+                                    </p-multiselect>
+                                </div>
+                                <div class="col-4" style="text-align: right">
                                     <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
                                 </div>
                             </div>
@@ -123,6 +137,36 @@
                                         </ul>
                                     </template>
                                 </p-card>
+                            </div>
+                        </template>
+                        <template #list="slotProps">
+                            <div class="col-12">
+                                <div class="product-list-item">
+                                    <a :href="'/db/album/'+ slotProps.data.id">
+                                        <img :src="slotProps.data.cover.url" :alt="slotProps.data.cover.name"/>
+                                    </a>
+                                    <div class="product-list-detail">
+                                        <a :href="'/db/album/'+ slotProps.data.id">
+                                            <div class="product-name">{{slotProps.data.nameJp}}</div>
+                                        </a>
+                                        <span class="smallfont" style="margin: 0 0 .5rem 0;">
+                                            <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
+                                        </span>
+                                        <span class="ml-2 text-end">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                        <br/>
+                                        <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.series.name}}</span>
+                                        <span class="col-2" v-if="slotProps.data.hasBonus == 1">
+                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem" v-tooltip="'包含特典'"></i>
+                                        </span>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item mr-2" v-for="product of slotProps.data.products">
+                                                <a :href="domainUrl + '/db/product/' + product.id">
+                                                    <p-tag class="product-tag" icon="pi pi-tag" :value="product.name"></p-tag>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </template>
                     </p-dataview>
@@ -249,7 +293,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="smallfont album-anime">
+                                                <span class="smallfont">
                                                     <b>{{album.catalogNo}}</b> {{album.releaseDate}}
                                                 </span>
                                             </li>
@@ -279,8 +323,40 @@
     const App = {
         setup() {
             onMounted(() => {
-
             });
+            const seriesSet = ref([[${seriesSet}]]);
+            const albums = ref([[${albums}]]);
+
+            //region 搜索
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const productSelect = ref(true);
+            const selectParam = ref({
+                productIds:[],
+                seriesId: null,
+            });
+            const productSet = ref();
+            const getProducts = (ev) => {
+                let json = {seriesId: ev.value};
+                axiosPostRequest(GET_ALL_PRODUCT_URL, json)
+                    .then(res => {
+                        selectParam.value.productIds = [];
+                        productSet.value = res;
+                        productSelect.value = false;
+                    })
+            };
+            //endregion
+
+            //region 页面header
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
 
             const justEditedAlbums = ref([[${justEditedAlbums}]]);
             const justAddedAlbums = ref([[${justAddedAlbums}]]);
@@ -293,65 +369,6 @@
             const sortOptions = ref([
                 {label: '按发售时间正序', value: '!releaseDate'},
                 {label: '按发售时间逆序', value: 'releaseDate'},
-            ]);
-
-            const albums = ref([[${albums}]]);
-
-            const navbarItems = ref([
-                {
-                    label: 'Home',
-                    icon: 'pi pi-fw pi-home',
-                    url: "http://localhost:8080"
-                },
-                {
-                    label: 'DataBase',
-                    icon: 'pi pi-fw iconfont icon-database',
-                    url: "http://localhost:8080/db"
-                },
-                {
-                    label: 'Album',
-                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
-                    items: [
-                        {
-                            label: 'Album List',
-                            icon: 'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album/list'
-                        },
-                        {
-                            label: 'Album Card',
-                            icon: 'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album/card'
-                        }
-                    ]
-                },
-                {
-                    label: 'Disc',
-                    icon: 'pi pi-fw iconfont icon-Video-Disc',
-                    items: [
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        },
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        }
-                    ]
-                },
-                {
-                    label: 'Book',
-                    icon: 'pi pi-fw pi-book',
-                    items: [
-                        {
-                            label: 'Book List',
-                            icon: 'pi pi-fw pi-book'
-                        },
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        }
-                    ]
-                }
             ]);
 
             const onSortChange = (event) => {
@@ -370,9 +387,10 @@
                 }
             };
 
-            return {onSortChange,
-                justAddedAlbums, justEditedAlbums, popularAlbums,
-                navbarItems, albums, layout,
+            return {
+                albumFormatSet, getProducts, seriesSet, productSet, selectParam, productSelect,
+                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
+                justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
                 sortKey, sortOrder, sortField, sortOptions
             }
         },
@@ -389,6 +407,7 @@
             "p-avatar": primevue.avatar,
             "p-inputtext": primevue.inputtext,
             "p-badge": primevue.badge,
+            "p-multiselect": primevue.multiselect,
         }
     };
 
@@ -408,6 +427,66 @@
         .mount("#app");
 </script>
 <style>
+    .p-multiselect {
+        width: 10rem;
+    }
+    .product-category-icon {
+        vertical-align: middle;
+        margin-right: .5rem;
+    }
+
+    .product-category {
+        font-weight: 600;
+        vertical-align: middle;
+    }
+    .product-name {
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .product-description {
+        margin: 0 0 1rem 0;
+    }
+    .product-list-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .product-list-item img {
+        width: 70px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        margin-right: 2rem;
+    }
+
+    .product-list-item .product-list-detail {
+        flex: 1 1 0;
+    }
+
+    .product-list-item .p-rating {
+        margin: 0 0 .5rem 0;
+    }
+
+    .product-list-item .product-price {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: .5rem;
+        align-self: flex-end;
+    }
+
+    .product-list-item .product-list-action {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-list-item .p-button {
+        margin-bottom: .5rem;
+    }
+
+
+
+
     .card {
         padding: 0rem;
     }

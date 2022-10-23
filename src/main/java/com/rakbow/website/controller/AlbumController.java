@@ -101,6 +101,8 @@ public class AlbumController {
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
         return "/album-card";
     }
 
@@ -254,8 +256,6 @@ public class AlbumController {
             album.setArtists(originAlbum.getArtists());
             album.setBonus(originAlbum.getBonus());
             album.setDescription(originAlbum.getDescription());
-
-            System.out.println(album);
 
             albumService.updateAlbum(album.getId(), album);
 

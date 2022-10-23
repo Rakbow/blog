@@ -13,7 +13,13 @@ public enum EntityType {
 
     UNCLASSIFIED(0,"未分类"),
     ALBUM(1,"专辑"),
-    DISC(2,"碟片");
+    DISC(2,"碟片"),
+    BOOK(3,"书籍"),
+    GOODS(4,"周边"),
+    GAME(5,"游戏"),
+    SERIES(6,"系列"),
+    PRODUCT(7,"作品"),
+    article(8,"文章");
 
     private int Id;
     private String Name;

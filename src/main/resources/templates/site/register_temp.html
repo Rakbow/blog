@@ -28,7 +28,7 @@
   <!-- Axios -->
   <script th:src="@{/js/axios/axios.min.js}"></script>
   <script th:src="@{/js/basic/httpRequest.js}"></script>
-  <script th:src="@{/js/basic/basicParam.js}"></script>
+  <script th:src="@{/js/basic/basicUrl.js}"></script>
 
   <!-- JQuery -->
   <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
@@ -120,7 +120,7 @@
 
       //刷新验证码
       const refreshKaptcha = () => {
-        const path = DOMIAN_URL + "/kaptcha?p=" + Math.random();
+        const path = DOMAIN_URL + "/kaptcha?p=" + Math.random();
         $("#kaptcha").attr("src", path);
       }
 

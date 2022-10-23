@@ -67,8 +67,9 @@
 
     <!-- other -->
     <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicParam.js}"></script>
+    <script th:src="@{/js/basic/basicUrl.js}"></script>
     <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/basic/navbarParam.js}"></script>
 </head>
 <body>
 <div class="nk-container">
@@ -137,7 +138,7 @@
                     <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
                     <p-column header="专辑原名">
                         <template #body="slotProps">
-                            <a :href="'http://localhost:8080/db/album/' + slotProps.data.id">
+                            <a :href="domainUrl + '/db/album/' + slotProps.data.id">
                                 {{slotProps.data.nameJp}}
                             </a>
                         </template>
@@ -524,6 +525,18 @@
                 init();
             });
 
+            //region 页面header
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
             const displayEditDialog = ref(false);
             const deleteAlbumsDialog = ref(false);
             const displayNewDialog = ref(false);
@@ -599,7 +612,7 @@
                     }).catch(err => {
                     console.log(err);
                 });
-            }
+            };
 
             const label2value = (xFormat, xFormatSet) => {
                 let tmp = new Array();
@@ -625,6 +638,7 @@
                         }
                     })
             };
+
             //删除数据
             const deleteSelectedAlbums = () => {
                 axiosDeleteRequest(DELETE_ALBUM_URL, selectedAlbums.value)
@@ -694,7 +708,9 @@
                                 } else {
                                     toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                                 }
-                            });
+                            }).catch(e => {
+                                console.error(e);
+                        });
                     }
                 }
             }
@@ -784,71 +800,17 @@
                     })
             };
 
-            const navbarItems = ref([
-                {
-                    label: 'Home',
-                    icon: 'pi pi-fw pi-home',
-                    url: "http://localhost:8080"
-                },
-                {
-                    label: 'DataBase',
-                    icon: 'pi pi-fw iconfont icon-database',
-                    url: "http://localhost:8080/db"
-                },
-                {
-                    label: 'Album',
-                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
-                    items: [
-                        {
-                            label: 'Album List',
-                            icon: 'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album/list'
-                        },
-                        {
-                            label: 'Album Card',
-                            icon: 'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album/card'
-                        }
-                    ]
-                },
-                {
-                    label: 'Disc',
-                    icon: 'pi pi-fw iconfont icon-Video-Disc',
-                    items: [
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        },
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        }
-                    ]
-                },
-                {
-                    label: 'Book',
-                    icon: 'pi pi-fw pi-book',
-                    items: [
-                        {
-                            label: 'Book List',
-                            icon: 'pi pi-fw pi-book'
-                        },
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        }
-                    ]
-                }
-            ]);
+
 
             return {
+                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 album, albums, formatCurrency, columns, selectedColumns, onToggle,
                 loading, filters, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
                 submitNewAlbum, confirmDeleteSelected, deleteAlbumsDialog, deleteSelectedAlbums,
                 selectedAlbums, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
                 mediaFormatSet, publishFormatSet, albumFormatSet, productSet, seriesSet,
-                getProducts, productSelect, imgData, imgArr, detailId, navbarItems
+                getProducts, productSelect, imgData, imgArr, detailId
             }
         },
         components: {
