@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * @Create: 2022-08-17 23:33
  * @Description: 该注解表示需要登陆
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface LoginRequired {
-}
+// @Target(ElementType.METHOD)
+// @Retention(RetentionPolicy.RUNTIME)
+// public @interface LoginRequired {
+// }

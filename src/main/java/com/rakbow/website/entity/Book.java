@@ -10,43 +10,57 @@ import java.util.Date;
  * @Description: 书籍实体类
  */
 public class Book {
-    private long id;
-    private String title;
-    private String subtitle;
-    private String isbn;
-    private String barcode;
-    private int bookType;
-    private int seriesId;
-    private String author;
-    private String translator;
-    private String illustrator;
-    private String publisher;
-    private Date publish_date;
-    private int price;
-    private String designed;
-    private String bonus;
-    private String description;
-    private String images;
-    private String remark;
-    private Timestamp addedTime;
-    private Timestamp editedTime;
-    private int _s;
+    private int id;//主键编号
+    private String title;//标题（原文）
+    private String subtitle;//副标题（原文）
+    private String title_zh;//标题（中文）
+    private String subtitle_zh;//副标题（中文）
+    private String title_en;//标题（英文）
+    private String subtitle_en;//副标题（英文）
+    private String isbn_10;//国际标准书号（10位）
+    private String isbn_13;//国际标准书号（13位）
+    private String barcode;//商品条形码
+    private int bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
+    private int seriesId;//所属系列
+    private String area;//地区
+    private String language;//语言
+    private String authors;//作者（译者，插画，原作者等，json）
+    private String publisher;//出版社
+    private Date publish_date;//出版日期
+    private int price;//出版价格
+    private String spec;//规格
+    private String designed;//装帧
+    private int hasBonus;//是否包含特典
+    private String bonus;//特典信息
+    private String description;//描述
+    private String images;//图片（json）
+    private String remark;//备注
+    private Timestamp addedTime;//收录时间
+    private Timestamp editedTime;//编辑时间
+    private int _s;//状态
 
     public Book() {
-        this.id = 0l;
+        this.id = 0;
         this.title = "";
         this.subtitle = "";
-        this.isbn = "";
+        this.title_zh = "";
+        this.subtitle_zh = "";
+        this.title_en = "";
+        this.subtitle_en = "";
+        this.isbn_10 = "";
+        this.isbn_13 = "";
         this.barcode = "";
         this.bookType = 0;
         this.seriesId = 0;
-        this.author = "";
-        this.translator = "";
-        this.illustrator = "";
+        this.area = "";
+        this.language = "";
+        this.authors = "[]";
         this.publisher = "";
         this.publish_date = null;
         this.price = 0;
+        this.spec = "";
         this.designed = "";
+        this.hasBonus = 0;
         this.bonus = "";
         this.description = "";
         this.images = "[]";
@@ -56,11 +70,11 @@ public class Book {
         this._s = 1;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -80,12 +94,52 @@ public class Book {
         this.subtitle = subtitle;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public String getTitle_zh() {
+        return title_zh;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setTitle_zh(String title_zh) {
+        this.title_zh = title_zh;
+    }
+
+    public String getSubtitle_zh() {
+        return subtitle_zh;
+    }
+
+    public void setSubtitle_zh(String subtitle_zh) {
+        this.subtitle_zh = subtitle_zh;
+    }
+
+    public String getTitle_en() {
+        return title_en;
+    }
+
+    public void setTitle_en(String title_en) {
+        this.title_en = title_en;
+    }
+
+    public String getSubtitle_en() {
+        return subtitle_en;
+    }
+
+    public void setSubtitle_en(String subtitle_en) {
+        this.subtitle_en = subtitle_en;
+    }
+
+    public String getIsbn_10() {
+        return isbn_10;
+    }
+
+    public void setIsbn_10(String isbn_10) {
+        this.isbn_10 = isbn_10;
+    }
+
+    public String getIsbn_13() {
+        return isbn_13;
+    }
+
+    public void setIsbn_13(String isbn_13) {
+        this.isbn_13 = isbn_13;
     }
 
     public String getBarcode() {
@@ -112,28 +166,28 @@ public class Book {
         this.seriesId = seriesId;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getArea() {
+        return area;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setArea(String area) {
+        this.area = area;
     }
 
-    public String getTranslator() {
-        return translator;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setTranslator(String translator) {
-        this.translator = translator;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public String getIllustrator() {
-        return illustrator;
+    public String getAuthors() {
+        return authors;
     }
 
-    public void setIllustrator(String illustrator) {
-        this.illustrator = illustrator;
+    public void setAuthors(String authors) {
+        this.authors = authors;
     }
 
     public String getPublisher() {
@@ -160,12 +214,28 @@ public class Book {
         this.price = price;
     }
 
+    public String getSpec() {
+        return spec;
+    }
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
+
     public String getDesigned() {
         return designed;
     }
 
     public void setDesigned(String designed) {
         this.designed = designed;
+    }
+
+    public int getHasBonus() {
+        return hasBonus;
+    }
+
+    public void setHasBonus(int hasBonus) {
+        this.hasBonus = hasBonus;
     }
 
     public String getBonus() {
@@ -230,17 +300,24 @@ public class Book {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", subtitle='" + subtitle + '\'' +
-                ", isbn='" + isbn + '\'' +
+                ", title_zh='" + title_zh + '\'' +
+                ", subtitle_zh='" + subtitle_zh + '\'' +
+                ", title_en='" + title_en + '\'' +
+                ", subtitle_en='" + subtitle_en + '\'' +
+                ", isbn_10='" + isbn_10 + '\'' +
+                ", isbn_13='" + isbn_13 + '\'' +
                 ", barcode='" + barcode + '\'' +
                 ", bookType=" + bookType +
                 ", seriesId=" + seriesId +
-                ", author='" + author + '\'' +
-                ", translator='" + translator + '\'' +
-                ", illustrator='" + illustrator + '\'' +
+                ", area='" + area + '\'' +
+                ", language='" + language + '\'' +
+                ", authors='" + authors + '\'' +
                 ", publisher='" + publisher + '\'' +
                 ", publish_date=" + publish_date +
                 ", price=" + price +
+                ", spec='" + spec + '\'' +
                 ", designed='" + designed + '\'' +
+                ", hasBonus=" + hasBonus +
                 ", bonus='" + bonus + '\'' +
                 ", description='" + description + '\'' +
                 ", images='" + images + '\'' +

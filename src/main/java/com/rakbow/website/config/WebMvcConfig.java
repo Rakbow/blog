@@ -1,6 +1,5 @@
 package com.rakbow.website.config;
 
-import com.rakbow.website.controller.interceptor.LoginRequiredInterceptor;
 import com.rakbow.website.controller.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

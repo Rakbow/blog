@@ -40,6 +40,10 @@
     <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
     <script th:src="@{/js/basic/navbarParam.js}"></script>
 
+    <!-- high light js -->
+    <link th:href="@{/css/highlightjs/default.min.css}" rel="stylesheet">
+    <script th:src="@{/js/highlightjs/highlight.min.js}"></script>
+
     <!-- md-editor-v3 -->
     <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
     <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
@@ -81,6 +85,7 @@
             <div id="app">
                 <!-- 头部 -->
                 <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+
                 <div class="grid card mt-2">
                     <p-toast></p-toast>
                     <div class="col-12 sm:col-12 md:col-6 lg:col-9">
@@ -824,6 +829,9 @@
                         <p-button label="保存更改" icon="pi pi-save" @click="updateImage" autofocus></p-button>
                     </template>
                 </p-dialog>
+
+                <!-- 尾部 -->
+                <footer th:insert="~{footer :: site_footer}"></footer>
             </div>
         </div>
     </div>
@@ -886,7 +894,7 @@
                     label: '音轨信息',
                     icon: 'pi iconfont icon-playlist',
                     command: () => {
-                        openArtistEditDialog();
+                        openTrackEditDialog();
                     }
                 },
                 {
@@ -1077,22 +1085,24 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     });
-            }
+            };
+            //endregion
+
+            //region ------markdown共通------
+
             const text2marked = () => {
 
                 const description = album.value.description;
                 const bonus = album.value.bonus;
 
-                if (description != null && description != "") {
-                    var view = marked.parse(description);
-                    document.getElementById("description").innerHTML = view;
+                if (description != null && description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(description);
                 } else {
                     document.getElementById("description").innerHTML = "暂无描述信息";
                 }
 
-                if (bonus != null && bonus != "") {
-                    var view = marked.parse(bonus);
-                    document.getElementById("bonus").innerHTML = view;
+                if (bonus != null && bonus !== "") {
+                    document.getElementById("bonus").innerHTML = marked.parse(bonus);
                 } else {
                     document.getElementById("bonus").innerHTML = "暂无特典信息";
                 }

@@ -510,6 +510,9 @@
                               @click="deleteSelectedAlbums"></p-button>
                 </template>
             </p-dialog>
+
+            <!-- 尾部 -->
+            <footer th:insert="~{footer :: site_footer}"></footer>
         </div>
     </div>
 </div>
@@ -683,7 +686,7 @@
                 init();
             };
             //保存编辑数据
-            const submitEditAlbum = () => {
+            const submitEditAlbum = async () => {
                 if (checkAlbum(albumEdit)) {
                     if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
                         albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
@@ -692,28 +695,27 @@
                     albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
                     albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
                     albumEdit.value.productId = albumEdit.value.productId.join(",");
-                    if (true) {
-                        axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
-                            .then(res => {
-                                if (res.state == 1) {
-                                    albumEdit.value = {};
-                                    toast.add({
-                                        severity: 'success',
-                                        summary: 'Successful',
-                                        detail: res.message,
-                                        life: 3000
-                                    });
-                                    closeEditDialog();
-                                    init();
-                                } else {
-                                    toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                                }
-                            }).catch(e => {
-                                console.error(e);
+                    await axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
+                        .then(res => {
+                            if (res.state === 1) {
+                                albumEdit.value = {};
+                                toast.add({
+                                    severity: 'success',
+                                    summary: 'Successful',
+                                    detail: res.message,
+                                    life: 3000
+                                });
+                                closeEditDialog();
+                                init();
+                            } else {
+                                console.log(res);
+                                toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                            }
+                        }).catch(e => {
+                            console.error(e);
                         });
-                    }
                 }
-            }
+            };
 
             //打开新增数据面板
             const openNewDialog = () => {

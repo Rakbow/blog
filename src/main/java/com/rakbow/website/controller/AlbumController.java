@@ -145,6 +145,14 @@ public class AlbumController {
 
     //endregion
 
+    // public void tmp(){
+    //     if (userService.checkAuthority(request).state) {
+    //
+    //     } else {
+    //         res.setErrorMessage(userService.checkAuthority(request).message);
+    //     }
+    // }
+
     //region ------增删改查------
 
     //获得所有专辑
@@ -185,89 +193,97 @@ public class AlbumController {
     //新增专辑
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
-    public String insertAlbum(@RequestBody String json) {
+    public String insertAlbum(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            Album album = albumService.json2Album(param);
+            if (userService.checkAuthority(request).state) {
+                Album album = albumService.json2Album(param);
 
-            //保存新增专辑
-            albumService.insertAlbum(album);
+                //保存新增专辑
+                albumService.insertAlbum(album);
 
-            //将新增的专辑保存到Elasticsearch服务器索引中
-            elasticsearchService.saveAlbum(album);
+                //将新增的专辑保存到Elasticsearch服务器索引中
+                elasticsearchService.saveAlbum(album);
 
-            //新增访问量实体
-            visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
+                //新增访问量实体
+                visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
 
-            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getName());
-            return JSON.toJSONString(res);
+                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getName());
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //删除专辑(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteAlbum(@RequestBody String json) {
+    public String deleteAlbum(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONArray albums = JSON.parseArray(json);
         try {
-            for (int i = 0; i < albums.size(); i++) {
+            if (userService.checkAuthority(request).state) {
+                for (int i = 0; i < albums.size(); i++) {
 
-                int id = albums.getJSONObject(i).getInteger("id");
+                    int id = albums.getJSONObject(i).getInteger("id");
 
-                //从数据库中删除专辑
-                albumService.deleteAlbumById(id);
+                    //从数据库中删除专辑
+                    albumService.deleteAlbumById(id);
 
-                //从Elasticsearch服务器索引中删除专辑
-                elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
+                    //从Elasticsearch服务器索引中删除专辑
+                    elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
 
-                //删除访问量实体
-                visitService.deleteVisit(EntityType.ALBUM.getId(), id);
+                    //删除访问量实体
+                    visitService.deleteVisit(EntityType.ALBUM.getId(), id);
+                }
+                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getName());
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getName());
-            return JSON.toJSONString(res);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //列表界面的更新专辑操作
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbum(@RequestBody String json) {
+    public String updateAlbum(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            Album album = albumService.json2Album(param);
-            System.out.println(album);
+            if (userService.checkAuthority(request).state) {
+                Album album = albumService.json2Album(param);
 
-            Album originAlbum = albumService.findAlbumById(album.getId());
-            //修改编辑时间
-            album.setEditedTime(new Timestamp(System.currentTimeMillis()));
+                Album originAlbum = albumService.findAlbumById(album.getId());
+                //修改编辑时间
+                album.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-            //列表编辑界面不涉及编辑的内容
-            album.setTrackInfo(originAlbum.getTrackInfo());
-            album.setImages(originAlbum.getImages());
-            album.setArtists(originAlbum.getArtists());
-            album.setBonus(originAlbum.getBonus());
-            album.setDescription(originAlbum.getDescription());
+                //列表编辑界面不涉及编辑的内容
+                album.setTrackInfo(originAlbum.getTrackInfo());
+                album.setImages(originAlbum.getImages());
+                album.setArtists(originAlbum.getArtists());
+                album.setBonus(originAlbum.getBonus());
+                album.setDescription(originAlbum.getDescription());
 
-            albumService.updateAlbum(album.getId(), album);
+                albumService.updateAlbum(album.getId(), album);
 
-            //将更新的专辑保存到Elasticsearch服务器索引中
-            elasticsearchService.saveAlbum(album);
+                //将更新的专辑保存到Elasticsearch服务器索引中
+                elasticsearchService.saveAlbum(album);
 
-            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getName());
-            return JSON.toJSONString(res);
+                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getName());
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //获取专辑图像
@@ -369,7 +385,7 @@ public class AlbumController {
                     jo.put("nameEn", imageInfo.getString("nameEn"));
                     jo.put("nameZh", imageInfo.getString("nameZh"));
                     jo.put("type", imageInfo.getString("type"));
-                    if(imageInfo.getString("description") == null){
+                    if (imageInfo.getString("description") == null) {
                         jo.put("description", "");
                     }
                     imgJson.add(jo);
@@ -404,18 +420,18 @@ public class AlbumController {
                 int id = JSON.parseObject(json).getInteger("id");
 
                 //更改信息
-                if(JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id){
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
                     String image = JSON.parseObject(json).getString("image");
                     res.message = albumService.updateAlbumImages(id, image);
                     //更新elasticsearch中的专辑
                     elasticsearchService.saveAlbum(albumService.findAlbumById(id));
                 }//删除
-                else if(JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id){
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
                     String imageUrl = JSON.parseObject(JSON.parseObject(json).getString("image")).getString("url");
                     res.message = albumService.deleteAlbumImages(id, imageUrl);
                     //更新elasticsearch中的专辑
                     elasticsearchService.saveAlbum(albumService.findAlbumById(id));
-                }else {
+                } else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
             } else {

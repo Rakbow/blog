@@ -48,9 +48,12 @@
                 <template #end>
                     <div class="grid mt-0 mb-0 pt-0 pb-0">
                         <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
-                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label" option-value="value" placeholder="类型"></p-dropdown>
-                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
-                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
+                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label"
+                                        option-value="value" placeholder="类型"></p-dropdown>
+                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword"
+                                         th:value="${keyword}"></p-inputtext>
+                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
+                                      type="submit"></p-button>
                         </div>
                     </div>
                 </template>
@@ -66,12 +69,16 @@
                 <template #end>
                     <div class="grid mt-0 mb-0 pt-0 pb-0">
                         <div class="col-2 mt-0 mb-0 pt-0 pb-0">
-                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small" shape="circle"></p-avatar>
+                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}"
+                                      size="small" shape="circle"></p-avatar>
                         </div>
                         <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
-                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label" option-value="value" placeholder="类型"></p-dropdown>
-                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword" th:value="${keyword}"></p-inputtext>
-                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light" type="submit"></p-button>
+                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label"
+                                        option-value="value" placeholder="类型" style="width: 8px"></p-dropdown>
+                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword"
+                                         th:value="${keyword}"></p-inputtext>
+                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
+                                      type="submit"></p-button>
                         </div>
                     </div>
                 </template>
@@ -97,7 +104,7 @@
 
             const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
 
-            return { domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity }
+            return {domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity}
         },
         components: {
             "p-dropdown": primevue.dropdown,
@@ -108,7 +115,7 @@
         }
     };
 
-    const routes = [{ path: "/", component: App }];
+    const routes = [{path: "/", component: App}];
 
     const router = VueRouter.createRouter({
         // history: VueRouter.createWebHashHistory(),

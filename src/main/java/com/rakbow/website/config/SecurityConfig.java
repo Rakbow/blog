@@ -44,12 +44,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         CommonConstant.AUTHORITY_ADMIN
                 )
                 .antMatchers(
-                        "/db/album/insert",
-                        "/db/album/update",
-                        "/db/album/delete",
-                        "/db/album/upload",
-                        "/db/album/updateAlbumArtists",
-                        "/db/album/updateAlbumTrackInfo"
+                        // "/db/album/insert",
+                        // "/db/album/update",
+                        // "/db/album/delete",
+                        // "/db/album/upload",
+                        // "/db/album/updateAlbumArtists",
+                        // "/db/album/updateAlbumTrackInfo"
                 )
                 .hasAnyAuthority(
                         CommonConstant.AUTHORITY_ADMIN

@@ -115,9 +115,4 @@ public class ElasticsearchTests {
     //
     // }
 
-    @Test
-    public void test111() throws IOException, ParseException {
-        elasticsearchService.searchAlbum("MAGES").stream().forEach(i -> System.out.println(i));
-    }
-
 }

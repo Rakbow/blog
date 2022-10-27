@@ -46,19 +46,19 @@
                 <div class="text-6xl text-primary font-bold mb-3">Rakbow的私人在线数据库</div>
                 <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
 
-                <p-button label="了解详情" type="button" @click.native="goUrl('http://localhost:8080/db')" class="mr-3 p-button-raised"></p-button>
+                <p-button label="数据库" type="button" @click.native="goUrl('http://localhost:8080/db')" class="mr-3 p-button-raised"></p-button>
+                <p-button label="博客" type="button" @click.native="goUrl('http://localhost:8080/blog')" class="p-button-outlined"></p-button>
             </section>
         </div>
         <div class="col-12 md:col-6 overflow-hidden">
             <img src="/img/index.bmp" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
         </div>
     </div>
-</div>
 
-<!-- 尾部 -->
-<!--<footer class="bg-dark">-->
-<!--    <div th:insert="~{footer :: site_footer}"></div>-->
-<!--</footer>-->
+    <!-- 尾部 -->
+    <footer th:insert="~{footer :: site_footer}"></footer>
+
+</div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
 

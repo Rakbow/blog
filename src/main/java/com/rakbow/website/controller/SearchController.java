@@ -1,5 +1,6 @@
 package com.rakbow.website.controller;
 
+import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.service.AlbumService;
 // import com.rakbow.website.service.ElasticsearchService;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,13 +34,16 @@ public class SearchController {
 
     // s?keyword=xxx
     @RequestMapping(path = "/s", method = RequestMethod.GET)
-    public String search(String keyword, Model model) throws IOException, ParseException {
+    public String search(String type, String keyword, Model model) throws IOException, ParseException {
 
-        List<Album> searchResult = elasticsearchService.searchAlbum(keyword);
+        if(Integer.parseInt(type) == EntityType.ALBUM.getId()){
+            List<Album> searchResult = elasticsearchService.searchAlbum(keyword);
+            model.addAttribute("searchResult", searchResult);
+            model.addAttribute("totals", (searchResult == null) ? 0 : searchResult.size());
+        }
 
-        model.addAttribute("searchResult", searchResult);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("totals", (searchResult == null) ? 0 : searchResult.size());
+        model.addAttribute("type", EntityType.getItemNameByIndex(Integer.parseInt(type)));
         return "/site/search";
     }
 
