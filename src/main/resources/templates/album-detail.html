@@ -94,8 +94,8 @@
                                 <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
                                     <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{album.nameJp}}</h4>
-                                    <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameEn}}</small>
-                                    </h4>
+                                    <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameEn}}</small></h4>
+                                    <h4 v-if="album.nameZh != ''" class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameZh}}</small></h4>
                                 </div>
                             </template>
                             <template #icons th:if="${loginUser != null}">

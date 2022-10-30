@@ -22,12 +22,12 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                 icon: 'pi pi-fw iconfont icon-database',
                 url: DATABASE_INDEX_URL
             },
-            {
-                label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: SERIES_INDEX_URL
-            },
-            {
-                label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_INDEX_URL
-            },
+            // {
+            //     label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: SERIES_INDEX_URL
+            // },
+            // {
+            //     label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_INDEX_URL
+            // },
             {
                 label: '专辑', icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
                 items: [
@@ -35,34 +35,34 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                     {label: '专辑列表', icon: 'pi pi-fw pi-list', url: ALBUM_LIST_URL}
                 ]
             },
-            {
-                label: 'BD/DVD', icon: 'pi pi-fw iconfont icon-Video-Disc',
-                items: [
-                    {label: '碟片首页', icon: 'pi pi-fw iconfont icon-Video-Disc', url: DISC_INDEX_URL},
-                    {label: '碟片列表', icon: 'pi pi-fw pi-list'}
-                ]
-            },
-            {
-                label: '书籍', icon: 'pi pi-fw pi-book',
-                items: [
-                    {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
-                    {label: '书籍列表', icon: 'pi pi-fw pi-list'}
-                ]
-            },
-            {
-                label: '周边', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
-                items: [
-                    {label: '周边首页', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang', url: DISC_INDEX_URL},
-                    {label: '周边列表', icon: 'pi pi-fw pi-list'}
-                ]
-            },
-            {
-                label: '游戏', icon: 'pi pi-fw iconfont icon-youxi',
-                items: [
-                    {label: '游戏首页', icon: 'pi pi-fw iconfont icon-youxi', url: GAME_INDEX_URL},
-                    {label: '游戏列表', icon: 'pi pi-fw pi-list'}
-                ]
-            }
+            // {
+            //     label: 'BD/DVD', icon: 'pi pi-fw iconfont icon-Video-Disc',
+            //     items: [
+            //         {label: '碟片首页', icon: 'pi pi-fw iconfont icon-Video-Disc', url: DISC_INDEX_URL},
+            //         {label: '碟片列表', icon: 'pi pi-fw pi-list'}
+            //     ]
+            // },
+            // {
+            //     label: '书籍', icon: 'pi pi-fw pi-book',
+            //     items: [
+            //         {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
+            //         {label: '书籍列表', icon: 'pi pi-fw pi-list'}
+            //     ]
+            // },
+            // {
+            //     label: '周边', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
+            //     items: [
+            //         {label: '周边首页', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang', url: DISC_INDEX_URL},
+            //         {label: '周边列表', icon: 'pi pi-fw pi-list'}
+            //     ]
+            // },
+            // {
+            //     label: '游戏', icon: 'pi pi-fw iconfont icon-youxi',
+            //     items: [
+            //         {label: '游戏首页', icon: 'pi pi-fw iconfont icon-youxi', url: GAME_INDEX_URL},
+            //         {label: '游戏列表', icon: 'pi pi-fw pi-list'}
+            //     ]
+            // }
         ]
     },
     {
@@ -91,16 +91,16 @@ const LOGIN_NAVBAR_ITEMS = [
                 icon: 'pi pi-fw iconfont icon-database',
                 url: DATABASE_INDEX_URL
             },
-            {
-                label: '系列',
-                icon: 'pi pi-fw iconfont icon-_classification',
-                url: SERIES_INDEX_URL
-            },
-            {
-                label: '作品',
-                icon: 'pi pi-fw iconfont icon-_classification',
-                url: PRODUCT_INDEX_URL
-            },
+            // {
+            //     label: '系列',
+            //     icon: 'pi pi-fw iconfont icon-_classification',
+            //     url: SERIES_INDEX_URL
+            // },
+            // {
+            //     label: '作品',
+            //     icon: 'pi pi-fw iconfont icon-_classification',
+            //     url: PRODUCT_INDEX_URL
+            // },
             {
                 label: '专辑',
                 icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
@@ -117,66 +117,66 @@ const LOGIN_NAVBAR_ITEMS = [
                     }
                 ]
             },
-            {
-                label: 'BD/DVD',
-                icon: 'pi pi-fw iconfont icon-Video-Disc',
-                items: [
-                    {
-                        label: '碟片首页',
-                        icon: 'pi pi-fw iconfont icon-Video-Disc',
-                        url: DISC_INDEX_URL
-                    },
-                    {
-                        label: '碟片列表',
-                        icon: 'pi pi-fw pi-list'
-                    }
-                ]
-            },
-            {
-                label: '书籍',
-                icon: 'pi pi-fw pi-book',
-                items: [
-                    {
-                        label: '书籍首页',
-                        icon: 'pi pi-fw pi-book',
-                        url: ALBUM_INDEX_URL
-                    },
-                    {
-                        label: '书籍列表',
-                        icon: 'pi pi-fw pi-list'
-                    }
-                ]
-            },
-            {
-                label: '周边',
-                icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
-                items: [
-                    {
-                        label: '周边首页',
-                        icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
-                        url: DISC_INDEX_URL
-                    },
-                    {
-                        label: '周边列表',
-                        icon: 'pi pi-fw pi-list'
-                    }
-                ]
-            },
-            {
-                label: '游戏',
-                icon: 'pi pi-fw iconfont icon-youxi',
-                items: [
-                    {
-                        label: '游戏首页',
-                        icon: 'pi pi-fw iconfont icon-youxi',
-                        url: GAME_INDEX_URL
-                    },
-                    {
-                        label: '游戏列表',
-                        icon: 'pi pi-fw pi-list'
-                    }
-                ]
-            }
+            // {
+            //     label: 'BD/DVD',
+            //     icon: 'pi pi-fw iconfont icon-Video-Disc',
+            //     items: [
+            //         {
+            //             label: '碟片首页',
+            //             icon: 'pi pi-fw iconfont icon-Video-Disc',
+            //             url: DISC_INDEX_URL
+            //         },
+            //         {
+            //             label: '碟片列表',
+            //             icon: 'pi pi-fw pi-list'
+            //         }
+            //     ]
+            // },
+            // {
+            //     label: '书籍',
+            //     icon: 'pi pi-fw pi-book',
+            //     items: [
+            //         {
+            //             label: '书籍首页',
+            //             icon: 'pi pi-fw pi-book',
+            //             url: ALBUM_INDEX_URL
+            //         },
+            //         {
+            //             label: '书籍列表',
+            //             icon: 'pi pi-fw pi-list'
+            //         }
+            //     ]
+            // },
+            // {
+            //     label: '周边',
+            //     icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
+            //     items: [
+            //         {
+            //             label: '周边首页',
+            //             icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
+            //             url: DISC_INDEX_URL
+            //         },
+            //         {
+            //             label: '周边列表',
+            //             icon: 'pi pi-fw pi-list'
+            //         }
+            //     ]
+            // },
+            // {
+            //     label: '游戏',
+            //     icon: 'pi pi-fw iconfont icon-youxi',
+            //     items: [
+            //         {
+            //             label: '游戏首页',
+            //             icon: 'pi pi-fw iconfont icon-youxi',
+            //             url: GAME_INDEX_URL
+            //         },
+            //         {
+            //             label: '游戏列表',
+            //             icon: 'pi pi-fw pi-list'
+            //         }
+            //     ]
+            // }
         ]
     },
     {

@@ -19,9 +19,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @Project_name: website
@@ -101,14 +101,26 @@ public class AlbumUtilTests {
     public void test6(){
         List<Album> tmp = new ArrayList<>();
         String productId = "10";
-        albumMapper.selectAlbumByFilter(null, null, null, productId)
-                .stream().forEach(i -> {
+        albumMapper.selectAlbumByFilter(null, null, null, null, null, "1")
+                .forEach(i -> {
                     Arrays.stream(i.getProductId().split(",")).forEach(j -> {
                         if(j.equals(productId)){
                             tmp.add(i);
                             System.out.println(i.getProductId());
                         }
                     });
+                });
+    }
+
+    @Test
+    public void test20(){
+        Set<String> productId = Set.of("16,18".split(","));
+        Set<String> publishFormat = new HashSet<>();
+        Set<String> albumFormat = new HashSet<>();
+        Set<String> mediaFormat = new HashSet<>();
+        albumMapper.selectAlbumBySuperFilter("1", productId, null, null, null, null)
+                .forEach(i -> {
+                    System.out.println(i);
                 });
     }
 

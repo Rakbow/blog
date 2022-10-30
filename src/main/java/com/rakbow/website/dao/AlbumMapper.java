@@ -6,6 +6,7 @@ import org.apache.kafka.clients.admin.ConsumerGroupListing;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Project_name: website
@@ -20,7 +21,11 @@ public interface AlbumMapper {
     Album selectAlbumById(int id);
 
     //根据查询条件查询专辑
-    List<Album> selectAlbumByFilter(String publishFormat, String albumFormat, String mediaFormat, String productId);
+    List<Album> selectAlbumByFilter(String publishFormat, String albumFormat, String mediaFormat, String productId, String seriesId, String hasBonus);
+
+    //详细查询
+    List<Album> selectAlbumBySuperFilter(String seriesId, Set<String> productId, Set<String> publishFormat, Set<String> albumFormat,
+                                         Set<String> mediaFormat, String hasBonus);
 
     //插入新专辑
     int insertAlbum(Album album);

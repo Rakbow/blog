@@ -90,7 +90,6 @@ public class AlbumController {
         return view;
     }
 
-
     @RequestMapping(path = "/card", method = RequestMethod.GET)
     public String getAlbumCard(Model model) {
         List<JSONObject> albums = new ArrayList<>();
@@ -181,6 +180,74 @@ public class AlbumController {
                 return JSON.toJSONString(res);
             }
             res.data = JSON.toJSONString(albumService.album2Json(albumService.findAlbumById(id)));
+            return JSON.toJSONString(res);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            res.state = 0;
+            res.message = ex.getMessage();
+            return JSON.toJSONString(res);
+        }
+    }
+
+    //根据搜索条件获取专辑
+    @RequestMapping(value = "/getAlbums", method = RequestMethod.POST)
+    @ResponseBody
+    public String getAlbumsByFilter(@RequestBody String json){
+        ApiResult res = new ApiResult();
+        try {
+            JSONObject queryParam = new JSONObject();
+            String seriesId = JSONObject.parseObject(json).getString("seriesId");
+            queryParam.put("seriesId", seriesId);
+
+            JSONArray productId = JSONObject.parseObject(json).getJSONArray("productId");
+            if(productId.size() != 0){
+                String productIdString = productId.toString();
+                queryParam.put("productId", productIdString.substring(productIdString.indexOf("[")+1, productIdString.indexOf("]")));
+            }else {
+                queryParam.put("productId", null);
+            }
+
+            JSONArray publishFormat = JSONObject.parseObject(json).getJSONArray("publishFormat");
+            if(publishFormat.size() != 0){
+                String publishFormatString = publishFormat.toString();
+                queryParam.put("publishFormat", publishFormatString.substring(publishFormatString.indexOf("[")+1, publishFormatString.indexOf("]")));
+            }else {
+                queryParam.put("publishFormat", null);
+            }
+
+            JSONArray albumFormat = JSONObject.parseObject(json).getJSONArray("albumFormat");
+            if(albumFormat.size() != 0){
+                String albumFormatString = albumFormat.toString();
+                queryParam.put("albumFormat", albumFormatString.substring(albumFormatString.indexOf("[")+1, albumFormatString.indexOf("]")));
+            }else {
+                queryParam.put("albumFormat", null);
+            }
+
+            JSONArray mediaFormat = JSONObject.parseObject(json).getJSONArray("mediaFormat");
+            if(mediaFormat.size() != 0){
+                String mediaFormatString = mediaFormat.toString();
+                queryParam.put("mediaFormat", mediaFormatString.substring(mediaFormatString.indexOf("[")+1, mediaFormatString.indexOf("]")));
+            }else {
+                queryParam.put("mediaFormat", null);
+            }
+
+            String hasBonus = JSONObject.parseObject(json).getString("hasBonus");
+            if(hasBonus == null || hasBonus.equals("")){
+                queryParam.put("hasBonus", null);
+            }else {
+                if(hasBonus.equals("true")){
+                    queryParam.put("hasBonus", "1");
+                }else {
+                    queryParam.put("hasBonus", "0");
+                }
+            }
+            List<JSONObject> albums = new ArrayList<>();
+            if(albumService.selectAlbumBySuperFilter(queryParam.toJSONString()).size() != 0){
+                albumService.selectAlbumBySuperFilter(queryParam.toJSONString()).forEach(i -> {
+                    albums.add(albumService.album2JsonDisplay(i));
+                });
+            }
+            res.data = albums;
             return JSON.toJSONString(res);
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -116,7 +116,76 @@ public class AlbumService {
         String albumFormat = (param.get("albumFormat") == null) ? null : param.get("albumFormat").toString();
         String mediaFormat = (param.get("mediaFormat") == null) ? null : param.get("mediaFormat").toString();
         String productId = (param.get("productId") == null) ? null : param.get("productId").toString();
-        return albumMapper.selectAlbumByFilter(publishFormat, albumFormat, mediaFormat, productId);
+        String seriesId = (param.get("seriesId") == null) ? null : param.get("seriesId").toString();
+        String hasBonus = (param.get("hasBonus") == null) ? null : param.get("hasBonus").toString();
+        return albumMapper.selectAlbumByFilter(publishFormat, albumFormat, mediaFormat, productId, seriesId, hasBonus);
+    }
+
+    //精准搜索
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<Album> selectAlbumBySuperFilter(String queryParam) {
+        JSONObject param = JSON.parseObject(queryParam);
+        String seriesId = (param.get("seriesId") == null) ? null : param.get("seriesId").toString();
+        Set<String> productId = (param.get("productId") == null) ? null : Set.of(param.get("productId").toString().split(","));
+        Set<String> publishFormat = (param.get("publishFormat") == null) ? null : Set.of(param.get("publishFormat").toString().split(","));
+        Set<String> albumFormat = (param.get("albumFormat") == null) ? null : Set.of(param.get("albumFormat").toString().split(","));
+        Set<String> mediaFormat = (param.get("mediaFormat") == null) ? null : Set.of(param.get("mediaFormat").toString().split(","));
+        String hasBonus = (param.get("hasBonus") == null) ? null : param.get("hasBonus").toString();
+
+        List<Album> albums = albumMapper.selectAlbumBySuperFilter(seriesId, productId, publishFormat, albumFormat, mediaFormat, hasBonus);
+        List<Album> tmp = new ArrayList<>();
+        //筛选产品id
+        if(productId != null && productId.size() != 0){
+            albums.forEach(i -> {
+                if(productId.equals(Set.of(i.getProductId().split(",")))){
+                    if(!tmp.contains(i)){
+                        tmp.add(i);
+                    }
+                }
+            });
+            albums.clear();
+            albums.addAll(tmp);
+        }
+        //筛选出版形式
+        if(publishFormat != null && publishFormat.size() != 0){
+            albums.forEach(i -> {
+                if(publishFormat.equals(Set.of(i.getPublishFormat().split(",")))){
+                    if(!tmp.contains(i)){
+                        tmp.add(i);
+                    }
+                }
+            });
+            albums.clear();
+            albums.addAll(tmp);
+        }
+
+        //筛选专辑分类
+        if(albumFormat != null && albumFormat.size() != 0){
+            albums.forEach(i -> {
+                if(albumFormat.equals(Set.of(i.getAlbumFormat().split(",")))){
+                    if(!tmp.contains(i)){
+                        tmp.add(i);
+                    }
+                }
+            });
+            albums.clear();
+            albums.addAll(tmp);
+        }
+
+        //筛选媒体格式
+        if(mediaFormat != null && mediaFormat.size() != 0){
+            albums.forEach(i -> {
+                if(mediaFormat.equals(Set.of(i.getMediaFormat().split(",")))){
+                    if(!tmp.contains(i)){
+                        tmp.add(i);
+                    }
+                }
+            });
+            albums.clear();
+            albums.addAll(tmp);
+        }
+
+        return albums;
     }
 
     //region ------数据处理------
@@ -300,7 +369,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<Album> getAlbumsByProductId(int productId) {
         List<Album> albums = new ArrayList<>();
-        albumMapper.selectAlbumByFilter(null, null, null, Integer.toString(productId))
+        albumMapper.selectAlbumByFilter(null, null, null, Integer.toString(productId), null, null)
                 .stream().forEach(i -> {
                     Arrays.stream(i.getProductId().split(",")).forEach(j -> {
                         if (j.equals(productId)) {

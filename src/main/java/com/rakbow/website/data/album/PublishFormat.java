@@ -10,7 +10,7 @@ public enum PublishFormat {
     UNCLASSIFIED(0, "未分类", "Unclassified"),
     COMMERCIAL(1, "商业发行", "Commercial"),
     INDIE_DOUJIN(2,"独立同人", "Doujin"),
-    BONUS(3,"同捆特典（非卖品）", "Bonus"),
+    BONUS(3,"同捆特典", "Bonus"),
     EVENT_ONLY(4,"展会、活动限定", "Event Only"),
     PREORDER(5,"预约特典", "Preorder");
 
