@@ -30,28 +30,6 @@
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
     <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/js/axios/axios.min.js}"></script>
-
-    <!-- other -->
-    <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
-    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
-    <script th:src="@{/js/basic/navbarParam.js}"></script>
-
-    <!-- high light js -->
-    <link th:href="@{/css/highlightjs/default.min.css}" rel="stylesheet">
-    <script th:src="@{/js/highlightjs/highlight.min.js}"></script>
-
-    <!-- md-editor-v3 -->
-    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
-
-    <!-- marked -->
-    <script th:src="@{/js/marked/marked.min.js}"></script>
-    <link th:href="@{/css/markdown/github-markdown.css}" rel="stylesheet">
-
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
     <script th:src="@{/js/primevue/components/panel.min.js}"></script>
@@ -77,6 +55,32 @@
     <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
     <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- other -->
+    <script th:src="@{/js/basic/httpRequest.js}"></script>
+    <script th:src="@{/js/basic/basicUrl.js}"></script>
+    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
+    <script th:src="@{/js/basic/navbarParam.js}"></script>
+
+    <!-- high light js -->
+    <link th:href="@{/css/highlightjs/default.min.css}" rel="stylesheet">
+    <script th:src="@{/js/highlightjs/highlight.min.js}"></script>
+
+    <!-- md-editor-v3 -->
+    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
+
+    <!-- marked -->
+    <script th:src="@{/js/marked/marked.min.js}"></script>
+    <link th:href="@{/css/markdown/github-markdown.css}" rel="stylesheet">
+
+    <!-- aPlayer -->
+    <script th:src="@{/tools/aplayer/1.10.1/APlayer.min.js}"></script>
+    <link th:href="@{/tools/aplayer/1.10.1/APlayer.min.css}" rel="stylesheet">
 </head>
 <body>
 <div class="nk-container">
@@ -225,6 +229,13 @@
                                 </table>
                             </div>
                         </p-panel>
+<!--                        <p-fieldset :toggleable="true" class="mt-2">-->
+<!--                            <template #legend>-->
+<!--                                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>-->
+<!--                                <b>在线播放</b>-->
+<!--                            </template>-->
+<!--                            <div class="player"></div>-->
+<!--                        </p-fieldset>-->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
@@ -849,6 +860,8 @@
             onMounted(() => {
                 init();
             })
+
+
             //region 页面header
             const domainUrl = DOMAIN_URL;
 
@@ -868,6 +881,32 @@
             const album = ref([[${album}]]);
 
             const toast = useToast();
+
+            //region ------音频播放------
+            // const ap = new APlayer({
+            //     container: document.getElementById('player'),
+            //     mini: false,
+            //     autoplay: false,
+            //     theme: '#FADFA3',
+            //     loop: 'all',
+            //     order: 'random',
+            //     preload: 'auto',
+            //     volume: 0.5,
+            //     mutex: true,
+            //     listFolded: false,
+            //     listMaxHeight: 90,
+            //     lrcType: 3,
+            //     audio: [
+            //         {
+            //             name: 'I believe what you said',
+            //             artist: '亜咲花',
+            //             url: 'https://m801.music.126.net/20221031202854/334e56d4fb62d47e87419e101287cddd/jdyyaac/obj/w5rDlsOJwrLDjj7CmsOj/7187900676/1837/6cef/37d3/a2c14ff004815057ad241f7ea05261cb.m4a',
+            //             cover: 'http://localhost:8080/db/album/109/Front.jpg',
+            //             theme: '#ebd0c2'
+            //         }
+            //     ]
+            // });
+            //endregion
 
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const albumFormatSet = ref([[${albumFormatSet}]]);

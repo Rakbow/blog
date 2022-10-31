@@ -101,7 +101,9 @@ public class AlbumController {
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
         model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
+        model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
         return "/album-card";
     }
 

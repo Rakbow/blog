@@ -46,6 +46,8 @@
     <script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/accordion.min.js}"></script>
+    <script th:src="@{/js/primevue/components/accordiontab.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
@@ -70,39 +72,79 @@
                     <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
                                 :sort-field="sortField">
                         <template #empty>
-                            <span>暂无数据</span>
+                            <div align="center">
+                                <span>暂无数据</span>
+                            </div>
                         </template>
                         <template #header>
                             <div class="grid grid-nogutter">
-                                <div class="col-4" style="text-align: left">
+                                <div class="col-6" style="text-align: left">
                                     <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
                                                 placeholder="按发行时间排序"
                                                 @change="onSortChange($event)"></p-dropdown>
                                 </div>
-                                <div class="col-4" style="text-align: left">
-                                    <p-checkbox inputId="binary" v-model="queryParam.hasBonus" :binary="true" @change="searchAlbum"></p-checkbox>
-                                    <label htmlFor="binary">包含特典</label>
-                                </div>
-<!--                                <div class="col-12 md:col-4 lg:col-2" style="text-align: left">-->
-<!--                                    <p-dropdown v-model="queryParam.seriesId" :options="seriesSet"-->
-<!--                                                placeholder="所属系列" option-label="label" option-value="value"-->
-<!--                                                @change="getProducts">-->
-<!--                                    </p-dropdown>-->
-<!--                                </div>-->
-<!--                                <div class="col-12 md:col-4 lg:col-2" style="text-align: left">-->
-<!--                                    <p-multiselect v-model="queryParam.productIds" :options="productSet"-->
-<!--                                                   option-label="label" option-value="value" placeholder="请先选择所属系列"-->
-<!--                                                   display="chip" :filter="true" :disabled="productSelect">-->
-<!--                                    </p-multiselect>-->
-<!--                                </div>-->
-<!--                                <div class="col-12 md:col-4 lg:col-2" style="text-align: left">-->
-<!--                                    <p-multiselect v-model="queryParam.albumFormats" :options="albumFormatSet"-->
-<!--                                                   option-label="label" option-value="value" placeholder="选择专辑分类"-->
-<!--                                                   display="chip" :filter="true">-->
-<!--                                    </p-multiselect>-->
-<!--                                </div>-->
-                                <div class="col-4" style="text-align: right">
+                                <div class="col-6" style="text-align: right">
                                     <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                                </div>
+                                <div class="col-12">
+                                    <p-accordion class="accordion-custom">
+                                        <p-accordiontab>
+                                            <template #header>
+                                                <i class="pi pi-search"></i>
+                                                <span>筛选</span>
+                                                <i class="pi pi-cog"></i>
+                                            </template>
+                                            <div class="grid p-fluid">
+                                                <div class="col-12 md:col-4">
+                                                    <p-dropdown v-model="queryParam.seriesId" :options="seriesSet"
+                                                                placeholder="所属系列" option-label="label"
+                                                                option-value="value"
+                                                                @change="getProducts">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.productId" :options="productSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="请先选择所属系列"
+                                                                   display="chip" :filter="true"
+                                                                   :disabled="productSelect">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-checkbox inputId="binary" v-model="queryParam.hasBonus"
+                                                                :binary="true"></p-checkbox>
+                                                    <label htmlFor="binary">包含特典</label>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.publishFormat" :options="publishFormatSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="出版形式"
+                                                                   display="chip" :filter="true">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.albumFormat" :options="albumFormatSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="专辑分类"
+                                                                   display="chip" :filter="true">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.mediaFormat" :options="mediaFormatSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="媒体格式"
+                                                                   display="chip" :filter="true">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-3 sm:col-6" style="text-align: right">
+                                                    <p-button icon="pi pi-times" label="清空" class="p-button-rounded p-button-info" @click="clearSearch"></p-button>
+                                                </div>
+                                                <div class="col-12 md:col-3 sm:col-6" style="text-align: left">
+                                                    <p-button icon="pi pi-search" label="搜索" class="p-button-rounded p-button-success" @click="searchAlbum"></p-button>
+                                                </div>
+                                            </div>
+                                        </p-accordiontab>
+                                    </p-accordion>
                                 </div>
                             </div>
                         </template>
@@ -135,7 +177,8 @@
                                             <div class="col-2 px-0 py-0">
                                             </div>
                                             <div class="col-2 px-0 py-0" v-if="slotProps.data.hasBonus == 1">
-                                                <i class="pi iconfont icon-gift" style="font-size: 1.3rem" v-tooltip="'包含特典'"></i>
+                                                <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
+                                                   v-tooltip="'包含特典'"></i>
                                             </div>
                                             <div class="col-12 px-0 py-0">
                                                 <span class="ml-2 text-end" style="color: white">{{slotProps.data.publishFormat.join(" / ")}}</span>
@@ -171,12 +214,15 @@
                                         <br/>
                                         <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.series.name}}</span>
                                         <span class="col-2" v-if="slotProps.data.hasBonus == 1">
-                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem" v-tooltip="'包含特典'"></i>
+                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
+                                               v-tooltip="'包含特典'"></i>
                                         </span>
                                         <ul class="list-inline">
-                                            <li class="list-inline-item mr-2" v-for="product of slotProps.data.products">
+                                            <li class="list-inline-item mr-2"
+                                                v-for="product of slotProps.data.products">
                                                 <a :href="domainUrl + '/db/product/' + product.id">
-                                                    <p-tag class="product-tag" icon="pi pi-tag" :value="product.name"></p-tag>
+                                                    <p-tag class="product-tag" icon="pi pi-tag"
+                                                           :value="product.name"></p-tag>
                                                 </a>
                                             </li>
                                         </ul>
@@ -285,7 +331,7 @@
                                             <div class="grid">
                                                 <div class="col-12 text-center">
                                                     <p-badge :value="index+1" class="mr-2"></p-badge>
-<!--                                                    <b style="font-size: 20px">{{index+1}}</b>-->
+                                                    <!--                                                    <b style="font-size: 20px">{{index+1}}</b>-->
                                                 </div>
                                                 <div class="col-12">
                                                     <i class="pi pi-eye" style="font-size: 0.5rem"></i>
@@ -350,7 +396,9 @@
             const albums = ref([[${albums}]]);
 
             //region ------ 搜索 ------
+            const publishFormatSet = ref([[${publishFormatSet}]]);
             const albumFormatSet = ref([[${albumFormatSet}]]);
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const productSelect = ref(true);
             const queryParam = ref({
                 seriesId: null,
@@ -360,6 +408,17 @@
                 mediaFormat: [],
                 hasBonus: null
             });
+            const clearSearch = () => {
+                queryParam.value = {
+                    seriesId: null,
+                    productId: [],
+                    publishFormat: [],
+                    albumFormat: [],
+                    mediaFormat: [],
+                    hasBonus: null
+                };
+                searchAlbum();
+            }
             const productSet = ref();
             const getProducts = (ev) => {
                 let json = {seriesId: ev.value};
@@ -375,7 +434,7 @@
                     .then(res => {
                         if (res.state === 1) {
                             albums.value = res.data;
-                        }else {
+                        } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     });
@@ -415,8 +474,7 @@
                     sortOrder.value = -1;
                     sortField.value = value.substring(1, value.length);
                     sortKey.value = sortValue;
-                }
-                else {
+                } else {
                     sortOrder.value = 1;
                     sortField.value = value;
                     sortKey.value = sortValue;
@@ -424,7 +482,9 @@
             };
 
             return {
-                albumFormatSet, getProducts, seriesSet, productSet, queryParam, productSelect,
+                clearSearch,
+                publishFormatSet, albumFormatSet, mediaFormatSet,
+                getProducts, seriesSet, productSet, queryParam, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
                 justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
                 sortKey, sortOrder, sortField, sortOptions, searchAlbum
@@ -446,6 +506,8 @@
             "p-multiselect": primevue.multiselect,
             "p-checkbox": primevue.checkbox,
             "p-toast": primevue.toast,
+            "p-accordion": primevue.accordion,
+            "p-accordiontab": primevue.accordiontab,
         }
     };
 
@@ -465,7 +527,7 @@
         .mount("#app");
 </script>
 <style>
-    .accordion-custom i{
+    .accordion-custom i {
         vertical-align: middle;
     }
 
@@ -478,13 +540,11 @@
         line-height: 1.5;
         margin: 0;
     }
+
     .p-tooltip-text {
         width: 15rem;
     }
 
-    .p-multiselect {
-        width: 10rem;
-    }
     .product-category-icon {
         vertical-align: middle;
         margin-right: .5rem;
@@ -494,6 +554,7 @@
         font-weight: 600;
         vertical-align: middle;
     }
+
     .product-name {
         font-size: 1rem;
         font-weight: 700;
@@ -502,6 +563,7 @@
     .product-description {
         margin: 0 0 1rem 0;
     }
+
     .product-list-item {
         display: flex;
         align-items: center;
@@ -540,15 +602,15 @@
     }
 
 
-
-
     .card {
         padding: 0rem;
     }
+
     .custom-error .p-tooltip-text {
         background-color: var(--pink-800);
         color: rgb(255, 255, 255);
     }
+
     .custom-error.p-tooltip-right .p-tooltip-arrow {
         border-right-color: var(--pink-800);
     }
