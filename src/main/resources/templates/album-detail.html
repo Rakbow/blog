@@ -491,8 +491,8 @@
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect id="productId" v-model="albumEdit.productId" :options="productSet"
+                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect id="products" v-model="albumEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
                                            display="chip" :filter="true">
                             </p-multiselect>
@@ -971,7 +971,8 @@
                             albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                             albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
                             albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                            albumEdit.value.productId = label2value(dataTmp.product, productSet.value).concat();
+                            albumEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                            albumEdit.value.series = dataTmp.series.id;
                             displayEditDialog.value = true;
                         }
                     })
@@ -989,10 +990,10 @@
                     if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
                         albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
                     }
-                    albumEdit.value.publishFormat = albumEdit.value.publishFormat.join(",");
-                    albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
-                    albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
-                    albumEdit.value.productId = albumEdit.value.productId.join(",");
+                    albumEdit.value.publishFormat = "{\"ids\":[" + albumEdit.value.publishFormat.join(",") + "]}";
+                    albumEdit.value.albumFormat = "{\"ids\":[" + albumEdit.value.albumFormat.join(",") + "]}";
+                    albumEdit.value.mediaFormat = "{\"ids\":[" + albumEdit.value.mediaFormat.join(",") + "]}";
+                    albumEdit.value.products = "{\"ids\":[" + albumEdit.value.products.join(",") + "]}";
                     axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
                         .then(res => {
                             if (res.state === 1) {
@@ -1030,10 +1031,10 @@
                 } else if (data.value.mediaFormat == null || data.value.mediaFormat.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择媒体类型！', life: 3000});
                     flag = false;
-                } else if (data.value.productId == null || data.value.productId.length == 0) {
+                } else if (data.value.products == null || data.value.products.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
                     flag = false;
-                } else if (data.value.seriesId == null) {
+                } else if (data.value.series == null) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择所属产品！', life: 3000});
                     flag = false;
                 }

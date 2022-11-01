@@ -7,14 +7,14 @@
     <sql id="selectFields">
         id, catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format,
         publish_price, album_format, media_format, label, publisher, distributor, copyright,
-        has_bonus, bonus, description, remark, series_id, product_id, artists, images, track_info,
+        has_bonus, bonus, description, remark, series, products, artists, images, track_info,
         added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         catalog_no, name_jp, name_zh, name_en, barcode, release_date, publish_format, publish_price,
         album_format, media_format, label, publisher, distributor, copyright, has_bonus, bonus, description,
-        remark, series_id, product_id, artists, images, track_info, added_time, edited_time, _s
+        remark, series, products, artists, images, track_info, added_time, edited_time, _s
     </sql>
 
 
@@ -41,11 +41,11 @@
             <if test="mediaFormat != null and mediaFormat != '' ">
                 and media_format like concat('%', #{mediaFormat}, '%')
             </if>
-            <if test="productId != null and productId != '' ">
-                and product_id like concat('%', #{productId}, '%')
+            <if test="products != null and products != '' ">
+                and products like concat('%', #{products}, '%')
             </if>
-            <if test="seriesId != null and seriesId != '' ">
-                and series_id = #{seriesId}
+            <if test="series != null and series != '' ">
+                and series = #{series}
             </if>
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
@@ -61,30 +61,30 @@
         from album
         <where>
             <if test="seriesId != null and seriesId != '' ">
-                and series_id = #{seriesId}
+                and series = #{seriesId}
             </if>
             <if test="productId != null">
                 <foreach item="item" index="index" collection="productId" open=""
                          close="" separator="">
-                    and product_id like concat('%', #{item} , '%')
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
                 </foreach>
             </if>
             <if test="publishFormat != null">
                 <foreach item="item" index="index" collection="publishFormat" open=""
                          close="" separator="">
-                    and publish_format like concat('%', #{item} , '%')
+                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
                 </foreach>
             </if>
             <if test="albumFormat != null">
                 <foreach item="item" index="index" collection="albumFormat" open=""
                          close="" separator="">
-                    and album_format like concat('%', #{item} , '%')
+                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
                 </foreach>
             </if>
             <if test="mediaFormat != null">
                 <foreach item="item" index="index" collection="mediaFormat" open=""
                          close="" separator="">
-                    and media_format like concat('%', #{item} , '%')
+                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
                 </foreach>
             </if>
             <if test="hasBonus != null and hasBonus != '' ">
@@ -114,7 +114,7 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{nameJp}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{publishPrice}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
-        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{seriesId}, #{productId}, #{artists}, #{images},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{series}, #{products}, #{artists}, #{images},
         #{trackInfo},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -130,7 +130,7 @@
         #{album.copyright},
         has_bonus = #{album.hasBonus}, bonus = #{album.bonus}, description = #{album.description}, remark =
         #{album.remark},
-        series_id = #{album.seriesId}, product_id = #{album.productId}, artists = #{album.artists}, images =
+        series = #{album.series}, products = #{album.products}, artists = #{album.artists}, images =
         #{album.images},
         track_info = #{album.trackInfo}, added_time = #{album.addedTime}, edited_time = #{album.editedTime}, _s = #{album._s}
         where id = #{album.id}

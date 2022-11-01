@@ -3,6 +3,7 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rakbow.website.data.DataActionType;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Album;
@@ -107,19 +108,9 @@ public class AlbumController {
         return "/album-card";
     }
 
-    @RequestMapping(path = "/test", method = RequestMethod.GET)
-    @ResponseBody
-    public List<JSONObject> test() {
-        List<JSONObject> albums = new ArrayList<>();
-        albumService.getAll().forEach(i -> {
-            albums.add(albumService.album2JsonDisplay(i));
-        });
-        return albums;
-    }
-
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
+    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) throws JsonProcessingException {
         if (albumService.findAlbumById(albumId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
             return "/error/404";
@@ -132,7 +123,8 @@ public class AlbumController {
         model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
         model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
         model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(album.getSeriesId()));
+        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(album.getSeries()));
+
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
 
         model.addAttribute("album", albumService.album2Json(album));
@@ -140,7 +132,7 @@ public class AlbumController {
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), albumId).getVisitNum());
         //获取相关专辑
-        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
+        // model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
         return "/album-detail";
     }
 
@@ -161,12 +153,9 @@ public class AlbumController {
     @ResponseBody
     public String getAllAlbum() {
         JSONArray albums = new JSONArray();
-        List<Album> tmp = albumService.getAll();
-        if (tmp == null || tmp.size() == 0) {
-        }
-        for (Album album : tmp) {
-            albums.add(albumService.album2Json(album));
-        }
+
+        albumService.getAll().forEach(i -> albums.add(albumService.album2Json(i)));
+
         return JSON.toJSONString(albums);
     }
 
@@ -198,8 +187,8 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         try {
             JSONObject queryParam = new JSONObject();
-            String seriesId = JSONObject.parseObject(json).getString("seriesId");
-            queryParam.put("seriesId", seriesId);
+            String series = JSONObject.parseObject(json).getString("series");
+            queryParam.put("series", series);
 
             JSONArray productId = JSONObject.parseObject(json).getJSONArray("productId");
             if(productId.size() != 0){
@@ -237,17 +226,18 @@ public class AlbumController {
             if(hasBonus == null || hasBonus.equals("")){
                 queryParam.put("hasBonus", null);
             }else {
-                if(hasBonus.equals("true")){
+                if(hasBonus.equals("all")){
+                    queryParam.put("hasBonus", null);
+                }else if (hasBonus.equals("has")) {
                     queryParam.put("hasBonus", "1");
                 }else {
                     queryParam.put("hasBonus", "0");
                 }
             }
             List<JSONObject> albums = new ArrayList<>();
-            if(albumService.selectAlbumBySuperFilter(queryParam.toJSONString()).size() != 0){
-                albumService.selectAlbumBySuperFilter(queryParam.toJSONString()).forEach(i -> {
-                    albums.add(albumService.album2JsonDisplay(i));
-                });
+            List<Album> searchResult = albumService.selectAlbumBySuperFilter(queryParam.toJSONString());
+            if(searchResult.size() != 0){
+                searchResult.forEach(i -> albums.add(albumService.album2JsonDisplay(i)));
             }
             res.data = albums;
             return JSON.toJSONString(res);
@@ -376,16 +366,6 @@ public class AlbumController {
         } catch (IOException e) {
             logger.error("读取图片失败: " + e.getMessage());
         }
-    }
-
-    //获取相关专辑
-    @RequestMapping(path = "/getRelatedAlbums", method = RequestMethod.GET)
-    @ResponseBody
-    public List<String> getRelatedAlbums(@RequestBody String json) {
-        JSONObject param = JSON.parseObject(json);
-        Album album = albumService.findAlbumById(param.getInteger("id"));
-        List<String> tmp = Arrays.asList(album.getProductId());
-        return tmp;
     }
 
     //endregion

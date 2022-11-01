@@ -3,7 +3,6 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.mysql.cj.xdevapi.JsonArray;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.data.ProductClass;
@@ -49,11 +48,13 @@ public class AlbumService {
     private ProductService productService;
     @Autowired
     private VisitService visitService;
+    // @Autowired
+    // private ObjectMapper objectMapper;
     @Value("${website.path.img}")
     private String imgPath;
     //endregion
 
-    //region ------基础更删改查------
+    //region ------更删改查------
 
     //新增专辑
     // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
@@ -88,6 +89,51 @@ public class AlbumService {
         return albumMapper.updateAlbum(id, album);
     }
 
+    //根据具体搜索条件查询
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<Album> selectAlbumByFilter(String queryParam) {
+        // JSONObject param = JSON.parseObject(queryParam);
+        JSONObject param = JSON.parseObject(queryParam);
+        String publishFormat = (param.get("publishFormat") == null) ? null : param.get("publishFormat").toString();
+        String albumFormat = (param.get("albumFormat") == null) ? null : param.get("albumFormat").toString();
+        String mediaFormat = (param.get("mediaFormat") == null) ? null : param.get("mediaFormat").toString();
+        String productId = (param.get("productId") == null) ? null : param.get("productId").toString();
+        String seriesId = (param.get("seriesId") == null) ? null : param.get("seriesId").toString();
+        String hasBonus = (param.get("hasBonus") == null) ? null : param.get("hasBonus").toString();
+        return albumMapper.selectAlbumByFilter(publishFormat, albumFormat, mediaFormat, productId, seriesId, hasBonus);
+    }
+
+    //精准搜索
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<Album> selectAlbumBySuperFilter(String queryParam) {
+        JSONObject param = JSON.parseObject(queryParam);
+        String seriesId = (param.get("seriesId") == null) ? null : param.get("seriesId").toString();
+
+        List<Integer> productId = (param.get("productId") == null) ? null : new ArrayList<>();
+        if(param.get("productId") != null){
+            List.of(param.get("productId").toString().split(",")).forEach(i -> productId.add(Integer.parseInt(i)));
+        }
+
+        List<Integer> publishFormat = (param.get("publishFormat") == null) ? null : new ArrayList<>();
+        if(param.get("publishFormat") != null){
+            List.of(param.get("publishFormat").toString().split(",")).forEach(i -> publishFormat.add(Integer.parseInt(i)));
+        }
+
+        List<Integer> albumFormat = (param.get("albumFormat") == null) ? null : new ArrayList<>();
+        if(param.get("albumFormat") != null){
+            List.of(param.get("albumFormat").toString().split(",")).forEach(i -> albumFormat.add(Integer.parseInt(i)));
+        }
+
+        List<Integer> mediaFormat = (param.get("mediaFormat") == null) ? null : new ArrayList<>();
+        if(param.get("mediaFormat") != null){
+            List.of(param.get("mediaFormat").toString().split(",")).forEach(i -> mediaFormat.add(Integer.parseInt(i)));
+        }
+
+        String hasBonus = (param.get("hasBonus") == null) ? null : param.get("hasBonus").toString();
+
+        return albumMapper.selectAlbumBySuperFilter(seriesId, productId, publishFormat, albumFormat, mediaFormat, hasBonus);
+    }
+
     //endregion
 
     //region ------暂时用不到------
@@ -108,86 +154,6 @@ public class AlbumService {
 
     //endregion
 
-    //根据具体搜索条件查询
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<Album> selectAlbumByFilter(String queryParam) {
-        JSONObject param = JSON.parseObject(queryParam);
-        String publishFormat = (param.get("publishFormat") == null) ? null : param.get("publishFormat").toString();
-        String albumFormat = (param.get("albumFormat") == null) ? null : param.get("albumFormat").toString();
-        String mediaFormat = (param.get("mediaFormat") == null) ? null : param.get("mediaFormat").toString();
-        String productId = (param.get("productId") == null) ? null : param.get("productId").toString();
-        String seriesId = (param.get("seriesId") == null) ? null : param.get("seriesId").toString();
-        String hasBonus = (param.get("hasBonus") == null) ? null : param.get("hasBonus").toString();
-        return albumMapper.selectAlbumByFilter(publishFormat, albumFormat, mediaFormat, productId, seriesId, hasBonus);
-    }
-
-    //精准搜索
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<Album> selectAlbumBySuperFilter(String queryParam) {
-        JSONObject param = JSON.parseObject(queryParam);
-        String seriesId = (param.get("seriesId") == null) ? null : param.get("seriesId").toString();
-        Set<String> productId = (param.get("productId") == null) ? null : Set.of(param.get("productId").toString().split(","));
-        Set<String> publishFormat = (param.get("publishFormat") == null) ? null : Set.of(param.get("publishFormat").toString().split(","));
-        Set<String> albumFormat = (param.get("albumFormat") == null) ? null : Set.of(param.get("albumFormat").toString().split(","));
-        Set<String> mediaFormat = (param.get("mediaFormat") == null) ? null : Set.of(param.get("mediaFormat").toString().split(","));
-        String hasBonus = (param.get("hasBonus") == null) ? null : param.get("hasBonus").toString();
-
-        List<Album> albums = albumMapper.selectAlbumBySuperFilter(seriesId, productId, publishFormat, albumFormat, mediaFormat, hasBonus);
-        List<Album> tmp = new ArrayList<>();
-        //筛选产品id
-        if(productId != null && productId.size() != 0){
-            albums.forEach(i -> {
-                if(productId.equals(Set.of(i.getProductId().split(",")))){
-                    if(!tmp.contains(i)){
-                        tmp.add(i);
-                    }
-                }
-            });
-            albums.clear();
-            albums.addAll(tmp);
-        }
-        //筛选出版形式
-        if(publishFormat != null && publishFormat.size() != 0){
-            albums.forEach(i -> {
-                if(publishFormat.equals(Set.of(i.getPublishFormat().split(",")))){
-                    if(!tmp.contains(i)){
-                        tmp.add(i);
-                    }
-                }
-            });
-            albums.clear();
-            albums.addAll(tmp);
-        }
-
-        //筛选专辑分类
-        if(albumFormat != null && albumFormat.size() != 0){
-            albums.forEach(i -> {
-                if(albumFormat.equals(Set.of(i.getAlbumFormat().split(",")))){
-                    if(!tmp.contains(i)){
-                        tmp.add(i);
-                    }
-                }
-            });
-            albums.clear();
-            albums.addAll(tmp);
-        }
-
-        //筛选媒体格式
-        if(mediaFormat != null && mediaFormat.size() != 0){
-            albums.forEach(i -> {
-                if(mediaFormat.equals(Set.of(i.getMediaFormat().split(",")))){
-                    if(!tmp.contains(i)){
-                        tmp.add(i);
-                    }
-                }
-            });
-            albums.clear();
-            albums.addAll(tmp);
-        }
-
-        return albums;
-    }
-
     //region ------数据处理------
 
     //Album转Json对象，以便前端使用
@@ -195,39 +161,53 @@ public class AlbumService {
 
         JSONObject albumJson = (JSONObject) JSON.toJSON(album);
 
+        //相关创作人员
         JSONArray artists = JSONArray.parseArray(album.getArtists());
 
+        //图片
         JSONArray images = JSONArray.parseArray(album.getImages());
 
+        //音轨信息
         JSONObject trackInfo = JSONObject.parseObject(album.getTrackInfo());
 
+        //发售时间转为string
         albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
 
+        //出版类型
         List<String> publishFormat = new ArrayList();
-        Arrays.stream(album.getPublishFormat().split(","))
-                .forEach(i -> publishFormat.add(PublishFormat.getNameByIndex(Integer.parseInt(i))));
+        JSONObject.parseObject(album.getPublishFormat()).getList("ids", Integer.class)
+                .forEach(id -> publishFormat.add(PublishFormat.getNameByIndex(id)));
 
+        //专辑分类
         List<String> albumFormat = new ArrayList();
-        Arrays.stream(album.getAlbumFormat().split(","))
-                .forEach(i -> albumFormat.add(AlbumFormat.getNameByIndex(Integer.parseInt(i))));
+        JSONObject.parseObject(album.getAlbumFormat()).getList("ids", Integer.class)
+                .forEach(id -> albumFormat.add(AlbumFormat.getNameByIndex(id)));
 
+        //媒体格式
         List<String> mediaFormat = new ArrayList();
-        Arrays.stream(album.getMediaFormat().split(","))
-                .forEach(i -> mediaFormat.add(MediaFormat.getNameByIndex(Integer.parseInt(i))));
+        JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
+                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
+        //所属产品（详细）
         List<String> product = new ArrayList();
-        Arrays.stream(album.getProductId().split(","))
-                .forEach(i -> product.add(productService.selectProductById(Integer.parseInt(i)).getNameZh() + "(" +
-                        ProductClass.getNameByIndex(productService.selectProductById(Integer.parseInt(i)).getClassification()) + ")"));
-        List<JSONObject> productMap = new ArrayList<>();
-        Arrays.stream(album.getProductId().split(","))
-                .forEach(i -> {
+        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
+                .forEach(id -> product.add(productService.selectProductById(id).getNameZh() + "(" +
+                        ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")"));
+
+        //所属产品
+        List<JSONObject> products = new ArrayList<>();
+        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
+                .forEach(id -> {
                     JSONObject jo = new JSONObject();
-                    jo.put("id", Integer.parseInt(i));
-                    jo.put("name", productService.selectProductById(Integer.parseInt(i)).getNameZh() + "(" +
-                            ProductClass.getNameByIndex(productService.selectProductById(Integer.parseInt(i)).getClassification()) + ")");
-                    productMap.add(jo);
+                    jo.put("id", id);
+                    jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")");
+                    products.add(jo);
                 });
+
+        JSONObject series = new JSONObject();
+        series.put("id", album.getSeries());
+        series.put("name", seriesService.selectSeriesById(album.getSeries()).getNameZh());
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
@@ -275,9 +255,9 @@ public class AlbumService {
         albumJson.put("displayImages", displayImages);
         albumJson.put("otherImages", otherImages);
         albumJson.put("trackInfo", trackInfo);
-        albumJson.put("series", seriesService.selectSeriesById(album.getSeriesId()).getNameZh());
+        albumJson.put("series", series);
         albumJson.put("product", product);
-        albumJson.put("products", productMap);
+        albumJson.put("products", products);
         albumJson.put("addedTime", CommonUtil.dateToString(album.getAddedTime(), "yyyy/MM/dd hh:mm:ss"));
         albumJson.put("editedTime", CommonUtil.dateToString(album.getEditedTime(), "yyyy/MM/dd hh:mm:ss"));
         return albumJson;
@@ -296,30 +276,34 @@ public class AlbumService {
 
         json.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
 
+        //出版类型
         List<String> publishFormat = new ArrayList();
-        Arrays.stream(album.getPublishFormat().split(","))
-                .forEach(i -> publishFormat.add(PublishFormat.getNameByIndex(Integer.parseInt(i))));
+        JSONObject.parseObject(album.getPublishFormat()).getList("ids", Integer.class)
+                .forEach(id -> publishFormat.add(PublishFormat.getNameByIndex(id)));
 
+        //专辑分类
         List<String> albumFormat = new ArrayList();
-        Arrays.stream(album.getAlbumFormat().split(","))
-                .forEach(i -> albumFormat.add(AlbumFormat.getNameByIndex(Integer.parseInt(i))));
+        JSONObject.parseObject(album.getAlbumFormat()).getList("ids", Integer.class)
+                .forEach(id -> albumFormat.add(AlbumFormat.getNameByIndex(id)));
 
+        //媒体格式
         List<String> mediaFormat = new ArrayList();
-        Arrays.stream(album.getMediaFormat().split(","))
-                .forEach(i -> mediaFormat.add(MediaFormat.getNameByIndex(Integer.parseInt(i))));
+        JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
+                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
         List<JSONObject> products = new ArrayList<>();
-        Arrays.stream(album.getProductId().split(","))
-                .forEach(i -> {
+        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
+                .forEach(id -> {
                     JSONObject jo = new JSONObject();
-                    jo.put("id", Integer.parseInt(i));
-                    jo.put("name", productService.selectProductById(Integer.parseInt(i)).getNameZh());
+                    jo.put("id", id);
+                    jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
         JSONObject series = new JSONObject();
-        series.put("id", album.getSeriesId());
-        series.put("name", seriesService.selectSeriesById(album.getSeriesId()).getNameZh());
+        series.put("id", album.getSeries());
+        series.put("name", seriesService.selectSeriesById(album.getSeries()).getNameZh());
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
@@ -349,8 +333,6 @@ public class AlbumService {
         json.remove("bonus");
         json.remove("description");
         json.remove("images");
-        json.remove("productId");
-        json.remove("seriesId");
         json.remove("trackInfo");
         return json;
     }
@@ -366,66 +348,69 @@ public class AlbumService {
     //endregion
 
     //根据产品id获取所有该产品的专辑
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<Album> getAlbumsByProductId(int productId) {
-        List<Album> albums = new ArrayList<>();
-        albumMapper.selectAlbumByFilter(null, null, null, Integer.toString(productId), null, null)
-                .stream().forEach(i -> {
-                    Arrays.stream(i.getProductId().split(",")).forEach(j -> {
-                        if (j.equals(productId)) {
-                            albums.add(i);
-                        }
-                    });
-                });
-        return albums;
-    }
+    // @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    // public List<Album> getAlbumsByProductId(int productId) {
+    //     List<Album> albums = new ArrayList<>();
+    //     albumMapper.selectAlbumByFilter(null, null, null, Integer.toString(productId), null, null)
+    //             .stream().forEach(i -> {
+    //                 Arrays.stream(i.getProductId().split(",")).forEach(j -> {
+    //                     if (j.equals(productId)) {
+    //                         albums.add(i);
+    //                     }
+    //                 });
+    //             });
+    //     return albums;
+    // }
 
     //获取相关专辑
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<JSONObject> getRelatedAlbums(int id) {
-        String[] productIds = findAlbumById(id).getProductId().split(",");
-        List<JSONObject> relatedAlbums = new ArrayList<>();
-        if (productIds.length == 1) {
-            List<Album> tmp = selectAlbumByFilter("{\"productId\":\"" + productIds[0] + "\"}");
-            if (tmp.size() < 4) {
-                tmp.stream().forEach(i -> relatedAlbums.add(album2Json(i)));
-            } else {
-                for (int i = 0; i < 4; i++) {
-                    relatedAlbums.add(album2Json(tmp.get(i)));
-                }
-            }
-        } else if (productIds.length > 1 && productIds.length <= 4) {
-            for (int i = 0; i < productIds.length; i++) {
-                relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productIds[i] + "\"}").get(0)));
-            }
-        } else {
-            for (int i = 0; i < 4; i++) {
-                relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productIds[i] + "\"}").get(0)));
-            }
-        }
-
-
-        //处理空图片
-        for (JSONObject album : relatedAlbums) {
-
-            JSONArray images = JSONArray.parseArray(album.get("images").toString());
-            JSONObject cover = new JSONObject();
-
-            if (images.isEmpty()) {
-                cover.put("url", "/img/404.jpg");
-                album.put("cover", cover);
-            } else {
-                for (int i = 0; i < images.size(); i++) {
-                    JSONObject img = images.getJSONObject(i);
-                    if (Integer.parseInt(img.getString("type")) == 1) {
-                        cover.put("url", img.getString("url"));
-                        album.put("cover", cover);
-                    }
-                }
-            }
-        }
-        return relatedAlbums;
-    }
+    // @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    // public List<JSONObject> getRelatedAlbums(int id) {
+    //
+    //     Album album = findAlbumById(id);
+    //
+    //     List<Integer> productIds = JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class);
+    //     List<JSONObject> relatedAlbums = new ArrayList<>();
+    //     if (productIds.size() == 1) {
+    //         List<Album> tmp = selectAlbumByFilter("{\"productId\":\"" + productIds[0] + "\"}");
+    //         if (tmp.size() < 4) {
+    //             tmp.stream().forEach(i -> relatedAlbums.add(album2Json(i)));
+    //         } else {
+    //             for (int i = 0; i < 4; i++) {
+    //                 relatedAlbums.add(album2Json(tmp.get(i)));
+    //             }
+    //         }
+    //     } else if (productIds.size() > 1 && productIds.size() <= 4) {
+    //         for (int i = 0; i < productIds.size(); i++) {
+    //             relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productIds[i] + "\"}").get(0)));
+    //         }
+    //     } else {
+    //         for (int i = 0; i < 4; i++) {
+    //             relatedAlbums.add(album2Json(selectAlbumByFilter("{\"productId\":\"" + productIds[i] + "\"}").get(0)));
+    //         }
+    //     }
+    //
+    //
+    //     //处理空图片
+    //     for (JSONObject relatedAlbum : relatedAlbums) {
+    //
+    //         JSONArray images = JSONArray.parseArray(album.get("images").toString());
+    //         JSONObject cover = new JSONObject();
+    //
+    //         if (images.isEmpty()) {
+    //             cover.put("url", "/img/404.jpg");
+    //             album.put("cover", cover);
+    //         } else {
+    //             for (int i = 0; i < images.size(); i++) {
+    //                 JSONObject img = images.getJSONObject(i);
+    //                 if (Integer.parseInt(img.getString("type")) == 1) {
+    //                     cover.put("url", img.getString("url"));
+    //                     album.put("cover", cover);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return relatedAlbums;
+    // }
 
     //获取最新加入的专辑
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -449,7 +434,7 @@ public class AlbumService {
         return editedAlbums;
     }
 
-    //获取最新编辑的专辑
+    //获取浏览量最高的专辑
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<JSONObject> getPopularAlbums(int limit){
         List<JSONObject> popularAlbums = new ArrayList<>();

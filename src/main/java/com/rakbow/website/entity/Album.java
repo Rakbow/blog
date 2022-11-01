@@ -22,7 +22,6 @@ public class Album {
 
     @Id
     private int id;//表主键
-
     @Field(type = FieldType.Text)
     private String catalogNo;//专辑编号
     @Field(type = FieldType.Text)
@@ -52,8 +51,8 @@ public class Album {
     private String copyright;//版权方
     private int hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
-    private int seriesId;//所属系列id
-    private String productId;//所属产品id 在mysql中以数组字符串形式存储
+    private int series;//所属系列
+    private String products;//所属产品id 在mysql中以数组字符串形式存储
     private String description;//描述
     private String remark;//备注
     private String artists;//staff
@@ -76,9 +75,9 @@ public class Album {
         this.nameEn = "";
         this.barcode = "";
         this.releaseDate = null;
-        this.publishFormat = "";
-        this.albumFormat = "";
-        this.mediaFormat = "";
+        this.publishFormat = "{\"ids\":[]}";
+        this.albumFormat = "{\"ids\":[]}";
+        this.mediaFormat = "{\"ids\":[]}";
         this.publishPrice = 0;
         this.label = "";
         this.publisher = "";
@@ -86,7 +85,7 @@ public class Album {
         this.copyright = "";
         this.hasBonus = 0;
         this.bonus = "";
-        this.productId = "";
+        this.products = "{\"ids\":[]}";
         this.description = "";
         this.remark = "";
         this.artists = "[]";
@@ -234,20 +233,20 @@ public class Album {
         this.bonus = bonus;
     }
 
-    public int getSeriesId() {
-        return seriesId;
+    public int getSeries() {
+        return series;
     }
 
-    public void setSeriesId(int seriesId) {
-        this.seriesId = seriesId;
+    public void setSeries(int series) {
+        this.series = series;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getProducts() {
+        return products;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setProducts(String products) {
+        this.products = products;
     }
 
     public String getDescription() {
@@ -270,8 +269,8 @@ public class Album {
         return artists;
     }
 
-    public void setArtists(String credits) {
-        this.artists = credits;
+    public void setArtists(String artists) {
+        this.artists = artists;
     }
 
     public String getImages() {
@@ -334,8 +333,8 @@ public class Album {
                 ", copyright='" + copyright + '\'' +
                 ", hasBonus=" + hasBonus +
                 ", bonus='" + bonus + '\'' +
-                ", seriesId=" + seriesId +
-                ", productId='" + productId + '\'' +
+                ", series='" + series + '\'' +
+                ", products='" + products + '\'' +
                 ", description='" + description + '\'' +
                 ", remark='" + remark + '\'' +
                 ", artists='" + artists + '\'' +

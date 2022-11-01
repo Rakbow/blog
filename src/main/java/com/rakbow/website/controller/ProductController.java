@@ -32,7 +32,7 @@ public class ProductController {
     @ResponseBody
     public List<JSONObject> getAllProductBySeriesId(@RequestBody String json){
         JSONObject param = JSON.parseObject(json);
-        return productService.getAllProductSetBySeriesId(param.getInteger("seriesId"));
+        return productService.getAllProductSetBySeriesId(param.getInteger("series"));
     }
 
 }

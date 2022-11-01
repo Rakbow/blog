@@ -111,36 +111,44 @@
                                                     </p-multiselect>
                                                 </div>
                                                 <div class="col-12 md:col-4">
-                                                    <p-checkbox inputId="binary" v-model="queryParam.hasBonus"
-                                                                :binary="true"></p-checkbox>
-                                                    <label htmlFor="binary">包含特典</label>
+                                                    <p-dropdown v-model="queryParam.hasBonus" :options="hasBonusSet"
+                                                                placeholder="是否包含特典" option-label="label"
+                                                                option-value="value">
+                                                    </p-dropdown>
                                                 </div>
                                                 <div class="col-12 md:col-4">
-                                                    <p-multiselect v-model="queryParam.publishFormat" :options="publishFormatSet"
+                                                    <p-multiselect v-model="queryParam.publishFormat"
+                                                                   :options="publishFormatSet"
                                                                    option-label="label" option-value="value"
                                                                    placeholder="出版形式"
                                                                    display="chip" :filter="true">
                                                     </p-multiselect>
                                                 </div>
                                                 <div class="col-12 md:col-4">
-                                                    <p-multiselect v-model="queryParam.albumFormat" :options="albumFormatSet"
+                                                    <p-multiselect v-model="queryParam.albumFormat"
+                                                                   :options="albumFormatSet"
                                                                    option-label="label" option-value="value"
                                                                    placeholder="专辑分类"
                                                                    display="chip" :filter="true">
                                                     </p-multiselect>
                                                 </div>
                                                 <div class="col-12 md:col-4">
-                                                    <p-multiselect v-model="queryParam.mediaFormat" :options="mediaFormatSet"
+                                                    <p-multiselect v-model="queryParam.mediaFormat"
+                                                                   :options="mediaFormatSet"
                                                                    option-label="label" option-value="value"
                                                                    placeholder="媒体格式"
                                                                    display="chip" :filter="true">
                                                     </p-multiselect>
                                                 </div>
                                                 <div class="col-12 md:col-3 sm:col-6" style="text-align: right">
-                                                    <p-button icon="pi pi-times" label="清空" class="p-button-rounded p-button-info" @click="clearSearch"></p-button>
+                                                    <p-button icon="pi pi-times" label="清空"
+                                                              class="p-button-rounded p-button-info"
+                                                              @click="clearSearch"></p-button>
                                                 </div>
                                                 <div class="col-12 md:col-3 sm:col-6" style="text-align: left">
-                                                    <p-button icon="pi pi-search" label="搜索" class="p-button-rounded p-button-success" @click="searchAlbum"></p-button>
+                                                    <p-button icon="pi pi-search" label="搜索"
+                                                              class="p-button-rounded p-button-success"
+                                                              @click="searchAlbum"></p-button>
                                                 </div>
                                             </div>
                                         </p-accordiontab>
@@ -400,6 +408,11 @@
             const albumFormatSet = ref([[${albumFormatSet}]]);
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const productSelect = ref(true);
+            const hasBonusSet = ref([
+                {label: "全部", value: "all"},
+                {label: "有", value: "has"},
+                {label: "无", value: "no"}
+            ]);
             const queryParam = ref({
                 seriesId: null,
                 productId: [],
@@ -421,7 +434,7 @@
             }
             const productSet = ref();
             const getProducts = (ev) => {
-                let json = {seriesId: ev.value};
+                let json = {series: ev.value};
                 axiosPostRequest(GET_ALL_PRODUCT_URL, json)
                     .then(res => {
                         queryParam.value.productIds = [];
@@ -482,7 +495,7 @@
             };
 
             return {
-                clearSearch,
+                clearSearch, hasBonusSet,
                 publishFormatSet, albumFormatSet, mediaFormatSet,
                 getProducts, seriesSet, productSet, queryParam, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,

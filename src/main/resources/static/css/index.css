@@ -202,5 +202,13 @@ img.flag {
 .false-icon {
     color: #C63737;
 }
+
+.p-menubar {
+    height: 60px;
+}
+
+.p-menuitem-text {
+    font-size: 17px;
+}
     
     

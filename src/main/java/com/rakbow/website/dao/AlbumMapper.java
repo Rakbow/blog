@@ -24,8 +24,8 @@ public interface AlbumMapper {
     List<Album> selectAlbumByFilter(String publishFormat, String albumFormat, String mediaFormat, String productId, String seriesId, String hasBonus);
 
     //详细查询
-    List<Album> selectAlbumBySuperFilter(String seriesId, Set<String> productId, Set<String> publishFormat, Set<String> albumFormat,
-                                         Set<String> mediaFormat, String hasBonus);
+    List<Album> selectAlbumBySuperFilter(String seriesId, List<Integer> productId, List<Integer> publishFormat, List<Integer> albumFormat,
+                                         List<Integer> mediaFormat, String hasBonus);
 
     //插入新专辑
     int insertAlbum(Album album);

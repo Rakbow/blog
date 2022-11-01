@@ -151,7 +151,7 @@
                         <!--                    <p-inputnumber v-model="filterModel.value" mode="currency" currency="JPY" locale="ja-JP"></p-inputnumber>-->
                         <!--                </template>-->
                     </p-column>
-                    <p-column field="series" header="所属系列" :sortable="true"></p-column>
+                    <p-column field="series.name" header="所属系列" :sortable="true"></p-column>
                     <p-column header="所属产品">
                         <template #body="slotProps">
                             <ul>
@@ -258,15 +258,15 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown id="seriesId" v-model="album.seriesId" :options="seriesSet"
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown id="series" v-model="album.series" :options="seriesSet"
                                         placeholder="选择所属系列" option-label="label" option-value="value"
                                         @change="getProducts">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect id="productId" v-model="album.productId" :options="productSet"
+                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect id="products" v-model="album.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="请先选择所属系列"
                                            display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
@@ -398,15 +398,15 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown id="series" v-model="albumEdit.series" :options="seriesSet"
                                         placeholder="选择所属系列" option-label="label" option-value="value"
                                         @change="getProducts">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="productId" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect id="productId" v-model="albumEdit.productId" :options="productSet"
+                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect id="products" v-model="albumEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
                                            display="chip" :filter="true">
                             </p-multiselect>
@@ -662,18 +662,19 @@
             const openEditDialog = (data) => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             albumEdit.value = dataTmp;
-                            axiosPostRequest(GET_ALL_PRODUCT_URL, {seriesId:dataTmp.seriesId})
+                            axiosPostRequest(GET_ALL_PRODUCT_URL, {series:dataTmp.series.id})
                                 .then(res => {
                                     productSet.value = res;
                                     albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                                     albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
                                     albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                                    albumEdit.value.productId = label2value(dataTmp.product, productSet.value).concat();
+                                    albumEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                                    albumEdit.value.series = dataTmp.series.id;
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -691,10 +692,10 @@
                     if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
                         albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
                     }
-                    albumEdit.value.publishFormat = albumEdit.value.publishFormat.join(",");
-                    albumEdit.value.albumFormat = albumEdit.value.albumFormat.join(",");
-                    albumEdit.value.mediaFormat = albumEdit.value.mediaFormat.join(",");
-                    albumEdit.value.productId = albumEdit.value.productId.join(",");
+                    albumEdit.value.publishFormat = "{\"ids\":[" + albumEdit.value.publishFormat.join(",") + "]}";
+                    albumEdit.value.albumFormat = "{\"ids\":[" + albumEdit.value.albumFormat.join(",") + "]}";
+                    albumEdit.value.mediaFormat = "{\"ids\":[" + albumEdit.value.mediaFormat.join(",") + "]}";
+                    albumEdit.value.products = "{\"ids\":[" + albumEdit.value.products.join(",") + "]}";
                     await axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
                         .then(res => {
                             if (res.state === 1) {
@@ -753,11 +754,11 @@
                 } else if (data.value.mediaFormat == null || data.value.mediaFormat.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择媒体类型！', life: 3000});
                     flag = false;
-                } else if (data.value.productId == null || data.value.productId.length == 0) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
-                    flag = false;
-                } else if (data.value.seriesId == null) {
+                } else if (data.value.products == null || data.value.products.length == 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择所属产品！', life: 3000});
+                    flag = false;
+                } else if (data.value.series == null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
                     flag = false;
                 }
                 return flag;
@@ -767,10 +768,10 @@
             const submitNewAlbum = () => {
                 if (checkAlbum(album)) {
                     album.value.releaseDate = dateToString(album.value.releaseDate);
-                    album.value.publishFormat = album.value.publishFormat.join(",");
-                    album.value.albumFormat = album.value.albumFormat.join(",");
-                    album.value.mediaFormat = album.value.mediaFormat.join(",");
-                    album.value.productId = album.value.productId.join(",");
+                    album.value.publishFormat = "{\"ids\":[" + album.value.publishFormat.join(",") + "]}";
+                    album.value.albumFormat = "{\"ids\":[" + album.value.albumFormat.join(",") + "]}";
+                    album.value.mediaFormat = "{\"ids\":[" + album.value.mediaFormat.join(",") + "]}";
+                    album.value.products = "{\"ids\":[" + album.value.products.join(",") + "]}";
                     if (true) {
                         axiosPostRequest(INSERT_ALBUM_URL, album.value)
                             .then(res => {
@@ -794,7 +795,7 @@
 
             //根据系列id获取该系列所有产品
             const getProducts = (ev) => {
-                let json = {seriesId: ev.value};
+                let json = {series: ev.value};
                 axiosPostRequest(GET_ALL_PRODUCT_URL, json)
                     .then(res => {
                         productSet.value = res;
