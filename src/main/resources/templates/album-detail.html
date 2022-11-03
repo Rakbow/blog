@@ -7,26 +7,26 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
     <!-- bootstrap -->
-    <script th:src="@{/js/bootstrap/bootstrap.min.js}"></script>
-    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-    <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
-    <link th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
+    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
+    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!--other css -->
     <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
-    <!-- PrimeVue css-->
+    <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
-    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
-    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
+    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
@@ -40,7 +40,6 @@
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
     <script th:src="@{/js/primevue/components/chips.min.js}"></script>
-    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
     <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
     <script th:src="@{/js/primevue/components/galleria.min.js}"></script>
@@ -55,26 +54,26 @@
     <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
 
     <!-- Axios -->
-    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 
-    <!-- jquery -->
-    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
+    <!-- Jquery -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 
     <!-- high light js -->
-    <link th:href="@{/css/highlightjs/default.min.css}" rel="stylesheet">
-    <script th:src="@{/js/highlightjs/highlight.min.js}"></script>
+    <link href="https://cdn.staticfile.org/highlight.js/11.6.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/highlight.js/11.6.0/highlight.min.js"></script>
 
     <!-- md-editor-v3 -->
     <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
     <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script th:src="@{/js/marked/marked.min.js}"></script>
-    <link th:href="@{/css/markdown/github-markdown.css}" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/marked/4.2.0/marked.min.js"></script>
+    <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- aPlayer -->
-    <script th:src="@{/tools/aplayer/1.10.1/APlayer.min.js}"></script>
-    <link th:href="@{/tools/aplayer/1.10.1/APlayer.min.css}" rel="stylesheet">
+    <!-- <script th:src="@{/tools/aplayer/1.10.1/APlayer.min.js}"></script>
+    <link th:href="@{/tools/aplayer/1.10.1/APlayer.min.css}" rel="stylesheet"> -->
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -255,7 +254,7 @@
                                 </table>
                             </div>
                             <div v-else>
-                                <span>暂无音乐创作相关信息</span>
+                                <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
                             </div>
                         </p-fieldset>
                         <p-fieldset :toggleable="true" class="mt-2">
@@ -264,7 +263,7 @@
                                 <b>音轨信息</b>
                             </template>
                             <div v-if="album.trackInfo == null || JSON.stringify(album.trackInfo) == '{}' ">
-                                <span>暂无音轨信息</span>
+                                <span class="emptyInfo"><em>暂无音轨信息</em></span>
                             </div>
                             <div v-else v-for="disc in album.trackInfo.disc_list">
                                 <table class="table table-sm table-hover table-striped">
@@ -315,7 +314,7 @@
                                 <b>图片</b>
                             </template>
                             <div v-if="album.displayImages.length == 0">
-                                <span>暂无图片</span>
+                                <span class="emptyInfo"><em>暂无图片</em></span>
                             </div>
                             <div v-else align="center">
                                 <p-galleria :value="album.displayImages" :responsive-options="responsiveOptions"
@@ -378,7 +377,7 @@
                                 <b>相关专辑</b>
                             </template>
                             <div class="grid">
-                            <span class="smallfont">
+                                <span class="smallfont">
                                     <div class="album_infobit_small smallfont ml-0 grid"
                                          v-if="relatedAlbums.length != 0"
                                          v-for="relatedAlbum of relatedAlbums">
@@ -412,6 +411,42 @@
                                 <br>
                                 <b class="rbot"><b></b></b>
                             </div>
+                        </p-panel>
+                        <br>
+                        <p-panel>
+                            <template #header>
+                                <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
+                                <b>图片</b>
+                            </template>
+                            <div v-if="album.displayImages.length == 0">
+                                <span class="emptyInfo"><em>暂无图片</em></span>
+                            </div>
+                            <p-galleria v-if="album.displayImages" :value="album.displayImages"
+                                        v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
+                                        :num-visible="7" container-style="max-width: 800px"
+                                        :circular="true" :full-screen="true" :show-item-navigators="true"
+                                        :show-thumbnails="false" v-model:visible="displayCustom">
+                                <template #item="{item}">
+                                    <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name" />
+                                </template>
+                                <template #caption="{item}">
+                                    <div class="custom-galleria-footer">
+                                        <span v-if="album.displayImages" class="title-container">
+                                            <span>共{{album.displayImages.length}}张</span>
+                                            <span class="title">{{item.nameZh}}</span>
+                                            <span>{{item.description}}</span>
+                                        </span>
+                                    </div>
+                                </template>
+                            </p-galleria>
+                            <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">
+                                <div class="col-4 mt-2 mb-2" id="panel-image-div" v-for="(image, index) of album.displayImages" :key="index">
+                                    <img :class="initPanelImageClass(image.url)" :src="image.url" :alt="image.name" style="cursor: pointer"
+                                         @click="imageClick(index)"/>
+                                </div>
+                            </div>
+                            <br>
+                            <b class="rbot"><b></b></b>
                         </p-panel>
                         <br>
                         <p-panel>
@@ -667,7 +702,7 @@
                             </div>
                         </div>
                         <div v-else>
-                            <span>暂无图片</span>
+                            <span class="emptyInfo"><em>暂无图片</em></span>
                         </div>
                     </p-panel>
                 </p-dialog>
@@ -859,6 +894,26 @@
             onMounted(() => {
                 init();
             })
+
+            //region 图片板块
+            const activeIndex = ref(0);
+            const displayCustom = ref(false);
+            const imageClick = (index) => {
+                activeIndex.value = index;
+                displayCustom.value = true;
+            };
+            const initPanelImageClass = (url) => {
+                var image = new Image();
+                image.src = url;
+                return (image.naturalWidth > image.naturalHeight) ? "panel-image-width" : "panel-image-height";
+            };
+
+            const initGalleriaImageClass = (url) => {
+                var image = new Image();
+                image.src = url;
+                return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
+            };
+            //endregion
 
             //region 页面header
             const domainUrl = DOMAIN_URL;
@@ -1136,13 +1191,17 @@
                 if (description != null && description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(description);
                 } else {
-                    document.getElementById("description").innerHTML = "暂无描述信息";
+                    //<![CDATA[
+                    document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
+                    //]]>
                 }
 
                 if (bonus != null && bonus !== "") {
                     document.getElementById("bonus").innerHTML = marked.parse(bonus);
                 } else {
-                    document.getElementById("bonus").innerHTML = "暂无特典信息";
+                    //<![CDATA[
+                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
+                    //]]>
                 }
             };
             //endregion
@@ -1306,6 +1365,7 @@
                 });
             };
             const galleriaItemClass = ref("");
+
             const responsiveOptions = [
                 {
                     breakpoint: '1024px',
@@ -1459,6 +1519,11 @@
             }
 
             return {
+                initGalleriaImageClass,
+                initPanelImageClass,
+                imageClick,
+                displayCustom,
+                activeIndex,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
 
                 edits,
@@ -1568,6 +1633,40 @@
         .mount("#app");
 </script>
 <style>
+    .emptyInfo {
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        display: flex;
+        color: #212121;
+    }
+    #panel-image-div {
+        display: flex;
+        position: relative;
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        background-color: black;
+        border: 1px solid black;
+    }
+    .panel-image-width {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        min-width: 100%;
+        max-width: 100%;
+        transform: translate(-50%, -50%);
+    }
+    .panel-image-height {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        min-height: 100%;
+        max-height: 100%;
+        transform: translate(-50%, -50%);
+    }
     .small-image-img {
         width: 50px;
         position: relative;
@@ -1585,6 +1684,7 @@
     .p-tooltip-text {
         width: 15rem;
     }
+
     .card {
         padding: 0rem;
     }

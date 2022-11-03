@@ -330,7 +330,6 @@ public class AlbumService {
     public JSONObject album2JsonSimple(Album album) {
 
         JSONArray images = JSONArray.parseArray(album.getImages());
-
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
         cover.put("url", domain + "/img/404.jpg");
@@ -355,7 +354,6 @@ public class AlbumService {
         albumJson.put("cover", cover);
         albumJson.put("addedTime", CommonUtil.dateToString(album.getAddedTime(), "yyyy/MM/dd hh:mm:ss"));
         albumJson.put("editedTime", CommonUtil.dateToString(album.getEditedTime(), "yyyy/MM/dd hh:mm:ss"));
-
         return albumJson;
     }
 
@@ -376,47 +374,72 @@ public class AlbumService {
     public List<JSONObject> getRelatedAlbums(int id) {
 
         Album album = findAlbumById(id);
-        //该专辑包含的作品id
-        List<Integer> productIds = JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class);
+        String seriesId = Integer.toString(album.getSeries());
 
         List<JSONObject> relatedAlbums = new ArrayList<>();
 
+        //该专辑包含的作品id
+        List<Integer> productIds = JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class);
+
+        List<Album> result = new ArrayList<>();
+
         JSONObject queryParam = new JSONObject();
-        queryParam.put("seriesId", Integer.toString(album.getSeries()));
+        queryParam.put("seriesId", seriesId);
         queryParam.put("productId", StringUtils.join(productIds.toArray(new Integer[0]), ","));
-        List<Album> tmp_list = selectAlbumBySuperFilter(queryParam.toJSONString());
-
-        if(tmp_list.size() > 5){
-            tmp_list.subList(0, 5).forEach(i -> relatedAlbums.add(album2JsonSimple(i)));
-        }else if(!tmp_list.isEmpty() && tmp_list.size() <= 5){
-            tmp_list.forEach(i -> relatedAlbums.add(album2JsonSimple(i)));
-        }else {
-            //为空
-
+        List<Album> queryResult = selectAlbumBySuperFilter(queryParam.toJSONString());
+        for (int i = 0; i < queryResult.size(); i++) {
+            if(queryResult.get(i).getId() == id){
+                queryResult.remove(i);
+                break;
+            }
         }
 
-        // //只包含一个所属作品
-        // if (productIds.size() == 1) {
-        //     queryParam.put("productId", productIds.get(0));
-        //     List<Album> tmp = selectAlbumBySuperFilter(queryParam.toJSONString());
-        //     if (tmp.size() < 4) {
-        //         tmp.stream().forEach(i -> relatedAlbums.add(album2JsonSimple(i)));
-        //     } else {
-        //         for (int i = 0; i < 4; i++) {
-        //             relatedAlbums.add(album2JsonSimple(tmp.get(i)));
-        //         }
-        //     }
-        // } else if (productIds.size() > 1 && productIds.size() <= 4) {
-        //     for (int i = 0; i < productIds.size(); i++) {
-        //         queryParam.put("productId", productIds.get(i));
-        //         relatedAlbums.add(album2JsonSimple(selectAlbumBySuperFilter(queryParam.toJSONString()).get(0)));
-        //     }
-        // } else {
-        //     for (int i = 0; i < 4; i++) {
-        //         queryParam.put("productId", productIds.get(i));
-        //         relatedAlbums.add(album2JsonSimple(selectAlbumBySuperFilter(queryParam.toJSONString()).get(0)));
-        //     }
-        // }
+        JSONObject tmpQueryParam = new JSONObject();
+
+        if (queryResult.size() > 5) {
+            result.addAll(queryResult.subList(0, 5));
+        } else if (queryResult.size() == 5) {
+            result.addAll(queryResult);
+        } else if (queryResult.size() > 0) {
+            List<Album> tmp = new ArrayList<>(queryResult);
+
+            if(productIds.size() > 1){
+                tmpQueryParam.put("seriesId", seriesId);
+                tmpQueryParam.put("productId", productIds.get(1));
+                List<Album> tmpQueryResult = selectAlbumBySuperFilter(tmpQueryParam.toJSONString());
+                for (int i = 0; i < tmpQueryResult.size(); i++) {
+                    if(tmpQueryResult.get(i).getId() == id){
+                        tmpQueryResult.remove(i);
+                        break;
+                    }
+                }
+                if (tmpQueryResult.size() >= 5-queryResult.size()) {
+                    tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
+                }else if(tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5-queryResult.size()) {
+                    tmp.addAll(tmpQueryResult);
+                }
+            }
+            result.addAll(tmp);
+        } else {
+            List<Album> tmp = new ArrayList<>(queryResult);
+            for (int productId : productIds) {
+                tmpQueryParam.put("seriesId", seriesId);
+                tmpQueryParam.put("productId", Integer.toString(productId));
+                tmp.addAll(selectAlbumBySuperFilter(tmpQueryParam.toJSONString()));
+            }
+            result = CommonUtil.removeDuplicateList(tmp);
+            for (int i = 0; i < result.size(); i++) {
+                if(result.get(i).getId() == id){
+                    result.remove(i);
+                    break;
+                }
+            }
+            if(result.size() >= 5){
+                result = result.subList(0, 5);
+            }
+        }
+        result = CommonUtil.removeDuplicateList(result);
+        result.forEach(i -> relatedAlbums.add(album2JsonSimple(i)));
         return relatedAlbums;
     }
 

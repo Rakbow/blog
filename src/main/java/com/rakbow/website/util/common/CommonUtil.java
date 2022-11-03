@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -167,12 +168,12 @@ public class CommonUtil {
         return mStringBuffer.toString();
     }
 
-    public static String getJSONString(int code, String msg) {
-        return getJSONString(code, msg, null);
-    }
-
-    public static String getJSONString(int code) {
-        return getJSONString(code, null, null);
+    /**
+     * 使用 Stream 去重list
+     * @param list
+     */
+    public static <T> List<T> removeDuplicateList(List<T> list) {
+        return list.stream().distinct().collect(Collectors.toList());
     }
 
 }
