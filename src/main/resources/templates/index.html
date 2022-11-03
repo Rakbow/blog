@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Rakbow's Blog</title>
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <title>Rakbow's Web</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<!--    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css" crossorigin="anonymous">-->
-    <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css" />
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css" />
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css" />
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css" />
 
-    <!-- Other Css -->
-    <link rel="stylesheet" th:href="@{/css/index.css}">
-    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon" />
+    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
-    <!-- Vue -->
-    <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript" ></script>
-    <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript" ></script>
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
+
+    <!-- Vue3 -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
     <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
@@ -27,17 +27,15 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
 
-    <!-- other -->
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/navbarParam.js}"></script>
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
 </head>
 <body>
-<!-- 头部 -->
-
-
 <div id="app">
     <!-- 头部 -->
-    <header class="sticky-top" th:insert="~{header :: site_header}"></header><br>
+    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header><br>
 
     <div class="grid grid-nogutter surface-section text-800">
         <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
@@ -46,18 +44,17 @@
                 <div class="text-6xl text-primary font-bold mb-3">Rakbow的私人在线数据库</div>
                 <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
 
-                <p-button label="数据库" type="button" @click.native="goUrl('http://localhost:8080/db')" class="mr-3 p-button-raised"></p-button>
-                <p-button label="博客" type="button" @click.native="goUrl('http://localhost:8080/blog')" class="p-button-outlined"></p-button>
+                <p-button label="数据库" type="button" @click.native="goDb" class="mr-3 p-button-raised"></p-button>
+                <p-button label="博客" type="button" @click.native="goBlog" class="p-button-outlined"></p-button>
             </section>
         </div>
         <div class="col-12 md:col-6 overflow-hidden">
-            <img src="/img/index.bmp" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
+            <img src="/img/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
         </div>
     </div>
 
     <!-- 尾部 -->
-    <footer th:insert="~{footer :: site_footer}"></footer>
-
+    <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
@@ -67,12 +64,14 @@
             onMounted(() => {
             })
 
-            const goUrl = (url) => {
-                //跳转页面覆盖当前页面
-                window.location.href = url
-                //或者写为
-                // window.open(url,"_self")
+            const goBlog = () => {
+                window.location.href = BLOG_INDEX_URL;
             };
+
+            const goDb = () => {
+                window.location.href = DATABASE_INDEX_URL;
+            };
+
             const domainUrl = DOMAIN_URL;
 
             //region 页面header
@@ -85,7 +84,7 @@
             const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
             //endregion
 
-            return { goUrl, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity }
+            return { goDb, goBlog, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity }
         },
         components: {
             "p-button": primevue.button,

@@ -20,9 +20,6 @@ public interface AlbumMapper {
     //根据id查询专辑信息
     Album selectAlbumById(int id);
 
-    //根据查询条件查询专辑
-    List<Album> selectAlbumByFilter(String publishFormat, String albumFormat, String mediaFormat, String productId, String seriesId, String hasBonus);
-
     //详细查询
     List<Album> selectAlbumBySuperFilter(String seriesId, List<Integer> productId, List<Integer> publishFormat, List<Integer> albumFormat,
                                          List<Integer> mediaFormat, String hasBonus);

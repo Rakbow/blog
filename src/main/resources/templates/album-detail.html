@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Album Detail</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-    <title>Rakbow's Database</title>
-
-    <!-- icon -->
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
 
     <!-- bootstrap -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
     <script th:src="@{/js/bootstrap/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}" rel="stylesheet"/>
 
-    <!-- other css -->
-    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
-    <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
-    <!-- Dependencies -->
+    <!-- Vue3 -->
     <script th:src="@{/js/primevue/vue.min.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
     <script th:src="@{/js/primevue/vue-router.global.js}"></script>
@@ -59,12 +57,8 @@
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
 
-    <!-- other -->
-    <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <!-- jquery -->
     <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
-    <script th:src="@{/js/basic/navbarParam.js}"></script>
 
     <!-- high light js -->
     <link th:href="@{/css/highlightjs/default.min.css}" rel="stylesheet">
@@ -81,6 +75,11 @@
     <!-- aPlayer -->
     <script th:src="@{/tools/aplayer/1.10.1/APlayer.min.js}"></script>
     <link th:href="@{/tools/aplayer/1.10.1/APlayer.min.css}" rel="stylesheet">
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
 </head>
 <body>
 <div class="nk-container">
@@ -98,8 +97,10 @@
                                 <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
                                     <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{album.nameJp}}</h4>
-                                    <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameEn}}</small></h4>
-                                    <h4 v-if="album.nameZh != ''" class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameZh}}</small></h4>
+                                    <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameEn}}</small>
+                                    </h4>
+                                    <h4 v-if="album.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
+                                        style="text-align: left"><small>{{album.nameZh}}</small></h4>
                                 </div>
                             </template>
                             <template #icons th:if="${loginUser != null}">
@@ -229,13 +230,13 @@
                                 </table>
                             </div>
                         </p-panel>
-<!--                        <p-fieldset :toggleable="true" class="mt-2">-->
-<!--                            <template #legend>-->
-<!--                                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>-->
-<!--                                <b>在线播放</b>-->
-<!--                            </template>-->
-<!--                            <div class="player"></div>-->
-<!--                        </p-fieldset>-->
+                        <!--                        <p-fieldset :toggleable="true" class="mt-2">-->
+                        <!--                            <template #legend>-->
+                        <!--                                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>-->
+                        <!--                                <b>在线播放</b>-->
+                        <!--                            </template>-->
+                        <!--                            <div class="player"></div>-->
+                        <!--                        </p-fieldset>-->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
@@ -354,7 +355,7 @@
                                     <i class="pi pi-bookmark mr-2"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-1">
-                                    {{album.series}}
+                                    {{album.series.name}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2"></i><b>所属作品</b>
@@ -377,29 +378,29 @@
                                 <b>相关专辑</b>
                             </template>
                             <div class="grid">
-                                <!-- <div style="width: 250px;"> -->
-                                <span class="smallfont">
-                                    <div class="album_infobit_small smallfont label ml-0 grid"
+                            <span class="smallfont">
+                                    <div class="album_infobit_small smallfont ml-0 grid"
                                          v-if="relatedAlbums.length != 0"
                                          v-for="relatedAlbum of relatedAlbums">
-                                        <div class="col-3 related-image-div mt-2">
-                                            <a :href="domainUrl + '/db/album/'+ relatedAlbum.id ">
-                                                <img id="related-image-img" :src="relatedAlbum.cover.url"
-                                                     style="border-radius: 20%;">
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'/db/album/'+ relatedAlbum.id ">
+                                                <img class="small-image-img" :src="relatedAlbum.cover.url"
+                                                     style="border-radius: 20%;"
+                                                     v-tooltip.bottom="'收录时间: ' + relatedAlbum.addedTime + '编辑时间: ' + relatedAlbum.editedTime">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="album_infobit_detail">
                                             <li>
-                                                <a class="albumtitle smallfont album-anime"
-                                                   :href="domainUrl + '/db/album/'+ relatedAlbum.id ">
-                                                    <span class="albumtitle" lang="en" style="display:inline">
+                                                <a class="smallfont"
+                                                   :href="'/db/album/'+ relatedAlbum.id ">
+                                                    <span class="text-truncate-2" lang="ja">
                                                         {{relatedAlbum.nameJp}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="catalog smallfont album-anime">
+                                                <span class="smallfont">
                                                     <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
                                                 </span>
                                             </li>
@@ -485,7 +486,7 @@
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown id="seriesId" v-model="albumEdit.seriesId" :options="seriesSet"
+                            <p-dropdown id="seriesId" v-model="albumEdit.series" :options="seriesSet"
                                         option-label="label" option-value="value"
                                         :disabled="seriesBool">
                             </p-dropdown>
@@ -842,17 +843,15 @@
                 </p-dialog>
 
                 <!-- 尾部 -->
-                <footer th:insert="~{footer :: site_footer}"></footer>
+                <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
             </div>
         </div>
     </div>
-
-    <!-- 尾部 -->
-    <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
 </div>
 <script type="module" th:inline="javascript">
 
     const {createApp, onMounted, ref} = Vue;
+    const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -860,7 +859,6 @@
             onMounted(() => {
                 init();
             })
-
 
             //region 页面header
             const domainUrl = DOMAIN_URL;
@@ -1022,16 +1020,16 @@
                 if (data.value.releaseDate == null) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未填写发行时间！', life: 3000});
                     flag = false;
-                } else if (data.value.publishFormat == null || data.value.publishFormat.length == 0) {
+                } else if (data.value.publishFormat == null || data.value.publishFormat.length === 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择出版形式！', life: 3000});
                     flag = false;
-                } else if (data.value.albumFormat == null || data.value.albumFormat.length == 0) {
+                } else if (data.value.albumFormat == null || data.value.albumFormat.length === 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择专辑分类！', life: 3000});
                     flag = false;
-                } else if (data.value.mediaFormat == null || data.value.mediaFormat.length == 0) {
+                } else if (data.value.mediaFormat == null || data.value.mediaFormat.length === 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择媒体类型！', life: 3000});
                     flag = false;
-                } else if (data.value.products == null || data.value.products.length == 0) {
+                } else if (data.value.products == null || data.value.products.length === 0) {
                     toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
                     flag = false;
                 } else if (data.value.series == null) {
@@ -1566,9 +1564,27 @@
         .use(primevue.toastservice)
         .use(primevue.config.default)
         .use(MdEditorV3)
+        .directive('tooltip', Tooltip)
         .mount("#app");
 </script>
 <style>
+    .small-image-img {
+        width: 50px;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .small-image-div {
+        position: relative;
+        width: 60px;
+        height: 60px;
+    }
+
+    .p-tooltip-text {
+        width: 15rem;
+    }
     .card {
         padding: 0rem;
     }
@@ -1831,23 +1847,9 @@
         font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
     }
 
-    a.album-anime {
-        /* color: yellowgreen !important; */
-    }
-
-    /* #imgRelatedAlbum {
-        width: 50px;
-    } */
-
     .p-panel .p-panel-content {
         padding: 0.5rem;
     }
-
-    /*
-    p-image {
-        width: 250px;
-        margin-right: 0 auto;
-    } */
 </style>
 </body>
 </html>

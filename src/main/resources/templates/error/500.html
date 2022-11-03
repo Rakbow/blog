@@ -1,53 +1,48 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>404</title>
+    <title>500 Error</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-    <!-- bootstrap -->
-<!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
-<!--    <link rel="stylesheet"-->
-<!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
-<!--    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">-->
-<!--    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">-->
-<!--    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">-->
-<!--    <link rel="stylesheet" th:href="@{/css/index.css}">-->
 
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon" />
+    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-<!--    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>-->
-<!--    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>-->
-<!--    <script th:src="@{/assets/js/script.min.js}"></script>-->
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
 
-    <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
-
-    <!-- Dependencies -->
+    <!-- Vue3 -->
     <script th:src="@{/js/primevue/vue.min.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
 
     <!-- other -->
-    <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
 </head>
 <body>
 <div class="nk-container">
-    <!-- 头部 -->
-    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>
-
     <div class="main">
         <div id="app">
+            <!-- 头部 -->
+<!--            <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>-->
+
             <div class="surface-ground px-2 py-4 md:px-6 lg:px-8 sm:px-4">
                 <div class="text-900 font-bold text-2xl mb-1 text-center">系统消息</div>
 
@@ -56,7 +51,7 @@
                         <div class="p-3 h-full">
                             <p-card class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
                                 <template #header>
-                                    <img alt="404 NOT FOUND" src="http://localhost:8080/img/404.jpg">
+                                    <img alt="404 NOT FOUND" src="/img/404.jpg">
                                 </template>
                                 <template #title :v-if="errorMessage != null && errorMessage!= ''">
                                     {{errorMessage}}
@@ -74,7 +69,7 @@
     </div>
 
     <!-- 尾部 -->
-<!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
+    <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
 </div>
 
 <script type="module" th:inline="javascript">
@@ -84,10 +79,22 @@
 
             const errorMessage = ref([[${errorMessage}]]);
 
+            //region 页面header
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
             //跳转首页
             const goIndex = () => {
                 //跳转页面覆盖当前页面
-                window.location.href = "http://localhost:8080";
+                window.location.href = domainUrl;
             };
 
             //返回上一页
@@ -95,18 +102,31 @@
                 window.history.back();
             };
 
-            return {errorMessage, goIndex, goBack}
+            return {errorMessage, goIndex, goBack, domainUrl, selectedEntity, entityType, notLoginNavbarItems, loginNavbarItems}
         },
 
         components: {
             "p-card": primevue.card,
             "p-button": primevue.button,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-inputtext": primevue.inputtext,
+            "p-dropdown": primevue.dropdown,
         }
     };
 
-    const app = createApp(App);
-    app.use(primevue.config.default);
-    app.mount("#app");
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    const app = createApp(App)
+        .use(router)
+        .use(primevue.config.default)
+        .mount("#app");
 </script>
 <style>
     #imgbox img {

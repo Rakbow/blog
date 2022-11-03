@@ -27,34 +27,6 @@
         where id = #{id} and _s = 1
     </select>
 
-    <select id="selectAlbumByFilter" resultType="Album">
-        select
-        <include refid="selectFields"></include>
-        from album
-        <where>
-            <if test="publishFormat != null and publishFormat != '' ">
-                and publish_format like concat('%', #{publishFormat}, '%')
-            </if>
-            <if test="albumFormat != null and albumFormat != '' ">
-                and album_format like concat('%', #{albumFormat}, '%')
-            </if>
-            <if test="mediaFormat != null and mediaFormat != '' ">
-                and media_format like concat('%', #{mediaFormat}, '%')
-            </if>
-            <if test="products != null and products != '' ">
-                and products like concat('%', #{products}, '%')
-            </if>
-            <if test="series != null and series != '' ">
-                and series = #{series}
-            </if>
-            <if test="hasBonus != null and hasBonus != '' ">
-                and has_bonus = #{hasBonus}
-            </if>
-            and _s = 1
-        </where>
-        order by release_date desc
-    </select>
-
     <select id="selectAlbumBySuperFilter" resultType="Album">
         select
         <include refid="selectFields"></include>

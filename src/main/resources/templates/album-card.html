@@ -1,34 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Album Card</title>
+    <title>Albums</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
     <!-- bootstrap -->
-    <!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
-    <!--    <link rel="stylesheet"-->
-    <!--          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">-->
-    <!--    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">-->
-    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-    <!--    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">-->
-    <link rel="stylesheet" th:href="@{/css/index.css}">
-    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
-
-
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/bootstrap/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}" rel="stylesheet"/>
 
-    <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
-    <!-- Dependencies -->
-    <script th:src="@{/js/primevue/vue.min.js}" type="text/javascript"></script>
-    <script th:src="@{/js/primevue/primevue.min.js}" type="text/javascript"></script>
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
+
+    <!-- Vue3 -->
+    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
     <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
@@ -52,12 +49,13 @@
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
 
-    <!-- other -->
-    <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
+    <!-- jquery -->
     <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
-    <script th:src="@{/js/basic/navbarParam.js}"></script>
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
 </head>
 <body>
 <div class="nk-container">
@@ -261,7 +259,7 @@
                                         <div class="col-9">
                                             <ul class="album_infobit_detail">
                                             <li>
-                                                <a class="smallfont album-anime"
+                                                <a class="smallfont"
                                                    :href="'/db/album/'+ addAlbum.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{addAlbum.nameJp}}
@@ -269,7 +267,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="smallfont album-anime">
+                                                <span class="smallfont">
                                                     <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
                                                 </span>
                                             </li>
@@ -381,12 +379,9 @@
             </div>
 
             <!-- 尾部 -->
-            <footer th:insert="~{footer :: site_footer}"></footer>
+            <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
         </div>
     </div>
-
-    <!-- 尾部 -->
-    <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;

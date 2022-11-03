@@ -132,19 +132,11 @@ public class AlbumController {
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), albumId).getVisitNum());
         //获取相关专辑
-        // model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
+        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
         return "/album-detail";
     }
 
     //endregion
-
-    // public void tmp(){
-    //     if (userService.checkAuthority(request).state) {
-    //
-    //     } else {
-    //         res.setErrorMessage(userService.checkAuthority(request).message);
-    //     }
-    // }
 
     //region ------增删改查------
 
@@ -187,8 +179,8 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         try {
             JSONObject queryParam = new JSONObject();
-            String series = JSONObject.parseObject(json).getString("series");
-            queryParam.put("series", series);
+            String series = JSONObject.parseObject(json).getString("seriesId");
+            queryParam.put("seriesId", series);
 
             JSONArray productId = JSONObject.parseObject(json).getJSONArray("productId");
             if(productId.size() != 0){
@@ -596,4 +588,10 @@ public class AlbumController {
     }
 
     //endregion
+
+    @RequestMapping(path = "/test", method = RequestMethod.GET)
+    @ResponseBody
+    public List<JSONObject> test(int id) {
+        return albumService.getRelatedAlbums(id);
+    }
 }

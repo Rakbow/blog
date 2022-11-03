@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon" />
+    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
-    <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
 
-    <!-- other css -->
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
-
-    <!-- Dependencies -->
+    <!-- Vue3 -->
     <script th:src="@{/js/primevue/vue.min.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
     <script th:src="@{/js/primevue/vue-router.global.js}"></script>
 
-    <!-- PrimeVue Components -->
+    <!-- PrimeVue components -->
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/css/index.css}">
+
     <!-- Axios -->
     <script th:src="@{/js/axios/axios.min.js}"></script>
 
-    <!-- other -->
-    <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
-    <script th:src="@{/js/basic/navbarParam.js}"></script>
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
 </head>
+
 <body>
 <div id="app">
     <div th:fragment="site_header">
@@ -50,8 +51,8 @@
                         <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
                             <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label"
                                         option-value="value" placeholder="类型"></p-dropdown>
-                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword"
-                                         th:value="${keyword}"></p-inputtext>
+                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search"
+                                         name="keyword" th:value="${keyword}"></p-inputtext>
                             <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
                                       type="submit"></p-button>
                         </div>
@@ -69,14 +70,14 @@
                 <template #end>
                     <div class="grid mt-0 mb-0 pt-0 pb-0">
                         <div class="col-2 mt-0 mb-0 pt-0 pb-0">
-                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}"
-                                      size="small" shape="circle"></p-avatar>
+                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                                      shape="circle"></p-avatar>
                         </div>
                         <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
                             <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label"
                                         option-value="value" placeholder="类型" style="width: 8px"></p-dropdown>
-                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search" name="keyword"
-                                         th:value="${keyword}"></p-inputtext>
+                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search"
+                                         name="keyword" th:value="${keyword}"></p-inputtext>
                             <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
                                       type="submit"></p-button>
                         </div>
@@ -87,7 +88,7 @@
     </div>
 </div>
 <script type="module" th:inline="javascript">
-    const {createApp, onMounted, ref} = Vue;
+    const { createApp, onMounted, ref } = Vue;
 
     const App = {
         setup() {
@@ -104,7 +105,7 @@
 
             const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
 
-            return {domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity}
+            return { domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity }
         },
         components: {
             "p-dropdown": primevue.dropdown,
@@ -115,7 +116,7 @@
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{ path: "/", component: App }];
 
     const router = VueRouter.createRouter({
         // history: VueRouter.createWebHashHistory(),
@@ -136,4 +137,5 @@
     }
 </style>
 </body>
+
 </html>

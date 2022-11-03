@@ -1,51 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Template</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-    <title>Rakbow's Database</title>
-
-    <!-- icon -->
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-    <link rel="stylesheet" th:href="@{/css/iconfont/iconfont.css}">
 
     <!-- bootstrap -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
     <script th:src="@{/js/bootstrap/bootstrap.min.js}"></script>
     <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
+    <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}"rel="stylesheet" />
 
-    <!-- other css -->
-    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon" />
+    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
-    <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
 
-    <!-- Dependencies -->
+    <!-- Vue3 -->
     <script th:src="@{/js/primevue/vue.min.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
     <script th:src="@{/js/primevue/vue-router.global.js}"></script>
-
-    <!-- Axios -->
-    <script th:src="@{/js/axios/axios.min.js}"></script>
-
-    <!-- other -->
-    <script th:src="@{/js/basic/httpRequest.js}"></script>
-    <script th:src="@{/js/basic/basicUrl.js}"></script>
-    <script th:src="@{/js/basic/dataHandler.js}"></script>
-    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
-
-    <!-- md-editor-v3 -->
-    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
-
-    <!-- marked -->
-    <script th:src="@{/js/marked/marked.min.js}"></script>
-    <link th:href="@{/css/markdown/github-markdown.css}" rel="stylesheet">
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
@@ -53,98 +34,62 @@
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+
+    <!-- jquery -->
+    <script th:src="@{/js/jquery/1.10.2/jquery.min.js}"></script>
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
 </head>
 <body>
 <div class="nk-container">
     <div class="main">
-        <div class="container">
-            <div id="app">
-                <p-toast></p-toast>
-                <!-- 头部 -->
-                <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+        <div id="app">
+            <!-- 头部 -->
+            <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
 
-                <!-- 尾部 -->
-                <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
-            </div>
+            <p-toast></p-toast>
+
+            <!-- 尾部 -->
+            <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
         </div>
     </div>
 </div>
 <script type="module" th:inline="javascript">
-
     const {createApp, onMounted, ref} = Vue;
+    const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
 
     const App = {
         setup() {
             onMounted(() => {
-            })
+            });
+
+            //region 基础配置
             const toast = useToast();
+            const domainUrl = DOMAIN_URL;
+            const selectedEntity = ref();
+            const entityType = ref(ENTITY_TYPE);
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
 
-            const navbarItems = ref([
-                {
-                    label: 'Home',
-                    icon: 'pi pi-fw pi-home',
-                    url: "http://localhost:8080"
-                },
-                {
-                    label: 'DataBase',
-                    icon: 'pi pi-fw iconfont icon-database',
-                    url: "http://localhost:8080/db"
-                },
-                {
-                    label: 'Album',
-                    icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
-                    items: [
-                        {
-                            label: 'Album List',
-                            icon: 'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album/list'
-                        },
-                        {
-                            label: 'Album Card',
-                            icon: 'pi pi-fw pi-list',
-                            url: 'http://localhost:8080/db/album/card'
-                        }
-                    ]
-                },
-                {
-                    label: 'Disc',
-                    icon: 'pi pi-fw iconfont icon-Video-Disc',
-                    items: [
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        },
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        }
-                    ]
-                },
-                {
-                    label: 'Book',
-                    icon: 'pi pi-fw pi-book',
-                    items: [
-                        {
-                            label: 'Book List',
-                            icon: 'pi pi-fw pi-book'
-                        },
-                        {
-                            label: 'Develop',
-                            icon: 'pi pi-fw pi-wrench'
-                        }
-                    ]
-                }
-            ]);
-
-            return { navbarItems }
+            return {
+                toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
+            }
         },
         components: {
+            "p-dropdown": primevue.dropdown,
+            "p-button": primevue.button,
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
-            "p-toast": primevue.toast,
             "p-inputtext": primevue.inputtext,
-            "p-button": primevue.button
+            "p-toast": primevue.toast,
         }
     };
 
@@ -160,11 +105,10 @@
         .use(router)
         .use(primevue.toastservice)
         .use(primevue.config.default)
+        .directive('tooltip', Tooltip)
         .mount("#app");
 </script>
 <style>
-
-
 </style>
 </body>
 </html>
