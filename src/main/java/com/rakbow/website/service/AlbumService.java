@@ -10,9 +10,11 @@ import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.album.MediaFormat;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +50,8 @@ public class AlbumService {
     private ProductService productService;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private MusicService musicService;
     // @Autowired
     // private ObjectMapper objectMapper;
     @Value("${website.path.img}")
@@ -156,11 +160,8 @@ public class AlbumService {
         //图片
         JSONArray images = JSONArray.parseArray(album.getImages());
 
-        //音轨信息
-        JSONObject trackInfo = JSONObject.parseObject(album.getTrackInfo());
-
         //发售时间转为string
-        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
+        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
 
         //出版类型
         List<String> publishFormat = new ArrayList();
@@ -200,7 +201,7 @@ public class AlbumService {
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", domain + "/img/404.jpg");
+        cover.put("url", "/img/404.jpg");
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -234,6 +235,63 @@ public class AlbumService {
             }
         }
 
+        //音轨信息
+        List<Music> musics = new ArrayList<>();
+        JSONObject trackInfo = JSONObject.parseObject(album.getTrackInfo());
+        if (trackInfo != null && !Objects.equals(trackInfo.toJSONString(), "{}")) {
+            List<Music> allMusics = musicService.getAll();
+            JSONArray discList = trackInfo.getJSONArray("disc_list");
+            JSONArray newDiscList = new JSONArray();
+            for (int i = 0; i < discList.size(); i++) {
+                JSONObject disc = discList.getJSONObject(i);
+                JSONArray trackList = disc.getJSONArray("track_list");
+                JSONArray newTrackList = new JSONArray();
+                for (int j = 0; j < trackList.size(); j++) {
+                    int musicId = trackList.getInteger(j);
+                    Music music = DataFinder.findMusicById(musicId, allMusics);
+                    if (music != null) {
+                        JSONObject track = new JSONObject();
+                        track.put("serial", music.getTrackSerial());
+                        track.put("music_id", musicId);
+                        track.put("name_jp", music.getNameJp());
+                        track.put("nameEn", music.getNameEn());
+                        track.put("length", music.getLength());
+                        newTrackList.add(track);
+                        musics.add(music);
+                    }
+                }
+                disc.put("track_list", newTrackList);
+                newDiscList.add(disc);
+            }
+            trackInfo.put("disc_list", newDiscList);
+        }
+
+        //音频播放
+        List<JSONObject> audios = new ArrayList<>();
+        musics.forEach(music -> {
+            if (!StringUtils.isBlank(music.getAudioUrl())) {
+                JSONObject audio = new JSONObject();
+                audio.put("name", music.getNameJp());
+                if(!Objects.equals(music.getArtists(), "[]")) {
+                    JSONArray audioArtists = JSON.parseArray(music.getArtists());
+                    for (int i = 0; i < audioArtists.size(); i++) {
+                        JSONObject artist = audioArtists.getJSONObject(i);
+                        if(Objects.equals(artist.getString("pos"), "vocal")) {
+                            audio.put("artist", artist.getString("name"));
+                        }
+                    }
+                }else {
+                    audio.put("artist", "artist");
+                }
+                audio.put("url", domain + music.getAudioUrl());
+                audio.put("cover", domain + music.getCoverUrl());
+                if (!StringUtils.isBlank(music.getLrcUrl())) {
+                    audio.put("lrc", music.getLrcUrl());
+                }
+                audios.add(audio);
+            }
+        });
+
 
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
@@ -241,14 +299,15 @@ public class AlbumService {
         albumJson.put("artists", artists);
         albumJson.put("images", images);
         albumJson.put("cover", cover);
+        albumJson.put("audios", audios);
         albumJson.put("displayImages", displayImages);
         albumJson.put("otherImages", otherImages);
         albumJson.put("trackInfo", trackInfo);
         albumJson.put("series", series);
         albumJson.put("product", product);
         albumJson.put("products", products);
-        albumJson.put("addedTime", CommonUtil.dateToString(album.getAddedTime(), "yyyy/MM/dd hh:mm:ss"));
-        albumJson.put("editedTime", CommonUtil.dateToString(album.getEditedTime(), "yyyy/MM/dd hh:mm:ss"));
+        albumJson.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
+        albumJson.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
         return albumJson;
     }
 
@@ -263,7 +322,7 @@ public class AlbumService {
             json.put("catalogNo", "N/A");
         }
 
-        json.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
+        json.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
 
         //出版类型
         List<String> publishFormat = new ArrayList();
@@ -296,7 +355,7 @@ public class AlbumService {
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", domain + "/img/404.jpg");
+        cover.put("url", "/img/404.jpg");
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -316,8 +375,8 @@ public class AlbumService {
         json.put("cover", cover);
         json.put("products", products);
         json.put("series", series);
-        json.put("addedTime", CommonUtil.dateToString(album.getAddedTime(), "yyyy/MM/dd hh:mm:ss"));
-        json.put("editedTime", CommonUtil.dateToString(album.getEditedTime(), "yyyy/MM/dd hh:mm:ss"));
+        json.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
+        json.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
         json.remove("artists");
         json.remove("bonus");
         json.remove("description");
@@ -332,7 +391,7 @@ public class AlbumService {
         JSONArray images = JSONArray.parseArray(album.getImages());
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", domain + "/img/404.jpg");
+        cover.put("url", "/img/404.jpg");
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -347,13 +406,13 @@ public class AlbumService {
         JSONObject albumJson = new JSONObject();
         albumJson.put("id", album.getId());
         albumJson.put("catalogNo", album.getCatalogNo());
-        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate(), "yyyy/MM/dd"));
+        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
         albumJson.put("nameJp", album.getNameJp());
         albumJson.put("nameZh", album.getNameZh());
         albumJson.put("seriesId", album.getSeries());
         albumJson.put("cover", cover);
-        albumJson.put("addedTime", CommonUtil.dateToString(album.getAddedTime(), "yyyy/MM/dd hh:mm:ss"));
-        albumJson.put("editedTime", CommonUtil.dateToString(album.getEditedTime(), "yyyy/MM/dd hh:mm:ss"));
+        albumJson.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
+        albumJson.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
         return albumJson;
     }
 
@@ -388,7 +447,7 @@ public class AlbumService {
         queryParam.put("productId", StringUtils.join(productIds.toArray(new Integer[0]), ","));
         List<Album> queryResult = selectAlbumBySuperFilter(queryParam.toJSONString());
         for (int i = 0; i < queryResult.size(); i++) {
-            if(queryResult.get(i).getId() == id){
+            if (queryResult.get(i).getId() == id) {
                 queryResult.remove(i);
                 break;
             }
@@ -403,19 +462,19 @@ public class AlbumService {
         } else if (queryResult.size() > 0) {
             List<Album> tmp = new ArrayList<>(queryResult);
 
-            if(productIds.size() > 1){
+            if (productIds.size() > 1) {
                 tmpQueryParam.put("seriesId", seriesId);
                 tmpQueryParam.put("productId", productIds.get(1));
                 List<Album> tmpQueryResult = selectAlbumBySuperFilter(tmpQueryParam.toJSONString());
                 for (int i = 0; i < tmpQueryResult.size(); i++) {
-                    if(tmpQueryResult.get(i).getId() == id){
+                    if (tmpQueryResult.get(i).getId() == id) {
                         tmpQueryResult.remove(i);
                         break;
                     }
                 }
-                if (tmpQueryResult.size() >= 5-queryResult.size()) {
+                if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
-                }else if(tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5-queryResult.size()) {
+                } else if (tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult);
                 }
             }
@@ -429,12 +488,12 @@ public class AlbumService {
             }
             result = CommonUtil.removeDuplicateList(tmp);
             for (int i = 0; i < result.size(); i++) {
-                if(result.get(i).getId() == id){
+                if (result.get(i).getId() == id) {
                     result.remove(i);
                     break;
                 }
             }
-            if(result.size() >= 5){
+            if (result.size() >= 5) {
                 result = result.subList(0, 5);
             }
         }
@@ -541,7 +600,7 @@ public class AlbumService {
 
     //更新音轨信息
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void updateAlbumTrackInfo(int id, String discList) {
+    public void updateAlbumTrackInfo(int id, String discList) throws Exception {
 
         JSONObject trackInfo = new JSONObject();
 
@@ -551,7 +610,9 @@ public class AlbumService {
 
         int totalTrack = 0;
 
-        int serial = 1;
+        int discSerial = 1;
+
+        String trackSerial = "";
 
         for (Object _disc : JSON.parseArray(discList)) {
             JSONObject disc = new JSONObject();
@@ -561,29 +622,41 @@ public class AlbumService {
             for (Object _track : JSON.parseArray(JSON.parseObject(_disc.toString()).getString("track_list"))) {
                 JSONObject track = JSON.parseObject(_track.toString());
                 if (i < 10) {
-                    track.put("serial", "0" + i);
+                    trackSerial = "0" + i;
                 } else {
-                    track.put("serial", Integer.toString(i));
+                    trackSerial = Integer.toString(i);
                 }
-                track_list.add(track);
+                track.put("serial", trackSerial);
+
+                //往music表中添加新数据
+                Music music = new Music();
+                music.setNameJp(track.getString("name"));
+                music.setAlbumId(id);
+                music.setDiscSerial(discSerial);
+                music.setTrackSerial(trackSerial);
+                music.setLength(track.getString("length"));
+                musicService.insertMusic(music);
+
+
+                track_list.add(music.getId());
                 _times.add(track.get("length").toString());
                 i++;
             }
             times.addAll(_times);
             totalTrack += track_list.size();
 
-            disc.put("serial", serial);
+            disc.put("serial", discSerial);
             disc.put("media_format", JSON.parseObject(_disc.toString()).get("media_format").toString());
             disc.put("album_format", JSON.parseObject(_disc.toString()).get("album_format").toString());
             if (!StringUtils.isBlank(albumMapper.selectAlbumById(id).getCatalogNo())) {
-                disc.put("catalog_no", albumMapper.selectAlbumById(id).getCatalogNo() + '-' + serial);
+                disc.put("catalog_no", albumMapper.selectAlbumById(id).getCatalogNo() + '-' + discSerial);
             } else {
                 disc.put("catalog_no", "");
             }
             disc.put("disc_length", CommonUtil.countTotalTime(_times));
             disc.put("track_list", track_list);
 
-            serial++;
+            discSerial++;
             disc_list.add(disc);
         }
         trackInfo.put("disc_list", disc_list);

@@ -210,5 +210,17 @@ img.flag {
 .p-menuitem-text {
     font-size: 17px;
 }
+
+.emptyInfo {
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    display: flex;
+    color: #212121;
+}
+
+.time-tooltip .p-tooltip-text {
+    width: 15rem;
+}
     
     

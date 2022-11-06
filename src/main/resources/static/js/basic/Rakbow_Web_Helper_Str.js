@@ -36,6 +36,10 @@ const UPDATE_ALBUM_DESCRIPTION_URL = DOMAIN_URL + "/db/album/updateAlbumDescript
 const UPDATE_ALBUM_BONUS_URL = DOMAIN_URL + "/db/album/updateAlbumBonus";
 //endregion
 
+//region music
+const UPDATE_MUSIC_LYRICS_TEXT = DOMAIN_URL + "/db/music/updateMusicLyricsText";
+//endregion
+
 //region user
 const CHECK_USER_AUTHORITY_URL = DOMAIN_URL + "/user/checkAuthority";
 const LOGIN_URL = DOMAIN_URL + "/login";

@@ -43,6 +43,10 @@ public class HomeController {
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
+    @Value("${website.path.file}")
+    private String filePath;
+    @Value("${website.path.audio}")
+    private String audioPath;
 
     //获取首页
     @RequestMapping(path = "", method = RequestMethod.GET)
@@ -77,7 +81,28 @@ public class HomeController {
                 os.write(buffer, 0, b);
             }
         } catch (IOException e) {
-            logger.error("读取图片失败: " + e.getMessage());
+            logger.error(ApiInfo.GET_IMAGE_FAILED + e.getMessage());
+        }
+    }
+
+    //获取音频文件
+    @RequestMapping(path = "/file/audio/{fileName}", method = RequestMethod.GET)
+    public void getAudio(@PathVariable("fileName") String fileName, HttpServletResponse response) {
+        // 服务器存放路径
+        fileName = audioPath + "/" + fileName;
+        // 响应文件
+        response.setContentType("audio/mp3");
+        try (
+                FileInputStream fis = new FileInputStream(fileName);
+                OutputStream os = response.getOutputStream();
+        ) {
+            byte[] buffer = new byte[1024];
+            int b = 0;
+            while ((b = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, b);
+            }
+        } catch (IOException e) {
+            logger.error(ApiInfo.GET_FILE_FAILED + e.getMessage());
         }
     }
 

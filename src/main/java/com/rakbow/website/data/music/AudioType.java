@@ -1,53 +1,50 @@
-package com.rakbow.website.data.album;
+package com.rakbow.website.data.music;
 
 /**
  * @Project_name: website
  * @Author: Rakbow
- * @Create: 2022-08-19 22:57
- * @Description: 专辑分类
+ * @Create: 2022-11-06 20:31
+ * @Description:
  */
-public enum AlbumFormat {
+public enum AudioType {
     UNCLASSIFIED(0,"未分类","Unclassified"),
-    THEME(1, "主题曲","Vocal"),
-    ORIGINAL_SOUNDTRACK(2, "原声","Origin sound track"),
-    CHARACTER_SONG(3, "角色曲","Character song"),
-    DRAMA(4, "广播剧","Drama"),
-    DOUJIN_MUSIC(5,"同人歌曲","Doujin"),
-    VIDEO(6,"影像","Video"),
-    ARRANGEMENT(7,"改编曲","Arrangement");
+    VOCAL(1, "歌曲","Vocal"),
+    INSTRUMENTAL(2, "歌曲(无伴奏)","Instrumental"),
+    ORIGINAL_SOUNDTRACK(3, "原声","Origin sound track"),
+    DRAMA(4, "广播剧","Drama");
 
     private int index;
     private String name;
     private String nameEn;
 
-    AlbumFormat(int index, String name, String nameEn) {
+    AudioType(int index, String name, String nameEn) {
         this.index = index;
         this.name = name;
         this.nameEn = nameEn;
     }
 
     public static String getNameByIndex (int index){
-        for (AlbumFormat albumFormat : AlbumFormat.values()) {
-            if (albumFormat.getIndex() == index) {
-                return albumFormat.getName();
+        for (AudioType audioType : AudioType.values()) {
+            if (audioType.getIndex() == index) {
+                return audioType.getName();
             }
         }
         return "未分类";
     }
 
     public static String getNameEnByIndex (int index){
-        for (AlbumFormat albumFormat : AlbumFormat.values()) {
-            if (albumFormat.getIndex() == index) {
-                return albumFormat.getNameEn();
+        for (AudioType audioType : AudioType.values()) {
+            if (audioType.getIndex() == index) {
+                return audioType.getNameEn();
             }
         }
         return "Unclassified";
     }
 
     public static int getIndexByName(String name){
-        for (AlbumFormat albumFormat : AlbumFormat.values()) {
-            if (albumFormat.getName().equals(name)) {
-                return albumFormat.index;
+        for (AudioType audioType : AudioType.values()) {
+            if (audioType.getName().equals(name)) {
+                return audioType.index;
             }
         }
         return 0;

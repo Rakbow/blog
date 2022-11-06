@@ -98,7 +98,7 @@ public class ElasticsearchService {
         for (SearchHit hit : searchResponse.getHits()) {
             Date date = simpleDateFormat.parse(JSON.parseObject(hit.getSourceAsString()).get("releaseDate").toString());
             JSONObject albumJson = JSON.parseObject(hit.getSourceAsString());
-            albumJson.put("releaseDate", CommonUtil.dateToString(date, "yyyy/MM/dd"));
+            albumJson.put("releaseDate", CommonUtil.dateToString(date));
             albumJson.remove("_class");
             Album album = albumService.json2Album(albumJson);
 

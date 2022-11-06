@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Albums</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <!-- bootstrap -->
+    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
+    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet" />
+
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon" />
+    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
+
+    <!-- PrimeVue css -->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
+
+    <!-- Vue3 -->
+    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/dataview.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dataviewlayoutoptions.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/badge.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/accordion.min.js}"></script>
+    <script th:src="@{/js/primevue/components/accordiontab.min.js}"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+
+    <!-- Jquery -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <div class="main">
+        <div id="app">
+            <!-- 头部 -->
+            <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+
+            <div class="grid card mt-2">
+                <p-toast></p-toast>
+                <div class="col-12 sm:col-12 md:col-6 lg:col-9">
+                    <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="20" :sort-order="sortOrder"
+                                :sort-field="sortField">
+                        <template #empty>
+                            <div align="center">
+                                <span>暂无数据</span>
+                            </div>
+                        </template>
+                        <template #header>
+                            <div class="grid grid-nogutter">
+                                <div class="col-6" style="text-align: left">
+                                    <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
+                                                placeholder="按发行时间排序"
+                                                @change="onSortChange($event)"></p-dropdown>
+                                </div>
+                                <div class="col-6" style="text-align: right">
+                                    <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                                </div>
+                                <div class="col-12">
+                                    <p-accordion class="accordion-custom">
+                                        <p-accordiontab>
+                                            <template #header>
+                                                <i class="pi pi-search"></i>
+                                                <span>筛选</span>
+                                                <i class="pi pi-cog"></i>
+                                            </template>
+                                            <div class="grid p-fluid">
+                                                <div class="col-12 md:col-4">
+                                                    <p-dropdown v-model="queryParam.seriesId" :options="seriesSet"
+                                                                placeholder="所属系列" option-label="label"
+                                                                option-value="value"
+                                                                @change="getProducts">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.productId" :options="productSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="请先选择所属系列"
+                                                                   display="chip" :filter="true"
+                                                                   :disabled="productSelect">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-dropdown v-model="queryParam.hasBonus" :options="hasBonusSet"
+                                                                placeholder="是否包含特典" option-label="label"
+                                                                option-value="value">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.publishFormat"
+                                                                   :options="publishFormatSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="出版形式"
+                                                                   display="chip" :filter="true">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.albumFormat"
+                                                                   :options="albumFormatSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="专辑分类"
+                                                                   display="chip" :filter="true">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-4">
+                                                    <p-multiselect v-model="queryParam.mediaFormat"
+                                                                   :options="mediaFormatSet"
+                                                                   option-label="label" option-value="value"
+                                                                   placeholder="媒体格式"
+                                                                   display="chip" :filter="true">
+                                                    </p-multiselect>
+                                                </div>
+                                                <div class="col-12 md:col-3 sm:col-6" style="text-align: right">
+                                                    <p-button icon="pi pi-times" label="清空"
+                                                              class="p-button-rounded p-button-info"
+                                                              @click="clearSearch"></p-button>
+                                                </div>
+                                                <div class="col-12 md:col-3 sm:col-6" style="text-align: left">
+                                                    <p-button icon="pi pi-search" label="搜索"
+                                                              class="p-button-rounded p-button-success"
+                                                              @click="searchAlbum"></p-button>
+                                                </div>
+                                            </div>
+                                        </p-accordiontab>
+                                    </p-accordion>
+                                </div>
+                            </div>
+                        </template>
+                        <template #grid="slotProps">
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12 single-card ml-2">
+                                <p-card>
+                                    <template #header>
+                                        <a :href="'/db/album/'+ slotProps.data.id">
+                                            <div class="cover-img"
+                                                 :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                                <p-tag class="catalog ml-1 mt-1">
+                                                    {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
+                                                </p-tag>
+                                                <div class="absolute releaseDate">
+                                                    <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </template>
+                                    <template #title>
+                                        <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
+                                            {{slotProps.data.nameJp}}
+                                        </span>
+                                    </template>
+                                    <template #subtitle>
+                                        <div class="grid mt-0 mb-0">
+                                            <div class="col-8 px-0 py-0">
+                                                <span class="ml-2 text-end" style="color: white">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                            </div>
+                                            <div class="col-2 px-0 py-0">
+                                            </div>
+                                            <div class="col-2 px-0 py-0" v-if="slotProps.data.hasBonus == 1">
+                                                <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
+                                                   v-tooltip="'包含特典'"></i>
+                                            </div>
+                                            <div class="col-12 px-0 py-0">
+                                                <span class="ml-2 text-end" style="color: white">{{slotProps.data.publishFormat.join(" / ")}}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template #content>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item" v-for="product of slotProps.data.products">
+                                                <a :href="domainUrl + '/db/product/' + product.id">
+                                                    <p-tag class="product-tag">{{product.name}}</p-tag>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </template>
+                                </p-card>
+                            </div>
+                        </template>
+                        <template #list="slotProps">
+                            <div class="col-12">
+                                <div class="product-list-item">
+                                    <a :href="'/db/album/'+ slotProps.data.id">
+                                        <img :src="slotProps.data.cover.url" :alt="slotProps.data.cover.name"/>
+                                    </a>
+                                    <div class="product-list-detail">
+                                        <a :href="'/db/album/'+ slotProps.data.id">
+                                            <div class="product-name">{{slotProps.data.nameJp}}</div>
+                                        </a>
+                                        <span class="smallfont" style="margin: 0 0 .5rem 0;">
+                                            <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
+                                        </span>
+                                        <span class="ml-2 text-end">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                        <br/>
+                                        <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.series.name}}</span>
+                                        <span class="col-2" v-if="slotProps.data.hasBonus == 1">
+                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
+                                               v-tooltip="'包含特典'"></i>
+                                        </span>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item mr-2"
+                                                v-for="product of slotProps.data.products">
+                                                <a :href="domainUrl + '/db/product/' + product.id">
+                                                    <p-tag class="product-tag" icon="pi pi-tag"
+                                                           :value="product.name"></p-tag>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </p-dataview>
+                </div>
+                <div class="col-12 sm:col-12 md:col-6 lg:col-3">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>最新收录</b>
+                        </template>
+                        <div class="grid">
+                            <span class="smallfont">
+                                    <div class="album_infobit_small smallfont ml-0 grid"
+                                         v-if="justAddedAlbums.length != 0"
+                                         v-for="addAlbum of justAddedAlbums">
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'/db/album/'+ addAlbum.id ">
+                                                <img class="small-image-img" :src="addAlbum.cover.url"
+                                                     style="border-radius: 20%;"
+                                                     v-tooltip.bottom="{value: '收录时间: ' + addAlbum.addedTime + '编辑时间: ' + addAlbum.editedTime, class: 'time-tooltip'}">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="smallfont"
+                                                   :href="'/db/album/'+ addAlbum.id ">
+                                                    <span class="text-truncate-2" lang="ja">
+                                                        {{addAlbum.nameJp}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="smallfont">
+                                                    <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>最新编辑</b>
+                        </template>
+                        <div class="grid">
+                            <span class="smallfont">
+                                    <div class="album_infobit_small smallfont ml-0 grid"
+                                         v-if="justEditedAlbums.length != 0"
+                                         v-for="editAlbum of justEditedAlbums">
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'/db/album/'+ editAlbum.id ">
+                                                <img class="small-image-img" :src="editAlbum.cover.url"
+                                                     style="border-radius: 20%;"
+                                                     v-tooltip.bottom="{value: '收录时间: ' + editAlbum.addedTime + '编辑时间: ' + editAlbum.editedTime, class: 'time-tooltip'}">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="smallfont album-anime"
+                                                   :href="'/db/album/'+ editAlbum.id ">
+                                                    <span class="text-truncate-2" lang="ja">
+                                                        {{editAlbum.nameJp}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="smallfont album-anime">
+                                                    <b>{{editAlbum.catalogNo}}</b> {{editAlbum.releaseDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>浏览排名</b>
+                        </template>
+                        <div class="grid">
+                            <span class="smallfont">
+                                <div class="album_infobit_small smallfont ml-0 grid"
+                                     v-if="popularAlbums.length != 0"
+                                     v-for="(album, index) of popularAlbums">
+                                        <div class="col-2 ml-0 mr-0 mt-0 mb-0">
+                                            <div class="grid">
+                                                <div class="col-12 text-center">
+                                                    <p-badge :value="index+1" class="mr-2"></p-badge>
+                                                    <!--                                                    <b style="font-size: 20px">{{index+1}}</b>-->
+                                                </div>
+                                                <div class="col-12">
+                                                    <i class="pi pi-eye" style="font-size: 0.5rem"></i>
+                                                    {{album.visitNum}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 small-image-div mt-2">
+                                            <a :href="'/db/album/'+ album.id ">
+                                                <img class="small-image-img" :src="album.cover.url"
+                                                     style="border-radius: 20%;">
+                                            </a>
+                                        </div>
+                                        <div class="col-7">
+                                            <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="smallfont album-anime"
+                                                   :href="'/db/album/'+ album.id ">
+                                                    <span class="text-truncate-2" lang="ja">
+                                                        {{album.nameJp}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="smallfont">
+                                                    <b>{{album.catalogNo}}</b> {{album.releaseDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                            </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+
+            <!-- 尾部 -->
+            <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
+        </div>
+    </div>
+</div>
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+            });
+
+            const toast = useToast();
+            const seriesSet = ref([[${seriesSet}]]);
+            const albums = ref([[${albums}]]);
+
+            //region ------ 搜索 ------
+            const publishFormatSet = ref([[${publishFormatSet}]]);
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const productSelect = ref(true);
+            const hasBonusSet = ref([
+                {label: "全部", value: "all"},
+                {label: "有", value: "has"},
+                {label: "无", value: "no"}
+            ]);
+            const queryParam = ref({
+                seriesId: null,
+                productId: [],
+                publishFormat: [],
+                albumFormat: [],
+                mediaFormat: [],
+                hasBonus: null
+            });
+            const clearSearch = () => {
+                queryParam.value = {
+                    seriesId: null,
+                    productId: [],
+                    publishFormat: [],
+                    albumFormat: [],
+                    mediaFormat: [],
+                    hasBonus: null
+                };
+                searchAlbum();
+            }
+            const productSet = ref();
+            const getProducts = (ev) => {
+                let json = {series: ev.value};
+                axiosPostRequest(GET_ALL_PRODUCT_URL, json)
+                    .then(res => {
+                        queryParam.value.productIds = [];
+                        productSet.value = res;
+                        productSelect.value = false;
+                    })
+            };
+            const searchAlbum = () => {
+                axiosPostRequest(GET_ALBUMS_URL, queryParam.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            albums.value = res.data;
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
+            }
+            //endregion
+
+            //region 页面header
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
+            const justEditedAlbums = ref([[${justEditedAlbums}]]);
+            const justAddedAlbums = ref([[${justAddedAlbums}]]);
+            const popularAlbums = ref([[${popularAlbums}]]);
+
+            const layout = ref('grid');
+            const sortKey = ref();
+            const sortOrder = ref();
+            const sortField = ref();
+            const sortOptions = ref([
+                {label: '按发售时间正序', value: '!releaseDate'},
+                {label: '按发售时间逆序', value: 'releaseDate'},
+            ]);
+
+            const onSortChange = (event) => {
+                const value = event.value.value;
+                const sortValue = event.value;
+
+                if (value.indexOf('!') === 0) {
+                    sortOrder.value = -1;
+                    sortField.value = value.substring(1, value.length);
+                    sortKey.value = sortValue;
+                } else {
+                    sortOrder.value = 1;
+                    sortField.value = value;
+                    sortKey.value = sortValue;
+                }
+            };
+
+            return {
+                clearSearch, hasBonusSet,
+                publishFormatSet, albumFormatSet, mediaFormatSet,
+                getProducts, seriesSet, productSet, queryParam, productSelect,
+                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
+                justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
+                sortKey, sortOrder, sortField, sortOptions, searchAlbum
+            }
+        },
+        components: {
+            "p-dataview": primevue.dataview,
+            "p-dataviewlayoutoptions": primevue.dataviewlayoutoptions,
+            "p-dropdown": primevue.dropdown,
+            "p-button": primevue.button,
+            "p-toolbar": primevue.toolbar,
+            "p-tag": primevue.tag,
+            "p-card": primevue.card,
+            "p-panel": primevue.panel,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-inputtext": primevue.inputtext,
+            "p-badge": primevue.badge,
+            "p-multiselect": primevue.multiselect,
+            "p-checkbox": primevue.checkbox,
+            "p-toast": primevue.toast,
+            "p-accordion": primevue.accordion,
+            "p-accordiontab": primevue.accordiontab,
+        }
+    };
+
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.toastservice)
+        .use(primevue.config.default)
+        .directive('tooltip', Tooltip)
+        .mount("#app");
+</script>
+<style>
+    .accordion-custom i {
+        vertical-align: middle;
+    }
+
+    .accordion-custom span {
+        vertical-align: middle;
+        margin: 0 .5rem;
+    }
+
+    .p-accordion p {
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .product-category-icon {
+        vertical-align: middle;
+        margin-right: .5rem;
+    }
+
+    .product-category {
+        font-weight: 600;
+        vertical-align: middle;
+    }
+
+    .product-name {
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .product-description {
+        margin: 0 0 1rem 0;
+    }
+
+    .product-list-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .product-list-item img {
+        width: 70px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        margin-right: 2rem;
+    }
+
+    .product-list-item .product-list-detail {
+        flex: 1 1 0;
+    }
+
+    .product-list-item .p-rating {
+        margin: 0 0 .5rem 0;
+    }
+
+    .product-list-item .product-price {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: .5rem;
+        align-self: flex-end;
+    }
+
+    .product-list-item .product-list-action {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-list-item .p-button {
+        margin-bottom: .5rem;
+    }
+
+
+    .card {
+        padding: 0rem;
+    }
+
+    .p-card .p-card-body {
+        padding: 0.5rem;
+    }
+
+    b.rbot {
+        background-position: 0 -8px;
+    }
+
+    .releaseDate {
+        bottom: 0;
+        right: 0;
+        padding: 5px;
+        background-color: rgba(0, 0, 0, .47);
+    }
+
+    .single-card {
+        position: relative;
+        width: 200px;
+        height: 330px;
+        margin: 5px;
+        background-color: #2F364F;
+        /*padding: 24px 0px 0px 16px;*/
+    }
+
+    .cover-img {
+        width: 200px;
+        height: 200px;
+        position: relative;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        /*top: 50%;*/
+        /*left: 50%;*/
+        /*transform: translate(-50%, -50%);*/
+    }
+
+    .catalog {
+        align-items: flex-start;
+        justify-content: space-around;
+        background: #795548 !important;
+        color: #ffffff;
+    }
+
+    .text-truncate-2 {
+        /*text-overflow: -o-ellipsis-lastline;*/
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .p-card .p-card-body {
+        background-color: #2F364F;
+    }
+
+    .p-card .p-card-title {
+        color: #ffffff;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin: 0rem;
+    }
+
+    .p-card .p-card-subtitle {
+        color: #ffffff;
+        font-size: 0.5rem;
+        margin: 0rem;
+    }
+
+    .p-card .p-card-content {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .product-tag {
+        align-items: flex-start;
+        justify-content: space-around;
+        background: #788990 !important;
+        color: #ffffff;
+    }
+
+    .list-inline {
+        padding-left: 0;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        list-style: none
+    }
+
+    .list-inline-item {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block
+    }
+
+    .smallfont {
+        font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
+    }
+
+    .album_infobit_small {
+        clear: left;
+        height: 76px;
+        /* border-top: 1px solid #464A64; */
+        /* border-bottom: 1px solid #1B273D; */
+        padding: 4px 6px 4px 4px;
+        overflow: hidden;
+    }
+
+    .small-image-div {
+        position: relative;
+        width: 60px;
+        height: 60px;
+    }
+
+    .small-image-img {
+        width: 50px;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    ul.album_infobit_detail {
+        list-style-type: none;
+        margin: 6px 0 0 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+</style>
+</body>
+</html>

@@ -20,6 +20,9 @@ public class ApiInfo {
     public static final String INCORRECT_FILE_FORMAT = "文件的格式不正确！";
     public static final String UPLOAD_EXCEPTION = "上传文件失败,服务器发生异常！";
 
+    public static final String GET_IMAGE_FAILED = "读取图片失败: ";
+    public static final String GET_FILE_FAILED = "读取文件失败: ";
+
     //region 登录相关
     public static final String INCORRECT_VERIFY_CODE = "验证码不正确!";
     public static final String USERNAME_ARE_EMPTY = "账号不能为空!";

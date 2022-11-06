@@ -12,6 +12,7 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.util.AlbumUtil;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -110,7 +111,7 @@ public class AlbumController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) throws JsonProcessingException {
+    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
         if (albumService.findAlbumById(albumId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
             return "/error/404";
@@ -158,11 +159,12 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         try {
             int id = JSONObject.parseObject(json).getInteger("id");
-            if (albumService.findAlbumById(id) == null) {
+            Album album = albumService.findAlbumById(id);
+            if (album == null) {
                 res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED, EntityType.ALBUM.getName()));
                 return JSON.toJSONString(res);
             }
-            res.data = JSON.toJSONString(albumService.album2Json(albumService.findAlbumById(id)));
+            res.data = JSON.toJSONString(albumService.album2Json(album));
             return JSON.toJSONString(res);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -426,6 +428,7 @@ public class AlbumController {
                     jo.put("nameEn", imageInfo.getString("nameEn"));
                     jo.put("nameZh", imageInfo.getString("nameZh"));
                     jo.put("type", imageInfo.getString("type"));
+                    jo.put("uploadTime", CommonUtil.getCurrentTime());
                     if (imageInfo.getString("description") == null) {
                         jo.put("description", "");
                     }
@@ -522,7 +525,7 @@ public class AlbumController {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
                 String discList = JSON.parseObject(json).get("discList").toString();
-                if (StringUtils.isBlank(discList)) {
+                if (Objects.equals(discList, "[]")) {
                     res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
                     return JSON.toJSONString(res);
                 }

@@ -19,7 +19,8 @@ public enum EntityType {
     GAME(5,"游戏"),
     SERIES(6,"系列"),
     PRODUCT(7,"作品"),
-    article(8,"文章");
+    ARTICLE(8,"文章"),
+    MUSIC(9,"音乐");
 
     private int Id;
     private String Name;

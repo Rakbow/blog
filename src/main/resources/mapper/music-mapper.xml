@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.website.dao.MusicMapper">
+
+    <sql id="selectFields">
+        id, name_jp, name_en, artists, audio_type, album_id, disc_serial, track_serial, audio_url, cover_url, lrc_url, lrc_text,
+        length, description, remark, added_time, edited_time, _s
+    </sql>
+
+    <sql id="insertFields">
+        name_jp, name_en, artists, audio_type, album_id, disc_serial, track_serial, audio_url, cover_url, lrc_url, lrc_text,
+        length, description, remark, added_time, edited_time, _s
+    </sql>
+
+    <select id="selectMusicById" resultType="Music">
+        select
+        <include refid="selectFields"></include>
+        from music
+        where id = #{id} and _s = 1
+    </select>
+
+    <select id="getAll" resultType="Music">
+        select
+        <include refid="selectFields"></include>
+        from music
+        where _s = 1
+        <!--        order by id desc-->
+        order by album_id asc
+        <!-- limit #{offset}, #{limit} -->
+    </select>
+
+    <select id="selectMusicByAlbumId" resultType="Music">
+        select
+        <include refid="selectFields"></include>
+        from music
+        where album_id = #{albumId} and _s = 1
+    </select>
+
+    <select id="selectMusicRows" resultType="int">
+        select count(id)
+        from music
+    </select>
+
+    <insert id="insertMusic" parameterType="Music" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into music (<include refid="insertFields"></include>)
+        values (#{nameJp}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial}, #{audioUrl},
+        #{coverUrl}, #{lrcUrl}, #{lrcText}, #{length}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+    </insert>
+
+    <update id="updateMusic" parameterType="Music" keyProperty="id">
+        update music
+        set
+        name_jp = #{music.nameJp}, name_en = #{music.nameEn}, artists = #{music.artists}, audio_type = #{music.audioType},
+        album_id = #{music.albumId}, disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial},
+        audio_url = #{music.audioUrl}, cover_url = #{music.coverUrl}, lrc_url = #{music.lrcUrl}, lrc_text = #{music.lrcText},
+        length = #{music.length}, description = #{music.description}, remark = #{music.remark},
+        added_time = #{music.addedTime}, edited_time = #{music.editedTime}, _s = #{music._s}
+        where id = #{music.id}
+    </update>
+
+    <delete id="deleteMusicById">
+        delete
+        from music
+        where id = #{id}
+    </delete>
+
+    <update id="updateStatusById" keyProperty="id">
+        update music
+        set
+        _s = 0
+        where id = #{id}
+    </update>
+
+</mapper>
