@@ -6,12 +6,12 @@
 
     <sql id="selectFields">
         id, name_jp, name_en, artists, audio_type, album_id, disc_serial, track_serial, audio_url, cover_url, lrc_url, lrc_text,
-        length, description, remark, added_time, edited_time, _s
+        audio_length, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         name_jp, name_en, artists, audio_type, album_id, disc_serial, track_serial, audio_url, cover_url, lrc_url, lrc_text,
-        length, description, remark, added_time, edited_time, _s
+        audio_length, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="selectMusicById" resultType="Music">
@@ -31,7 +31,7 @@
         <!-- limit #{offset}, #{limit} -->
     </select>
 
-    <select id="selectMusicByAlbumId" resultType="Music">
+    <select id="selectMusicsByAlbumId" resultType="Music">
         select
         <include refid="selectFields"></include>
         from music
@@ -49,7 +49,7 @@
         </selectKey>
         insert into music (<include refid="insertFields"></include>)
         values (#{nameJp}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial}, #{audioUrl},
-        #{coverUrl}, #{lrcUrl}, #{lrcText}, #{length}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{coverUrl}, #{lrcUrl}, #{lrcText}, #{audioLength}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateMusic" parameterType="Music" keyProperty="id">
@@ -58,7 +58,7 @@
         name_jp = #{music.nameJp}, name_en = #{music.nameEn}, artists = #{music.artists}, audio_type = #{music.audioType},
         album_id = #{music.albumId}, disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial},
         audio_url = #{music.audioUrl}, cover_url = #{music.coverUrl}, lrc_url = #{music.lrcUrl}, lrc_text = #{music.lrcText},
-        length = #{music.length}, description = #{music.description}, remark = #{music.remark},
+        audio_length = #{music.audioLength}, description = #{music.description}, remark = #{music.remark},
         added_time = #{music.addedTime}, edited_time = #{music.editedTime}, _s = #{music._s}
         where id = #{music.id}
     </update>
@@ -73,6 +73,27 @@
         update music
         set
         _s = 0
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicArtists" keyProperty="id">
+        update music
+        set
+        artists = #{artists}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicLyricsText" keyProperty="id">
+        update music
+        set
+        lrc_text = #{lrcText}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicDescription" keyProperty="id">
+        update music
+        set
+        description = #{description}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

@@ -3,6 +3,7 @@ package com.rakbow.website.dao;
 import com.rakbow.website.entity.Music;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -29,5 +30,9 @@ public interface MusicMapper {
     int deleteMusicById(int id);
 
     int updateStatusById(int id);
+
+    int updateMusicArtists(int id, String artists, Timestamp editedTime);
+    int updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
+    int updateMusicDescription(int id, String description, Timestamp editedTime);
 
 }

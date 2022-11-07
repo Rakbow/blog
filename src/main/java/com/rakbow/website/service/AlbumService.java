@@ -255,7 +255,7 @@ public class AlbumService {
                         track.put("music_id", musicId);
                         track.put("name_jp", music.getNameJp());
                         track.put("nameEn", music.getNameEn());
-                        track.put("length", music.getLength());
+                        track.put("length", music.getAudioLength());
                         newTrackList.add(track);
                         musics.add(music);
                     }
@@ -634,7 +634,7 @@ public class AlbumService {
                 music.setAlbumId(id);
                 music.setDiscSerial(discSerial);
                 music.setTrackSerial(trackSerial);
-                music.setLength(track.getString("length"));
+                music.setAudioLength(track.getString("length"));
                 musicService.insertMusic(music);
 
 

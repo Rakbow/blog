@@ -3,7 +3,9 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.elasticsearch.AlbumRepository;
+import com.rakbow.website.dao.elasticsearch.MusicRepository;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.CommonUtil;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -38,7 +40,8 @@ public class ElasticsearchService {
 
     @Autowired
     private AlbumRepository albumRepository;
-
+    @Autowired
+    private MusicRepository musicRepository;
     @Autowired
     private RestHighLevelClient restHighLevelClient;
 
@@ -46,8 +49,12 @@ public class ElasticsearchService {
     private AlbumService albumService;
 
     @Autowired
+    private MusicService musicService;
+
+    @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
+    //region 专辑相关
     public void saveAlbum(Album album) {
         albumRepository.save(album);
     }
@@ -137,5 +144,17 @@ public class ElasticsearchService {
 
         return albums;
     }
+
+    //endregion
+
+    //region 专辑相关
+    public void saveMusic(Music music) {
+        musicRepository.save(music);
+    }
+
+    public void deleteMusic(int id) {
+        musicRepository.deleteById(id);
+    }
+    //endregion
 
 }

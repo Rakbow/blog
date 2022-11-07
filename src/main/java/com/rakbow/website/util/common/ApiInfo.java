@@ -49,4 +49,12 @@ public class ApiInfo {
      public static final String UPDATE_ALBUM_BONUS_SUCCESS = "专辑特典信息更新成功！";
 
     //endregion
+
+    //region music相关
+
+    public static final String UPDATE_MUSIC_ARTISTS_SUCCESS = "创作人员信息更新成功！";
+    public static final String UPDATE_MUSIC_DESCRIPTION_SUCCESS = "描述信息更新成功！";
+    public static final String UPDATE_MUSIC_LYRICS_SUCCESS = "歌词文本更新成功！";
+
+    //endregion
 }

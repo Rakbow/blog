@@ -111,7 +111,7 @@
                     <template #loading>
                         加载中，别急~
                     </template>
-                    <p-column selection-mode="multiple" header-style="width: 1rem" :exportable="false"></p-column>
+                    <p-column selection-mode="multiple" style="width: 1rem" :exportable="false"></p-column>
                     <p-column field="id" header="Id" exportHeader="Album Id" :sortable="true">
                         <template #body="slotProps">
                             <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">

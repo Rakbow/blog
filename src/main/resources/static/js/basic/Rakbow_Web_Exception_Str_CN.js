@@ -5,3 +5,9 @@ const ALBUM_DETAIL_TRACK_INFO_MUSIC_NOT_EQUALS = "音轨时间与名称列表不
 const ALBUM_DETAIL_TRACK_INFO_ALBUM_FORMAT_EMPTY = "未选择专辑分类！";
 const ALBUM_DETAIL_TRACK_INFO_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
 //endregion
+
+//region album_detail
+const MUSIC_DETAIL_NAME_JP_EMPTY = "曲名不能为空！";
+const MUSIC_DETAIL_AUDIO_TYPE_EMPTY = "未选择音频类型！";
+const MUSIC_DETAIL_AUDIO_LENGTH_EMPTY = "音频长度不能为空！";
+//endregion

@@ -1,18 +1,22 @@
 package com.rakbow.website.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Music;
+import com.rakbow.website.service.ElasticsearchService;
 import com.rakbow.website.service.MusicService;
+import com.rakbow.website.service.UserService;
 import com.rakbow.website.service.VisitService;
 import com.rakbow.website.util.AlbumUtil;
 import com.rakbow.website.util.MusicUtil;
 import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Project_name: website
@@ -29,6 +33,10 @@ public class MusicController {
     private MusicService musicService;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ElasticsearchService elasticsearchService;
     //endregion
 
     //获取单个音频详细信息页面
@@ -50,8 +58,73 @@ public class MusicController {
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(music));
 
-        return "/music-detail";
+        return "/music/music-detail";
 
+    }
+
+    //更新Music
+
+    //更新music创作人员信息
+    @RequestMapping(path = "/updateMusicArtists", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateMusicArtists(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String artists = JSON.parseObject(json).get("artists").toString();
+                musicService.updateMusicArtists(id, artists);
+                res.message = ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
+    }
+
+    //更新歌词文本
+    @RequestMapping(path = "/updateMusicLyricsText", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateMusicLyricsText(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String lyricsText = JSON.parseObject(json).get("lyricsText").toString();
+                musicService.updateMusicLyricsText(id, lyricsText);
+                res.message = ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
+    }
+
+    //更新描述信息
+    @RequestMapping(path = "/updateMusicDescription", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateMusicDescription(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String description = JSON.parseObject(json).get("description").toString();
+                musicService.updateMusicDescription(id, description);
+                res.message = ApiInfo.UPDATE_MUSIC_DESCRIPTION_SUCCESS;
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
     }
 
 }

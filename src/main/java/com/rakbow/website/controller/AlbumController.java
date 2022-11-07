@@ -88,7 +88,7 @@ public class AlbumController {
         model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
         model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        view.setViewName("/album-list");
+        view.setViewName("/album/album-list");
         return view;
     }
 
@@ -106,7 +106,7 @@ public class AlbumController {
         model.addAttribute("mediaFormatSet", AlbumUtil.getMediaFormatSet());
         model.addAttribute("albumFormatSet", AlbumUtil.getAlbumFormatSet());
         model.addAttribute("publishFormatSet", AlbumUtil.getPublishFormatSet());
-        return "/album-card";
+        return "/album/album-card";
     }
 
     //获取单个专辑详细信息页面
@@ -134,7 +134,7 @@ public class AlbumController {
         model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), albumId).getVisitNum());
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
-        return "/album-detail";
+        return "/album/album-detail";
     }
 
     //endregion

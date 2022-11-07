@@ -6,7 +6,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.data.music.AudioType;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.ApiInfo;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +36,8 @@ public class MusicService {
     private MusicMapper musicMapper;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private AlbumService albumservice;
     //endregion
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
@@ -98,7 +100,7 @@ public class MusicService {
                 music.setDiscSerial(disc.getInteger("serial"));
                 music.setTrackSerial(track.getString("serial"));
                 music.setCoverUrl(cover.getString("url"));
-                music.setLength(track.getString("length"));
+                music.setAudioLength(track.getString("audioLength"));
                 music.setAddedTime(CommonUtil.stringToTimestamp(albumJson.getString("addedTime")));
                 music.setEditedTime(CommonUtil.stringToTimestamp(albumJson.getString("editedTime")));
                 musicMapper.insertMusic(music);
@@ -141,12 +143,10 @@ public class MusicService {
     public JSONObject music2Json(Music music) {
         JSONObject musicJson = (JSONObject) JSON.toJSON(music);
 
-        AlbumService albumservice = new AlbumService();
-
-        JSONObject audioType = new JSONObject();
-        audioType.put("id", music.getAudioType());
-        audioType.put("nameJp", AudioType.getNameByIndex(music.getAudioType()));
-        audioType.put("nameEn", AudioType.getNameEnByIndex(music.getAudioType()));
+        JSONObject audioTypeObj = new JSONObject();
+        audioTypeObj.put("id", music.getAudioType());
+        audioTypeObj.put("nameJp", AudioType.getNameByIndex(music.getAudioType()));
+        audioTypeObj.put("nameEn", AudioType.getNameEnByIndex(music.getAudioType()));
 
         //音乐创作
         JSONArray artists = JSON.parseArray(music.getArtists());
@@ -154,7 +154,7 @@ public class MusicService {
         //所属专辑信息
         JSONObject relatedAlbum = albumservice.album2JsonSimple(albumservice.findAlbumById(music.getAlbumId()));
 
-        musicJson.put("audioType", audioType);
+        musicJson.put("audioTypeObj", audioTypeObj);
         musicJson.put("addedTime", CommonUtil.timestampToString(music.getAddedTime()));
         musicJson.put("editedTime", CommonUtil.timestampToString(music.getEditedTime()));
         musicJson.put("relatedAlbum", relatedAlbum);
@@ -171,7 +171,7 @@ public class MusicService {
         musicJson.put("id", music.getId());
         musicJson.put("nameJp", music.getNameJp());
         musicJson.put("nameEb", music.getNameEn());
-        musicJson.put("length", music.getLength());
+        musicJson.put("audioLength", music.getAudioLength());
         musicJson.put("discSerial", music.getDiscSerial());
         musicJson.put("trackSerial", music.getTrackSerial());
 
@@ -191,4 +191,23 @@ public class MusicService {
 
         return relatedMusics;
     }
+
+    //更新创作人员信息
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void updateMusicArtists(int id, String artists) {
+        musicMapper.updateMusicArtists(id, artists, new Timestamp(System.currentTimeMillis()));
+    }
+
+    //更新歌词文本
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void updateMusicLyricsText(int id, String lrcText) {
+        musicMapper.updateMusicLyricsText(id, lrcText, new Timestamp(System.currentTimeMillis()));
+    }
+
+    //更新描述信息
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void updateMusicDescription(int id, String description) {
+        musicMapper.updateMusicDescription(id, description, new Timestamp(System.currentTimeMillis()));
+    }
+
 }
