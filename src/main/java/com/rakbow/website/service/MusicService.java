@@ -11,6 +11,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -66,6 +67,11 @@ public class MusicService {
 
             //新增访问量实体
             visitService.insertVisit(new Visit(EntityType.MUSIC.getId(), music.getId()));
+
+            //若封面url为空，赋404图
+            if (StringUtils.isBlank(music.getCoverUrl())) {
+                music.setCoverUrl("/img/404.jpg");
+            }
 
             musicMapper.insertMusic(music);
             return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MUSIC.getName());
@@ -208,6 +214,12 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateMusicDescription(int id, String description) {
         musicMapper.updateMusicDescription(id, description, new Timestamp(System.currentTimeMillis()));
+    }
+
+    //更新封面url
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void updateMusicCoverUrl(int id, String coverUrl) {
+        musicMapper.updateMusicCoverUrl(id, coverUrl);
     }
 
 }

@@ -31,6 +31,8 @@ public interface MusicMapper {
 
     int updateStatusById(int id);
 
+    int updateMusicCoverUrl(int id, String coverUrl);
+
     int updateMusicArtists(int id, String artists, Timestamp editedTime);
     int updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
     int updateMusicDescription(int id, String description, Timestamp editedTime);

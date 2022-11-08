@@ -20,6 +20,40 @@ function JPY2CNY(jpy) {
         })
 }
 
+//根据选项set转换label -> value
+const label2value = (xFormat, xFormatSet) => {
+    let tmp = [];
+    for (let item1 of xFormat) {
+        for (let item2 of xFormatSet) {
+            if (item1 === item2.label) {
+                tmp.push(item2.value);
+            }
+        }
+    }
+    return tmp;
+};
+
+//根据图片url获取图片字节大小和长宽
+const getImgProp = (url) => {
+    let imgProp = {
+        imgSize: 0,
+        width: 0,
+        height: 0
+    };
+    fetch(url).then(res => {
+        res.blob().then(result => {
+            imgProp.imgSize = (result.size/1024).toFixed(2);
+            var image = new Image();
+            image.src = url;
+            image.onload = function (){
+                imgProp.width = image.naturalWidth;
+                imgProp.height = image.naturalHeight;
+            }
+        })
+    });
+    return imgProp;
+};
+
 /**
  * 根据图片url转为png文件对象
  * @param url

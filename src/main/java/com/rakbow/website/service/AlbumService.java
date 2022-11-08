@@ -18,12 +18,14 @@ import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -150,7 +152,7 @@ public class AlbumService {
     //region ------数据处理------
 
     //Album转Json对象，以便前端使用
-    public JSONObject album2Json(Album album) {
+    public JSONObject album2Json(Album album) throws IOException {
 
         JSONObject albumJson = (JSONObject) JSON.toJSON(album);
 
@@ -544,6 +546,21 @@ public class AlbumService {
     //新增专辑图片
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void insertAlbumImages(int id, String images) {
+
+        List<Music> musics = musicService.selectMusicsByAlbumId(id);
+
+        //如果图片类型为封面则更新对应曲目的封面
+        JSONArray imagesJsonArray = JSON.parseArray(images);
+        for (int i = 0; i < imagesJsonArray.size(); i++) {
+            JSONObject image = imagesJsonArray.getJSONObject(i);
+            if(Objects.equals(image.getString("type"), "1")) {
+                String coverUrl = image.getString("url");
+                for (int j = 0; j < musics.size(); j++) {
+                    musicService.updateMusicCoverUrl(musics.get(j).getId(), coverUrl);
+                }
+            }
+        }
+
         albumMapper.insertAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
     }
 
@@ -589,6 +606,18 @@ public class AlbumService {
         Path albumImgPath = Paths.get(imgPath + "/album/" + id);
         CommonUtil.deleteFile(albumImgPath, fileName);
         albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.DELETE_ALBUM_IMAGES_SUCCESS;
+    }
+
+    //删除该专辑所有图片
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String deleteAllAlbumImages(int id) {
+        Album album = findAlbumById(id);
+        JSONArray images = JSON.parseArray(album.getImages());
+        for (int i = 0; i < images.size(); i++) {
+            JSONObject image = images.getJSONObject(i);
+            deleteAlbumImages(id, image.getString("url"));
+        }
         return ApiInfo.DELETE_ALBUM_IMAGES_SUCCESS;
     }
 

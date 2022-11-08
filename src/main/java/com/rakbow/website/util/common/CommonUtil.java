@@ -2,6 +2,7 @@ package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.clazz.ImageProperty;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
@@ -10,9 +11,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.PushBuilder;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -202,6 +208,25 @@ public class CommonUtil {
      */
     public static <T> List<T> removeDuplicateList(List<T> list) {
         return list.stream().distinct().collect(Collectors.toList());
+    }
+
+    /**
+     * 使用 通过图片url获取字节大小，长宽
+     * @param imgUrl
+     */
+    public static ImageProperty getImageProperty(String imgUrl) throws IOException {
+        ImageProperty img = new ImageProperty();
+
+        File file = new File(imgUrl);
+
+        // 图片对象
+        BufferedImage bufferedImage = ImageIO.read(new FileInputStream(file));
+
+        img.setSize(file.length());
+        img.setWidth(bufferedImage.getWidth());
+        img.setHeight(bufferedImage.getHeight());
+
+        return img;
     }
 
 }

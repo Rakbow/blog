@@ -76,6 +76,13 @@
         where id = #{id}
     </update>
 
+    <update id="updateMusicCoverUrl" keyProperty="id">
+        update music
+        set
+        cover_url = #{coverUrl}
+        where id = #{id}
+    </update>
+
     <update id="updateMusicArtists" keyProperty="id">
         update music
         set

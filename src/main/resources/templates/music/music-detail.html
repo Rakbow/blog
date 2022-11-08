@@ -521,19 +521,6 @@
                 return true;
             };
 
-            const label2value = (xFormat, xFormatSet) => {
-                let tmp = [];
-                for (let item1 of xFormat) {
-                    for (let item2 of xFormatSet) {
-                        if (item1 === item2.label) {
-                            tmp.push(item2.value);
-                        }
-                    }
-                }
-                return tmp;
-            };
-            //endregion
-
             //region ------编辑描述------
             const descriptionMd = ref("");
             const displayDescriptionDialog = ref(false);

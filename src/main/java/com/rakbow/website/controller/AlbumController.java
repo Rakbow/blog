@@ -111,7 +111,7 @@ public class AlbumController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
+    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) throws IOException {
         if (albumService.findAlbumById(albumId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
             return "/error/404";
@@ -147,7 +147,13 @@ public class AlbumController {
     public String getAllAlbum() {
         JSONArray albums = new JSONArray();
 
-        albumService.getAll().forEach(i -> albums.add(albumService.album2Json(i)));
+        albumService.getAll().forEach(i -> {
+            try {
+                albums.add(albumService.album2Json(i));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         return JSON.toJSONString(albums);
     }
@@ -177,7 +183,7 @@ public class AlbumController {
     //根据搜索条件获取专辑
     @RequestMapping(value = "/getAlbums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilter(@RequestBody String json){
+    public String getAlbumsByFilter(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             JSONObject queryParam = new JSONObject();
@@ -185,52 +191,52 @@ public class AlbumController {
             queryParam.put("seriesId", series);
 
             JSONArray productId = JSONObject.parseObject(json).getJSONArray("productId");
-            if(productId.size() != 0){
+            if (productId.size() != 0) {
                 String productIdString = productId.toString();
-                queryParam.put("productId", productIdString.substring(productIdString.indexOf("[")+1, productIdString.indexOf("]")));
-            }else {
+                queryParam.put("productId", productIdString.substring(productIdString.indexOf("[") + 1, productIdString.indexOf("]")));
+            } else {
                 queryParam.put("productId", null);
             }
 
             JSONArray publishFormat = JSONObject.parseObject(json).getJSONArray("publishFormat");
-            if(publishFormat.size() != 0){
+            if (publishFormat.size() != 0) {
                 String publishFormatString = publishFormat.toString();
-                queryParam.put("publishFormat", publishFormatString.substring(publishFormatString.indexOf("[")+1, publishFormatString.indexOf("]")));
-            }else {
+                queryParam.put("publishFormat", publishFormatString.substring(publishFormatString.indexOf("[") + 1, publishFormatString.indexOf("]")));
+            } else {
                 queryParam.put("publishFormat", null);
             }
 
             JSONArray albumFormat = JSONObject.parseObject(json).getJSONArray("albumFormat");
-            if(albumFormat.size() != 0){
+            if (albumFormat.size() != 0) {
                 String albumFormatString = albumFormat.toString();
-                queryParam.put("albumFormat", albumFormatString.substring(albumFormatString.indexOf("[")+1, albumFormatString.indexOf("]")));
-            }else {
+                queryParam.put("albumFormat", albumFormatString.substring(albumFormatString.indexOf("[") + 1, albumFormatString.indexOf("]")));
+            } else {
                 queryParam.put("albumFormat", null);
             }
 
             JSONArray mediaFormat = JSONObject.parseObject(json).getJSONArray("mediaFormat");
-            if(mediaFormat.size() != 0){
+            if (mediaFormat.size() != 0) {
                 String mediaFormatString = mediaFormat.toString();
-                queryParam.put("mediaFormat", mediaFormatString.substring(mediaFormatString.indexOf("[")+1, mediaFormatString.indexOf("]")));
-            }else {
+                queryParam.put("mediaFormat", mediaFormatString.substring(mediaFormatString.indexOf("[") + 1, mediaFormatString.indexOf("]")));
+            } else {
                 queryParam.put("mediaFormat", null);
             }
 
             String hasBonus = JSONObject.parseObject(json).getString("hasBonus");
-            if(hasBonus == null || hasBonus.equals("")){
+            if (hasBonus == null || hasBonus.equals("")) {
                 queryParam.put("hasBonus", null);
-            }else {
-                if(hasBonus.equals("all")){
+            } else {
+                if (hasBonus.equals("all")) {
                     queryParam.put("hasBonus", null);
-                }else if (hasBonus.equals("has")) {
+                } else if (hasBonus.equals("has")) {
                     queryParam.put("hasBonus", "1");
-                }else {
+                } else {
                     queryParam.put("hasBonus", "0");
                 }
             }
             List<JSONObject> albums = new ArrayList<>();
             List<Album> searchResult = albumService.selectAlbumBySuperFilter(queryParam.toJSONString());
-            if(searchResult.size() != 0){
+            if (searchResult.size() != 0) {
                 searchResult.forEach(i -> albums.add(albumService.album2JsonDisplay(i)));
             }
             res.data = albums;
@@ -467,14 +473,13 @@ public class AlbumController {
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
                     String image = JSON.parseObject(json).getString("image");
                     res.message = albumService.updateAlbumImages(id, image);
-                    //更新elasticsearch中的专辑
-                    elasticsearchService.saveAlbum(albumService.findAlbumById(id));
-                }//删除
+                }//删除单张
                 else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
                     String imageUrl = JSON.parseObject(JSON.parseObject(json).getString("image")).getString("url");
                     res.message = albumService.deleteAlbumImages(id, imageUrl);
-                    //更新elasticsearch中的专辑
-                    elasticsearchService.saveAlbum(albumService.findAlbumById(id));
+                }//删除全部
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.ALL_DELETE.id) {
+                    res.message = albumService.deleteAllAlbumImages(id);
                 } else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
