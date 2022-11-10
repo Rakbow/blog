@@ -1,13 +1,10 @@
 package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.service.ElasticsearchService;
-import com.rakbow.website.service.MusicService;
-import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.VisitService;
-import com.rakbow.website.util.AlbumUtil;
+import com.rakbow.website.service.*;
 import com.rakbow.website.util.MusicUtil;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
@@ -17,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 
 /**
  * @Project_name: website
@@ -32,6 +30,8 @@ public class MusicController {
     @Autowired
     private MusicService musicService;
     @Autowired
+    private AlbumService albumService;
+    @Autowired
     private VisitService visitService;
     @Autowired
     private UserService userService;
@@ -42,30 +42,58 @@ public class MusicController {
     //获取单个音频详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getMusicDetail(@PathVariable("id") int musicId, Model model) {
-        if (musicService.selectMusicById(musicId) == null) {
+        if (musicService.getMusicById(musicId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getName()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.MUSIC.getId(), musicId);
 
-        Music music = musicService.selectMusicById(musicId);
+        Music music = musicService.getMusicById(musicId);
 
         model.addAttribute("audioTypeSet", MusicUtil.getAudioTypeSet());
         model.addAttribute("music", musicService.music2Json(music));
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.MUSIC.getId(), music.getId()).getVisitNum());
         //获取同属一张碟片的音频
-        model.addAttribute("relatedMusics", musicService.getRelatedMusics(music));
+        model.addAttribute("relatedMusics", musicService.getRelatedMusics(musicId));
+        //获取所属专辑的信息
+        model.addAttribute("relatedAlbum",albumService.album2JsonSimple(albumService.getAlbumById(music.getAlbumId())));
 
         return "/music/music-detail";
 
     }
 
     //更新Music
+    @RequestMapping(path = "/update", method = RequestMethod.GET)
+    public String updateMusic(@RequestBody  String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        JSONObject param = JSON.parseObject(json);
+        try{
+            if (userService.checkAuthority(request).state) {
+
+                Music music = musicService.json2Music(param);
+
+                //修改编辑时间
+                music.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+                musicService.updateMusic(music.getId(), music);
+
+                //将更新的专辑保存到Elasticsearch服务器索引中
+
+                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getName());
+
+            }else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+        } catch (Exception ex) {
+            res.setErrorMessage(ex.getMessage());
+        }
+        return JSON.toJSONString(res);
+    }
 
     //更新music创作人员信息
-    @RequestMapping(path = "/updateMusicArtists", method = RequestMethod.POST)
+    @RequestMapping(path = "/update-artists", method = RequestMethod.POST)
     @ResponseBody
     public String updateMusicArtists(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
@@ -86,7 +114,7 @@ public class MusicController {
     }
 
     //更新歌词文本
-    @RequestMapping(path = "/updateMusicLyricsText", method = RequestMethod.POST)
+    @RequestMapping(path = "/update-lyrics-text", method = RequestMethod.POST)
     @ResponseBody
     public String updateMusicLyricsText(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
@@ -107,7 +135,7 @@ public class MusicController {
     }
 
     //更新描述信息
-    @RequestMapping(path = "/updateMusicDescription", method = RequestMethod.POST)
+    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
     @ResponseBody
     public String updateMusicDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();

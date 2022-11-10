@@ -14,7 +14,7 @@ import java.util.List;
  * @Create: 2022-08-19 23:44
  * @Description:
  */
-public class AlbumUtil {
+public class AlbumUtils {
 
     //获取专辑分类数组
     public static List<JSONObject> getAlbumFormatSet(){

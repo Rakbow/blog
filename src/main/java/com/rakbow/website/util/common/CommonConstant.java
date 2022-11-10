@@ -8,6 +8,24 @@ package com.rakbow.website.util.common;
  */
 public class CommonConstant {
 
+    //region ------通用常量------
+
+    //404图url
+    public static final String EMPTY_IMAGE_URL = "/img/404.jpg";
+
+    //endregion
+
+    //region ------专辑------
+
+    //展示 显示在详情
+    public static final int ALBUM_IMAGE_DISPLAY = 0;
+    //封面 专辑封面
+    public static final int ALBUM_IMAGE_COVER = 1;
+    //其他 用于描述中引用
+    public static final int ALBUM_IMAGE_OTHER = 2;
+
+    //endregion
+
     /**
      * 激活成功
      */

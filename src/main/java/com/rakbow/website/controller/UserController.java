@@ -121,7 +121,7 @@ public class UserController {
     }
 
     //执行操作时，检测用户权限
-    @RequestMapping(path = "/checkAuthority", method = RequestMethod.GET)
+    @RequestMapping(path = "/check-authority", method = RequestMethod.GET)
     @ResponseBody
     public ApiResult checkAuthority(HttpServletRequest request) {
         ApiResult res = new ApiResult();

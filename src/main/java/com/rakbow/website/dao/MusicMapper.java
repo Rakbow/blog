@@ -15,19 +15,21 @@ import java.util.List;
 @Mapper
 public interface MusicMapper {
 
-    Music selectMusicById(int id);
+    Music getMusicById(int id);
 
     List<Music> getAll();
 
-    List<Music> selectMusicsByAlbumId(int albumId);
+    List<Music> getMusicsByAlbumId(int albumId);
 
-    int selectMusicRows();
+    int getMusicRows();
 
-    int insertMusic(Music music);
+    int addMusic(Music music);
 
     int updateMusic(int id, Music music);
 
     int deleteMusicById(int id);
+
+    int deleteMusicByAlbumId(int albumId);
 
     int updateStatusById(int id);
 

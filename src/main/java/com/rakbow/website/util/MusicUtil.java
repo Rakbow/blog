@@ -2,6 +2,8 @@ package com.rakbow.website.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.music.AudioType;
+import com.rakbow.website.service.MusicService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,14 @@ import java.util.List;
  */
 public class MusicUtil {
 
-    //获取专辑分类数组
+    @Autowired
+    private static MusicService musicService;
+
+    /**
+     * 获取音乐分类数组
+     * @author rakbow
+     * @return list
+     * */
     public static List<JSONObject> getAudioTypeSet(){
         List<JSONObject> audioTypeSet = new ArrayList<>();
         for(AudioType audioType : AudioType.values()){
@@ -25,6 +34,15 @@ public class MusicUtil {
             audioTypeSet.add(audioTypeJson);
         }
         return audioTypeSet;
+    }
+
+    /**
+     * 根据专辑id删除该专辑对应所有音乐
+     * @author rakbow
+     * @param albumId 专辑id
+     * */
+    public static void deleteAllMusicByAlbumId(int albumId) throws Exception {
+        musicService.deleteMusicByAlbumId(albumId);
     }
 
 }

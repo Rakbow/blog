@@ -2,11 +2,9 @@ package com.rakbow.website.dao;
 
 import com.rakbow.website.entity.Album;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @Project_name: website
@@ -18,14 +16,14 @@ import java.util.Set;
 public interface AlbumMapper {
 
     //根据id查询专辑信息
-    Album selectAlbumById(int id);
+    Album getAlbumById(int id);
 
     //详细查询
-    List<Album> selectAlbumBySuperFilter(String seriesId, List<Integer> productId, List<Integer> publishFormat, List<Integer> albumFormat,
-                                         List<Integer> mediaFormat, String hasBonus);
+    List<Album> getAlbumsByFilter(String seriesId, List<Integer> productId, List<Integer> publishFormat, List<Integer> albumFormat,
+                                  List<Integer> mediaFormat, String hasBonus);
 
-    //插入新专辑
-    int insertAlbum(Album album);
+    //新增专辑
+    int addAlbum(Album album);
 
     //更新专辑信息
     int updateAlbum(int id, Album album);
@@ -40,12 +38,9 @@ public interface AlbumMapper {
     //如果sql语句中有动态的条件并且在<if>里使用
     // 且该方法有且只有一个参数，一定要取别名
     //@Param("userType") int userType
-    int selectAlbumRows();
+    int getAlbumRows();
 
     //更新专辑图片
-    int insertAlbumImages(int id, String images, Timestamp editedTime);
-
-    //删除专辑图片
     int updateAlbumImages(int id, String images, Timestamp editedTime);
 
     //更新专辑Artists
@@ -61,8 +56,8 @@ public interface AlbumMapper {
     int updateAlbumBonus(int id, String bonus, Timestamp editedTime);
 
     //获取最新添加专辑, limit
-    List<Album> selectAlbumOrderByAddedTime(int limit);
+    List<Album> getAlbumOrderByAddedTime(int limit);
 
     //获取最新编辑专辑, limit
-    List<Album> selectAlbumOrderByEditedTime(int limit);
+    List<Album> getAlbumOrderByEditedTime(int limit);
 }

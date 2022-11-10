@@ -28,7 +28,7 @@ public class ProductController {
     /**
      * 根据系列id获取该系列所有产品
      * */
-    @RequestMapping(path = "/getProductsBySeriesId", method = RequestMethod.POST)
+    @RequestMapping(path = "/get-products", method = RequestMethod.POST)
     @ResponseBody
     public List<JSONObject> getAllProductBySeriesId(@RequestBody String json){
         JSONObject param = JSON.parseObject(json);

@@ -1,31 +1,19 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.data.EntityType;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.service.VisitService;
-import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.DataSorter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @SpringBootTest
 class WebSiteApplicationTests {
@@ -110,7 +98,7 @@ class WebSiteApplicationTests {
     @Test
     public void test4() {
         Music music = new Music();
-        System.out.println(musicMapper.insertMusic(music));
+        System.out.println(musicMapper.addMusic(music));
         System.out.println(music.getId());
     }
 

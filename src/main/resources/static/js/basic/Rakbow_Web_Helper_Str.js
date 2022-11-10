@@ -11,7 +11,7 @@ const SERIES_INDEX_URL = DOMAIN_URL + "/db/series";
 const PRODUCT_INDEX_URL = DOMAIN_URL + "/db/product";
 
 const ALBUM_LIST_URL = DOMAIN_URL + "/db/album/list";
-const ALBUM_INDEX_URL = DOMAIN_URL + "/db/album/card";
+const ALBUM_INDEX_URL = DOMAIN_URL + "/db/album/index";
 
 const DISC_INDEX_URL = DOMAIN_URL + "/db/disc";
 const BOOK_INDEX_URL = DOMAIN_URL + "/db/book";
@@ -21,35 +21,36 @@ const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
 //endregion
 
 //region album
-const GET_ALL_ALBUM_URL = DOMAIN_URL + "/db/album/getAll";
+const GET_ALL_ALBUM_URL = DOMAIN_URL + "/db/album/get-all";
 const DELETE_ALBUM_URL = DOMAIN_URL + "/db/album/delete";
 const UPDATE_ALBUM_URL = DOMAIN_URL + "/db/album/update";
-const INSERT_ALBUM_URL = DOMAIN_URL + "/db/album/insert";
-const GET_ALBUM_URL = DOMAIN_URL + "/db/album/getAlbum";
-const GET_ALBUMS_URL = DOMAIN_URL + "/db/album/getAlbums";
+const INSERT_ALBUM_URL = DOMAIN_URL + "/db/album/add";
+const GET_ALBUM_URL = DOMAIN_URL + "/db/album/get-album";
+const GET_ALBUMS_URL = DOMAIN_URL + "/db/album/get-albums";
 
-const UPDATE_ALBUM_ARTISTS_URL = DOMAIN_URL + "/db/album/updateAlbumArtists";
-const UPDATE_ALBUM_TRACK_INFO_URL = DOMAIN_URL + "/db/album/updateAlbumTrackInfo";
-const INSERT_ALBUM_IMAGES_URL = DOMAIN_URL + "/db/album/insertAlbumImages";
-const UPDATE_ALBUM_IMAGES_URL = DOMAIN_URL + "/db/album/updateAlbumImages";
-const UPDATE_ALBUM_DESCRIPTION_URL = DOMAIN_URL + "/db/album/updateAlbumDescription";
-const UPDATE_ALBUM_BONUS_URL = DOMAIN_URL + "/db/album/updateAlbumBonus";
+const UPDATE_ALBUM_ARTISTS_URL = DOMAIN_URL + "/db/album/update-artists";
+const UPDATE_ALBUM_TRACK_INFO_URL = DOMAIN_URL + "/db/album/update-trackInfo";
+const INSERT_ALBUM_IMAGES_URL = DOMAIN_URL + "/db/album/add-images";
+const UPDATE_ALBUM_IMAGES_URL = DOMAIN_URL + "/db/album/update-images";
+const UPDATE_ALBUM_DESCRIPTION_URL = DOMAIN_URL + "/db/album/update-description";
+const UPDATE_ALBUM_BONUS_URL = DOMAIN_URL + "/db/album/update-bonus";
 //endregion
 
 //region music
-const UPDATE_MUSIC_ARTISTS_URL = DOMAIN_URL + "/db/music/updateMusicArtists";
-const UPDATE_MUSIC_LYRICS_TEXT_URL = DOMAIN_URL + "/db/music/updateMusicLyricsText";
-const UPDATE_MUSIC_DESCRIPTION_URL = DOMAIN_URL + "/db/music/updateMusicDescription";
+const UPDATE_MUSIC_URL = DOMAIN_URL + "/db/music/update";
+const UPDATE_MUSIC_ARTISTS_URL = DOMAIN_URL + "/db/music/update-artists";
+const UPDATE_MUSIC_LYRICS_TEXT_URL = DOMAIN_URL + "/db/music/update-lyrics-text";
+const UPDATE_MUSIC_DESCRIPTION_URL = DOMAIN_URL + "/db/music/update-description";
 //endregion
 
 //region user
-const CHECK_USER_AUTHORITY_URL = DOMAIN_URL + "/user/checkAuthority";
+const CHECK_USER_AUTHORITY_URL = DOMAIN_URL + "/user/check-authority";
 const LOGIN_URL = DOMAIN_URL + "/login";
 const LOGOUT_URL = DOMAIN_URL + "/logout";
 //endregion
 
 //common
-const GET_ALL_PRODUCT_URL = DOMAIN_URL + "/product/getProductsBySeriesId";
+const GET_ALL_PRODUCT_URL = DOMAIN_URL + "/product/get-products";
 
 //region header
 const ENTITY_TYPE = [

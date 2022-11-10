@@ -9,6 +9,7 @@ import com.rakbow.website.data.music.AudioType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -37,51 +39,76 @@ public class MusicService {
     private MusicMapper musicMapper;
     @Autowired
     private VisitService visitService;
-    @Autowired
-    private AlbumService albumservice;
     //endregion
 
+    /**
+     * 根据音乐id获取音乐
+     * @author rakbow
+     * @param id 音乐id
+     * @return music
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Music selectMusicById(int id) {
-        return musicMapper.selectMusicById(id);
+    public Music getMusicById(int id) {
+        return musicMapper.getMusicById(id);
     }
 
+    /**
+     * 获取所有音乐数据
+     * @author rakbow
+     * @return list
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<Music> getAll() {
         return musicMapper.getAll();
     }
 
+    /**
+     * 根据专辑id获取该专辑所有音乐
+     * @author rakbow
+     * @param albumId 专辑id
+     * @return list
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<Music> selectMusicsByAlbumId(int albumId) {
-        return musicMapper.selectMusicsByAlbumId(albumId);
+    public List<Music> getMusicsByAlbumId(int albumId) {
+        return musicMapper.getMusicsByAlbumId(albumId);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public int selectMusicRows() {
-        return musicMapper.selectMusicRows();
+    public int getMusicRows() {
+        return musicMapper.getMusicRows();
     }
 
+    /**
+     * 新增music
+     *
+     * @param music
+     * @author rakbow
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String insertMusic(Music music) throws Exception {
+    public void addMusic(Music music) throws Exception {
         try {
+            //若封面url为空，赋404图
+            if (StringUtils.isBlank(music.getCoverUrl())) {
+                music.setCoverUrl(CommonConstant.EMPTY_IMAGE_URL);
+            }
+
+            musicMapper.addMusic(music);
 
             //新增访问量实体
             visitService.insertVisit(new Visit(EntityType.MUSIC.getId(), music.getId()));
 
-            //若封面url为空，赋404图
-            if (StringUtils.isBlank(music.getCoverUrl())) {
-                music.setCoverUrl("/img/404.jpg");
-            }
-
-            musicMapper.insertMusic(music);
-            return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MUSIC.getName());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
     }
 
+    /**
+     * 从专辑数据中新增music
+     * @author rakbow
+     * @param albumJson
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void insertMusicsFromAlbum(JSONObject albumJson){
+    public void addMusicsFromAlbum(JSONObject albumJson){
 
         int albumId = albumJson.getInteger("id");
 
@@ -109,7 +136,7 @@ public class MusicService {
                 music.setAudioLength(track.getString("audioLength"));
                 music.setAddedTime(CommonUtil.stringToTimestamp(albumJson.getString("addedTime")));
                 music.setEditedTime(CommonUtil.stringToTimestamp(albumJson.getString("editedTime")));
-                musicMapper.insertMusic(music);
+                musicMapper.addMusic(music);
             }
         }
 
@@ -135,6 +162,25 @@ public class MusicService {
         }
     }
 
+    /**
+     * 根据专辑id删除对应的music
+     * @author rakbow
+     * @param albumId 专辑id
+     * */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void deleteMusicByAlbumId(int albumId) throws Exception {
+        try {
+            musicMapper.deleteMusicByAlbumId(albumId);
+        }catch (Exception ex) {
+            throw new Exception(ex);
+        }
+    }
+
+    /**
+     * 修改状态
+     * @author rakbow
+     * @param id 音乐id
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateStatusById(int id) throws Exception {
         try {
@@ -144,7 +190,12 @@ public class MusicService {
         }
     }
 
-    //music对象转json
+    /**
+     * music对象转json
+     * @author rakbow
+     * @param music 音乐
+     * @return JSONObject
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public JSONObject music2Json(Music music) {
         JSONObject musicJson = (JSONObject) JSON.toJSON(music);
@@ -157,19 +208,20 @@ public class MusicService {
         //音乐创作
         JSONArray artists = JSON.parseArray(music.getArtists());
 
-        //所属专辑信息
-        JSONObject relatedAlbum = albumservice.album2JsonSimple(albumservice.findAlbumById(music.getAlbumId()));
-
         musicJson.put("audioTypeObj", audioTypeObj);
         musicJson.put("addedTime", CommonUtil.timestampToString(music.getAddedTime()));
         musicJson.put("editedTime", CommonUtil.timestampToString(music.getEditedTime()));
-        musicJson.put("relatedAlbum", relatedAlbum);
         musicJson.put("artists", artists);
 
         return musicJson;
     }
 
-    //music对象转json（极简）
+    /**
+     * music对象转json（极简）
+     * @author rakbow
+     * @param music 音乐
+     * @return JSONObject
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public JSONObject music2JsonSimple(Music music) {
         JSONObject musicJson = new JSONObject();
@@ -184,13 +236,31 @@ public class MusicService {
         return musicJson;
     }
 
-    //获取同属一张碟片的音频findMusicByDiscSerial
+    /**
+     * json转music
+     * @author rakbow
+     * @param musicJson
+     * @return music
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<JSONObject> getRelatedMusics(Music music) {
+    public Music json2Music(@RequestBody JSONObject musicJson) {
+        return musicJson.toJavaObject(Music.class);
+    }
+
+    /**
+     * 获取同属一张碟片的音频
+     * @author rakbow
+     * @param id 音乐id
+     * @return list
+     * */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getRelatedMusics(int id) {
         List<JSONObject> relatedMusics = new ArrayList<>();
 
+        Music music = getMusicById(id);
+
         //获取同属一张专辑的音频
-        List<Music> sameAlbumMusics = selectMusicsByAlbumId(music.getAlbumId());
+        List<Music> sameAlbumMusics = getMusicsByAlbumId(music.getAlbumId());
         //筛选出同一张碟片的音频，并按照序号排序
         DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics)
                 .forEach(m -> relatedMusics.add(music2JsonSimple(m)));
@@ -198,25 +268,45 @@ public class MusicService {
         return relatedMusics;
     }
 
-    //更新创作人员信息
+    /**
+     * 更新创作人员信息
+     * @author rakbow
+     * @param id 音乐id
+     * @param artists 创作人员信息
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateMusicArtists(int id, String artists) {
         musicMapper.updateMusicArtists(id, artists, new Timestamp(System.currentTimeMillis()));
     }
 
-    //更新歌词文本
+    /**
+     * 更新歌词文本
+     * @author rakbow
+     * @param id 音乐id
+     * @param lrcText 歌词文本
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateMusicLyricsText(int id, String lrcText) {
         musicMapper.updateMusicLyricsText(id, lrcText, new Timestamp(System.currentTimeMillis()));
     }
 
-    //更新描述信息
+    /**
+     * 更新描述信息
+     * @author rakbow
+     * @param id 音乐id
+     * @param description 描述信息
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateMusicDescription(int id, String description) {
         musicMapper.updateMusicDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
 
-    //更新封面url
+    /**
+     * 更新封面url
+     * @author rakbow
+     * @param id 音乐id
+     * @param coverUrl 封面url
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateMusicCoverUrl(int id, String coverUrl) {
         musicMapper.updateMusicCoverUrl(id, coverUrl);

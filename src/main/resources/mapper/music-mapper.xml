@@ -14,7 +14,7 @@
         audio_length, description, remark, added_time, edited_time, _s
     </sql>
 
-    <select id="selectMusicById" resultType="Music">
+    <select id="getMusicById" resultType="Music">
         select
         <include refid="selectFields"></include>
         from music
@@ -31,19 +31,19 @@
         <!-- limit #{offset}, #{limit} -->
     </select>
 
-    <select id="selectMusicsByAlbumId" resultType="Music">
+    <select id="getMusicsByAlbumId" resultType="Music">
         select
         <include refid="selectFields"></include>
         from music
         where album_id = #{albumId} and _s = 1
     </select>
 
-    <select id="selectMusicRows" resultType="int">
+    <select id="getMusicRows" resultType="int">
         select count(id)
         from music
     </select>
 
-    <insert id="insertMusic" parameterType="Music" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addMusic" parameterType="Music" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -67,6 +67,12 @@
         delete
         from music
         where id = #{id}
+    </delete>
+
+    <delete id="deleteMusicByAlbumId">
+        delete
+        from music
+        where album_id = #{albumId}
     </delete>
 
     <update id="updateStatusById" keyProperty="id">
