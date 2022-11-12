@@ -52,6 +52,7 @@
     <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
     <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -94,9 +95,9 @@
                     <div class="col-12 sm:col-12 md:col-6 lg:col-9">
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
+                                <i class="pi iconfont icon-music mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
-                                    <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{music.nameJp}}</h4>
+                                    <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{music.name}}</h4>
                                     <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{music.nameEn}}</small>
                                     </h4>
                                 </div>
@@ -117,25 +118,40 @@
                                 <table class="table-borderless table-sm ml-3">
                                     <tbody>
                                     <tr>
+                                        <td><strong>曲目(日语)</strong></td>
                                         <td>
-                                            <i class="pi iconfont icon-dingdanbianhao mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>音频长度</strong>
-                                        </td>
-                                        <td>
-                                            {{music.audioLength?music.audioLength:"N/A"}}
+                                            {{music.name?music.name:"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td><strong>曲目(英语)</strong></td>
                                         <td>
-                                            <i class="pi iconfont icon-dingdanbianhao mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>音频类型</strong>
-                                        </td>
-                                        <td>
-                                            {{music.audioTypeObj.nameJp?music.audioTypeObj.nameJp:"N/A"}}
+                                            {{music.nameEn?music.nameEn:" - "}}
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td><strong>音频长度</strong></td>
+                                        <td>
+                                            {{music.audioLength}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>音频类型</strong></td>
+                                        <td>
+                                            {{music.audioTypeObj.name}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>碟片序号</strong></td>
+                                        <td>
+                                            {{music.discSerial}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>曲目序号</strong></td>
+                                        <td>
+                                            {{music.trackSerial}}
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -152,7 +168,7 @@
                                     <tr v-for="artist in music.artists">
                                         <td><strong>{{artist.pos}}</strong></td>
                                         <td>
-                                            {{artist.name}}
+                                            {{artist.name.join("/")}}
                                         </td>
                                     </tr>
                                     </tbody>
@@ -162,18 +178,6 @@
                                 <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
                             </div>
                         </p-fieldset>
-                        <!--            <p-fieldset :toggleable="true" class="mt-2">-->
-                        <!--              <template #legend>-->
-                        <!--                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>-->
-                        <!--                <b>在线播放</b>-->
-                        <!--              </template>-->
-                        <!--              <div v-if="album.audios.length != 0">-->
-                        <!--                <div id="player"></div>-->
-                        <!--              </div>-->
-                        <!--              <div v-else>-->
-                        <!--                <span class="emptyInfo"><em>暂无播放源</em></span>-->
-                        <!--              </div>-->
-                        <!--            </p-fieldset>-->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
@@ -183,53 +187,62 @@
                         </p-fieldset>
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
-                                <i class="pi iconfont icon-gift mr-2" style="font-size: 2rem"></i>
+                                <i class="pi iconfont icon-music mr-2" style="font-size: 2rem"></i>
                                 <b>歌词</b>
                             </template>
                             <article id="lyrics" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
                     </div>
                     <div class="col-12 sm:col-12 md:col-6 lg:col-3">
-<!--                        <p-panel>-->
-<!--                            <template #header>-->
-<!--                                <i class="pi iconfont icon-product_b mr-2" style="font-size: 2rem"></i>-->
-<!--                                <b>专辑分类</b>-->
-<!--                            </template>-->
-<!--                            <div class="grid">-->
-<!--                                <div class="col-fixed">-->
-<!--                                    <i class="pi pi-bookmark mr-2"></i><b>所属系列</b>-->
-<!--                                </div>-->
-<!--                                <div class="col-10 col-offset-1">-->
-<!--                                    {{music.series.name}}-->
-<!--                                </div>-->
-<!--                                <div class="col-fixed">-->
-<!--                                    <i class="pi pi-tags mr-2"></i><b>所属作品</b>-->
-<!--                                </div>-->
-<!--                                <div class="col-10 col-offset-1">-->
-<!--                                    <p class="mb-0" v-for="item of music.products">-->
-<!--                                        <a :href="'https://rakbow.com/blog/product/'+ item.id ">-->
-<!--                                            <span class="musictitle" lang="en" style="display:inline">-->
-<!--                                                {{item.name}}-->
-<!--                                            </span>-->
-<!--                                        </a>-->
-<!--                                    </p>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </p-panel>-->
-<!--                        <br>-->
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
-                                <b>相关曲目</b>
+                                <i class="pi pi-th-large mr-2" style="font-size: 2rem"></i>
+                                <b>相关信息</b>
                             </template>
-                            <div class="grid">
+                            <span class="grid">
                                 <span class="smallfont">
-                                    <div class="album_infobit_small smallfont ml-0 grid"
+                                    <p-divider align="center">
+                                        <i class="pi iconfont icon-24gl-musicAlbum2 mr-1" style="font-size: 1.5rem"></i>
+                                        <span><b>所属专辑</b></span>
+                                    </p-divider>
+                                    <div class="music_infobit_small smallfont ml-2 mt-2 mb-2 grid" style="border: solid black">
+                                        <div class="col-3 small-image-div mt-2">
+                                        <a :href="'/db/album/'+ relatedAlbum.id ">
+                                            <img class="small-image-img" :src="relatedAlbum.cover.url"
+                                                 style="border-radius: 20%;">
+                                        </a>
+                                    </div>
+                                        <div class="col-9">
+                                        <ul class="album_infobit_detail">
+                                            <li>
+                                                <a class="smallfont"
+                                                   :href="'/db/album/'+ relatedAlbum.id ">
+                                                        <span class="text-truncate-2" lang="ja">
+                                                            {{relatedAlbum.nameJp}}
+                                                        </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                    <span class="smallfont">
+                                                        <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
+                                                    </span>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                    </div>
+                                    <span class="ml-2">所属该专辑的第<b>{{music.discSerial}}</b>
+                                        张碟片，第<b>{{music.trackSerial}}</b>首曲目</span>
+                                    <p-divider align="center">
+                                        <i class="pi iconfont icon-music mr-1" style="font-size: 1.5rem"></i>
+                                        <span><b>相关曲目</b></span>
+                                    </p-divider>
+                                    <div class="music_infobit_small smallfont ml-0 grid"
                                          v-if="relatedMusics.length != 0"
                                          v-for="relatedMusic of relatedMusics">
                                         <div class="col-3 small-image-div mt-2">
                                             <a :href="'/db/music/'+ relatedMusic.id ">
-                                                <img class="small-image-img" src="/img/404.jpg"
+                                                <img class="small-image-img" :src="relatedMusic.coverUrl"
                                                      style="border-radius: 20%;">
                                             </a>
                                         </div>
@@ -239,7 +252,7 @@
                                                 <a class="smallfont"
                                                    :href="'/db/music/'+ relatedMusic.id ">
                                                     <span class="text-truncate-2" lang="ja">
-                                                        {{relatedMusic.nameJp}}
+                                                        {{relatedMusic.name}}
                                                     </span>
                                                 </a>
                                             </li>
@@ -255,56 +268,9 @@
                                 </span>
                                 <br>
                                 <b class="rbot"><b></b></b>
-                            </div>
+                            </span>
                         </p-panel>
                         <br>
-<!--                        <p-panel>-->
-<!--                            <template #header>-->
-<!--                                <i class="pi pi-images mr-2" style="font-size: 2rem"></i>-->
-<!--                                <b>图片</b>-->
-<!--                            </template>-->
-<!--                            <div v-if="album.displayImages.length == 0">-->
-<!--                                <span class="emptyInfo"><em>暂无图片</em></span>-->
-<!--                            </div>-->
-<!--                            <p-galleria v-if="album.displayImages" :value="album.displayImages"-->
-<!--                                        v-model:active-index="activeIndex" :responsive-options="responsiveOptions"-->
-<!--                                        :num-visible="7" container-style="max-width: 800px"-->
-<!--                                        :circular="true" :full-screen="true" :show-item-navigators="true"-->
-<!--                                        :show-thumbnails="false" v-model:visible="displayCustom">-->
-<!--                                <template #item="{item}">-->
-<!--                                    <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"-->
-<!--                                         oncontextmenu="return false"/>-->
-<!--                                </template>-->
-<!--                                <template #caption="{item}">-->
-<!--                                    <div class="custom-galleria-footer">-->
-<!--                                        <div class="col-6">-->
-<!--                                            <span v-if="album.displayImages" class="title-container">-->
-<!--                                                <span>共{{album.displayImages.length}}张</span>-->
-<!--                                                <span class="title">{{item.nameZh}}</span>-->
-<!--                                                <span>{{item.description}}</span>-->
-<!--                                            </span>-->
-<!--                                        </div>-->
-<!--                                        <div class="col-6 text-end">-->
-<!--                                            <span v-if="album.displayImages">-->
-<!--                                            <span>上传于 {{item.uploadTime}}</span>-->
-<!--                                        </span>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </template>-->
-<!--                            </p-galleria>-->
-<!--                            <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">-->
-<!--                                <div class="col-4 mt-2 mb-2" id="panel-image-div"-->
-<!--                                     v-for="(image, index) of album.displayImages" :key="index">-->
-<!--                                    <img :class="initPanelImageClass(image.url)" :src="image.url" draggable="false"-->
-<!--                                         oncontextmenu="return false"-->
-<!--                                         v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"-->
-<!--                                         @click="imageClick(index)"/>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <br>-->
-<!--                            <b class="rbot"><b></b></b>-->
-<!--                        </p-panel>-->
-<!--                        <br>-->
                         <p-panel>
                             <template #header>
                                 <i class="pi pi-info-circle mr-2" style="font-size: 2rem"></i>
@@ -334,12 +300,12 @@
                         </p-panel>
                     </div>
                 </div>
-                <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑数据" :modal="true"
+                <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息" :modal="true"
                           class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">曲名(日语)<span style="color: red">*</span></label>
-                            <p-inputtext id="nameJp" v-model.trim="musicEdit.nameJp"></p-inputtext>
+                            <label htmlFor="name">曲名<span style="color: red">*</span></label>
+                            <p-inputtext id="name" v-model.trim="musicEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
                             <label htmlFor="nameEn">曲名(英语)</label>
@@ -392,7 +358,41 @@
                                   @click="submitEditMusic"></p-button>
                     </template>
                 </p-dialog>
-
+                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
+                          :modal="true">
+                    <div class="grid">
+                        <div class="col-3">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                <p-inputtext v-model="artistPos" placeholder="职位名称"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                                <p-chips v-model="artistName" placeholder="人员信息" separator=","></p-chips>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <p-button label="保存当前" icon="pi pi-save"
+                                      @click="saveArtists"></p-button>
+                        </div>
+                    </div>
+                    <p-divider></p-divider>
+                    <div class="grid">
+                        <section>
+                            <div id="artistBox" v-html="artistHtml"></div>
+                        </section>
+                    </div>
+                    <template #footer>
+                        <p-button label="提交更新" icon="pi pi-save" class="p-button-success mr-4"
+                                  @click="submitArtist"></p-button>
+                    </template>
+                </p-dialog>
                 <!-- 尾部 -->
                 <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
             </div>
@@ -452,7 +452,7 @@
                 },
                 {
                     label: '编辑歌词',
-                    icon: 'pi iconfont icon-gift',
+                    icon: 'pi iconfont icon-music',
                     command: () => {
                         openLyricsEditDialog();
                     }
@@ -477,51 +477,91 @@
                     })
             };
 
-            //关闭编辑数据面板
+            //关闭编辑基础信息面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
                 musicEdit.value = {};
             };
 
-            //保存编辑数据
-            const submitEditAlbum = () => {
-                if (checkMusic(musicEdit)) {
-                    axiosPostRequest(UPDATE_ALBUM_URL, musicEdit.value)
-                        .then(res => {
-                            if (res.state === 1) {
-                                albumEdit.value = {};
-                                toast.add({
-                                    severity: 'success',
-                                    summary: 'Successful',
-                                    detail: res.message,
-                                    life: 3000
-                                });
-                                closeEditDialog();
-                                location.reload(true);
-                            } else {
-                                toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                            }
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                }
+            //保存编辑好的基础信息
+            const submitEditMusic = () => {
+                axiosPostRequest(UPDATE_MUSIC_URL, musicEdit.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            musicEdit.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
+                            });
+                            closeEditDialog();
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             };
 
-            //检测数据
-            const checkMusic = (data) => {
-                if (data.value.nameJp == null || data.value.nameJp === '') {
-                    toast.add({severity: 'error', summary: 'Error', detail: MUSIC_DETAIL_NAME_JP_EMPTY, life: 3000});
-                    return false;
-                } else if (data.value.audioType == null || data.value.audioType === '') {
-                    toast.add({severity: 'error', summary: 'Error', detail: MUSIC_DETAIL_AUDIO_TYPE_EMPTY, life: 3000});
-                    return false;
-                } else if (data.value.audioLength == null || data.value.audioLength === '') {
-                    toast.add({severity: 'error', summary: 'Error', detail: MUSIC_DETAIL_AUDIO_LENGTH_EMPTY, life: 3000});
-                    return false;
-                }
-                return true;
+            //region ------artists相关组件------
+            const artistHtml = ref("");
+            const artistPos = ref();
+            const artistName = ref();
+            const artists = ref([]);
+            const displayArtistEditDialog = ref(false);
+            const openArtistEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            artists.value = [];
+                            artistPos.value = "";
+                            artistName.value = [];
+                            displayArtistEditDialog.value = true;
+                        }
+                    })
             };
+            const saveArtists = () => {
+                let artist = {
+                    pos: artistPos.value,
+                    name: artistName.value
+                };
+                artists.value.push(artist);
+                artistPos.value = "";
+                artistName.value = [];
+                showArtist();
+            }
+            const showArtist = () => {
+                artistHtml.value = "";
+                //<![CDATA[
+                for (const artist of artists.value) {
+                    artistHtml.value += '<p>' + artist.pos + ' : ' + artist.name.join("/") + '</p>';
+                }
+                //]]>
+                document.getElementById("artistBox").innerHTML = artistHtml;
+            };
+            const submitArtist = () => {
+                let json = {
+                    id: music.value.id,
+                    artists: artists.value
+                }
+                axiosPostRequest(UPDATE_MUSIC_ARTISTS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            displayArtistEditDialog.value = false;
+                            artists.value = [];
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+            };
+            //endregion
 
             //region ------编辑描述------
             const descriptionMd = ref("");
@@ -622,68 +662,12 @@
             };
             //endregion
 
-            //region ------artists相关组件------
-            const artistHtml = ref("");
-            const positionName = ref();
-            const positionArtist = ref();
-            const artists = ref([]);
-            const displayArtistEditDialog = ref(false);
-            const openArtistEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            artists.value = [];
-                            positionName.value = "";
-                            positionArtist.value = "";
-                            displayArtistEditDialog.value = true;
-                        }
-                    })
-            };
-            const saveArtist = () => {
-                let param = {
-                    position: positionName.value,
-                    artist: positionArtist.value
-                };
-                artists.value.push(param);
-                positionName.value = "";
-                positionArtist.value = [];
-                showArtist();
-            }
-            const showArtist = () => {
-                artistHtml.value = "";
-                //<![CDATA[
-                for (const a of artists.value) {
-                    artistHtml.value += '<p>' + a.position + ' : ' + a.artist.join("/") + '</p>';
-                }
-                //]]>
-                document.getElementById("artistBox").innerHTML = artistHtml;
-            };
-            const submitArtist = () => {
-                let json = {
-                    id: album.value.id,
-                    artists: artists.value
-                }
-                axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
-                    .then(res => {
-                        if (res.state == 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            displayArtistEditDialog.value = false;
-                            artists.value = [];
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    })
-            };
-            //endregion
-
             const init = () => {
                 text2marked();
             };
 
             return {
+                relatedAlbum,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
 
                 edits,
@@ -693,18 +677,18 @@
                 musicEdit,
                 openEditDialog,
                 closeEditDialog,
-                submitEditAlbum,
+                submitEditMusic,
 
                 audioTypeSet,
 
                 visitNum,
                 music,
 
-                positionName,
-                positionArtist,
+                artistPos,
+                artistName,
                 displayArtistEditDialog,
                 artists,
-                saveArtist,
+                saveArtists,
                 artistHtml,
                 submitArtist,
                 descriptionMd,
@@ -739,6 +723,7 @@
             "p-inputnumber": primevue.inputnumber,
             "p-inputswitch": primevue.inputswitch,
             "p-splitbutton": primevue.splitbutton,
+            "p-tag": primevue.tag,
         }
     };
 
@@ -1042,8 +1027,6 @@
     .music_infobit_small {
         clear: left;
         height: 76px;
-        /* border-top: 1px solid #464A64; */
-        /* border-bottom: 1px solid #1B273D; */
         padding: 4px 6px 4px 4px;
         overflow: hidden;
     }

@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public class Music {
 
     private int id;
-    private String nameJp;// 曲名（日语）
+    private String name;// 曲名（原文）
     private String nameEn;// 曲名（英语）
     private String artists;// 创作人员名单 [{"pos":"","name":""}]
     private int audioType;// 音频类型 0-未分类 1-歌曲 2-歌曲（无伴奏） 3-原声 4-广播剧
@@ -34,7 +34,7 @@ public class Music {
 
     public Music(){
         this.id = 0;
-        this.nameJp = "";
+        this.name = "";
         this.nameEn = "";
         this.artists = "[]";
         this.audioType = 0;

@@ -1,5 +1,8 @@
 package com.rakbow.website.data.album;
 
+import com.alibaba.fastjson2.JSONArray;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -23,6 +26,14 @@ public enum MediaFormat {
         this.nameEn = nameEn;
     }
 
+    public static String index2NameEnArray (JSONArray indexArr) {
+        String[] nameEnArr = new String[indexArr.size()];
+        for (int i = 0; i < indexArr.size(); i++) {
+            nameEnArr[i] = getNameEnByIndex(indexArr.getIntValue(i));
+        }
+        return StringUtils.join(nameEnArr, ",");
+    }
+
     public static String getNameByIndex (int index){
         for (MediaFormat mediaFormat : MediaFormat.values()) {
             if (mediaFormat.getIndex() == index) {
@@ -30,6 +41,15 @@ public enum MediaFormat {
             }
         }
         return "未分类";
+    }
+
+    public static String getNameEnByIndex (int index){
+        for (MediaFormat mediaFormat : MediaFormat.values()) {
+            if (mediaFormat.getIndex() == index) {
+                return mediaFormat.getNameEn();
+            }
+        }
+        return "Unclassified";
     }
 
     public static int getIndexByName(String name){

@@ -1,3 +1,16 @@
+//将{label, value}选项里value数组转为label数组
+const value2LabelArray = (xFormat, xFormatSet) => {
+    let tmp = [];
+    for (let item1 of xFormat) {
+        for (let item2 of xFormatSet) {
+            if (item1 === item2.labelEn) {
+                tmp.push(item2.value);
+            }
+        }
+    }
+    return tmp;
+}
+
 //将date类型转为string类型
 function dateToString(date) {
     const year = date.getFullYear();

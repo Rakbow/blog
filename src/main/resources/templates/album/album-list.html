@@ -345,7 +345,7 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">专辑名称(日语)</label>
+                            <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
                             <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
                         </div>
                         <div class="field col">
@@ -672,34 +672,25 @@
             };
             //保存编辑数据
             const submitEditAlbum = async () => {
-                if (checkAlbum(albumEdit)) {
-                    if (albumEdit.value.releaseDate.constructor.toString().indexOf("Date") > -1) {
-                        albumEdit.value.releaseDate = dateToString(albumEdit.value.releaseDate);
-                    }
-                    albumEdit.value.publishFormat = "{\"ids\":[" + albumEdit.value.publishFormat.join(",") + "]}";
-                    albumEdit.value.albumFormat = "{\"ids\":[" + albumEdit.value.albumFormat.join(",") + "]}";
-                    albumEdit.value.mediaFormat = "{\"ids\":[" + albumEdit.value.mediaFormat.join(",") + "]}";
-                    albumEdit.value.products = "{\"ids\":[" + albumEdit.value.products.join(",") + "]}";
-                    await axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
-                        .then(res => {
-                            if (res.state === 1) {
-                                albumEdit.value = {};
-                                toast.add({
-                                    severity: 'success',
-                                    summary: 'Successful',
-                                    detail: res.message,
-                                    life: 3000
-                                });
-                                closeEditDialog();
-                                init();
-                            } else {
-                                console.log(res);
-                                toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                            }
-                        }).catch(e => {
-                            console.error(e);
-                        });
-                }
+                await axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            albumEdit.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
+                            });
+                            closeEditDialog();
+                            init();
+                        } else {
+                            console.log(res);
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(e => {
+                        console.error(e);
+                    });
             };
 
             //打开新增数据面板
@@ -723,58 +714,24 @@
                 submitted.value = false;
             };
 
-            //检测数据
-            const checkAlbum = (data) => {
-                let flag = true;
-                if (data.value.releaseDate == null) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未填写发行时间！', life: 3000});
-                    flag = false;
-                } else if (data.value.publishFormat == null || data.value.publishFormat.length == 0) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择出版形式！', life: 3000});
-                    flag = false;
-                } else if (data.value.albumFormat == null || data.value.albumFormat.length == 0) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择专辑分类！', life: 3000});
-                    flag = false;
-                } else if (data.value.mediaFormat == null || data.value.mediaFormat.length == 0) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择媒体类型！', life: 3000});
-                    flag = false;
-                } else if (data.value.products == null || data.value.products.length == 0) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择所属产品！', life: 3000});
-                    flag = false;
-                } else if (data.value.series == null) {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择所属系列！', life: 3000});
-                    flag = false;
-                }
-                return flag;
-            };
-
             //提交新增数据
             const submitNewAlbum = () => {
-                if (checkAlbum(album)) {
-                    album.value.releaseDate = dateToString(album.value.releaseDate);
-                    album.value.publishFormat = "{\"ids\":[" + album.value.publishFormat.join(",") + "]}";
-                    album.value.albumFormat = "{\"ids\":[" + album.value.albumFormat.join(",") + "]}";
-                    album.value.mediaFormat = "{\"ids\":[" + album.value.mediaFormat.join(",") + "]}";
-                    album.value.products = "{\"ids\":[" + album.value.products.join(",") + "]}";
-                    if (true) {
-                        axiosPostRequest(INSERT_ALBUM_URL, album.value)
-                            .then(res => {
-                                if (res.state == 1) {
-                                    album.value = {};
-                                    toast.add({
-                                        severity: 'success',
-                                        summary: 'Successful',
-                                        detail: res.message,
-                                        life: 3000
-                                    });
-                                    closeNewDialog();
-                                    init();
-                                } else {
-                                    toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                                }
+                axiosPostRequest(INSERT_ALBUM_URL, album.value)
+                    .then(res => {
+                        if (res.state == 1) {
+                            album.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
                             });
-                    }
-                }
+                            closeNewDialog();
+                            init();
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
             };
 
             //根据系列id获取该系列所有产品
@@ -803,12 +760,8 @@
         components: {
             "p-datatable": primevue.datatable,
             "p-column": primevue.column,
-            "p-inputtext": primevue.inputtext,
-            "p-button": primevue.button,
-            "p-multiselect": primevue.multiselect,
             "p-calendar": primevue.calendar,
             "p-inputnumber": primevue.inputnumber,
-            "p-dropdown": primevue.dropdown,
             "p-dialog": primevue.dialog,
             "p-textarea": primevue.textarea,
             "p-toolbar": primevue.toolbar,
@@ -819,6 +772,9 @@
             "p-autocomplete": primevue.autocomplete,
             "p-multiselect": primevue.multiselect,
             "p-card": primevue.card,
+            "p-inputtext": primevue.inputtext,
+            "p-button": primevue.button,
+            "p-dropdown": primevue.dropdown,
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
         }

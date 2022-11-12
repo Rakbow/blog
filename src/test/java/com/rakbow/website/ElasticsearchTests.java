@@ -63,10 +63,10 @@ public class ElasticsearchTests {
         albumRepository.deleteAll();
     }
 
-    @Test
-    public void testInsertList(){
-        albumRepository.saveAll(albumMapper.getAll());
-    }
+    // @Test
+    // public void testInsertList(){
+    //     albumRepository.saveAll(albumMapper.getAll());
+    // }
 
     // @Test
     // public void testAlbumRepository() throws IOException, ParseException {

@@ -34,7 +34,7 @@ import java.util.Objects;
 @Service
 public class MusicService {
 
-    //reg|ion ------引入实例------
+    //region ------引入实例------
     @Autowired
     private MusicMapper musicMapper;
     @Autowired
@@ -80,7 +80,6 @@ public class MusicService {
 
     /**
      * 新增music
-     *
      * @param music
      * @author rakbow
      */
@@ -128,7 +127,7 @@ public class MusicService {
             for (int j = 0; j < trackList.size(); j++) {
                 JSONObject track = trackList.getJSONObject(j);
                 Music music = new Music();
-                music.setNameJp(track.getString("name"));
+                music.setName(track.getString("name"));
                 music.setAlbumId(albumId);
                 music.setDiscSerial(disc.getInteger("serial"));
                 music.setTrackSerial(track.getString("serial"));
@@ -202,7 +201,7 @@ public class MusicService {
 
         JSONObject audioTypeObj = new JSONObject();
         audioTypeObj.put("id", music.getAudioType());
-        audioTypeObj.put("nameJp", AudioType.getNameByIndex(music.getAudioType()));
+        audioTypeObj.put("name", AudioType.getNameByIndex(music.getAudioType()));
         audioTypeObj.put("nameEn", AudioType.getNameEnByIndex(music.getAudioType()));
 
         //音乐创作
@@ -227,13 +226,33 @@ public class MusicService {
         JSONObject musicJson = new JSONObject();
 
         musicJson.put("id", music.getId());
-        musicJson.put("nameJp", music.getNameJp());
+        musicJson.put("name", music.getName());
         musicJson.put("nameEb", music.getNameEn());
+        musicJson.put("coverUrl", music.getCoverUrl());
         musicJson.put("audioLength", music.getAudioLength());
         musicJson.put("discSerial", music.getDiscSerial());
         musicJson.put("trackSerial", music.getTrackSerial());
 
         return musicJson;
+    }
+
+    /**
+     * 检测music数据
+     * @author rakbow
+     * @param musicJson
+     * @return 错误信息
+     * */
+    public String checkMusicJson(JSONObject musicJson) {
+        if (StringUtils.isBlank(musicJson.getString("name"))) {
+            return ApiInfo.MUSIC_NAME_EMPTY;
+        }
+        if (StringUtils.isBlank(musicJson.getString("audioType"))) {
+            return ApiInfo.MUSIC_AUDIO_TYPE_EMPTY;
+        }
+        if (StringUtils.isBlank(musicJson.getString("audioLength"))) {
+            return ApiInfo.MUSIC_AUDIO_LENGTH_EMPTY;
+        }
+        return "";
     }
 
     /**

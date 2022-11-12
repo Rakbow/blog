@@ -26,10 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -227,6 +224,19 @@ public class CommonUtil {
         img.setHeight(bufferedImage.getHeight());
 
         return img;
+    }
+
+    /**
+     * int字符串转为int数组并排序
+     * @author rakbow
+     * @param arrStr
+     * @return int[]
+     * */
+    public static String[] str2SortedArray(String arrStr) {
+        String[] strArr = arrStr.substring(1,arrStr.length()-1).split(",");
+        // int[] intArr = Arrays.stream(strArr).mapToInt(Integer::parseInt).toArray();
+        Arrays.sort(strArr);
+        return strArr;
     }
 
 }

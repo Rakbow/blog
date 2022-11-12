@@ -1,5 +1,8 @@
 package com.rakbow.website.data.album;
 
+import com.alibaba.fastjson2.JSONArray;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -24,6 +27,14 @@ public enum AlbumFormat {
         this.index = index;
         this.name = name;
         this.nameEn = nameEn;
+    }
+
+    public static String index2NameEnArray (JSONArray indexArr) {
+        String[] nameEnArr = new String[indexArr.size()];
+        for (int i = 0; i < indexArr.size(); i++) {
+            nameEnArr[i] = getNameEnByIndex(indexArr.getIntValue(i));
+        }
+        return StringUtils.join(nameEnArr, ",");
     }
 
     public static String getNameByIndex (int index){

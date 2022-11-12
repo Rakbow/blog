@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +45,6 @@ public class ElasticsearchService {
     private MusicRepository musicRepository;
     @Autowired
     private RestHighLevelClient restHighLevelClient;
-
     @Autowired
     private AlbumService albumService;
 
@@ -63,7 +63,9 @@ public class ElasticsearchService {
         albumRepository.deleteById(id);
     }
 
-    public List<Album> searchAlbum(String keyword) throws IOException, ParseException {
+    public List<JSONObject> searchAlbum(String keyword) throws IOException, ParseException {
+
+        List<JSONObject> searchResults;
 
         //搜索的索引名，album，就是表名
         SearchRequest searchRequest = new SearchRequest("album");
@@ -72,13 +74,10 @@ public class ElasticsearchService {
 
         //返回结果高亮
         HighlightBuilder highlightBuilder = new HighlightBuilder();
+        highlightBuilder.field("catalogNo");
         highlightBuilder.field("nameZh");
         highlightBuilder.field("nameJp");
         highlightBuilder.field("nameEn");
-        highlightBuilder.field("label");
-        highlightBuilder.field("publisher");
-        highlightBuilder.field("distributor");
-        highlightBuilder.field("copyright");
         highlightBuilder.requireFieldMatch(false);
         highlightBuilder.preTags("<span style='color:red'>");
         highlightBuilder.postTags("</span>");
@@ -87,7 +86,7 @@ public class ElasticsearchService {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 //在album索引的以下字段中都查询keyword
                 .query(QueryBuilders.multiMatchQuery(keyword,
-                        "nameZh", "nameJp", "nameEn", "label", "publisher", "distributor", "copyright"))
+                        "catalogNo", "nameZh", "nameJp", "nameEn"))
                 // matchQuery是模糊查询，会对key进行分词：searchSourceBuilder.query(QueryBuilders.matchQuery(key,value));
                 // termQuery是精准查询：searchSourceBuilder.query(QueryBuilders.termQuery(key,value));
                 .sort(SortBuilders.fieldSort("releaseDate").order(SortOrder.DESC))
@@ -122,27 +121,11 @@ public class ElasticsearchService {
             if (nameEnField != null) {
                 album.setNameEn(nameEnField.getFragments()[0].toString());
             }
-            HighlightField labelField = hit.getHighlightFields().get("label");
-            if (labelField != null) {
-                album.setLabel(labelField.getFragments()[0].toString());
-            }
-            HighlightField publisherField = hit.getHighlightFields().get("publisher");
-            if (publisherField != null) {
-                album.setPublisher(publisherField.getFragments()[0].toString());
-            }
-            HighlightField distributorField = hit.getHighlightFields().get("distributor");
-            if (distributorField != null) {
-                album.setDistributor(distributorField.getFragments()[0].toString());
-            }
-            HighlightField copyrightField = hit.getHighlightFields().get("copyright");
-            if (copyrightField != null) {
-                album.setCopyright(copyrightField.getFragments()[0].toString());
-            }
             albums.add(album);
         }
+        searchResults = albumService.album2StorageJson(albums);
 
-
-        return albums;
+        return searchResults;
     }
 
     //endregion

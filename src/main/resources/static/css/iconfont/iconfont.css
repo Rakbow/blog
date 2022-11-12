@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1666515904996') format('truetype');
+  src: url('iconfont.ttf?t=1668234911430') format('truetype');
 }
 
 .iconfont {
@@ -125,6 +125,10 @@
 
 .icon-product_b:before {
   content: "\e800";
+}
+
+.icon-music:before {
+  content: "\e892";
 }
 
 .icon-youxi1:before {

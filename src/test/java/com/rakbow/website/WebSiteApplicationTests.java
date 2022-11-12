@@ -1,18 +1,27 @@
 package com.rakbow.website;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.data.EntityType;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.service.VisitService;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.util.ArrayUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.List;
 
 @SpringBootTest
@@ -103,11 +112,8 @@ class WebSiteApplicationTests {
     }
 
     @Test
-    public void test5() {
-        musicService.getAll().forEach(music -> {
-            //新增访问量实体
-            visitService.insertVisit(new Visit(EntityType.MUSIC.getId(), music.getId()));
-        });
+    public void test5() throws IOException {
+        System.out.println(albumService.album2Json(albumService.getAlbumById(3)));
     }
 
 }

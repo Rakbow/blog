@@ -48,6 +48,15 @@ public class ApiInfo {
      public static final String UPDATE_ALBUM_DESCRIPTION_SUCCESS = "专辑描述更新成功！";
      public static final String UPDATE_ALBUM_BONUS_SUCCESS = "专辑特典信息更新成功！";
 
+
+     public static final String ALBUM_NAME_EMPTY = "未填写专辑名称！";
+     public static final String ALBUM_RELEASE_DATE_EMPTY = "未填写发行日期！";
+     public static final String ALBUM_SERIES_EMPTY = "未选择专辑所属系列！";
+     public static final String ALBUM_PRODUCTS_EMPTY = "未选择专辑所属作品！";
+     public static final String ALBUM_PUBLISH_FORMAT_EMPTY = "未选择出版形式！";
+     public static final String ALBUM_ALBUM_FORMAT_EMPTY = "未选择专辑分类！";
+     public static final String ALBUM_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
+
     //endregion
 
     //region music相关
@@ -56,5 +65,10 @@ public class ApiInfo {
     public static final String UPDATE_MUSIC_DESCRIPTION_SUCCESS = "描述信息更新成功！";
     public static final String UPDATE_MUSIC_LYRICS_SUCCESS = "歌词文本更新成功！";
 
+    public static final String MUSIC_NAME_EMPTY = "未填写曲名！";
+    public static final String MUSIC_AUDIO_TYPE_EMPTY = "未选择音频类型！";
+    public static final String MUSIC_AUDIO_LENGTH_EMPTY = "未填写音频长度！";
+
     //endregion
+
 }

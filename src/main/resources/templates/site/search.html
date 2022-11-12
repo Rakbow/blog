@@ -1,85 +1,70 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>搜索结果</title>
+    <title>Search Result</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
+
     <!-- bootstrap -->
-    <!--    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">-->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
-    <link rel="stylesheet" th:href="@{/assets/fonts/simple-line-icons.min.css}">
-    <link rel="stylesheet" th:href="@{/css/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/styles.min.css}">
-
-
-    <link rel="stylesheet" th:href="@{/css/index.css}">
-
-
-    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-    <script th:src="@{/assets/bootstrap/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/ajax/libs/baguettebox.js/1.11.1/baguetteBox.min.js}"></script>
-    <script th:src="@{/assets/js/script.min.js}"></script>
+    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
+    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
-    <!-- Dependencies -->
-    <script th:src="@{/js/primevue/vue.min.js}"></script>
+    <!-- Vue3 -->
+    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
 
     <!-- PrimeVue Components -->
-    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
-    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
-    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
-    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
-    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
-    <script th:src="@{/js/primevue/components/image.min.js}"></script>
-    <script th:src="@{/js/primevue/components/card.min.js}"></script>
-    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
-    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
-    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
 
     <!-- Axios -->
-    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
 
-    <!-- other -->
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
-    <script th:src="@{/js/basic/Data_Helper.js}"></script>
 </head>
 <body>
 <div class="nk-container">
     <!-- 头部 -->
-    <!--    <header class="bg-dark sticky-top" th:insert="~{header :: site_header}"></header>-->
+    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
 
     <div class="main">
         <div class="container">
             <div id="app">
                 <div class="card">
+                    <p>类型： {{type}}</p>
                     <p>关键词： {{keyword}}</p>
                     <p>数据共{{totals}}条</p>
 
-                    <div v-for="album in searchResult">
-                        <a :href="'http://localhost:8080/db/album/' + album.id">{{album.nameJp}}</a>
+                    <div v-if="type == '专辑'">
+                        <div v-for="result in searchResult">
+                            <a :href="domainUrl + '/db/album/' + result.id">{{result.nameJp}}</a>
+                        </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 尾部 -->
-    <!--    <footer th:insert="~{footer :: site_footer}"></footer>-->
+    <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
@@ -88,28 +73,55 @@
         setup() {
             onMounted(() => {
             })
-            const searchResult = [[${searchResult}]];
-            const totals = [[${totals}]];
-            const keyword = [[${keyword}]];
+            const searchResult = ref([[${searchResult}]]);
+            const totals = ref([[${totals}]]);
+            const keyword = ref([[${keyword}]]);
+            const type = ref([[${type]}]]);
 
-            return {searchResult, totals, keyword}
+            //region 页面header
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
+            return {
+                searchResult,
+                totals,
+                keyword,
+                type,
+                domainUrl,
+                selectedEntity,
+                entityType,
+                notLoginNavbarItems,
+                loginNavbarItems
+            }
         },
         components: {
-            "p-panel": primevue.panel,
-            "p-image": primevue.image,
-            "p-fieldset": primevue.fieldset,
-            "p-button": primevue.button,
-            "p-dialog": primevue.dialog,
-            "p-fileupload": primevue.fileupload,
-            "p-toolbar": primevue.toolbar,
-            "p-chips": primevue.chips,
-            "p-divider": primevue.divider,
             "p-inputtext": primevue.inputtext,
+            "p-button": primevue.button,
+            "p-dropdown": primevue.dropdown,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
         }
     };
 
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
     createApp(App)
         .use(primevue.config.default)
+        .use(router)
         .mount("#app");
 </script>
 </body>

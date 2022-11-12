@@ -209,6 +209,13 @@
       "unicode_decimal": 59392
     },
     {
+      "icon_id": "15617051",
+      "name": "music",
+      "font_class": "music",
+      "unicode": "e892",
+      "unicode_decimal": 59538
+    },
+    {
       "icon_id": "20266229",
       "name": "游戏",
       "font_class": "youxi1",

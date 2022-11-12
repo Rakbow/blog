@@ -8,6 +8,7 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.util.MusicUtil;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +66,8 @@ public class MusicController {
     }
 
     //更新Music
-    @RequestMapping(path = "/update", method = RequestMethod.GET)
+    @RequestMapping(path = "/update", method = RequestMethod.POST)
+    @ResponseBody
     public String updateMusic(@RequestBody  String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
@@ -73,6 +75,12 @@ public class MusicController {
             if (userService.checkAuthority(request).state) {
 
                 Music music = musicService.json2Music(param);
+
+                //检测数据
+                if(!StringUtils.isBlank(musicService.checkMusicJson(param))) {
+                    res.setErrorMessage(musicService.checkMusicJson(param));
+                    return JSON.toJSONString(res);
+                }
 
                 //修改编辑时间
                 music.setEditedTime(new Timestamp(System.currentTimeMillis()));

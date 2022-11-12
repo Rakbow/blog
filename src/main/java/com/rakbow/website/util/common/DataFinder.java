@@ -1,7 +1,6 @@
 package com.rakbow.website.util.common;
 
 import com.rakbow.website.entity.Music;
-import org.elasticsearch.search.suggest.phrase.Correction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +42,7 @@ public class DataFinder {
     public static Music findMusicByNameAndAlbumId(String name, String nameType, int albumId, List<Music> musics) {
         if (Objects.equals(nameType, "nameJp")) {
             for (Music music : musics) {
-                if (music.getAlbumId() == albumId && Objects.equals(music.getNameJp(), name)) {
+                if (music.getAlbumId() == albumId && Objects.equals(music.getName(), name)) {
                     return music;
                 }
             }

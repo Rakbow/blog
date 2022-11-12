@@ -95,11 +95,7 @@ public class AlbumController {
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getAlbumCard(Model model) {
-        List<JSONObject> albums = new ArrayList<>();
-        albumService.getAll().forEach(i -> {
-            albums.add(albumService.album2JsonDisplay(i));
-        });
-        model.addAttribute("albums", albums);
+        model.addAttribute("albums", albumService.album2JsonDisplay(albumService.getAll()));
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
@@ -256,7 +252,14 @@ public class AlbumController {
         JSONObject param = JSON.parseObject(json);
         try {
             if (userService.checkAuthority(request).state) {
-                Album album = albumService.json2Album(param);
+
+                //检测数据
+                if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
+                    res.setErrorMessage(albumService.checkAlbumJson(param));
+                    return JSON.toJSONString(res);
+                }
+
+                Album album = albumService.json2Album(albumService.handleAlbumJson(param));
 
                 //保存新增专辑
                 albumService.addAlbum(album);
@@ -320,7 +323,13 @@ public class AlbumController {
         JSONObject param = JSON.parseObject(json);
         try {
             if (userService.checkAuthority(request).state) {
-                Album album = albumService.json2Album(param);
+                //检测数据
+                if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
+                    res.setErrorMessage(albumService.checkAlbumJson(param));
+                    return JSON.toJSONString(res);
+                }
+
+                Album album = albumService.json2Album(albumService.handleAlbumJson(param));
 
                 //修改编辑时间
                 album.setEditedTime(new Timestamp(System.currentTimeMillis()));
