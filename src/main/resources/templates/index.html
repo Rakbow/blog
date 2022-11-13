@@ -35,7 +35,7 @@
 <body>
 <div id="app">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header><br>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header><br>
 
     <div class="grid grid-nogutter surface-section text-800">
         <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
@@ -54,7 +54,7 @@
     </div>
 
     <!-- 尾部 -->
-    <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;

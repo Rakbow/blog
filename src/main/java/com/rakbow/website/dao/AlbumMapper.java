@@ -34,6 +34,9 @@ public interface AlbumMapper {
     //查询所有专辑信息 offset：每页起始行行号，limit：每页显示数量
     List<Album> getAll();
 
+    //获取指定起始行和指定数量的数据
+    List<Album> getAlbumLimit(int offset, int limit, String where);
+
     //查询表里有多少条数据
     //如果sql语句中有动态的条件并且在<if>里使用
     // 且该方法有且只有一个参数，一定要取别名

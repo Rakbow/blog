@@ -77,9 +77,19 @@
         <!-- limit #{offset}, #{limit} -->
     </select>
 
+    <select id="getAlbumLimit" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where _s = 1
+        order by #{where}
+         limit #{offset}, #{limit}
+    </select>
+
     <select id="getAlbumRows" resultType="int">
         select count(id)
         from album
+        where _s = 1
     </select>
 
     <insert id="addAlbum" parameterType="Album" keyProperty="id">

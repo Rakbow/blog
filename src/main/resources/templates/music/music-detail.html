@@ -88,7 +88,7 @@
         <div class="container">
             <div id="app">
                 <!-- 头部 -->
-                <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+                <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
                 <div class="grid card mt-2">
                     <p-toast></p-toast>
@@ -393,8 +393,30 @@
                                   @click="submitArtist"></p-button>
                     </template>
                 </p-dialog>
+                <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                    <!--                    <div id="md-editor-v3">-->
+                    <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+                    </md-editor-v3>
+                    <!--                    </div>-->
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                                  class="p-button-text">
+                        </p-button>
+                        <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayLyricsDialog" header="编辑歌词文本"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                    <md-editor-v3 v-model="lyricsMd" preview-theme="github"></md-editor-v3>
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" @click="closeLyricsEditDialog" class="p-button-text">
+                        </p-button>
+                        <p-button label="保存" icon="pi pi-save" @click="submitLyrics" autofocus></p-button>
+                    </template>
+                </p-dialog>
                 <!-- 尾部 -->
-                <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
+                <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
             </div>
         </div>
     </div>
@@ -437,7 +459,7 @@
 
             const edits = ref([
                 {
-                    label: '音乐制作',
+                    label: '创作人员',
                     icon: 'pi pi-users',
                     command: () => {
                         openArtistEditDialog();
@@ -505,6 +527,7 @@
                         console.error(error);
                     });
             };
+            //endregion
 
             //region ------artists相关组件------
             const artistHtml = ref("");
@@ -572,7 +595,7 @@
                         if (res.state == 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            descriptionMd.value = album.value.description;
+                            descriptionMd.value = music.value.description;
                             displayDescriptionDialog.value = true;
                         }
                     });
@@ -583,13 +606,13 @@
             }
             const submitDescription = () => {
                 let json = {
-                    id: album.value.id,
+                    id: music.value.id,
                     description: descriptionMd.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_DESCRIPTION_URL, json)
+                axiosPostRequest(UPDATE_MUSIC_DESCRIPTION_URL, json)
                     .then(res => {
-                        if (res.state != 0) {
-                            album.value.description = descriptionMd.value;
+                        if (res.state === 1) {
+                            music.value.description = descriptionMd.value;
                             text2marked();
                             closeDescriptionEditDialog();
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
@@ -606,7 +629,7 @@
             const openLyricsEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             lyricsMd.value = music.value.lrcText;
@@ -621,11 +644,11 @@
             const submitLyrics = () => {
                 let json = {
                     id: music.value.id,
-                    lyrics: lyricsMd.value
+                    lyricsText: lyricsMd.value
                 }
                 axiosPostRequest(UPDATE_MUSIC_LYRICS_TEXT_URL, json)
                     .then(res => {
-                        if (res.state != 0) {
+                        if (res.state === 1) {
                             music.value.lrcText = lyricsMd.value;
                             text2marked();
                             closeLyricsEditDialog();

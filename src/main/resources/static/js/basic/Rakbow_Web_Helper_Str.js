@@ -21,6 +21,7 @@ const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
 //endregion
 
 //region album
+const GET_LIMIT_ALBUM_URL = DOMAIN_URL + "/db/album/get-album-limit";
 const GET_ALL_ALBUM_URL = DOMAIN_URL + "/db/album/get-all";
 const DELETE_ALBUM_URL = DOMAIN_URL + "/db/album/delete";
 const UPDATE_ALBUM_URL = DOMAIN_URL + "/db/album/update";

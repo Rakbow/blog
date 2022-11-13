@@ -49,6 +49,7 @@
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -63,7 +64,7 @@
     <div class="main">
         <div id="app">
             <!-- 头部 -->
-            <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
             <p-panel header="专辑列表">
                 <p-toast></p-toast>
@@ -89,24 +90,25 @@
                              LastPageLink CurrentPageReport RowsPerPageDropdown"
                              current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                              v-model:filters="filters" filter-display="row" responsive-layout="scroll"
-                             :global-filter-fields="['nameJp', 'publishPrice']">
+                             :global-filter-fields="['nameJp', 'nameEn', 'nameZh', 'catalogNo', 'publishPrice']">
                     <template #header>
-                        <div class="grid">
-                            <div class="col-4" style="text-align:center">
+                        <div class="flex justify-content-between">
+                            <p-button type="button" icon="pi pi-filter-slash" label="清空过滤" class="p-button-outlined" @click="clearFilter()"></p-button>
+                            <div class="col-4" style="text-align:left">
                                 <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
                                                @update:model-value="onToggle"
-                                               placeholder="可选显示项目" style="width: 20em"></p-multiselect>
+                                               placeholder="可选显示列" style="width: 20em"></p-multiselect>
                             </div>
-                            <div class="col-4" style="text-align:right">
                             <span class="p-input-icon-left ">
                                 <i class="pi pi-search"></i>
                                 <p-inputtext v-model="filters['global'].value" placeholder="输入关键字"></p-inputtext>
                             </span>
-                            </div>
                         </div>
                     </template>
                     <template #empty>
-                        没找到相关数据
+                        <div class="emptyInfo">
+                            没找到相关数据
+                        </div>
                     </template>
                     <template #loading>
                         加载中，别急~
@@ -120,7 +122,6 @@
                         </template>
                     </p-column>
                     <p-column field="catalogNo" header="专辑编号" :sortable="true"></p-column>
-                    <p-column field="barcode" header="商品条形码" :sortable="true"></p-column>
                     <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
                     <p-column header="专辑原名">
                         <template #body="slotProps">
@@ -174,24 +175,11 @@
                             </ul>
                         </template>
                     </p-column>
-
-                    <!--                    <p-column field="type" header="专辑类型" :show-filter-menu="false" style="min-width:12rem">-->
-                    <!--                        <template #body="slotProps">-->
-                    <!--                            {{slotProps.data.type}}-->
-                    <!--                        </template>-->
-                    <!--                        <template #filter="{filterModel,filterCallback}">-->
-                    <!--                            <p-dropdown v-model="filterModel.value" @change="filterCallback()" :options="albumType"-->
-                    <!--                                        placeholder="All" class="p-column-filter" :show-clear="true">-->
-                    <!--                                <template #value="slotProps">-->
-                    <!--                                    <span :class="slotProps.value" v-if="slotProps.value">{{slotProps.value}}</span>-->
-                    <!--                                    <span v-else>{{slotProps.placeholder}}</span>-->
-                    <!--                                </template>-->
-                    <!--                                <template #option="slotProps">-->
-                    <!--                                    <span :class="slotProps.option">{{slotProps.option}}</span>-->
-                    <!--                                </template>-->
-                    <!--                            </p-dropdown>-->
-                    <!--                        </template>-->
-                    <!--                    </p-column>-->
+                    <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center" style="min-width:8rem">
+                        <template #body="{data}">
+                            <i class="pi" :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
+                        </template>
+                    </p-column>
                     <p-column v-for="(col, index) of selectedColumns" :field="col.field"
                               :header="col.header" :key="col.field + '_' + index" :sortable="true">
                     </p-column>
@@ -339,7 +327,6 @@
                     <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
                 </template>
             </p-dialog>
-
             <p-dialog v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据" :modal="true"
                       class="p-fluid">
                 <p-panel header="基础信息">
@@ -481,7 +468,6 @@
                               @click="submitEditAlbum"></p-button>
                 </template>
             </p-dialog>
-
             <p-dialog v-model:visible="deleteAlbumsDialog" :style="{width: '450px'}" header="删除数据" :modal="true">
                 <div class="confirmation-content">
                     <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
@@ -496,7 +482,7 @@
             </p-dialog>
 
             <!-- 尾部 -->
-            <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
+            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
         </div>
     </div>
 </div>
@@ -546,11 +532,10 @@
             const dt = ref();
             const loading = ref(true);
             const columns = ref([
+                {field: 'barcode', header: '商品条形码'},
                 {field: 'nameZh', header: '专辑名称（中文）'},
                 {field: 'nameEn', header: '专辑名称（英文）'},
                 {field: 'remark', header: '备注'},
-                {field: 'description', header: '描述'},
-                {field: 'bonus', header: '特典信息'},
                 {field: 'label', header: '唱片公司'},
                 {field: 'publisher', header: '发行商'},
                 {field: 'distributor', header: '经销商'},
@@ -565,19 +550,37 @@
             const formatCurrency = (value) => {
                 return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
             };
+
+            //region ------过滤------
+            const clearFilter = () => {
+                initFilters();
+            };
+            const initFilters = () => {
+                filters.value = {
+                    'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                    'nameJp': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                    'nameEn': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                    'nameZh': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                    'catalogNo': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                    'releaseDate': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]}
+                }
+            };
             const filters = ref({
                 'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
-                'nameJp': {value: null, matchMode: FilterMatchMode.STARTS_WITH},
-                // 'type': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'publishPrice': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'nameJp': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                'nameEn': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                'nameZh': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                'catalogNo': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                'releaseDate': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]}
             });
             const onToggle = (val) => {
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
+            //endregion
             const exportCSV = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             dt.value.exportCSV();
@@ -601,19 +604,7 @@
                 });
             };
 
-            const label2value = (xFormat, xFormatSet) => {
-                let tmp = new Array();
-                for (let item1 of xFormat) {
-                    for (let item2 of xFormatSet) {
-                        if (item1 == item2.label) {
-                            tmp.push(item2.value);
-                        }
-                    }
-                }
-                return tmp;
-            };
-
-            //删除相关操作
+            //region ------新增编辑、编辑和删除相关操作------
             //打开删除确认面板
             const confirmDeleteSelected = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
@@ -641,7 +632,6 @@
                     });
             };
 
-            //编辑相关操作
             //打开编辑数据面板
             const openEditDialog = (data) => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
@@ -744,9 +734,11 @@
                     })
             };
 
+            //endregion
 
 
             return {
+                clearFilter,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 album, albums, formatCurrency, columns, selectedColumns, onToggle,
                 loading, filters, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
@@ -777,6 +769,7 @@
             "p-dropdown": primevue.dropdown,
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
+            "p-tristatecheckbox": primevue.tristatecheckbox,
         }
     };
 
@@ -795,5 +788,28 @@
     app.use(router);
     app.mount("#app");
 </script>
+<style>
+    .p-datatable.p-datatable-customers .p-datatable-header {
+        padding: 1rem;
+        text-align: left;
+        font-size: 1.5rem;
+    }
+
+    .p-datatable.p-datatable-customers .p-paginator {
+        padding: 1rem;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-thead > tr > th {
+        text-align: left;
+    }
+
+    .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td {
+        cursor: auto;
+    }
+
+    .p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
+        text-transform: uppercase;
+    }
+</style>
 </body>
 </html>

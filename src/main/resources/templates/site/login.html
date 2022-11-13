@@ -45,7 +45,7 @@
 <body>
 <div id="app">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
     <p-toast></p-toast>
     <form class="mt-5" method="post" th:action="@{/login}">

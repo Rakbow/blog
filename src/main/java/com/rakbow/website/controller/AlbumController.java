@@ -95,6 +95,7 @@ public class AlbumController {
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getAlbumCard(Model model) {
+        // model.addAttribute("totalRecords", albumService.getAlbumRows());
         model.addAttribute("albums", albumService.album2JsonDisplay(albumService.getAll()));
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
@@ -138,21 +139,21 @@ public class AlbumController {
 
     //region ------增删改查------
 
+    //获取指定起始行，指定数量的专辑get-album-limit
+    @RequestMapping(value = "/get-album-limit", method = RequestMethod.POST)
+    @ResponseBody
+    public List<JSONObject> getAlbumLimit(@RequestBody String json) {
+        int offset = JSONObject.parseObject(json).getInteger("offset");
+        int limit = JSONObject.parseObject(json).getInteger("limit");
+        String where = JSONObject.parseObject(json).getString("where");
+        return albumService.album2JsonDisplay(albumService.getAlbumLimit(offset, limit, where));
+    }
+
     //获得所有专辑
     @RequestMapping(value = "/get-all", method = RequestMethod.GET)
     @ResponseBody
     public String getAllAlbum() {
-        JSONArray albums = new JSONArray();
-
-        albumService.getAll().forEach(i -> {
-            try {
-                albums.add(albumService.album2Json(i));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        return JSON.toJSONString(albums);
+        return JSON.toJSONString(albumService.album2Json(albumService.getAll()));
     }
 
     //获取单个专辑信息

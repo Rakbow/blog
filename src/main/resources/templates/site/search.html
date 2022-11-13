@@ -43,7 +43,7 @@
 <body>
 <div class="nk-container">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
     <div class="main">
         <div class="container">
@@ -64,7 +64,7 @@
     </div>
 
     <!-- 尾部 -->
-    <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;

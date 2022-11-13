@@ -88,7 +88,7 @@
         <div class="container">
             <div id="app">
                 <!-- 头部 -->
-                <header class="sticky-top mb-2" th:insert="~{header :: site_header}"></header>
+                <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
                 <div class="grid card mt-2">
                     <p-toast></p-toast>
@@ -152,7 +152,7 @@
                                             <strong>发行价格</strong>
                                         </td>
                                         <td>
-                                            {{album.publishPrice?album.publishPrice:"N/A"}} 日元(含税)
+                                            {{album.publishPrice != 0 ? album.publishPrice + "日元(含税)" :"N/A"}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -161,7 +161,7 @@
                                                style="font-size: 1.3rem"></i>
                                             <strong>特典</strong>
                                         </td>
-                                        <td><a v-if=" album.hasBonus == '1' " href="#bonus">有</a>{{(album.hasBonus=="1")?"":"无"}}
+                                        <td><a v-if="album.hasBonus" href="#bonus">有</a>{{(album.hasBonus)?"":"无"}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -928,7 +928,7 @@
                 </p-dialog>
 
                 <!-- 尾部 -->
-                <footer class="mt-2" th:insert="~{footer :: site_footer}"></footer>
+                <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
             </div>
         </div>
     </div>

@@ -68,6 +68,7 @@ public class AlbumService {
     // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
     // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
     // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
+
     /**
      * 新增专辑
      *
@@ -81,19 +82,33 @@ public class AlbumService {
 
     /**
      * 获取表中所有数据
-     * @author rakbow
      * @return album表中所有专辑，用list封装
-     * */
+     * @author rakbow
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<Album> getAll() {
         return albumMapper.getAll();
     }
 
     /**
-     * 根据Id获取专辑
+     * 获取表中所有数据
      * @author rakbow
+     * @param offset 起始行数
+     * @param limit 需要多少数量
+     * @return List<Album>
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<Album> getAlbumLimit(int offset, int limit, String where) {
+        return albumMapper.getAlbumLimit(offset, limit, where);
+    }
+
+
+    /**
+     * 根据Id获取专辑
+     *
      * @param id 专辑id
      * @return album
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public Album getAlbumById(int id) {
@@ -128,9 +143,10 @@ public class AlbumService {
 
     /**
      * 根据条件精准搜索专辑
-     * @author rakbow
+     *
      * @param queryParam 包含所属系列id，所属产品id数组，媒体格式数组，专辑分类数组，出版形式数组和是否包含特典
      * @return list封装的专辑
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<Album> getAlbumsByFilter(String queryParam) {
@@ -199,10 +215,11 @@ public class AlbumService {
 
     /**
      * 检测数据合法性
-     * @author rakbow
+     *
      * @param albumJson
      * @return string类型错误消息，若为空则数据检测通过
-     * */
+     * @author rakbow
+     */
     public String checkAlbumJson(JSONObject albumJson) {
         if (StringUtils.isBlank(albumJson.getString("nameJp"))) {
             return ApiInfo.ALBUM_NAME_EMPTY;
@@ -234,10 +251,11 @@ public class AlbumService {
 
     /**
      * 处理前端传送专辑数据
-     * @author rakbow
+     *
      * @param albumJson
      * @return 处理后的album json格式数据
-     * */
+     * @author rakbow
+     */
     public JSONObject handleAlbumJson(JSONObject albumJson) {
 
         String[] products = CommonUtil.str2SortedArray(albumJson.getString("products"));
@@ -259,13 +277,17 @@ public class AlbumService {
 
     /**
      * Album转Json对象，以便前端使用，转换量最大的
-     * @author rakbow
+     *
      * @param album
      * @return JSONObject
+     * @author rakbow
      */
     public JSONObject album2Json(Album album) throws IOException {
 
         JSONObject albumJson = (JSONObject) JSON.toJSON(album);
+
+        //是否包含特典
+        boolean hasBonus = ((album.getHasBonus() == 1) ? true : false);
 
         //相关创作人员
         JSONArray artists = JSONArray.parseArray(album.getArtists());
@@ -407,7 +429,7 @@ public class AlbumService {
         //     }
         // });
 
-
+        albumJson.put("hasBonus", hasBonus);
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
@@ -427,9 +449,10 @@ public class AlbumService {
 
     /**
      * 列表转换, Album转Json对象，以便前端使用，转换量最大的
-     * @author rakbow
+     *
      * @param albums
      * @return List<JSONObject>
+     * @author rakbow
      */
     public List<JSONObject> album2Json(List<Album> albums) {
         List<JSONObject> albumJsons = new ArrayList<>();
@@ -446,9 +469,10 @@ public class AlbumService {
 
     /**
      * Album转Json对象，供首页展示
-     * @author rakbow
+     *
      * @param album
      * @return JSONObject
+     * @author rakbow
      */
     public JSONObject album2JsonDisplay(Album album) {
 
@@ -525,11 +549,12 @@ public class AlbumService {
 
     /**
      * 列表转换, Album转Json对象，供首页展示
-     * @author rakbow
+     *
      * @param albums
      * @return List<JSONObject>
+     * @author rakbow
      */
-    public List<JSONObject> album2JsonDisplay (List<Album> albums) {
+    public List<JSONObject> album2JsonDisplay(List<Album> albums) {
         List<JSONObject> albumJsons = new ArrayList<>();
 
         albums.forEach(album -> {
@@ -540,9 +565,10 @@ public class AlbumService {
 
     /**
      * Album转极简Json
-     * @author rakbow
+     *
      * @param album
      * @return JSONObject
+     * @author rakbow
      */
     public JSONObject album2JsonSimple(Album album) {
 
@@ -576,11 +602,12 @@ public class AlbumService {
 
     /**
      * 列表转换, Album转极简Json
-     * @author rakbow
+     *
      * @param albums
      * @return JSONObject
+     * @author rakbow
      */
-    public List<JSONObject> album2JsonSimple (List<Album> albums) {
+    public List<JSONObject> album2JsonSimple(List<Album> albums) {
         List<JSONObject> albumJsons = new ArrayList<>();
 
         albums.forEach(album -> {
@@ -591,9 +618,10 @@ public class AlbumService {
 
     /**
      * json对象转Album，以便保存到数据库
-     * @author rakbow
+     *
      * @param albumJson
      * @return Album
+     * @author rakbow
      */
     public Album json2Album(JSONObject albumJson) throws ParseException {
         // albumJson.put("releaseDate", CommonUtil.stringToDate(albumJson.getString("releaseDate"), "yyyy/MM/dd"));
@@ -602,9 +630,10 @@ public class AlbumService {
 
     /**
      * Album转json，用于存储在elasticsearch服务器中，用于搜索
-     * @author rakbow
+     *
      * @param album
      * @return JSONObject
+     * @author rakbow
      */
     public JSONObject album2StorageJson(Album album) {
         JSONObject albumJson = new JSONObject();
@@ -622,9 +651,10 @@ public class AlbumService {
 
     /**
      * 列表转换, Album转json，用于存储在elasticsearch服务器中，用于搜索
-     * @author rakbow
+     *
      * @param albums
      * @return List<JSONObject>
+     * @author rakbow
      */
     public List<JSONObject> album2StorageJson(List<Album> albums) {
         List<JSONObject> albumJsons = new ArrayList<>();
@@ -639,9 +669,10 @@ public class AlbumService {
 
     /**
      * 获取相关联专辑
-     * @author rakbow
+     *
      * @param id 专辑id
      * @return list封装的Album
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<JSONObject> getRelatedAlbums(int id) {
@@ -718,9 +749,10 @@ public class AlbumService {
 
     /**
      * 获取最新收录的专辑
-     * @author rakbow
+     *
      * @param limit 获取条数
      * @return list封装的Album
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<JSONObject> getJustAddedAlbums(int limit) {
@@ -734,9 +766,10 @@ public class AlbumService {
 
     /**
      * 获取最近编辑的专辑
-     * @author rakbow
+     *
      * @param limit 获取条数
      * @return list封装的Album
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<JSONObject> getJustEditedAlbums(int limit) {
@@ -750,9 +783,10 @@ public class AlbumService {
 
     /**
      * 获取浏览量最高的专辑
-     * @author rakbow
+     *
      * @param limit 获取条数
      * @return list封装的Album
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<JSONObject> getPopularAlbums(int limit) {
@@ -772,9 +806,10 @@ public class AlbumService {
 
     /**
      * 新增专辑图片
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id     专辑id
      * @param images 图片json数据
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void addAlbumImages(int id, String images) {
@@ -785,7 +820,7 @@ public class AlbumService {
         JSONArray imagesJsonArray = JSON.parseArray(images);
         for (int i = 0; i < imagesJsonArray.size(); i++) {
             JSONObject image = imagesJsonArray.getJSONObject(i);
-            if(Objects.equals(image.getString("type"), "1")) {
+            if (Objects.equals(image.getString("type"), "1")) {
                 String coverUrl = image.getString("url");
                 for (int j = 0; j < musics.size(); j++) {
                     musicService.updateMusicCoverUrl(musics.get(j).getId(), coverUrl);
@@ -798,9 +833,10 @@ public class AlbumService {
 
     /**
      * 更新专辑图片
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id    专辑id
      * @param image 需要更新的图片json数据
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String updateAlbumImages(int id, String image) {
@@ -825,9 +861,10 @@ public class AlbumService {
 
     /**
      * 删除专辑图片
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id       专辑id
      * @param imageUrl 需要删除的图片url
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAlbumImages(int id, String imageUrl) {
@@ -853,8 +890,9 @@ public class AlbumService {
 
     /**
      * 删除该专辑所有图片
-     * @author rakbow
+     *
      * @param id 专辑id
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAllAlbumImages(int id) {
@@ -869,9 +907,10 @@ public class AlbumService {
 
     /**
      * 更新专辑Artists
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id      专辑id
      * @param artists 专辑的创作相关信息json数据
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateAlbumArtists(int id, String artists) {
@@ -880,9 +919,10 @@ public class AlbumService {
 
     /**
      * 更新音轨信息
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id        专辑id
      * @param _discList 专辑的音轨信息json数据
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateAlbumTrackInfo(int id, String _discList) throws Exception {
@@ -952,9 +992,10 @@ public class AlbumService {
 
     /**
      * 更新专辑描述
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id          专辑id
      * @param description 专辑的描述json数据
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateAlbumDescription(int id, String description) {
@@ -963,9 +1004,10 @@ public class AlbumService {
 
     /**
      * 更新特典信息
-     * @author rakbow
-     * @param id 专辑id
+     *
+     * @param id    专辑id
      * @param bonus 专辑的特典信息json数据
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateAlbumBonus(int id, String bonus) {
@@ -973,14 +1015,16 @@ public class AlbumService {
     }
 
     //endregion
-    
+
     //region ------其他------
+
     /**
      * 根据id获取专辑封面图，若为空返回404图片
-     * @author rakbow
+     *
      * @param id 专辑id
      * @return 图片url
-     * */
+     * @author rakbow
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String getAlbumCoverUrl(int id) {
         //先赋值为404图片
