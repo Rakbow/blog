@@ -40,3 +40,5 @@ build/
 *.iml
 out
 gen
+!/src/main/resources/templates/album/album-index-tmp.html
+!/src/main/resources/templates/album/album-detail-tmp.html

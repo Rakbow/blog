@@ -53,6 +53,9 @@
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
     <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -240,9 +243,9 @@
                                 <table class="table-borderless table-sm ml-10">
                                     <tbody>
                                     <tr v-for="item in album.artists">
-                                        <td><strong>{{item.position}}</strong></td>
+                                        <td><strong>{{item.pos}}</strong></td>
                                         <td>
-                                            {{item.artist.join("/")}}
+                                            {{item.name.join("/")}}
                                         </td>
                                     </tr>
                                     </tbody>
@@ -286,7 +289,7 @@
                                     <thead>
                                     <h5>
                                         Disc {{disc.serial}} ({{disc.mediaFormat}})
-                                        <span v-if="disc.catalog_no != ''">[{{disc.catalogNo}}]</span>
+                                        <span v-if="disc.catalogNo != ''">[{{disc.catalogNo}}]</span>
                                         {{disc.albumFormat}}
                                     </h5>
                                     </thead>
@@ -294,7 +297,7 @@
                                     <tr v-for="track in disc.trackList">
                                         <th scope="row">{{track.serial}}</th>
                                         <td>
-                                            <a :href="domainUrl + '/db/music/' + track.musicId">
+                                            <a :href="'/db/music/' + track.musicId">
                                                 {{track.name}}
                                             </a>
                                         </td>
@@ -562,7 +565,7 @@
                             <div class="col-12">
                                 <label htmlFor="hasBonus" class="mb-3">特典</label>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mt-2">
                                 <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>
@@ -623,9 +626,12 @@
                                   @click="submitEditAlbum"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="图片管理"
-                          :modal="true">
+                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="图片管理" :modal="true">
                     <p-panel>
+                        <template #header>
+                            <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
                         <div class="grid">
                             <div class="col-6" align="left">
                                 <p-fileupload
@@ -692,6 +698,10 @@
                         </div>
                     </p-panel>
                     <p-panel>
+                        <template #header>
+                            <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
                         <div class="grid" v-if="album.images.length != 0">
                             <div class="col-4" v-for="image in album.images">
                                 <div class="grid">
@@ -745,44 +755,83 @@
                         </div>
                     </p-panel>
                 </p-dialog>
-                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑音乐制作"
-                          :modal="true">
-                    <div class="grid">
-                        <div class="col-3">
-                            <div class="p-inputgroup">
+                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作信息" :modal="true">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                <p-inputtext v-model="positionName" placeholder="职位名称"></p-inputtext>
+                                    <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-7">
-                            <div class="p-inputgroup">
+                            <div class="col-7">
+                                <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-users"></i>
                                     </span>
-                                <p-chips v-model="positionArtist" placeholder="人员信息" separator=","></p-chips>
+                                    <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <p-button label="新增" icon="pi pi-save"
+                                          @click="addArtist"></p-button>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <p-button label="保存当前" icon="pi pi-save"
-                                      @click="saveArtist"></p-button>
+                    </p-panel>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
+                        <div v-if="album.artists.length != 0">
+                            <p-datatable dataKey="id" :value="album.artists" responsive-layout="scroll"
+                                         class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                         context-menu v-model:context-menu-selection="selectedArtist"
+                                         @row-contextmenu="onRowContextMenu" edit-mode="row"
+                                         v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                                <p-column :row-reorder="true"></p-column>
+                                <p-column field="pos" header="职位">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="name" header="人员">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.name.join(" / ")}}
+                                    </template>
+                                    <template #editor="{ data, field }">
+                                        <p-chips v-model="data[field]"></p-chips>
+                                    </template>
+                                </p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                            </p-datatable>
+                            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
-                    </div>
-                    <p-divider></p-divider>
-                    <div class="grid">
-                        <section>
-                            <div id="artistBox" v-html="artistHtml"></div>
-                        </section>
-                    </div>
+                        <div v-else>
+                            <span class="emptyInfo">暂无创作人员相关信息</span>
+                        </div>
+                    </p-panel>
                     <template #footer>
-                        <p-button label="提交更新" icon="pi pi-save" class="p-button-success mr-4"
+                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                                  @click="clearArtists"></p-button>
+                        <p-button label="取消" icon="pi pi-times" class="mr-4"
+                                  @click="cancelArtistEdit"></p-button>
+                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
                                   @click="submitArtist"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayTrackEditDialog" :style="{width: '800px'}" header="编辑音轨信息"
-                          :modal="true">
+                <p-dialog v-model:visible="displayTrackEditDialog" :style="{width: '800px'}" header="编辑音轨信息" :modal="true">
                     <p-panel>
+                        <template #header>
+                            <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
                         <div class="grid">
                             <div class="col-10">
                                 <div class="p-inputgroup">
@@ -834,6 +883,45 @@
                             <section>
                                 <div id="trackBox" v-html="trackHtml"></div>
                             </section>
+                        </div>
+                    </p-panel>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
+                        <div v-if="album.trackInfo.discList.length != 0">
+                            <p-datatable dataKey="serial" :value="album.trackInfo.discList" class="p-datatable-sm"
+                                         responsive-layout="scroll" v-model:expanded-rows="expandedRows">
+                                <template #header>
+                                    <div class="table-header-container">
+                                        <p-button icon="pi pi-plus" label="展开" @click="expandAll" class="mr-2"></p-button>
+                                        <p-button icon="pi pi-minus" label="折叠" @click="collapseAll"></p-button>
+                                    </div>
+                                </template>
+                                <p-column :expander="true" headerStyle="width: 3rem"></p-column>
+                                <p-column field="serial" header="碟片序号"></p-column>
+                                <p-column field="catalogNo" header="序号"></p-column>
+                                <p-column field="discLength" header="碟片时长"></p-column>
+                                <p-column field="albumFormat" header="专辑分类"></p-column>
+                                <p-column field="mediaFormat" header="媒体格式"></p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                                <template #expansion="slotProps">
+                                    <div class="orders-subtable">
+                                        <h5><b>{{slotProps.data.catalogNo}}</b></h5>
+                                        <p-datatable :value="slotProps.data.trackList" responsive-layout="scroll">
+                                            <p-column field="serial" header="曲目序号" sortable></p-column>
+                                            <p-column field="musicId" header="曲目id" sortable></p-column>
+                                            <p-column field="name" header="曲名"></p-column>
+                                            <p-column field="length" header="音频长度"></p-column>
+                                        </p-datatable>
+                                    </div>
+                                </template>
+                            </p-datatable>
+                            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo">暂无音轨信息</span>
                         </div>
                     </p-panel>
                     <template #footer>
@@ -938,19 +1026,6 @@
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
-
-    // const ap = new APlayer({
-    //     container: document.getElementById('player'),
-    //     volume: 0.5,
-    //     audio: [
-    //         {
-    //             name: "ひぐらしのなく頃に",
-    //             url: "http://m10.music.126.net/20221106200409/197162ad14f6388257756f1e8b0e512d/ymusic/fde3/675b/a2b7/20e324785de28f717d97ce9397a23b53.mp3",
-    //             artist: "島みやえい子",
-    //             cover: "/db/album/11/Front.jpg"
-    //         }
-    //     ]
-    // });
 
     const App = {
         setup() {
@@ -1202,6 +1277,14 @@
             //endregion
 
             //region ------音轨信息相关组件------
+            const expandedRows = ref([]);
+            const expandAll = () => {
+                expandedRows.value = album.value.trackInfo.discList.filter(disc => disc.serial);
+            };
+            const collapseAll = () => {
+                expandedRows.value = null;
+            };
+
             const mediaFormat = ref();
             const albumFormat = ref();
             const trackHtml = ref("");
@@ -1317,59 +1400,71 @@
             //endregion
 
             //region ------artists相关组件------
-            const artistHtml = ref("");
-            const positionName = ref();
-            const positionArtist = ref();
+            const cm = ref();
+            const selectedArtist = ref();
+            const artist = ref({});
             const artists = ref([]);
             const displayArtistEditDialog = ref(false);
+            const menuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
+            ]);
+            const onRowContextMenu = (event) => {
+                cm.value.show(event.originalEvent);
+            };
+            const deleteArtist = (artist) => {
+                album.value.artists = album.value.artists.filter((a) => a.pos !== artist.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: artist.pos, life: 3000});
+                selectedArtist.value = null;
+            };
+            const editingRows = ref([]);
+            const onRowEditSave = (event) => {
+                let { newData, index } = event;
+
+                album.value.artists[index] = newData;
+            };
+
             const openArtistEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            artists.value = [];
-                            positionName.value = "";
-                            positionArtist.value = [];
+                            artist.value = {};
                             displayArtistEditDialog.value = true;
                         }
                     })
             };
-            const saveArtist = () => {
-                let param = {
-                    position: positionName.value,
-                    artist: positionArtist.value
-                };
-                artists.value.push(param);
-                positionName.value = "";
-                positionArtist.value = [];
-                showArtist();
+            const clearArtists = () => {
+                album.value.artists = [];
+            };
+            const addArtist = () => {
+                album.value.artists.push(artist.value);
+                artist.value = {};
             }
-            const showArtist = () => {
-                artistHtml.value = "";
-                //<![CDATA[
-                for (const artist of artists.value) {
-                    artistHtml.value += '<p>' + artist.position + ' : ' + artist.artist.join("/") + '</p>';
-                }
-                //]]>
-                document.getElementById("artistBox").innerHTML = artistHtml;
+            const cancelArtistEdit = () => {
+                artist.value = {};
+                displayArtistEditDialog.value = false;
             };
             const submitArtist = () => {
                 let json = {
                     id: album.value.id,
-                    artists: artists.value
+                    artists: album.value.artists
                 }
                 axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
                     .then(res => {
-                        if (res.state == 1) {
+                        if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayArtistEditDialog.value = false;
-                            artists.value = [];
+                            artist.value = {};
                             location.reload(true);
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
+            };
+            const onRowReorder = (event) => {
+                album.value.artists = event.value;
+                toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
             };
             //endregion
 
@@ -1593,6 +1688,23 @@
             }
 
             return {
+                expandedRows, expandAll, collapseAll,
+
+                cm,
+                artist,
+                artists,
+                menuModel,
+                editingRows,
+                selectedArtist,
+                addArtist,
+                clearArtists,
+                submitArtist,
+                deleteArtist,
+                cancelArtistEdit,
+                onRowContextMenu,
+                onRowEditSave,
+                onRowReorder,
+
                 blockDeleteImage,
                 cancelDeleteAllImage,
                 deleteAllAlbumImageDialog,
@@ -1603,22 +1715,22 @@
                 imageClick,
                 displayCustom,
                 activeIndex,
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
 
+                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 edits,
                 seriesBool,
                 displayEditDialog,
                 albumEdit,
                 openEditDialog,
                 closeEditDialog,
-                submitEditAlbum,
 
+                submitEditAlbum,
                 mediaFormatSet,
                 albumFormatSet,
                 publishFormatSet,
                 productSet,
-                seriesSet,
 
+                seriesSet,
                 visitNum,
                 updateImage,
                 selectedEditImage,
@@ -1630,8 +1742,8 @@
                 confirmDeleteSelectedImage,
                 deleteAlbumImageDialog,
                 initImageClass,
-                galleriaItemClass,
 
+                galleriaItemClass,
                 onUpload,
                 save2imageInfos,
                 imageInfo,
@@ -1643,13 +1755,7 @@
                 selectFile,
                 imageHtml,
                 displayImageEditDialog,
-                positionName,
-                positionArtist,
                 displayArtistEditDialog,
-                artists,
-                saveArtist,
-                artistHtml,
-                submitArtist,
                 displayTrackEditDialog,
                 musicName,
                 musicLength,
@@ -1693,6 +1799,9 @@
             "p-inputswitch": primevue.inputswitch,
             "p-splitbutton": primevue.splitbutton,
             "p-blockui": primevue.blockui,
+            "p-datatable": primevue.datatable,
+            "p-column": primevue.column,
+            "p-contextmenu": primevue.contextmenu,
         }
     };
 
@@ -1713,6 +1822,9 @@
         .mount("#app");
 </script>
 <style>
+    .orders-subtable {
+        padding: 1rem;
+    }
     #panel-image-div {
         display: flex;
         position: relative;

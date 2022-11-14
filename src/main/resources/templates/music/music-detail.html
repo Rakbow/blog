@@ -53,6 +53,9 @@
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
     <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -358,38 +361,74 @@
                                   @click="submitEditMusic"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
-                          :modal="true">
-                    <div class="grid">
-                        <div class="col-3">
-                            <div class="p-inputgroup">
+                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作" :modal="true">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                <p-inputtext v-model="artistPos" placeholder="职位名称"></p-inputtext>
+                                    <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-7">
-                            <div class="p-inputgroup">
+                            <div class="col-7">
+                                <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-users"></i>
                                     </span>
-                                <p-chips v-model="artistName" placeholder="人员信息" separator=","></p-chips>
+                                    <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <p-button label="新增" icon="pi pi-save"
+                                          @click="addArtist"></p-button>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <p-button label="保存当前" icon="pi pi-save"
-                                      @click="saveArtists"></p-button>
+                    </p-panel>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
+                        <div v-if="music.artists.length != 0">
+                            <p-datatable dataKey="id" :value="music.artists" responsive-layout="scroll"
+                                         class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                         context-menu v-model:context-menu-selection="selectedArtist"
+                                         @row-contextmenu="onRowContextMenu" edit-mode="row"
+                                         v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                                <p-column :row-reorder="true"></p-column>
+                                <p-column field="pos" header="职位">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="name" header="人员">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.name.join(" / ")}}
+                                    </template>
+                                    <template #editor="{ data, field }">
+                                        <p-chips v-model="data[field]"></p-chips>
+                                    </template>
+                                </p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                            </p-datatable>
+                            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
-                    </div>
-                    <p-divider></p-divider>
-                    <div class="grid">
-                        <section>
-                            <div id="artistBox" v-html="artistHtml"></div>
-                        </section>
-                    </div>
+                        <div v-else>
+                            <span class="emptyInfo">暂无创作人员相关信息</span>
+                        </div>
+                    </p-panel>
                     <template #footer>
-                        <p-button label="提交更新" icon="pi pi-save" class="p-button-success mr-4"
+                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                                  @click="clearArtists"></p-button>
+                        <p-button label="取消" icon="pi pi-times" class="mr-4"
+                                  @click="cancelArtistEdit"></p-button>
+                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
                                   @click="submitArtist"></p-button>
                     </template>
                 </p-dialog>
@@ -433,15 +472,11 @@
                 init();
             })
 
-            //region 页面header
+            //region ------页面header------
             const domainUrl = DOMAIN_URL;
-
             const selectedEntity = ref();
-
             const entityType = ref(ENTITY_TYPE);
-
             const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
             const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
             //endregion
 
@@ -530,59 +565,71 @@
             //endregion
 
             //region ------artists相关组件------
-            const artistHtml = ref("");
-            const artistPos = ref();
-            const artistName = ref();
+            const cm = ref();
+            const selectedArtist = ref();
+            const artist = ref({});
             const artists = ref([]);
             const displayArtistEditDialog = ref(false);
+            const menuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
+            ]);
+            const onRowContextMenu = (event) => {
+                cm.value.show(event.originalEvent);
+            };
+            const deleteArtist = (artist) => {
+                music.value.artists = music.value.artists.filter((a) => a.pos !== artist.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: artist.pos, life: 3000});
+                selectedArtist.value = null;
+            };
+            const editingRows = ref([]);
+            const onRowEditSave = (event) => {
+                let { newData, index } = event;
+
+                music.value.artists[index] = newData;
+            };
+
             const openArtistEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            artists.value = [];
-                            artistPos.value = "";
-                            artistName.value = [];
+                            artist.value = {};
                             displayArtistEditDialog.value = true;
                         }
                     })
             };
-            const saveArtists = () => {
-                let artist = {
-                    pos: artistPos.value,
-                    name: artistName.value
-                };
-                artists.value.push(artist);
-                artistPos.value = "";
-                artistName.value = [];
-                showArtist();
+            const clearArtists = () => {
+                music.value.artists = [];
+            };
+            const addArtist = () => {
+                music.value.artists.push(artist.value);
+                artist.value = {};
             }
-            const showArtist = () => {
-                artistHtml.value = "";
-                //<![CDATA[
-                for (const artist of artists.value) {
-                    artistHtml.value += '<p>' + artist.pos + ' : ' + artist.name.join("/") + '</p>';
-                }
-                //]]>
-                document.getElementById("artistBox").innerHTML = artistHtml;
+            const cancelArtistEdit = () => {
+                artist.value = {};
+                displayArtistEditDialog.value = false;
             };
             const submitArtist = () => {
                 let json = {
                     id: music.value.id,
-                    artists: artists.value
+                    artists: music.value.artists
                 }
                 axiosPostRequest(UPDATE_MUSIC_ARTISTS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayArtistEditDialog.value = false;
-                            artists.value = [];
+                            artist.value = {};
                             location.reload(true);
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
+            };
+            const onRowReorder = (event) => {
+                music.value.artists = event.value;
+                toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
             };
             //endregion
 
@@ -690,6 +737,22 @@
             };
 
             return {
+                cm,
+                artist,
+                artists,
+                menuModel,
+                editingRows,
+                selectedArtist,
+                addArtist,
+                clearArtists,
+                submitArtist,
+                deleteArtist,
+                cancelArtistEdit,
+                onRowContextMenu,
+                onRowEditSave,
+                onRowReorder,
+
+
                 relatedAlbum,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
 
@@ -707,13 +770,7 @@
                 visitNum,
                 music,
 
-                artistPos,
-                artistName,
                 displayArtistEditDialog,
-                artists,
-                saveArtists,
-                artistHtml,
-                submitArtist,
                 descriptionMd,
                 displayDescriptionDialog,
                 closeDescriptionEditDialog,
@@ -747,6 +804,9 @@
             "p-inputswitch": primevue.inputswitch,
             "p-splitbutton": primevue.splitbutton,
             "p-tag": primevue.tag,
+            "p-datatable": primevue.datatable,
+            "p-column": primevue.column,
+            "p-contextmenu": primevue.contextmenu,
         }
     };
 

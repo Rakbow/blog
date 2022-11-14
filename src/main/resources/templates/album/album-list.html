@@ -83,7 +83,8 @@
                     </template>
                 </p-toolbar>
                 <p-datatable ref="dt" :value="albums" class="p-datatable-customers p-datatable-sm"
-                             :paginator="true" :rows="10" :loading="loading"
+                             :paginator="true" :rows="10" :loading="loading" striped-rows
+                             :resizable-columns="true" column-resize-mode="fit"
                              v-model:selection="selectedAlbums" dataKey="id"
                              :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                              paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
