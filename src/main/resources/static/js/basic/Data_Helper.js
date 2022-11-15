@@ -1,10 +1,22 @@
 //将{label, value}选项里value数组转为label数组
-const value2LabelArray = (xFormat, xFormatSet) => {
+const labelEn2valueArray = (xFormat, xFormatSet) => {
     let tmp = [];
     for (let item1 of xFormat) {
         for (let item2 of xFormatSet) {
             if (item1 === item2.labelEn) {
                 tmp.push(item2.value);
+            }
+        }
+    }
+    return tmp;
+}
+
+const value2LabelEnArray = (xFormat, xFormatSet) => {
+    let tmp = [];
+    for (let item1 of xFormat) {
+        for (let item2 of xFormatSet) {
+            if (item1 === item2.value) {
+                tmp.push(item2.labelEn);
             }
         }
     }

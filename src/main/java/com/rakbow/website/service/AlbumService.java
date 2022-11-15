@@ -286,8 +286,10 @@ public class AlbumService {
 
         JSONObject albumJson = (JSONObject) JSON.toJSON(album);
 
+        List<Music> allMusics = musicService.getMusicsByAlbumId(album.getId());
+
         //是否包含特典
-        boolean hasBonus = ((album.getHasBonus() == 1) ? true : false);
+        boolean hasBonus = (album.getHasBonus() == 1);
 
         //相关创作人员
         JSONArray artists = JSONArray.parseArray(album.getArtists());
@@ -299,22 +301,22 @@ public class AlbumService {
         albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
 
         //出版类型
-        List<String> publishFormat = new ArrayList();
+        List<String> publishFormat = new ArrayList<>();
         JSONObject.parseObject(album.getPublishFormat()).getList("ids", Integer.class)
                 .forEach(id -> publishFormat.add(PublishFormat.getNameByIndex(id)));
 
         //专辑分类
-        List<String> albumFormat = new ArrayList();
+        List<String> albumFormat = new ArrayList<>();
         JSONObject.parseObject(album.getAlbumFormat()).getList("ids", Integer.class)
                 .forEach(id -> albumFormat.add(AlbumFormat.getNameByIndex(id)));
 
         //媒体格式
-        List<String> mediaFormat = new ArrayList();
+        List<String> mediaFormat = new ArrayList<>();
         JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
         //所属产品（详细）
-        List<String> product = new ArrayList();
+        List<String> product = new ArrayList<>();
         JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
                 .forEach(id -> product.add(productService.selectProductById(id).getNameZh() + "(" +
                         ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")"));
@@ -370,11 +372,38 @@ public class AlbumService {
             }
         }
 
+        //可供编辑的editDiscList
+        JSONArray tmpEditDiscList = JSONObject.parseObject(album.getTrackInfo()).getJSONArray("discList");
+        JSONArray editDiscList = new JSONArray();
+        for (int i = 0; i < tmpEditDiscList.size(); i++) {
+            JSONObject disc = tmpEditDiscList.getJSONObject(i);
+            JSONArray trackList = disc.getJSONArray("trackList");
+            JSONArray editTrackList = new JSONArray();
+            for (int j = 0; j < trackList.size(); j++) {
+                int musicId = trackList.getInteger(j);
+                Music music = DataFinder.findMusicById(musicId, allMusics);
+                if(music != null){
+                    JSONObject track = new JSONObject();
+                    track.put("musicId", musicId);
+                    track.put("name", music.getName());
+                    track.put("length", music.getAudioLength());
+                    editTrackList.add(track);
+                }
+            }
+            disc.put("trackList", editTrackList);
+            disc.put("albumFormat", AlbumFormat.index2NameEnArray(disc.getJSONArray("albumFormat")));
+            disc.put("mediaFormat", MediaFormat.index2NameEnArray(disc.getJSONArray("mediaFormat")));
+            disc.remove("serial");
+            disc.remove("catalogNo");
+            disc.remove("discLength");
+            editDiscList.add(disc);
+        }
+
+
         //音轨信息
         List<Music> musics = new ArrayList<>();
         JSONObject trackInfo = JSONObject.parseObject(album.getTrackInfo());
         if (trackInfo != null && !Objects.equals(trackInfo.toJSONString(), "{}")) {
-            List<Music> allMusics = musicService.getMusicsByAlbumId(album.getId());
             JSONArray discList = trackInfo.getJSONArray("discList");
             JSONArray newDiscList = new JSONArray();
             for (int i = 0; i < discList.size(); i++) {
@@ -429,6 +458,7 @@ public class AlbumService {
         //     }
         // });
 
+        albumJson.put("editDiscList", editDiscList);
         albumJson.put("hasBonus", hasBonus);
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);

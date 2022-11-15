@@ -284,18 +284,18 @@
                                 </p>
                             </div>
                             <div v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' "
-                                 v-for="disc in album.trackInfo.discList">
+                                 v-for="(disc, index) in album.trackInfo.discList">
                                 <table class="table table-sm table-hover table-striped">
                                     <thead>
                                     <h5>
-                                        Disc {{disc.serial}} ({{disc.mediaFormat}})
-                                        <span v-if="disc.catalogNo != ''">[{{disc.catalogNo}}]</span>
+                                        Disc {{index+1}} ({{disc.mediaFormat}})
+                                        <span v-if="disc.catalogNo != ''">[{{album.catalogNo+"-"+(index+1)}}]</span>
                                         {{disc.albumFormat}}
                                     </h5>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="track in disc.trackList">
-                                        <th scope="row">{{track.serial}}</th>
+                                    <tr v-for="(track, index) in disc.trackList">
+                                        <th scope="row">{{index+1>9?index+1:"0"+(index+1)}}</th>
                                         <td>
                                             <a :href="'/db/music/' + track.musicId">
                                                 {{track.name}}
@@ -838,7 +838,7 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                    <p-chips v-model="musicName" placeholder="曲目列表" separator=","></p-chips>
+                                    <p-chips v-model="tracks.audioNames" placeholder="曲目列表" separator=","></p-chips>
                                 </div>
                             </div>
                             <div class="col-10">
@@ -846,7 +846,7 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-users"></i>
                                     </span>
-                                    <p-chips v-model="musicLength" placeholder="曲目长度" separator=","></p-chips>
+                                    <p-chips v-model="tracks.audioLengths" placeholder="曲目长度" separator=","></p-chips>
                                 </div>
                             </div>
 
@@ -855,7 +855,7 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                    <p-multiselect id="mediaFormat" v-model="mediaFormat" :options="mediaFormatSet"
+                                    <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="mediaFormatSet"
                                                    option-label="label" option-value="labelEn" placeholder="媒体格式"
                                                    display="chip">
                                     </p-multiselect>
@@ -866,7 +866,7 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                    <p-multiselect id="albumFormat" v-model="albumFormat" :options="albumFormatSet"
+                                    <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="albumFormatSet"
                                                    option-label="label" option-value="labelEn" placeholder="专辑分类"
                                                    display="chip">
                                     </p-multiselect>
@@ -874,49 +874,68 @@
                             </div>
 
                             <div class="col-2">
-                                <p-button label="保存disc" icon="pi pi-save" class="p-button-success"
-                                          @click="saveDisc"></p-button>
+                                <p-button label="添加碟片" icon="pi pi-save" class="p-button-success"
+                                          @click="addDisc"></p-button>
                             </div>
-                        </div>
-                        <p-divider></p-divider>
-                        <div class="grid">
-                            <section>
-                                <div id="trackBox" v-html="trackHtml"></div>
-                            </section>
                         </div>
                     </p-panel>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>
+                            <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
                             <b>编辑</b>
                         </template>
-                        <div v-if="album.trackInfo.discList.length != 0">
-                            <p-datatable dataKey="serial" :value="album.trackInfo.discList" class="p-datatable-sm"
-                                         responsive-layout="scroll" v-model:expanded-rows="expandedRows">
+                        <div v-if="album.editDiscList != 0">
+                            <p-datatable :value="album.editDiscList" class="p-datatable-sm" striped-rows
+                                         responsive-layout="scroll" v-model:expanded-rows="expandedRows"
+                                         @row-reorder="onRowReorderDisc"
+                                         context-menu v-model:context-menu-selection="selectedDisc"
+                                         @row-contextmenu="onRowContextMenuDisc" edit-mode="row"
+                                         v-model:editing-rows="editingRowsDisc" @row-edit-save="onRowEditSaveDisc">
                                 <template #header>
                                     <div class="table-header-container">
-                                        <p-button icon="pi pi-plus" label="展开" @click="expandAll" class="mr-2"></p-button>
-                                        <p-button icon="pi pi-minus" label="折叠" @click="collapseAll"></p-button>
+                                        <p-button icon="pi pi-plus" label="全部展开" @click="expandAll" class="mr-2"></p-button>
+                                        <p-button icon="pi pi-minus" label="全部折叠" @click="collapseAll"></p-button>
                                     </div>
                                 </template>
+                                <p-column :row-reorder="true"></p-column>
                                 <p-column :expander="true" headerStyle="width: 3rem"></p-column>
-                                <p-column field="serial" header="碟片序号"></p-column>
-                                <p-column field="catalogNo" header="序号"></p-column>
-                                <p-column field="discLength" header="碟片时长"></p-column>
-                                <p-column field="albumFormat" header="专辑分类"></p-column>
-                                <p-column field="mediaFormat" header="媒体格式"></p-column>
+                                <p-column header="碟片序号">
+                                    <template #body="slotProps">
+                                        {{slotProps.index+1}}
+                                    </template>
+                                </p-column>
+                                <p-column field="albumFormat" header="专辑分类">
+                                    <template #editor="{ data, field }">
+                                        <p-multiselect v-model="data[field]" :options="albumFormatSet"
+                                                       option-label="label" option-value="labelEn" placeholder="专辑分类"
+                                                       display="chip">
+                                        </p-multiselect>
+                                    </template>
+                                </p-column>
+                                <p-column field="mediaFormat" header="媒体格式">
+                                    <template #editor="{ data, field }">
+                                        <p-multiselect v-model="data[field]" :options="mediaFormatSet"
+                                                       option-label="label" option-value="labelEn" placeholder="媒体格式"
+                                                       display="chip">
+                                        </p-multiselect>
+                                    </template>
+                                </p-column>
                                 <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
                                 <template #expansion="slotProps">
                                     <div class="orders-subtable">
-                                        <h5><b>{{slotProps.data.catalogNo}}</b></h5>
                                         <p-datatable :value="slotProps.data.trackList" responsive-layout="scroll">
-                                            <p-column field="serial" header="曲目序号" sortable></p-column>
-                                            <p-column field="musicId" header="曲目id" sortable></p-column>
+                                            <p-column header="曲目序号">
+                                                <template #body="slotProps">
+                                                    {{slotProps.index+1}}
+                                                </template>
+                                            </p-column>
+                                            <p-column field="musicId" header="曲目编号" sortable></p-column>
                                             <p-column field="name" header="曲名"></p-column>
                                             <p-column field="length" header="音频长度"></p-column>
                                         </p-datatable>
                                     </div>
                                 </template>
+                                <p-contextmenu :model="menuModelDisc" ref="cmDisc"></p-contextmenu>
                             </p-datatable>
                             <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
@@ -1033,56 +1052,9 @@
                 init();
             })
 
-            //region 图片板块
-            const activeIndex = ref(0);
-            const displayCustom = ref(false);
-            const imageClick = (index) => {
-                activeIndex.value = index;
-                displayCustom.value = true;
-            };
-            const initPanelImageClass = (url) => {
-                var image = new Image();
-                image.src = url;
-                return (image.naturalWidth > image.naturalHeight) ? "panel-image-width" : "panel-image-height";
-            };
-
-            const initGalleriaImageClass = (url) => {
-                var image = new Image();
-                image.src = url;
-                return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
-            };
-            //endregion
-
-            //region 页面header
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
-            //endregion
-
-            const seriesBool = true;
-
-            const visitNum = ref([[${visitNum}]]);
-
             const album = ref([[${album}]]);
-
+            const visitNum = ref([[${visitNum}]]);
             const toast = useToast();
-
-            //region ------音频播放------
-
-            //endregion
-
-            const mediaFormatSet = ref([[${mediaFormatSet}]]);
-            const albumFormatSet = ref([[${albumFormatSet}]]);
-            const publishFormatSet = ref([[${publishFormatSet}]]);
-            const productSet = ref([[${productSet}]]);
-            const seriesSet = ref([[${seriesSet}]]);
-
             const edits = ref([
                 {
                     label: '图片管理',
@@ -1120,8 +1092,46 @@
                     }
                 }
             ]);
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const publishFormatSet = ref([[${publishFormatSet}]]);
+            const productSet = ref([[${productSet}]]);
+            const seriesSet = ref([[${seriesSet}]]);
+
+            //region ------图片板块------
+            const activeIndex = ref(0);
+            const displayCustom = ref(false);
+            const imageClick = (index) => {
+                activeIndex.value = index;
+                displayCustom.value = true;
+            };
+            const initPanelImageClass = (url) => {
+                var image = new Image();
+                image.src = url;
+                return (image.naturalWidth > image.naturalHeight) ? "panel-image-width" : "panel-image-height";
+            };
+
+            const initGalleriaImageClass = (url) => {
+                var image = new Image();
+                image.src = url;
+                return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
+            };
+            //endregion
+
+            //region ------页面header------
+            const domainUrl = DOMAIN_URL;
+
+            const selectedEntity = ref();
+
+            const entityType = ref(ENTITY_TYPE);
+
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
 
             //region ------编辑专辑信息------
+            const seriesBool = true;
             const albumEdit = ref({});
             const displayEditDialog = ref(false);
 
@@ -1277,35 +1287,63 @@
             //endregion
 
             //region ------音轨信息相关组件------
+            const cmDisc = ref();
+            const selectedDisc = ref();
+            const menuModelDisc = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteDisc(selectedDisc)}
+            ]);
+            const onRowReorderDisc = (event) => {
+                album.value.editDiscList = event.value;
+                console.log(album.value.editDiscList);
+            };
+            const onRowContextMenuDisc = (event) => {
+                cmDisc.value.show(event.originalEvent);
+            };
+            const deleteDisc = (disc) => {
+                album.value.editDiscList = album.value.editDiscList.filter((d) => d.trackList !== disc.trackList);
+                toast.add({severity: 'error', summary: '已删除', detail: artist.pos, life: 3000});
+                selectedArtist.value = null;
+            };
+            const editingRowsDisc = ref([]);
+            const onRowEditSaveDisc = (event) => {
+                let { newData, index } = event;
+
+                album.value.editDiscList[index] = newData;
+            };
+
+            const tracks = ref({
+                audioNames: [],
+                audioLengths: []
+            });
+            const disc = ref({
+                albumFormat: "",
+                mediaFormat: ""
+            });
             const expandedRows = ref([]);
             const expandAll = () => {
-                expandedRows.value = album.value.trackInfo.discList.filter(disc => disc.serial);
+                expandedRows.value = album.value.editDiscList;
             };
             const collapseAll = () => {
                 expandedRows.value = null;
             };
-
-            const mediaFormat = ref();
-            const albumFormat = ref();
-            const trackHtml = ref("");
-            const musicName = ref([]);
-            const musicLength = ref([]);
-            const discList = ref([]);
             const displayTrackEditDialog = ref(false);
+
             const openTrackEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            discList.value = [];
-                            trackHtml.value = "";
+                        if (res.state === 1) {
+
+                            tracks.value = {};
+                            disc.value = {};
+
                             displayTrackEditDialog.value = true;
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     });
             };
             const checkDisc = () => {
-                if (musicName.value.length === 0) {
+                if (tracks.value.audioNames === undefined || tracks.value.audioNames.length === 0) {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
@@ -1313,7 +1351,8 @@
                         life: 3000
                     });
                     return false;
-                } else if (musicLength.value.length === 0) {
+                }
+                if (tracks.value.audioLengths === undefined || tracks.value.audioLengths.length === 0) {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
@@ -1321,7 +1360,8 @@
                         life: 3000
                     });
                     return false;
-                } else if (musicLength.value.length !== musicName.value.length) {
+                }
+                if (tracks.value.audioLengths.length !== tracks.value.audioNames.length) {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
@@ -1329,7 +1369,8 @@
                         life: 3000
                     });
                     return false;
-                } else if (mediaFormat.value === undefined) {
+                }
+                if (disc.value.mediaFormat === undefined) {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
@@ -1337,7 +1378,8 @@
                         life: 3000
                     });
                     return false;
-                } else if (albumFormat.value === undefined) {
+                }
+                if (disc.value.albumFormat === undefined) {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
@@ -1348,37 +1390,29 @@
                 }
                 return true;
             }
-            const saveDisc = () => {
+            const addDisc = () => {
                 if (checkDisc()) {
-                    let disc = {trackList: null, mediaFormat: null, albumFormat: null};
-                    let trackList = [];
-                    for (let i = 0; i < musicName.value.length; i++) {
-                        let param = {name: null, length: null};
-                        param.name = musicName.value[i];
-                        param.length = musicLength.value[i];
-                        trackList.push(param);
+                    let newDisc = {
+                        trackList: [],
+                        mediaFormat: "",
+                        albumFormat: ""
+                    };
+                    for (let i = 0; i < tracks.value.audioNames.length; i++) {
+                        let track = {musicId: 0, name: null, length: null};
+                        track.name = tracks.value.audioNames[i];
+                        track.length = tracks.value.audioLengths[i];
+                        newDisc.trackList.push(track);
                     }
-                    disc.trackList = trackList;
-                    disc.albumFormat = value2LabelArray(albumFormat.value, albumFormatSet.value);
-                    disc.mediaFormat = value2LabelArray(mediaFormat.value, mediaFormatSet.value);
-                    discList.value.push(disc);
-                    musicName.value = [];
-                    musicLength.value = [];
-                    albumFormat.value = [];
-                    mediaFormat.value = [];
-                    showTrackInfo();
+                    console.log(disc.value.albumFormat)
+                    newDisc.albumFormat = disc.value.albumFormat.join(",");
+                    newDisc.mediaFormat = disc.value.mediaFormat.join(",");
+                    album.value.editDiscList.push(newDisc);
+
+                    console.log(album.value.editDiscList);
+
+                    tracks.value = {};
+                    disc.value = {};
                 }
-            };
-            const showTrackInfo = () => {
-                trackHtml.value = "";
-                //<![CDATA[
-                for (const disc of discList.value) {
-                    for (let t of disc.trackList) {
-                        trackHtml.value += '<p>' + t.name + ' : ' + t.length + '</p>';
-                    }
-                }
-                //]]>
-                document.getElementById("trackBox").innerHTML = trackHtml;
             };
             const submitTrackInfo = () => {
                 let json = {
@@ -1408,6 +1442,10 @@
             const menuModel = ref([
                 {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
             ]);
+            const onRowReorder = (event) => {
+                album.value.artists = event.value;
+                toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
+            };
             const onRowContextMenu = (event) => {
                 cm.value.show(event.originalEvent);
             };
@@ -1462,10 +1500,6 @@
                         }
                     })
             };
-            const onRowReorder = (event) => {
-                album.value.artists = event.value;
-                toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
-            };
             //endregion
 
             //region ------图片相关组件------
@@ -1498,7 +1532,7 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
-                    console.log(err);
+                    console.error(err);
                 });
             };
             const galleriaItemClass = ref("");
@@ -1545,7 +1579,7 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
-                    console.log(err);
+                    console.error(err);
                 });
             };
 
@@ -1572,7 +1606,7 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
-                    console.log(err);
+                    console.error(err);
                 });
             };
 
@@ -1662,7 +1696,7 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
-                    console.log(err);
+                    console.error(err);
                 });
             };
             //endregion
@@ -1688,6 +1722,20 @@
             }
 
             return {
+                cmDisc,
+                selectedDisc,
+                menuModelDisc,
+                onRowReorderDisc,
+                onRowContextMenuDisc,
+                editingRowsDisc,
+                onRowEditSaveDisc,
+
+                tracks,
+                disc,
+                addDisc,
+                submitTrackInfo,
+
+
                 expandedRows, expandAll, collapseAll,
 
                 cm,
@@ -1757,14 +1805,7 @@
                 displayImageEditDialog,
                 displayArtistEditDialog,
                 displayTrackEditDialog,
-                musicName,
-                musicLength,
-                discList,
-                saveDisc,
-                trackHtml,
-                submitTrackInfo,
-                mediaFormat,
-                albumFormat,
+
                 responsiveOptions,
                 descriptionMd,
                 displayDescriptionDialog,
