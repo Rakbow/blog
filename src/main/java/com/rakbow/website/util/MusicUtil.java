@@ -2,6 +2,7 @@ package com.rakbow.website.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.music.AudioType;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 

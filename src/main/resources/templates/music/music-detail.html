@@ -399,7 +399,7 @@
                             <p-datatable dataKey="id" :value="music.artists" responsive-layout="scroll"
                                          class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
                                          context-menu v-model:context-menu-selection="selectedArtist"
-                                         @row-contextmenu="onRowContextMenu" edit-mode="row"
+                                         @row-contextmenu="artistRowMenu" edit-mode="row"
                                          v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                                 <p-column :row-reorder="true"></p-column>
                                 <p-column field="pos" header="职位">
@@ -573,8 +573,8 @@
             const menuModel = ref([
                 {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
             ]);
-            const onRowContextMenu = (event) => {
-                cm.value.show(event.originalEvent);
+            const artistRowMenu = (ev) => {
+                cm.value.show(ev.originalEvent);
             };
             const deleteArtist = (artist) => {
                 music.value.artists = music.value.artists.filter((a) => a.pos !== artist.value.pos);
@@ -582,8 +582,8 @@
                 selectedArtist.value = null;
             };
             const editingRows = ref([]);
-            const onRowEditSave = (event) => {
-                let { newData, index } = event;
+            const onRowEditSave = (ev) => {
+                let { newData, index } = ev;
 
                 music.value.artists[index] = newData;
             };
@@ -627,8 +627,8 @@
                         }
                     })
             };
-            const onRowReorder = (event) => {
-                music.value.artists = event.value;
+            const onRowReorder = (ev) => {
+                music.value.artists = ev.value;
                 toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
             };
             //endregion
@@ -748,7 +748,7 @@
                 submitArtist,
                 deleteArtist,
                 cancelArtistEdit,
-                onRowContextMenu,
+                artistRowMenu,
                 onRowEditSave,
                 onRowReorder,
 

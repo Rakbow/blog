@@ -141,6 +141,12 @@ public class MusicService {
 
     }
 
+    /**
+     * 更新music基础信息
+     * @author rakbow
+     * @param id,music music的id和music
+     * @return apiInfo
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String updateMusic(int id, Music music) throws Exception {
         try {

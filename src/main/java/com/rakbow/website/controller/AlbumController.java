@@ -153,7 +153,7 @@ public class AlbumController {
     @RequestMapping(value = "/get-all", method = RequestMethod.GET)
     @ResponseBody
     public String getAllAlbum() {
-        return JSON.toJSONString(albumService.album2Json(albumService.getAll()));
+        return JSON.toJSONString(albumService.album2JsonDisplayList(albumService.getAll()));
     }
 
     //获取单个专辑信息

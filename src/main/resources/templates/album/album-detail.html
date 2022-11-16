@@ -789,11 +789,11 @@
                             <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
                             <b>编辑</b>
                         </template>
-                        <div v-if="album.artists.length != 0">
-                            <p-datatable dataKey="id" :value="album.artists" responsive-layout="scroll"
+                        <div v-if="tmpArtists.length != 0">
+                            <p-datatable dataKey="id" :value="tmpArtists" responsive-layout="scroll"
                                          class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
                                          context-menu v-model:context-menu-selection="selectedArtist"
-                                         @row-contextmenu="onRowContextMenu" edit-mode="row"
+                                         @row-contextmenu="artistRowMenu" edit-mode="row"
                                          v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                                 <p-column :row-reorder="true"></p-column>
                                 <p-column field="pos" header="职位">
@@ -884,12 +884,12 @@
                             <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
                             <b>编辑</b>
                         </template>
-                        <div v-if="album.editDiscList != 0">
-                            <p-datatable :value="album.editDiscList" class="p-datatable-sm" striped-rows
+                        <div v-if="tmpEditDiscList.length != 0">
+                            <p-datatable :value="tmpEditDiscList" class="p-datatable-sm" striped-rows
                                          responsive-layout="scroll" v-model:expanded-rows="expandedRows"
                                          @row-reorder="onRowReorderDisc"
                                          context-menu v-model:context-menu-selection="selectedDisc"
-                                         @row-contextmenu="onRowContextMenuDisc" edit-mode="row"
+                                         @row-contextmenu="discRowMenu" edit-mode="row"
                                          v-model:editing-rows="editingRowsDisc" @row-edit-save="onRowEditSaveDisc">
                                 <template #header>
                                     <div class="table-header-container">
@@ -905,6 +905,9 @@
                                     </template>
                                 </p-column>
                                 <p-column field="albumFormat" header="专辑分类">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.albumFormat.join("/")}}
+                                    </template>
                                     <template #editor="{ data, field }">
                                         <p-multiselect v-model="data[field]" :options="albumFormatSet"
                                                        option-label="label" option-value="labelEn" placeholder="专辑分类"
@@ -913,6 +916,9 @@
                                     </template>
                                 </p-column>
                                 <p-column field="mediaFormat" header="媒体格式">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.mediaFormat.join("/")}}
+                                    </template>
                                     <template #editor="{ data, field }">
                                         <p-multiselect v-model="data[field]" :options="mediaFormatSet"
                                                        option-label="label" option-value="labelEn" placeholder="媒体格式"
@@ -923,21 +929,36 @@
                                 <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
                                 <template #expansion="slotProps">
                                     <div class="orders-subtable">
-                                        <p-datatable :value="slotProps.data.trackList" responsive-layout="scroll">
+                                        <p-datatable :value="slotProps.data.trackList" class="p-datatable-sm" striped-rows
+                                                     responsive-layout="scroll"
+                                                     @row-reorder="onRowReorderTrack"
+                                                     context-menu v-model:context-menu-selection="selectedTrack"
+                                                     @row-contextmenu="trackRowMenu" edit-mode="row"
+                                                     v-model:editing-rows="editingRowsTrack" @row-edit-save="onRowEditSaveTrack">
+                                            <p-column :row-reorder="true"></p-column>
                                             <p-column header="曲目序号">
                                                 <template #body="slotProps">
                                                     {{slotProps.index+1}}
                                                 </template>
                                             </p-column>
                                             <p-column field="musicId" header="曲目编号" sortable></p-column>
-                                            <p-column field="name" header="曲名"></p-column>
-                                            <p-column field="length" header="音频长度"></p-column>
+                                            <p-column field="name" header="曲名">
+                                                <template #editor="{ data, field }">
+                                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                                </template>
+                                            </p-column>
+                                            <p-column field="length" header="音频长度">
+                                                <template #editor="{ data, field }">
+                                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                                </template>
+                                            </p-column>
+                                            <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                                            <p-contextmenu :model="menuModelTrack" ref="cmTrack"></p-contextmenu>
                                         </p-datatable>
                                     </div>
                                 </template>
                                 <p-contextmenu :model="menuModelDisc" ref="cmDisc"></p-contextmenu>
                             </p-datatable>
-                            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
                         <div v-else>
                             <span class="emptyInfo">暂无音轨信息</span>
@@ -1287,28 +1308,63 @@
             //endregion
 
             //region ------音轨信息相关组件------
+            let tmpDiscId = 1000;
+            let tmpTrackId = 1000;
+            const tmpEditDiscList = ref();
             const cmDisc = ref();
+            const cmTrack = ref();
             const selectedDisc = ref();
+            const selectedTrack = ref();
             const menuModelDisc = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteDisc(selectedDisc)}
+                {label: '删除', icon: 'pi pi-fw pi-trash', command: () => deleteDisc(selectedDisc)}
             ]);
-            const onRowReorderDisc = (event) => {
-                album.value.editDiscList = event.value;
-                console.log(album.value.editDiscList);
+            const menuModelTrack = ref([
+                {label: '删除', icon: 'pi pi-fw pi-trash', command: () => deleteTrack(selectedTrack)}
+            ]);
+            const onRowReorderDisc = (ev) => {
+                tmpEditDiscList.value = ev.value;
             };
-            const onRowContextMenuDisc = (event) => {
-                cmDisc.value.show(event.originalEvent);
+            const onRowReorderTrack = (ev) => {
+
+                for (let disc of tmpEditDiscList.value) {
+                    if (disc.tmpDiscId === ev.value[0].tmpDiscId) {
+                        disc.trackList = ev.value;
+                    }
+                }
+            };
+            const discRowMenu = (ev) => {
+                cmDisc.value.show(ev.originalEvent);
+            };
+            const trackRowMenu = (ev) => {
+                cmTrack.value.show(ev.originalEvent);
             };
             const deleteDisc = (disc) => {
-                album.value.editDiscList = album.value.editDiscList.filter((d) => d.trackList !== disc.trackList);
-                toast.add({severity: 'error', summary: '已删除', detail: artist.pos, life: 3000});
+                tmpEditDiscList.value = tmpEditDiscList.value.filter((d) => d.tmpDiscId !== disc.value.tmpDiscId);
+                toast.add({severity: 'error', summary: '已删除', detail: disc.value.tmpDiscId, life: 3000});
                 selectedArtist.value = null;
             };
+            const deleteTrack = (track) => {
+                for (let disc of tmpEditDiscList.value) {
+                    if (disc.tmpDiscId === track.value.tmpDiscId) {
+                        disc.trackList = disc.trackList.filter((t) => t.tmpTrackId !== track.value.tmpTrackId);
+                    }
+                }
+                toast.add({severity: 'error', summary: '已删除', detail: track.value.name, life: 3000});
+            };
             const editingRowsDisc = ref([]);
-            const onRowEditSaveDisc = (event) => {
-                let { newData, index } = event;
+            const editingRowsTrack = ref([]);
+            const onRowEditSaveDisc = (ev) => {
+                let { newData, index } = ev;
+                tmpEditDiscList.value[index] = newData;
+            };
+            const onRowEditSaveTrack = (ev) => {
+                let { newData, index } = ev;
 
-                album.value.editDiscList[index] = newData;
+                for (let disc of tmpEditDiscList.value) {
+                    if (disc.tmpDiscId === newData.tmpDiscId) {
+                        disc.trackList[index] = newData;
+                    }
+                }
             };
 
             const tracks = ref({
@@ -1316,12 +1372,12 @@
                 audioLengths: []
             });
             const disc = ref({
-                albumFormat: "",
-                mediaFormat: ""
+                albumFormat: [],
+                mediaFormat: []
             });
             const expandedRows = ref([]);
             const expandAll = () => {
-                expandedRows.value = album.value.editDiscList;
+                expandedRows.value = tmpEditDiscList.value;
             };
             const collapseAll = () => {
                 expandedRows.value = null;
@@ -1332,6 +1388,8 @@
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 1) {
+
+                            tmpEditDiscList.value = JSON.parse(JSON.stringify(album.value.editDiscList));
 
                             tracks.value = {};
                             disc.value = {};
@@ -1393,38 +1451,36 @@
             const addDisc = () => {
                 if (checkDisc()) {
                     let newDisc = {
+                        tmpDiscId: tmpDiscId,
                         trackList: [],
-                        mediaFormat: "",
-                        albumFormat: ""
+                        mediaFormat: [],
+                        albumFormat: []
                     };
                     for (let i = 0; i < tracks.value.audioNames.length; i++) {
-                        let track = {musicId: 0, name: null, length: null};
+                        let track = {tmpDiscId: tmpDiscId, tmpTrackId: tmpTrackId, musicId: 0, name: null, length: null};
                         track.name = tracks.value.audioNames[i];
                         track.length = tracks.value.audioLengths[i];
                         newDisc.trackList.push(track);
+                        tmpTrackId++;
                     }
-                    console.log(disc.value.albumFormat)
-                    newDisc.albumFormat = disc.value.albumFormat.join(",");
-                    newDisc.mediaFormat = disc.value.mediaFormat.join(",");
-                    album.value.editDiscList.push(newDisc);
-
-                    console.log(album.value.editDiscList);
-
+                    newDisc.albumFormat = disc.value.albumFormat;
+                    newDisc.mediaFormat = disc.value.mediaFormat;
+                    tmpEditDiscList.value.push(newDisc);
                     tracks.value = {};
                     disc.value = {};
+                    tmpDiscId++;
                 }
             };
             const submitTrackInfo = () => {
                 let json = {
                     id: album.value.id,
-                    discList: discList.value
+                    discList: tmpEditDiscList.value
                 }
                 axiosPostRequest(UPDATE_ALBUM_TRACK_INFO_URL, json)
                     .then(res => {
                         if (res.state !== 0) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayTrackEditDialog.value = false;
-                            discList.value = [];
                             location.reload(true);
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -1434,6 +1490,7 @@
             //endregion
 
             //region ------artists相关组件------
+            const tmpArtists = ref();
             const cm = ref();
             const selectedArtist = ref();
             const artist = ref({});
@@ -1442,23 +1499,22 @@
             const menuModel = ref([
                 {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
             ]);
-            const onRowReorder = (event) => {
-                album.value.artists = event.value;
-                toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
+            const onRowReorder = (ev) => {
+                tmpArtists.value = ev.value;
             };
-            const onRowContextMenu = (event) => {
-                cm.value.show(event.originalEvent);
+            const artistRowMenu = (ev) => {
+                cm.value.show(ev.originalEvent);
             };
             const deleteArtist = (artist) => {
-                album.value.artists = album.value.artists.filter((a) => a.pos !== artist.value.pos);
-                toast.add({severity: 'error', summary: '已删除', detail: artist.pos, life: 3000});
+                tmpArtists.value = tmpArtists.value.filter((a) => a.pos !== artist.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: artist.value.pos, life: 3000});
                 selectedArtist.value = null;
             };
             const editingRows = ref([]);
-            const onRowEditSave = (event) => {
-                let { newData, index } = event;
+            const onRowEditSave = (ev) => {
+                let { newData, index } = ev;
 
-                album.value.artists[index] = newData;
+                tmpArtists.value[index] = newData;
             };
 
             const openArtistEditDialog = () => {
@@ -1467,16 +1523,17 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
+                            tmpArtists.value = JSON.parse(JSON.stringify(album.value.artists));
                             artist.value = {};
                             displayArtistEditDialog.value = true;
                         }
                     })
             };
             const clearArtists = () => {
-                album.value.artists = [];
+                tmpArtists.value = [];
             };
             const addArtist = () => {
-                album.value.artists.push(artist.value);
+                tmpArtists.value.push(artist.value);
                 artist.value = {};
             }
             const cancelArtistEdit = () => {
@@ -1486,7 +1543,7 @@
             const submitArtist = () => {
                 let json = {
                     id: album.value.id,
-                    artists: album.value.artists
+                    artists: tmpArtists.value
                 }
                 axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
                     .then(res => {
@@ -1722,13 +1779,24 @@
             }
 
             return {
+                tmpEditDiscList,
+                tmpArtists,
+
                 cmDisc,
                 selectedDisc,
                 menuModelDisc,
                 onRowReorderDisc,
-                onRowContextMenuDisc,
+                discRowMenu,
                 editingRowsDisc,
                 onRowEditSaveDisc,
+
+                cmTrack,
+                selectedTrack,
+                menuModelTrack,
+                onRowReorderTrack,
+                trackRowMenu,
+                editingRowsTrack,
+                onRowEditSaveTrack,
 
                 tracks,
                 disc,
@@ -1749,7 +1817,7 @@
                 submitArtist,
                 deleteArtist,
                 cancelArtistEdit,
-                onRowContextMenu,
+                artistRowMenu,
                 onRowEditSave,
                 onRowReorder,
 

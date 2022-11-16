@@ -10,11 +10,11 @@ import org.apache.commons.lang3.StringUtils;
  * @Description: 媒体类型
  */
 public enum MediaFormat {
-    UNCLASSIFIED(0,"未分类", "Unclassified"),
+    UNCLASSIFIED(0, "未分类", "Unclassified"),
     CD(1, "CD", "CD"),
     DVD(2, "DVD", "DVD"),
     BLU_RAY(3, "Blu-ray", "Blu-ray"),
-    DIGITAL(4,"数字专辑", "Digital");
+    DIGITAL(4, "数字专辑", "Digital");
 
     private int index;
     private String name;
@@ -26,7 +26,14 @@ public enum MediaFormat {
         this.nameEn = nameEn;
     }
 
-    public static String index2NameEnArray (JSONArray indexArr) {
+    /**
+     * index列表转用逗号隔开的nameEn数组字符串
+     *
+     * @param indexArr index的JSONArray数组
+     * @return String
+     * @author rakbow
+     */
+    public static String index2NameEnArrayString(JSONArray indexArr) {
         String[] nameEnArr = new String[indexArr.size()];
         for (int i = 0; i < indexArr.size(); i++) {
             nameEnArr[i] = getNameEnByIndex(indexArr.getIntValue(i));
@@ -34,7 +41,21 @@ public enum MediaFormat {
         return StringUtils.join(nameEnArr, ",");
     }
 
-    public static String getNameByIndex (int index){
+    public static JSONArray nameEn2IndexArray(JSONArray nameEnArray) {
+        if (!nameEnArray.isEmpty()) {
+            JSONArray indexArray = new JSONArray();
+
+            for (int i = 0; i < nameEnArray.size(); i++) {
+                indexArray.add(getIndexByNameEn(nameEnArray.getString(i)));
+            }
+
+            return indexArray;
+        }else {
+            return null;
+        }
+    }
+
+    public static String getNameByIndex(int index) {
         for (MediaFormat mediaFormat : MediaFormat.values()) {
             if (mediaFormat.getIndex() == index) {
                 return mediaFormat.getName();
@@ -43,7 +64,7 @@ public enum MediaFormat {
         return "未分类";
     }
 
-    public static String getNameEnByIndex (int index){
+    public static String getNameEnByIndex(int index) {
         for (MediaFormat mediaFormat : MediaFormat.values()) {
             if (mediaFormat.getIndex() == index) {
                 return mediaFormat.getNameEn();
@@ -52,9 +73,18 @@ public enum MediaFormat {
         return "Unclassified";
     }
 
-    public static int getIndexByName(String name){
+    public static int getIndexByName(String name) {
         for (MediaFormat mediaFormat : MediaFormat.values()) {
             if (mediaFormat.getName().equals(name)) {
+                return mediaFormat.index;
+            }
+        }
+        return 0;
+    }
+
+    public static int getIndexByNameEn(String nameEn) {
+        for (MediaFormat mediaFormat : MediaFormat.values()) {
+            if (mediaFormat.getNameEn().equals(nameEn)) {
                 return mediaFormat.index;
             }
         }
