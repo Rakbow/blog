@@ -76,8 +76,8 @@
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- aPlayer -->
-    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
+<!--    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>-->
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -255,18 +255,6 @@
                                 <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
                             </div>
                         </p-fieldset>
-<!--                        <p-fieldset :toggleable="true" class="mt-2">-->
-<!--                            <template #legend>-->
-<!--                                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>-->
-<!--                                <b>在线播放</b>-->
-<!--                            </template>-->
-<!--                            <div v-if="album.audios.length != 0">-->
-<!--                                <div id="player"></div>-->
-<!--                            </div>-->
-<!--                            <div v-else>-->
-<!--                                <span class="emptyInfo"><em>暂无播放源</em></span>-->
-<!--                            </div>-->
-<!--                        </p-fieldset>-->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>
@@ -626,7 +614,7 @@
                                   @click="submitEditAlbum"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '800px'}" header="图片管理" :modal="true">
+                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '1200px'}" header="图片管理" :modal="true">
                     <p-panel>
                         <template #header>
                             <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
@@ -670,22 +658,30 @@
                                     <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
                                 </div>
                             </div>
-                        </div>
-                        <div class="formgrid grid mt-2">
                             <div class="field col">
                                 <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                            option-value="value" placeholder="选择图片类型"></p-dropdown>
+                                            option-value="value" placeholder="选择图片类型" style="width: 280px"></p-dropdown>
                             </div>
                             <div class="field col">
                                 <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                            :auto-resize="true" placeholder="图片描述"></p-textarea>
+                                            :auto-resize="true" placeholder="图片描述" style="width: 280px"></p-textarea>
                             </div>
-                            <div class="field col">
-                                <p-button label="保存当前图片信息" icon="pi pi-save"
+                        </div>
+                        <div class="formgrid grid mt-2">
+<!--                            <div class="field col">-->
+<!--                                <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"-->
+<!--                                            option-value="value" placeholder="选择图片类型"></p-dropdown>-->
+<!--                            </div>-->
+<!--                            <div class="field col">-->
+<!--                                <p-textarea v-model="imageInfo.description" rows="1" cols="20"-->
+<!--                                            :auto-resize="true" placeholder="图片描述"></p-textarea>-->
+<!--                            </div>-->
+                            <div class="field col" align="left">
+                                <p-button label="新增图片" icon="pi pi-save"
                                           @click="save2imageInfos"></p-button>
                             </div>
-                            <div class="field col">
-                                <p-button label="提交更新" icon="pi pi-save"
+                            <div class="field col" align="right">
+                                <p-button label="提交新增" icon="pi pi-save"
                                           @click="submitImages" class="p-button-success"></p-button>
                             </div>
                         </div>
@@ -702,53 +698,90 @@
                             <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
                             <b>编辑</b>
                         </template>
-                        <div class="grid" v-if="album.images.length != 0">
-                            <div class="col-4" v-for="image in album.images">
-                                <div class="grid">
-                                    <div class="edit-image-div">
-                                        <img id="edit-image-img" :src="image.url" :alt="image.nameZh"/>
-                                    </div>
-                                    <div class="col-12 mt-0 mb-0" align="center" style="width: 240px">
-                                        <table class="table table-sm table-hover table-striped">
-                                            <thead class="mt-0 mb-0">
-                                            <h6 class="mt-0">图片详情</h6>
-                                            </thead>
-                                            <tbody class="mt-0 mb-0">
-                                            <tr>
-                                                <th scope="row">图片路径</th>
-                                                <td>{{image.url}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">图片名（中）</th>
-                                                <td>{{image.nameZh}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">图片名（英）</th>
-                                                <td>{{image.nameEn}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">类型</th>
-                                                <td>{{(image.type == 1)?"封面":((image.type == 0)?"展示":"其他")}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">描述</th>
-                                                <td>{{image.description}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">上传时间</th>
-                                                <td>{{image.uploadTime}}</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="col-12 mt-0 mb-0" align="center">
-                                        <p-button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                                                  @click="openDisplayImageSingleEdit(image)"></p-button>
-                                        <p-button icon="pi pi-times" class="p-button-rounded p-button-danger mr-2"
-                                                  @click="confirmDeleteSelectedImage(image)"></p-button>
-                                    </div>
-                                </div>
-                            </div>
+                        <div v-if="album.images.length != 0">
+                            <p-datatable :value="album.images" responsive-layout="scroll" class="p-datatable-sm"
+                                         @row-reorder="imgRowReorder" edit-mode="row" striped-rows :scrollable="true"
+                                         :resizable-columns="true" column-resize-mode="expand"
+                                         v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave">
+                                <p-column :row-reorder="true" style="flex: 0 0 2rem"></p-column>
+                                <p-column header="图片" style="flex: 0 0 5rem">
+                                    <template #body="slotProps">
+                                        <img :src="slotProps.data.url" :alt="slotProps.data.nameEn" class="edit-image" />
+                                    </template>
+                                </p-column>
+                                <p-column field="url" header="url" style="flex: 0 0 20rem"></p-column>
+                                <p-column field="nameZh" header="名(中)" style="flex: 0 0 8rem">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="nameEn" header="名(英)" style="flex: 0 0 8rem">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="type" header="类型" style="flex: 0 0 7rem">
+                                    <template #editor="{ data, field }">
+                                        <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
+                                                    option-value="value" placeholder="图片类型">
+
+                                        </p-dropdown>
+                                    </template>
+                                </p-column>
+                                <p-column field="description" header="描述" style="flex: 0 0 15rem">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus style="width: 150px"></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="uploadTime" header="上传时间" style="flex: 0 0 10rem"></p-column>
+                                <p-column :row-editor="true"></p-column>
+                            </p-datatable>
+<!--                            <div class="col-4" v-for="image in album.images">-->
+<!--                                <div class="grid">-->
+<!--                                    <div class="edit-image-div">-->
+<!--                                        <img id="edit-image-img" :src="image.url" :alt="image.nameZh"/>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 mt-0 mb-0" align="center" style="width: 240px">-->
+<!--                                        <table class="table table-sm table-hover table-striped">-->
+<!--                                            <thead class="mt-0 mb-0">-->
+<!--                                            <h6 class="mt-0">图片详情</h6>-->
+<!--                                            </thead>-->
+<!--                                            <tbody class="mt-0 mb-0">-->
+<!--                                            <tr>-->
+<!--                                                <th scope="row">图片路径</th>-->
+<!--                                                <td>{{image.url}}</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <th scope="row">图片名（中）</th>-->
+<!--                                                <td>{{image.nameZh}}</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <th scope="row">图片名（英）</th>-->
+<!--                                                <td>{{image.nameEn}}</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <th scope="row">类型</th>-->
+<!--                                                <td>{{(image.type == 1)?"封面":((image.type == 0)?"展示":"其他")}}</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <th scope="row">描述</th>-->
+<!--                                                <td>{{image.description}}</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <th scope="row">上传时间</th>-->
+<!--                                                <td>{{image.uploadTime}}</td>-->
+<!--                                            </tr>-->
+<!--                                            </tbody>-->
+<!--                                        </table>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 mt-0 mb-0" align="center">-->
+<!--                                        <p-button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"-->
+<!--                                                  @click="openDisplayImageSingleEdit(image)"></p-button>-->
+<!--                                        <p-button icon="pi pi-times" class="p-button-rounded p-button-danger mr-2"-->
+<!--                                                  @click="confirmDeleteSelectedImage(image)"></p-button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </div>
                         <div v-else>
                             <span class="emptyInfo"><em>暂无图片</em></span>
@@ -1120,6 +1153,15 @@
             const seriesSet = ref([[${seriesSet}]]);
 
             //region ------图片板块------
+            const imgRowReorder = (ev) => {
+                album.value.images = ev.value;
+            };
+            const editingImages = ref([]);
+            const imgRowEditSave = (ev) => {
+                let { newData, index } = ev;
+                album.value.images[index] = newData;
+            };
+
             const activeIndex = ref(0);
             const displayCustom = ref(false);
             const imageClick = (index) => {
@@ -1779,6 +1821,10 @@
             }
 
             return {
+                editingImages,
+                imgRowEditSave,
+                imgRowReorder,
+
                 tmpEditDiscList,
                 tmpArtists,
 
@@ -1931,6 +1977,11 @@
         .mount("#app");
 </script>
 <style>
+    .edit-image {
+        pointer-events: none;
+        width: 50px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+    }
     .orders-subtable {
         padding: 1rem;
     }

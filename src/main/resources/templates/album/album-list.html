@@ -84,7 +84,7 @@
                 </p-toolbar>
                 <p-datatable ref="dt" :value="albums" class="p-datatable-customers p-datatable-sm"
                              :paginator="true" :rows="10" :loading="loading" striped-rows
-                             :resizable-columns="true" column-resize-mode="fit"
+                             :resizable-columns="true" column-resize-mode="fit | expand"
                              v-model:selection="selectedAlbums" dataKey="id"
                              :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                              paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
@@ -93,17 +93,22 @@
                              v-model:filters="filters" filter-display="row" responsive-layout="scroll"
                              :global-filter-fields="['nameJp', 'nameEn', 'nameZh', 'catalogNo', 'publishPrice']">
                     <template #header>
-                        <div class="flex justify-content-between">
-                            <p-button type="button" icon="pi pi-filter-slash" label="清空过滤" class="p-button-outlined" @click="clearFilter()"></p-button>
-                            <div class="col-4" style="text-align:left">
+                        <div class="grid p-fluid">
+                            <div class="col-12 lg:col-3 md:col-3 sm:col-6" style="text-align:left">
                                 <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
                                                @update:model-value="onToggle"
                                                placeholder="可选显示列" style="width: 20em"></p-multiselect>
                             </div>
-                            <span class="p-input-icon-left ">
-                                <i class="pi pi-search"></i>
-                                <p-inputtext v-model="filters['global'].value" placeholder="输入关键字"></p-inputtext>
-                            </span>
+                            <div class="col-6"></div>
+                            <div class="col-12 lg:col-1 md:col-1 sm:col-2" style="text-align:right">
+                                <p-button type="button" icon="pi pi-filter-slash" class="p-button-outlined" @click="clearFilter()"></p-button>
+                            </div>
+                            <div class="col-12 lg:col-2 md:col-2 sm:col-4" style="text-align:right">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <p-inputtext v-model="filters['global'].value" placeholder="输入关键字"></p-inputtext>
+                                </span>
+                            </div>
                         </div>
                     </template>
                     <template #empty>
@@ -114,24 +119,24 @@
                     <template #loading>
                         加载中，别急~
                     </template>
-                    <p-column selection-mode="multiple" style="width: 1rem" :exportable="false"></p-column>
-                    <p-column field="id" header="Id" exportHeader="Album Id" :sortable="true">
+                    <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>
+                    <p-column field="id" header="Id" exportHeader="Album Id" :sortable="true" style="flex: 0 0 4rem">
                         <template #body="slotProps">
                             <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                                 {{slotProps.data.id}}
                             </p-button>
                         </template>
                     </p-column>
-                    <p-column field="catalogNo" header="专辑编号" :sortable="true"></p-column>
-                    <p-column field="releaseDate" header="发行时间" :sortable="true"></p-column>
-                    <p-column header="专辑原名">
+                    <p-column field="catalogNo" header="专辑编号" :sortable="true" style="flex: 0 0 8rem"></p-column>
+                    <p-column header="专辑原名" style="flex: 0 0 25rem">
                         <template #body="slotProps">
                             <a :href="domainUrl + '/db/album/' + slotProps.data.id">
                                 {{slotProps.data.nameJp}}
                             </a>
                         </template>
                     </p-column>
-                    <p-column field="publishPrice" header="发售价格（含税）" :sortable="true">
+                    <p-column field="releaseDate" header="发行时间" :sortable="true" style="flex: 0 0 7rem"></p-column>
+                    <p-column field="publishPrice" header="发售价格" :sortable="true" style="flex: 0 0 7rem">
                         <template #body="slotProps">
                             {{formatCurrency(slotProps.data.publishPrice)}}
                         </template>
@@ -139,44 +144,44 @@
                         <!--                    <p-inputnumber v-model="filterModel.value" mode="currency" currency="JPY" locale="ja-JP"></p-inputnumber>-->
                         <!--                </template>-->
                     </p-column>
-                    <p-column field="series.name" header="所属系列" :sortable="true"></p-column>
-                    <p-column header="所属产品">
+                    <p-column field="series.name" header="所属系列" :sortable="true" style="flex: 0 0 10rem"></p-column>
+                    <p-column header="所属产品" style="flex: 0 0 16rem">
                         <template #body="slotProps">
-                            <ul>
+                            <ul class="px-3">
                                 <li v-for="data in slotProps.data.product">
                                     {{data}}
                                 </li>
                             </ul>
                         </template>
                     </p-column>
-                    <p-column header="出版形式">
+                    <p-column header="出版形式" style="flex: 0 0 8rem">
                         <template #body="slotProps">
-                            <ul>
+                            <ul class="px-3">
                                 <li v-for="data in slotProps.data.publishFormat">
                                     {{data}}
                                 </li>
                             </ul>
                         </template>
                     </p-column>
-                    <p-column header="专辑分类">
+                    <p-column header="专辑分类" style="flex: 0 0 6rem">
                         <template #body="slotProps">
-                            <ul>
+                            <ul class="px-3">
                                 <li v-for="data in slotProps.data.albumFormat">
                                     {{data}}
                                 </li>
                             </ul>
                         </template>
                     </p-column>
-                    <p-column header="媒体类型">
+                    <p-column header="媒体类型" style="flex: 0 0 6rem">
                         <template #body="slotProps">
-                            <ul>
+                            <ul class="px-3">
                                 <li v-for="data in slotProps.data.mediaFormat">
                                     {{data}}
                                 </li>
                             </ul>
                         </template>
                     </p-column>
-                    <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center" style="min-width:8rem">
+                    <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center" style="flex: 0 0 3rem">
                         <template #body="{data}">
                             <i class="pi" :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
                         </template>
