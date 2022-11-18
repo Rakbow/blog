@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.EntityType;
+import com.rakbow.website.data.ImageType;
 import com.rakbow.website.data.ProductClass;
 import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.album.MediaFormat;
@@ -81,6 +82,7 @@ public class AlbumService {
 
     /**
      * 获取表中所有数据
+     *
      * @return album表中所有专辑，用list封装
      * @author rakbow
      */
@@ -91,10 +93,11 @@ public class AlbumService {
 
     /**
      * 获取表中所有数据
-     * @author rakbow
+     *
      * @param offset 起始行数
-     * @param limit 需要多少数量
+     * @param limit  需要多少数量
      * @return List<Album>
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public List<Album> getAlbumLimit(int offset, int limit, String where) {
@@ -293,7 +296,6 @@ public class AlbumService {
         //相关创作人员
         JSONArray artists = JSONArray.parseArray(album.getArtists());
 
-        //图片
         JSONArray images = JSONArray.parseArray(album.getImages());
 
         //发售时间转为string
@@ -387,7 +389,7 @@ public class AlbumService {
                 for (int j = 0; j < trackList.size(); j++) {
                     int musicId = trackList.getInteger(j);
                     Music music = DataFinder.findMusicById(musicId, allMusics);
-                    if(music != null){
+                    if (music != null) {
                         JSONObject track = new JSONObject();
                         track.put("tmpDiscId", tmpDiscId);
                         track.put("tmpTrackId", tmpTracId);
@@ -453,39 +455,14 @@ public class AlbumService {
             trackInfo.put("discList", newDiscList);
         }
 
-        //音频播放
-        // List<JSONObject> audios = new ArrayList<>();
-        // musics.forEach(music -> {
-        //     if (!StringUtils.isBlank(music.getAudioUrl())) {
-        //         JSONObject audio = new JSONObject();
-        //         audio.put("name", music.getName());
-        //         if(!Objects.equals(music.getArtists(), "[]")) {
-        //             JSONArray audioArtists = JSON.parseArray(music.getArtists());
-        //             for (int i = 0; i < audioArtists.size(); i++) {
-        //                 JSONObject artist = audioArtists.getJSONObject(i);
-        //                 if(Objects.equals(artist.getString("pos"), "vocal")) {
-        //                     audio.put("artist", artist.getString("name"));
-        //                 }
-        //             }
-        //         }else {
-        //             audio.put("artist", "artist");
-        //         }
-        //         audio.put("url", domain + music.getAudioUrl());
-        //         audio.put("cover", domain + music.getCoverUrl());
-        //         if (!StringUtils.isBlank(music.getLrcUrl())) {
-        //             audio.put("lrc", music.getLrcUrl());
-        //         }
-        //         audios.add(audio);
-        //     }
-        // });
 
+        albumJson.put("images", images);
         albumJson.put("editDiscList", editDiscList);
         albumJson.put("hasBonus", hasBonus);
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
         albumJson.put("artists", artists);
-        albumJson.put("images", images);
         albumJson.put("cover", cover);
         albumJson.put("displayImages", displayImages);
         albumJson.put("otherImages", otherImages);
@@ -674,7 +651,7 @@ public class AlbumService {
      * @return JSONObject
      * @author rakbow
      */
-    public JSONObject album2JsonDisplayList (Album album) {
+    public JSONObject album2JsonDisplayList(Album album) {
         JSONObject albumJson = (JSONObject) JSON.toJSON(album);
 
         //是否包含特典
@@ -728,6 +705,12 @@ public class AlbumService {
         albumJson.put("products", products);
         albumJson.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
         albumJson.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
+
+        albumJson.remove("trackInfo");
+        albumJson.remove("artists");
+        albumJson.remove("images");
+        albumJson.remove("description");
+        albumJson.remove("bonus");
 
         return albumJson;
     }
@@ -967,55 +950,49 @@ public class AlbumService {
      * 更新专辑图片
      *
      * @param id    专辑id
-     * @param image 需要更新的图片json数据
+     * @param images 需要更新的图片json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String updateAlbumImages(int id, String image) {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
-        JSONObject editImage = JSONObject.parseObject(image);
-        // 迭代器
-        Iterator<Object> iterator = images.iterator();
-        while (iterator.hasNext()) {
-            JSONObject itJson = (JSONObject) iterator.next();
-            if (editImage.getString("url").equals(itJson.getString("url"))) {
-                // 替换数组元素
-                itJson.put("nameEn", editImage.getString("nameEn"));
-                itJson.put("nameZh", editImage.getString("nameZh"));
-                itJson.put("type", editImage.getString("type"));
-                itJson.put("description", editImage.getString("description"));
-            }
-        }
-        albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
+    public String updateAlbumImages(int id, String images) {
+        albumMapper.updateAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_ALBUM_IMAGES_SUCCESS;
     }
 
     /**
      * 删除专辑图片
      *
-     * @param id       专辑id
-     * @param imageUrl 需要删除的图片url
+     * @param id           专辑id
+     * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String deleteAlbumImages(int id, String imageUrl) {
+    public String deleteAlbumImages(int id, JSONArray deleteImages) {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
-        // 迭代器
+
+        //图片文件名
         String fileName = "";
-        Iterator<Object> iterator = images.iterator();
-        while (iterator.hasNext()) {
-            JSONObject itJson = (JSONObject) iterator.next();
-            if (imageUrl.equals(itJson.getString("url"))) {
-                // 删除数组元素
-                fileName = itJson.getString("nameEn").replaceAll(" ", "");
-                iterator.remove();
+
+        //循环删除
+        for (int i = 0; i < deleteImages.size(); i++) {
+            JSONObject image = deleteImages.getJSONObject(i);
+            // 迭代器
+            Iterator<Object> iterator = images.iterator();
+            while (iterator.hasNext()) {
+                JSONObject itJson = (JSONObject) iterator.next();
+                if (image.getString("url").equals(itJson.getString("url"))) {
+                    // 删除数组元素
+                    String deleteImageUrl = itJson.getString("url");
+                    fileName = deleteImageUrl.substring(
+                            deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
+                    iterator.remove();
+                }
+                //删除服务器上对应图片文件
+                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
+                CommonUtil.deleteFile(albumImgPath, fileName);
             }
         }
-        //删除服务器上对应图片文件
-        Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-        CommonUtil.deleteFile(albumImgPath, fileName);
         albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
         return ApiInfo.DELETE_ALBUM_IMAGES_SUCCESS;
     }
@@ -1030,9 +1007,16 @@ public class AlbumService {
     public String deleteAllAlbumImages(int id) {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
+        //图片文件名
+        String fileName = "";
         for (int i = 0; i < images.size(); i++) {
             JSONObject image = images.getJSONObject(i);
-            deleteAlbumImages(id, image.getString("url"));
+            String deleteImageUrl = image.getString("url");
+            fileName = deleteImageUrl.substring(
+                    deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
+            //删除服务器上对应图片文件
+            Path albumImgPath = Paths.get(imgPath + "/album/" + id);
+            CommonUtil.deleteFile(albumImgPath, fileName);
         }
         return ApiInfo.DELETE_ALBUM_IMAGES_SUCCESS;
     }
@@ -1100,7 +1084,7 @@ public class AlbumService {
                     music.setAudioLength(track.getString("length"));
                     musicService.addMusic(music);
                     track_list.add(music.getId());
-                }else {//若musicId不为0则代表之前已经添加进music表中，需要进一步更新
+                } else {//若musicId不为0则代表之前已经添加进music表中，需要进一步更新
                     Music currentMusic = DataFinder.findMusicById(track.getInteger("musicId"), musics);
                     currentMusic.setName(track.getString("name"));
                     currentMusic.setAudioLength(track.getString("length"));

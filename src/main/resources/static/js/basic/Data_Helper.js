@@ -11,6 +11,22 @@ const labelEn2valueArray = (xFormat, xFormatSet) => {
     return tmp;
 }
 
+const value2Label = (value, xSet) => {
+    for (let item of xSet) {
+        if (value === item.value) {
+            return item.label;
+        }
+    }
+};
+
+const label2Value = (label, xSet) => {
+    for (let item of xSet) {
+        if (label === item.label) {
+            return item.value;
+        }
+    }
+}
+
 const value2LabelEnArray = (xFormat, xFormatSet) => {
     let tmp = [];
     for (let item1 of xFormat) {

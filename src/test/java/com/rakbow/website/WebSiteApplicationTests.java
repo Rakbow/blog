@@ -37,6 +37,7 @@ class WebSiteApplicationTests {
     private AlbumMapper albumMapper;
     @Autowired
     private VisitService visitService;
+
     @Test
     void contextLoads() {
     }
@@ -77,7 +78,7 @@ class WebSiteApplicationTests {
         List<Music> musics = musicService.getAll();
         System.out.println(DataFinder.findMusicById(5, musics));
         // List<Music> musics = musicService.getAll();
-		// List<Album> albums = albumService.getAll();
+        // List<Album> albums = albumService.getAll();
         // albums.sort(DataSorter.albumSortById);
         // for (int i = 0; i < albums.size(); i++) {
         //     Album album = albums.get(i);
@@ -113,7 +114,8 @@ class WebSiteApplicationTests {
 
     @Test
     public void test5() throws IOException {
-        System.out.println(albumService.album2Json(albumService.getAlbumById(3)));
+        String fileName = "/album/11/Front.png";
+        System.out.println(fileName.substring(fileName.lastIndexOf("/") + 1, fileName.lastIndexOf(".")));
     }
 
 }

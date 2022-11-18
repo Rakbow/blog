@@ -474,19 +474,17 @@ public class AlbumController {
 
                 //获取专辑id
                 int id = JSON.parseObject(json).getInteger("id");
+                JSONArray images = JSON.parseObject(json).getJSONArray("images");
 
-                //更改信息
+                //检测是否nameEn相同
+
+                //更改图片
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
-                    String image = JSON.parseObject(json).getString("image");
-                    res.message = albumService.updateAlbumImages(id, image);
-                }//删除单张
+                    res.message = albumService.updateAlbumImages(id, images.toJSONString());
+                }//删除图片
                 else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
-                    String imageUrl = JSON.parseObject(JSON.parseObject(json).getString("image")).getString("url");
-                    res.message = albumService.deleteAlbumImages(id, imageUrl);
-                }//删除全部
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.ALL_DELETE.id) {
-                    res.message = albumService.deleteAllAlbumImages(id);
-                } else {
+                    res.message = albumService.deleteAlbumImages(id, images);
+                }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
 
