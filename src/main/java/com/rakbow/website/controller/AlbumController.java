@@ -374,6 +374,29 @@ public class AlbumController {
         }
     }
 
+    //获取专辑图像
+    @RequestMapping(path = "/{id}/compress/{fileName}", method = RequestMethod.GET)
+    public void getAlbumCompressImg(@PathVariable("fileName") String fileName, @PathVariable("id") int albumId, HttpServletResponse response) {
+        // 服务器存放路径
+        fileName = imgPath + "/compress/album/" + albumId + "/" + fileName;
+        // 文件后缀
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        // 响应图片
+        response.setContentType("image/" + suffix);
+        try (
+                FileInputStream fis = new FileInputStream(fileName);
+                OutputStream os = response.getOutputStream();
+        ) {
+            byte[] buffer = new byte[1024];
+            int b = 0;
+            while ((b = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, b);
+            }
+        } catch (IOException e) {
+            logger.error("读取图片失败: " + e.getMessage());
+        }
+    }
+
     //endregion
 
     //region 新增图片、Artists和音轨信息等
@@ -382,20 +405,23 @@ public class AlbumController {
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
     public String insertAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
 
-                if (images.length == 0 || images == null) {
+                if (images == null || images.length == 0) {
                     res.setErrorMessage(ApiInfo.INPUT_IMAGE_EMPTY);
                     return JSON.toJSONString(res);
                 }
 
+                JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
                 JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
 
-                for (Object o : imageInfosTmp) {
-                    JSONObject jo = (JSONObject) o;
+                //检测数据合法性
+                String errorMessage = AlbumUtils.checkAlbumAddImages(imageInfosTmp, imagesJson);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
                 }
 
                 //创建存储专辑图片的文件夹
@@ -446,7 +472,7 @@ public class AlbumController {
                     }
                     imgJson.add(jo);
                 }
-                JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
+
                 imagesJson.addAll(imgJson);
                 albumService.addAlbumImages(id, imagesJson.toJSONString());
 
@@ -476,10 +502,16 @@ public class AlbumController {
                 int id = JSON.parseObject(json).getInteger("id");
                 JSONArray images = JSON.parseObject(json).getJSONArray("images");
 
-                //检测是否nameEn相同
-
                 //更改图片
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+
+                    //检测是否存在多张封面
+                    String errorMessage = AlbumUtils.checkAlbumUpdateImages(images);
+                    if (!StringUtils.equals("", errorMessage)) {
+                        res.setErrorMessage(errorMessage);
+                        return JSON.toJSONString(res);
+                    }
+
                     res.message = albumService.updateAlbumImages(id, images.toJSONString());
                 }//删除图片
                 else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {

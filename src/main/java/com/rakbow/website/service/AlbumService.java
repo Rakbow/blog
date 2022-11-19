@@ -26,8 +26,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -356,7 +358,10 @@ public class AlbumService {
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1") || Objects.equals(image.getString("type"), "0")) {
+                if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
+                        || image.getIntValue("type") == ImageType.COVER.getIndex()) {
+                    image.put("thumbUrl", getCompressImageUrl(album.getId(),
+                            AlbumUtils.getImageFileNameByUrl(image.getString("url"))));
                     displayImages.add(image);
                 }
             }
@@ -1170,11 +1175,37 @@ public class AlbumService {
 
         for (int i = 0; i < images.size(); i++) {
             JSONObject image = images.getJSONObject(i);
-            if (StringUtils.equals(image.getString("type"), Integer.toString(CommonConstant.ALBUM_IMAGE_COVER))) {
+            //若图片中包含封面类型图片
+            if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
                 coverUrl = image.getString("url");
             }
         }
         return coverUrl;
+    }
+
+    /**
+     * 压缩图片并返回缩略图的url
+     *
+     * @author rakbow
+     * @param albumId,fileName 专辑id和图片文件全名
+     * @return 缩略图url
+     * */
+    public String getCompressImageUrl (int albumId, String fileName) {
+        Path albumImgPath = Paths.get(imgPath + "/album/" + albumId);
+        String oldFilePath = (albumImgPath.toUri() + fileName).substring(8);
+        String outFilePath = (imgPath + "/compress/album/" + albumId + "/" + fileName);
+
+        File file = new File(outFilePath);
+        //判断是否存在
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdir();
+        } else {
+            file.getParentFile().delete();
+            file.getParentFile().mkdir();
+        }
+
+        CommonUtil.imageCompress(oldFilePath, 200, 200, outFilePath, true);
+        return "/db/album/" + albumId + "/compress/" + fileName;
     }
 
     //endregion

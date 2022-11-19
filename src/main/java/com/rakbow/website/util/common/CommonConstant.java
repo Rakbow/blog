@@ -13,19 +13,6 @@ public class CommonConstant {
     //404图url
     public static final String EMPTY_IMAGE_URL = "/img/404.jpg";
 
-    //endregion
-
-    //region ------专辑------
-
-    //展示 显示在详情
-    public static final int ALBUM_IMAGE_DISPLAY = 0;
-    //封面 专辑封面
-    public static final int ALBUM_IMAGE_COVER = 1;
-    //其他 用于描述中引用
-    public static final int ALBUM_IMAGE_OTHER = 2;
-
-    //endregion
-
     /**
      * 激活成功
      */
@@ -42,14 +29,14 @@ public class CommonConstant {
     public static final int ACTIVATION_FAILURE = 2;
 
     /**
-     * 默认状态的登录凭证的超时时间
+     * 默认状态的登录凭证的超时时间 12小时
      */
     public static final int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
 
     /**
      * 记住状态的登录凭证超时时间
      */
-    public static final int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
+    public static final int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 10;
 
     /**
      * 实体类型: 帖子

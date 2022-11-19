@@ -50,6 +50,7 @@
     <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
     <script th:src="@{/js/primevue/components/column.min.js}"></script>
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inplace.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -316,29 +317,37 @@
                                 <span class="emptyInfo"><em>暂无图片</em></span>
                             </div>
                             <div v-else align="center">
-                                <p-galleria :value="album.displayImages" :responsive-options="responsiveOptions"
-                                            :num-visible="5" container-style="width: 600px" :circular="true">
-                                    <template #item="{item}">
-                                        <div id="galleria-div">
-                                            <img :class="galleriaItemClass" :src="item.url" :alt="item.name"
-                                                 :onload="initImageClass(item.url)"/>
-                                        </div>
+                                <p-inplace>
+                                    <template #display>
+                                        <span class="pi pi-eye" style="vertical-align: middle"></span>
+                                        <span style="margin-left:.5rem; vertical-align: middle">加载图片</span>
                                     </template>
-                                    <template #caption="{item}">
-                                        <div class="custom-galleria-footer">
+                                    <template #content>
+                                        <p-galleria :value="album.displayImages" :responsive-options="responsiveOptions"
+                                                    :num-visible="5" container-style="width: 600px" :circular="true">
+                                            <template #item="{item}">
+                                                <div id="galleria-div">
+                                                    <img :class="galleriaItemClass" :src="item.url" :alt="item.name"
+                                                         :onload="initImageClass(item.url)"/>
+                                                </div>
+                                            </template>
+                                            <template #caption="{item}">
+                                                <div class="custom-galleria-footer">
                                             <span v-if="album.displayImages" class="title-container">
                                                 <span>共{{album.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
                                                 <span>{{item.description}}</span>
                                             </span>
-                                        </div>
+                                                </div>
+                                            </template>
+                                            <template #thumbnail="{item}">
+                                                <div class="grid grid-nogutter justify-content-center">
+                                                    <img id="galleria-item" :src="item.url" :alt="item.name" class="temp2"/>
+                                                </div>
+                                            </template>
+                                        </p-galleria>
                                     </template>
-                                    <template #thumbnail="{item}">
-                                        <div class="grid grid-nogutter justify-content-center">
-                                            <img id="galleria-item" :src="item.url" :alt="item.name" class="temp2"/>
-                                        </div>
-                                    </template>
-                                </p-galleria>
+                                </p-inplace>
                             </div>
                         </p-fieldset>
                     </div>
@@ -449,7 +458,7 @@
                             <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">
                                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
                                      v-for="(image, index) of album.displayImages" :key="index">
-                                    <img :class="initPanelImageClass(image.url)" :src="image.url" draggable="false"
+                                    <img :class="initPanelImageClass(image.thumbUrl)" :src="image.thumbUrl" draggable="false"
                                          oncontextmenu="return false"
                                          v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
                                          @click="imageClick(index)"/>
@@ -627,6 +636,10 @@
                                         @uploader="onUpload"
                                         @select="selectFile">
                                 </p-fileupload>
+                            </div>
+                            <div class="col-6" align="right">
+                                <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                          label="清空所选" @click="clearUploadedImage"></p-button>
                             </div>
                         </div>
                         <div class="formgrid grid mt-2">
@@ -1004,6 +1017,7 @@
 
             const album = ref([[${album}]]);
             const visitNum = ref([[${visitNum}]]);
+            const relatedAlbums = ref([[${relatedAlbums}]]);
             const toast = useToast();
             const edits = ref([
                 {
@@ -1580,13 +1594,13 @@
                 type: 0
             });
             const imageInfos = ref([]);
-            const relatedAlbums = ref([[${relatedAlbums}]]);
+
             const displayImageEditDialog = ref(false);
             const imageHtml = ref("");
             const openImageEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             imageInfo.value = {};
@@ -1599,6 +1613,7 @@
                 imageInfo.value = {};
                 imageInfos.value = [];
                 displayImageEditDialog.value = false;
+                document.getElementById("imgBox").innerHTML = "";
             };
             const showImage = () => {
                 imageHtml.value = "";
@@ -1606,7 +1621,7 @@
                 for (const img of imageInfos.value) {
                     imageHtml.value += '<div align=""center>';
                     imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
-                    imageHtml.value += '<p>图片类型: ' + img.type + '</p>';
+                    imageHtml.value += '<p>图片类型: ' + (img.type==="1"?"封面":(img.type==="0"?"展示":"其他")) + '</p>';
                     imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
                     imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
                     imageHtml.value += '<p>描述: ' + img.description + '</p>';
@@ -1619,22 +1634,39 @@
                 imageInfo.value.image = ev.files[0];
             };
             const onUpload = (ev) => {
-                toast.add({severity: 'info', summary: 'Success', detail: '图片已经选择', life: 3000});
+                toast.add({severity: 'info', summary: 'Success', detail: ALBUM_IMAGE_SELECTED, life: 3000});
             };
-            const save2imageInfos = () => {
+            const checkImageInfo = () => {
                 if (typeof imageInfo.value.description == "undefined") {
                     imageInfo.value.description = "";
-                } else if (typeof imageInfo.value.nameZh == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未填写图片名（中）', life: 3000});
-                } else if (typeof imageInfo.value.nameEn == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未填写图片名（英）', life: 3000});
-                } else if (typeof imageInfo.value.type == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: '未选择图片类型', life: 3000});
-                } else {
+                }
+                if (imageInfo.value.image === null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_EMPTY, life: 3000});
+                }
+                if (typeof imageInfo.value.nameZh == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_NAME_ZH_EMPTY, life: 3000});
+                    return false;
+                }
+                if (typeof imageInfo.value.nameEn == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_NAME_EN_EMPTY, life: 3000});
+                    return false;
+                }
+                if (typeof imageInfo.value.type == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_TYPE_EMPTY, life: 3000});
+                    return false;
+                }
+                return true;
+            }
+            const save2imageInfos = () => {
+                if (checkImageInfo()) {
                     imageInfos.value.push(imageInfo.value);
                     showImage();
                     imageInfo.value = {};
                 }
+            };
+            const clearUploadedImage = () => {
+                imageInfos.value = [];
+                document.getElementById("imgBox").innerHTML = "";
             };
             const submitImages = () => {
                 const formData = new FormData();
@@ -1645,8 +1677,7 @@
                 formData.append("imageInfos", JSON.stringify(imageInfos.value));
                 axiosRequest(INSERT_ALBUM_IMAGES_URL, formData)
                     .then(res => {
-                        if (res.state == 1) {
-
+                        if (res.state === 1) {
                             closeImageEditDialog();
                             location.reload(true);
                         } else {
@@ -1675,6 +1706,7 @@
             }
 
             return {
+                clearUploadedImage,
                 closeImageEditDialog,
                 selectedImage,
                 getImageTypeLabel,
@@ -1801,6 +1833,7 @@
             "p-datatable": primevue.datatable,
             "p-column": primevue.column,
             "p-contextmenu": primevue.contextmenu,
+            "p-inplace": primevue.inplace,
         }
     };
 

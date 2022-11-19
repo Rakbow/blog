@@ -12,6 +12,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.service.VisitService;
+import com.rakbow.website.util.AlbumUtils;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.ArrayUtils;
@@ -19,9 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.util.ArrayUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @SpringBootTest
@@ -37,7 +42,8 @@ class WebSiteApplicationTests {
     private AlbumMapper albumMapper;
     @Autowired
     private VisitService visitService;
-
+    @Value("${website.path.img}")
+    private String imgPath;
     @Test
     void contextLoads() {
     }
@@ -114,8 +120,7 @@ class WebSiteApplicationTests {
 
     @Test
     public void test5() throws IOException {
-        String fileName = "/album/11/Front.png";
-        System.out.println(fileName.substring(fileName.lastIndexOf("/") + 1, fileName.lastIndexOf(".")));
+        System.out.println(AlbumUtils.getImageFileNameByUrl("http://localhost:8080/img/album/11/compress/Back.png"));
     }
 
 }

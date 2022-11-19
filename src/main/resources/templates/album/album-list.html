@@ -140,9 +140,6 @@
                         <template #body="slotProps">
                             {{formatCurrency(slotProps.data.publishPrice)}}
                         </template>
-                        <!--                <template #filter="{filterModel}">-->
-                        <!--                    <p-inputnumber v-model="filterModel.value" mode="currency" currency="JPY" locale="ja-JP"></p-inputnumber>-->
-                        <!--                </template>-->
                     </p-column>
                     <p-column field="series.name" header="所属系列" :sortable="true" style="flex: 0 0 10rem"></p-column>
                     <p-column header="所属产品" style="flex: 0 0 16rem">
@@ -492,7 +489,6 @@
         </div>
     </div>
 </div>
-
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
     const {FilterMatchMode, FilterOperator} = primevue.api;

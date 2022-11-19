@@ -57,6 +57,9 @@ public class ApiInfo {
      public static final String ALBUM_ALBUM_FORMAT_EMPTY = "未选择专辑分类！";
      public static final String ALBUM_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
 
+     public static final String ALBUM_COVER_COUNT_EXCEPTION = "只允许一张图片类型为封面！";
+     public static final String ALBUM_IMAGE_NAME_EN_REPEAT_EXCEPTION = "图片英文名不能重复！";
+
     //endregion
 
     //region music相关
