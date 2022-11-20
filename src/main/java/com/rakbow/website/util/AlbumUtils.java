@@ -128,7 +128,7 @@ public class AlbumUtils {
             originImageUrlNameEns.add(imageUrl.substring(
                     imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf(".")));
         }
-        if (originImageUrlNameEns.stream().distinct().count() == images.size()) {
+        if (originImageUrlNameEns.stream().distinct().count() != images.size()) {
             return ApiInfo.ALBUM_IMAGE_NAME_EN_REPEAT_EXCEPTION;
         }
 

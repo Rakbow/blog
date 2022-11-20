@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -119,8 +120,24 @@ class WebSiteApplicationTests {
     }
 
     @Test
-    public void test5() throws IOException {
-        System.out.println(AlbumUtils.getImageFileNameByUrl("http://localhost:8080/img/album/11/compress/Back.png"));
+    public void getAlbumsByFilterListTest() throws IOException {
+        List<Integer> products = new ArrayList<>();
+        products.add(1);
+        List<Integer> publishFormat = new ArrayList<>();
+        publishFormat.add(1);
+        List<Integer> albumFormat = new ArrayList<>();
+        albumFormat.add(4);
+        List<Integer> mediaFormat = new ArrayList<>();
+        mediaFormat.add(1);
+        String orderField = "id";
+        int desc = 0;
+        List<Album> albums = albumMapper.getAlbumsByFilterList("", "", 1, products, publishFormat,
+                albumFormat, mediaFormat, "0", orderField, desc,  0, 5);
+
+        albums.forEach(album -> {
+            System.out.println(album.getId());
+        });
+
     }
 
 }

@@ -94,7 +94,7 @@ public class AlbumService {
     }
 
     /**
-     * 获取表中所有数据
+     * 获取表中数据根据行高
      *
      * @param offset 起始行数
      * @param limit  需要多少数量
@@ -106,6 +106,72 @@ public class AlbumService {
         return albumMapper.getAlbumLimit(offset, limit, where);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public Map<String, Object> getAlbumsByFilterList (JSONObject queryParams) {
+
+        JSONObject filter = queryParams.getJSONObject("filters");
+
+        String catalogNo = filter.getJSONObject("catalogNo").getString("value");
+
+        String nameJp = filter.getJSONObject("nameJp").getString("value");
+
+        String sortField = queryParams.getString("sortField");
+
+        int sortOrder = queryParams.getIntValue("sortOrder");
+
+        int seriesId = 0;
+        if (filter.getJSONObject("series").getInteger("value") != null) {
+            seriesId = filter.getJSONObject("series").getIntValue("value");
+        }
+
+        String hasBonus;
+        if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
+            hasBonus = null;
+        }else {
+            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
+                    ?Integer.toString(1):Integer.toString(0);
+        }
+
+        List<Integer> products = new ArrayList<>();
+        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
+        if (tmpProducts != null) {
+            products.addAll(tmpProducts);
+        }
+
+        List<Integer> publishFormat = new ArrayList<>();
+        List<Integer> tmpPublishFormat = filter.getJSONObject("publishFormat").getList("value", Integer.class);
+        if (tmpPublishFormat != null) {
+            publishFormat.addAll(tmpPublishFormat);
+        }
+
+        List<Integer> albumFormat = new ArrayList<>();
+        List<Integer> tmpAlbumFormat = filter.getJSONObject("albumFormat").getList("value", Integer.class);
+        if (tmpAlbumFormat != null) {
+            albumFormat.addAll(tmpAlbumFormat);
+        }
+
+        List<Integer> mediaFormat = new ArrayList<>();
+        List<Integer> tmpMediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
+        if (tmpMediaFormat != null) {
+            mediaFormat.addAll(tmpMediaFormat);
+        }
+
+        int first = queryParams.getIntValue("first");
+
+        int row = queryParams.getIntValue("rows");
+
+        List<Album> albums = albumMapper.getAlbumsByFilterList(catalogNo, nameJp, seriesId, products, publishFormat,
+                albumFormat, mediaFormat, hasBonus, sortField, sortOrder,  first, row);
+
+        int total = albumMapper.getAlbumRowsByFilterList(catalogNo, nameJp, seriesId, products, publishFormat,
+                albumFormat, mediaFormat, hasBonus);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("data", albums);
+        res.put("total", total);
+
+        return res;
+    }
 
     /**
      * 根据Id获取专辑
@@ -299,6 +365,11 @@ public class AlbumService {
         JSONArray artists = JSONArray.parseArray(album.getArtists());
 
         JSONArray images = JSONArray.parseArray(album.getImages());
+        for (int i = 0; i < images.size(); i++) {
+            JSONObject image = images.getJSONObject(i);
+            image.put("thumbUrl", getCompressImageUrl(album.getId(),
+                    AlbumUtils.getImageFileNameByUrl(image.getString("url"))));
+        }
 
         //发售时间转为string
         albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
@@ -360,8 +431,6 @@ public class AlbumService {
                 JSONObject image = images.getJSONObject(i);
                 if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
                         || image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    image.put("thumbUrl", getCompressImageUrl(album.getId(),
-                            AlbumUtils.getImageFileNameByUrl(image.getString("url"))));
                     displayImages.add(image);
                 }
             }

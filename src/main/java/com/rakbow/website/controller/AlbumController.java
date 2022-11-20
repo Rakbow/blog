@@ -245,6 +245,23 @@ public class AlbumController {
         }
     }
 
+    //根据搜索条件获取专辑--列表界面
+    @RequestMapping(value = "/get-albums-list", method = RequestMethod.POST)
+    @ResponseBody
+    public String getAlbumsByFilterList(@RequestBody String json) {
+        JSONObject queryParams = JSON.parseObject(json);
+
+        Map<String, Object> map = albumService.getAlbumsByFilterList(queryParams);
+
+        List<JSONObject> albums = albumService.album2JsonDisplayList((List<Album>) map.get("data"));
+
+        JSONObject result = new JSONObject();
+        result.put("data", albums);
+        result.put("total", map.get("total"));
+
+        return JSON.toJSONString(result);
+    }
+
     //新增专辑
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -501,6 +518,9 @@ public class AlbumController {
                 //获取专辑id
                 int id = JSON.parseObject(json).getInteger("id");
                 JSONArray images = JSON.parseObject(json).getJSONArray("images");
+                for (int i = 0; i < images.size(); i++) {
+                    images.getJSONObject(i).remove("thumbUrl");
+                }
 
                 //更改图片
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {

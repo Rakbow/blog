@@ -342,7 +342,7 @@
                                             </template>
                                             <template #thumbnail="{item}">
                                                 <div class="grid grid-nogutter justify-content-center">
-                                                    <img id="galleria-item" :src="item.url" :alt="item.name" class="temp2"/>
+                                                    <img id="galleria-item" :src="item.thumbUrl" :alt="item.name" class="temp2"/>
                                                 </div>
                                             </template>
                                         </p-galleria>
@@ -705,7 +705,7 @@
                                 <p-column :row-reorder="true" header-style="width: 3%"></p-column>
                                 <p-column header="图片" header-style="width: 8%">
                                     <template #body="slotProps">
-                                        <img :src="slotProps.data.url" :alt="slotProps.data.nameEn" class="edit-image" />
+                                        <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn" class="edit-image" />
                                     </template>
                                 </p-column>
                                 <p-column field="url" header="url" header-style="width: 10%"></p-column>

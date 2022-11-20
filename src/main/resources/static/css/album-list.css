@@ -2,10 +2,6 @@
     width: 300px;
 }
 
-.p-multiselect {
-    width: 16rem;
-}
-
 .custom-scrolltop {
     width: 2rem;
     height: 2rem;
@@ -64,22 +60,12 @@
 .p-datatable.p-datatable-customers .p-dropdown-label:not(.p-placeholder) {
     text-transform: uppercase;
 }
-
-@media screen and (max-width: 640px) {
-    .p-multiselect {
-        width: 100%;
-    }
+.p-datatable.p-datatable-customers .p-datatable-header {
+    padding: 1rem;
+    text-align: left;
+    font-size: 1.5rem;
 }
 
-/*.sizes .p-inputtext {*/
-/*    display: block;*/
-/*    margin-bottom: .5rem;*/
-/*}*/
-
-/*.sizes:last-child {*/
-/*    margin-bottom: 0;*/
-/*}*/
-
-/*.field * {*/
-/*    display: block;*/
-/*}*/
+.p-multiselect-items {
+    max-width: 240px;
+}

@@ -28,6 +28,7 @@ const UPDATE_ALBUM_URL = DOMAIN_URL + "/db/album/update";
 const INSERT_ALBUM_URL = DOMAIN_URL + "/db/album/add";
 const GET_ALBUM_URL = DOMAIN_URL + "/db/album/get-album";
 const GET_ALBUMS_URL = DOMAIN_URL + "/db/album/get-albums";
+const GET_ALBUMS_LIST_URL = DOMAIN_URL + "/db/album/get-albums-list";
 
 const UPDATE_ALBUM_ARTISTS_URL = DOMAIN_URL + "/db/album/update-artists";
 const UPDATE_ALBUM_TRACK_INFO_URL = DOMAIN_URL + "/db/album/update-trackInfo";
