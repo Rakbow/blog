@@ -171,3 +171,9 @@ function countTotalLength(track_info) {
     }
     return second2time(total_length);
 }
+
+const getSidebarPanelImageClass = (url) => {
+    var image = new Image();
+    image.src = url;
+    return (image.naturalWidth > image.naturalHeight) ? "sidebar-panel-image-middle-width" : "sidebar-panel-image-middle-height";
+};

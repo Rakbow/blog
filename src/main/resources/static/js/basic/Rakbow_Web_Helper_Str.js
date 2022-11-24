@@ -8,7 +8,7 @@ const APP_INDEX_URL = DOMAIN_URL + "/app";
 const BLOG_INDEX_URL = DOMAIN_URL + "/blog";
 
 const SERIES_INDEX_URL = DOMAIN_URL + "/db/series";
-const PRODUCT_INDEX_URL = DOMAIN_URL + "/db/product";
+const PRODUCT_INDEX_URL = DOMAIN_URL + "/db/product/list";
 
 const ALBUM_LIST_URL = DOMAIN_URL + "/db/album/list";
 const ALBUM_INDEX_URL = DOMAIN_URL + "/db/album/index";
@@ -52,7 +52,7 @@ const LOGOUT_URL = DOMAIN_URL + "/logout";
 //endregion
 
 //common
-const GET_ALL_PRODUCT_URL = DOMAIN_URL + "/product/get-products";
+const GET_PRODUCTS_BY_SERIES_ID_URL = DOMAIN_URL + "/db/product/get-products-by-series-id";
 
 //region header
 const ENTITY_TYPE = [
@@ -82,9 +82,9 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
             // {
             //     label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: SERIES_INDEX_URL
             // },
-            // {
-            //     label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_INDEX_URL
-            // },
+            {
+                label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_INDEX_URL
+            },
             {
                 label: '专辑', icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
                 items: [
@@ -153,11 +153,11 @@ const LOGIN_NAVBAR_ITEMS = [
             //     icon: 'pi pi-fw iconfont icon-_classification',
             //     url: SERIES_INDEX_URL
             // },
-            // {
-            //     label: '作品',
-            //     icon: 'pi pi-fw iconfont icon-_classification',
-            //     url: PRODUCT_INDEX_URL
-            // },
+            {
+                label: '作品',
+                icon: 'pi pi-fw iconfont icon-_classification',
+                url: PRODUCT_INDEX_URL
+            },
             {
                 label: '专辑',
                 icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',

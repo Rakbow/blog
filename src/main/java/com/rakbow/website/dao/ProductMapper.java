@@ -17,8 +17,11 @@ public interface ProductMapper {
     //新增产品
     int insertProduct(Product product);
 
-    //通过id查找产品
+    //通过id查找作品
     Product selectProductById(int id);
+
+    //获取所有作品
+    List<Product> getAll();
 
     //修改系列信息
     int updateProduct(int id, Product product);

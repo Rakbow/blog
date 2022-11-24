@@ -83,7 +83,7 @@ public class AlbumController {
     //region ------获取页面------
 
     @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getAlbumList(Model model) {
+    public ModelAndView getAlbumListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
         model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
@@ -94,7 +94,7 @@ public class AlbumController {
     }
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
-    public String getAlbumCard(Model model) {
+    public String getAlbumIndexPage(Model model) {
         // model.addAttribute("totalRecords", albumService.getAlbumRows());
         model.addAttribute("albums", albumService.album2JsonDisplay(albumService.getAll()));
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));

@@ -39,7 +39,7 @@
     <div class="container">
         <div id="app">
             <!-- 头部 -->
-            <header class="sticky-top" th:insert="~{header :: site_header}"></header><br>
+            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
             <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
                 <div class="mb-3 font-bold text-2xl">
@@ -124,6 +124,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 尾部 -->
+            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
         </div>
     </div>
 </div>

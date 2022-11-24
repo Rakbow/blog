@@ -105,9 +105,9 @@
                     </div>
                 </template>
                 <template #empty>
-                    <div class="emptyInfo">
+                    <span class="emptyInfo">
                         没找到相关数据
-                    </div>
+                    </span>
                 </template>
                 <template #loading>
                     加载中，别急~
@@ -615,8 +615,8 @@
             const loading = ref(true);
             const columns = ref([
                 {field: 'barcode', header: '商品条形码'},
-                {field: 'nameZh', header: '专辑名称（中文）'},
-                {field: 'nameEn', header: '专辑名称（英文）'},
+                {field: 'nameZh', header: '专辑名称(中文)'},
+                {field: 'nameEn', header: '专辑名称(英文)'},
                 {field: 'remark', header: '备注'},
                 {field: 'label', header: '唱片公司'},
                 {field: 'publisher', header: '发行商'},
@@ -704,7 +704,7 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             albumEdit.value = dataTmp;
-                            axiosPostRequest(GET_ALL_PRODUCT_URL, {series:dataTmp.series.id})
+                            axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, {series:dataTmp.series.id})
                                 .then(res => {
                                     productSet.value = res;
                                     albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
@@ -790,7 +790,7 @@
             //根据系列id获取该系列所有作品
             const getProducts = (ev) => {
                 let json = {series: ev.value};
-                axiosPostRequest(GET_ALL_PRODUCT_URL, json)
+                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
                     .then(res => {
                         productSet.value = res;
                         productSelect.value = false;

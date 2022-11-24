@@ -248,9 +248,9 @@
                                     <div class="album_infobit_small smallfont ml-0 grid"
                                          v-if="justAddedAlbums.length != 0"
                                          v-for="addAlbum of justAddedAlbums">
-                                        <div class="col-3 small-image-div mt-2">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/album/'+ addAlbum.id ">
-                                                <img class="small-image-img" :src="addAlbum.cover.url"
+                                                <img class="sidebar-panel-image-small" :src="addAlbum.cover.url"
                                                      style="border-radius: 20%;"
                                                      v-tooltip.bottom="{value: '收录时间: ' + addAlbum.addedTime + '编辑时间: ' + addAlbum.editedTime, class: 'time-tooltip'}">
                                             </a>
@@ -290,9 +290,9 @@
                                     <div class="album_infobit_small smallfont ml-0 grid"
                                          v-if="justEditedAlbums.length != 0"
                                          v-for="editAlbum of justEditedAlbums">
-                                        <div class="col-3 small-image-div mt-2">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/album/'+ editAlbum.id ">
-                                                <img class="small-image-img" :src="editAlbum.cover.url"
+                                                <img class="sidebar-panel-image-small" :src="editAlbum.cover.url"
                                                      style="border-radius: 20%;"
                                                      v-tooltip.bottom="{value: '收录时间: ' + editAlbum.addedTime + '编辑时间: ' + editAlbum.editedTime, class: 'time-tooltip'}">
                                             </a>
@@ -344,9 +344,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-3 small-image-div mt-2">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/album/'+ album.id ">
-                                                <img class="small-image-img" :src="album.cover.url"
+                                                <img class="sidebar-panel-image-small" :src="album.cover.url"
                                                      style="border-radius: 20%;">
                                             </a>
                                         </div>
@@ -428,7 +428,7 @@
             const productSet = ref();
             const getProducts = (ev) => {
                 let json = {series: ev.value};
-                axiosPostRequest(GET_ALL_PRODUCT_URL, json)
+                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
                     .then(res => {
                         queryParam.value.productIds = [];
                         productSet.value = res;
@@ -720,13 +720,13 @@
         overflow: hidden;
     }
 
-    .small-image-div {
+    .sidebar-panel-image-small-div {
         position: relative;
         width: 60px;
         height: 60px;
     }
 
-    .small-image-img {
+    .sidebar-panel-image-small {
         width: 50px;
         position: relative;
         top: 50%;

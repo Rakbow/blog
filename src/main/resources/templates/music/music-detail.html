@@ -29,30 +29,20 @@
     <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
 
     <!-- PrimeVue Components -->
-    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
     <script th:src="@{/js/primevue/components/panel.min.js}"></script>
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
-    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
-    <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
     <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
-    <script th:src="@{/js/primevue/components/image.min.js}"></script>
-    <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
     <script th:src="@{/js/primevue/components/chips.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
-    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
-    <script th:src="@{/js/primevue/components/galleria.min.js}"></script>
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
     <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
-    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
-    <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
     <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
-    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
     <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
     <script th:src="@{/js/primevue/components/column.min.js}"></script>
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
@@ -76,8 +66,8 @@
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- aPlayer -->
-    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
+<!--    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>-->
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -116,7 +106,7 @@
                             </template>
                             <div class="grid">
                                 <div class="ml-3" style="width: 200px; height: 200px">
-                                    <img :src="music.coverUrl" alt="cover" id="coverart"/>
+                                    <img :src="music.coverUrl" alt="cover" class="music-cover" />
                                 </div>
                                 <table class="table-borderless table-sm ml-3">
                                     <tbody>
@@ -203,22 +193,22 @@
                                 <b>相关信息</b>
                             </template>
                             <span class="grid">
-                                <span class="smallfont">
+                                <span class="small_font">
                                     <p-divider align="center">
                                         <i class="pi iconfont icon-24gl-musicAlbum2 mr-1" style="font-size: 1.5rem"></i>
                                         <span><b>所属专辑</b></span>
                                     </p-divider>
-                                    <div class="music_infobit_small smallfont ml-2 mt-2 mb-2 grid" style="border: solid black">
-                                        <div class="col-3 small-image-div mt-2">
+                                    <div class="info_bit_small small_font ml-2 mt-2 mb-2 grid" style="border: solid black">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
                                         <a :href="'/db/album/'+ relatedAlbum.id ">
-                                            <img class="small-image-img" :src="relatedAlbum.cover.url"
+                                            <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.url"
                                                  style="border-radius: 20%;">
                                         </a>
                                     </div>
                                         <div class="col-9">
                                         <ul class="album_infobit_detail">
                                             <li>
-                                                <a class="smallfont"
+                                                <a class="small_font"
                                                    :href="'/db/album/'+ relatedAlbum.id ">
                                                         <span class="text-truncate-2" lang="ja">
                                                             {{relatedAlbum.nameJp}}
@@ -226,7 +216,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                    <span class="smallfont">
+                                                    <span class="small_font">
                                                         <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
                                                     </span>
                                             </li>
@@ -240,19 +230,19 @@
                                         <i class="pi iconfont icon-music mr-1" style="font-size: 1.5rem"></i>
                                         <span><b>相关曲目</b></span>
                                     </p-divider>
-                                    <div class="music_infobit_small smallfont ml-0 grid"
+                                    <div class="info_bit_small small_font ml-0 grid"
                                          v-if="relatedMusics.length != 0"
                                          v-for="relatedMusic of relatedMusics">
-                                        <div class="col-3 small-image-div mt-2">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/music/'+ relatedMusic.id ">
-                                                <img class="small-image-img" :src="relatedMusic.coverUrl"
+                                                <img class="sidebar-panel-image-small" :src="relatedMusic.coverUrl"
                                                      style="border-radius: 20%;">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="album_infobit_detail">
                                             <li>
-                                                <a class="smallfont"
+                                                <a class="small_font"
                                                    :href="'/db/music/'+ relatedMusic.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{relatedMusic.name}}
@@ -260,7 +250,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="smallfont">
+                                                <span class="small_font">
                                                     <b>{{relatedMusic.audioLength}}</b>
                                                 </span>
                                             </li>
@@ -783,27 +773,19 @@
         },
         components: {
             "p-panel": primevue.panel,
-            "p-image": primevue.image,
             "p-fieldset": primevue.fieldset,
             "p-button": primevue.button,
             "p-dialog": primevue.dialog,
-            "p-fileupload": primevue.fileupload,
-            "p-toolbar": primevue.toolbar,
             "p-chips": primevue.chips,
             "p-divider": primevue.divider,
             "p-inputtext": primevue.inputtext,
-            "p-multiselect": primevue.multiselect,
-            "p-galleria": primevue.galleria,
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
             "p-toast": primevue.toast,
             "p-dropdown": primevue.dropdown,
             "p-textarea": primevue.textarea,
-            "p-calendar": primevue.calendar,
             "p-inputnumber": primevue.inputnumber,
-            "p-inputswitch": primevue.inputswitch,
             "p-splitbutton": primevue.splitbutton,
-            "p-tag": primevue.tag,
             "p-datatable": primevue.datatable,
             "p-column": primevue.column,
             "p-contextmenu": primevue.contextmenu,
@@ -827,6 +809,16 @@
         .mount("#app");
 </script>
 <style>
+    .music-cover {
+        max-width: 100%;
+        max-height: 100%;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
     #panel-image-div {
         display: flex;
         position: relative;
@@ -837,64 +829,12 @@
         border: 1px solid black;
     }
 
-    .panel-image-width {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-width: 100%;
-        max-width: 100%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        /*pointer-events: none;*/
-    }
-
-    .panel-image-height {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-height: 100%;
-        max-height: 100%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        /*pointer-events: none;*/
-    }
-
-    .small-image-img {
-        width: 50px;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .small-image-div {
-        position: relative;
-        width: 60px;
-        height: 60px;
-    }
-
     .p-tooltip-text {
         width: 15rem;
     }
 
     .card {
         padding: 0rem;
-    }
-
-    .related-image-div {
-        position: relative;
-        width: 60px;
-        height: 60px;
-    }
-
-    #related-image-img {
-        width: 50px;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
     }
 
     .edit-image-div {
@@ -914,87 +854,6 @@
         pointer-events: none;
     }
 
-    #galleria-div {
-        position: relative;
-        width: 600px;
-        height: 600px;
-        overflow: hidden;
-        background-color: black;
-    }
-
-    .galleria-div-width {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-width: 100%;
-        max-width: 100%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    .galleria-div-height {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-height: 100%;
-        max-height: 100%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    .temp2 {
-        display: block;
-        /*height: 500px;*/
-        /*width: 500px;*/
-        max-width: 100px;
-        max-height: 100px;
-        height: auto;
-        width: auto;
-        /*overflow: auto;*/
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-
-    /*.p-galleria .p-galleria-thumbnail-items-container {*/
-    /*    width: 100%;*/
-    /*}*/
-
-    .p-galleria .p-galleria-item-wrapper {
-        width: 600px;
-        height: 600px;
-    }
-
-    .p-galleria .p-galleria-item-container {
-        /*width: 500px;*/
-        /*height: 500px;*/
-    }
-
-    .custom-galleria-footer {
-        display: flex;
-        align-items: center;
-        /*background-color: rgba(0, 0, 0, 0.9);*/
-        color: #ffffff;
-    }
-
-    .custom-galleria-footer > button {
-        background-color: transparent;
-        color: #ffffff;
-        border: 0 none;
-        border-radius: 0;
-        margin: .2rem 0;
-    }
-
-    .custom-galleria-footer > button.fullscreen-button {
-        margin-left: auto;
-    }
-
-    .custom-galleria-footer > button:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
     .title-container > span {
         font-size: .9rem;
         padding-left: .829rem;
@@ -1003,36 +862,6 @@
     .title-container > span.title {
         font-weight: bold;
     }
-
-    .p-galleria-content {
-        position: relative;
-    }
-
-    /*.p-galleria-thumbnail-wrapper {*/
-    /*    position: absolute;*/
-    /*    bottom: 0;*/
-    /*    left: 0;*/
-    /*    width: 100%;*/
-    /*}*/
-
-    /*.p-galleria-thumbnail-items-container {*/
-    /*    width: 100%;*/
-    /*}*/
-
-    /*.custom-galleria-footer {*/
-    /*    display: flex;*/
-    /*    align-items: center;*/
-    /*    background-color: rgba(0, 0, 0, .9);*/
-    /*    color: #ffffff;*/
-    /*}*/
-
-    /*.custom-galleria-footer .p-button {*/
-    /*    background-color: transparent;*/
-    /*    color: #ffffff;*/
-    /*    border: 0 none;*/
-    /*    border-radius: 0;*/
-    /*    margin: .2rem 0;*/
-    /*}*/
 
 
     .markdown-body {
@@ -1074,20 +903,6 @@
         }
     }
 
-    .p-galleria-item-wrapper {
-        height: 500px;
-        width: 500px;
-    }
-
-    .p-galleria-thumbnail-content {
-        height: 100px;
-        width: 100px;
-    }
-
-    #imgBox img {
-        height: 200px;
-    }
-
     .p-panel .p-panel-header {
         /* border: 1px solid #dee2e6; */
         padding: 0.5rem;
@@ -1097,46 +912,12 @@
         border-top-left-radius: 3px;
     }
 
-    #coverart {
-        max-width: 100%;
-        max-height: 100%;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    .music_infobit_small {
-        clear: left;
-        height: 76px;
-        padding: 4px 6px 4px 4px;
-        overflow: hidden;
-    }
-
     .label {
         color: #788990;
     }
 
-    .music_infobit_thumb {
-        float: left;
-        margin: 0 4px 0 0;
-        padding: 8px;
-    }
-
-    ul.music_infobit_detail {
-        list-style-type: none;
-        margin: 6px 0 0 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
     b.rbot {
         background-position: 0 -8px;
-    }
-
-    .smallfont {
-        font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
     }
 
     .p-panel .p-panel-content {

@@ -7,38 +7,56 @@ package com.rakbow.website.data;
  * @Description:
  */
 public enum ProductClass {
-    UNCLASSIFIED(0,"未分类"),
-    GAME(1, "游戏"),
-    ANIMATION(2, "TV动画"),
-    LIVE_ACTION_MOVIE(3, "真人电影");
+    UNCLASSIFIED(0,"未分类", "unclassified"),
+    GAME(1, "游戏", "Game"),
+    ANIMATION(2, "TV动画", "Animation"),
+    LIVE_ACTION_MOVIE(3, "真人电影", "Movie");
 
     private int index;
-    private String name;
+    private String nameZh;
+    private String nameEn;
 
-    ProductClass(int index, String name) {
+    ProductClass(int index, String nameZh, String nameEn) {
         this.index = index;
-        this.name = name;
+        this.nameZh = nameZh;
+        this.nameEn = nameEn;
     }
 
-    public static String getNameByIndex (int index){
+    public static String getNameZhByIndex (int index){
         for (ProductClass productClass : ProductClass.values()) {
             if (productClass.getIndex() == index) {
-                return productClass.getName();
+                return productClass.getNameZh();
             }
         }
         return "未分类";
     }
 
-    public static int getIndexByName(String name){
+    public static String getNameEnByIndex (int index){
         for (ProductClass productClass : ProductClass.values()) {
-            if (productClass.getName().equals(name)) {
+            if (productClass.getIndex() == index) {
+                return productClass.getNameEn();
+            }
+        }
+        return "unclassified";
+    }
+
+    public static int getIndexByNameZh(String nameZh){
+        for (ProductClass productClass : ProductClass.values()) {
+            if (productClass.getNameZh().equals(nameZh)) {
                 return productClass.index;
             }
         }
         return 0;
     }
 
-
+    public static int getIndexByNameEn(String nameEn){
+        for (ProductClass productClass : ProductClass.values()) {
+            if (productClass.getNameEn().equals(nameEn)) {
+                return productClass.index;
+            }
+        }
+        return 0;
+    }
 
     public int getIndex() {
         return index;
@@ -48,11 +66,19 @@ public enum ProductClass {
         this.index = index;
     }
 
-    public String getName() {
-        return name;
+    public String getNameZh() {
+        return nameZh;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameZh(String nameZh) {
+        this.nameZh = nameZh;
+    }
+
+    public String getNameEn() {
+        return nameEn;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
     }
 }

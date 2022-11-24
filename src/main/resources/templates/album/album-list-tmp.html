@@ -643,7 +643,7 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             albumEdit.value = dataTmp;
-                            axiosPostRequest(GET_ALL_PRODUCT_URL, {series:dataTmp.series.id})
+                            axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, {series:dataTmp.series.id})
                                 .then(res => {
                                     productSet.value = res;
                                     albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
@@ -729,7 +729,7 @@
             //根据系列id获取该系列所有产品
             const getProducts = (ev) => {
                 let json = {series: ev.value};
-                axiosPostRequest(GET_ALL_PRODUCT_URL, json)
+                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
                     .then(res => {
                         productSet.value = res;
                         productSelect.value = false;

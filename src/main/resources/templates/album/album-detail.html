@@ -113,7 +113,7 @@
                             </template>
                             <div class="grid">
                                 <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
-                                    <img :src="album.cover.url" :alt="album.cover.name" id="coverart"/>
+                                    <img :src="album.cover.url" :alt="album.cover.name" class="image-cover"/>
                                 </div>
                                 <table class="table-borderless table-sm ml-3">
                                     <tbody>
@@ -385,21 +385,21 @@
                                 <b>相关专辑</b>
                             </template>
                             <div class="grid">
-                                <span class="smallfont">
-                                    <div class="album_infobit_small smallfont ml-0 grid"
+                                <span class="small_font">
+                                    <div class="info_bit_small small_font ml-0 grid"
                                          v-if="relatedAlbums.length != 0"
                                          v-for="relatedAlbum of relatedAlbums">
-                                        <div class="col-3 small-image-div mt-2">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/album/'+ relatedAlbum.id ">
-                                                <img class="small-image-img" :src="relatedAlbum.cover.url"
+                                                <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.url"
                                                      style="border-radius: 20%;"
                                                      v-tooltip.bottom="'收录时间: ' + relatedAlbum.addedTime + '编辑时间: ' + relatedAlbum.editedTime">
                                             </a>
                                         </div>
                                         <div class="col-9">
-                                            <ul class="album_infobit_detail">
+                                            <ul class="info_bit_small">
                                             <li>
-                                                <a class="smallfont"
+                                                <a class="small_font"
                                                    :href="'/db/album/'+ relatedAlbum.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{relatedAlbum.nameJp}}
@@ -407,7 +407,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="smallfont">
+                                                <span class="small_font">
                                                     <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
                                                 </span>
                                             </li>
@@ -458,7 +458,7 @@
                             <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">
                                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
                                      v-for="(image, index) of album.displayImages" :key="index">
-                                    <img :class="initPanelImageClass(image.thumbUrl)" :src="image.thumbUrl" draggable="false"
+                                    <img :class="getSidebarPanelImageClass(image.thumbUrl)" :src="image.thumbUrl" draggable="false"
                                          oncontextmenu="return false"
                                          v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
                                          @click="imageClick(index)"/>
@@ -497,8 +497,8 @@
                         </p-panel>
                     </div>
                 </div>
-                <p-dialog v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑专辑基础信息" :modal="true"
-                          class="p-fluid">
+                <p-dialog v-model:visible="displayEditDialog" header="编辑专辑基础信息"
+                          :style="{width: '800px'}"  :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
@@ -617,7 +617,8 @@
                                   @click="submitEditAlbum"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayImageEditDialog" :style="{width: '1200px'}" header="图片管理" :modal="true">
+                <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
+                          :style="{width: '1200px'}" :modal="true">
                     <p-panel>
                         <template #header>
                             <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
@@ -748,7 +749,8 @@
                         <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作信息" :modal="true">
+                <p-dialog v-model:visible="displayArtistEditDialog" header="编辑创作信息"
+                          :style="{width: '800px'}" :modal="true">
                     <p-panel>
                         <template #header>
                             <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
@@ -819,7 +821,8 @@
                                   @click="submitArtist"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayTrackEditDialog" :style="{width: '800px'}" header="编辑音轨信息" :modal="true">
+                <p-dialog v-model:visible="displayTrackEditDialog" header="编辑音轨信息"
+                          :style="{width: '800px'}" :modal="true">
                     <p-panel>
                         <template #header>
                             <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
@@ -984,8 +987,8 @@
                         <p-button label="保存" icon="pi pi-save" @click="submitBonus"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="deleteAlbumImageDialog" :breakpoints="{'960px': '75vw', '640px': '90vw'}"
-                          :style="{width: '50vw'}" header="删除图片" :modal="true">
+                <p-dialog v-model:visible="deleteAlbumImageDialog" header="删除图片"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
                     <div class="confirmation-content">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
                         <span v-if="album">确定删除所选的图片？</span>
@@ -997,6 +1000,7 @@
                                   @click="deleteImage"></p-button>
                     </template>
                 </p-dialog>
+
                 <!-- 尾部 -->
                 <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
             </div>
@@ -1071,7 +1075,6 @@
                 let { newData, index } = ev;
                 album.value.images[index] = newData;
             };
-
             const getImageTypeLabel = (type) => {
                 return value2Label(type, imageTypes.value);
             }
@@ -1081,29 +1084,11 @@
                 activeIndex.value = index;
                 displayCustom.value = true;
             };
-            const initPanelImageClass = (url) => {
-                var image = new Image();
-                image.src = url;
-                return (image.naturalWidth > image.naturalHeight) ? "panel-image-width" : "panel-image-height";
-            };
-
             const initGalleriaImageClass = (url) => {
                 var image = new Image();
                 image.src = url;
                 return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
             };
-            //endregion
-
-            //region ------页面header------
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
             //endregion
 
             //region ------编辑专辑信息------
@@ -1689,6 +1674,14 @@
             };
             //endregion
 
+            //region ------页面header------
+            const domainUrl = DOMAIN_URL;
+            const selectedEntity = ref();
+            const entityType = ref(ENTITY_TYPE);
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
             const init = () => {
                 text2marked();
                 initImageClass($("#galleria-item").attr("src"));
@@ -1756,7 +1749,7 @@
                 onRowEditSave,
 
                 initGalleriaImageClass,
-                initPanelImageClass,
+                getSidebarPanelImageClass,
                 imageClick,
                 displayCustom,
                 activeIndex,
@@ -1854,6 +1847,18 @@
         .mount("#app");
 </script>
 <style>
+    .image-cover {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        min-width: 100%;
+        max-width: 100%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        pointer-events: none;
+    }
+
     .edit-image {
         pointer-events: none;
         width: 50px;
@@ -1872,64 +1877,12 @@
         border: 1px solid black;
     }
 
-    .panel-image-width {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-width: 100%;
-        max-width: 100%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        /*pointer-events: none;*/
-    }
-
-    .panel-image-height {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-height: 100%;
-        max-height: 100%;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        /*pointer-events: none;*/
-    }
-
-    .small-image-img {
-        width: 50px;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .small-image-div {
-        position: relative;
-        width: 60px;
-        height: 60px;
-    }
-
     .p-tooltip-text {
         width: 15rem;
     }
 
     .card {
         padding: 0rem;
-    }
-
-    .related-image-div {
-        position: relative;
-        width: 60px;
-        height: 60px;
-    }
-
-    #related-image-img {
-        width: 50px;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
     }
 
     .edit-image-div {
@@ -2132,48 +2085,12 @@
         border-top-left-radius: 3px;
     }
 
-    #coverart {
-        max-width: 100%;
-        max-height: 100%;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    .album_infobit_small {
-        clear: left;
-        height: 76px;
-        /* border-top: 1px solid #464A64; */
-        /* border-bottom: 1px solid #1B273D; */
-        padding: 4px 6px 4px 4px;
-        overflow: hidden;
-    }
-
     .label {
         color: #788990;
     }
 
-    .album_infobit_thumb {
-        float: left;
-        margin: 0 4px 0 0;
-        padding: 8px;
-    }
-
-    ul.album_infobit_detail {
-        list-style-type: none;
-        margin: 6px 0 0 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
     b.rbot {
         background-position: 0 -8px;
-    }
-
-    .smallfont {
-        font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
     }
 
     .p-panel .p-panel-content {

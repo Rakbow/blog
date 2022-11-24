@@ -393,7 +393,7 @@ public class AlbumService {
         List<String> product = new ArrayList<>();
         JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
                 .forEach(id -> product.add(productService.selectProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")"));
+                        ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")"));
 
         //所属产品
         List<JSONObject> products = new ArrayList<>();
@@ -402,7 +402,7 @@ public class AlbumService {
                     JSONObject jo = new JSONObject();
                     jo.put("id", id);
                     jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")");
+                            ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
@@ -609,7 +609,7 @@ public class AlbumService {
                     JSONObject jo = new JSONObject();
                     jo.put("id", id);
                     jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")");
+                            ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
@@ -753,7 +753,7 @@ public class AlbumService {
         List<String> product = new ArrayList<>();
         JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
                 .forEach(id -> product.add(productService.selectProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")"));
+                        ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")"));
 
         //所属产品
         List<JSONObject> products = new ArrayList<>();
@@ -762,7 +762,7 @@ public class AlbumService {
                     JSONObject jo = new JSONObject();
                     jo.put("id", id);
                     jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameByIndex(productService.selectProductById(id).getClassification()) + ")");
+                            ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
@@ -1261,7 +1261,7 @@ public class AlbumService {
      * */
     public String getCompressImageUrl (int albumId, String fileName) {
         Path albumImgPath = Paths.get(imgPath + "/album/" + albumId);
-        String oldFilePath = (albumImgPath.toUri() + fileName).substring(8);
+        String oldFilePath = (albumImgPath + "\\" + fileName);
         String outFilePath = (imgPath + "/compress/album/" + albumId + "/" + fileName);
 
         File file = new File(outFilePath);
@@ -1278,4 +1278,5 @@ public class AlbumService {
     }
 
     //endregion
+
 }

@@ -5,13 +5,13 @@
 <mapper namespace="com.rakbow.website.dao.ProductMapper">
 
     <sql id="selectFields">
-        id, series_id, name_zh, name_jp, name_en, release_date, classification,
-        added_time, edited_time, description, remark, images
+        id, series_id, name, name_zh, name_en, release_date, classification,
+        images, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        series_id, name_zh, name_jp, name_en, release_date, classification,
-        added_time, edited_time, description, remark, images
+        series_id, name, name_zh, name_en, release_date, classification,
+        images, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="selectProductById" resultType="Product">
@@ -21,16 +21,23 @@
         where id = #{id}
     </select>
 
+    <select id="getAll" resultType="Product">
+        select
+        <include refid="selectFields"></include>
+        from product
+        where _s = 1;
+    </select>
+
     <insert id="insertProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
-        values (#{seriesId}, #{nameZh}, #{nameJp}, #{nameEn}, #{releaseDate}, #{classification},
+        values (#{seriesId}, #{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{classification},
                 #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
         update product
         set
-        series_id = #{seriesId}, name_zh = #{nameZh}, name_jp = #{nameJp}, name_en = #{nameEn},
+        series_id = #{seriesId}, name = #{name}, name_zh = #{nameZh}, name_en = #{nameEn},
         release_date = #{releaseDate}, classification = #{classification}, added_time = #{addedTime},
         edited_time = #{editedTime}, description = #{description}, remark = #{remark}, images = #{images}
         where id = #{id}
