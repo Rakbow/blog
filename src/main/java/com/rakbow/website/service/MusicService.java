@@ -10,7 +10,7 @@ import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,8 +133,8 @@ public class MusicService {
                 music.setTrackSerial(track.getString("serial"));
                 music.setCoverUrl(cover.getString("url"));
                 music.setAudioLength(track.getString("audioLength"));
-                music.setAddedTime(CommonUtil.stringToTimestamp(albumJson.getString("addedTime")));
-                music.setEditedTime(CommonUtil.stringToTimestamp(albumJson.getString("editedTime")));
+                music.setAddedTime(CommonUtils.stringToTimestamp(albumJson.getString("addedTime")));
+                music.setEditedTime(CommonUtils.stringToTimestamp(albumJson.getString("editedTime")));
                 musicMapper.addMusic(music);
             }
         }
@@ -151,7 +151,7 @@ public class MusicService {
     public String updateMusic(int id, Music music) throws Exception {
         try {
             musicMapper.updateMusic(id, music);
-            return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getName());
+            return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -161,7 +161,7 @@ public class MusicService {
     public String deleteMusicById(int id) throws Exception {
         try {
             musicMapper.deleteMusicById(id);
-            return String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.MUSIC.getName());
+            return String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -214,8 +214,8 @@ public class MusicService {
         JSONArray artists = JSON.parseArray(music.getArtists());
 
         musicJson.put("audioTypeObj", audioTypeObj);
-        musicJson.put("addedTime", CommonUtil.timestampToString(music.getAddedTime()));
-        musicJson.put("editedTime", CommonUtil.timestampToString(music.getEditedTime()));
+        musicJson.put("addedTime", CommonUtils.timestampToString(music.getAddedTime()));
+        musicJson.put("editedTime", CommonUtils.timestampToString(music.getEditedTime()));
         musicJson.put("artists", artists);
 
         return musicJson;

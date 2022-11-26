@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.elasticsearch.AlbumRepository;
 import com.rakbow.website.data.EntityType;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.ElasticsearchService;
 import com.rakbow.website.service.UserService;
@@ -12,7 +11,6 @@ import com.rakbow.website.util.common.ApiResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +54,7 @@ public class SearchController {
         model.addAttribute("searchResult", searchResult);
         model.addAttribute("totals", (searchResult == null) ? 0 : searchResult.size());
         model.addAttribute("keyword", keyword);
-        model.addAttribute("type", EntityType.getItemNameByIndex(Integer.parseInt(type)));
+        model.addAttribute("type", EntityType.getItemNameZhByIndex(Integer.parseInt(type)));
         return "/site/search";
     }
 

@@ -38,6 +38,11 @@
     <script th:src="@{/js/primevue/components/column.min.js}"></script>
     <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
     <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -60,27 +65,26 @@
 
             <p-toast></p-toast>
             <p-toolbar class="mb-4">
-<!--                <template #start>-->
-<!--                    <p-button icon="pi pi-refresh" class="p-button-rounded mr-4" @click="init"></p-button>-->
-<!--                    <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"-->
-<!--                              @click="openNewDialog"></p-button>-->
+                <template #start>
+                    <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
+                              @click="openNewDialog"></p-button>&nbsp;
 <!--                    <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"-->
 <!--                              :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;-->
-<!--                </template>-->
-
+                </template>
                 <template #end>
                     <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help"
                               @click="exportCSV($event)"></p-button>
                 </template>
             </p-toolbar>
             <p-datatable ref="dt" :value="products" class="p-datatable-customers p-datatable-sm"
-                         :paginator="true" :rows="10" striped-rows dataKey="id"
-                         :resizable-columns="true" column-resize-mode="expand"
-                         :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
+                         v-model:filters="filters" filter-display="row" responsive-layout="scroll"
+                         :paginator="true" :rows="10" striped-rows dataKey="id" :resizable-columns="true"
+                         column-resize-mode="expand" :scrollable="true" scroll-height="flex"
+                         :rows-per-page-options="[10,25,50]" show-gridlines
                          paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                              LastPageLink CurrentPageReport RowsPerPageDropdown"
                          current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
-                         responsive-layout="scroll">
+                         :global-filter-fields="['name','country.name','representative.name','balance','status']">
                 <template #header>
                     <div class="grid p-fluid">
                         <div class="col-12 lg:col-3 md:col-3 sm:col-6" style="text-align:left">
@@ -103,22 +107,43 @@
                         </p-button>
                     </template>
                 </p-column>
-                <p-column header="作品原名" field="name" style="flex: 0 0 15rem">
+                <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
                     <template #body="slotProps">
                         <a :href="'/db/product/' + slotProps.data.id">
                             {{slotProps.data.name}}
                         </a>
                     </template>
+                    <template #filter="{filterModel,filterCallback}">
+                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
+                                     class="p-column-filter" placeholder="名称"></p-inputtext>
+                    </template>
                 </p-column>
-                <p-column header="作品名称(中)" field="nameZh" style="flex: 0 0 15rem"></p-column>
-                <p-column header="作品分类" field="classification" style="flex: 0 0 7rem">
+                <p-column header="作品名称(中)" field="nameZh"  :show-filter-menu="false" style="flex: 0 0 15rem">
+                    <template #filter="{filterModel,filterCallback}">
+                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
+                                     class="p-column-filter" placeholder="名称"></p-inputtext>
+                    </template>
+                </p-column>
+                <p-column header="作品分类" field="classification.id" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
                         {{slotProps.data.classification.nameZh}}
                     </template>
+                    <template #filter="{filterModel,filterCallback}">
+                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                    :options="productClassSet" option-label="label" option-value="value"
+                                    style="width: 8rem" placeholder="作品分类" class="p-column-filter">
+                        </p-dropdown>
+                    </template>
                 </p-column>
-                <p-column header="所属系列" field="series" style="flex: 0 0 9rem">
+                <p-column header="所属系列" field="series.id" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
                         {{slotProps.data.series.name}}
+                    </template>
+                    <template #filter="{filterModel,filterCallback}">
+                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                    :options="seriesSet" option-label="label" option-value="value"
+                                    style="width: 8rem" placeholder="所属系列" class="p-column-filter">
+                        </p-dropdown>
                     </template>
                 </p-column>
                 <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
@@ -128,6 +153,126 @@
                           :header="col.header" :key="col.field + '_' + index">
                 </p-column>
             </p-datatable>
+            <p-dialog v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据" :modal="true"
+                      class="p-fluid">
+                <p-panel header="基础信息">
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="name">作品名称<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="product.name"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="nameZh">作品名称(中文)<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="product.nameZh"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="nameEn">作品名称(英语)</label>
+                            <p-inputtext v-model.trim="product.nameEn"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="product.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true" :show-icon="true"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="classification" class="mb-3">作品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="product.classification" :options="productClassSet"
+                                        placeholder="选择作品分类" option-label="label" option-value="value">
+                            </p-dropdown>
+
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="product.seriesId" :options="seriesSet"
+                                        placeholder="选择所属系列" option-label="label" option-value="value">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea v-model="product.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+                <p-panel header="其他信息">
+                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>如需添加图片，请到作品详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>如需图片描述信息，请到作品详情页面进行</em></span>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewProduct"></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
+                      class="p-fluid">
+                <p-panel header="基础信息">
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="name">作品名称<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="productEdit.name"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="nameZh">作品名称(中文)<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="productEdit.nameZh"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="nameEn">作品名称(英语)</label>
+                            <p-inputtext v-model.trim="productEdit.nameEn"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="productEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true" :show-icon="true"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="classification" class="mb-3">作品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.classification" :options="productClassSet"
+                                        placeholder="选择作品分类" option-label="label" option-value="value">
+                            </p-dropdown>
+
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.seriesId" :options="seriesSet"
+                                        placeholder="选择所属系列" option-label="label" option-value="value">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea v-model="productEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+                <p-panel header="其他信息">
+                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>如需添加图片，请到作品详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>如需图片描述信息，请到作品详情页面进行</em></span>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                              @click="closeEditDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                              @click="submitEditProduct"></p-button>
+                </template>
+            </p-dialog>
 
             <!-- 尾部 -->
             <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
@@ -136,6 +281,7 @@
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
+    const {FilterMatchMode, FilterOperator} = primevue.api;
     const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
 
@@ -145,6 +291,84 @@
             });
 
             const products = ref([[${products}]]);
+            const seriesSet = ref([[${seriesSet}]]);
+            const productClassSet = ref([[${productClassSet}]]);
+
+
+
+            //region ------新增、编辑------
+            const product = ref({});
+            const productEdit = ref({});
+
+            const displayEditDialog = ref(false);
+            const displayNewDialog = ref(false);
+
+            //打开新增数据面板
+            const openNewDialog = () => {
+                product.value = {};
+                displayNewDialog.value = true;
+            };
+            //关闭新增数据面板
+            const closeNewDialog = () => {
+                product.value = {};
+                displayNewDialog.value = false;
+            };
+            //提交新增数据
+            const submitNewProduct = () => {
+                axiosPostRequest(ADD_PRODUCT_URL, product.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            product.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
+                            });
+                            closeNewDialog();
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
+            };
+
+            //打开编辑数据面板
+            const openEditDialog = (data) => {
+                let dataTmp = JSON.parse(JSON.stringify(data));
+                productEdit.value = dataTmp;
+                productEdit.value.seriesId = dataTmp.series.id;
+                productEdit.value.classification = dataTmp.classification.id;
+                displayEditDialog.value = true;
+            };
+            //关闭编辑数据面板
+            const closeEditDialog = () => {
+                displayEditDialog.value = false;
+                productEdit.value = {};
+            };
+            //保存编辑数据
+            const submitEditProduct = async () => {
+                await axiosPostRequest(UPDATE_PRODUCT_URL, productEdit.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            productEdit.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
+                            });
+                            closeEditDialog();
+                            location.reload(true);
+                        } else {
+                            console.log(res);
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(e => {
+                        console.error(e);
+                    });
+            };
+            //endregion
 
             //region 基础配置
             const toast = useToast();
@@ -165,6 +389,15 @@
             };
             //endregion
 
+            //region 过滤
+            const filters = ref({
+                'name': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                'nameZh': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                'series.id': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'classification.id': {value: null, matchMode: FilterMatchMode.EQUALS},
+            });
+            //endregion
+
             const onToggle = (val) => {
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
@@ -178,6 +411,9 @@
             //endregion
 
             return {
+                productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
+                product, displayNewDialog, openNewDialog, closeNewDialog, submitNewProduct,
+                filters, seriesSet, productClassSet,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, exportCSV,
                 products, selectedColumns, columns, onToggle
             }
@@ -193,6 +429,11 @@
             "p-column": primevue.column,
             "p-multiselect": primevue.multiselect,
             "p-toolbar": primevue.toolbar,
+            "p-calendar": primevue.calendar,
+            "p-textarea": primevue.textarea,
+            "p-panel": primevue.panel,
+            "p-divider": primevue.divider,
+            "p-dialog": primevue.dialog,
         }
     };
 

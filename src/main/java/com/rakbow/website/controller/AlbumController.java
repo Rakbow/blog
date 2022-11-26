@@ -12,7 +12,7 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.util.AlbumUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,11 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,7 +72,6 @@ public class AlbumController {
     private String domain;
     @Value("${server.servlet.context-path}")
     private String contextPath;
-
     @Autowired
     private HostHolder hostHolder;
     //endregion
@@ -111,7 +107,7 @@ public class AlbumController {
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int albumId, Model model) throws IOException {
         if (albumService.getAlbumById(albumId) == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getName()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
         //访问数+1
@@ -165,7 +161,7 @@ public class AlbumController {
             int id = JSONObject.parseObject(json).getInteger("id");
             Album album = albumService.getAlbumById(id);
             if (album == null) {
-                res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED, EntityType.ALBUM.getName()));
+                res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED, EntityType.ALBUM.getNameZh()));
                 return JSON.toJSONString(res);
             }
             res.data = JSON.toJSONString(albumService.album2Json(album));
@@ -288,7 +284,7 @@ public class AlbumController {
                 //新增访问量实体
                 visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
 
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getName());
+                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -323,7 +319,7 @@ public class AlbumController {
                     //删除访问量实体
                     visitService.deleteVisit(EntityType.ALBUM.getId(), id);
                 }
-                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getName());
+                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }
@@ -357,7 +353,7 @@ public class AlbumController {
                 //将更新的专辑保存到Elasticsearch服务器索引中
                 elasticsearchService.saveAlbum(album);
 
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getName());
+                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -366,52 +362,6 @@ public class AlbumController {
             res.setErrorMessage(ex.getMessage());
         }
         return JSON.toJSONString(res);
-    }
-
-    //获取专辑图像
-    @RequestMapping(path = "/{id}/{fileName}", method = RequestMethod.GET)
-    public void getAlbumImg(@PathVariable("fileName") String fileName, @PathVariable("id") int albumId, HttpServletResponse response) {
-        // 服务器存放路径
-        fileName = imgPath + "/album/" + albumId + "/" + fileName;
-        // 文件后缀
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
-        // 响应图片
-        response.setContentType("image/" + suffix);
-        try (
-                FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
-        ) {
-            byte[] buffer = new byte[1024];
-            int b = 0;
-            while ((b = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, b);
-            }
-        } catch (IOException e) {
-            logger.error("读取图片失败: " + e.getMessage());
-        }
-    }
-
-    //获取专辑图像
-    @RequestMapping(path = "/{id}/compress/{fileName}", method = RequestMethod.GET)
-    public void getAlbumCompressImg(@PathVariable("fileName") String fileName, @PathVariable("id") int albumId, HttpServletResponse response) {
-        // 服务器存放路径
-        fileName = imgPath + "/compress/album/" + albumId + "/" + fileName;
-        // 文件后缀
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
-        // 响应图片
-        response.setContentType("image/" + suffix);
-        try (
-                FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
-        ) {
-            byte[] buffer = new byte[1024];
-            int b = 0;
-            while ((b = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, b);
-            }
-        } catch (IOException e) {
-            logger.error("读取图片失败: " + e.getMessage());
-        }
     }
 
     //endregion
@@ -435,7 +385,7 @@ public class AlbumController {
                 JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = AlbumUtils.checkAlbumAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonUtils.checkAddImages(imageInfosTmp, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
@@ -483,7 +433,7 @@ public class AlbumController {
                     jo.put("nameEn", imageInfo.getString("nameEn"));
                     jo.put("nameZh", imageInfo.getString("nameZh"));
                     jo.put("type", imageInfo.getString("type"));
-                    jo.put("uploadTime", CommonUtil.getCurrentTime());
+                    jo.put("uploadTime", CommonUtils.getCurrentTime());
                     if (imageInfo.getString("description") == null) {
                         jo.put("description", "");
                     }
@@ -496,7 +446,7 @@ public class AlbumController {
                 //更新elasticsearch中的专辑
                 elasticsearchService.saveAlbum(albumService.getAlbumById(id));
 
-                res.message = ApiInfo.INSERT_ALBUM_IMAGES_SUCCESS;
+                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -526,7 +476,7 @@ public class AlbumController {
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
 
                     //检测是否存在多张封面
-                    String errorMessage = AlbumUtils.checkAlbumUpdateImages(images);
+                    String errorMessage = CommonUtils.checkUpdateImages(images);
                     if (!StringUtils.equals("", errorMessage)) {
                         res.setErrorMessage(errorMessage);
                         return JSON.toJSONString(res);

@@ -6,7 +6,7 @@ import com.rakbow.website.dao.elasticsearch.AlbumRepository;
 import com.rakbow.website.dao.elasticsearch.MusicRepository;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,7 +103,7 @@ public class ElasticsearchService {
         for (SearchHit hit : searchResponse.getHits()) {
             Date date = simpleDateFormat.parse(JSON.parseObject(hit.getSourceAsString()).get("releaseDate").toString());
             JSONObject albumJson = JSON.parseObject(hit.getSourceAsString());
-            albumJson.put("releaseDate", CommonUtil.dateToString(date));
+            albumJson.put("releaseDate", CommonUtils.dateToString(date));
             albumJson.remove("_class");
             Album album = albumService.json2Album(albumJson);
 

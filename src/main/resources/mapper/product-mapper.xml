@@ -28,18 +28,19 @@
         where _s = 1;
     </select>
 
-    <insert id="insertProduct" parameterType="Product" keyProperty="id">
+    <insert id="addProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
         values (#{seriesId}, #{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{classification},
-                #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images})
+        #{images}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
         update product
         set
-        series_id = #{seriesId}, name = #{name}, name_zh = #{nameZh}, name_en = #{nameEn},
-        release_date = #{releaseDate}, classification = #{classification}, added_time = #{addedTime},
-        edited_time = #{editedTime}, description = #{description}, remark = #{remark}, images = #{images}
+        series_id = #{product.seriesId}, name = #{product.name}, name_zh = #{product.nameZh},
+        name_en = #{product.nameEn}, release_date = #{product.releaseDate},
+        classification = #{product.classification}, remark = #{product.remark},
+        added_time = #{product.addedTime}, edited_time = #{product.editedTime}, _s = #{product._s}
         where id = #{id}
     </update>
 
@@ -56,5 +57,19 @@
         where series_id = #{seriesId}
         order by release_date desc
     </select>
+
+    <update id="updateProductDescription" keyProperty="id">
+        update product
+        set
+        description = #{description}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateProductImages" keyProperty="id">
+        update product
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
 
 </mapper>

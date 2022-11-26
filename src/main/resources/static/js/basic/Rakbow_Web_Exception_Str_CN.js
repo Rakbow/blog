@@ -5,11 +5,11 @@ const ALBUM_DETAIL_TRACK_INFO_MUSIC_NOT_EQUALS = "音轨时间与名称列表不
 const ALBUM_DETAIL_TRACK_INFO_ALBUM_FORMAT_EMPTY = "未选择专辑分类！";
 const ALBUM_DETAIL_TRACK_INFO_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
 
-const ALBUM_IMAGE_EMPTY = "未选择图片！";
-const ALBUM_IMAGE_NAME_ZH_EMPTY = "未填写图片名(中)！";
-const ALBUM_IMAGE_NAME_EN_EMPTY = "未填写图片名(英)！";
-const ALBUM_IMAGE_TYPE_EMPTY = "未选择图片类型！";
-const ALBUM_IMAGE_SELECTED = "图片已上传！";
+const IMAGE_EMPTY_EXCEPTION = "未选择图片！";
+const IMAGE_NAME_ZH_EMPTY_EXCEPTION = "未填写图片名(中)！";
+const IMAGE_NAME_EN_EMPTY_EXCEPTION = "未填写图片名(英)！";
+const IMAGE_TYPE_EMPTY_EXCEPTION = "未选择图片类型！";
+const IMAGE_SELECTED_INFO = "图片已上传！";
 //endregion
 
 //region music_detail

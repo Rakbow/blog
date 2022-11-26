@@ -82,7 +82,6 @@
                 </template>
             </p-toolbar>
             <p-datatable ref="dt" :value="albums" class="p-datatable-customers p-datatable-sm"
-
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row"
@@ -239,7 +238,7 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">专辑名称(日语)</label>
+                            <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
                             <p-inputtext id="nameJp" v-model.trim="album.nameJp"></p-inputtext>
                         </div>
                         <div class="field col">
@@ -349,23 +348,23 @@
                 <p-panel header="其他信息">
                     <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需添加曲目，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需添加曲目，请到专辑详情页面进行</em></span>
                     </div>
-                    <p-divider align="center" type="dashed"><b>音乐创作</b></p-divider>
+                    <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需添加音乐创作信息，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需添加图片，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需添加图片，请到专辑详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>描述</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需图片描述信息，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需图片描述信息，请到专辑详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>特典</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需图片特典信息，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需图片特典信息，请到专辑详情页面进行</em></span>
                     </div>
                 </p-panel>
                 <template #footer>
@@ -488,23 +487,23 @@
                 <p-panel header="其他信息">
                     <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">添加和编辑曲目等操作，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>添加和编辑曲目等操作，请到专辑详情页面进行</em></span>
                     </div>
-                    <p-divider align="center" type="dashed"><b>音乐创作</b></p-divider>
+                    <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需添加音乐创作信息，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">添加和编辑图片等操作，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>添加和编辑图片等操作，请到专辑详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>描述</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需编辑描述信息，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需编辑描述信息，请到专辑详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>特典</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center">如需编辑特典信息，请到专辑详情页面进行</span>
+                        <span style="text-align: center"><em>如需编辑特典信息，请到专辑详情页面进行</em></span>
                     </div>
                 </p-panel>
                 <template #footer>
@@ -657,15 +656,6 @@
                 getAlbums();
                 loading.value = false;
             };
-            //获取所有专辑信息
-            const getAllAlbum = () => {
-                axiosGetRequest(GET_ALL_ALBUM_URL, null)
-                    .then(res => {
-                        albums.value = res;
-                    }).catch(err => {
-                    console.log(err);
-                });
-            };
 
             //region ------新增编辑、编辑和删除相关操作------
             //打开删除确认面板
@@ -750,7 +740,7 @@
             const openNewDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             album.value = {};
@@ -771,7 +761,7 @@
             const submitNewAlbum = () => {
                 axiosPostRequest(INSERT_ALBUM_URL, album.value)
                     .then(res => {
-                        if (res.state == 1) {
+                        if (res.state === 1) {
                             album.value = {};
                             toast.add({
                                 severity: 'success',

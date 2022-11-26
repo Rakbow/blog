@@ -16,7 +16,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.AlbumUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -328,10 +326,10 @@ public class AlbumService {
      */
     public JSONObject handleAlbumJson(JSONObject albumJson) {
 
-        String[] products = CommonUtil.str2SortedArray(albumJson.getString("products"));
-        String[] publishFormat = CommonUtil.str2SortedArray(albumJson.getString("publishFormat"));
-        String[] albumFormat = CommonUtil.str2SortedArray(albumJson.getString("albumFormat"));
-        String[] mediaFormat = CommonUtil.str2SortedArray(albumJson.getString("mediaFormat"));
+        String[] products = CommonUtils.str2SortedArray(albumJson.getString("products"));
+        String[] publishFormat = CommonUtils.str2SortedArray(albumJson.getString("publishFormat"));
+        String[] albumFormat = CommonUtils.str2SortedArray(albumJson.getString("albumFormat"));
+        String[] mediaFormat = CommonUtils.str2SortedArray(albumJson.getString("mediaFormat"));
 
         //处理时间
         // String releaseDate = CommonUtil.dateToString(albumJson.getDate("releaseDate"));
@@ -365,14 +363,17 @@ public class AlbumService {
         JSONArray artists = JSONArray.parseArray(album.getArtists());
 
         JSONArray images = JSONArray.parseArray(album.getImages());
-        for (int i = 0; i < images.size(); i++) {
-            JSONObject image = images.getJSONObject(i);
-            image.put("thumbUrl", getCompressImageUrl(album.getId(),
-                    AlbumUtils.getImageFileNameByUrl(image.getString("url"))));
+        if (!images.isEmpty()) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                image.put("thumbUrl", CommonUtils.getCompressImageUrl(imgPath,
+                        StringUtils.lowerCase(EntityType.ALBUM.getNameEn()),
+                        album.getId(), CommonUtils.getImageFileNameByUrl(image.getString("url"))));
+            }
         }
 
         //发售时间转为string
-        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
+        albumJson.put("releaseDate", CommonUtils.dateToString(album.getReleaseDate()));
 
         //出版类型
         List<String> publishFormat = new ArrayList<>();
@@ -392,8 +393,8 @@ public class AlbumService {
         //所属产品（详细）
         List<String> product = new ArrayList<>();
         JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.selectProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")"));
+                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
+                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
 
         //所属产品
         List<JSONObject> products = new ArrayList<>();
@@ -401,8 +402,8 @@ public class AlbumService {
                 .forEach(id -> {
                     JSONObject jo = new JSONObject();
                     jo.put("id", id);
-                    jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")");
+                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
@@ -544,8 +545,8 @@ public class AlbumService {
         albumJson.put("series", series);
         albumJson.put("product", product);
         albumJson.put("products", products);
-        albumJson.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
-        albumJson.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
+        albumJson.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
+        albumJson.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));
         return albumJson;
     }
 
@@ -586,7 +587,7 @@ public class AlbumService {
             json.put("catalogNo", "N/A");
         }
 
-        json.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
+        json.put("releaseDate", CommonUtils.dateToString(album.getReleaseDate()));
 
         //出版类型
         List<String> publishFormat = new ArrayList();
@@ -608,8 +609,8 @@ public class AlbumService {
                 .forEach(id -> {
                     JSONObject jo = new JSONObject();
                     jo.put("id", id);
-                    jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")");
+                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
@@ -639,8 +640,8 @@ public class AlbumService {
         json.put("cover", cover);
         json.put("products", products);
         json.put("series", series);
-        json.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
-        json.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
+        json.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
+        json.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));
         json.remove("artists");
         json.remove("bonus");
         json.remove("description");
@@ -692,13 +693,13 @@ public class AlbumService {
         JSONObject albumJson = new JSONObject();
         albumJson.put("id", album.getId());
         albumJson.put("catalogNo", album.getCatalogNo());
-        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
+        albumJson.put("releaseDate", CommonUtils.dateToString(album.getReleaseDate()));
         albumJson.put("nameJp", album.getNameJp());
         albumJson.put("nameZh", album.getNameZh());
         albumJson.put("seriesId", album.getSeries());
         albumJson.put("cover", cover);
-        albumJson.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
-        albumJson.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
+        albumJson.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
+        albumJson.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));
         return albumJson;
     }
 
@@ -732,7 +733,7 @@ public class AlbumService {
         boolean hasBonus = (album.getHasBonus() == 1);
 
         //发售时间转为string
-        albumJson.put("releaseDate", CommonUtil.dateToString(album.getReleaseDate()));
+        albumJson.put("releaseDate", CommonUtils.dateToString(album.getReleaseDate()));
 
         //出版类型
         List<String> publishFormat = new ArrayList<>();
@@ -752,8 +753,8 @@ public class AlbumService {
         //所属产品（详细）
         List<String> product = new ArrayList<>();
         JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.selectProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")"));
+                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
+                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
 
         //所属产品
         List<JSONObject> products = new ArrayList<>();
@@ -761,8 +762,8 @@ public class AlbumService {
                 .forEach(id -> {
                     JSONObject jo = new JSONObject();
                     jo.put("id", id);
-                    jo.put("name", productService.selectProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.selectProductById(id).getClassification()) + ")");
+                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
                     products.add(jo);
                 });
 
@@ -777,8 +778,8 @@ public class AlbumService {
         albumJson.put("series", series);
         albumJson.put("product", product);
         albumJson.put("products", products);
-        albumJson.put("addedTime", CommonUtil.timestampToString(album.getAddedTime()));
-        albumJson.put("editedTime", CommonUtil.timestampToString(album.getEditedTime()));
+        albumJson.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
+        albumJson.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));
 
         albumJson.remove("trackInfo");
         albumJson.remove("artists");
@@ -920,7 +921,7 @@ public class AlbumService {
                 tmpQueryParam.put("productId", Integer.toString(productId));
                 tmp.addAll(getAlbumsByFilter(tmpQueryParam.toJSONString()));
             }
-            result = CommonUtil.removeDuplicateList(tmp);
+            result = CommonUtils.removeDuplicateList(tmp);
             for (int i = 0; i < result.size(); i++) {
                 if (result.get(i).getId() == id) {
                     result.remove(i);
@@ -931,7 +932,7 @@ public class AlbumService {
                 result = result.subList(0, 5);
             }
         }
-        result = CommonUtil.removeDuplicateList(result);
+        result = CommonUtils.removeDuplicateList(result);
         result.forEach(i -> relatedAlbums.add(album2JsonSimple(i)));
         return relatedAlbums;
     }
@@ -1030,7 +1031,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String updateAlbumImages(int id, String images) {
         albumMapper.updateAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_ALBUM_IMAGES_SUCCESS;
+        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
     /**
@@ -1064,11 +1065,11 @@ public class AlbumService {
                 }
                 //删除服务器上对应图片文件
                 Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-                CommonUtil.deleteFile(albumImgPath, fileName);
+                CommonUtils.deleteFile(albumImgPath, fileName);
             }
         }
         albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.DELETE_ALBUM_IMAGES_SUCCESS;
+        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
     /**
@@ -1090,9 +1091,9 @@ public class AlbumService {
                     deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
             //删除服务器上对应图片文件
             Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-            CommonUtil.deleteFile(albumImgPath, fileName);
+            CommonUtils.deleteFile(albumImgPath, fileName);
         }
-        return ApiInfo.DELETE_ALBUM_IMAGES_SUCCESS;
+        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
     /**
@@ -1180,7 +1181,7 @@ public class AlbumService {
                     JSON.parseObject(_disc.toString()).getJSONArray("mediaFormat")));
             disc.put("albumFormat", AlbumFormat.nameEn2IndexArray(
                     JSON.parseObject(_disc.toString()).getJSONArray("albumFormat")));
-            disc.put("discLength", CommonUtil.countTotalTime(_times));
+            disc.put("discLength", CommonUtils.countTotalTime(_times));
             disc.put("trackList", track_list);
 
             discSerial++;
@@ -1188,7 +1189,7 @@ public class AlbumService {
         }
         trackInfo.put("discList", discList);
         trackInfo.put("totalTracks", totalTrack);
-        trackInfo.put("totalLength", CommonUtil.countTotalTime(times));
+        trackInfo.put("totalLength", CommonUtils.countTotalTime(times));
         albumMapper.updateAlbumTrackInfo(id, trackInfo.toJSONString(), new Timestamp(System.currentTimeMillis()));
 
         //删除对应music
@@ -1250,31 +1251,6 @@ public class AlbumService {
             }
         }
         return coverUrl;
-    }
-
-    /**
-     * 压缩图片并返回缩略图的url
-     *
-     * @author rakbow
-     * @param albumId,fileName 专辑id和图片文件全名
-     * @return 缩略图url
-     * */
-    public String getCompressImageUrl (int albumId, String fileName) {
-        Path albumImgPath = Paths.get(imgPath + "/album/" + albumId);
-        String oldFilePath = (albumImgPath + "\\" + fileName);
-        String outFilePath = (imgPath + "/compress/album/" + albumId + "/" + fileName);
-
-        File file = new File(outFilePath);
-        //判断是否存在
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdir();
-        } else {
-            file.getParentFile().delete();
-            file.getParentFile().mkdir();
-        }
-
-        CommonUtil.imageCompress(oldFilePath, 200, 200, outFilePath, true);
-        return "/db/album/" + albumId + "/compress/" + fileName;
     }
 
     //endregion

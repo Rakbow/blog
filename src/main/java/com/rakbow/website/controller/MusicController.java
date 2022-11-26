@@ -44,7 +44,7 @@ public class MusicController {
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getMusicDetail(@PathVariable("id") int musicId, Model model) {
         if (musicService.getMusicById(musicId) == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getName()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getNameZh()));
             return "/error/404";
         }
         //访问数+1
@@ -89,7 +89,7 @@ public class MusicController {
 
                 //将更新的专辑保存到Elasticsearch服务器索引中
 
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getName());
+                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
 
             }else {
                 res.setErrorMessage(userService.checkAuthority(request).message);

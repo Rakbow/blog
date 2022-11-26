@@ -232,7 +232,7 @@
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
-                                <b>音乐创作</b>
+                                <b>创作者信息</b>
                             </template>
                             <div class="grid" v-if="album.artists.length != 0">
                                 <table class="table-borderless table-sm ml-10">
@@ -247,7 +247,7 @@
                                 </table>
                             </div>
                             <div v-else>
-                                <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
+                                <span class="emptyInfo"><em>暂无创作者相关信息</em></span>
                             </div>
                         </p-fieldset>
                         <p-fieldset :toggleable="true" class="mt-2">
@@ -342,7 +342,8 @@
                                             </template>
                                             <template #thumbnail="{item}">
                                                 <div class="grid grid-nogutter justify-content-center">
-                                                    <img id="galleria-item" :src="item.thumbUrl" :alt="item.name" class="temp2"/>
+                                                    <img id="galleria-item" :src="item.thumbUrl" :alt="item.name"
+                                                         class="galleria-thumb-image"/>
                                                 </div>
                                             </template>
                                         </p-galleria>
@@ -458,7 +459,8 @@
                             <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">
                                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
                                      v-for="(image, index) of album.displayImages" :key="index">
-                                    <img :class="getSidebarPanelImageClass(image.thumbUrl)" :src="image.thumbUrl" draggable="false"
+                                    <img :class="getSidebarPanelImageClass(image.thumbUrl)" :src="image.thumbUrl"
+                                         draggable="false"
                                          oncontextmenu="return false"
                                          v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
                                          @click="imageClick(index)"/>
@@ -749,7 +751,7 @@
                         <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayArtistEditDialog" header="编辑创作信息"
+                <p-dialog v-model:visible="displayArtistEditDialog" header="编辑创作者信息"
                           :style="{width: '800px'}" :modal="true">
                     <p-panel>
                         <template #header>
@@ -809,7 +811,7 @@
                             <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
                         <div v-else>
-                            <span class="emptyInfo">暂无创作人员相关信息</span>
+                            <span class="emptyInfo">暂无创作者相关信息</span>
                         </div>
                     </p-panel>
                     <template #footer>
@@ -1083,11 +1085,6 @@
             const imageClick = (index) => {
                 activeIndex.value = index;
                 displayCustom.value = true;
-            };
-            const initGalleriaImageClass = (url) => {
-                var image = new Image();
-                image.src = url;
-                return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
             };
             //endregion
 
@@ -1619,25 +1616,25 @@
                 imageInfo.value.image = ev.files[0];
             };
             const onUpload = (ev) => {
-                toast.add({severity: 'info', summary: 'Success', detail: ALBUM_IMAGE_SELECTED, life: 3000});
+                toast.add({severity: 'info', summary: 'Success', detail: IMAGE_SELECTED_INFO, life: 3000});
             };
             const checkImageInfo = () => {
                 if (typeof imageInfo.value.description == "undefined") {
                     imageInfo.value.description = "";
                 }
                 if (imageInfo.value.image === null) {
-                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_EMPTY, life: 3000});
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_EMPTY_EXCEPTION, life: 3000});
                 }
                 if (typeof imageInfo.value.nameZh == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_NAME_ZH_EMPTY, life: 3000});
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_ZH_EMPTY_EXCEPTION, life: 3000});
                     return false;
                 }
                 if (typeof imageInfo.value.nameEn == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_NAME_EN_EMPTY, life: 3000});
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_EN_EMPTY_EXCEPTION, life: 3000});
                     return false;
                 }
                 if (typeof imageInfo.value.type == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: ALBUM_IMAGE_TYPE_EMPTY, life: 3000});
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_TYPE_EMPTY_EXCEPTION, life: 3000});
                     return false;
                 }
                 return true;
@@ -1867,15 +1864,6 @@
     .orders-subtable {
         padding: 1rem;
     }
-    #panel-image-div {
-        display: flex;
-        position: relative;
-        width: 100px;
-        height: 100px;
-        overflow: hidden;
-        background-color: black;
-        border: 1px solid black;
-    }
 
     .p-tooltip-text {
         width: 15rem;
@@ -1910,29 +1898,7 @@
         background-color: black;
     }
 
-    .galleria-div-width {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-width: 100%;
-        max-width: 100%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    .galleria-div-height {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        min-height: 100%;
-        max-height: 100%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    .temp2 {
+    .galleria-thumb-image {
         display: block;
         /*height: 500px;*/
         /*width: 500px;*/
@@ -1994,72 +1960,6 @@
 
     .p-galleria-content {
         position: relative;
-    }
-
-    /*.p-galleria-thumbnail-wrapper {*/
-    /*    position: absolute;*/
-    /*    bottom: 0;*/
-    /*    left: 0;*/
-    /*    width: 100%;*/
-    /*}*/
-
-    /*.p-galleria-thumbnail-items-container {*/
-    /*    width: 100%;*/
-    /*}*/
-
-    /*.custom-galleria-footer {*/
-    /*    display: flex;*/
-    /*    align-items: center;*/
-    /*    background-color: rgba(0, 0, 0, .9);*/
-    /*    color: #ffffff;*/
-    /*}*/
-
-    /*.custom-galleria-footer .p-button {*/
-    /*    background-color: transparent;*/
-    /*    color: #ffffff;*/
-    /*    border: 0 none;*/
-    /*    border-radius: 0;*/
-    /*    margin: .2rem 0;*/
-    /*}*/
-
-
-    .markdown-body {
-        box-sizing: border-box;
-        min-width: 200px;
-        /* max-width: 980px; */
-        margin: 0 auto;
-        padding: 10px;
-    }
-
-    @media (max-width: 767px) {
-        .markdown-body {
-            padding: 15px;
-        }
-    }
-
-    #md-area {
-        width: 100%;
-        background: #f5f5f5;
-        border: 1px solid #111;
-    }
-
-    #view-area {
-        width: 100%;
-        /* border: 1px solid #111; */
-    }
-
-    .markdown-body {
-        box-sizing: border-box;
-        min-width: 200px;
-        /* max-width: 980px; */
-        margin: 0 auto;
-        padding: 10px;
-    }
-
-    @media (max-width: 767px) {
-        .markdown-body {
-            padding: 15px;
-        }
     }
 
     .p-galleria-item-wrapper {

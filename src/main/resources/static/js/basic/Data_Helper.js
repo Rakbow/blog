@@ -177,3 +177,17 @@ const getSidebarPanelImageClass = (url) => {
     image.src = url;
     return (image.naturalWidth > image.naturalHeight) ? "sidebar-panel-image-middle-width" : "sidebar-panel-image-middle-height";
 };
+
+const dropdownValue2Label = (value, set) => {
+    for (let item of set) {
+        if (item.value === value) {
+            return item.label;
+        }
+    }
+}
+
+const initGalleriaImageClass = (url) => {
+    var image = new Image();
+    image.src = url;
+    return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
+};

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Detail</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+    <!--other css -->
+    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
+    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
+    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+
+    <!-- PrimeVue css-->
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
+
+    <!-- Vue3 -->
+    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/galleria.min.js}"></script>
+    <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
+    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+
+    <!-- Jquery -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+    <!-- high light js -->
+    <link href="https://cdn.staticfile.org/highlight.js/11.6.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/highlight.js/11.6.0/highlight.min.js"></script>
+
+    <!-- md-editor-v3 -->
+    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
+
+    <!-- marked -->
+    <script src="https://cdn.staticfile.org/marked/4.2.0/marked.min.js"></script>
+    <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <div class="main">
+        <div id="app">
+            <!-- 头部 -->
+            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+
+            <div class="grid card mt-2">
+                <p-toast></p-toast>
+                <div class="col-12 sm:col-12 md:col-6 lg:col-9">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-_classification mr-0" style="font-size: 2rem"></i>
+                            <div class="container mt-0 mb-0 ml-0">
+                                <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{product.name}}</h4>
+                                <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">
+                                    <small>{{product.nameZh}}</small>
+                                </h4>
+                                <h4 v-if="product.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
+                                    style="text-align: left"><small>{{product.nameEn}}</small></h4>
+                            </div>
+                        </template>
+                        <template #icons th:if="${loginUser != null}">
+                            <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"
+                                           th:if="${loginUser.type == 1}">
+                                <p-button @click="openEditDialog">
+                                    <i class="pi pi-pencil"></i>
+                                    <span class="ml-2 flex align-items-center font-bold">编辑</span>
+                                </p-button>
+                            </p-splitbutton>
+                        </template>
+                        <div class="grid">
+                            <div class="ml-3" style="width: 250px; height: 150px">
+                                <img :src="product.cover.url" :alt="product.cover.name" class="product-cover"/>
+                            </div>
+                            <table class="table-borderless table-sm ml-3">
+                                <tbody>
+                                <tr>
+                                    <td><strong>所属系列</strong></td>
+                                    <td>
+                                        {{product.series.name}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>作品分类</strong></td>
+                                    <td>
+                                        {{product.classification.nameZh}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>发行时间</strong></td>
+                                    <td>
+                                        {{product.releaseDate}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </p-panel>
+                    <p-fieldset :toggleable="true" class="mt-2">
+                        <template #legend>
+                            <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
+                            <b>描述</b>
+                        </template>
+                        <article id="description" class="markdown-body" style="width: 100%;"></article>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true" class="mt-2">
+                        <template #legend>
+                            <i class="pi iconfont icon-_classification mr-2" style="font-size: 2rem"></i>
+                            <b>专辑</b>
+                        </template>
+<!--                        <div v-if="product.images.length == 0">-->
+<!--                            <span class="emptyInfo"><em>暂无图片</em></span>-->
+<!--                        </div>-->
+                    </p-fieldset>
+                </div>
+                <div class="col-12 sm:col-12 md:col-6 lg:col-3">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
+                            <b>图片</b>
+                        </template>
+                        <div v-if="product.images.length == 0">
+                            <span class="emptyInfo"><em>暂无图片</em></span>
+                        </div>
+                        <p-galleria v-if="product.images" :value="product.images"
+                                    v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
+                                    :num-visible="7" container-style="max-width: 800px"
+                                    :circular="true" :full-screen="true" :show-item-navigators="true"
+                                    :show-thumbnails="false" v-model:visible="displayCustom">
+                            <template #item="{item}">
+                                <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
+                                     oncontextmenu="return false"/>
+                            </template>
+                            <template #caption="{item}">
+                                <div class="custom-galleria-footer">
+                                    <div class="col-6">
+                                            <span v-if="product.images" class="title-container">
+                                                <span>共{{product.images.length}}张</span>
+                                                <span class="title">{{item.nameZh}}</span>
+                                                <span>{{item.description}}</span>
+                                            </span>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                            <span v-if="product.images">
+                                            <span>上传于 {{item.uploadTime}}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </template>
+                        </p-galleria>
+                        <div v-if="product.images" class="grid justify-content-evenly justify-content-start">
+                            <div class="col-4 mt-2 mb-2" id="panel-image-div"
+                                 v-for="(image, index) of product.images" :key="index">
+                                <img :class="getSidebarPanelImageClass(image.thumbUrl)" :src="image.thumbUrl"
+                                     draggable="false"
+                                     oncontextmenu="return false"
+                                     v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
+                                     @click="imageClick(index)"/>
+                            </div>
+                        </div>
+                        <br>
+                        <b class="rbot"><b></b></b>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <b>相关作品</b>
+                        </template>
+                        <div class="grid">
+                                <span class="small_font">
+                                    <div class="info_bit_small small_font ml-0 grid"
+                                         v-if="relatedProducts.length != 0"
+                                         v-for="relatedProduct of relatedProducts">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
+                                            <a :href="'/db/product/'+ relatedProduct.id ">
+                                                <img class="sidebar-panel-image-small" :src="relatedProduct.cover.url"
+                                                     style="border-radius: 20%;"
+                                                     v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="info_bit_small">
+                                            <li>
+                                                <a class="small_font"
+                                                   :href="'/db/product/'+ relatedProduct.id ">
+                                                    <span class="text-truncate-2" lang="ja">
+                                                        {{relatedProduct.name}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="small_font">
+                                                    <b>{{relatedProduct.releaseDate}}</b>
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-info-circle mr-2" style="font-size: 2rem"></i>
+                            <b>页面信息</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-fixed">
+                                <i class="pi pi-plus mr-2"></i><b>收录时间</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                {{product.addedTime}}
+                            </div>
+                            <div class="col-fixed">
+                                <i class="pi pi-pencil mr-2"></i><b>编辑时间</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                {{product.editedTime}}
+                            </div>
+                            <div class="col-fixed">
+                                <i class="pi pi-chart-bar mr-2"></i><b>页面流量</b>
+                            </div>
+                            <div class="col-10 col-offset-1">
+                                <i class="pi pi-eye mr-2"></i><b>访问数：</b>
+                                <span class="text-center">{{visitNum}}</span>
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+            <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
+                      class="p-fluid">
+                <p-panel header="基础信息">
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="name">作品名称<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="productEdit.name"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="nameZh">作品名称(中文)<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="productEdit.nameZh"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="nameEn">作品名称(英语)</label>
+                            <p-inputtext v-model.trim="productEdit.nameEn"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="productEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true" :show-icon="true"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="classification" class="mb-3">作品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.classification" :options="productClassSet"
+                                        placeholder="选择作品分类" option-label="label" option-value="value">
+                            </p-dropdown>
+
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.seriesId" :options="seriesSet" :disabled="true"
+                                        placeholder="选择所属系列" option-label="label" option-value="value">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea v-model="productEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                              @click="closeEditDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                              @click="submitEditProduct"></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                <!--                    <div id="md-editor-v3">-->
+                <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+                </md-editor-v3>
+                <!--                    </div>-->
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                              class="p-button-text">
+                    </p-button>
+                    <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
+                      :style="{width: '1200px'}" :modal="true">
+                <p-panel>
+                    <template #header>
+                        <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                        <b>新增</b>
+                    </template>
+                    <div class="grid">
+                        <div class="col-6" align="left">
+                            <p-fileupload
+                                    mode="basic"
+                                    :custom-upload="true"
+                                    accept="image/*"
+                                    :auto="true"
+                                    choose-label="上传图片"
+                                    :max-file-size="10000000" :preview-width="100"
+                                    invalid-file-size-message="{0}大小已超过{1}"
+                                    @uploader="onUpload"
+                                    @select="selectFile">
+                            </p-fileupload>
+                        </div>
+                        <div class="col-6" align="right">
+                            <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                      label="清空所选" @click="clearUploadedImage"></p-button>
+                        </div>
+                    </div>
+                    <div class="formgrid grid mt-2">
+                        <div class="field col">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-image"></i>
+                                    </span>
+                                <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="field col">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-image"></i>
+                                    </span>
+                                <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="field col">
+                            <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                                        option-value="value" placeholder="选择图片类型" style="width: 280px"></p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                                        :auto-resize="true" placeholder="图片描述" style="width: 280px"></p-textarea>
+                        </div>
+                    </div>
+                    <div class="formgrid grid mt-2">
+                        <div class="field col" align="left">
+                            <p-button label="新增图片" icon="pi pi-save"
+                                      @click="save2imageInfos"></p-button>
+                        </div>
+                        <div class="field col" align="right">
+                            <p-button label="提交新增" icon="pi pi-save"
+                                      @click="submitImages" class="p-button-success"></p-button>
+                        </div>
+                    </div>
+                    <p-divider></p-divider>
+                    <div class="field">
+                        <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
+                        <section>
+                            <div id="imgBox" v-html="imageHtml"></div>
+                        </section>
+                    </div>
+                </p-panel>
+                <p-panel>
+                    <template #header>
+                        <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                        <b>编辑</b>
+                    </template>
+                    <div v-if="product.images.length != 0">
+                        <p-datatable :value="product.images" class="p-datatable-sm"
+                                     @row-reorder="imgRowReorder" edit-mode="row" striped-rows
+                                     :resizable-columns="true" column-resize-mode="expand"
+                                     v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
+                                     v-model:selection="selectedImage">
+                            <template #header>
+                                <p-button icon="pi pi-trash" class="p-button-danger"
+                                          @click="confirmDeleteSelectedImage"></p-button>
+                            </template>
+                            <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
+                            <p-column :row-reorder="true" header-style="width: 3%"></p-column>
+                            <p-column header="图片" header-style="width: 8%">
+                                <template #body="slotProps">
+                                    <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn" class="edit-image" />
+                                </template>
+                            </p-column>
+                            <p-column field="url" header="url" header-style="width: 10%"></p-column>
+                            <p-column field="nameZh" header="名(中)" header-style="width: 10%">
+                                <template #editor="{ data, field }">
+                                    <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                </template>
+                            </p-column>
+                            <p-column field="nameEn" header="名(英)" header-style="width: 10%">
+                                <template #editor="{ data, field }">
+                                    <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                </template>
+                            </p-column>
+                            <p-column field="type" header="类型" header-style="width: 8%">
+                                <template #editor="{ data, field }">
+                                    <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
+                                                option-value="value" placeholder="图片类型">
+
+                                    </p-dropdown>
+                                </template>
+                                <template #body="slotProps">
+                                    {{getImageTypeLabel(slotProps.data.type)}}
+                                </template>
+                            </p-column>
+                            <p-column field="description" header="描述" header-style="width: 15%">
+                                <template #editor="{ data, field }">
+                                    <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                </template>
+                            </p-column>
+                            <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                            <p-column :row-editor="true" header-style="width: 15%"></p-column>
+                        </p-datatable>
+                    </div>
+                    <div v-else>
+                        <span class="emptyInfo"><em>暂无图片</em></span>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog" class="p-button-text"></p-button>
+                    <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="deleteProductImageDialog" header="删除图片"
+                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+                <div class="confirmation-content">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span v-if="product">确定删除所选的图片？</span>
+                </div>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                              @click="cancelDeleteSelectedImage"></p-button>
+                    <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                              @click="deleteImage"></p-button>
+                </template>
+            </p-dialog>
+
+            <!-- 尾部 -->
+            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
+        </div>
+    </div>
+</div>
+<script type="module" th:inline="javascript">
+    const {createApp, onMounted, ref} = Vue;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+                init();
+            });
+
+            const product = ref([[${product}]]);
+            const visitNum = ref([[${visitNum}]]);
+            const productClassSet = ref([[${productClassSet}]]);
+            const seriesSet = ref([[${seriesSet}]]);
+            const relatedProducts = ref([]);
+            const edits = ref([
+                {
+                    label: '图片管理',
+                    icon: 'pi pi-images',
+                    command: () => {
+                        openImageEditDialog();
+                    }
+                },
+                {
+                    label: '描述信息',
+                    icon: 'pi iconfont icon-miaoshu',
+                    command: () => {
+                        openDescriptionEditDialog();
+                    }
+                }
+            ]);
+
+            //region ------侧边栏图片------
+            const activeIndex = ref(0);
+            const responsiveOptions = [
+                {
+                    breakpoint: '1024px',
+                    numVisible: 5
+                },
+                {
+                    breakpoint: '768px',
+                    numVisible: 3
+                },
+                {
+                    breakpoint: '560px',
+                    numVisible: 1
+                }
+            ];
+            const displayCustom = ref(false);
+            const imageClick = (index) => {
+                activeIndex.value = index;
+                displayCustom.value = true;
+            };
+            //endregion
+
+            //region ------图片管理------
+            const updateImage = () => {
+                let json = {
+                    id: product.value.id,
+                    images: product.value.images,
+                    action: "1"
+                };
+                axiosPostRequest(UPDATE_PRODUCT_IMAGES_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            closeImageEditDialog();
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            const imgRowReorder = (ev) => {
+                product.value.images = ev.value;
+            };
+            const editingImages = ref([]);
+            const imgRowEditSave = (ev) => {
+                let { newData, index } = ev;
+                product.value.images[index] = newData;
+            };
+            const getImageTypeLabel = (type) => {
+                return value2Label(type, imageTypes.value);
+            };
+            const selectedImage = ref([]);
+            const confirmDeleteSelectedImage = () => {
+                deleteProductImageDialog.value = true;
+            };
+            const cancelDeleteSelectedImage = () => {
+                selectedImage.value = [];
+                deleteProductImageDialog.value = false;
+            };
+            const deleteProductImageDialog = ref(false);
+            const deleteImage = () => {
+                let json = {
+                    id: product.value.id,
+                    images: selectedImage.value,
+                    action: "2"
+                };
+                axiosPostRequest(UPDATE_PRODUCT_IMAGES_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            deleteProductImageDialog.value = false;
+                            closeImageEditDialog();
+                            selectedImage.value = [];
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            const imageTypes = ref([
+                {label: '展示', value: '0'},
+                {label: '封面', value: '1'},
+                {label: '其他', value: '2'}
+            ]);
+            const imageInfo = ref({
+                image: null,
+                nameZh: "",
+                nameEn: "",
+                description: "",
+                type: 0
+            });
+            const imageInfos = ref([]);
+            const displayImageEditDialog = ref(false);
+            const imageHtml = ref("");
+            const openImageEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            imageInfo.value = {};
+                            imageInfos.value = [];
+                            displayImageEditDialog.value = true;
+                        }
+                    })
+            };
+            const closeImageEditDialog = () => {
+                imageInfo.value = {};
+                imageInfos.value = [];
+                displayImageEditDialog.value = false;
+                document.getElementById("imgBox").innerHTML = "";
+            };
+            const showImage = () => {
+                imageHtml.value = "";
+                //<![CDATA[
+                for (const img of imageInfos.value) {
+                    imageHtml.value += '<div align=""center>';
+                    imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
+                    imageHtml.value += '<p>图片类型: ' + (img.type==="1"?"封面":(img.type==="0"?"展示":"其他")) + '</p>';
+                    imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
+                    imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
+                    imageHtml.value += '<p>描述: ' + img.description + '</p>';
+                    imageHtml.value += '</div>';
+                }
+                //]]>
+                document.getElementById("imgBox").innerHTML = imageHtml;
+            };
+            const selectFile = (ev) => {
+                imageInfo.value.image = ev.files[0];
+            };
+            const onUpload = (ev) => {
+                toast.add({severity: 'info', summary: 'Success', detail: IMAGE_SELECTED_INFO, life: 3000});
+            };
+            const checkImageInfo = () => {
+                if (typeof imageInfo.value.description == "undefined") {
+                    imageInfo.value.description = "";
+                }
+                if (imageInfo.value.image === null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_EMPTY_EXCEPTION, life: 3000});
+                }
+                if (typeof imageInfo.value.nameZh == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_ZH_EMPTY_EXCEPTION, life: 3000});
+                    return false;
+                }
+                if (typeof imageInfo.value.nameEn == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_EN_EMPTY_EXCEPTION, life: 3000});
+                    return false;
+                }
+                if (typeof imageInfo.value.type == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_TYPE_EMPTY_EXCEPTION, life: 3000});
+                    return false;
+                }
+                return true;
+            }
+            const save2imageInfos = () => {
+                if (checkImageInfo()) {
+                    imageInfos.value.push(imageInfo.value);
+                    showImage();
+                    imageInfo.value = {};
+                }
+            };
+            const clearUploadedImage = () => {
+                imageInfos.value = [];
+                document.getElementById("imgBox").innerHTML = "";
+            };
+            const submitImages = () => {
+                const formData = new FormData();
+                for (const img of imageInfos.value) {
+                    formData.append("images", img.image);
+                }
+                formData.append("id", product.value.id);
+                formData.append("imageInfos", JSON.stringify(imageInfos.value));
+                axiosRequest(INSERT_PRODUCT_IMAGES_URL, formData)
+                    .then(res => {
+                        if (res.state === 1) {
+                            closeImageEditDialog();
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            //endregion
+
+            //region ------编辑描述------
+            const descriptionMd = ref("");
+            const displayDescriptionDialog = ref(false);
+            const openDescriptionEditDialog = () => {
+                descriptionMd.value = product.value.description;
+                displayDescriptionDialog.value = true;
+            }
+            const closeDescriptionEditDialog = () => {
+                displayDescriptionDialog.value = false;
+                descriptionMd.value = "";
+            }
+            const submitDescription = () => {
+                let json = {
+                    id: product.value.id,
+                    description: descriptionMd.value
+                }
+                axiosPostRequest(UPDATE_PRODUCT_DESCRIPTION_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            product.value.description = descriptionMd.value;
+                            text2marked();
+                            closeDescriptionEditDialog();
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
+            }
+            //markdown
+            const text2marked = () => {
+
+                const description = product.value.description;
+
+                if (description != null && description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(description);
+                } else {
+                    //<![CDATA[
+                    document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
+                    //]]>
+                }
+            };
+            //endregion
+
+            //region ------编辑------
+            //打开编辑数据面板
+            const productEdit = ref({});
+            const displayEditDialog = ref(false);
+            const openEditDialog = () => {
+                let dataTmp = JSON.parse(JSON.stringify(product.value));
+                productEdit.value = dataTmp;
+                productEdit.value.seriesId = dataTmp.series.id;
+                productEdit.value.classification = dataTmp.classification.id;
+                displayEditDialog.value = true;
+            };
+            //关闭编辑数据面板
+            const closeEditDialog = () => {
+                displayEditDialog.value = false;
+                productEdit.value = {};
+            };
+            //保存编辑数据
+            const submitEditProduct = async () => {
+                await axiosPostRequest(UPDATE_PRODUCT_URL, productEdit.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            productEdit.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
+                            });
+                            closeEditDialog();
+                            location.reload(true);
+                        } else {
+                            console.log(res);
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(e => {
+                        console.error(e);
+                    });
+            };
+            //endregion
+
+            const init = () => {
+                text2marked();
+            }
+
+            //region 基础配置
+            const toast = useToast();
+            const domainUrl = DOMAIN_URL;
+            const selectedEntity = ref();
+            const entityType = ref(ENTITY_TYPE);
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
+            return {
+                getSidebarPanelImageClass,
+                imgRowReorder, editingImages, imgRowEditSave, getImageTypeLabel, selectedImage, updateImage,
+                confirmDeleteSelectedImage, cancelDeleteSelectedImage, deleteProductImageDialog, deleteImage,
+                imageTypes, imageInfo, imageInfos, displayImageEditDialog, imageHtml, openImageEditDialog,
+                closeImageEditDialog, selectFile, onUpload, save2imageInfos, clearUploadedImage, submitImages,
+
+                descriptionMd, displayDescriptionDialog, openDescriptionEditDialog, closeDescriptionEditDialog,
+                submitDescription,
+                activeIndex, responsiveOptions, displayCustom, initGalleriaImageClass, imageClick,
+                productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
+                product, visitNum, productClassSet, edits, relatedProducts, seriesSet,
+                toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+            }
+        },
+        components: {
+            "p-dropdown": primevue.dropdown,
+            "p-button": primevue.button,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-inputtext": primevue.inputtext,
+            "p-toast": primevue.toast,
+            "p-panel": primevue.panel,
+            "p-fieldset": primevue.fieldset,
+            "p-galleria": primevue.galleria,
+            "p-splitbutton": primevue.splitbutton,
+            "p-calendar": primevue.calendar,
+            "p-textarea": primevue.textarea,
+            "p-dialog": primevue.dialog,
+            "p-fileupload": primevue.fileupload,
+            "p-divider": primevue.divider,
+            "p-column": primevue.column,
+            "p-datatable": primevue.datatable,
+        }
+    };
+
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.toastservice)
+        .use(primevue.config.default)
+        .directive('tooltip', Tooltip)
+        .use(MdEditorV3)
+        .mount("#app");
+</script>
+<style>
+    .product-cover {
+        max-width: 250px;
+        /*max-height: 100px;*/
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
+    #imgBox img {
+        height: 200px;
+    }
+
+    .p-panel .p-panel-header {
+        /* border: 1px solid #dee2e6; */
+        padding: 0.5rem;
+        background: #6d7c8b;
+        color: #d0da9a;
+        border-top-right-radius: 3px;
+        border-top-left-radius: 3px;
+    }
+
+    .label {
+        color: #788990;
+    }
+
+    .galleria-thumb-image {
+        display: block;
+        /*height: 500px;*/
+        /*width: 500px;*/
+        max-width: 100px;
+        max-height: 100px;
+        height: auto;
+        width: auto;
+        /*overflow: auto;*/
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    /*.p-galleria .p-galleria-thumbnail-items-container {*/
+    /*    width: 100%;*/
+    /*}*/
+
+    .p-galleria .p-galleria-item-wrapper {
+        width: 400px;
+        height: 400px;
+    }
+
+    .p-galleria .p-galleria-item-container {
+        /*width: 500px;*/
+        /*height: 500px;*/
+    }
+
+    .custom-galleria-footer {
+        display: flex;
+        align-items: center;
+        /*background-color: rgba(0, 0, 0, 0.9);*/
+        color: #ffffff;
+    }
+
+    .custom-galleria-footer > button {
+        background-color: transparent;
+        color: #ffffff;
+        border: 0 none;
+        border-radius: 0;
+        margin: .2rem 0;
+    }
+
+    .custom-galleria-footer > button.fullscreen-button {
+        margin-left: auto;
+    }
+
+    .custom-galleria-footer > button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .title-container > span {
+        font-size: .9rem;
+        padding-left: .829rem;
+    }
+
+    .title-container > span.title {
+        font-weight: bold;
+    }
+
+    .p-galleria-content {
+        position: relative;
+    }
+
+    .p-galleria-item-wrapper {
+        height: 400px;
+        width: 400px;
+    }
+
+    .p-galleria-thumbnail-content {
+        height: 100px;
+        width: 100px;
+    }
+
+</style>
+</body>
+</html>

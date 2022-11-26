@@ -64,7 +64,7 @@ public class HomeController {
 
     //获取图像
     @RequestMapping(path = "/img/{fileName}", method = RequestMethod.GET)
-    public void getAlbumImg(@PathVariable("fileName") String fileName, HttpServletResponse response) {
+    public void getCommonImage(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         // 服务器存放路径
         fileName = imgPath + "/" + fileName;
         // 文件后缀
@@ -118,4 +118,53 @@ public class HomeController {
         model.addAttribute("errorMessage", ApiInfo.NOT_AUTHORITY_DENIED);
         return "/error/404";
     }
+
+    //获取图像
+    @RequestMapping(path = "/db/{entity}/{id}/{fileName}", method = RequestMethod.GET)
+    public void getImg(@PathVariable("entity") String entity, @PathVariable("fileName") String fileName,
+                       @PathVariable("id") int entityId, HttpServletResponse response) {
+        // 服务器存放路径
+        fileName = imgPath + "/" + entity + "/" + entityId + "/" + fileName;
+        // 文件后缀
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        // 响应图片
+        response.setContentType("image/" + suffix);
+        try (
+                FileInputStream fis = new FileInputStream(fileName);
+                OutputStream os = response.getOutputStream();
+        ) {
+            byte[] buffer = new byte[1024];
+            int b = 0;
+            while ((b = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, b);
+            }
+        } catch (IOException e) {
+            logger.error("读取图片失败: " + e.getMessage());
+        }
+    }
+
+    //获取缩略图
+    @RequestMapping(path = "/db/{entity}/{id}/compress/{fileName}", method = RequestMethod.GET)
+    public void getCompressImage(@PathVariable("entity") String entity, @PathVariable("fileName") String fileName,
+                                 @PathVariable("id") int entityId, HttpServletResponse response) {
+        // 服务器存放路径
+        fileName = imgPath + "/compress/" + entity + "/" + entityId + "/" + fileName;
+        // 文件后缀
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        // 响应图片
+        response.setContentType("image/" + suffix);
+        try (
+                FileInputStream fis = new FileInputStream(fileName);
+                OutputStream os = response.getOutputStream();
+        ) {
+            byte[] buffer = new byte[1024];
+            int b = 0;
+            while ((b = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, b);
+            }
+        } catch (IOException e) {
+            logger.error("读取图片失败: " + e.getMessage());
+        }
+    }
+
 }

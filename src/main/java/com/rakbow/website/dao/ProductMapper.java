@@ -3,6 +3,7 @@ package com.rakbow.website.dao;
 import com.rakbow.website.entity.Product;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 public interface ProductMapper {
 
     //新增产品
-    int insertProduct(Product product);
+    int addProduct(Product product);
 
     //通过id查找作品
     Product selectProductById(int id);
@@ -31,5 +32,11 @@ public interface ProductMapper {
 
     //获取某系列所有产品
     List<Product> selectAllProductsBySeriesId(int seriesId);
+
+    //更新描述
+    int updateProductDescription(int id, String description, Timestamp editedTime);
+
+    //更新图片
+    int updateProductImages(int id, String images, Timestamp editedTime);
 
 }

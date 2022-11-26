@@ -8,7 +8,7 @@ import com.rakbow.website.util.CookieUtil;
 import com.rakbow.website.util.common.ActionResult;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +87,11 @@ public class UserService{
         }
 
         // 注册用户
-        user.setSalt(CommonUtil.generateUUID().substring(0, 5));
-        user.setPassword(CommonUtil.md5(user.getPassword() + user.getSalt()));
+        user.setSalt(CommonUtils.generateUUID().substring(0, 5));
+        user.setPassword(CommonUtils.md5(user.getPassword() + user.getSalt()));
         user.setType(0);//设置用户类型 0-普通用户 1-管理员
         user.setStatus(0);
-        user.setActivationCode(CommonUtil.generateUUID());
+        user.setActivationCode(CommonUtils.generateUUID());
         //设置用户默认头像
         //user.setHeaderUrl(String.format("", new Random().nextInt(1000)));
         user.setCreateTime(new Date());
@@ -147,7 +147,7 @@ public class UserService{
         }
 
         // 验证密码
-        password = CommonUtil.md5(password + user.getSalt());
+        password = CommonUtils.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
             map.put("error", ApiInfo.INCORRECT_PASSWORD);
             return map;
@@ -156,7 +156,7 @@ public class UserService{
         // 生成登录凭证
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
-        loginTicket.setTicket(CommonUtil.generateUUID());
+        loginTicket.setTicket(CommonUtils.generateUUID());
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
         loginTicketMapper.insertLoginTicket(loginTicket);

@@ -10,11 +10,7 @@ import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtil;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,113 +96,6 @@ public class AlbumUtils {
             }
         }
         return coverUrl;
-    }
-
-    /**
-     * 对更新图片信息合法性进行检测，图片英文名和图片类型
-     *
-     * @param
-     * @return
-     * @author rakbow
-     */
-    public static String checkAlbumUpdateImages(JSONArray images) {
-        //封面类型的图片个数
-        int coverCount = 0;
-        for (int i = 0; i < images.size(); i++) {
-            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
-                coverCount++;
-            }
-        }
-        if (coverCount > 1) {
-            return ApiInfo.ALBUM_COVER_COUNT_EXCEPTION;
-        }
-
-        //检测是否存在重复英文名
-        List<String> originImageUrlNameEns = new ArrayList<>();
-        for (int i = 0; i < images.size(); i++) {
-            String imageUrl = images.getJSONObject(i).getString("url");
-            originImageUrlNameEns.add(imageUrl.substring(
-                    imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf(".")));
-        }
-        if (originImageUrlNameEns.stream().distinct().count() != images.size()) {
-            return ApiInfo.ALBUM_IMAGE_NAME_EN_REPEAT_EXCEPTION;
-        }
-
-        return "";
-    }
-
-    /**
-     * 对新增图片信息合法性进行检测，图片英文名和图片类型
-     *
-     * @param imageInfos,images 新增图片信息，专辑原图片集合
-     * @return boolean
-     * @author rakbow
-     */
-    public static String checkAlbumAddImages(JSONArray imageInfos, JSONArray images) {
-
-        List<String> imageUrlNameEns = new ArrayList<>();
-        int coverCount = 0;
-
-        if (images.size() != 0) {
-
-            for (int i = 0; i < images.size(); i++) {
-                String imageUrl = images.getJSONObject(i).getString("url");
-                imageUrlNameEns.add(imageUrl.substring(
-                        imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf(".")));
-            }
-            for (int i = 0; i < imageInfos.size(); i++) {
-                String nameEn = imageInfos.getJSONObject(i).getString("nameEn");
-                imageUrlNameEns.add(nameEn.replace(" ", ""));
-            }
-
-            for (int i = 0; i < images.size(); i++) {
-                if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
-                    coverCount++;
-                }
-            }
-            for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
-                    coverCount++;
-                }
-            }
-        } else {
-
-            for (int i = 0; i < imageInfos.size(); i++) {
-                String nameEn = imageInfos.getJSONObject(i).getString("nameEn");
-                imageUrlNameEns.add(nameEn.replace(" ", ""));
-            }
-
-            for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
-                    coverCount++;
-                }
-            }
-
-        }
-
-        //检测是否存在重复英文名
-        int originNameUrlCount = imageUrlNameEns.size();
-        if (imageUrlNameEns.stream().distinct().count() != originNameUrlCount) {
-            return ApiInfo.ALBUM_IMAGE_NAME_EN_REPEAT_EXCEPTION;
-        }
-
-        //检测图片类型为封面的个数是否大于1
-        if (coverCount > 1) {
-            return ApiInfo.ALBUM_COVER_COUNT_EXCEPTION;
-        }
-
-        return "";
-    }
-
-    /**
-     * 根据图片url获取图片文件全名
-     *
-     * @author rakbow
-     * @param url 图片url
-     * @return fileName
-     * */
-    public static String getImageFileNameByUrl (String url) {
-        return url.substring(url.lastIndexOf("/") + 1);
     }
 
 }

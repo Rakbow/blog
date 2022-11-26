@@ -51,8 +51,14 @@ const LOGIN_URL = DOMAIN_URL + "/login";
 const LOGOUT_URL = DOMAIN_URL + "/logout";
 //endregion
 
-//common
+//region product
 const GET_PRODUCTS_BY_SERIES_ID_URL = DOMAIN_URL + "/db/product/get-products-by-series-id";
+const ADD_PRODUCT_URL = DOMAIN_URL + "/db/product/add";
+const UPDATE_PRODUCT_URL = DOMAIN_URL + "/db/product/update";
+const UPDATE_PRODUCT_DESCRIPTION_URL = DOMAIN_URL + "/db/product/update-description";
+const INSERT_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/add-images";
+const UPDATE_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/update-images";
+//endregion
 
 //region header
 const ENTITY_TYPE = [

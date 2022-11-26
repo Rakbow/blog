@@ -11,38 +11,40 @@ import java.util.List;
  */
 public enum EntityType {
 
-    UNCLASSIFIED(0,"未分类"),
-    ALBUM(1,"专辑"),
-    DISC(2,"碟片"),
-    BOOK(3,"书籍"),
-    GOODS(4,"周边"),
-    GAME(5,"游戏"),
-    SERIES(6,"系列"),
-    PRODUCT(7,"作品"),
-    ARTICLE(8,"文章"),
-    MUSIC(9,"音乐");
+    UNCLASSIFIED(0,"未分类", "Unclassified"),
+    ALBUM(1,"专辑", "Album"),
+    DISC(2,"碟片", "Disc"),
+    BOOK(3,"书籍", "Book"),
+    GOODS(4,"周边", "Goods"),
+    GAME(5,"游戏", "Game"),
+    SERIES(6,"系列", "Series"),
+    PRODUCT(7,"作品", "Product"),
+    ARTICLE(8,"文章", "Article"),
+    MUSIC(9,"音乐", "Music");
 
-    private int Id;
-    private String Name;
+    private int id;
+    private String nameZh;
+    private String nameEn;
 
-    EntityType(int id, String name) {
-        this.Id = id;
-        this.Name = name;
+    EntityType(int id, String nameZh, String nameEn) {
+        this.id = id;
+        this.nameZh = nameZh;
+        this.nameEn = nameEn;
     }
 
-    public static String getItemNameByIndex(int id){
+    public static String getItemNameZhByIndex(int id){
         for (EntityType itemType : EntityType.values()) {
             if (itemType.getId() == id) {
-                return itemType.Name;
+                return itemType.nameZh;
             }
         }
         return "";
     }
 
-    public static int getItemIndexByName(String name){
+    public static int getItemIndexByNameZh(String nameZh){
         for (EntityType itemType : EntityType.values()) {
-            if (itemType.getName().equals(itemType)) {
-                return itemType.Id;
+            if (itemType.getNameZh().equals(nameZh)) {
+                return itemType.id;
             }
         }
         return 0;
@@ -51,24 +53,32 @@ public enum EntityType {
     public static List<String> getItemList(){
         List<String> items = new ArrayList<>();
         for (EntityType itemType : EntityType.values()) {
-            items.add(itemType.getName());
+            items.add(itemType.getNameZh());
         }
         return items;
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
-    public String getName() {
-        return Name;
+    public String getNameZh() {
+        return nameZh;
     }
 
-    public void setName(String name) {
-        Name = name;
+    public void setNameZh(String nameZh) {
+        this.nameZh = nameZh;
+    }
+
+    public String getNameEn() {
+        return nameEn;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
     }
 }

@@ -12,6 +12,7 @@ public class CommonConstant {
 
     //404图url
     public static final String EMPTY_IMAGE_URL = "/img/404.jpg";
+    public static final String EMPTY_IMAGE_WIDTH_URL = "/img/404_width.jpg";
 
     /**
      * 激活成功

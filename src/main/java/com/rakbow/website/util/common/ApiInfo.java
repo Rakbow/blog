@@ -23,6 +23,12 @@ public class ApiInfo {
     public static final String GET_IMAGE_FAILED = "读取图片失败: ";
     public static final String GET_FILE_FAILED = "读取文件失败: ";
 
+    public static final String UPDATE_IMAGES_SUCCESS = "%s图片更改成功！";
+    public static final String INSERT_IMAGES_SUCCESS = "%s图片新增成功！";
+    public static final String DELETE_IMAGES_SUCCESS = "%s图片删除成功！";
+    public static final String COVER_COUNT_EXCEPTION = "只允许一张图片类型为封面！";
+    public static final String IMAGE_NAME_EN_REPEAT_EXCEPTION = "图片英文名不能重复！";
+
     //region 登录相关
     public static final String INCORRECT_VERIFY_CODE = "验证码不正确!";
     public static final String USERNAME_ARE_EMPTY = "账号不能为空!";
@@ -39,10 +45,6 @@ public class ApiInfo {
     //endregion
 
     //region 专辑相关
-
-     public static final String UPDATE_ALBUM_IMAGES_SUCCESS = "专辑图片更改成功！";
-     public static final String INSERT_ALBUM_IMAGES_SUCCESS = "专辑图片新增成功！";
-     public static final String DELETE_ALBUM_IMAGES_SUCCESS = "专辑图片删除成功！";
      public static final String UPDATE_ALBUM_TRACK_INFO_SUCCESS = "专辑音轨信息更新成功！";
      public static final String UPDATE_ALBUM_ARTISTS_SUCCESS = "专辑音乐创作信息更新成功！";
      public static final String UPDATE_ALBUM_DESCRIPTION_SUCCESS = "专辑描述更新成功！";
@@ -57,9 +59,6 @@ public class ApiInfo {
      public static final String ALBUM_ALBUM_FORMAT_EMPTY = "未选择专辑分类！";
      public static final String ALBUM_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
 
-     public static final String ALBUM_COVER_COUNT_EXCEPTION = "只允许一张图片类型为封面！";
-     public static final String ALBUM_IMAGE_NAME_EN_REPEAT_EXCEPTION = "图片英文名不能重复！";
-
     //endregion
 
     //region music相关
@@ -72,6 +71,15 @@ public class ApiInfo {
     public static final String MUSIC_AUDIO_TYPE_EMPTY = "未选择音频类型！";
     public static final String MUSIC_AUDIO_LENGTH_EMPTY = "未填写音频长度！";
 
+    //endregion
+
+    //region product相关
+    public static final String PRODUCT_NAME_EMPTY = "未填写作品名称！";
+    public static final String PRODUCT_NAME_ZH_EMPTY = "未填写作品译名(中)！";
+    public static final String PRODUCT_RELEASE_DATE_EMPTY = "未填写发行日期！";
+    public static final String PRODUCT_SERIES_EMPTY = "未选择作品所属系列！";
+    public static final String PRODUCT_CLASSIFICATION_EMPTY = "未选择作品分类！";
+    public static final String UPDATE_PRODUCT_DESCRIPTION_SUCCESS = "描述信息更新成功！";
     //endregion
 
 }
