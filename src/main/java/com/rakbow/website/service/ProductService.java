@@ -121,6 +121,8 @@ public class ProductService {
             }
         }
 
+        JSONArray staffs = JSON.parseArray(product.getStaffs());
+
         JSONObject cover = new JSONObject();
         cover.put("url", CommonConstant.EMPTY_IMAGE_WIDTH_URL);
         if (!images.isEmpty()) {
@@ -140,6 +142,7 @@ public class ProductService {
         productJson.put("releaseDate", CommonUtils.dateToString(product.getReleaseDate()));
         productJson.put("classification", classification);
         productJson.put("description", product.getDescription());
+        productJson.put("staffs", staffs);
         productJson.put("remark", product.getRemark());
         productJson.put("images", images);
         productJson.put("cover", cover);
@@ -211,6 +214,18 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateProductDescription(int id, String description) {
         productMapper.updateProductDescription(id, description, new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
+     * 更新Staff
+     *
+     * @param id 作品id
+     * @param staffs staff相关信息json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public void updateProductStaffs(int id, String staffs) {
+        productMapper.updateProductStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
     }
 
     /**

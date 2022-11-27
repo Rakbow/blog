@@ -46,7 +46,7 @@ public class ApiInfo {
 
     //region 专辑相关
      public static final String UPDATE_ALBUM_TRACK_INFO_SUCCESS = "专辑音轨信息更新成功！";
-     public static final String UPDATE_ALBUM_ARTISTS_SUCCESS = "专辑音乐创作信息更新成功！";
+     public static final String UPDATE_ALBUM_ARTISTS_SUCCESS = "专辑创作者信息更新成功！";
      public static final String UPDATE_ALBUM_DESCRIPTION_SUCCESS = "专辑描述更新成功！";
      public static final String UPDATE_ALBUM_BONUS_SUCCESS = "专辑特典信息更新成功！";
 
@@ -80,6 +80,7 @@ public class ApiInfo {
     public static final String PRODUCT_SERIES_EMPTY = "未选择作品所属系列！";
     public static final String PRODUCT_CLASSIFICATION_EMPTY = "未选择作品分类！";
     public static final String UPDATE_PRODUCT_DESCRIPTION_SUCCESS = "描述信息更新成功！";
+    public static final String UPDATE_PRODUCT_STAFFS_SUCCESS = "staff信息更新成功！";
     //endregion
 
 }

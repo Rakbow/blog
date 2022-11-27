@@ -191,6 +191,34 @@ public class ProductController {
         }
     }
 
+    //更新staff
+    @RequestMapping(path = "/update-staffs", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateProductStaffs(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
+                if (StringUtils.isBlank(staffs)) {
+                    res.state = 0;
+                    res.message = "输入信息为空";
+                    return JSON.toJSONString(res);
+                }
+                productService.updateProductStaffs(id, staffs);
+                res.message = ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
+                // //更新elasticsearch中的专辑
+                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
+    }
+
     //endregion
 
     /**

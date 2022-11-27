@@ -36,6 +36,9 @@ public interface ProductMapper {
     //更新描述
     int updateProductDescription(int id, String description, Timestamp editedTime);
 
+    //更新staff
+    int updateProductStaffs(int id, String staffs, Timestamp editedTime);
+
     //更新图片
     int updateProductImages(int id, String images, Timestamp editedTime);
 

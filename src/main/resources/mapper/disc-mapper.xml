@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.website.dao.DiscMapper">
+
+    <sql id="selectFields">
+        id, catalog_no, name, name_zh, name_en, barcode, series_id, product_id, release_date, price, media_format,
+        is_limited, spec, area, language, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+    </sql>
+
+    <sql id="insertFields">
+        catalog_no, name, name_zh, name_en, barcode, series_id, product_id, release_date, price, media_format,
+        is_limited, spec, area, language, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+    </sql>
+
+    <select id="getDiscById" resultType="Disc">
+        select
+        <include refid="selectFields"></include>
+        from disc
+        where id = #{id} and _s = 1
+    </select>
+
+    <select id="getAllDisc" resultType="Disc">
+        select
+        <include refid="selectFields"></include>
+        from disc
+        where _s = 1
+        order by release_date desc
+    </select>
+
+    <insert id="addDisc" parameterType="Disc" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into disc (<include refid="insertFields"></include>)
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{seriesId}, #{productId}, #{releaseDate}, #{price},
+        #{mediaFormat}, #{isLimited}, #{spec}, #{area}, #{language}, #{hasBonus}, #{bonus}, #{images},
+        #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+    </insert>
+
+    <update id="updateDisc" parameterType="Disc" keyProperty="id">
+        update disc
+        set
+        catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
+        barcode = #{disc.barcode}, series_id = #{disc.seriesId}, product_id = #{disc.productId},
+        release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
+        is_limited = #{disc.isLimited}, spec = #{disc.spec}, area = #{disc.area}, language = #{disc.language},
+        has_bonus = #{disc.hasBonus}, edited_time = #{disc.editedTime}, _s = #{disc._s}
+        where id = #{disc.id}
+    </update>
+
+    <delete id="deleteDiscById">
+        delete
+        from music
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteMusicByAlbumId">
+        delete
+        from music
+        where album_id = #{albumId}
+    </delete>
+
+    <update id="updateStatusById" keyProperty="id">
+        update music
+        set
+        _s = 0
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicCoverUrl" keyProperty="id">
+        update music
+        set
+        cover_url = #{coverUrl}
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicArtists" keyProperty="id">
+        update music
+        set
+        artists = #{artists}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicLyricsText" keyProperty="id">
+        update music
+        set
+        lrc_text = #{lrcText}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicDescription" keyProperty="id">
+        update music
+        set
+        description = #{description}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+</mapper>

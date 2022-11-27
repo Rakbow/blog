@@ -6,12 +6,12 @@
 
     <sql id="selectFields">
         id, series_id, name, name_zh, name_en, release_date, classification,
-        images, description, remark, added_time, edited_time, _s
+        images, staffs, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         series_id, name, name_zh, name_en, release_date, classification,
-        images, description, remark, added_time, edited_time, _s
+        images, staffs, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="selectProductById" resultType="Product">
@@ -31,7 +31,7 @@
     <insert id="addProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
         values (#{seriesId}, #{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{classification},
-        #{images}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{images}, #{staffs}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
@@ -62,6 +62,13 @@
         update product
         set
         description = #{description}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateProductStaffs" keyProperty="id">
+        update product
+        set
+        staffs = #{staffs}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

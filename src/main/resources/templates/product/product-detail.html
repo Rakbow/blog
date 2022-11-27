@@ -46,6 +46,8 @@
     <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
     <script th:src="@{/js/primevue/components/column.min.js}"></script>
     <script th:src="@{/js/primevue/components/timeline.min.js}"></script>
+    <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -132,6 +134,27 @@
                     </p-panel>
                     <p-fieldset :toggleable="true" class="mt-2">
                         <template #legend>
+                            <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
+                            <b>Staff信息</b>
+                        </template>
+                        <div class="grid" v-if="product.staffs.length != 0">
+                            <table class="table-borderless table-sm ml-10">
+                                <tbody>
+                                <tr v-for="item in product.staffs">
+                                    <td><strong>{{item.pos}}</strong></td>
+                                    <td>
+                                        {{item.name.join("/")}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo"><em>暂无Staff相关信息</em></span>
+                        </div>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true" class="mt-2">
+                        <template #legend>
                             <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
                             <b>描述</b>
                         </template>
@@ -146,13 +169,6 @@
                             <span class="emptyInfo"><em>暂无专辑</em></span>
                         </div>
                         <div v-else>
-<!--                            <ul v-for="album of relatedAlbums">-->
-<!--                                <li>-->
-<!--                                    <b>{{album.releaseDate}}</b>&nbsp;<a :href="'/db/album/' + album.id"><em>{{album.nameJp}}</em></a>&nbsp;-->
-<!--                                    <small><b>{{album.catalogNo}}</b>&nbsp;{{album.albumFormat.join(", ")}}</small>-->
-<!--                                </li>-->
-<!--                            </ul>-->
-
                             <p-timeline :value="relatedAlbums">
                                 <template #opposite="slotProps">
                                     <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
@@ -337,19 +353,6 @@
                               @click="submitEditProduct"></p-button>
                 </template>
             </p-dialog>
-            <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
-                <!--                    <div id="md-editor-v3">-->
-                <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-                </md-editor-v3>
-                <!--                    </div>-->
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                              class="p-button-text">
-                    </p-button>
-                    <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
-                </template>
-            </p-dialog>
             <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
                       :style="{width: '1200px'}" :modal="true">
                 <p-panel>
@@ -482,6 +485,92 @@
                     <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                 </template>
             </p-dialog>
+            <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                <!--                    <div id="md-editor-v3">-->
+                <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+                </md-editor-v3>
+                <!--                    </div>-->
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                              class="p-button-text">
+                    </p-button>
+                    <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="displayStaffEditDialog" header="编辑Staff信息"
+                      :style="{width: '800px'}" :modal="true">
+                <p-panel>
+                    <template #header>
+                        <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                        <b>新增</b>
+                    </template>
+                    <div class="grid">
+                        <div class="col-3">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                <p-inputtext v-model="staff.pos" placeholder="职位名称"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                                <p-chips v-model="staff.name" placeholder="人员信息" separator=","></p-chips>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <p-button label="新增" icon="pi pi-save"
+                                      @click="addStaff"></p-button>
+                        </div>
+                    </div>
+                </p-panel>
+                <p-panel>
+                    <template #header>
+                        <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                        <b>编辑</b>
+                    </template>
+                    <div v-if="tmpStaffs.length != 0">
+                        <p-datatable dataKey="id" :value="tmpStaffs" responsive-layout="scroll"
+                                     class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                     context-menu v-model:context-menu-selection="selectedStaff"
+                                     @row-contextmenu="staffRowMenu" edit-mode="row"
+                                     v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                            <p-column :row-reorder="true"></p-column>
+                            <p-column field="pos" header="职位">
+                                <template #editor="{ data, field }">
+                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                </template>
+                            </p-column>
+                            <p-column field="name" header="人员">
+                                <template #body="slotProps">
+                                    {{slotProps.data.name.join(" / ")}}
+                                </template>
+                                <template #editor="{ data, field }">
+                                    <p-chips v-model="data[field]"></p-chips>
+                                </template>
+                            </p-column>
+                            <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                      bodyStyle="text-align:center"></p-column>
+                        </p-datatable>
+                        <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
+                    </div>
+                    <div v-else>
+                        <span class="emptyInfo">暂无Staff相关信息</span>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                              @click="clearStaffs"></p-button>
+                    <p-button label="取消" icon="pi pi-times" class="mr-4"
+                              @click="cancelStaffEdit"></p-button>
+                    <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                              @click="submitStaff"></p-button>
+                </template>
+            </p-dialog>
             <p-dialog v-model:visible="deleteProductImageDialog" header="删除图片"
                       :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
                 <div class="confirmation-content">
@@ -527,6 +616,13 @@
                     }
                 },
                 {
+                    label: 'staff信息',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        openStaffEditDialog();
+                    }
+                },
+                {
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
@@ -534,6 +630,76 @@
                     }
                 }
             ]);
+
+            //region ------staffs相关组件------
+            const tmpStaffs = ref();
+            const cm = ref();
+            const selectedStaff = ref();
+            const staff = ref({});
+            const staffs = ref([]);
+            const displayStaffEditDialog = ref(false);
+            const menuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteStaff(selectedStaff)}
+            ]);
+            const onRowReorder = (ev) => {
+                tmpStaffs.value = ev.value;
+            };
+            const staffRowMenu = (ev) => {
+                cm.value.show(ev.originalEvent);
+            };
+            const deleteStaff = (staff) => {
+                tmpStaffs.value = tmpStaffs.value.filter((a) => a.pos !== staff.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: staff.value.pos, life: 3000});
+                selectedStaff.value = null;
+            };
+            const editingRows = ref([]);
+            const onRowEditSave = (ev) => {
+                let {newData, index} = ev;
+
+                tmpStaffs.value[index] = newData;
+            };
+
+            const openStaffEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            tmpStaffs.value = JSON.parse(JSON.stringify(product.value.staffs));
+                            staff.value = {};
+                            displayStaffEditDialog.value = true;
+                        }
+                    })
+            };
+            const clearStaffs = () => {
+                tmpStaffs.value = [];
+            };
+            const addStaff = () => {
+                tmpStaffs.value.push(staff.value);
+                staff.value = {};
+            }
+            const cancelStaffEdit = () => {
+                staff.value = {};
+                displayStaffEditDialog.value = false;
+            };
+            const submitStaff = () => {
+                let json = {
+                    id: product.value.id,
+                    staffs: tmpStaffs.value
+                }
+                axiosPostRequest(UPDATE_PRODUCT_STAFF_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            displayStaffEditDialog.value = false;
+                            staff.value = {};
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+            };
+            //endregion
 
             //region ------侧边栏图片------
             const activeIndex = ref(0);
@@ -823,6 +989,9 @@
             //endregion
 
             return {
+                tmpStaffs, cm, selectedStaff, staff, staffs, displayStaffEditDialog, menuModel, onRowReorder,
+                staffRowMenu, deleteStaff, editingRows, onRowEditSave, openStaffEditDialog, clearStaffs, addStaff,
+                cancelStaffEdit, submitStaff,
                 getSidebarPanelImageClass,
                 imgRowReorder, editingImages, imgRowEditSave, getImageTypeLabel, selectedImage, updateImage,
                 confirmDeleteSelectedImage, cancelDeleteSelectedImage, deleteProductImageDialog, deleteImage,
@@ -856,6 +1025,8 @@
             "p-column": primevue.column,
             "p-datatable": primevue.datatable,
             "p-timeline": primevue.timeline,
+            "p-chips": primevue.chips,
+            "p-contextmenu": primevue.contextmenu,
         }
     };
 

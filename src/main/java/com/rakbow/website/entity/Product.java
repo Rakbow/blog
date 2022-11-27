@@ -22,6 +22,7 @@ public class Product {
     private Date releaseDate;//发售日期
     private int classification;//作品分类
     private String images;//图片合集，json格式
+    private String staffs;//staff
     private String description;//描述
     private String remark;//备注
     private Timestamp addedTime;//收录时间
@@ -38,6 +39,7 @@ public class Product {
         classification = 0;
         images = "[]";
         description = "";
+        staffs = "[]";
         remark = "";
         addedTime = new Timestamp(System.currentTimeMillis());
         editedTime = new Timestamp(System.currentTimeMillis());
