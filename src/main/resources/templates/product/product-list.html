@@ -100,11 +100,16 @@
                     </span>
                 </template>
 <!--                <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>-->
-                <p-column field="id" header="Id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem">
+                <p-column style="flex: 0 0 4rem">
                     <template #body="slotProps">
-                        <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
-                            {{slotProps.data.id}}
-                        </p-button>
+                        <p-button icon="pi pi-pencil" class="p-button-rounded p-button-text"
+                                  @click="openEditDialog(slotProps.data)"></p-button>
+                    </template>
+                </p-column>
+                <p-column field="id" header="Id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
+                <p-column header="封面" style="flex: 0 0 16rem">
+                    <template #body="slotProps">
+                        <img :src="slotProps.data.cover.url" :alt="slotProps.data.name" class="product-image" />
                     </template>
                 </p-column>
                 <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
@@ -453,6 +458,11 @@
         .mount("#app");
 </script>
 <style>
+    .product-image {
+        /*width: 50px;*/
+        height: 50px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+    }
 </style>
 </body>
 </html>

@@ -405,7 +405,6 @@ public class CommonUtils {
     public static String getCompressImageUrl(String imgPath, String entity, int entityId, String fileName) {
         Path imagePath = Paths.get(imgPath + "/" + entity + "/" + entityId);
         String oldFilePath = (imagePath + "\\" + fileName);
-        System.out.println(oldFilePath);
         String outFilePath = (imgPath + "/compress/" + entity + "/" + entityId + "/" + fileName);
 
         File file = new File(outFilePath);

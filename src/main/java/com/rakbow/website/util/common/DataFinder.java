@@ -1,6 +1,7 @@
 package com.rakbow.website.util.common;
 
 import com.rakbow.website.entity.Music;
+import com.rakbow.website.entity.Product;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -15,6 +16,14 @@ import java.util.Objects;
  * @Description: 数据查找
  */
 public class DataFinder {
+
+    //region album
+
+
+
+    //endregion
+
+    //region music
 
     /**
      * 根据musicId从指定music列表中查找
@@ -50,13 +59,13 @@ public class DataFinder {
     public static Music findMusicByNameAndAlbumId(String name, String nameType, int albumId, List<Music> musics) {
         if (StringUtils.equals(nameType, "nameJp")) {
             for (Music music : musics) {
-                if (music.getAlbumId() == albumId && Objects.equals(music.getName(), name)) {
+                if (music.getAlbumId() == albumId && StringUtils.equals(music.getName(), name)) {
                     return music;
                 }
             }
         } else {
             for (Music music : musics) {
-                if (music.getAlbumId() == albumId && Objects.equals(music.getNameEn(), name)) {
+                if (music.getAlbumId() == albumId && StringUtils.equals(music.getNameEn(), name)) {
                     return music;
                 }
             }
@@ -64,4 +73,23 @@ public class DataFinder {
 
         return null;
     }
+
+    //endregion
+
+    //region product
+
+    public static List<Product> findProductsByClassification(int classification, List<Product> products) {
+        List<Product> result = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getClassification() == classification) {
+                if (!result.contains(product)) {
+                    result.add(product);
+                }
+            }
+        }
+        return result;
+    }
+
+    //endregion
+
 }

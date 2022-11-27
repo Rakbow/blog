@@ -71,8 +71,8 @@
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- aPlayer -->
-<!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
-<!--    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>-->
+    <!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
+    <!--    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>-->
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -370,7 +370,7 @@
                                 </div>
                                 <div class="col-10 col-offset-1">
                                     <p class="mb-0" v-for="item of album.products">
-                                        <a :href="'https://rakbow.com/db/product/'+ item.id ">
+                                        <a :href="'/db/product/'+ item.id ">
                                             <span class="albumtitle" lang="en" style="display:inline">
                                                 {{item.name}}
                                             </span>
@@ -500,7 +500,7 @@
                     </div>
                 </div>
                 <p-dialog v-model:visible="displayEditDialog" header="编辑专辑基础信息"
-                          :style="{width: '800px'}"  :modal="true" class="p-fluid">
+                          :style="{width: '800px'}" :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
@@ -664,11 +664,13 @@
                             </div>
                             <div class="field col">
                                 <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                            option-value="value" placeholder="选择图片类型" style="width: 280px"></p-dropdown>
+                                            option-value="value" placeholder="选择图片类型"
+                                            style="width: 280px"></p-dropdown>
                             </div>
                             <div class="field col">
                                 <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                            :auto-resize="true" placeholder="图片描述" style="width: 280px"></p-textarea>
+                                            :auto-resize="true" placeholder="图片描述"
+                                            style="width: 280px"></p-textarea>
                             </div>
                         </div>
                         <div class="formgrid grid mt-2">
@@ -708,7 +710,8 @@
                                 <p-column :row-reorder="true" header-style="width: 3%"></p-column>
                                 <p-column header="图片" header-style="width: 8%">
                                     <template #body="slotProps">
-                                        <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn" class="edit-image" />
+                                        <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn"
+                                             class="edit-image"/>
                                     </template>
                                 </p-column>
                                 <p-column field="url" header="url" header-style="width: 10%"></p-column>
@@ -747,7 +750,8 @@
                         </div>
                     </p-panel>
                     <template #footer>
-                        <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog" class="p-button-text"></p-button>
+                        <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                                  class="p-button-text"></p-button>
                         <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                     </template>
                 </p-dialog>
@@ -806,7 +810,8 @@
                                         <p-chips v-model="data[field]"></p-chips>
                                     </template>
                                 </p-column>
-                                <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                          bodyStyle="text-align:center"></p-column>
                             </p-datatable>
                             <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
@@ -844,7 +849,8 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-users"></i>
                                     </span>
-                                    <p-chips v-model="tracks.audioLengths" placeholder="曲目长度" separator=","></p-chips>
+                                    <p-chips v-model="tracks.audioLengths" placeholder="曲目长度"
+                                             separator=","></p-chips>
                                 </div>
                             </div>
 
@@ -891,7 +897,8 @@
                                          v-model:editing-rows="editingRowsDisc" @row-edit-save="onRowEditSaveDisc">
                                 <template #header>
                                     <div class="table-header-container">
-                                        <p-button icon="pi pi-plus" label="全部展开" @click="expandAll" class="mr-2"></p-button>
+                                        <p-button icon="pi pi-plus" label="全部展开" @click="expandAll"
+                                                  class="mr-2"></p-button>
                                         <p-button icon="pi pi-minus" label="全部折叠" @click="collapseAll"></p-button>
                                     </div>
                                 </template>
@@ -908,7 +915,8 @@
                                     </template>
                                     <template #editor="{ data, field }">
                                         <p-multiselect v-model="data[field]" :options="albumFormatSet"
-                                                       option-label="label" option-value="labelEn" placeholder="专辑分类"
+                                                       option-label="label" option-value="labelEn"
+                                                       placeholder="专辑分类"
                                                        display="chip">
                                         </p-multiselect>
                                     </template>
@@ -919,20 +927,24 @@
                                     </template>
                                     <template #editor="{ data, field }">
                                         <p-multiselect v-model="data[field]" :options="mediaFormatSet"
-                                                       option-label="label" option-value="labelEn" placeholder="媒体格式"
+                                                       option-label="label" option-value="labelEn"
+                                                       placeholder="媒体格式"
                                                        display="chip">
                                         </p-multiselect>
                                     </template>
                                 </p-column>
-                                <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                          bodyStyle="text-align:center"></p-column>
                                 <template #expansion="slotProps">
                                     <div class="orders-subtable">
-                                        <p-datatable :value="slotProps.data.trackList" class="p-datatable-sm" striped-rows
+                                        <p-datatable :value="slotProps.data.trackList" class="p-datatable-sm"
+                                                     striped-rows
                                                      responsive-layout="scroll"
                                                      @row-reorder="onRowReorderTrack"
                                                      context-menu v-model:context-menu-selection="selectedTrack"
                                                      @row-contextmenu="trackRowMenu" edit-mode="row"
-                                                     v-model:editing-rows="editingRowsTrack" @row-edit-save="onRowEditSaveTrack">
+                                                     v-model:editing-rows="editingRowsTrack"
+                                                     @row-edit-save="onRowEditSaveTrack">
                                             <p-column :row-reorder="true"></p-column>
                                             <p-column header="曲目序号">
                                                 <template #body="slotProps">
@@ -950,7 +962,8 @@
                                                     <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                                                 </template>
                                             </p-column>
-                                            <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                                            <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                                      bodyStyle="text-align:center"></p-column>
                                             <p-contextmenu :model="menuModelTrack" ref="cmTrack"></p-contextmenu>
                                         </p-datatable>
                                     </div>
@@ -1074,7 +1087,7 @@
             };
             const editingImages = ref([]);
             const imgRowEditSave = (ev) => {
-                let { newData, index } = ev;
+                let {newData, index} = ev;
                 album.value.images[index] = newData;
             };
             const getImageTypeLabel = (type) => {
@@ -1291,11 +1304,11 @@
             const editingRowsDisc = ref([]);
             const editingRowsTrack = ref([]);
             const onRowEditSaveDisc = (ev) => {
-                let { newData, index } = ev;
+                let {newData, index} = ev;
                 tmpEditDiscList.value[index] = newData;
             };
             const onRowEditSaveTrack = (ev) => {
-                let { newData, index } = ev;
+                let {newData, index} = ev;
 
                 for (let disc of tmpEditDiscList.value) {
                     if (disc.tmpDiscId === newData.tmpDiscId) {
@@ -1394,7 +1407,13 @@
                         albumFormat: []
                     };
                     for (let i = 0; i < tracks.value.audioNames.length; i++) {
-                        let track = {tmpDiscId: tmpDiscId, tmpTrackId: tmpTrackId, musicId: 0, name: null, length: null};
+                        let track = {
+                            tmpDiscId: tmpDiscId,
+                            tmpTrackId: tmpTrackId,
+                            musicId: 0,
+                            name: null,
+                            length: null
+                        };
                         track.name = tracks.value.audioNames[i];
                         track.length = tracks.value.audioLengths[i];
                         newDisc.trackList.push(track);
@@ -1449,7 +1468,7 @@
             };
             const editingRows = ref([]);
             const onRowEditSave = (ev) => {
-                let { newData, index } = ev;
+                let {newData, index} = ev;
 
                 tmpArtists.value[index] = newData;
             };
@@ -1603,7 +1622,7 @@
                 for (const img of imageInfos.value) {
                     imageHtml.value += '<div align=""center>';
                     imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
-                    imageHtml.value += '<p>图片类型: ' + (img.type==="1"?"封面":(img.type==="0"?"展示":"其他")) + '</p>';
+                    imageHtml.value += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
                     imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
                     imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
                     imageHtml.value += '<p>描述: ' + img.description + '</p>';
@@ -1861,6 +1880,7 @@
         width: 50px;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
     }
+
     .orders-subtable {
         padding: 1rem;
     }

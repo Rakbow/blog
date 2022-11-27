@@ -7,10 +7,7 @@ import com.rakbow.website.data.DataActionType;
 import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.service.ProductService;
-import com.rakbow.website.service.SeriesService;
-import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.VisitService;
+import com.rakbow.website.service.*;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
@@ -58,6 +55,8 @@ public class ProductController {
     @Autowired
     private VisitService visitService;
     @Autowired
+    private AlbumService albumService;
+    @Autowired
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
@@ -87,6 +86,8 @@ public class ProductController {
         model.addAttribute("user", hostHolder.getUser());
         model.addAttribute("productClassSet", ProductUtils.getProductClassSet());
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("relatedAlbums", albumService.getRelatedAlbumsByProductId(productId));
+        model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
         //获取页面访问量
         model.addAttribute("visitNum",
                 visitService.getVisit(EntityType.PRODUCT.getId(), productId).getVisitNum());

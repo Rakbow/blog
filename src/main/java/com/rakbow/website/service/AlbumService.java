@@ -590,17 +590,17 @@ public class AlbumService {
         json.put("releaseDate", CommonUtils.dateToString(album.getReleaseDate()));
 
         //出版类型
-        List<String> publishFormat = new ArrayList();
+        List<String> publishFormat = new ArrayList<>();
         JSONObject.parseObject(album.getPublishFormat()).getList("ids", Integer.class)
                 .forEach(id -> publishFormat.add(PublishFormat.getNameByIndex(id)));
 
         //专辑分类
-        List<String> albumFormat = new ArrayList();
+        List<String> albumFormat = new ArrayList<>();
         JSONObject.parseObject(album.getAlbumFormat()).getList("ids", Integer.class)
                 .forEach(id -> albumFormat.add(AlbumFormat.getNameByIndex(id)));
 
         //媒体格式
-        List<String> mediaFormat = new ArrayList();
+        List<String> mediaFormat = new ArrayList<>();
         JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
@@ -632,8 +632,6 @@ public class AlbumService {
             }
         }
 
-
-        json.put("publishFormat", publishFormat);
         json.put("publishFormat", publishFormat);
         json.put("albumFormat", albumFormat);
         json.put("mediaFormat", mediaFormat);
@@ -690,6 +688,11 @@ public class AlbumService {
             }
         }
 
+        //专辑分类
+        List<String> albumFormat = new ArrayList<>();
+        JSONObject.parseObject(album.getAlbumFormat()).getList("ids", Integer.class)
+                .forEach(id -> albumFormat.add(AlbumFormat.getNameByIndex(id)));
+
         JSONObject albumJson = new JSONObject();
         albumJson.put("id", album.getId());
         albumJson.put("catalogNo", album.getCatalogNo());
@@ -697,6 +700,7 @@ public class AlbumService {
         albumJson.put("nameJp", album.getNameJp());
         albumJson.put("nameZh", album.getNameZh());
         albumJson.put("seriesId", album.getSeries());
+        albumJson.put("albumFormat", albumFormat);
         albumJson.put("cover", cover);
         albumJson.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
         albumJson.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));
@@ -1251,6 +1255,21 @@ public class AlbumService {
             }
         }
         return coverUrl;
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getRelatedAlbumsByProductId (int productId) {
+        List<JSONObject> relatedAlbums = new ArrayList<>();
+
+        List<Integer> products = new ArrayList<>();
+        products.add(productId);
+
+        List<Album> albums = albumMapper.getAlbumsByFilter(null, products, null,
+                null, null, null);
+
+        relatedAlbums = album2JsonSimple(albums);
+
+        return relatedAlbums;
     }
 
     //endregion

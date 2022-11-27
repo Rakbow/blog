@@ -45,6 +45,7 @@
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
     <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/timeline.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
@@ -138,12 +139,31 @@
                     </p-fieldset>
                     <p-fieldset :toggleable="true" class="mt-2">
                         <template #legend>
-                            <i class="pi iconfont icon-_classification mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-24gl-musicAlbum2 mr-2" style="font-size: 2rem"></i>
                             <b>专辑</b>
                         </template>
-<!--                        <div v-if="product.images.length == 0">-->
-<!--                            <span class="emptyInfo"><em>暂无图片</em></span>-->
-<!--                        </div>-->
+                        <div v-if="relatedAlbums.length == 0">
+                            <span class="emptyInfo"><em>暂无专辑</em></span>
+                        </div>
+                        <div v-else>
+<!--                            <ul v-for="album of relatedAlbums">-->
+<!--                                <li>-->
+<!--                                    <b>{{album.releaseDate}}</b>&nbsp;<a :href="'/db/album/' + album.id"><em>{{album.nameJp}}</em></a>&nbsp;-->
+<!--                                    <small><b>{{album.catalogNo}}</b>&nbsp;{{album.albumFormat.join(", ")}}</small>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+
+                            <p-timeline :value="relatedAlbums">
+                                <template #opposite="slotProps">
+                                    <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
+                                </template>
+                                <template #content="slotProps">
+                                    <a :href="'/db/album/' + slotProps.item.id"><em>{{slotProps.item.nameJp}}</em></a>&nbsp;
+                                    <small><b>{{slotProps.item.catalogNo}}</b>&nbsp;
+                                        {{slotProps.item.albumFormat.join(", ")}}</small>
+                                </template>
+                            </p-timeline>
+                        </div>
                     </p-fieldset>
                 </div>
                 <div class="col-12 sm:col-12 md:col-6 lg:col-3">
@@ -496,7 +516,8 @@
             const visitNum = ref([[${visitNum}]]);
             const productClassSet = ref([[${productClassSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
-            const relatedProducts = ref([]);
+            const relatedProducts = ref([[${relatedProducts}]]);
+            const relatedAlbums = ref([[${relatedAlbums}]]);
             const edits = ref([
                 {
                     label: '图片管理',
@@ -812,7 +833,7 @@
                 submitDescription,
                 activeIndex, responsiveOptions, displayCustom, initGalleriaImageClass, imageClick,
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
-                product, visitNum, productClassSet, edits, relatedProducts, seriesSet,
+                product, visitNum, productClassSet, edits, relatedProducts, seriesSet, relatedAlbums,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
             }
         },
@@ -834,6 +855,7 @@
             "p-divider": primevue.divider,
             "p-column": primevue.column,
             "p-datatable": primevue.datatable,
+            "p-timeline": primevue.timeline,
         }
     };
 
@@ -854,6 +876,18 @@
         .mount("#app");
 </script>
 <style>
+    .p-timeline-event-content {
+        width: 800px;
+    }
+    .p-timeline-event-opposite {
+
+    }
+
+    .p-timeline-left {
+        position: relative;
+        left: -40%;
+    }
+
     .product-cover {
         max-width: 250px;
         /*max-height: 100px;*/
@@ -953,6 +987,10 @@
     .p-galleria-thumbnail-content {
         height: 100px;
         width: 100px;
+    }
+
+    .p-tooltip-text {
+        width: 15rem;
     }
 
 </style>

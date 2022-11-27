@@ -11,6 +11,7 @@ import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -296,6 +297,33 @@ public class ProductService {
             CommonUtils.deleteFile(productImgPath, fileName);
         }
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
+    }
+
+    /**
+     * 获取相关作品
+     *
+     * @param productId 作品id
+     * @author rakbow
+     * @return list
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getRelatedProducts (int productId) {
+        List<JSONObject> relatedProducts = new ArrayList<>();
+
+        Product product = getProductById(productId);
+
+        List<Product> sameSeriesProducts = selectProductsBySeriesId(product.getSeriesId());
+        List<Product> products = DataFinder.findProductsByClassification(product.getClassification(), sameSeriesProducts);
+
+        products.removeIf(it -> it.getId() == productId);
+
+        relatedProducts = product2json(products);
+
+        if (relatedProducts.size() > 5) {
+            relatedProducts = relatedProducts.subList(0, 5);
+        }
+
+        return relatedProducts;
     }
 
     //endregion
