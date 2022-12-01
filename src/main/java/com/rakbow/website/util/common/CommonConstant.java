@@ -11,8 +11,8 @@ public class CommonConstant {
     //region ------通用常量------
 
     //404图url
-    public static final String EMPTY_IMAGE_URL = "/img/404.jpg";
-    public static final String EMPTY_IMAGE_WIDTH_URL = "/img/404_width.jpg";
+    public static final String EMPTY_IMAGE_URL = "https://img.rakbow.com/common/404.jpg";
+    public static final String EMPTY_IMAGE_WIDTH_URL = "https://img.rakbow.com/common/404_width.jpg";
 
     /**
      * 激活成功

@@ -204,25 +204,6 @@ public class CommonUtils {
     }
 
     /**
-     * 使用 通过图片url获取字节大小，长宽
-     * @param imgUrl
-     */
-    public static ImageProperty getImageProperty(String imgUrl) throws IOException {
-        ImageProperty img = new ImageProperty();
-
-        File file = new File(imgUrl);
-
-        // 图片对象
-        BufferedImage bufferedImage = ImageIO.read(new FileInputStream(file));
-
-        img.setSize(file.length());
-        img.setWidth(bufferedImage.getWidth());
-        img.setHeight(bufferedImage.getHeight());
-
-        return img;
-    }
-
-    /**
      * int字符串转为int数组并排序
      * @author rakbow
      * @param arrStr
@@ -235,6 +216,8 @@ public class CommonUtils {
         return strArr;
     }
 
+    //region ------暂时废弃------
+
     /**
      * 压缩图片
      *
@@ -245,6 +228,7 @@ public class CommonUtils {
      * @param outFile 压缩图片后,图片名称路径
      * @param percentage 是否等比压缩 若true宽高比率将将自动调整
      */
+    @Deprecated
     public static String imageCompress(String oldFilePath, int width, int height, String outFile, boolean percentage) {
         if (oldFilePath != null && width > 0 && height > 0) {
             Image srcFile=null;
@@ -306,7 +290,8 @@ public class CommonUtils {
      * @return
      * @author rakbow
      */
-    public static String checkUpdateImages(JSONArray images) {
+    @Deprecated
+    public static String DeprecatedCheckUpdateImages(JSONArray images) {
         //封面类型的图片个数
         int coverCount = 0;
         for (int i = 0; i < images.size(); i++) {
@@ -339,7 +324,8 @@ public class CommonUtils {
      * @return boolean
      * @author rakbow
      */
-    public static String checkAddImages(JSONArray imageInfos, JSONArray images) {
+    @Deprecated
+    public static String DeprecatedCheckAddImages(JSONArray imageInfos, JSONArray images) {
 
         List<String> imageUrlNameEns = new ArrayList<>();
         int coverCount = 0;
@@ -402,6 +388,7 @@ public class CommonUtils {
      * @param entity,id,fileName 实体类型,id和图片文件全名
      * @return 缩略图url
      * */
+    @Deprecated
     public static String getCompressImageUrl(String imgPath, String entity, int entityId, String fileName) {
         Path imagePath = Paths.get(imgPath + "/" + entity + "/" + entityId);
         String oldFilePath = (imagePath + "\\" + fileName);
@@ -419,5 +406,7 @@ public class CommonUtils {
         CommonUtils.imageCompress(oldFilePath, 200, 200, outFilePath, true);
         return "/db/" + entity + "/" + entityId + "/compress/" + fileName;
     }
+
+    //endregion
 
 }

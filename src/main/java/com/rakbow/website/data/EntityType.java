@@ -38,7 +38,16 @@ public enum EntityType {
                 return itemType.nameZh;
             }
         }
-        return "";
+        return "未分类";
+    }
+
+    public static String getItemNameEnByIndex(int id){
+        for (EntityType itemType : EntityType.values()) {
+            if (itemType.getId() == id) {
+                return itemType.nameEn;
+            }
+        }
+        return "Unclassified";
     }
 
     public static int getItemIndexByNameZh(String nameZh){

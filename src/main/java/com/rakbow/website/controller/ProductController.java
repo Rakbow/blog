@@ -8,6 +8,7 @@ import com.rakbow.website.data.EntityType;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
@@ -248,7 +249,7 @@ public class ProductController {
                 JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonUtils.checkAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
@@ -339,7 +340,7 @@ public class ProductController {
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
 
                     //检测是否存在多张封面
-                    String errorMessage = CommonUtils.checkUpdateImages(images);
+                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
                     if (!StringUtils.equals("", errorMessage)) {
                         res.setErrorMessage(errorMessage);
                         return JSON.toJSONString(res);

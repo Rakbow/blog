@@ -113,7 +113,8 @@
                             </template>
                             <div class="grid">
                                 <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
-                                    <img :src="album.cover.url" :alt="album.cover.name" class="image-cover"/>
+                                    <img :src="album.cover.url" :alt="album.cover.name"
+                                         :class="getCoverClass(album.cover.url)"/>
                                 </div>
                                 <table class="table-borderless table-sm ml-3">
                                     <tbody>
@@ -1034,6 +1035,7 @@
                 init();
             })
 
+            //region ------基础------
             const album = ref([[${album}]]);
             const visitNum = ref([[${visitNum}]]);
             const relatedAlbums = ref([[${relatedAlbums}]]);
@@ -1080,6 +1082,12 @@
             const publishFormatSet = ref([[${publishFormatSet}]]);
             const productSet = ref([[${productSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
+            const getCoverClass = (url) => {
+                const image = new Image();
+                image.src = url;
+                return ((image.naturalWidth > image.naturalHeight) ? "image-cover-width" : "image-cover-height");
+            }
+            //endregion
 
             //region ------图片板块------
             const imgRowReorder = (ev) => {
@@ -1707,7 +1715,7 @@
             };
 
             const initImageClass = (url) => {
-                var image = new Image();
+                const image = new Image();
                 image.src = url;
                 image.onload = function () {
                     galleriaItemClass.value = (this.naturalWidth > this.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
@@ -1715,6 +1723,7 @@
             }
 
             return {
+                getCoverClass,
                 clearUploadedImage,
                 closeImageEditDialog,
                 selectedImage,
@@ -1864,13 +1873,23 @@
         .mount("#app");
 </script>
 <style>
-    .image-cover {
+    .image-cover-width {
         position: absolute;
         top: 50%;
         left: 50%;
         display: block;
-        min-width: 100%;
-        max-width: 100%;
+        max-width: 250px;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        pointer-events: none;
+    }
+
+    .image-cover-height {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        max-height: 250px;
         transform: translate(-50%, -50%);
         cursor: pointer;
         pointer-events: none;

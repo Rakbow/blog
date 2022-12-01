@@ -10,6 +10,7 @@ import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.AlbumUtils;
+import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.CommonUtils;
@@ -371,7 +372,7 @@ public class AlbumController {
     //新增专辑图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
-    public String insertAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
+    public String addAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
@@ -381,70 +382,22 @@ public class AlbumController {
                     return JSON.toJSONString(res);
                 }
 
+                //原始图片信息json数组
                 JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
+                //新增图片的信息
                 JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonUtils.checkAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
                 }
 
-                //创建存储专辑图片的文件夹
-                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-
-                //存储图片链接的json
-                JSONArray imgJson = new JSONArray();
-
-                if (Files.notExists(albumImgPath)) {
-                    try {
-                        Files.createDirectory(albumImgPath);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                for (int i = 0; i < images.length; i++) {
-                    //获取json中的jo对象
-                    JSONObject imageInfo = imageInfosTmp.getJSONObject(i);
-
-                    String fileName = images[i].getOriginalFilename();
-                    String suffix = fileName.substring(fileName.lastIndexOf("."));
-                    if (StringUtils.isBlank(suffix)) {
-                        res.setErrorMessage(ApiInfo.INCORRECT_FILE_FORMAT);
-                        return JSON.toJSONString(res);
-                    }
-                    fileName = (imageInfo.getString("nameEn") + suffix).replaceAll(" ", "");
-                    // 确定文件存放的路径
-                    File dest = new File(albumImgPath + "/" + fileName);
-                    try {
-                        // 存储文件
-                        images[i].transferTo(dest);
-                    } catch (IOException e) {
-                        logger.error("上传文件失败: " + e.getMessage());
-                        // throw new RuntimeException("上传文件失败,服务器发生异常!", e);
-                        res.setErrorMessage(ApiInfo.UPLOAD_EXCEPTION);
-                        return JSON.toJSONString(res);
-                    }
-
-                    //将数据存至数据库
-                    JSONObject jo = new JSONObject();
-                    jo.put("url", "/db/album/" + id + "/" + fileName);
-                    jo.put("nameEn", imageInfo.getString("nameEn"));
-                    jo.put("nameZh", imageInfo.getString("nameZh"));
-                    jo.put("type", imageInfo.getString("type"));
-                    jo.put("uploadTime", CommonUtils.getCurrentTime());
-                    if (imageInfo.getString("description") == null) {
-                        jo.put("description", "");
-                    }
-                    imgJson.add(jo);
-                }
-
-                imagesJson.addAll(imgJson);
-                albumService.addAlbumImages(id, imagesJson.toJSONString());
+                albumService.addAlbumImages(id, images, imagesJson, imageInfosTmp);
 
                 //更新elasticsearch中的专辑
-                elasticsearchService.saveAlbum(albumService.getAlbumById(id));
+                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
 
                 res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
 
@@ -472,11 +425,11 @@ public class AlbumController {
                     images.getJSONObject(i).remove("thumbUrl");
                 }
 
-                //更改图片
+                //更新图片信息
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
 
                     //检测是否存在多张封面
-                    String errorMessage = CommonUtils.checkUpdateImages(images);
+                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
                     if (!StringUtils.equals("", errorMessage)) {
                         res.setErrorMessage(errorMessage);
                         return JSON.toJSONString(res);
@@ -620,5 +573,98 @@ public class AlbumController {
         }
     }
 
+    //endregion
+
+    //region 废弃
+    @Deprecated
+    public String insertAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+
+                if (images == null || images.length == 0) {
+                    res.setErrorMessage(ApiInfo.INPUT_IMAGE_EMPTY);
+                    return JSON.toJSONString(res);
+                }
+
+                //原始图片信息json数组
+                JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
+                //新增图片的信息
+                JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
+
+                //检测数据合法性
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
+                }
+
+                //创建存储专辑图片的文件夹
+                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
+
+                //存储图片链接的json
+                JSONArray imgJson = new JSONArray();
+
+                if (Files.notExists(albumImgPath)) {
+                    try {
+                        Files.createDirectory(albumImgPath);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (int i = 0; i < images.length; i++) {
+                    //获取json中的jo对象
+                    JSONObject imageInfo = imageInfosTmp.getJSONObject(i);
+
+                    String fileName = images[i].getOriginalFilename();
+                    String suffix = fileName.substring(fileName.lastIndexOf("."));
+                    if (StringUtils.isBlank(suffix)) {
+                        res.setErrorMessage(ApiInfo.INCORRECT_FILE_FORMAT);
+                        return JSON.toJSONString(res);
+                    }
+                    fileName = (imageInfo.getString("nameEn") + suffix).replaceAll(" ", "");
+                    // 确定文件存放的路径
+                    File dest = new File(albumImgPath + "/" + fileName);
+                    try {
+                        // 存储文件
+                        images[i].transferTo(dest);
+                    } catch (IOException e) {
+                        logger.error("上传文件失败: " + e.getMessage());
+                        // throw new RuntimeException("上传文件失败,服务器发生异常!", e);
+                        res.setErrorMessage(ApiInfo.UPLOAD_EXCEPTION);
+                        return JSON.toJSONString(res);
+                    }
+
+                    //将数据存至数据库
+                    JSONObject jo = new JSONObject();
+                    jo.put("url", "/db/album/" + id + "/" + fileName);
+                    jo.put("nameEn", imageInfo.getString("nameEn"));
+                    jo.put("nameZh", imageInfo.getString("nameZh"));
+                    jo.put("type", imageInfo.getString("type"));
+                    jo.put("uploadTime", CommonUtils.getCurrentTime());
+                    if (imageInfo.getString("description") == null) {
+                        jo.put("description", "");
+                    }else {
+                        jo.put("description", imageInfo.getString("description"));
+                    }
+                    imgJson.add(jo);
+                }
+
+                imagesJson.addAll(imgJson);
+                // albumService.addAlbumImages(id, imagesJson.toJSONString());
+
+                //更新elasticsearch中的专辑
+                elasticsearchService.saveAlbum(albumService.getAlbumById(id));
+
+                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
+
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
     //endregion
 }

@@ -2,6 +2,7 @@ package com.rakbow.website.data.album;
 
 import com.alibaba.fastjson2.JSONArray;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.ui.context.Theme;
 
 /**
  * @Project_name: website
@@ -11,13 +12,20 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum AlbumFormat {
     UNCLASSIFIED(0,"未分类","Unclassified"),
-    THEME(1, "主题曲","Vocal"),
-    ORIGINAL_SOUNDTRACK(2, "原声","OriginSoundTrack"),
-    CHARACTER_SONG(3, "角色曲","CharacterSong"),
-    DRAMA(4, "广播剧","Drama"),
-    DOUJIN_MUSIC(5,"同人歌曲","Doujin"),
-    VIDEO(6,"影像","Video"),
-    ARRANGEMENT(7,"改编曲","Arrangement");
+    VOCAL(1, "歌曲","Vocal"),
+    OPENING_THEME(2, "片头曲","Opening Theme"),
+    ENDING_THEME(3, "片尾曲","Ending Theme"),
+    INSERT_SONG(4, "插入曲","Insert Song"),
+    SOUNDTRACK(5, "原声","Soundtrack"),
+    CHARACTER_SONG(6, "角色曲","Character Song"),
+    DRAMA(7, "广播剧","Drama"),
+    TALK(8, "广播电台","Talk"),
+    REMIX(9, "混音","Remix"),
+    DOUJIN_REMIX(10, "同人混音","Doujin Remix"),
+    DERIVATIVE(11, "衍生曲","Derivative"),
+    ARRANGEMENT(12, "改编","Arrangement"),
+    DOUJIN_ARRANGEMENT(13,"同人改编","Doujin Arrangement"),
+    VIDEO(14,"影片","Video");
 
     private int index;
     private String name;

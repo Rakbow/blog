@@ -14,10 +14,10 @@ import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.AlbumUtils;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.Image.CommonImageUtils;
+import com.rakbow.website.util.Image.QiniuImageHandleUtils;
+import com.rakbow.website.util.Image.QiniuImageUtils;
+import com.rakbow.website.util.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -61,6 +64,8 @@ public class AlbumService {
     private String imgPath;
     @Value("${website.path.domain}")
     private String domain;
+    @Autowired
+    private QiniuImageUtils qiniuImageUtils;
     //endregion
 
     //region ------更删改查------
@@ -366,9 +371,11 @@ public class AlbumService {
         if (!images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", CommonUtils.getCompressImageUrl(imgPath,
-                        StringUtils.lowerCase(EntityType.ALBUM.getNameEn()),
-                        album.getId(), CommonUtils.getImageFileNameByUrl(image.getString("url"))));
+                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
+
+                // image.put("thumbUrl", CommonUtils.getCompressImageUrl(imgPath,
+                //         StringUtils.lowerCase(EntityType.ALBUM.getNameEn()),
+                //         album.getId(), CommonUtils.getImageFileNameByUrl(image.getString("url"))));
             }
         }
 
@@ -411,15 +418,15 @@ public class AlbumService {
         series.put("id", album.getSeries());
         series.put("name", seriesService.selectSeriesById(album.getSeries()).getNameZh());
 
-        //对图片封面进行处理
+        //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", CommonConstant.EMPTY_IMAGE_URL);
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", image.getString("url"));
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -1002,27 +1009,57 @@ public class AlbumService {
      * 新增专辑图片
      *
      * @param id     专辑id
-     * @param images 图片json数据
+     * @param images 新增图片文件数组
+     * @param originalImagesJson 数据库中现存的图片json数据
+     * @param imageInfos 新增图片json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void addAlbumImages(int id, String images) {
+    public void addAlbumImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
-        List<Music> musics = musicService.getMusicsByAlbumId(id);
+        //最终保存到数据库的json信息
+        JSONArray finalImageJson = new JSONArray();
 
-        //如果图片类型为封面则更新对应曲目的封面
-        JSONArray imagesJsonArray = JSON.parseArray(images);
-        for (int i = 0; i < imagesJsonArray.size(); i++) {
-            JSONObject image = imagesJsonArray.getJSONObject(i);
-            if (Objects.equals(image.getString("type"), "1")) {
-                String coverUrl = image.getString("url");
-                for (int j = 0; j < musics.size(); j++) {
-                    musicService.updateMusicCoverUrl(musics.get(j).getId(), coverUrl);
+        //新增图片信息json
+        JSONArray addImageJson = new JSONArray();
+
+        //创建存储链接前缀
+        String filePath = EntityType.ALBUM.getNameEn().toLowerCase() + "/" + id + "/";
+
+        for (int i = 0; i < images.length; i++) {
+            //上传图片
+            ActionResult ar = qiniuImageUtils.uploadImageToQiniu(images[i], filePath);
+            if (ar.state) {
+                JSONObject jo = new JSONObject();
+                jo.put("url", ar.data.toString());
+                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
+                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
+                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
+                jo.put("uploadTime", CommonUtils.getCurrentTime());
+                if (imageInfos.getJSONObject(i).getString("description") == null) {
+                    jo.put("description", "");
+                }else {
+                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
                 }
+                addImageJson.add(jo);
             }
         }
 
-        albumMapper.updateAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
+        //汇总
+        finalImageJson.addAll(originalImagesJson);
+        finalImageJson.addAll(addImageJson);
+
+        List<Music> musics = musicService.getMusicsByAlbumId(id);
+
+        //若涉及封面类型图片，则更新相应的音频封面
+        String coverUrl = CommonImageUtils.getCoverUrl(addImageJson);
+        if (!StringUtils.isBlank(coverUrl)) {
+            for (Music music : musics) {
+                musicService.updateMusicCoverUrl(music.getId(), coverUrl);
+            }
+        }
+
+        albumMapper.updateAlbumImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
 
     /**
@@ -1050,26 +1087,36 @@ public class AlbumService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
 
-        //图片文件名
-        String fileName = "";
+        //从七牛云上删除
+        //删除结果
+        List<String> deleteResult = new ArrayList<>();
+        //若删除的图片只有一张，调用单张删除方法
+        if (deleteImages.size() == 1) {
+            ActionResult ar = qiniuImageUtils.deleteImageFromQiniu(deleteImages.getJSONObject(0).getString("url"));
+            if (!ar.state) {
+                return ar.message;
+            }
+            deleteResult.add(deleteImages.getJSONObject(0).getString("url"));
+        }else {
+            String[] fullImageUrlList = new String[deleteImages.size()];
+            for (int i = 0; i < deleteImages.size(); i++) {
+                fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
+            }
+            ActionResult ar = qiniuImageUtils.deleteImagesFromQiniu(fullImageUrlList);
+            deleteResult = (List<String>) ar.data;
+        }
 
-        //循环删除
-        for (int i = 0; i < deleteImages.size(); i++) {
-            JSONObject image = deleteImages.getJSONObject(i);
-            // 迭代器
+        //根据删除结果循环删除图片信息json数组
+        // 迭代器
+
+        for (String s : deleteResult) {
             Iterator<Object> iterator = images.iterator();
             while (iterator.hasNext()) {
                 JSONObject itJson = (JSONObject) iterator.next();
-                if (image.getString("url").equals(itJson.getString("url"))) {
+                if (StringUtils.equals(itJson.getString("url"), s)) {
                     // 删除数组元素
-                    String deleteImageUrl = itJson.getString("url");
-                    fileName = deleteImageUrl.substring(
-                            deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
                     iterator.remove();
                 }
-                //删除服务器上对应图片文件
-                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-                CommonUtils.deleteFile(albumImgPath, fileName);
             }
         }
         albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
@@ -1272,6 +1319,47 @@ public class AlbumService {
         return relatedAlbums;
     }
 
+    //endregion
+
+    //region ------废弃------
+    /**
+     * 删除专辑图片
+     *
+     * @param id           专辑id
+     * @param deleteImages 需要删除的图片jsonArray
+     * @author rakbow
+     */
+    @Deprecated
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public String DeprecatedDeleteAlbumImages(int id, JSONArray deleteImages) {
+        //获取原始图片json数组
+        JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
+
+        //图片文件名
+        String fileName = "";
+
+        //循环删除
+        for (int i = 0; i < deleteImages.size(); i++) {
+            JSONObject image = deleteImages.getJSONObject(i);
+            // 迭代器
+            Iterator<Object> iterator = images.iterator();
+            while (iterator.hasNext()) {
+                JSONObject itJson = (JSONObject) iterator.next();
+                if (image.getString("url").equals(itJson.getString("url"))) {
+                    // 删除数组元素
+                    String deleteImageUrl = itJson.getString("url");
+                    fileName = deleteImageUrl.substring(
+                            deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
+                    iterator.remove();
+                }
+                //删除服务器上对应图片文件
+                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
+                CommonUtils.deleteFile(albumImgPath, fileName);
+            }
+        }
+        albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
+        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
+    }
     //endregion
 
 }

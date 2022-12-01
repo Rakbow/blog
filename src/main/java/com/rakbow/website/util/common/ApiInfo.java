@@ -22,7 +22,7 @@ public class ApiInfo {
 
     public static final String GET_IMAGE_FAILED = "读取图片失败: ";
     public static final String GET_FILE_FAILED = "读取文件失败: ";
-
+    public static final String IMAGE_FORMAT_EXCEPTION = "图片格式错误";
     public static final String UPDATE_IMAGES_SUCCESS = "%s图片更改成功！";
     public static final String INSERT_IMAGES_SUCCESS = "%s图片新增成功！";
     public static final String DELETE_IMAGES_SUCCESS = "%s图片删除成功！";
@@ -81,6 +81,10 @@ public class ApiInfo {
     public static final String PRODUCT_CLASSIFICATION_EMPTY = "未选择作品分类！";
     public static final String UPDATE_PRODUCT_DESCRIPTION_SUCCESS = "描述信息更新成功！";
     public static final String UPDATE_PRODUCT_STAFFS_SUCCESS = "staff信息更新成功！";
+    //endregion
+
+    //region 七牛云
+    public static final String QINIU_EXCEPTION = "七牛云异常: %s";
     //endregion
 
 }
