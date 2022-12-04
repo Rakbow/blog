@@ -12,7 +12,6 @@ import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
-import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,11 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -245,67 +240,19 @@ public class ProductController {
                     return JSON.toJSONString(res);
                 }
 
+                //原始图片信息json数组
                 JSONArray imagesJson = JSON.parseArray(productService.getProductById(id).getImages());
-                JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
+                //新增图片的信息
+                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
                 }
 
-                //创建存储图片的文件夹
-                Path productImgPath = Paths.get(imgPath + "/product/" + id);
-
-                //存储图片链接的json
-                JSONArray imgJson = new JSONArray();
-
-                if (Files.notExists(productImgPath)) {
-                    try {
-                        Files.createDirectory(productImgPath);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                for (int i = 0; i < images.length; i++) {
-                    //获取json中的jo对象
-                    JSONObject imageInfo = imageInfosTmp.getJSONObject(i);
-
-                    String fileName = images[i].getOriginalFilename();
-                    String suffix = fileName.substring(fileName.lastIndexOf("."));
-                    if (StringUtils.isBlank(suffix)) {
-                        res.setErrorMessage(ApiInfo.INCORRECT_FILE_FORMAT);
-                        return JSON.toJSONString(res);
-                    }
-                    fileName = (imageInfo.getString("nameEn") + suffix).replaceAll(" ", "");
-                    // 确定文件存放的路径
-                    File dest = new File(productImgPath + "/" + fileName);
-                    try {
-                        // 存储文件
-                        images[i].transferTo(dest);
-                    } catch (IOException e) {
-                        logger.error("上传文件失败: " + e.getMessage());
-                        // throw new RuntimeException("上传文件失败,服务器发生异常!", e);
-                        res.setErrorMessage(ApiInfo.UPLOAD_EXCEPTION);
-                        return JSON.toJSONString(res);
-                    }
-
-                    //将数据存至数据库
-                    JSONObject jo = new JSONObject();
-                    jo.put("url", "/db/product/" + id + "/" + fileName);
-                    jo.put("nameEn", imageInfo.getString("nameEn"));
-                    jo.put("nameZh", imageInfo.getString("nameZh"));
-                    jo.put("type", imageInfo.getString("type"));
-                    jo.put("uploadTime", CommonUtils.getCurrentTime());
-                    if (imageInfo.getString("description") == null) {
-                        jo.put("description", "");
-                    }
-                    imgJson.add(jo);
-                }
-
-                imagesJson.addAll(imgJson);
-                productService.addProductImages(id, imagesJson.toJSONString());
+                productService.addProductImages(id, images, imagesJson, imageInfosJson);
 
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));

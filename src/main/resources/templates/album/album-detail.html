@@ -19,6 +19,8 @@
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+<!--    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>-->
+<!--    <link th:href="@{/css/primevue/themes/vela-blue/theme.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
@@ -63,11 +65,11 @@
     <script src="https://cdn.staticfile.org/highlight.js/11.6.0/highlight.min.js"></script>
 
     <!-- md-editor-v3 -->
-    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
+    <script th:src="@{/js/md-editor-v3/2.5.0/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/css/md-editor-v3/2.5.0/style.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script src="https://cdn.staticfile.org/marked/4.2.0/marked.min.js"></script>
+    <script src="https://cdn.staticfile.org/marked/4.2.3/marked.min.js"></script>
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- aPlayer -->
@@ -90,7 +92,9 @@
 
                 <div class="grid card mt-2">
                     <p-toast></p-toast>
-                    <div class="col-12 sm:col-12 md:col-6 lg:col-9">
+                    <div class="col-12 sm:col-0 md:col-0 lg:col-1">
+                    </div>
+                    <div class="col-12 sm:col-12 md:col-9 lg:col-7">
                         <p-panel>
                             <template #header>
                                 <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
@@ -112,122 +116,128 @@
                                 </p-splitbutton>
                             </template>
                             <div class="grid">
-                                <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
-                                    <img :src="album.cover.url" :alt="album.cover.name"
-                                         :class="getCoverClass(album.cover.url)"/>
+                                <div class="col-12 sm:col-12 md:col-6 lg:col-4">
+                                    <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
+                                        <img :src="album.cover.url" :alt="album.cover.name"
+                                             class="image-cover"/>
+                                    </div>
                                 </div>
-                                <table class="table-borderless table-sm ml-3">
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-dingdanbianhao mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>专辑编号</strong>
-                                        </td>
-                                        <td>
-                                            {{album.catalogNo?album.catalogNo:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-bar-code mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>商品条形码</strong>
-                                        </td>
-                                        <td>{{album.barcode?album.barcode:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi pi-calendar mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>发行时间</strong>
-                                        </td>
-                                        <td>
-                                            {{album.releaseDate?album.releaseDate:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-wuliaojiage mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>发行价格</strong>
-                                        </td>
-                                        <td>
-                                            {{album.publishPrice != 0 ? album.publishPrice + "日元(含税)" :"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-gift mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>特典</strong>
-                                        </td>
-                                        <td><a v-if="album.hasBonus" href="#bonus">有</a>{{(album.hasBonus)?"":"无"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi pi-print mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>出版形式</strong>
-                                        </td>
-                                        <td>
-                                            {{album.publishFormat?album.publishFormat:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-zhuanjiguangpan mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>媒体类型</strong>
-                                        </td>
-                                        <td>
-                                            {{album.mediaFormat?album.mediaFormat:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-musicfill mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>专辑类型</strong>
-                                        </td>
-                                        <td>
-                                            {{album.albumFormat?album.albumFormat:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-tushuyinxiang mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>唱片公司</strong>
-                                        </td>
-                                        <td>{{album.label?album.label:"N/A"}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-gongsi mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>出版商</strong>
-                                        </td>
-                                        <td>
-                                            {{album.publisher?album.publisher:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-company mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>经销商</strong>
-                                        </td>
-                                        <td>
-                                            {{album.distributor?album.distributor:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="pi iconfont icon-copyright mr-1" style="font-size: 1.3rem"></i>
-                                            <strong>版权方</strong>
-                                        </td>
-                                        <td>
-                                            {{album.copyright?album.copyright:"N/A"}}
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <div class="col-12 sm:col-12 md:col-6 lg:col-8">
+                                    <table class="table-borderless table-sm ml-3">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-dingdanbianhao mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>专辑编号</strong>
+                                            </td>
+                                            <td>
+                                                {{album.catalogNo?album.catalogNo:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-bar-code mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>商品条形码</strong>
+                                            </td>
+                                            <td>{{album.barcode?album.barcode:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi pi-calendar mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>发行时间</strong>
+                                            </td>
+                                            <td>
+                                                {{album.releaseDate?album.releaseDate:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-wuliaojiage mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>发行价格</strong>
+                                            </td>
+                                            <td>
+                                                {{album.publishPrice != 0 ? album.publishPrice + "日元(含税)" :"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-gift mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>特典</strong>
+                                            </td>
+                                            <td><a v-if="album.hasBonus" href="#bonus">有</a>{{(album.hasBonus)?"":"无"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi pi-print mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>出版形式</strong>
+                                            </td>
+                                            <td>
+                                                {{album.publishFormat?album.publishFormat:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-zhuanjiguangpan mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>媒体类型</strong>
+                                            </td>
+                                            <td>
+                                                {{album.mediaFormat?album.mediaFormat:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-musicfill mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>专辑类型</strong>
+                                            </td>
+                                            <td>
+                                                {{album.albumFormat?album.albumFormat:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-tushuyinxiang mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>唱片公司</strong>
+                                            </td>
+                                            <td>{{album.label?album.label:"N/A"}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-gongsi mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>出版商</strong>
+                                            </td>
+                                            <td>
+                                                {{album.publisher?album.publisher:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-company mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>经销商</strong>
+                                            </td>
+                                            <td>
+                                                {{album.distributor?album.distributor:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-copyright mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>版权方</strong>
+                                            </td>
+                                            <td>
+                                                {{album.copyright?album.copyright:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
                             </div>
                         </p-panel>
                         <p-fieldset :toggleable="true" class="mt-2">
@@ -235,8 +245,8 @@
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
                                 <b>创作者信息</b>
                             </template>
-                            <div class="grid" v-if="album.artists.length != 0">
-                                <table class="table-borderless table-sm ml-10">
+                            <div class="grid ml-4" v-if="album.artists.length != 0">
+                                <table class="table-borderless table-sm">
                                     <tbody>
                                     <tr v-for="item in album.artists">
                                         <td><strong>{{item.pos}}</strong></td>
@@ -337,7 +347,7 @@
                                             <span v-if="album.displayImages" class="title-container">
                                                 <span>共{{album.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
-                                                <span>{{item.description}}</span>
+                                                <span style="font-size: 10px">{{item.description}}</span>
                                             </span>
                                                 </div>
                                             </template>
@@ -353,7 +363,7 @@
                             </div>
                         </p-fieldset>
                     </div>
-                    <div class="col-12 sm:col-12 md:col-6 lg:col-3">
+                    <div class="col-12 sm:col-12 md:col-3 lg:col-3">
                         <p-panel>
                             <template #header>
                                 <i class="pi iconfont icon-product_b mr-2" style="font-size: 2rem"></i>
@@ -403,7 +413,7 @@
                                             <li>
                                                 <a class="small_font"
                                                    :href="'/db/album/'+ relatedAlbum.id ">
-                                                    <span class="text-truncate-2" lang="ja">
+                                                    <span class="text-truncate-2 mr-4" lang="ja">
                                                         {{relatedAlbum.nameJp}}
                                                     </span>
                                                 </a>
@@ -446,7 +456,7 @@
                                             <span v-if="album.displayImages" class="title-container">
                                                 <span>共{{album.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
-                                                <span>{{item.description}}</span>
+                                                <span style="font-size: 10px">{{item.description}}</span>
                                             </span>
                                         </div>
                                         <div class="col-6 text-end">
@@ -460,10 +470,10 @@
                             <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">
                                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
                                      v-for="(image, index) of album.displayImages" :key="index">
-                                    <img :class="getSidebarPanelImageClass(image.thumbUrl)" :src="image.thumbUrl"
+                                    <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                                          draggable="false"
                                          oncontextmenu="return false"
-                                         v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
+                                         v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
                                          @click="imageClick(index)"/>
                                 </div>
                             </div>
@@ -498,6 +508,8 @@
                                 </div>
                             </div>
                         </p-panel>
+                    </div>
+                    <div class="col-12 sm:col-0 md:col-0 lg:col-1">
                     </div>
                 </div>
                 <p-dialog v-model:visible="displayEditDialog" header="编辑专辑基础信息"
@@ -635,7 +647,7 @@
                                         accept="image/*"
                                         :auto="true"
                                         choose-label="上传图片"
-                                        :max-file-size="10000000" :preview-width="100"
+                                        :max-file-size="2000000" :preview-width="100"
                                         invalid-file-size-message="{0}大小已超过{1}"
                                         @uploader="onUpload"
                                         @select="selectFile">
@@ -1082,11 +1094,6 @@
             const publishFormatSet = ref([[${publishFormatSet}]]);
             const productSet = ref([[${productSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
-            const getCoverClass = (url) => {
-                const image = new Image();
-                image.src = url;
-                return ((image.naturalWidth > image.naturalHeight) ? "image-cover-width" : "image-cover-height");
-            }
             //endregion
 
             //region ------图片板块------
@@ -1723,7 +1730,6 @@
             }
 
             return {
-                getCoverClass,
                 clearUploadedImage,
                 closeImageEditDialog,
                 selectedImage,
@@ -1775,7 +1781,6 @@
                 onRowEditSave,
 
                 initGalleriaImageClass,
-                getSidebarPanelImageClass,
                 imageClick,
                 displayCustom,
                 activeIndex,
@@ -1873,23 +1878,11 @@
         .mount("#app");
 </script>
 <style>
-    .image-cover-width {
+    .image-cover {
         position: absolute;
         top: 50%;
         left: 50%;
         display: block;
-        max-width: 250px;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        pointer-events: none;
-    }
-
-    .image-cover-height {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        max-height: 250px;
         transform: translate(-50%, -50%);
         cursor: pointer;
         pointer-events: none;
@@ -1906,7 +1899,7 @@
     }
 
     .p-tooltip-text {
-        width: 15rem;
+        width: 16rem;
     }
 
     .card {
@@ -1961,9 +1954,9 @@
         height: 600px;
     }
 
-    .p-galleria .p-galleria-item-container {
-        /*width: 500px;*/
-        /*height: 500px;*/
+    .galleria-panel .p-galleria-item-container {
+        width: 1000px;
+        height: 1000px;
     }
 
     .custom-galleria-footer {

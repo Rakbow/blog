@@ -5,13 +5,11 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.EntityType;
-import com.rakbow.website.data.ImageType;
 import com.rakbow.website.data.ProductClass;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.Image.QiniuImageHandleUtils;
+import com.rakbow.website.util.Image.QiniuImageUtils;
+import com.rakbow.website.util.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -43,6 +42,8 @@ public class ProductService {
     private SeriesService seriesService;
     @Value("${website.path.img}")
     private String imgPath;
+    @Autowired
+    private QiniuImageUtils qiniuImageUtils;
     //endregion
 
     //region ------基础增删改查------
@@ -69,6 +70,7 @@ public class ProductService {
 
     //删除作品
     public int deleteProductById(int id) {
+        deleteAllProductImages(id);
         return productMapper.deleteProductById(id);
     }
 
@@ -115,21 +117,22 @@ public class ProductService {
         if (!images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", CommonUtils.getCompressImageUrl(imgPath,
-                        StringUtils.lowerCase(EntityType.PRODUCT.getNameEn()),
-                        product.getId(), CommonUtils.getImageFileNameByUrl(image.getString("url"))));
+                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
             }
         }
 
         JSONArray staffs = JSON.parseArray(product.getStaffs());
 
+        //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", CommonConstant.EMPTY_IMAGE_WIDTH_URL);
-        if (!images.isEmpty()) {
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 250));
+        cover.put("name", "404");
+        if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    cover.put("url", image.getString("url"));
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
+                    cover.put("name", image.getString("nameEn"));
                 }
             }
         }
@@ -150,6 +153,72 @@ public class ProductService {
         productJson.put("editedTime", CommonUtils.timestampToString(product.getEditedTime()));
 
         return productJson;
+    }
+
+    /**
+     * Product转极简Json
+     *
+     * @param product
+     * @return JSONObject
+     * @author rakbow
+     */
+    public JSONObject product2JsonSimple(Product product) {
+        JSONObject productJson = new JSONObject();
+
+        JSONObject series = new JSONObject();
+        series.put("id", product.getSeriesId());
+        series.put("name", seriesService.selectSeriesById(product.getSeriesId()).getNameZh());
+
+        JSONObject classification = new JSONObject();
+        classification.put("id", product.getClassification());
+        classification.put("nameZh", ProductClass.getNameZhByIndex(product.getClassification()));
+
+        JSONArray images = JSON.parseArray(product.getImages());
+
+        JSONArray staffs = JSON.parseArray(product.getStaffs());
+
+        //对封面图片进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+
+        productJson.put("id", product.getId());
+        productJson.put("series", series);
+        productJson.put("name", product.getName());
+        productJson.put("nameZh", product.getNameZh());
+        productJson.put("nameEn", product.getNameEn());
+        productJson.put("releaseDate", CommonUtils.dateToString(product.getReleaseDate()));
+        productJson.put("classification", classification);
+        productJson.put("cover", cover);
+        productJson.put("addedTime", CommonUtils.timestampToString(product.getAddedTime()));
+        productJson.put("editedTime", CommonUtils.timestampToString(product.getEditedTime()));
+
+        return productJson;
+    }
+
+    /**
+     * 列表转换, Product转极简Json
+     *
+     * @param products
+     * @return JSONObject
+     * @author rakbow
+     */
+    public List<JSONObject> product2JsonSimple(List<Product> products) {
+        List<JSONObject> productsJsons = new ArrayList<>();
+
+        products.forEach(product -> {
+            productsJsons.add(product2JsonSimple(product));
+        });
+        return productsJsons;
     }
 
     /**
@@ -236,8 +305,41 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void addProductImages(int id, String images) {
-        productMapper.updateProductImages(id, images, new Timestamp(System.currentTimeMillis()));
+    public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
+
+        //最终保存到数据库的json信息
+        JSONArray finalImageJson = new JSONArray();
+
+        //新增图片信息json
+        JSONArray addImageJson = new JSONArray();
+
+        //创建存储链接前缀
+        String filePath = EntityType.PRODUCT.getNameEn().toLowerCase() + "/" + id + "/";
+
+        for (int i = 0; i < images.length; i++) {
+            //上传图片
+            ActionResult ar = qiniuImageUtils.uploadImageToQiniu(images[i], filePath);
+            if (ar.state) {
+                JSONObject jo = new JSONObject();
+                jo.put("url", ar.data.toString());
+                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
+                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
+                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
+                jo.put("uploadTime", CommonUtils.getCurrentTime());
+                if (imageInfos.getJSONObject(i).getString("description") == null) {
+                    jo.put("description", "");
+                }else {
+                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
+                }
+                addImageJson.add(jo);
+            }
+        }
+
+        //汇总
+        finalImageJson.addAll(originalImagesJson);
+        finalImageJson.addAll(addImageJson);
+
+        productMapper.updateProductImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
 
     /**
@@ -265,26 +367,36 @@ public class ProductService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getProductById(id).getImages());
 
-        //图片文件名
-        String fileName = "";
+        //从七牛云上删除
+        //删除结果
+        List<String> deleteResult = new ArrayList<>();
+        //若删除的图片只有一张，调用单张删除方法
+        if (deleteImages.size() == 1) {
+            ActionResult ar = qiniuImageUtils.deleteImageFromQiniu(deleteImages.getJSONObject(0).getString("url"));
+            if (!ar.state) {
+                return ar.message;
+            }
+            deleteResult.add(deleteImages.getJSONObject(0).getString("url"));
+        }else {
+            String[] fullImageUrlList = new String[deleteImages.size()];
+            for (int i = 0; i < deleteImages.size(); i++) {
+                fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
+            }
+            ActionResult ar = qiniuImageUtils.deleteImagesFromQiniu(fullImageUrlList);
+            deleteResult = (List<String>) ar.data;
+        }
 
-        //循环删除
-        for (int i = 0; i < deleteImages.size(); i++) {
-            JSONObject image = deleteImages.getJSONObject(i);
-            // 迭代器
+        //根据删除结果循环删除图片信息json数组
+        // 迭代器
+
+        for (String s : deleteResult) {
             Iterator<Object> iterator = images.iterator();
             while (iterator.hasNext()) {
                 JSONObject itJson = (JSONObject) iterator.next();
-                if (image.getString("url").equals(itJson.getString("url"))) {
+                if (StringUtils.equals(itJson.getString("url"), s)) {
                     // 删除数组元素
-                    String deleteImageUrl = itJson.getString("url");
-                    fileName = deleteImageUrl.substring(
-                            deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
                     iterator.remove();
                 }
-                //删除服务器上对应图片文件
-                Path productImgPath = Paths.get(imgPath + "/product/" + id);
-                CommonUtils.deleteFile(productImgPath, fileName);
             }
         }
         productMapper.updateProductImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
@@ -292,25 +404,25 @@ public class ProductService {
     }
 
     /**
-     * 删除该专辑所有图片
+     * 删除该作品所有图片
      *
-     * @param id 专辑id
+     * @param id 作品id
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String deleteAllAlbumImages(int id) {
-        JSONArray images = JSON.parseArray(getProductById(id).getImages());
+    public String deleteAllProductImages(int id) {
+        Product product = getProductById(id);
+        JSONArray images = JSON.parseArray(product.getImages());
+        String[] deleteImageKeyList = new String[images.size()];
         //图片文件名
-        String fileName = "";
+        String deleteImageUrl = "";
         for (int i = 0; i < images.size(); i++) {
             JSONObject image = images.getJSONObject(i);
-            String deleteImageUrl = image.getString("url");
-            fileName = deleteImageUrl.substring(
-                    deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
-            //删除服务器上对应图片文件
-            Path productImgPath = Paths.get(imgPath + "/product/" + id);
-            CommonUtils.deleteFile(productImgPath, fileName);
+            deleteImageUrl = image.getString("url");
+            //删除七牛服务器上对应图片文件
+            deleteImageKeyList[i] = deleteImageUrl;
         }
+        qiniuImageUtils.deleteImagesFromQiniu(deleteImageKeyList);
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
@@ -332,7 +444,7 @@ public class ProductService {
 
         products.removeIf(it -> it.getId() == productId);
 
-        relatedProducts = product2json(products);
+        relatedProducts = product2JsonSimple(products);
 
         if (relatedProducts.size() > 5) {
             relatedProducts = relatedProducts.subList(0, 5);

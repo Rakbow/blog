@@ -385,16 +385,16 @@ public class AlbumController {
                 //原始图片信息json数组
                 JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
                 //新增图片的信息
-                JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
+                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
                 }
 
-                albumService.addAlbumImages(id, images, imagesJson, imageInfosTmp);
+                albumService.addAlbumImages(id, images, imagesJson, imageInfosJson);
 
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));

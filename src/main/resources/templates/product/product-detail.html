@@ -60,11 +60,11 @@
     <script src="https://cdn.staticfile.org/highlight.js/11.6.0/highlight.min.js"></script>
 
     <!-- md-editor-v3 -->
-    <script th:src="@{/js/md-editor-v3/2.2.1/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/css/md-editor-v3/2.2.1/style.css}" rel="stylesheet">
+    <script th:src="@{/js/md-editor-v3/2.5.0/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/css/md-editor-v3/2.5.0/style.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script src="https://cdn.staticfile.org/marked/4.2.0/marked.min.js"></script>
+    <script src="https://cdn.staticfile.org/marked/4.2.3/marked.min.js"></script>
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- basic js -->
@@ -105,7 +105,7 @@
                             </p-splitbutton>
                         </template>
                         <div class="grid">
-                            <div class="ml-3" style="width: 250px; height: 150px">
+                            <div class="ml-3" style="width: 250px; height: 250px">
                                 <img :src="product.cover.url" :alt="product.cover.name" class="product-cover"/>
                             </div>
                             <table class="table-borderless table-sm ml-3">
@@ -220,7 +220,7 @@
                         <div v-if="product.images" class="grid justify-content-evenly justify-content-start">
                             <div class="col-4 mt-2 mb-2" id="panel-image-div"
                                  v-for="(image, index) of product.images" :key="index">
-                                <img :class="getSidebarPanelImageClass(image.thumbUrl)" :src="image.thumbUrl"
+                                <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                                      draggable="false"
                                      oncontextmenu="return false"
                                      v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
@@ -1060,8 +1060,6 @@
     }
 
     .product-cover {
-        max-width: 250px;
-        /*max-height: 100px;*/
         position: relative;
         top: 50%;
         left: 50%;

@@ -689,7 +689,7 @@ public class AlbumService {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", image.getString("url"));
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -1133,17 +1133,16 @@ public class AlbumService {
     public String deleteAllAlbumImages(int id) {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
+        String[] deleteImageKeyList = new String[images.size()];
         //图片文件名
-        String fileName = "";
+        String deleteImageUrl = "";
         for (int i = 0; i < images.size(); i++) {
             JSONObject image = images.getJSONObject(i);
-            String deleteImageUrl = image.getString("url");
-            fileName = deleteImageUrl.substring(
-                    deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
-            //删除服务器上对应图片文件
-            Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-            CommonUtils.deleteFile(albumImgPath, fileName);
+            deleteImageUrl = image.getString("url");
+            //删除七牛服务器上对应图片文件
+            deleteImageKeyList[i] = deleteImageUrl;
         }
+        qiniuImageUtils.deleteImagesFromQiniu(deleteImageKeyList);
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
