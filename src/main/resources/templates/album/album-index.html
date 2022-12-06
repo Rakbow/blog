@@ -141,7 +141,7 @@
                                         <a :href="'/db/album/'+ slotProps.data.id">
                                             <div class="product-name">{{slotProps.data.nameJp}}</div>
                                         </a>
-                                        <span class="smallfont" style="margin: 0 0 .5rem 0;">
+                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
                                             <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
                                         </span>
                                         <span class="ml-2 text-end">{{slotProps.data.albumFormat.join(" / ")}}</span>
@@ -244,37 +244,37 @@
                             <b>最新收录</b>
                         </template>
                         <div class="grid">
-                            <span class="smallfont">
-                                    <div class="album_infobit_small smallfont ml-0 grid"
-                                         v-if="justAddedAlbums.length != 0"
-                                         v-for="addAlbum of justAddedAlbums">
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/album/'+ addAlbum.id ">
-                                                <img class="sidebar-panel-image-small" :src="addAlbum.cover.url"
-                                                     style="border-radius: 20%;"
-                                                     v-tooltip.bottom="{value: '收录时间: ' + addAlbum.addedTime + '编辑时间: ' + addAlbum.editedTime, class: 'time-tooltip'}">
-                                            </a>
-                                        </div>
-                                        <div class="col-9">
-                                            <ul class="album_infobit_detail">
-                                            <li>
-                                                <a class="smallfont"
-                                                   :href="'/db/album/'+ addAlbum.id ">
-                                                    <span class="text-truncate-2" lang="ja">
-                                                        {{addAlbum.nameJp}}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <span class="smallfont">
-                                                    <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
-                                                </span>
-                                            </li>
-
-                                        </ul>
-                                        </div>
+                            <span class="small-font">
+                                <div class="info_bit_small small-font ml-0 grid"
+                                     v-if="justAddedAlbums.length != 0"
+                                     v-for="addAlbum of justAddedAlbums">
+                                    <div class="col-3 sidebar-panel-image-small-div mt-2">
+                                        <a :href="'/db/album/'+ addAlbum.id ">
+                                            <img class="sidebar-panel-image-small" :src="addAlbum.cover.url"
+                                                 style="border-radius: 20%;"
+                                                 v-tooltip.bottom="{value: '收录时间: ' + addAlbum.addedTime + '编辑时间: ' + addAlbum.editedTime, class: 'time-tooltip'}">
+                                        </a>
                                     </div>
-                                </span>
+                                    <div class="col-9">
+                                        <ul class="info_bit_detail">
+                                        <li>
+                                            <a class="small-font"
+                                               :href="'/db/album/'+ addAlbum.id ">
+                                                <span class="text-truncate-2" lang="ja">
+                                                    {{addAlbum.nameJp}}
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small-font">
+                                                <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
+                                            </span>
+                                        </li>
+
+                                    </ul>
+                                    </div>
+                                </div>
+                            </span>
                             <br>
                             <b class="rbot"><b></b></b>
                         </div>
@@ -286,8 +286,8 @@
                             <b>最新编辑</b>
                         </template>
                         <div class="grid">
-                            <span class="smallfont">
-                                    <div class="album_infobit_small smallfont ml-0 grid"
+                            <span class="small-font">
+                                    <div class="info_bit_small small-font ml-0 grid"
                                          v-if="justEditedAlbums.length != 0"
                                          v-for="editAlbum of justEditedAlbums">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
@@ -298,9 +298,9 @@
                                             </a>
                                         </div>
                                         <div class="col-9">
-                                            <ul class="album_infobit_detail">
+                                            <ul class="info_bit_detail">
                                             <li>
-                                                <a class="smallfont album-anime"
+                                                <a class="small-font album-anime"
                                                    :href="'/db/album/'+ editAlbum.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{editAlbum.nameJp}}
@@ -308,7 +308,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="smallfont album-anime">
+                                                <span class="small-font album-anime">
                                                     <b>{{editAlbum.catalogNo}}</b> {{editAlbum.releaseDate}}
                                                 </span>
                                             </li>
@@ -328,8 +328,8 @@
                             <b>浏览排名</b>
                         </template>
                         <div class="grid">
-                            <span class="smallfont">
-                                <div class="album_infobit_small smallfont ml-0 grid"
+                            <span class="small-font">
+                                <div class="info_bit_small small-font ml-0 grid"
                                      v-if="popularAlbums.length != 0"
                                      v-for="(album, index) of popularAlbums">
                                         <div class="col-2 ml-0 mr-0 mt-0 mb-0">
@@ -351,9 +351,9 @@
                                             </a>
                                         </div>
                                         <div class="col-7">
-                                            <ul class="album_infobit_detail">
+                                            <ul class="info_bit_detail">
                                             <li>
-                                                <a class="smallfont album-anime"
+                                                <a class="small-font album-anime"
                                                    :href="'/db/album/'+ album.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{album.nameJp}}
@@ -361,7 +361,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="smallfont">
+                                                <span class="small-font">
                                                     <b>{{album.catalogNo}}</b> {{album.releaseDate}}
                                                 </span>
                                             </li>
@@ -707,19 +707,6 @@
         display: inline-block
     }
 
-    .smallfont {
-        font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
-    }
-
-    .album_infobit_small {
-        clear: left;
-        height: 76px;
-        /* border-top: 1px solid #464A64; */
-        /* border-bottom: 1px solid #1B273D; */
-        padding: 4px 6px 4px 4px;
-        overflow: hidden;
-    }
-
     .sidebar-panel-image-small-div {
         position: relative;
         width: 60px;
@@ -732,13 +719,6 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-    }
-
-    ul.album_infobit_detail {
-        list-style-type: none;
-        margin: 6px 0 0 0;
-        padding: 0;
-        overflow: hidden;
     }
 
 </style>

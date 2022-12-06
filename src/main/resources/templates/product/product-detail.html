@@ -80,9 +80,9 @@
             <!-- 头部 -->
             <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-            <div class="grid card mt-2">
+            <div class="grid mt-2">
                 <p-toast></p-toast>
-                <div class="col-12 sm:col-12 md:col-6 lg:col-9">
+                <div class="col-12 sm:col-12 md:col-6 lg:col-7 lg:col-offset-1">
                     <p-panel>
                         <template #header>
                             <i class="pi iconfont icon-_classification mr-0" style="font-size: 2rem"></i>
@@ -137,11 +137,11 @@
                             <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
                             <b>Staff信息</b>
                         </template>
-                        <div class="grid" v-if="product.staffs.length != 0">
+                        <div class="grid ml-4" v-if="product.staffs.length != 0">
                             <table class="table-borderless table-sm ml-10">
                                 <tbody>
                                 <tr v-for="item in product.staffs">
-                                    <td><strong>{{item.pos}}</strong></td>
+                                    <td width="120px"><strong>{{item.pos}}</strong></td>
                                     <td>
                                         {{item.name.join("/")}}
                                     </td>
@@ -253,7 +253,7 @@
                                             <li>
                                                 <a class="small_font"
                                                    :href="'/db/product/'+ relatedProduct.id ">
-                                                    <span class="text-truncate-2" lang="ja">
+                                                    <span class="text-truncate-2 mr-4" lang="ja">
                                                         {{relatedProduct.name}}
                                                     </span>
                                                 </a>
@@ -280,21 +280,21 @@
                         </template>
                         <div class="grid">
                             <div class="col-fixed">
-                                <i class="pi pi-plus mr-2"></i><b>收录时间</b>
+                                <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
                             </div>
-                            <div class="col-10 col-offset-1">
+                            <div class="col-10 col-offset-2">
                                 {{product.addedTime}}
                             </div>
                             <div class="col-fixed">
-                                <i class="pi pi-pencil mr-2"></i><b>编辑时间</b>
+                                <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
                             </div>
-                            <div class="col-10 col-offset-1">
+                            <div class="col-10 col-offset-2">
                                 {{product.editedTime}}
                             </div>
                             <div class="col-fixed">
-                                <i class="pi pi-chart-bar mr-2"></i><b>页面流量</b>
+                                <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
                             </div>
-                            <div class="col-10 col-offset-1">
+                            <div class="col-10 col-offset-2">
                                 <i class="pi pi-eye mr-2"></i><b>访问数：</b>
                                 <span class="text-center">{{visitNum}}</span>
                             </div>

@@ -214,9 +214,10 @@ img.flag {
 .emptyInfo {
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 600;
     display: flex;
-    color: #212121;
+    color: black;
+    /*color: #B0C4DE;*/
 }
 
 .time-tooltip .p-tooltip-text {
@@ -270,7 +271,6 @@ img.flag {
 
 /*侧边栏panel小图*/
 .sidebar-panel-image-small {
-    width: 50px;
     position: relative;
     top: 50%;
     left: 50%;
@@ -337,6 +337,10 @@ ul.info_bit_small {
     padding: 10px;
 }
 
+/*.article {*/
+/*    background-color: #0a53be;*/
+/*}*/
+
 @media (max-width: 767px) {
     .markdown-body {
         padding: 15px;
@@ -351,4 +355,15 @@ ul.info_bit_small {
     overflow: hidden;
     background-color: black;
     border: 1px solid black;
+}
+
+.small-font {
+    font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, Meiryo, sans-serif;
+}
+
+ul.info_bit_detail {
+    list-style-type: none;
+    margin: 6px 0 0 0;
+    padding: 0;
+    overflow: hidden;
 }

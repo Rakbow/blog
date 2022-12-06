@@ -66,8 +66,8 @@
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- aPlayer -->
-<!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
-<!--    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>-->
+    <!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
+    <!--    <script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script>-->
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -83,9 +83,9 @@
                 <!-- 头部 -->
                 <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-                <div class="grid card mt-2">
+                <div class="grid mt-2">
                     <p-toast></p-toast>
-                    <div class="col-12 sm:col-12 md:col-6 lg:col-9">
+                    <div class="col-12 sm:col-12 md:col-6 lg:col-7 lg:col-offset-1">
                         <p-panel>
                             <template #header>
                                 <i class="pi iconfont icon-music mr-0" style="font-size: 2rem"></i>
@@ -106,7 +106,7 @@
                             </template>
                             <div class="grid">
                                 <div class="ml-3" style="width: 200px; height: 200px">
-                                    <img :src="music.coverUrl" alt="cover" class="music-cover" />
+                                    <img :src="music.cover" alt="cover" class="music-cover"/>
                                 </div>
                                 <table class="table-borderless table-sm ml-3">
                                     <tbody>
@@ -155,11 +155,11 @@
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
                                 <b>音乐创作</b>
                             </template>
-                            <div class="grid" v-if="music.artists.length != 0">
+                            <div class="grid ml-4" v-if="music.artists.length != 0">
                                 <table class="table-borderless table-sm ml-10">
                                     <tbody>
                                     <tr v-for="artist in music.artists">
-                                        <td><strong>{{artist.pos}}</strong></td>
+                                        <td width="120px"><strong>{{artist.pos}}</strong></td>
                                         <td>
                                             {{artist.name.join("/")}}
                                         </td>
@@ -192,76 +192,70 @@
                                 <i class="pi pi-th-large mr-2" style="font-size: 2rem"></i>
                                 <b>相关信息</b>
                             </template>
-                            <span class="grid">
-                                <span class="small_font">
-                                    <p-divider align="center">
-                                        <i class="pi iconfont icon-24gl-musicAlbum2 mr-1" style="font-size: 1.5rem"></i>
-                                        <span><b>所属专辑</b></span>
-                                    </p-divider>
-                                    <div class="info_bit_small small_font ml-2 mt-2 mb-2 grid" style="border: solid black">
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                        <a :href="'/db/album/'+ relatedAlbum.id ">
-                                            <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.url"
-                                                 style="border-radius: 20%;">
-                                        </a>
-                                    </div>
-                                        <div class="col-9">
-                                        <ul class="album_infobit_detail">
-                                            <li>
-                                                <a class="small_font"
-                                                   :href="'/db/album/'+ relatedAlbum.id ">
-                                                        <span class="text-truncate-2" lang="ja">
-                                                            {{relatedAlbum.nameJp}}
-                                                        </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                    <span class="small_font">
-                                                        <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
-                                                    </span>
-                                            </li>
-
-                                        </ul>
-                                    </div>
-                                    </div>
-                                    <span class="ml-2">所属该专辑的第<b>{{music.discSerial}}</b>
-                                        张碟片，第<b>{{music.trackSerial}}</b>首曲目</span>
-                                    <p-divider align="center">
-                                        <i class="pi iconfont icon-music mr-1" style="font-size: 1.5rem"></i>
-                                        <span><b>相关曲目</b></span>
-                                    </p-divider>
-                                    <div class="info_bit_small small_font ml-0 grid"
-                                         v-if="relatedMusics.length != 0"
-                                         v-for="relatedMusic of relatedMusics">
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/music/'+ relatedMusic.id ">
-                                                <img class="sidebar-panel-image-small" :src="relatedMusic.coverUrl"
-                                                     style="border-radius: 20%;">
+                            <p-divider align="center">
+                                <i class="pi iconfont icon-24gl-musicAlbum2 mr-1" style="font-size: 1.5rem"></i>
+                                <span><b>所属专辑</b></span>
+                            </p-divider>
+                            <div class="ml-2 mt-2 mb-2 mr-2 grid"
+                                 style="border: solid black">
+                                <div class="col-3 sidebar-panel-image-small-div mt-4">
+                                    <a :href="'/db/album/'+ relatedAlbum.id">
+                                        <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.url"
+                                             style="border-radius: 20%;">
+                                    </a>
+                                </div>
+                                <div class="col-9">
+                                    <ul class="px-1">
+                                        <li>
+                                            <a :href="'/db/album/'+ relatedAlbum.id">
+                                                <span class="text-truncate-2 small_font" lang="ja">
+                                                    {{relatedAlbum.nameJp}}
+                                                </span>
                                             </a>
-                                        </div>
-                                        <div class="col-9">
-                                            <ul class="album_infobit_detail">
-                                            <li>
-                                                <a class="small_font"
-                                                   :href="'/db/music/'+ relatedMusic.id ">
+                                        </li>
+                                        <li>
+                                            <span class="small_font">
+                                                <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <span class="ml-4">所属该专辑的第<b>{{music.discSerial}}</b>
+                                        张碟片，第<b>{{music.trackSerial}}</b>首曲目</span>
+                            <p-divider align="center">
+                                <i class="pi iconfont icon-music mr-1" style="font-size: 1.5rem"></i>
+                                <span><b>相关曲目</b></span>
+                            </p-divider>
+                            <div class="grid"
+                                 v-if="relatedMusics.length != 0"
+                                 v-for="relatedMusic of relatedMusics">
+                                <div class="col-3">
+                                    <a class="ml-4" :href="'/db/music/'+ relatedMusic.id ">
+                                        <img class="sidebar-panel-image-small" :src="relatedMusic.cover"
+                                             style="border-radius: 20%;"
+                                             v-tooltip.bottom="{value: '收录时间: ' + relatedMusic.addedTime + '编辑时间: ' + relatedMusic.editedTime, class: 'time-tooltip'}">
+                                    </a>
+                                </div>
+                                <div class="col-9">
+                                    <ul class="info_bit_detail ml-4">
+                                        <li>
+                                            <a class="small-font"
+                                               :href="'/db/music/'+ relatedMusic.id ">
                                                     <span class="text-truncate-2" lang="ja">
                                                         {{relatedMusic.name}}
                                                     </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <span class="small_font">
+                                            </a>
+                                        </li>
+                                        <li>
+                                                <span class="small-font">
                                                     <b>{{relatedMusic.audioLength}}</b>
                                                 </span>
-                                            </li>
+                                        </li>
 
-                                        </ul>
-                                        </div>
-                                    </div>
-                                </span>
-                                <br>
-                                <b class="rbot"><b></b></b>
-                            </span>
+                                    </ul>
+                                </div>
+                            </div>
                         </p-panel>
                         <br>
                         <p-panel>
@@ -271,21 +265,21 @@
                             </template>
                             <div class="grid">
                                 <div class="col-fixed">
-                                    <i class="pi pi-plus mr-2"></i><b>录入时间</b>
+                                    <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
                                 </div>
-                                <div class="col-10 col-offset-1">
+                                <div class="col-10 col-offset-2">
                                     {{music.addedTime}}
                                 </div>
                                 <div class="col-fixed">
-                                    <i class="pi pi-pencil mr-2"></i><b>编辑时间</b>
+                                    <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
                                 </div>
-                                <div class="col-10 col-offset-1">
+                                <div class="col-10 col-offset-2">
                                     {{music.editedTime}}
                                 </div>
                                 <div class="col-fixed">
-                                    <i class="pi pi-chart-bar mr-2"></i><b>页面流量</b>
+                                    <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
                                 </div>
-                                <div class="col-10 col-offset-1">
+                                <div class="col-10 col-offset-2">
                                     <i class="pi pi-eye mr-2"></i><b>访问数：</b>
                                     <span class="text-center">{{visitNum}}</span>
                                 </div>
@@ -293,7 +287,8 @@
                         </p-panel>
                     </div>
                 </div>
-                <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息" :modal="true"
+                <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息"
+                          :modal="true"
                           class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
@@ -314,13 +309,15 @@
                         </div>
                         <div class="field col">
                             <label htmlFor="audioLength">音频长度<span style="color: red">*</span></label>
-                            <p-inputtext id="audioLength" v-model.trim="musicEdit.audioLength" placeholder="00:00"></p-inputtext>
+                            <p-inputtext id="audioLength" v-model.trim="musicEdit.audioLength"
+                                         placeholder="00:00"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="discSerial">碟片序号<span style="color: red">*</span></label>
-                            <p-inputnumber id="discSerial" v-model="musicEdit.discSerial" disabled="true"></p-inputnumber>
+                            <p-inputnumber id="discSerial" v-model="musicEdit.discSerial"
+                                           disabled="true"></p-inputnumber>
                         </div>
                         <div class="field col">
                             <label htmlFor="trackSerial">曲目序号<span style="color: red">*</span></label>
@@ -351,7 +348,8 @@
                                   @click="submitEditMusic"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作" :modal="true">
+                <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
+                          :modal="true">
                     <p-panel>
                         <template #header>
                             <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
@@ -405,7 +403,8 @@
                                         <p-chips v-model="data[field]"></p-chips>
                                     </template>
                                 </p-column>
-                                <p-column :row-editor="true" style="width:10%; min-width:8rem" bodyStyle="text-align:center"></p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                          bodyStyle="text-align:center"></p-column>
                             </p-datatable>
                             <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
@@ -573,7 +572,7 @@
             };
             const editingRows = ref([]);
             const onRowEditSave = (ev) => {
-                let { newData, index } = ev;
+                let {newData, index} = ev;
 
                 music.value.artists[index] = newData;
             };
@@ -619,7 +618,7 @@
             };
             const onRowReorder = (ev) => {
                 music.value.artists = ev.value;
-                toast.add({severity:'success', summary: 'Rows Reordered', life: 3000});
+                toast.add({severity: 'success', summary: 'Rows Reordered', life: 3000});
             };
             //endregion
 

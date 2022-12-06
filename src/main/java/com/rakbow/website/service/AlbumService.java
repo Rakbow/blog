@@ -683,12 +683,12 @@ public class AlbumService {
         JSONArray images = JSONArray.parseArray(album.getImages());
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", CommonConstant.EMPTY_IMAGE_URL);
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
+                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
                     cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
@@ -1287,9 +1287,6 @@ public class AlbumService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String getAlbumCoverUrl(int id) {
-        //先赋值为404图片
-        String coverUrl = CommonConstant.EMPTY_IMAGE_URL;
-
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
 
@@ -1297,10 +1294,10 @@ public class AlbumService {
             JSONObject image = images.getJSONObject(i);
             //若图片中包含封面类型图片
             if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                coverUrl = image.getString("url");
+                return image.getString("url");
             }
         }
-        return coverUrl;
+        return "";
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)

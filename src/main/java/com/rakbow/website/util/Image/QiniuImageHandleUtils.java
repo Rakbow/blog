@@ -18,7 +18,7 @@ public class QiniuImageHandleUtils {
      * @return thumbImageUrl
      */
     public static String getThumbUrl(String imageUrl, int size) {
-        return imageUrl + "?imageView2/2/w/" + size + "/h/" + size;
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size;
     }
 
     /**

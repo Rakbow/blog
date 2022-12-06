@@ -8,6 +8,7 @@ import com.rakbow.website.data.EntityType;
 import com.rakbow.website.data.music.AudioType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
+import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
@@ -86,11 +87,6 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void addMusic(Music music) throws Exception {
         try {
-            //若封面url为空，赋404图
-            if (StringUtils.isBlank(music.getCoverUrl())) {
-                music.setCoverUrl(CommonConstant.EMPTY_IMAGE_URL);
-            }
-
             musicMapper.addMusic(music);
 
             //新增访问量实体
@@ -213,6 +209,11 @@ public class MusicService {
         //音乐创作
         JSONArray artists = JSON.parseArray(music.getArtists());
 
+        if (StringUtils.isBlank(music.getCoverUrl())) {
+            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
+        }else {
+            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(music.getCoverUrl(), 200));
+        }
         musicJson.put("audioTypeObj", audioTypeObj);
         musicJson.put("addedTime", CommonUtils.timestampToString(music.getAddedTime()));
         musicJson.put("editedTime", CommonUtils.timestampToString(music.getEditedTime()));
@@ -231,10 +232,15 @@ public class MusicService {
     public JSONObject music2JsonSimple(Music music) {
         JSONObject musicJson = new JSONObject();
 
+        if (StringUtils.isBlank(music.getCoverUrl())) {
+            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        }else {
+            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(music.getCoverUrl(), 50));
+        }
+
         musicJson.put("id", music.getId());
         musicJson.put("name", music.getName());
         musicJson.put("nameEb", music.getNameEn());
-        musicJson.put("coverUrl", music.getCoverUrl());
         musicJson.put("audioLength", music.getAudioLength());
         musicJson.put("discSerial", music.getDiscSerial());
         musicJson.put("trackSerial", music.getTrackSerial());
