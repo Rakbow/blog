@@ -292,6 +292,11 @@ public class MusicService {
 
         //获取同属一张专辑的音频
         List<Music> sameAlbumMusics = getMusicsByAlbumId(music.getAlbumId());
+
+        if (sameAlbumMusics.size() >= 5) {
+            sameAlbumMusics = sameAlbumMusics.subList(0, 5);
+        }
+
         //筛选出同一张碟片的音频，并按照序号排序
         DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics)
                 .forEach(m -> relatedMusics.add(music2JsonSimple(m)));

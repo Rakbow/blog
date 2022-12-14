@@ -191,3 +191,19 @@ const initGalleriaImageClass = (url) => {
     image.src = url;
     return (image.naturalWidth > image.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
 };
+
+const copy = () => {
+    const copyBtn = document.getElementById('copy');
+    const clipboard = new Clipboard(copyBtn);//实例化
+    clipboard.on('success', e => {
+        console.log('复制成功')
+        // 释放内存
+        clipboard.destroy()
+    })
+    clipboard.on('error', e => {
+        // 不支持复制
+        console.log('该浏览器不支持自动复制')
+        // 释放内存
+        clipboard.destroy()
+    })
+}

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
     <!--other css -->
-    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon" />
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
     <link th:href="@{/css/index.css}" rel="stylesheet" />
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
@@ -51,7 +51,7 @@
                         <div class="p-3 h-full">
                             <p-card class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
                                 <template #header>
-                                    <img alt="404 NOT FOUND" src="/img/404.jpg">
+                                    <img alt="404 NOT FOUND" src="https://img.rakbow.com/common/404.jpg">
                                 </template>
                                 <template #title :v-if="errorMessage != null && errorMessage!= ''">
                                     {{errorMessage}}

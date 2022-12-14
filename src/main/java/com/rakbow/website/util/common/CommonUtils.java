@@ -46,6 +46,7 @@ public class CommonUtils {
 
     //计算时间总和（返回字符串形式）
     public static String countTotalTime(List<String> times){
+
         int totalHour = 0;
         int totalMin = 0;
         int totalSecond = 0;

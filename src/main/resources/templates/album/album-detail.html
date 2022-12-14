@@ -13,13 +13,14 @@
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!--other css -->
-    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>
+<!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
-<!--    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>-->
-    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+<!--    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
 <!--    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
@@ -72,6 +73,8 @@
     <!-- marked -->
     <script src="https://cdn.staticfile.org/marked/4.2.3/marked.min.js"></script>
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
+
+    <script src="https://cdn.staticfile.org/clipboard.js/2.0.11/clipboard.min.js"></script>
 
     <!-- aPlayer -->
     <!--    <link href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css" rel="stylesheet">-->
@@ -297,13 +300,22 @@
                                             </a>
                                         </td>
 <!--                                        <td class="text-end"><span style="color: #B0C4DE">{{track.length}}</span></td>-->
-                                        <td class="text-end">{{track.length}}</td>
+                                        <td class="text-end">
+                                            <span v-if="track.length == '00:00'">
+                                                N/A
+                                            </span>
+                                            <span v-else>
+                                                {{track.length}}
+                                            </span>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
                                 <p class="text-end">
                                     曲目数: <b>{{disc.trackList.length}} </b>
-                                    碟片时长: <b>{{disc.discLength}}</b>
+                                    <span v-if="disc.discLength != '00:00'">
+                                        碟片时长: <b>{{disc.discLength}}</b>
+                                    </span>
                                 </p>
                             </div>
                         </p-fieldset>
@@ -724,11 +736,18 @@
                                     <p-column :row-reorder="true" header-style="width: 3%"></p-column>
                                     <p-column header="图片" header-style="width: 8%">
                                         <template #body="slotProps">
-                                            <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn"
+                                            <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
                                                  class="edit-image"/>
                                         </template>
                                     </p-column>
-                                    <p-column field="url" header="url" header-style="width: 10%"></p-column>
+                                    <p-column field="url" header="URL" header-style="width: 10%">
+                                        <template #body="slotProps">
+<!--                                            <p-button @click="copy" class="copy" icon="pi pi-clone"-->
+<!--                                                      :data-clipboard-text="slotProps.data.url + '?imageMogr2/auto-orient/thumbnail/150x150'">-->
+<!--                                            </p-button>-->
+                                            {{slotProps.data.url.substr(22)}}
+                                        </template>
+                                    </p-column>
                                     <p-column field="nameZh" header="名(中)" header-style="width: 10%">
                                         <template #editor="{ data, field }">
                                             <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
@@ -856,7 +875,7 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                    <p-chips v-model="tracks.audioNames" placeholder="曲目列表" separator=","></p-chips>
+                                    <p-chips v-model="tracks.audioNames" placeholder="曲目列表"></p-chips>
                                 </div>
                             </div>
                             <div class="col-10">
@@ -1637,8 +1656,9 @@
             const showImage = () => {
                 imageHtml.value = "";
                 //<![CDATA[
+                imageHtml.value += "<div class='grid'>";
                 for (const img of imageInfos.value) {
-                    imageHtml.value += '<div align=""center>';
+                    imageHtml.value += '<div class="col-4">';
                     imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
                     imageHtml.value += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
                     imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
@@ -1646,7 +1666,8 @@
                     imageHtml.value += '<p>描述: ' + img.description + '</p>';
                     imageHtml.value += '</div>';
                 }
-                //]]>
+                imageHtml.value += "</div>";
+                    //]]>
                 document.getElementById("imgBox").innerHTML = imageHtml;
             };
             const selectFile = (ev) => {
@@ -1898,7 +1919,6 @@
 
     .edit-image {
         pointer-events: none;
-        width: 50px;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
     }
 

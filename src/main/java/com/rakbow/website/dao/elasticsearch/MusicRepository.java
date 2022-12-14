@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * @Create: 2022-11-08 0:21
  * @Description:
  */
-@Repository
-public interface MusicRepository extends ElasticsearchRepository<Music, Integer> {
-}
+// @Repository
+// public interface MusicRepository extends ElasticsearchRepository<Music, Integer> {
+// }

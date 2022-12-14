@@ -48,4 +48,6 @@ public interface DiscMapper {
     //更新特典信息
     int updateDiscBonus(int id, String bonus, Timestamp editedTime);
 
+    int updateStatusById(int id);
+
 }

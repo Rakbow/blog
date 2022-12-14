@@ -372,6 +372,7 @@ public class AlbumService {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
+                image.put("thumbUrl50", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
 
                 // image.put("thumbUrl", CommonUtils.getCompressImageUrl(imgPath,
                 //         StringUtils.lowerCase(EntityType.ALBUM.getNameEn()),
@@ -508,13 +509,17 @@ public class AlbumService {
         //音轨信息
         List<Music> musics = new ArrayList<>();
         JSONObject trackInfo = JSONObject.parseObject(album.getTrackInfo());
+        List<String> times = new ArrayList<>();
+        int totalTrack = 0;
         if (trackInfo != null && !Objects.equals(trackInfo.toJSONString(), "{}")) {
             JSONArray discList = trackInfo.getJSONArray("discList");
             JSONArray newDiscList = new JSONArray();
             for (int i = 0; i < discList.size(); i++) {
+                List<String> _times = new ArrayList<>();
                 JSONObject disc = discList.getJSONObject(i);
                 JSONArray trackList = disc.getJSONArray("trackList");
                 JSONArray newTrackList = new JSONArray();
+                totalTrack += trackList.size();
                 for (int j = 0; j < trackList.size(); j++) {
                     int musicId = trackList.getInteger(j);
                     Music music = DataFinder.findMusicById(musicId, allMusics);
@@ -525,16 +530,26 @@ public class AlbumService {
                         track.put("name", music.getName());
                         track.put("nameEn", music.getNameEn());
                         track.put("length", music.getAudioLength());
+                        String _time = track.get("length").toString();
+                        if (_time.contains("\t")) {
+                            _times.add(_time.replace("\t", ""));
+                        }else {
+                            _times.add(_time);
+                        }
                         newTrackList.add(track);
                         musics.add(music);
                     }
                 }
+                times.addAll(_times);
                 disc.put("trackList", newTrackList);
                 disc.put("albumFormat", AlbumFormat.index2NameEnArray(disc.getJSONArray("albumFormat")));
                 disc.put("mediaFormat", MediaFormat.index2NameEnArrayString(disc.getJSONArray("mediaFormat")));
+                disc.put("discLength", CommonUtils.countTotalTime(_times));
                 newDiscList.add(disc);
             }
             trackInfo.put("discList", newDiscList);
+            trackInfo.put("totalLength", CommonUtils.countTotalTime(times));
+            trackInfo.put("totalTracks", totalTrack);
         }
 
 
@@ -624,16 +639,15 @@ public class AlbumService {
         JSONObject series = new JSONObject();
         series.put("id", album.getSeries());
         series.put("name", seriesService.selectSeriesById(album.getSeries()).getNameZh());
-
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", CommonConstant.EMPTY_IMAGE_URL);
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", image.getString("url"));
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 200));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -1175,11 +1189,6 @@ public class AlbumService {
 
         JSONArray discList = new JSONArray();
 
-        //计算总时长的数组
-        List<String> times = new ArrayList<>();
-
-        int totalTrack = 0;
-
         int discSerial = 1;
 
         String trackSerial = "";
@@ -1187,7 +1196,7 @@ public class AlbumService {
         for (Object _disc : JSON.parseArray(_discList)) {
             JSONObject disc = new JSONObject();
             JSONArray track_list = new JSONArray();
-            List<String> _times = new ArrayList<>();
+            // List<String> _times = new ArrayList<>();
             int i = 1;
             for (Object _track : JSON.parseArray(JSON.parseObject(_disc.toString()).getString("trackList"))) {
                 JSONObject track = JSON.parseObject(_track.toString());
@@ -1206,6 +1215,15 @@ public class AlbumService {
                     music.setAlbumId(id);
                     music.setDiscSerial(discSerial);
                     music.setTrackSerial(trackSerial);
+
+                    //去除时间中含有的\t影响
+                    String _time = track.get("length").toString();
+                    if (_time.contains("\t")) {
+                        music.setAudioLength(_time.replace("\t", ""));
+                    }else {
+                        music.setAudioLength(_time);
+                    }
+
                     music.setAudioLength(track.getString("length"));
                     musicService.addMusic(music);
                     track_list.add(music.getId());
@@ -1220,26 +1238,21 @@ public class AlbumService {
                     track_list.add(currentMusic.getId());
                     musics.remove(currentMusic);
                 }
-                _times.add(track.get("length").toString());
+
                 i++;
             }
-            times.addAll(_times);
-            totalTrack += track_list.size();
 
             disc.put("serial", discSerial);
             disc.put("mediaFormat", MediaFormat.nameEn2IndexArray(
                     JSON.parseObject(_disc.toString()).getJSONArray("mediaFormat")));
             disc.put("albumFormat", AlbumFormat.nameEn2IndexArray(
                     JSON.parseObject(_disc.toString()).getJSONArray("albumFormat")));
-            disc.put("discLength", CommonUtils.countTotalTime(_times));
             disc.put("trackList", track_list);
 
             discSerial++;
             discList.add(disc);
         }
         trackInfo.put("discList", discList);
-        trackInfo.put("totalTracks", totalTrack);
-        trackInfo.put("totalLength", CommonUtils.countTotalTime(times));
         albumMapper.updateAlbumTrackInfo(id, trackInfo.toJSONString(), new Timestamp(System.currentTimeMillis()));
 
         //删除对应music

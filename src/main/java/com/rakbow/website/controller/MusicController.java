@@ -36,8 +36,8 @@ public class MusicController {
     private VisitService visitService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ElasticsearchService elasticsearchService;
+    // @Autowired
+    // private ElasticsearchService elasticsearchService;
     //endregion
 
     //获取单个音频详细信息页面
