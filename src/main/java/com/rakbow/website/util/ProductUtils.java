@@ -4,9 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ImageType;
-import com.rakbow.website.data.ProductClass;
+import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 
 import java.util.ArrayList;

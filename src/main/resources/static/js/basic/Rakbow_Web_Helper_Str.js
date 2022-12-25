@@ -14,6 +14,8 @@ const ALBUM_LIST_URL = DOMAIN_URL + "/db/album/list";
 const ALBUM_INDEX_URL = DOMAIN_URL + "/db/album/index";
 
 const DISC_INDEX_URL = DOMAIN_URL + "/db/disc";
+const DISC_LIST_URL = DOMAIN_URL + "/db/disc/list";
+
 const BOOK_INDEX_URL = DOMAIN_URL + "/db/book";
 const GOODS_INDEX_URL = DOMAIN_URL + "/db/goods";
 const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
@@ -61,6 +63,23 @@ const INSERT_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/add-images";
 const UPDATE_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/update-images";
 //endregion
 
+//region disc
+const GET_LIMIT_DISC_URL = DOMAIN_URL + "/db/disc/get-disc-limit";
+const GET_ALL_DISC_URL = DOMAIN_URL + "/db/disc/get-all";
+const DELETE_DISC_URL = DOMAIN_URL + "/db/disc/delete";
+const UPDATE_DISC_URL = DOMAIN_URL + "/db/disc/update";
+const INSERT_DISC_URL = DOMAIN_URL + "/db/disc/add";
+const GET_DISC_URL = DOMAIN_URL + "/db/disc/get-disc";
+const GET_DISCS_URL = DOMAIN_URL + "/db/disc/get-discs";
+const GET_DISCS_LIST_URL = DOMAIN_URL + "/db/disc/get-discs-list";
+
+const INSERT_DISC_IMAGES_URL = DOMAIN_URL + "/db/disc/add-images";
+const UPDATE_DISC_IMAGES_URL = DOMAIN_URL + "/db/disc/update-images";
+const UPDATE_DISC_SPEC_URL = DOMAIN_URL + "/db/disc/update-spec";
+const UPDATE_DISC_DESCRIPTION_URL = DOMAIN_URL + "/db/disc/update-description";
+const UPDATE_DISC_BONUS_URL = DOMAIN_URL + "/db/disc/update-bonus";
+//endregion
+
 //region header
 const ENTITY_TYPE = [
     {label: '专辑', value: '1'},
@@ -99,13 +118,13 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                     {label: '专辑列表', icon: 'pi pi-fw pi-list', url: ALBUM_LIST_URL}
                 ]
             },
-            // {
-            //     label: 'BD/DVD', icon: 'pi pi-fw iconfont icon-Video-Disc',
-            //     items: [
-            //         {label: '碟片首页', icon: 'pi pi-fw iconfont icon-Video-Disc', url: DISC_INDEX_URL},
-            //         {label: '碟片列表', icon: 'pi pi-fw pi-list'}
-            //     ]
-            // },
+            {
+                label: 'BD/DVD', icon: 'pi pi-fw iconfont icon-Video-Disc',
+                items: [
+                    // {label: '碟片首页', icon: 'pi pi-fw iconfont icon-Video-Disc', url: DISC_INDEX_URL},
+                    {label: '碟片列表', icon: 'pi pi-fw pi-list', url: DISC_LIST_URL}
+                ]
+            },
             // {
             //     label: '书籍', icon: 'pi pi-fw pi-book',
             //     items: [
@@ -181,21 +200,22 @@ const LOGIN_NAVBAR_ITEMS = [
                     }
                 ]
             },
-            // {
-            //     label: 'BD/DVD',
-            //     icon: 'pi pi-fw iconfont icon-Video-Disc',
-            //     items: [
-            //         {
-            //             label: '碟片首页',
-            //             icon: 'pi pi-fw iconfont icon-Video-Disc',
-            //             url: DISC_INDEX_URL
-            //         },
-            //         {
-            //             label: '碟片列表',
-            //             icon: 'pi pi-fw pi-list'
-            //         }
-            //     ]
-            // },
+            {
+                label: 'BD/DVD',
+                icon: 'pi pi-fw iconfont icon-Video-Disc',
+                items: [
+                    // {
+                    //     label: '碟片首页',
+                    //     icon: 'pi pi-fw iconfont icon-Video-Disc',
+                    //     url: DISC_INDEX_URL
+                    // },
+                    {
+                        label: '碟片列表',
+                        icon: 'pi pi-fw pi-list',
+                        url: DISC_LIST_URL
+                    }
+                ]
+            },
             // {
             //     label: '书籍',
             //     icon: 'pi pi-fw pi-book',

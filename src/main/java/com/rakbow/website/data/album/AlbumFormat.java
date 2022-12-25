@@ -2,7 +2,6 @@ package com.rakbow.website.data.album;
 
 import com.alibaba.fastjson2.JSONArray;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.ui.context.Theme;
 
 /**
  * @Project_name: website

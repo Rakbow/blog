@@ -83,6 +83,18 @@ public class ApiInfo {
     public static final String UPDATE_PRODUCT_STAFFS_SUCCESS = "staff信息更新成功！";
     //endregion
 
+    //region disc相关
+    public static final String UPDATE_DISC_SPEC_SUCCESS = "碟片规格信息更新成功！";
+    public static final String UPDATE_DISC_DESCRIPTION_SUCCESS = "碟片描述更新成功！";
+    public static final String UPDATE_DISC_BONUS_SUCCESS = "碟片特典信息更新成功！";
+
+    public static final String DISC_NAME_EMPTY = "未填写专辑名称！";
+    public static final String DISC_RELEASE_DATE_EMPTY = "未填写发行日期！";
+    public static final String DISC_SERIES_EMPTY = "未选择专辑所属系列！";
+    public static final String DISC_PRODUCTS_EMPTY = "未选择专辑所属作品！";
+    public static final String DISC_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
+    //endregion
+
     //region 七牛云
     public static final String QINIU_EXCEPTION = "七牛云异常: %s";
     //endregion

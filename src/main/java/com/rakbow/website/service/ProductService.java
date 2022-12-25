@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.EntityType;
-import com.rakbow.website.data.ProductClass;
+import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.Image.QiniuImageUtils;
@@ -179,7 +179,7 @@ public class ProductService {
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {

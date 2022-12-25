@@ -1,4 +1,4 @@
-package com.rakbow.website.data;
+package com.rakbow.website.data.product;
 
 /**
  * @Project_name: website

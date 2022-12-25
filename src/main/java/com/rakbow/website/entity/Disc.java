@@ -21,14 +21,12 @@ public class Disc {
     private String nameEn;//商品译名(英)
     private String barcode;//商品条形码
     private int seriesId;//所属系列id
-    private int productId;//所属作品id
+    private String products;//所属作品id
     private Date releaseDate;//发行日期
     private int price;//发行价格
-    private int mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
+    private String mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
     private int isLimited;//发售版本是否为限定版 0-否 1-是
     private String spec;//商品规格
-    private String area;//发行地区
-    private String language;//语言
     private int hasBonus;//是否包含特典
     private String bonus;//特典信息
     private String images;//图片 json格式
@@ -46,14 +44,12 @@ public class Disc {
         nameEn = "";
         barcode = "";
         seriesId = 0;
-        productId = 0;
+        products = "{\"ids\":[]}";
         releaseDate = null;
         price = 0;
-        mediaFormat = 0;
+        mediaFormat = "{\"ids\":[]}";
         isLimited = 0;
         spec = "";
-        area = "";
-        language = "";
         hasBonus = 0;
         bonus = "";
         images = "[]";

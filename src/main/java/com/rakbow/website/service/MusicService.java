@@ -244,6 +244,8 @@ public class MusicService {
         musicJson.put("audioLength", music.getAudioLength());
         musicJson.put("discSerial", music.getDiscSerial());
         musicJson.put("trackSerial", music.getTrackSerial());
+        musicJson.put("addedTime", CommonUtils.timestampToString(music.getAddedTime()));
+        musicJson.put("editedTime", CommonUtils.timestampToString(music.getEditedTime()));
 
         return musicJson;
     }

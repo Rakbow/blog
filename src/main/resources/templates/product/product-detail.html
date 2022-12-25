@@ -18,7 +18,7 @@
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!-- PrimeVue css-->
-    <link th:href="@{/css/primevue/themes/saga-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
@@ -50,21 +50,21 @@
     <script th:src="@{/js/primevue/components/chips.min.js}"></script>
 
     <!-- Axios -->
-    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
 
     <!-- Jquery -->
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.6.2/jquery.min.js"></script>
 
     <!-- high light js -->
-    <link href="https://cdn.staticfile.org/highlight.js/11.6.0/styles/default.min.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/highlight.js/11.6.0/highlight.min.js"></script>
+    <link href="https://cdn.staticfile.org/highlight.js/11.7.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script>
 
     <!-- md-editor-v3 -->
     <script th:src="@{/js/md-editor-v3/2.5.0/md-editor-v3.umd.js}"></script>
     <link th:href="@{/css/md-editor-v3/2.5.0/style.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script src="https://cdn.staticfile.org/marked/4.2.3/marked.min.js"></script>
+    <script src="https://cdn.staticfile.org/marked/4.2.4/marked.min.js"></script>
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
     <!-- basic js -->
@@ -223,7 +223,7 @@
                                 <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                                      draggable="false"
                                      oncontextmenu="return false"
-                                     v-tooltip.bottom="{value: '上传时间: ' + image.uploadTime, class: 'time-tooltip'}"
+                                     v-tooltip.bottom="{value: '上传于: ' + image.uploadTime, class: 'time-tooltip'}"
                                      @click="imageClick(index)"/>
                             </div>
                         </div>
@@ -630,6 +630,11 @@
                     }
                 }
             ]);
+            const imageTypes = ref([
+                {label: '展示', value: '0'},
+                {label: '封面', value: '1'},
+                {label: '其他', value: '2'}
+            ]);
 
             //region ------staffs相关组件------
             const tmpStaffs = ref();
@@ -785,11 +790,6 @@
                     console.error(err);
                 });
             };
-            const imageTypes = ref([
-                {label: '展示', value: '0'},
-                {label: '封面', value: '1'},
-                {label: '其他', value: '2'}
-            ]);
             const imageInfo = ref({
                 image: null,
                 nameZh: "",
@@ -1159,7 +1159,7 @@
     }
 
     .p-tooltip-text {
-        width: 15rem;
+        width: 16rem;
     }
 
 </style>

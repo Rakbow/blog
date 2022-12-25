@@ -22,13 +22,13 @@ public interface DiscMapper {
     List<Disc> getAllDisc();
 
     //根据过滤条件搜索disc
-    List<Disc> getDiscsByFilterList(String catalogNo, String name, int seriesId, int productId, int media_format,
-                                String is_limited, String has_bonus, String sortField, int sortOrder,
-                                int first, int row);
+    List<Disc> getDiscsByFilterList(String catalogNo, String name, int seriesId, List<Integer> products,
+                                    List<Integer> mediaFormat, String isLimited, String hasBonus, String sortField,
+                                    int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getDiscsRowsByFilterList(String catalogNo, String name, int seriesId, int productId, int media_format,
-                                 String is_limited, String has_bonus);
+    int getDiscsRowsByFilterList(String catalogNo, String name, int seriesId, List<Integer> products,
+                                 List<Integer> mediaFormat, String isLimited, String hasBonus);
 
     //新增disc
     int addDisc (Disc disc);
@@ -41,6 +41,9 @@ public interface DiscMapper {
 
     //更新图片
     int updateDiscImages(int id, String images, Timestamp editedTime);
+
+    //更新规格信息
+    int updateDiscSpec(int id, String spec, Timestamp editedTime);
 
     //更新描述信息
     int updateDiscDescription(int id, String description, Timestamp editedTime);

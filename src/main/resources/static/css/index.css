@@ -367,3 +367,7 @@ ul.info_bit_detail {
     padding: 0;
     overflow: hidden;
 }
+
+.item-upload-time-tooltip .p-tooltip-text {
+    width: 16rem;
+}

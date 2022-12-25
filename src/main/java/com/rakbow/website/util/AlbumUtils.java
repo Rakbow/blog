@@ -5,10 +5,9 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ImageType;
 import com.rakbow.website.data.album.AlbumFormat;
-import com.rakbow.website.data.album.MediaFormat;
+import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.entity.Album;
-import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 
 import java.util.ArrayList;

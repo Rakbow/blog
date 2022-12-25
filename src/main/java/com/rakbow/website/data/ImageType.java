@@ -1,7 +1,5 @@
 package com.rakbow.website.data;
 
-import com.rakbow.website.data.album.AlbumFormat;
-
 /**
  * @Project_name: website
  * @Author: Rakbow

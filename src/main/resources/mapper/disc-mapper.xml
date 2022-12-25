@@ -5,13 +5,13 @@
 <mapper namespace="com.rakbow.website.dao.DiscMapper">
 
     <sql id="selectFields">
-        id, catalog_no, name, name_zh, name_en, barcode, series_id, product_id, release_date, price, media_format,
-        is_limited, spec, area, language, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        id, catalog_no, name, name_zh, name_en, barcode, series_id, products, release_date, price, media_format,
+        is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        catalog_no, name, name_zh, name_en, barcode, series_id, product_id, release_date, price, media_format,
-        is_limited, spec, area, language, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        catalog_no, name, name_zh, name_en, barcode, series_id, products, release_date, price, media_format,
+        is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="getDiscById" resultType="Disc">
@@ -34,19 +34,19 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into disc (<include refid="insertFields"></include>)
-        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{seriesId}, #{productId}, #{releaseDate}, #{price},
-        #{mediaFormat}, #{isLimited}, #{spec}, #{area}, #{language}, #{hasBonus}, #{bonus}, #{images},
-        #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{seriesId}, #{productId}, #{releaseDate},
+        #{price}, #{mediaFormat}, #{isLimited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
+        #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateDisc" parameterType="Disc" keyProperty="id">
         update disc
         set
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
-        barcode = #{disc.barcode}, series_id = #{disc.seriesId}, product_id = #{disc.productId},
+        barcode = #{disc.barcode}, series_id = #{disc.seriesId}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
-        is_limited = #{disc.isLimited}, spec = #{disc.spec}, area = #{disc.area}, language = #{disc.language},
-        has_bonus = #{disc.hasBonus}, edited_time = #{disc.editedTime}, _s = #{disc._s}
+        is_limited = #{disc.isLimited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
+        edited_time = #{disc.editedTime}, _s = #{disc._s}
         where id = #{disc.id}
     </update>
 
@@ -60,6 +60,13 @@
         update disc
         set
         images = #{images}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateDiscSpec" keyProperty="id">
+        update disc
+        set
+        spec = #{spec}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 
@@ -83,5 +90,104 @@
         _s = 0
         where id = #{id}
     </update>
+
+    <select id="getDiscsByFilterList" resultType="Disc">
+        select
+        <include refid="selectFields"></include>
+        from disc
+        <where>
+            <if test="catalogNo != null and catalogNo != '' ">
+                and catalog_no like concat('%', #{catalogNo}, '%')
+            </if>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="seriesId != 0 ">
+                and series_id = #{seriesId}
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="mediaFormat != null and mediaFormat.size() != 0">
+                <foreach item="item" index="index" collection="mediaFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="isLimited != null and isLimited != '' ">
+                and is_limited = #{isLimited}
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            and _s = 1
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'price'">
+            <if test="sortOrder == 1">
+                order by price asc
+            </if>
+            <if test="sortOrder == -1">
+                order by price desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        limit #{first}, #{row}
+    </select>
+
+    <select id="getDiscsRowsByFilterList" resultType="int">
+        select count(id)
+        from disc
+        <where>
+            <if test="catalogNo != null and catalogNo != '' ">
+                and catalog_no like concat('%', #{catalogNo}, '%')
+            </if>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="seriesId != 0 ">
+                and series_id = #{seriesId}
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="mediaFormat != null and mediaFormat.size() != 0">
+                <foreach item="item" index="index" collection="mediaFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="isLimited != null and isLimited != '' ">
+                and is_limited = #{isLimited}
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            and _s = 1
+        </where>
+    </select>
 
 </mapper>

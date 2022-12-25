@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Album Detail</title>
+    <title>Disc Detail</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -13,15 +13,15 @@
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!--other css -->
-<!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
+    <!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
-<!--    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
-<!--    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>-->
+    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
+    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
@@ -94,18 +94,19 @@
                 <!-- 头部 -->
                 <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-<!--                <div class="grid card mt-2" style="background-color: #20262E">-->
+                <!--                <div class="grid card mt-2" style="background-color: #20262E">-->
                 <div class="grid mt-2">
                     <p-toast></p-toast>
                     <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
+                                <i class="pi iconfont icon-Video-Disc mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
-                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{album.nameJp}}</h5>
-                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameEn}}</small></h5>
-                                    <h5 v-if="album.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
-                                        style="text-align: left"><small>{{album.nameZh}}</small></h5>
+                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{disc.name}}</h5>
+                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{disc.nameEn}}</small>
+                                    </h5>
+                                    <h5 v-if="disc.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
+                                        style="text-align: left"><small>{{disc.nameZh}}</small></h5>
                                 </div>
                             </template>
                             <template #icons th:if="${loginUser != null}">
@@ -119,8 +120,8 @@
                             </template>
                             <div class="grid">
                                 <div class="col-12 sm:col-12 md:col-6 lg:col-4">
-                                    <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
-                                        <img :src="album.cover.url" :alt="album.cover.name"
+                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">
+                                        <img :src="disc.cover.url" :alt="disc.cover.name"
                                              class="image-cover"/>
                                     </div>
                                 </div>
@@ -131,10 +132,10 @@
                                             <td>
                                                 <i class="pi iconfont icon-dingdanbianhao mr-1"
                                                    style="font-size: 1.3rem"></i>
-                                                <strong>专辑编号</strong>
+                                                <strong>碟片编号</strong>
                                             </td>
                                             <td>
-                                                {{album.catalogNo?album.catalogNo:"N/A"}}
+                                                {{disc.catalogNo?disc.catalogNo:"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -142,7 +143,7 @@
                                                 <i class="pi iconfont icon-bar-code mr-1" style="font-size: 1.3rem"></i>
                                                 <strong>商品条形码</strong>
                                             </td>
-                                            <td>{{album.barcode?album.barcode:"N/A"}}
+                                            <td>{{disc.barcode?disc.barcode:"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -151,16 +152,17 @@
                                                 <strong>发行时间</strong>
                                             </td>
                                             <td>
-                                                {{album.releaseDate?album.releaseDate:"N/A"}}
+                                                {{disc.releaseDate?disc.releaseDate:"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-wuliaojiage mr-1" style="font-size: 1.3rem"></i>
+                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                   style="font-size: 1.3rem"></i>
                                                 <strong>发行价格</strong>
                                             </td>
                                             <td>
-                                                {{album.publishPrice != 0 ? album.publishPrice + "日元(含税)" :"N/A"}}
+                                                {{disc.price != 0 ? disc.price + "日元" :"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -169,16 +171,7 @@
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>特典</strong>
                                             </td>
-                                            <td><a v-if="album.hasBonus" href="#bonus">有</a>{{(album.hasBonus)?"":"无"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-print mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>出版形式</strong>
-                                            </td>
-                                            <td>
-                                                {{album.publishFormat?album.publishFormat:"N/A"}}
+                                            <td><a v-if="disc.hasBonus" href="#bonus">有</a>{{(disc.hasBonus)?"":"无"}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -188,136 +181,20 @@
                                                 <strong>媒体类型</strong>
                                             </td>
                                             <td>
-                                                {{album.mediaFormat?album.mediaFormat:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-musicfill mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>专辑类型</strong>
-                                            </td>
-                                            <td>
-                                                {{album.albumFormat?album.albumFormat:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-tushuyinxiang mr-1"
-                                                   style="font-size: 1.3rem"></i>
-                                                <strong>唱片公司</strong>
-                                            </td>
-                                            <td>{{album.label?album.label:"N/A"}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-gongsi mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>出版商</strong>
-                                            </td>
-                                            <td>
-                                                {{album.publisher?album.publisher:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-company mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>经销商</strong>
-                                            </td>
-                                            <td>
-                                                {{album.distributor?album.distributor:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-copyright mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>版权方</strong>
-                                            </td>
-                                            <td>
-                                                {{album.copyright?album.copyright:"N/A"}}
+                                                {{disc.mediaFormat?disc.mediaFormat:"N/A"}}
                                             </td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </div>
-
-
                             </div>
                         </p-panel>
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
-                                <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
-                                <b>创作信息</b>
+                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
+                                <b>规格</b>
                             </template>
-                            <div class="grid ml-4" v-if="album.artists.length != 0">
-                                <table class="table-borderless table-sm">
-                                    <tbody>
-                                    <tr v-for="item in album.artists">
-                                        <td width="120px"><strong>{{item.pos}}</strong></td>
-                                        <td>
-                                            {{item.name.join("/")}}
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>暂无创作相关信息</em></span>
-                            </div>
-                        </p-fieldset>
-                        <p-fieldset :toggleable="true" class="mt-2">
-                            <template #legend>
-                                <i class="pi iconfont icon-playlist mr-2" style="font-size: 2rem"></i>
-                                <b>音轨信息</b>
-                            </template>
-                            <div v-if="album.trackInfo == null || JSON.stringify(album.trackInfo) == '{}' ">
-                                <span class="emptyInfo"><em>暂无音轨信息</em></span>
-                            </div>
-                            <div>
-                                <p class="text-start"
-                                   v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
-                                    总碟片数: <b>{{album.trackInfo.discList.length}} </b>
-                                    总曲目数: <b>{{album.trackInfo.totalTracks}} </b>
-                                    总时长: <b>{{album.trackInfo.totalLength}}</b>
-                                </p>
-                            </div>
-                            <div v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' "
-                                 v-for="(disc, index) in album.trackInfo.discList">
-                                <table class="table table-sm table-hover table-striped">
-                                    <thead>
-                                    <h5>
-                                        Disc {{index+1}} ({{disc.mediaFormat}})
-                                        <span v-if="disc.catalogNo != ''">[{{album.catalogNo+"-"+(index+1)}}]</span>
-                                        {{disc.albumFormat}}
-                                    </h5>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="(track, index) in disc.trackList">
-<!--                                        <th scope="row">{{index+1>9?index+1:"0"+(index+1)}}</th>-->
-<!--                                        <th scope="row"><span style="color: #B0C4DE">{{index+1>9?index+1:"0"+(index+1)}}</span></th>-->
-                                        <th scope="row">{{index+1>9?index+1:"0"+(index+1)}}</th>
-                                        <td>
-                                            <a :href="'/db/music/' + track.musicId">
-                                                {{track.name}}
-                                            </a>
-                                        </td>
-<!--                                        <td class="text-end"><span style="color: #B0C4DE">{{track.length}}</span></td>-->
-                                        <td class="text-end">
-                                            <span v-if="track.length == '00:00'">
-                                                N/A
-                                            </span>
-                                            <span v-else>
-                                                {{track.length}}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <p class="text-end">
-                                    曲目数: <b>{{disc.trackList.length}} </b>
-                                    <span v-if="disc.discLength != '00:00'">
-                                        碟片时长: <b>{{disc.discLength}}</b>
-                                    </span>
-                                </p>
-                            </div>
+                            <article id="spec" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
@@ -326,7 +203,7 @@
                             </template>
                             <article id="description" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
-                        <div v-if="album.hasBonus">
+                        <div v-if="disc.hasBonus">
                             <p-fieldset :toggleable="true" class="mt-2">
                                 <template #legend>
                                     <i class="pi iconfont icon-gift mr-2" style="font-size: 2rem"></i>
@@ -340,7 +217,7 @@
                                 <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
                                 <b>图片</b>
                             </template>
-                            <div v-if="album.displayImages.length == 0">
+                            <div v-if="disc.displayImages.length == 0">
                                 <span class="emptyInfo"><em>暂无图片</em></span>
                             </div>
                             <div v-else align="center">
@@ -350,7 +227,7 @@
                                         <span style="margin-left:.5rem; vertical-align: middle">加载图片</span>
                                     </template>
                                     <template #content>
-                                        <p-galleria :value="album.displayImages" :responsive-options="responsiveOptions"
+                                        <p-galleria :value="disc.displayImages" :responsive-options="responsiveOptions"
                                                     :num-visible="5" container-style="width: 600px" :circular="true">
                                             <template #item="{item}">
                                                 <div id="galleria-div">
@@ -360,8 +237,8 @@
                                             </template>
                                             <template #caption="{item}">
                                                 <div class="custom-galleria-footer">
-                                            <span v-if="album.displayImages" class="title-container">
-                                                <span>共{{album.displayImages.length}}张</span>
+                                            <span v-if="disc.displayImages" class="title-container">
+                                                <span>共{{disc.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
                                                 <span style="font-size: 10px">{{item.description}}</span>
                                             </span>
@@ -383,20 +260,20 @@
                         <p-panel>
                             <template #header>
                                 <i class="pi iconfont icon-product_b mr-2" style="font-size: 2rem"></i>
-                                <b>专辑分类</b>
+                                <b>分类</b>
                             </template>
                             <div class="grid">
                                 <div class="col-fixed">
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{album.series.name}}
+                                    {{disc.series.name}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    <p class="mb-0" v-for="item of album.products">
+                                    <p class="mb-0" v-for="item of disc.products">
                                         <a :href="'/db/product/'+ item.id ">
                                             <span lang="en" style="display:inline">
                                                 {{item.name}}
@@ -409,34 +286,33 @@
                         <br>
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
-                                <b>相关专辑</b>
+                                <i class="pi iconfont icon-Video-Disc mr-2" style="font-size: 2rem"></i>
+                                <b>相关碟片</b>
                             </template>
-                            <div class="grid">
+                            <div v-if="relatedDiscs.length != 0" class="grid">
                                 <span class="small_font">
                                     <div class="info_bit_small ml-0 grid"
-                                         v-if="relatedAlbums.length != 0"
-                                         v-for="relatedAlbum of relatedAlbums">
+                                         v-for="relatedDisc of relatedDiscs">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/album/'+ relatedAlbum.id ">
-                                                <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.url"
+                                            <a :href="'/db/disc/'+ relatedDisc.id ">
+                                                <img class="sidebar-panel-image-small" :src="relatedDisc.cover.url"
                                                      style="border-radius: 20%;"
-                                                     v-tooltip.bottom="'收录时间: ' + relatedAlbum.addedTime + '编辑时间: ' + relatedAlbum.editedTime">
+                                                     v-tooltip.bottom="'收录时间: ' + relatedDisc.addedTime + '编辑时间: ' + relatedDisc.editedTime">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="info_bit_small">
                                             <li>
                                                 <a class="small_font"
-                                                   :href="'/db/album/'+ relatedAlbum.id ">
+                                                   :href="'/db/disc/'+ relatedDisc.id ">
                                                     <span class="text-truncate-2 mr-4" lang="ja">
-                                                        {{relatedAlbum.nameJp}}
+                                                        {{relatedDisc.name}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <span class="small_font">
-                                                    <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
+                                                    <b>{{relatedDisc.catalogNo}}</b> {{relatedDisc.releaseDate}}
                                                 </span>
                                             </li>
 
@@ -447,6 +323,9 @@
                                 <br>
                                 <b class="rbot"><b></b></b>
                             </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无相关碟片</em></span>
+                            </div>
                         </p-panel>
                         <br>
                         <p-panel>
@@ -454,10 +333,10 @@
                                 <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
                                 <b>图片</b>
                             </template>
-                            <div v-if="album.displayImages.length == 0">
+                            <div v-if="disc.displayImages.length == 0">
                                 <span class="emptyInfo"><em>暂无图片</em></span>
                             </div>
-                            <p-galleria v-if="album.displayImages" :value="album.displayImages"
+                            <p-galleria v-if="disc.displayImages" :value="disc.displayImages"
                                         v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
                                         :num-visible="7" container-style="max-width: 800px"
                                         :circular="true" :full-screen="true" :show-item-navigators="true"
@@ -469,23 +348,23 @@
                                 <template #caption="{item}">
                                     <div class="custom-galleria-footer">
                                         <div class="col-6">
-                                            <span v-if="album.displayImages" class="title-container">
-                                                <span>共{{album.displayImages.length}}张</span>
+                                            <span v-if="disc.displayImages" class="title-container">
+                                                <span>共{{disc.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
                                                 <span style="font-size: 10px">{{item.description}}</span>
                                             </span>
                                         </div>
                                         <div class="col-6 text-end">
-                                            <span v-if="album.displayImages">
+                                            <span v-if="disc.displayImages">
                                             <span>上传于 {{item.uploadTime}}</span>
                                         </span>
                                         </div>
                                     </div>
                                 </template>
                             </p-galleria>
-                            <div v-if="album.displayImages" class="grid justify-content-evenly justify-content-start">
+                            <div v-if="disc.displayImages" class="grid justify-content-evenly justify-content-start">
                                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                                     v-for="(image, index) of album.displayImages" :key="index">
+                                     v-for="(image, index) of disc.displayImages" :key="index">
                                     <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                                          draggable="false"
                                          oncontextmenu="return false"
@@ -507,13 +386,13 @@
                                     <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{album.addedTime}}
+                                    {{disc.addedTime}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{album.editedTime}}
+                                    {{disc.editedTime}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
@@ -526,124 +405,96 @@
                         </p-panel>
                     </div>
                 </div>
-                <p-dialog v-model:visible="displayEditDialog" header="编辑专辑基础信息"
-                          :style="{width: '800px'}" :modal="true" class="p-fluid">
+                <p-dialog v-model:visible="displayEditDialog" header="编辑碟片基础信息"
+                          :style="{width: '600px'}" :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
-                            <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="nameEn">专辑名称(英语)</label>
-                            <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="nameZh">专辑名称(中文)</label>
-                            <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="catalogNo">专辑编号</label>
-                            <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
+                            <label htmlFor="catalogNo">碟片编号</label>
+                            <p-inputtext v-model.trim="discEdit.catalogNo"></p-inputtext>
                         </div>
                         <div class="field col">
                             <label htmlFor="barcode">商品条形码</label>
-                            <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
+                            <p-inputtext v-model.trim="discEdit.barcode"></p-inputtext>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                            <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="publishPrice">发行价格(含税)</label>
-                            <p-inputnumber id="publishPrice" v-model="albumEdit.publishPrice" mode="currency"
-                                           currency="JPY"
-                                           locale="ja-JP"></p-inputnumber>
-                        </div>
+                    <div class="field">
+                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="discEdit.name"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="nameZh">商品名(中)</label>
+                        <p-inputtext v-model.trim="discEdit.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="nameEn">商品名(英)</label>
+                        <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown id="seriesId" v-model="albumEdit.series" :options="seriesSet"
+                            <p-dropdown v-model="discEdit.series" :options="seriesSet"
                                         option-label="label" option-value="value"
                                         :disabled="seriesBool">
                             </p-dropdown>
                         </div>
                         <div class="field col">
                             <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect id="products" v-model="albumEdit.products" :options="productSet"
+                            <p-multiselect v-model="discEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
                                            display="chip" :filter="true">
                             </p-multiselect>
                         </div>
+                    </div>
+                    <div class="formgrid grid">
                         <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">特典</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="discEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="price">发行价格(含税)</label>
+                            <p-inputnumber v-model="discEdit.price" mode="currency"
+                                           currency="JPY" locale="ja-JP"></p-inputnumber>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="publishFormat" class="mb-3">出版形式<span
-                                    style="color: red">*</span></label>
-                            <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat"
-                                           :options="publishFormatSet"
-                                           option-label="label" option-value="value" placeholder="选择出版形式"
-                                           display="chip">
-                            </p-multiselect>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
-                            <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
-                                           option-label="label" option-value="value" placeholder="选择专辑分类"
-                                           display="chip">
-                            </p-multiselect>
-                        </div>
-                        <div class="field col">
                             <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
-                            <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
+                            <p-multiselect v-model="discEdit.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
                                            display="chip">
                             </p-multiselect>
                         </div>
-                    </div>
-                    <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="label">唱片公司</label>
-                            <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publisher">发行商</label>
-                            <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="distributor">经销商</label>
-                            <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="copyright">版权方</label>
-                            <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
+                            <div class="col-12">
+                                <label htmlFor="isLimited" class="mb-3">限定版</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="discEdit.isLimited" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
                         </div>
                     </div>
                     <div class="field">
                         <label htmlFor="remark">备注</label>
-                        <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
+                        <p-textarea v-model="discEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
                     <template #footer>
                         <p-button label="取消" icon="pi pi-times" class="p-button-text"
                                   @click="closeEditDialog"></p-button>
                         <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                                  @click="submitEditAlbum"></p-button>
+                                  @click="submitEditDisc"></p-button>
                     </template>
                 </p-dialog>
                 <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
@@ -724,8 +575,8 @@
                                 <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
                                 <b>编辑</b>
                             </template>
-                            <div v-if="album.images.length != 0">
-                                <p-datatable :value="album.images" class="p-datatable-sm"
+                            <div v-if="disc.images.length != 0">
+                                <p-datatable :value="disc.images" class="p-datatable-sm"
                                              @row-reorder="imgRowReorder" edit-mode="row" striped-rows
                                              :resizable-columns="true" column-resize-mode="expand"
                                              v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
@@ -744,20 +595,19 @@
                                     </p-column>
                                     <p-column field="url" header="URL" header-style="width: 10%">
                                         <template #body="slotProps">
-<!--                                            <p-button @click="copy" class="copy" icon="pi pi-clone"-->
-<!--                                                      :data-clipboard-text="slotProps.data.url + '?imageMogr2/auto-orient/thumbnail/150x150'">-->
-<!--                                            </p-button>-->
                                             {{slotProps.data.url.substr(22)}}
                                         </template>
                                     </p-column>
                                     <p-column field="nameZh" header="名(中)" header-style="width: 10%">
                                         <template #editor="{ data, field }">
-                                            <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                            <p-inputtext v-model="data[field]" autofocus
+                                                         style="width: 100px"></p-inputtext>
                                         </template>
                                     </p-column>
                                     <p-column field="nameEn" header="名(英)" header-style="width: 10%">
                                         <template #editor="{ data, field }">
-                                            <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                            <p-inputtext v-model="data[field]" autofocus
+                                                         style="width: 100px"></p-inputtext>
                                         </template>
                                     </p-column>
                                     <p-column field="type" header="类型" header-style="width: 8%">
@@ -773,7 +623,8 @@
                                     </p-column>
                                     <p-column field="description" header="描述" header-style="width: 15%">
                                         <template #editor="{ data, field }">
-                                            <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                            <p-inputtext v-model="data[field]" autofocus
+                                                         style="width: 100px"></p-inputtext>
                                         </template>
                                     </p-column>
                                     <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
@@ -791,229 +642,13 @@
                         <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayArtistEditDialog" header="编辑创作信息"
-                          :style="{width: '800px'}" :modal="true">
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                            <b>新增</b>
-                        </template>
-                        <div class="grid">
-                            <div class="col-3">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                                    <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
-                                </div>
-                            </div>
-                            <div class="col-7">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
-                                    </span>
-                                    <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <p-button label="新增" icon="pi pi-save"
-                                          @click="addArtist"></p-button>
-                            </div>
-                        </div>
-                    </p-panel>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                            <b>编辑</b>
-                        </template>
-                        <div v-if="tmpArtists.length != 0">
-                            <p-datatable dataKey="id" :value="tmpArtists" responsive-layout="scroll"
-                                         class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
-                                         context-menu v-model:context-menu-selection="selectedArtist"
-                                         @row-contextmenu="artistRowMenu" edit-mode="row"
-                                         v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
-                                <p-column :row-reorder="true"></p-column>
-                                <p-column field="pos" header="职位">
-                                    <template #editor="{ data, field }">
-                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                                    </template>
-                                </p-column>
-                                <p-column field="name" header="人员">
-                                    <template #body="slotProps">
-                                        {{slotProps.data.name.join(" / ")}}
-                                    </template>
-                                    <template #editor="{ data, field }">
-                                        <p-chips v-model="data[field]"></p-chips>
-                                    </template>
-                                </p-column>
-                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                          bodyStyle="text-align:center"></p-column>
-                            </p-datatable>
-                            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
-                        </div>
-                        <div v-else>
-                            <span class="emptyInfo">暂无创作相关信息</span>
-                        </div>
-                    </p-panel>
+                <p-dialog v-model:visible="displaySpecDialog" header="编辑规格信息"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                    <md-editor-v3 v-model="specMd" preview-theme="github"></md-editor-v3>
                     <template #footer>
-                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                                  @click="clearArtists"></p-button>
-                        <p-button label="取消" icon="pi pi-times" class="mr-4"
-                                  @click="cancelArtistEdit"></p-button>
-                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                                  @click="submitArtist"></p-button>
-                    </template>
-                </p-dialog>
-                <p-dialog v-model:visible="displayTrackEditDialog" header="编辑音轨信息"
-                          :style="{width: '800px'}" :modal="true">
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                            <b>新增</b>
-                        </template>
-                        <div class="grid">
-                            <div class="col-10">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                                    <p-chips v-model="tracks.audioNames" placeholder="曲目列表"></p-chips>
-                                </div>
-                            </div>
-                            <div class="col-10">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
-                                    </span>
-                                    <p-chips v-model="tracks.audioLengths" placeholder="曲目长度"
-                                             separator=","></p-chips>
-                                </div>
-                            </div>
-
-                            <div class="col-5">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                                    <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="mediaFormatSet"
-                                                   option-label="label" option-value="labelEn" placeholder="媒体格式"
-                                                   display="chip">
-                                    </p-multiselect>
-                                </div>
-                            </div>
-                            <div class="col-5">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                                    <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="albumFormatSet"
-                                                   option-label="label" option-value="labelEn" placeholder="专辑分类"
-                                                   display="chip">
-                                    </p-multiselect>
-                                </div>
-                            </div>
-
-                            <div class="col-2">
-                                <p-button label="添加碟片" icon="pi pi-save" class="p-button-success"
-                                          @click="addDisc"></p-button>
-                            </div>
-                        </div>
-                    </p-panel>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                            <b>编辑</b>
-                        </template>
-                        <div v-if="tmpEditDiscList.length != 0">
-                            <p-datatable :value="tmpEditDiscList" class="p-datatable-sm" striped-rows
-                                         responsive-layout="scroll" v-model:expanded-rows="expandedRows"
-                                         @row-reorder="onRowReorderDisc"
-                                         context-menu v-model:context-menu-selection="selectedDisc"
-                                         @row-contextmenu="discRowMenu" edit-mode="row"
-                                         v-model:editing-rows="editingRowsDisc" @row-edit-save="onRowEditSaveDisc">
-                                <template #header>
-                                    <div class="table-header-container">
-                                        <p-button icon="pi pi-plus" label="全部展开" @click="expandAll"
-                                                  class="mr-2"></p-button>
-                                        <p-button icon="pi pi-minus" label="全部折叠" @click="collapseAll"></p-button>
-                                    </div>
-                                </template>
-                                <p-column :row-reorder="true"></p-column>
-                                <p-column :expander="true" headerStyle="width: 3rem"></p-column>
-                                <p-column header="碟片序号">
-                                    <template #body="slotProps">
-                                        {{slotProps.index+1}}
-                                    </template>
-                                </p-column>
-                                <p-column field="albumFormat" header="专辑分类">
-                                    <template #body="slotProps">
-                                        {{slotProps.data.albumFormat.join("/")}}
-                                    </template>
-                                    <template #editor="{ data, field }">
-                                        <p-multiselect v-model="data[field]" :options="albumFormatSet"
-                                                       option-label="label" option-value="labelEn"
-                                                       placeholder="专辑分类"
-                                                       display="chip">
-                                        </p-multiselect>
-                                    </template>
-                                </p-column>
-                                <p-column field="mediaFormat" header="媒体格式">
-                                    <template #body="slotProps">
-                                        {{slotProps.data.mediaFormat.join("/")}}
-                                    </template>
-                                    <template #editor="{ data, field }">
-                                        <p-multiselect v-model="data[field]" :options="mediaFormatSet"
-                                                       option-label="label" option-value="labelEn"
-                                                       placeholder="媒体格式"
-                                                       display="chip">
-                                        </p-multiselect>
-                                    </template>
-                                </p-column>
-                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                          bodyStyle="text-align:center"></p-column>
-                                <template #expansion="slotProps">
-                                    <div class="orders-subtable">
-                                        <p-datatable :value="slotProps.data.trackList" class="p-datatable-sm"
-                                                     striped-rows
-                                                     responsive-layout="scroll"
-                                                     @row-reorder="onRowReorderTrack"
-                                                     context-menu v-model:context-menu-selection="selectedTrack"
-                                                     @row-contextmenu="trackRowMenu" edit-mode="row"
-                                                     v-model:editing-rows="editingRowsTrack"
-                                                     @row-edit-save="onRowEditSaveTrack">
-                                            <p-column :row-reorder="true"></p-column>
-                                            <p-column header="曲目序号">
-                                                <template #body="slotProps">
-                                                    {{slotProps.index+1}}
-                                                </template>
-                                            </p-column>
-                                            <p-column field="musicId" header="曲目编号" sortable></p-column>
-                                            <p-column field="name" header="曲名">
-                                                <template #editor="{ data, field }">
-                                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                                                </template>
-                                            </p-column>
-                                            <p-column field="length" header="音频长度">
-                                                <template #editor="{ data, field }">
-                                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                                                </template>
-                                            </p-column>
-                                            <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                                      bodyStyle="text-align:center"></p-column>
-                                            <p-contextmenu :model="menuModelTrack" ref="cmTrack"></p-contextmenu>
-                                        </p-datatable>
-                                    </div>
-                                </template>
-                                <p-contextmenu :model="menuModelDisc" ref="cmDisc"></p-contextmenu>
-                            </p-datatable>
-                        </div>
-                        <div v-else>
-                            <span class="emptyInfo">暂无音轨信息</span>
-                        </div>
-                    </p-panel>
-                    <template #footer>
-                        <p-button label="保存" icon="pi pi-save" class="p-button-success mr-4"
-                                  @click="submitTrackInfo"></p-button>
+                        <p-button label="取消" icon="pi pi-times" @click="closeSpecEditDialog" class="p-button-text">
+                        </p-button>
+                        <p-button label="保存" icon="pi pi-save" @click="submitSpec"></p-button>
                     </template>
                 </p-dialog>
                 <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
@@ -1038,11 +673,11 @@
                         <p-button label="保存" icon="pi pi-save" @click="submitBonus"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="deleteAlbumImageDialog" header="删除图片"
+                <p-dialog v-model:visible="deleteDiscImageDialog" header="删除图片"
                           :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
                     <div class="confirmation-content">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                        <span v-if="album">确定删除所选的图片？</span>
+                        <span v-if="disc">确定删除所选的图片？</span>
                     </div>
                     <template #footer>
                         <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -1071,9 +706,10 @@
             })
 
             //region ------基础------
-            const album = ref([[${album}]]);
+            const disc = ref([[${disc}]]);
             const visitNum = ref([[${visitNum}]]);
-            const relatedAlbums = ref([[${relatedAlbums}]]);
+            // const relatedDiscs = ref([[${relatedAlbums}]]);
+            const relatedDiscs = ref([]);
             const toast = useToast();
             const edits = ref([
                 {
@@ -1084,17 +720,10 @@
                     }
                 },
                 {
-                    label: '音乐制作',
-                    icon: 'pi pi-users',
+                    label: '规格信息',
+                    icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openArtistEditDialog();
-                    }
-                },
-                {
-                    label: '音轨信息',
-                    icon: 'pi iconfont icon-playlist',
-                    command: () => {
-                        openTrackEditDialog();
+                        openSpecEditDialog();
                     }
                 },
                 {
@@ -1113,8 +742,6 @@
                 }
             ]);
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
-            const albumFormatSet = ref([[${albumFormatSet}]]);
-            const publishFormatSet = ref([[${publishFormatSet}]]);
             const productSet = ref([[${productSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
             const blockedPanel = ref(false);
@@ -1127,12 +754,12 @@
 
             //region ------图片板块------
             const imgRowReorder = (ev) => {
-                album.value.images = ev.value;
+                disc.value.images = ev.value;
             };
             const editingImages = ref([]);
             const imgRowEditSave = (ev) => {
                 let {newData, index} = ev;
-                album.value.images[index] = newData;
+                disc.value.images[index] = newData;
             };
             const getImageTypeLabel = (type) => {
                 return value2Label(type, imageTypes.value);
@@ -1145,29 +772,26 @@
             };
             //endregion
 
-            //region ------编辑专辑信息------
+            //region ------编辑碟片信息------
             const seriesBool = true;
-            const albumEdit = ref({});
+            const discEdit = ref({});
             const displayEditDialog = ref(false);
 
             //打开编辑数据面板
             const openEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            let dataTmp = JSON.parse(JSON.stringify(album.value));
-                            dataTmp.hasBonus = album.value.hasBonus ? 1 : 0;
-                            dataTmp.mediaFormat = album.value.mediaFormat.split("/");
-                            dataTmp.albumFormat = album.value.albumFormat.split("/");
-                            dataTmp.publishFormat = album.value.publishFormat.split("/");
-                            albumEdit.value = dataTmp;
-                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                            albumEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
-                            albumEdit.value.series = dataTmp.series.id;
+                            let dataTmp = JSON.parse(JSON.stringify(disc.value));
+                            dataTmp.hasBonus = disc.value.hasBonus ? 1 : 0;
+                            dataTmp.isLimited = disc.value.isLimited ? 1 : 0;
+                            dataTmp.mediaFormat = disc.value.mediaFormat.split("/");
+                            discEdit.value = dataTmp;
+                            discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            discEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                            discEdit.value.series = dataTmp.series.id;
                             displayEditDialog.value = true;
                         }
                     })
@@ -1176,15 +800,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                albumEdit.value = {};
+                discEdit.value = {};
             };
 
             //保存编辑数据
-            const submitEditAlbum = () => {
-                axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
+            const submitEditDisc = () => {
+                axiosPostRequest(UPDATE_DISC_URL, discEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            albumEdit.value = {};
+                            discEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -1203,16 +827,53 @@
             };
             //endregion
 
+            //region ------编辑规格------
+            const specMd = ref("");
+            const displaySpecDialog = ref(false);
+            const openSpecEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            specMd.value = disc.value.spec;
+                            displaySpecDialog.value = true;
+                        }
+                    });
+            }
+            const closeSpecEditDialog = () => {
+                displaySpecDialog.value = false;
+                specMd.value = "";
+            }
+            const submitSpec = () => {
+                let json = {
+                    id: disc.value.id,
+                    spec: specMd.value
+                }
+                axiosPostRequest(UPDATE_DISC_SPEC_URL, json)
+                    .then(res => {
+                        if (res.state !== 0) {
+                            disc.value.spec = specMd.value;
+                            text2marked();
+                            closeSpecEditDialog();
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
+            }
+            //endregion
+
             //region ------编辑描述------
             const descriptionMd = ref("");
             const displayDescriptionDialog = ref(false);
             const openDescriptionEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            descriptionMd.value = album.value.description;
+                            descriptionMd.value = disc.value.description;
                             displayDescriptionDialog.value = true;
                         }
                     });
@@ -1223,13 +884,13 @@
             }
             const submitDescription = () => {
                 let json = {
-                    id: album.value.id,
+                    id: disc.value.id,
                     description: descriptionMd.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_DESCRIPTION_URL, json)
+                axiosPostRequest(UPDATE_DISC_DESCRIPTION_URL, json)
                     .then(res => {
                         if (res.state != 0) {
-                            album.value.description = descriptionMd.value;
+                            disc.value.description = descriptionMd.value;
                             text2marked();
                             closeDescriptionEditDialog();
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
@@ -1246,10 +907,10 @@
             const openBonusEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            bonusMd.value = album.value.bonus;
+                            bonusMd.value = disc.value.bonus;
                             displayBonusDialog.value = true;
                         }
                     });
@@ -1260,13 +921,13 @@
             }
             const submitBonus = () => {
                 let json = {
-                    id: album.value.id,
+                    id: disc.value.id,
                     bonus: bonusMd.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_BONUS_URL, json)
+                axiosPostRequest(UPDATE_DISC_BONUS_URL, json)
                     .then(res => {
-                        if (res.state != 0) {
-                            album.value.bonus = bonusMd.value;
+                        if (res.state !== 0) {
+                            disc.value.bonus = bonusMd.value;
                             text2marked();
                             closeBonusEditDialog();
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
@@ -1281,8 +942,17 @@
 
             const text2marked = () => {
 
-                const description = album.value.description;
-                const bonus = album.value.bonus;
+                const description = disc.value.description;
+                const spec = disc.value.spec;
+                const bonus = disc.value.bonus;
+
+                if (spec != null && spec !== "") {
+                    document.getElementById("spec").innerHTML = marked.parse(spec);
+                } else {
+                    //<![CDATA[
+                    document.getElementById("spec").innerHTML = "<span class='emptyInfo'><em>暂无规格信息</em></span>";
+                    //]]>
+                }
 
                 if (description != null && description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(description);
@@ -1292,11 +962,10 @@
                     //]]>
                 }
 
-                if (album.value.hasBonus && bonus != null && bonus !== "") {
+                if (disc.value.hasBonus && bonus != null && bonus !== "") {
                     document.getElementById("bonus").innerHTML = marked.parse(bonus);
                 }
-                if ((bonus == null || bonus === "") && album.value.hasBonus)
-                    {
+                if ((bonus == null || bonus === "") && disc.value.hasBonus) {
                     //<![CDATA[
                     document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
                     //]]>
@@ -1304,272 +973,14 @@
             };
             //endregion
 
-            //region ------音轨信息相关组件------
-            let tmpDiscId = 1000;
-            let tmpTrackId = 1000;
-            const tmpEditDiscList = ref();
-            const cmDisc = ref();
-            const cmTrack = ref();
-            const selectedDisc = ref();
-            const selectedTrack = ref();
-            const menuModelDisc = ref([
-                {label: '删除', icon: 'pi pi-fw pi-trash', command: () => deleteDisc(selectedDisc)}
-            ]);
-            const menuModelTrack = ref([
-                {label: '删除', icon: 'pi pi-fw pi-trash', command: () => deleteTrack(selectedTrack)}
-            ]);
-            const onRowReorderDisc = (ev) => {
-                tmpEditDiscList.value = ev.value;
-            };
-            const onRowReorderTrack = (ev) => {
-
-                for (let disc of tmpEditDiscList.value) {
-                    if (disc.tmpDiscId === ev.value[0].tmpDiscId) {
-                        disc.trackList = ev.value;
-                    }
-                }
-            };
-            const discRowMenu = (ev) => {
-                cmDisc.value.show(ev.originalEvent);
-            };
-            const trackRowMenu = (ev) => {
-                cmTrack.value.show(ev.originalEvent);
-            };
-            const deleteDisc = (disc) => {
-                tmpEditDiscList.value = tmpEditDiscList.value.filter((d) => d.tmpDiscId !== disc.value.tmpDiscId);
-                toast.add({severity: 'error', summary: '已删除', detail: disc.value.tmpDiscId, life: 3000});
-                selectedArtist.value = null;
-            };
-            const deleteTrack = (track) => {
-                for (let disc of tmpEditDiscList.value) {
-                    if (disc.tmpDiscId === track.value.tmpDiscId) {
-                        disc.trackList = disc.trackList.filter((t) => t.tmpTrackId !== track.value.tmpTrackId);
-                    }
-                }
-                toast.add({severity: 'error', summary: '已删除', detail: track.value.name, life: 3000});
-            };
-            const editingRowsDisc = ref([]);
-            const editingRowsTrack = ref([]);
-            const onRowEditSaveDisc = (ev) => {
-                let {newData, index} = ev;
-                tmpEditDiscList.value[index] = newData;
-            };
-            const onRowEditSaveTrack = (ev) => {
-                let {newData, index} = ev;
-
-                for (let disc of tmpEditDiscList.value) {
-                    if (disc.tmpDiscId === newData.tmpDiscId) {
-                        disc.trackList[index] = newData;
-                    }
-                }
-            };
-
-            const tracks = ref({
-                audioNames: [],
-                audioLengths: []
-            });
-            const disc = ref({
-                albumFormat: [],
-                mediaFormat: []
-            });
-            const expandedRows = ref([]);
-            const expandAll = () => {
-                expandedRows.value = tmpEditDiscList.value;
-            };
-            const collapseAll = () => {
-                expandedRows.value = null;
-            };
-            const displayTrackEditDialog = ref(false);
-
-            const openTrackEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 1) {
-
-                            tmpEditDiscList.value = JSON.parse(JSON.stringify(album.value.editDiscList));
-
-                            tracks.value = {};
-                            disc.value = {};
-
-                            displayTrackEditDialog.value = true;
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    });
-            };
-            const checkDisc = () => {
-                if (tracks.value.audioNames === undefined || tracks.value.audioNames.length === 0) {
-                    toast.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: ALBUM_DETAIL_TRACK_INFO_MUSIC_NAME_EMPTY,
-                        life: 3000
-                    });
-                    return false;
-                }
-                if (tracks.value.audioLengths === undefined || tracks.value.audioLengths.length === 0) {
-                    toast.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: ALBUM_DETAIL_TRACK_INFO_MUSIC_LENGTH_EMPTY,
-                        life: 3000
-                    });
-                    return false;
-                }
-                if (tracks.value.audioLengths.length !== tracks.value.audioNames.length) {
-                    toast.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: ALBUM_DETAIL_TRACK_INFO_MUSIC_NOT_EQUALS,
-                        life: 3000
-                    });
-                    return false;
-                }
-                if (disc.value.mediaFormat === undefined) {
-                    toast.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: ALBUM_DETAIL_TRACK_INFO_MEDIA_FORMAT_EMPTY,
-                        life: 3000
-                    });
-                    return false;
-                }
-                if (disc.value.albumFormat === undefined) {
-                    toast.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: ALBUM_DETAIL_TRACK_INFO_ALBUM_FORMAT_EMPTY,
-                        life: 3000
-                    });
-                    return false;
-                }
-                return true;
-            }
-            const addDisc = () => {
-                if (checkDisc()) {
-                    let newDisc = {
-                        tmpDiscId: tmpDiscId,
-                        trackList: [],
-                        mediaFormat: [],
-                        albumFormat: []
-                    };
-                    for (let i = 0; i < tracks.value.audioNames.length; i++) {
-                        let track = {
-                            tmpDiscId: tmpDiscId,
-                            tmpTrackId: tmpTrackId,
-                            musicId: 0,
-                            name: null,
-                            length: null
-                        };
-                        track.name = tracks.value.audioNames[i];
-                        track.length = tracks.value.audioLengths[i];
-                        newDisc.trackList.push(track);
-                        tmpTrackId++;
-                    }
-                    newDisc.albumFormat = disc.value.albumFormat;
-                    newDisc.mediaFormat = disc.value.mediaFormat;
-                    tmpEditDiscList.value.push(newDisc);
-                    tracks.value = {};
-                    disc.value = {};
-                    tmpDiscId++;
-                }
-            };
-            const submitTrackInfo = () => {
-                let json = {
-                    id: album.value.id,
-                    discList: tmpEditDiscList.value
-                }
-                axiosPostRequest(UPDATE_ALBUM_TRACK_INFO_URL, json)
-                    .then(res => {
-                        if (res.state !== 0) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            displayTrackEditDialog.value = false;
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    })
-            };
-            //endregion
-
-            //region ------artists相关组件------
-            const tmpArtists = ref();
-            const cm = ref();
-            const selectedArtist = ref();
-            const artist = ref({});
-            const artists = ref([]);
-            const displayArtistEditDialog = ref(false);
-            const menuModel = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
-            ]);
-            const onRowReorder = (ev) => {
-                tmpArtists.value = ev.value;
-            };
-            const artistRowMenu = (ev) => {
-                cm.value.show(ev.originalEvent);
-            };
-            const deleteArtist = (artist) => {
-                tmpArtists.value = tmpArtists.value.filter((a) => a.pos !== artist.value.pos);
-                toast.add({severity: 'error', summary: '已删除', detail: artist.value.pos, life: 3000});
-                selectedArtist.value = null;
-            };
-            const editingRows = ref([]);
-            const onRowEditSave = (ev) => {
-                let {newData, index} = ev;
-
-                tmpArtists.value[index] = newData;
-            };
-
-            const openArtistEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpArtists.value = JSON.parse(JSON.stringify(album.value.artists));
-                            artist.value = {};
-                            displayArtistEditDialog.value = true;
-                        }
-                    })
-            };
-            const clearArtists = () => {
-                tmpArtists.value = [];
-            };
-            const addArtist = () => {
-                tmpArtists.value.push(artist.value);
-                artist.value = {};
-            }
-            const cancelArtistEdit = () => {
-                artist.value = {};
-                displayArtistEditDialog.value = false;
-            };
-            const submitArtist = () => {
-                let json = {
-                    id: album.value.id,
-                    artists: tmpArtists.value
-                }
-                axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            displayArtistEditDialog.value = false;
-                            artist.value = {};
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    })
-            };
-            //endregion
-
             //region ------图片相关组件------
             const updateImage = () => {
                 let json = {
-                    id: album.value.id,
-                    images: album.value.images,
+                    id: disc.value.id,
+                    images: disc.value.images,
                     action: "1"
                 };
-                axiosPostRequest(UPDATE_ALBUM_IMAGES_URL, json)
+                axiosPostRequest(UPDATE_DISC_IMAGES_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
@@ -1600,24 +1011,24 @@
             ];
             const selectedImage = ref([]);
             const confirmDeleteSelectedImage = () => {
-                deleteAlbumImageDialog.value = true;
+                deleteDiscImageDialog.value = true;
             };
             const cancelDeleteSelectedImage = () => {
                 selectedImage.value = [];
-                deleteAlbumImageDialog.value = false;
+                deleteDiscImageDialog.value = false;
             };
-            const deleteAlbumImageDialog = ref(false);
+            const deleteDiscImageDialog = ref(false);
             const deleteImage = () => {
                 let json = {
-                    id: album.value.id,
+                    id: disc.value.id,
                     images: selectedImage.value,
                     action: "2"
                 };
-                axiosPostRequest(UPDATE_ALBUM_IMAGES_URL, json)
+                axiosPostRequest(UPDATE_DISC_IMAGES_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
-                            deleteAlbumImageDialog.value = false;
+                            deleteDiscImageDialog.value = false;
                             closeImageEditDialog();
                             selectedImage.value = [];
                             location.reload(true);
@@ -1671,7 +1082,7 @@
                     imageHtml.value += '</div>';
                 }
                 imageHtml.value += "</div>";
-                    //]]>
+                //]]>
                 document.getElementById("imgBox").innerHTML = imageHtml;
             };
             const selectFile = (ev) => {
@@ -1718,9 +1129,9 @@
                 for (const img of imageInfos.value) {
                     formData.append("images", img.image);
                 }
-                formData.append("id", album.value.id);
+                formData.append("id", disc.value.id);
                 formData.append("imageInfos", JSON.stringify(imageInfos.value));
-                axiosRequest(INSERT_ALBUM_IMAGES_URL, formData)
+                axiosRequest(INSERT_DISC_IMAGES_URL, formData)
                     .then(res => {
                         if (res.state === 1) {
                             blockedPanel.value = false;
@@ -1747,9 +1158,7 @@
             const init = () => {
                 text2marked();
                 initImageClass($("#galleria-item").attr("src"));
-                album.value.publishFormat = album.value.publishFormat.join("/");
-                album.value.mediaFormat = album.value.mediaFormat.join("/");
-                album.value.albumFormat = album.value.albumFormat.join("/");
+                disc.value.mediaFormat = disc.value.mediaFormat.join("/");
             };
 
             const initImageClass = (url) => {
@@ -1761,6 +1170,7 @@
             }
 
             return {
+                relatedDiscs,
                 blockedPanel,
                 clearUploadedImage,
                 closeImageEditDialog,
@@ -1770,47 +1180,7 @@
                 imgRowEditSave,
                 imgRowReorder,
 
-                tmpEditDiscList,
-                tmpArtists,
-
-                cmDisc,
-                selectedDisc,
-                menuModelDisc,
-                onRowReorderDisc,
-                discRowMenu,
-                editingRowsDisc,
-                onRowEditSaveDisc,
-
-                cmTrack,
-                selectedTrack,
-                menuModelTrack,
-                onRowReorderTrack,
-                trackRowMenu,
-                editingRowsTrack,
-                onRowEditSaveTrack,
-
-                tracks,
                 disc,
-                addDisc,
-                submitTrackInfo,
-                onRowReorder,
-
-
-                expandedRows, expandAll, collapseAll,
-
-                cm,
-                artist,
-                artists,
-                menuModel,
-                editingRows,
-                selectedArtist,
-                addArtist,
-                clearArtists,
-                submitArtist,
-                deleteArtist,
-                cancelArtistEdit,
-                artistRowMenu,
-                onRowEditSave,
 
                 initGalleriaImageClass,
                 imageClick,
@@ -1821,14 +1191,12 @@
                 edits,
                 seriesBool,
                 displayEditDialog,
-                albumEdit,
+                discEdit,
                 openEditDialog,
                 closeEditDialog,
 
-                submitEditAlbum,
+                submitEditDisc,
                 mediaFormatSet,
-                albumFormatSet,
-                publishFormatSet,
                 productSet,
 
                 seriesSet,
@@ -1837,7 +1205,7 @@
                 cancelDeleteSelectedImage,
                 deleteImage,
                 confirmDeleteSelectedImage,
-                deleteAlbumImageDialog,
+                deleteDiscImageDialog,
                 initImageClass,
 
                 galleriaItemClass,
@@ -1846,20 +1214,23 @@
                 imageInfo,
                 imageInfos,
                 imageTypes,
-                album,
-                relatedAlbums,
                 submitImages,
                 selectFile,
                 imageHtml,
                 displayImageEditDialog,
-                displayArtistEditDialog,
-                displayTrackEditDialog,
 
                 responsiveOptions,
+
+                specMd,
+                displaySpecDialog,
+                closeSpecEditDialog,
+                submitSpec,
+
                 descriptionMd,
                 displayDescriptionDialog,
                 closeDescriptionEditDialog,
                 submitDescription,
+
                 bonusMd,
                 displayBonusDialog,
                 closeBonusEditDialog,

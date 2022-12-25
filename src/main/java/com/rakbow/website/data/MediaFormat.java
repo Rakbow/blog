@@ -1,4 +1,4 @@
-package com.rakbow.website.data.album;
+package com.rakbow.website.data;
 
 import com.alibaba.fastjson2.JSONArray;
 import org.apache.commons.lang3.StringUtils;
