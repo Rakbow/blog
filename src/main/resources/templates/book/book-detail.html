@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Detail</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
+    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
+    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+
+    <!--other css -->
+    <!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
+    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
+    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>-->
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
+
+    <!-- Vue3 -->
+    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
+    <script th:src="@{/js/primevue/components/panel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/fieldset.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chips.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/galleria.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toast.min.js}"></script>
+    <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
+    <script th:src="@{/js/primevue/components/calendar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputnumber.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
+    <script th:src="@{/js/primevue/components/splitbutton.min.js}"></script>
+    <script th:src="@{/js/primevue/components/datatable.min.js}"></script>
+    <script th:src="@{/js/primevue/components/column.min.js}"></script>
+    <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inplace.min.js}"></script>
+    <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
+
+    <!-- Jquery -->
+    <script src="https://cdn.staticfile.org/jquery/3.6.2/jquery.min.js"></script>
+
+    <!-- high light js -->
+    <link href="https://cdn.staticfile.org/highlight.js/11.7.0/styles/default.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- md-editor-v3 -->
+    <script th:src="@{/js/md-editor-v3/2.5.0/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/css/md-editor-v3/2.5.0/style.css}" rel="stylesheet">
+
+    <!-- marked -->
+    <script src="https://cdn.staticfile.org/marked/4.2.4/marked.min.js"></script>
+    <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
+
+    <script src="https://cdn.staticfile.org/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <!-- aPlayer -->
+    <!--    <link href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">-->
+    <!--    <script src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js"></script>-->
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+</head>
+<body>
+<div class="nk-container">
+    <div class="main">
+        <div class="container">
+            <div id="app">
+                <!-- 头部 -->
+                <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+
+                <!--                <div class="grid card mt-2" style="background-color: #20262E">-->
+                <div class="grid mt-2">
+                    <p-toast></p-toast>
+                    <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
+                        <p-panel>
+                            <template #header>
+                                <i class="pi iconfont icon-Video-Disc mr-0" style="font-size: 2rem"></i>
+                                <div class="container mt-0 mb-0 ml-0">
+                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{book.title}}</h5>
+                                    <h5 v-if="book.titleEn != ''" class="text-start ml-2 mt-0 mb-0"
+                                        style="text-align: left"><small>{{book.titleEn}}</small>
+                                    </h5>
+                                    <h5 v-if="book.titleZh != ''" class="text-start ml-2 mt-0 mb-0"
+                                        style="text-align: left"><small>{{book.titleZh}}</small></h5>
+                                </div>
+                            </template>
+                            <template #icons th:if="${loginUser != null}">
+                                <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"
+                                               th:if="${loginUser.type == 1}">
+                                    <p-button @click="openEditDialog">
+                                        <i class="pi pi-pencil"></i>
+                                        <span class="ml-2 flex align-items-center font-bold">编辑</span>
+                                    </p-button>
+                                </p-splitbutton>
+                            </template>
+                            <div class="grid">
+                                <div class="col-12 sm:col-12 md:col-6 lg:col-4">
+                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">
+                                        <img :src="book.cover.url" :alt="book.cover.name"
+                                             class="image-cover"/>
+                                    </div>
+                                </div>
+                                <div class="col-12 sm:col-12 md:col-6 lg:col-8">
+                                    <table class="table-borderless table-sm ml-3">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-dingdanbianhao mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>ISBN-10</strong>
+                                            </td>
+                                            <td>
+                                                {{book.isbn10}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-bar-code mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>ISBN-13</strong>
+                                            </td>
+                                            <td>{{book.isbn13}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi pi-calendar mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>分类</strong>
+                                            </td>
+                                            <td>
+                                                {{book.bookType.nameZh}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>语言</strong>
+                                            </td>
+                                            <td>
+                                                {{book.publishLanguage.nameZh}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>出版日期</strong>
+                                            </td>
+                                            <td>
+                                                {{book.publishDate}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>出版社</strong>
+                                            </td>
+                                            <td>
+                                                {{book.publisher}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>出版价格</strong>
+                                            </td>
+                                            <td>
+                                                {{book.price != 0?book.price:" - "}} {{book.currencyUnit}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-gift mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>特典</strong>
+                                            </td>
+                                            <td><a v-if="book.hasBonus" href="#bonus">有</a>{{(book.hasBonus)?"":"无"}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </p-panel>
+
+                        <!-- 作者/规格 -->
+<!--                        <p-card class="mt-4">-->
+<!--                            <template #title>-->
+<!--                                <b>作者/规格</b>-->
+<!--                            </template>-->
+<!--                            <template #content>-->
+<!--                                <div class="grid">-->
+<!--                                    <div class="col-5 flex align-items-start justify-content-start">-->
+<!--                                        <div class="grid ml-4" v-if="book.authors.length != 0">-->
+<!--                                            <table class="table-borderless table-sm">-->
+<!--                                                <tbody>-->
+<!--                                                <tr v-for="author in book.authors">-->
+<!--                                                    <td width="120px"><strong>{{author.pos}}</strong></td>-->
+<!--                                                    <td>-->
+<!--                                                        {{author.name.join("/")}}-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                </tbody>-->
+<!--                                            </table>-->
+<!--                                        </div>-->
+<!--                                        <div v-else>-->
+<!--                                            <span class="emptyInfo"><em>暂无作者信息</em></span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-2">-->
+<!--                                        <p-divider layout="vertical"></p-divider>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-5 flex align-items-start justify-content-start">-->
+<!--                                        <div class="grid ml-4" v-if="book.spec.length != 0">-->
+<!--                                            <table class="table-borderless table-sm">-->
+<!--                                                <tbody>-->
+<!--                                                <tr v-for="specItem in book.spec">-->
+<!--                                                    <td width="120px"><strong>{{specItem.label}}</strong></td>-->
+<!--                                                    <td>-->
+<!--                                                        {{specItem.value}}-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                </tbody>-->
+<!--                                            </table>-->
+<!--                                        </div>-->
+<!--                                        <div v-else>-->
+<!--                                            <span class="emptyInfo"><em>暂无规格信息</em></span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </template>-->
+<!--                        </p-card>-->
+
+                        <p-fieldset :toggleable="true" class="mt-2">
+                            <template #legend>
+                                <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
+                                <b>作者/规格</b>
+                            </template>
+                            <div class="grid">
+                                <div class="col-5 flex align-items-start justify-content-start">
+                                    <div class="grid ml-4" v-if="book.authors.length != 0">
+                                        <table class="table-borderless table-sm">
+                                            <tbody>
+                                            <tr v-for="author in book.authors">
+                                                <td width="80px"><strong>{{author.pos}}</strong></td>
+                                                <td>
+                                                    {{author.name.join("/")}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>暂无作者信息</em></span>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <p-divider layout="vertical"></p-divider>
+                                </div>
+                                <div class="col-5 flex align-items-start justify-content-start">
+                                    <div class="grid ml-4" v-if="book.spec.length != 0">
+                                        <table class="table-borderless table-sm">
+                                            <tbody>
+                                            <tr v-for="specItem in book.spec">
+                                                <td width="80px"><strong>{{specItem.label}}</strong></td>
+                                                <td>
+                                                    {{specItem.value.join("/")}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>暂无规格信息</em></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-fieldset>
+                        <!-- 简介 -->
+                        <p-fieldset :toggleable="true" class="mt-2">
+                            <template #legend>
+                                <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
+                                <b>简介</b>
+                            </template>
+                            <div v-if="book.summary == ''">
+                                <span class="emptyInfo"><em>暂无简介</em></span>
+                            </div>
+                            <div v-else>
+                                <p>{{book.summary}}</p>
+                            </div>
+                        </p-fieldset>
+                        <!-- 描述 -->
+                        <p-fieldset :toggleable="true" class="mt-2">
+                            <template #legend>
+                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
+                                <b>描述</b>
+                            </template>
+                            <article id="description" class="markdown-body" style="width: 100%;"></article>
+                        </p-fieldset>
+                        <!-- 特典 -->
+                        <div v-if="book.hasBonus">
+                            <p-fieldset :toggleable="true" class="mt-2">
+                                <template #legend>
+                                    <i class="pi iconfont icon-gift mr-2" style="font-size: 2rem"></i>
+                                    <b>特典</b>
+                                </template>
+                                <article id="bonus" class="markdown-body" style="width: 100%;"></article>
+                            </p-fieldset>
+                        </div>
+                        <!-- 图片 -->
+                        <p-fieldset :toggleable="true" class="mt-2">
+                            <template #legend>
+                                <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
+                                <b>图片</b>
+                            </template>
+                            <div v-if="book.displayImages.length == 0">
+                                <span class="emptyInfo"><em>暂无图片</em></span>
+                            </div>
+                            <div v-else align="center">
+                                <p-inplace>
+                                    <template #display>
+                                        <span class="pi pi-eye" style="vertical-align: middle"></span>
+                                        <span style="margin-left:.5rem; vertical-align: middle">加载图片</span>
+                                    </template>
+                                    <template #content>
+                                        <p-galleria :value="book.displayImages" :responsive-options="responsiveOptions"
+                                                    :num-visible="5" container-style="width: 600px" :circular="true">
+                                            <template #item="{item}">
+                                                <div id="galleria-div">
+                                                    <img :class="galleriaItemClass" :src="item.url" :alt="item.name"
+                                                         :onload="initImageClass(item.url)"/>
+                                                </div>
+                                            </template>
+                                            <template #caption="{item}">
+                                                <div class="custom-galleria-footer">
+                                            <span v-if="book.displayImages" class="title-container">
+                                                <span>共{{book.displayImages.length}}张</span>
+                                                <span class="title">{{item.nameZh}}</span>
+                                                <span style="font-size: 10px">{{item.description}}</span>
+                                            </span>
+                                                </div>
+                                            </template>
+                                            <template #thumbnail="{item}">
+                                                <div class="grid grid-nogutter justify-content-center">
+                                                    <img id="galleria-item" :src="item.thumbUrl" :alt="item.name"
+                                                         class="galleria-thumb-image"/>
+                                                </div>
+                                            </template>
+                                        </p-galleria>
+                                    </template>
+                                </p-inplace>
+                            </div>
+                        </p-fieldset>
+                    </div>
+                    <div class="col-12 sm:col-12 md:col-3 lg:col-3">
+                        <p-panel>
+                            <template #header>
+                                <i class="pi iconfont icon-product_b mr-2" style="font-size: 2rem"></i>
+                                <b>分类</b>
+                            </template>
+                            <div class="grid">
+                                <div class="col-fixed">
+                                    <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
+                                </div>
+                                <div class="col-10 col-offset-2">
+                                    {{book.series.name}}
+                                </div>
+                                <div class="col-fixed">
+                                    <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
+                                </div>
+                                <div class="col-10 col-offset-2">
+                                    <p class="mb-0" v-for="item of book.products">
+                                        <a :href="'/db/product/'+ item.id ">
+                                            <span style="display:inline">
+                                                {{item.name}}
+                                            </span>
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </p-panel>
+                        <br>
+                        <p-panel>
+                            <template #header>
+                                <i class="pi iconfont icon-Video-Disc mr-2" style="font-size: 2rem"></i>
+                                <b>相关图书</b>
+                            </template>
+                            <div v-if="relatedBooks.length != 0" class="grid">
+                                <span class="small_font">
+                                    <div class="info_bit_small ml-0 grid"
+                                         v-for="relatedBook of relatedBooks">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
+                                            <a :href="'/db/book/'+ relatedBook.id ">
+                                                <img class="sidebar-panel-image-small" :src="relatedBook.cover.url"
+                                                     style="border-radius: 20%;"
+                                                     v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="info_bit_small">
+                                            <li>
+                                                <a class="small_font"
+                                                   :href="'/db/book/'+ relatedBook.id ">
+                                                    <span class="text-truncate-2 mr-4" lang="ja">
+                                                        {{relatedBook.name}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="small_font">
+                                                    <b>{{relatedBook.isbn13}}</b> {{relatedBook.publishDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                                <br>
+                                <b class="rbot"><b></b></b>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无相关书籍</em></span>
+                            </div>
+                        </p-panel>
+                        <br>
+                        <p-panel>
+                            <template #header>
+                                <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
+                                <b>图片</b>
+                            </template>
+                            <div v-if="book.displayImages.length == 0">
+                                <span class="emptyInfo"><em>暂无图片</em></span>
+                            </div>
+                            <p-galleria v-if="book.displayImages" :value="book.displayImages"
+                                        v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
+                                        :num-visible="7" container-style="max-width: 800px"
+                                        :circular="true" :full-screen="true" :show-item-navigators="true"
+                                        :show-thumbnails="false" v-model:visible="displayCustom">
+                                <template #item="{item}">
+                                    <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
+                                         oncontextmenu="return false"/>
+                                </template>
+                                <template #caption="{item}">
+                                    <div class="custom-galleria-footer">
+                                        <div class="col-6">
+                                            <span v-if="book.displayImages" class="title-container">
+                                                <span>共{{book.displayImages.length}}张</span>
+                                                <span class="title">{{item.nameZh}}</span>
+                                                <span style="font-size: 10px">{{item.description}}</span>
+                                            </span>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <span v-if="book.displayImages">
+                                            <span>上传于 {{item.uploadTime}}</span>
+                                        </span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </p-galleria>
+                            <div v-if="book.displayImages" class="grid justify-content-evenly justify-content-start">
+                                <div class="col-4 mt-2 mb-2" id="panel-image-div"
+                                     v-for="(image, index) of book.displayImages" :key="index">
+                                    <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
+                                         draggable="false"
+                                         oncontextmenu="return false"
+                                         v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
+                                         @click="imageClick(index)"/>
+                                </div>
+                            </div>
+                            <br>
+                            <b class="rbot"><b></b></b>
+                        </p-panel>
+                        <br>
+                        <p-panel>
+                            <template #header>
+                                <i class="pi pi-info-circle mr-2" style="font-size: 2rem"></i>
+                                <b>页面信息</b>
+                            </template>
+                            <div class="grid">
+                                <div class="col-fixed">
+                                    <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
+                                </div>
+                                <div class="col-10 col-offset-2">
+                                    {{book.addedTime}}
+                                </div>
+                                <div class="col-fixed">
+                                    <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
+                                </div>
+                                <div class="col-10 col-offset-2">
+                                    {{book.editedTime}}
+                                </div>
+                                <div class="col-fixed">
+                                    <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
+                                </div>
+                                <div class="col-10 col-offset-2">
+                                    <i class="pi pi-eye mr-2"></i><b>访问数：</b>
+                                    <span class="text-center">{{visitNum}}</span>
+                                </div>
+                            </div>
+                        </p-panel>
+                    </div>
+                </div>
+                <p-dialog v-model:visible="displayEditDialog" header="编辑基础信息"
+                          :style="{width: '600px'}" :modal="true" class="p-fluid">
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
+                            <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="title">书名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="titleZh">书名(中)</label>
+                        <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="titleEn">书名(英)</label>
+                        <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
+                                        option-label="label" option-value="value">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="area" class="mb-3">地区<span style="color: red">*</span></label>
+                            <p-dropdown v-model="bookEdit.area" :options="areaSet"
+                                        option-label="nameZh" option-value="code">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
+                            <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
+                                        option-label="nameZh" option-value="code">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="bookEdit.series" :options="seriesSet"
+                                        option-label="label" option-value="value" :disabled="seriesBool">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect v-model="bookEdit.products" :options="productSet"
+                                           option-label="label" option-value="value" placeholder="选择所属产品"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="price">发行价格</label>
+                            <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="publisher">出版社</label>
+                            <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="summary">简介</label>
+                        <p-textarea v-model="bookEdit.summary" rows="3" cols="20"
+                                    :auto-resize="true"></p-textarea>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea v-model="bookEdit.remark" rows="3" cols="20"
+                                    :auto-resize="true"></p-textarea>
+                    </div>
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                                  @click="closeEditDialog"></p-button>
+                        <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                                  @click="submitEditBook"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
+                          :style="{width: '1200px'}" :modal="true">
+                    <p-blockui :blocked="blockedPanel">
+                        <p-panel>
+                            <template #header>
+                                <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                                <b>新增</b>
+                            </template>
+                            <div class="grid">
+                                <div class="col-6" align="left">
+                                    <p-fileupload
+                                            mode="basic"
+                                            :custom-upload="true"
+                                            accept="image/*"
+                                            :auto="true"
+                                            choose-label="上传图片"
+                                            :max-file-size="2000000" :preview-width="100"
+                                            invalid-file-size-message="{0}大小已超过{1}"
+                                            @uploader="onUpload"
+                                            @select="selectFile">
+                                    </p-fileupload>
+                                </div>
+                                <div class="col-6" align="right">
+                                    <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                              label="清空所选" @click="clearUploadedImage"></p-button>
+                                </div>
+                            </div>
+                            <div class="formgrid grid mt-2">
+                                <div class="field col">
+                                    <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-image"></i>
+                                        </span>
+                                        <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                                    </div>
+                                </div>
+                                <div class="field col">
+                                    <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-image"></i>
+                                        </span>
+                                        <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                                    </div>
+                                </div>
+                                <div class="field col">
+                                    <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                                                option-value="value" placeholder="选择图片类型"
+                                                style="width: 280px"></p-dropdown>
+                                </div>
+                                <div class="field col">
+                                    <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                                                :auto-resize="true" placeholder="图片描述"
+                                                style="width: 280px"></p-textarea>
+                                </div>
+                            </div>
+                            <div class="formgrid grid mt-2">
+                                <div class="field col" align="left">
+                                    <p-button label="新增图片" icon="pi pi-save"
+                                              @click="save2imageInfos"></p-button>
+                                </div>
+                                <div class="field col" align="right">
+                                    <p-button label="提交新增" icon="pi pi-save"
+                                              @click="submitImages" class="p-button-success"></p-button>
+                                </div>
+                            </div>
+                            <p-divider></p-divider>
+                            <div class="field">
+                                <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
+                                <section>
+                                    <div id="imgBox" v-html="imageHtml"></div>
+                                </section>
+                            </div>
+                        </p-panel>
+                        <p-panel>
+                            <template #header>
+                                <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                                <b>编辑</b>
+                            </template>
+                            <div v-if="book.images.length != 0">
+                                <p-datatable :value="book.images" class="p-datatable-sm"
+                                             @row-reorder="imgRowReorder" edit-mode="row" striped-rows
+                                             :resizable-columns="true" column-resize-mode="expand"
+                                             v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
+                                             v-model:selection="selectedImage">
+                                    <template #header>
+                                        <p-button icon="pi pi-trash" class="p-button-danger"
+                                                  @click="confirmDeleteSelectedImage"></p-button>
+                                    </template>
+                                    <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
+                                    <p-column :row-reorder="true" header-style="width: 3%"></p-column>
+                                    <p-column header="图片" header-style="width: 8%">
+                                        <template #body="slotProps">
+                                            <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
+                                                 class="edit-image"/>
+                                        </template>
+                                    </p-column>
+                                    <p-column field="url" header="URL" header-style="width: 10%">
+                                        <template #body="slotProps">
+                                            {{slotProps.data.url.substr(22)}}
+                                        </template>
+                                    </p-column>
+                                    <p-column field="nameZh" header="名(中)" header-style="width: 10%">
+                                        <template #editor="{ data, field }">
+                                            <p-inputtext v-model="data[field]" autofocus
+                                                         style="width: 100px"></p-inputtext>
+                                        </template>
+                                    </p-column>
+                                    <p-column field="nameEn" header="名(英)" header-style="width: 10%">
+                                        <template #editor="{ data, field }">
+                                            <p-inputtext v-model="data[field]" autofocus
+                                                         style="width: 100px"></p-inputtext>
+                                        </template>
+                                    </p-column>
+                                    <p-column field="type" header="类型" header-style="width: 8%">
+                                        <template #editor="{ data, field }">
+                                            <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
+                                                        option-value="value" placeholder="图片类型">
+
+                                            </p-dropdown>
+                                        </template>
+                                        <template #body="slotProps">
+                                            {{getImageTypeLabel(slotProps.data.type)}}
+                                        </template>
+                                    </p-column>
+                                    <p-column field="description" header="描述" header-style="width: 15%">
+                                        <template #editor="{ data, field }">
+                                            <p-inputtext v-model="data[field]" autofocus
+                                                         style="width: 100px"></p-inputtext>
+                                        </template>
+                                    </p-column>
+                                    <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                                    <p-column :row-editor="true" header-style="width: 15%"></p-column>
+                                </p-datatable>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无图片</em></span>
+                            </div>
+                        </p-panel>
+                    </p-blockui>
+                    <template #footer>
+                        <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                                  class="p-button-text"></p-button>
+                        <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayAuthorEditDialog" header="编辑作者信息"
+                          :style="{width: '800px'}" :modal="true">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                    <p-inputtext v-model="author.pos" placeholder="职位名称"></p-inputtext>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                                    <p-chips v-model="author.name" placeholder="人员信息" separator=","></p-chips>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <p-button label="新增" icon="pi pi-save"
+                                          @click="addAuthor"></p-button>
+                            </div>
+                        </div>
+                    </p-panel>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
+                        <div v-if="tmpAuthors.length != 0">
+                            <p-datatable dataKey="id" :value="tmpAuthors" responsive-layout="scroll"
+                                         class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                         context-menu v-model:context-menu-selection="selectedAuthor"
+                                         @row-contextmenu="authorRowMenu" edit-mode="row"
+                                         v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                                <p-column :row-reorder="true"></p-column>
+                                <p-column field="pos" header="职位">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="name" header="人员">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.name.join("/")}}
+                                    </template>
+                                    <template #editor="{ data, field }">
+                                        <p-chips v-model="data[field]"></p-chips>
+                                    </template>
+                                </p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                          bodyStyle="text-align:center"></p-column>
+                            </p-datatable>
+                            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo">暂无作者信息</span>
+                        </div>
+                    </p-panel>
+                    <template #footer>
+                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                                  @click="clearAuthors"></p-button>
+                        <p-button label="取消" icon="pi pi-times" class="mr-4"
+                                  @click="cancelAuthorEdit"></p-button>
+                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                                  @click="submitAuthor"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displaySpecEditDialog" header="编辑规格信息"
+                          :style="{width: '800px'}" :modal="true">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                    <p-inputtext v-model="specItem.label" placeholder="规格名称"></p-inputtext>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                                    <p-chips v-model="specItem.value" placeholder="规格数据" separator=","></p-chips>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <p-button label="新增" icon="pi pi-save"
+                                          @click="addSpecItem"></p-button>
+                            </div>
+                        </div>
+                    </p-panel>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
+                        <div v-if="tmpSpec.length != 0">
+                            <p-datatable dataKey="id" :value="tmpSpec" responsive-layout="scroll"
+                                         class="p-datatable-sm" striped-rows @row-reorder="specOnRowReorder"
+                                         context-menu v-model:context-menu-selection="selectedSpecItem"
+                                         @row-contextmenu="specRowMenu" edit-mode="row"
+                                         v-model:editing-rows="specEditingRows" @row-edit-save="specOnRowEditSave">
+                                <p-column :row-reorder="true"></p-column>
+                                <p-column field="label" header="规格名称">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="value" header="规格数据">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.value.join("/")}}
+                                    </template>
+                                    <template #editor="{ data, field }">
+                                        <p-chips v-model="data[field]"></p-chips>
+                                    </template>
+                                </p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                          bodyStyle="text-align:center"></p-column>
+                            </p-datatable>
+                            <p-contextmenu :model="specMenuModel" ref="specCm"></p-contextmenu>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo">暂无规格信息</span>
+                        </div>
+                    </p-panel>
+                    <template #footer>
+                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                                  @click="clearSpec"></p-button>
+                        <p-button label="取消" icon="pi pi-times" class="mr-4"
+                                  @click="cancelSpecEdit"></p-button>
+                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                                  @click="submitSpec"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                    <!--                    <div id="md-editor-v3">-->
+                    <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+                    </md-editor-v3>
+                    <!--                    </div>-->
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                                  class="p-button-text">
+                        </p-button>
+                        <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayBonusDialog" header="编辑特典信息"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                    <md-editor-v3 v-model="bonusMd" preview-theme="github"></md-editor-v3>
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" @click="closeBonusEditDialog" class="p-button-text">
+                        </p-button>
+                        <p-button label="保存" icon="pi pi-save" @click="submitBonus"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="deleteBookImageDialog" header="删除图片"
+                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+                    <div class="confirmation-content">
+                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                        <span v-if="book">确定删除所选的图片？</span>
+                    </div>
+                    <template #footer>
+                        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                                  @click="cancelDeleteSelectedImage"></p-button>
+                        <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                                  @click="deleteImage"></p-button>
+                    </template>
+                </p-dialog>
+
+                <!-- 尾部 -->
+                <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" th:inline="javascript">
+
+    const {createApp, onMounted, ref} = Vue;
+    const Tooltip = primevue.tooltip;
+    const {useToast} = primevue.usetoast;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+                init();
+            })
+
+            //region ------基础------
+            const book = ref([[${book}]]);
+            const visitNum = ref([[${visitNum}]]);
+            const relatedBooks = ref([]);
+            const toast = useToast();
+            const edits = ref([
+                {
+                    label: '图片管理',
+                    icon: 'pi pi-images',
+                    command: () => {
+                        openImageEditDialog();
+                    }
+                },
+                {
+                    label: '作者信息',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        openAuthorEditDialog();
+                    }
+                },
+                {
+                    label: '规格信息',
+                    icon: 'pi iconfont icon-miaoshu',
+                    command: () => {
+                        openSpecEditDialog();
+                    }
+                },
+                {
+                    label: '描述信息',
+                    icon: 'pi iconfont icon-miaoshu',
+                    command: () => {
+                        openDescriptionEditDialog();
+                    }
+                },
+                {
+                    label: '特典信息',
+                    icon: 'pi iconfont icon-gift',
+                    command: () => {
+                        openBonusEditDialog();
+                    }
+                }
+            ]);
+            const bookTypeSet = ref([[${bookTypeSet}]]);
+            const productSet = ref([[${productSet}]]);
+            const seriesSet = ref([[${seriesSet}]]);
+            const blockedPanel = ref(false);
+            const imageTypes = ref([
+                {label: '展示', value: '0'},
+                {label: '封面', value: '1'},
+                {label: '其他', value: '2'}
+            ]);
+            //endregion
+
+            //region ------图片板块------
+            const imgRowReorder = (ev) => {
+                book.value.images = ev.value;
+            };
+            const editingImages = ref([]);
+            const imgRowEditSave = (ev) => {
+                let {newData, index} = ev;
+                book.value.images[index] = newData;
+            };
+            const getImageTypeLabel = (type) => {
+                return value2Label(type, imageTypes.value);
+            }
+            const activeIndex = ref(0);
+            const displayCustom = ref(false);
+            const imageClick = (index) => {
+                activeIndex.value = index;
+                displayCustom.value = true;
+            };
+            //endregion
+
+            //region ------编辑书籍信息------
+            const seriesBool = true;
+            const bookEdit = ref({});
+            const displayEditDialog = ref(false);
+
+            //打开编辑数据面板
+            const openEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            let dataTmp = JSON.parse(JSON.stringify(book.value));
+                            dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
+                            bookEdit.value = dataTmp;
+                            bookEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                            bookEdit.value.series = dataTmp.series.id;
+                            bookEdit.value.bookType = dataTmp.bookType.id;
+                            bookEdit.value.area = dataTmp.area.code;
+                            bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
+                            displayEditDialog.value = true;
+                        }
+                    })
+            };
+
+            //关闭编辑数据面板
+            const closeEditDialog = () => {
+                displayEditDialog.value = false;
+                bookEdit.value = {};
+            };
+
+            //保存编辑数据
+            const submitEditBook = () => {
+                axiosPostRequest(UPDATE_BOOK_URL, bookEdit.value)
+                    .then(res => {
+                        if (res.state === 1) {
+                            bookEdit.value = {};
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: res.message,
+                                life: 3000
+                            });
+                            closeEditDialog();
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            };
+            //endregion
+
+            //region ------编辑规格------
+
+            //endregion
+
+            //region ------编辑描述------
+            const descriptionMd = ref("");
+            const displayDescriptionDialog = ref(false);
+            const openDescriptionEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            descriptionMd.value = book.value.description;
+                            displayDescriptionDialog.value = true;
+                        }
+                    });
+            }
+            const closeDescriptionEditDialog = () => {
+                displayDescriptionDialog.value = false;
+                descriptionMd.value = "";
+            }
+            const submitDescription = () => {
+                let json = {
+                    id: book.value.id,
+                    description: descriptionMd.value
+                }
+                axiosPostRequest(UPDATE_BOOK_DESCRIPTION_URL, json)
+                    .then(res => {
+                        if (res.state != 0) {
+                            book.value.description = descriptionMd.value;
+                            text2marked();
+                            closeDescriptionEditDialog();
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
+            }
+            //endregion
+
+            //region ------编辑特典------
+            const bonusMd = ref("");
+            const displayBonusDialog = ref(false);
+            const openBonusEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            bonusMd.value = book.value.bonus;
+                            displayBonusDialog.value = true;
+                        }
+                    });
+            }
+            const closeBonusEditDialog = () => {
+                displayBonusDialog.value = false;
+                bonusMd.value = "";
+            }
+            const submitBonus = () => {
+                let json = {
+                    id: book.value.id,
+                    bonus: bonusMd.value
+                }
+                axiosPostRequest(UPDATE_BOOK_BONUS_URL, json)
+                    .then(res => {
+                        if (res.state !== 0) {
+                            book.value.bonus = bonusMd.value;
+                            text2marked();
+                            closeBonusEditDialog();
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    });
+            };
+            //endregion
+
+            //region ------markdown共通------
+
+            const text2marked = () => {
+
+                const description = book.value.description;
+                const bonus = book.value.bonus;
+
+                if (description != null && description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(description);
+                } else {
+                    //<![CDATA[
+                    document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
+                    //]]>
+                }
+
+                if (book.value.hasBonus && bonus != null && bonus !== "") {
+                    document.getElementById("bonus").innerHTML = marked.parse(bonus);
+                }
+                if ((bonus == null || bonus === "") && book.value.hasBonus) {
+                    //<![CDATA[
+                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
+                    //]]>
+                }
+            };
+            //endregion
+
+            //region ------图片相关组件------
+            const updateImage = () => {
+                let json = {
+                    id: book.value.id,
+                    images: book.value.images,
+                    action: "1"
+                };
+                axiosPostRequest(UPDATE_BOOK_IMAGES_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            closeImageEditDialog();
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            const galleriaItemClass = ref("");
+
+            const responsiveOptions = [
+                {
+                    breakpoint: '1024px',
+                    numVisible: 5
+                },
+                {
+                    breakpoint: '768px',
+                    numVisible: 3
+                },
+                {
+                    breakpoint: '560px',
+                    numVisible: 1
+                }
+            ];
+            const selectedImage = ref([]);
+            const confirmDeleteSelectedImage = () => {
+                deleteBookImageDialog.value = true;
+            };
+            const cancelDeleteSelectedImage = () => {
+                selectedImage.value = [];
+                deleteBookImageDialog.value = false;
+            };
+            const deleteBookImageDialog = ref(false);
+            const deleteImage = () => {
+                let json = {
+                    id: book.value.id,
+                    images: selectedImage.value,
+                    action: "2"
+                };
+                axiosPostRequest(UPDATE_BOOK_IMAGES_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            deleteBookImageDialog.value = false;
+                            closeImageEditDialog();
+                            selectedImage.value = [];
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            const imageInfo = ref({
+                image: null,
+                nameZh: "",
+                nameEn: "",
+                description: "",
+                type: 0
+            });
+            const imageInfos = ref([]);
+
+            const displayImageEditDialog = ref(false);
+            const imageHtml = ref("");
+            const openImageEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            imageInfo.value = {};
+                            imageInfos.value = [];
+                            displayImageEditDialog.value = true;
+                        }
+                    })
+            };
+            const closeImageEditDialog = () => {
+                imageInfo.value = {};
+                imageInfos.value = [];
+                displayImageEditDialog.value = false;
+                document.getElementById("imgBox").innerHTML = "";
+            };
+            const showImage = () => {
+                imageHtml.value = "";
+                //<![CDATA[
+                imageHtml.value += "<div class='grid'>";
+                for (const img of imageInfos.value) {
+                    imageHtml.value += '<div class="col-4">';
+                    imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
+                    imageHtml.value += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
+                    imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
+                    imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
+                    imageHtml.value += '<p>描述: ' + img.description + '</p>';
+                    imageHtml.value += '</div>';
+                }
+                imageHtml.value += "</div>";
+                //]]>
+                document.getElementById("imgBox").innerHTML = imageHtml;
+            };
+            const selectFile = (ev) => {
+                imageInfo.value.image = ev.files[0];
+            };
+            const onUpload = (ev) => {
+                toast.add({severity: 'info', summary: 'Success', detail: IMAGE_SELECTED_INFO, life: 3000});
+            };
+            const checkImageInfo = () => {
+                if (typeof imageInfo.value.description == "undefined") {
+                    imageInfo.value.description = "";
+                }
+                if (imageInfo.value.image === null) {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_EMPTY_EXCEPTION, life: 3000});
+                }
+                if (typeof imageInfo.value.nameZh == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_ZH_EMPTY_EXCEPTION, life: 3000});
+                    return false;
+                }
+                if (typeof imageInfo.value.nameEn == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_EN_EMPTY_EXCEPTION, life: 3000});
+                    return false;
+                }
+                if (typeof imageInfo.value.type == "undefined") {
+                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_TYPE_EMPTY_EXCEPTION, life: 3000});
+                    return false;
+                }
+                return true;
+            }
+            const save2imageInfos = () => {
+                if (checkImageInfo()) {
+                    imageInfos.value.push(imageInfo.value);
+                    showImage();
+                    imageInfo.value = {};
+                }
+            };
+            const clearUploadedImage = () => {
+                imageInfos.value = [];
+                document.getElementById("imgBox").innerHTML = "";
+            };
+            const submitImages = () => {
+                blockedPanel.value = true;
+                const formData = new FormData();
+                for (const img of imageInfos.value) {
+                    formData.append("images", img.image);
+                }
+                formData.append("id", book.value.id);
+                formData.append("imageInfos", JSON.stringify(imageInfos.value));
+                axiosRequest(INSERT_BOOK_IMAGES_URL, formData)
+                    .then(res => {
+                        if (res.state === 1) {
+                            blockedPanel.value = false;
+                            closeImageEditDialog();
+                            location.reload(true);
+                        } else {
+                            blockedPanel.value = false;
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            //endregion
+
+            //region ------页面header------
+            const domainUrl = DOMAIN_URL;
+            const selectedEntity = ref();
+            const entityType = ref(ENTITY_TYPE);
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
+            //region ------作者信息相关组件------
+            const tmpAuthors = ref();
+            const cm = ref();
+            const selectedAuthor = ref();
+            const author = ref({});
+            const authors = ref([]);
+            const displayAuthorEditDialog = ref(false);
+            const menuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteAuthor(selectedAuthor)}
+            ]);
+            const onRowReorder = (ev) => {
+                tmpAuthors.value = ev.value;
+            };
+            const authorRowMenu = (ev) => {
+                cm.value.show(ev.originalEvent);
+            };
+            const deleteAuthor = (author) => {
+                tmpAuthors.value = tmpAuthors.value.filter((a) => a.pos !== author.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: author.value.pos, life: 3000});
+                selectedAuthor.value = null;
+            };
+            const editingRows = ref([]);
+            const onRowEditSave = (ev) => {
+                let {newData, index} = ev;
+
+                tmpAuthors.value[index] = newData;
+            };
+
+            const openAuthorEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            tmpAuthors.value = JSON.parse(JSON.stringify(book.value.authors));
+                            author.value = {};
+                            displayAuthorEditDialog.value = true;
+                        }
+                    })
+            };
+            const clearAuthors = () => {
+                tmpAuthors.value = [];
+            };
+            const addAuthor = () => {
+                tmpAuthors.value.push(author.value);
+                author.value = {};
+            }
+            const cancelAuthorEdit = () => {
+                author.value = {};
+                displayAuthorEditDialog.value = false;
+            };
+            const submitAuthor = () => {
+                let json = {
+                    id: book.value.id,
+                    authors: tmpAuthors.value
+                }
+                axiosPostRequest(UPDATE_BOOK_AUTHORS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            displayAuthorEditDialog.value = false;
+                            author.value = {};
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+            };
+            //endregion
+
+            //region ------规格信息相关组件------
+            const tmpSpec = ref();
+            const specCm = ref();
+            const selectedSpecItem = ref();
+            const specItem = ref({});
+            const spec = ref([]);
+            const displaySpecEditDialog = ref(false);
+            const specMenuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteSpecItem(selectedSpecItem)}
+            ]);
+            const specOnRowReorder = (ev) => {
+                tmpSpec.value = ev.value;
+            };
+            const specRowMenu = (ev) => {
+                specCm.value.show(ev.originalEvent);
+            };
+            const deleteSpecItem = (SpecItem) => {
+                tmpSpec.value = tmpSpec.value.filter((s) => s.label !== SpecItem.value.label);
+                toast.add({severity: 'error', summary: '已删除', detail: SpecItem.value.value, life: 3000});
+                selectedSpecItem.value = null;
+            };
+            const specEditingRows = ref([]);
+            const specOnRowEditSave = (ev) => {
+                let {newData, index} = ev;
+
+                tmpSpec.value[index] = newData;
+            };
+
+            const openSpecEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            tmpSpec.value = JSON.parse(JSON.stringify(book.value.spec));
+                            specItem.value = {};
+                            displaySpecEditDialog.value = true;
+                        }
+                    })
+            };
+            const clearSpec = () => {
+                tmpSpec.value = [];
+            };
+            const addSpecItem = () => {
+                tmpSpec.value.push(specItem.value);
+                specItem.value = {};
+            }
+            const cancelSpecEdit = () => {
+                specItem.value = {};
+                displaySpecEditDialog.value = false;
+            };
+            const submitSpec = () => {
+                let json = {
+                    id: book.value.id,
+                    spec: tmpSpec.value
+                }
+                axiosPostRequest(UPDATE_BOOK_SPEC_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            displaySpecEditDialog.value = false;
+                            specItem.value = {};
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+            };
+            //endregion
+
+            const init = () => {
+                text2marked();
+                initImageClass($("#galleria-item").attr("src"));
+            };
+
+            const initImageClass = (url) => {
+                const image = new Image();
+                image.src = url;
+                image.onload = function () {
+                    galleriaItemClass.value = (this.naturalWidth > this.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
+                }
+            }
+
+            return {
+                displayAuthorEditDialog,
+                displaySpecEditDialog,
+                areaSet,
+                languageSet,
+                relatedBooks,
+                blockedPanel,
+                clearUploadedImage,
+                closeImageEditDialog,
+                selectedImage,
+                getImageTypeLabel,
+                editingImages,
+                imgRowEditSave,
+                imgRowReorder,
+                bookTypeSet,
+                book,
+
+                initGalleriaImageClass,
+                imageClick,
+                displayCustom,
+                activeIndex,
+
+                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+                edits,
+                seriesBool,
+                displayEditDialog,
+                bookEdit,
+                openEditDialog,
+                closeEditDialog,
+
+                submitEditBook,
+                productSet,
+
+                seriesSet,
+                visitNum,
+                updateImage,
+                cancelDeleteSelectedImage,
+                deleteImage,
+                confirmDeleteSelectedImage,
+                deleteBookImageDialog,
+                initImageClass,
+
+                galleriaItemClass,
+                onUpload,
+                save2imageInfos,
+                imageInfo,
+                imageInfos,
+                imageTypes,
+                submitImages,
+                selectFile,
+                imageHtml,
+                displayImageEditDialog,
+
+                responsiveOptions,
+
+                descriptionMd,
+                displayDescriptionDialog,
+                closeDescriptionEditDialog,
+                submitDescription,
+
+                bonusMd,
+                displayBonusDialog,
+                closeBonusEditDialog,
+                submitBonus,
+
+                tmpAuthors,
+                cm,
+                author,
+                authors,
+                menuModel,
+                editingRows,
+                selectedAuthor,
+                addAuthor,
+                clearAuthors,
+                submitAuthor,
+                deleteAuthor,
+                cancelAuthorEdit,
+                authorRowMenu,
+                onRowEditSave,
+                onRowReorder,
+
+                tmpSpec,
+                specCm,
+                specItem,
+                spec,
+                specMenuModel,
+                specEditingRows,
+                selectedSpecItem,
+                addSpecItem,
+                clearSpec,
+                submitSpec,
+                deleteSpecItem,
+                cancelSpecEdit,
+                specRowMenu,
+                specOnRowEditSave,
+                specOnRowReorder,
+            }
+        },
+        components: {
+            "p-panel": primevue.panel,
+            "p-fieldset": primevue.fieldset,
+            "p-button": primevue.button,
+            "p-dialog": primevue.dialog,
+            "p-fileupload": primevue.fileupload,
+            "p-chips": primevue.chips,
+            "p-divider": primevue.divider,
+            "p-inputtext": primevue.inputtext,
+            "p-multiselect": primevue.multiselect,
+            "p-galleria": primevue.galleria,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-toast": primevue.toast,
+            "p-dropdown": primevue.dropdown,
+            "p-textarea": primevue.textarea,
+            "p-calendar": primevue.calendar,
+            "p-inputnumber": primevue.inputnumber,
+            "p-inputswitch": primevue.inputswitch,
+            "p-splitbutton": primevue.splitbutton,
+            "p-datatable": primevue.datatable,
+            "p-column": primevue.column,
+            "p-contextmenu": primevue.contextmenu,
+            "p-inplace": primevue.inplace,
+            "p-blockui": primevue.blockui,
+            "p-card": primevue.card,
+        }
+    };
+
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.toastservice)
+        .use(primevue.config.default)
+        .use(MdEditorV3)
+        .directive('tooltip', Tooltip)
+        .mount("#app");
+</script>
+<style>
+    .image-cover {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        pointer-events: none;
+    }
+
+    .edit-image {
+        pointer-events: none;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+    }
+
+    .orders-subtable {
+        padding: 1rem;
+    }
+
+    .p-tooltip-text {
+        width: 16rem;
+    }
+
+    .card {
+        padding: 0rem;
+    }
+
+    .edit-image-div {
+        position: relative;
+        width: 240px;
+        height: 240px;
+        overflow: auto;
+        background-color: black;
+    }
+
+    #edit-image-img {
+        width: 200px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
+    #galleria-div {
+        position: relative;
+        width: 600px;
+        height: 600px;
+        overflow: hidden;
+        background-color: black;
+    }
+
+    .galleria-thumb-image {
+        display: block;
+        /*height: 500px;*/
+        /*width: 500px;*/
+        max-width: 100px;
+        max-height: 100px;
+        height: auto;
+        width: auto;
+        /*overflow: auto;*/
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    /*.p-galleria .p-galleria-thumbnail-items-container {*/
+    /*    width: 100%;*/
+    /*}*/
+
+    .p-galleria .p-galleria-item-wrapper {
+        width: 600px;
+        height: 600px;
+    }
+
+    .galleria-panel .p-galleria-item-container {
+        width: 1000px;
+        height: 1000px;
+    }
+
+    .custom-galleria-footer {
+        display: flex;
+        align-items: center;
+        /*background-color: rgba(0, 0, 0, 0.9);*/
+        color: #ffffff;
+    }
+
+    .custom-galleria-footer > button {
+        background-color: transparent;
+        color: #ffffff;
+        border: 0 none;
+        border-radius: 0;
+        margin: .2rem 0;
+    }
+
+    .custom-galleria-footer > button.fullscreen-button {
+        margin-left: auto;
+    }
+
+    .custom-galleria-footer > button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .title-container > span {
+        font-size: .9rem;
+        padding-left: .829rem;
+    }
+
+    .title-container > span.title {
+        font-weight: bold;
+    }
+
+    .p-galleria-content {
+        position: relative;
+    }
+
+    .p-galleria-item-wrapper {
+        height: 500px;
+        width: 500px;
+    }
+
+    .p-galleria-thumbnail-content {
+        height: 100px;
+        width: 100px;
+    }
+
+    #imgBox img {
+        height: 200px;
+    }
+
+    .p-panel .p-panel-header {
+        /* border: 1px solid #dee2e6; */
+        padding: 0.5rem;
+        background: #6d7c8b;
+        color: #d0da9a;
+        border-top-right-radius: 3px;
+        border-top-left-radius: 3px;
+    }
+
+    /*.p-panel .p-panel-content {*/
+    /*    background-color: #343e4c;*/
+    /*}*/
+
+    /*.p-field .p-fieldset-content {*/
+    /*    background-color: #343e4c;*/
+    /*}*/
+
+    .label {
+        color: #788990;
+    }
+
+    b.rbot {
+        background-position: 0 -8px;
+    }
+
+    .p-panel .p-panel-content {
+        padding: 0.5rem;
+    }
+</style>
+</body>
+</html>
