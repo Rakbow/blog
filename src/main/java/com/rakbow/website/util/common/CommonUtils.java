@@ -2,10 +2,8 @@ package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.ImageType;
-import com.rakbow.website.data.clazz.ImageProperty;
+import com.rakbow.website.data.common.ImageType;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.DigestUtils;
 
 import javax.imageio.ImageIO;

@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MusicMapper;
-import com.rakbow.website.data.EntityType;
+import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.music.AudioType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;

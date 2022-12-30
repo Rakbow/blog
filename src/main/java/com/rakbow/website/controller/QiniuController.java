@@ -1,7 +1,7 @@
 package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.data.EntityType;
+import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.service.QiniuService;
 import com.rakbow.website.util.common.ActionResult;
 import com.rakbow.website.util.common.ApiResult;

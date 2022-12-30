@@ -80,6 +80,24 @@ const UPDATE_DISC_DESCRIPTION_URL = DOMAIN_URL + "/db/disc/update-description";
 const UPDATE_DISC_BONUS_URL = DOMAIN_URL + "/db/disc/update-bonus";
 //endregion
 
+//region book
+const GET_LIMIT_BOOK_URL = DOMAIN_URL + "/db/book/get-book-limit";
+const GET_ALL_BOOK_URL = DOMAIN_URL + "/db/book/get-all";
+const DELETE_BOOK_URL = DOMAIN_URL + "/db/book/delete";
+const UPDATE_BOOK_URL = DOMAIN_URL + "/db/book/update";
+const INSERT_BOOK_URL = DOMAIN_URL + "/db/book/add";
+const GET_BOOK_URL = DOMAIN_URL + "/db/book/get-book";
+const GET_BOOKS_URL = DOMAIN_URL + "/db/book/get-books";
+const GET_BOOKS_LIST_URL = DOMAIN_URL + "/db/book/get-books-list";
+
+const INSERT_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/add-images";
+const UPDATE_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/update-images";
+const UPDATE_BOOK_AUTHORS_URL = DOMAIN_URL + "/db/book/update-authors";
+const UPDATE_BOOK_SPEC_URL = DOMAIN_URL + "/db/book/update-spec";
+const UPDATE_BOOK_DESCRIPTION_URL = DOMAIN_URL + "/db/book/update-description";
+const UPDATE_BOOK_BONUS_URL = DOMAIN_URL + "/db/book/update-bonus";
+//endregion
+
 //region header
 const ENTITY_TYPE = [
     {label: '专辑', value: '1'},

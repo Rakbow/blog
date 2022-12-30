@@ -206,5 +206,21 @@ const copy = () => {
         // 释放内存
         clipboard.destroy()
     })
-}
+};
+
+const areaSet = [
+    {nameEn: 'Japan', nameZh: '日本', code: 'JP', currency: 'JPY'},
+    {nameEn: 'China', nameZh: '中国大陆', code: 'CN', currency: 'CNY'},
+    {nameEn: 'Taiwan', nameZh: '台湾地区', code: 'TW', currency: 'TWD'},
+    {nameEn: 'Europe', nameZh: '欧洲', code: 'EU', currency: 'EUR'},
+    {nameEn: 'USA', nameZh: '美国', code: 'US', currency: 'USD'},
+];
+
+const languageSet = [
+    {nameEn: 'Japanese', nameZh: '日语', code: 'ja-JP'},
+    {nameEn: 'Japanese', nameZh: '简体中文', code: 'zh-CN'},
+    {nameEn: 'Japanese', nameZh: '繁体中文', code: 'zh-TW'},
+    {nameEn: 'Japanese', nameZh: '英语', code: 'en-US'},
+];
+
 

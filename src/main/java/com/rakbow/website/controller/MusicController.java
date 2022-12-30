@@ -2,7 +2,7 @@ package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.EntityType;
+import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.MusicUtil;

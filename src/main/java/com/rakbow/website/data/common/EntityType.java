@@ -1,4 +1,4 @@
-package com.rakbow.website.data;
+package com.rakbow.website.data.common;
 
 import java.util.ArrayList;
 import java.util.List;

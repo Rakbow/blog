@@ -3,7 +3,7 @@
 // import com.alibaba.fastjson2.JSON;
 // import com.alibaba.fastjson2.JSONObject;
 // import com.rakbow.website.dao.elasticsearch.AlbumRepository;
-// import com.rakbow.website.data.EntityType;
+// import com.rakbow.website.data.Common.EntityType;
 // import com.rakbow.website.service.AlbumService;
 // import com.rakbow.website.service.ElasticsearchService;
 // import com.rakbow.website.service.UserService;

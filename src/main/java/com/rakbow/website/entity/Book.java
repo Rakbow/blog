@@ -15,24 +15,21 @@ import java.util.Date;
 public class Book {
     private int id;//主键编号
     private String title;//标题（原文）
-    private String subtitle;//副标题（原文）
-    private String title_zh;//标题（中文）
-    private String subtitle_zh;//副标题（中文）
-    private String title_en;//标题（英文）
-    private String subtitle_en;//副标题（英文）
-    private String isbn_10;//国际标准书号（10位）
-    private String isbn_13;//国际标准书号（13位）
-    private String barcode;//商品条形码
+    private String titleEn;//标题（英文）
+    private String titleZh;//标题（中文）
+    private String isbn10;//国际标准书号（10位）
+    private String isbn13;//国际标准书号（13位）
     private int bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
-    private int seriesId;//所属系列
+    private int series;//所属系列
+    private String products;//所属产品
     private String area;//地区
-    private String language;//语言
+    private String publishLanguage;//语言
     private String authors;//作者（译者，插画，原作者等，json）
     private String publisher;//出版社
-    private Date publish_date;//出版日期
+    private Date publishDate;//出版日期
     private int price;//出版价格
+    private String summary;//简介
     private String spec;//规格
-    private String designed;//装帧
     private int hasBonus;//是否包含特典
     private String bonus;//特典信息
     private String description;//描述
@@ -45,24 +42,21 @@ public class Book {
     public Book() {
         this.id = 0;
         this.title = "";
-        this.subtitle = "";
-        this.title_zh = "";
-        this.subtitle_zh = "";
-        this.title_en = "";
-        this.subtitle_en = "";
-        this.isbn_10 = "";
-        this.isbn_13 = "";
-        this.barcode = "";
+        this.titleEn = "";
+        this.titleZh = "";
+        this.isbn10 = "";
+        this.isbn13 = "";
         this.bookType = 0;
-        this.seriesId = 0;
+        this.series = 0;
+        this.products = "{\"ids\": []}";
         this.area = "";
-        this.language = "";
+        this.publishLanguage = "";
         this.authors = "[]";
         this.publisher = "";
-        this.publish_date = null;
+        this.publishDate = null;
         this.price = 0;
-        this.spec = "";
-        this.designed = "";
+        this.summary = "";
+        this.spec = "[]";
         this.hasBonus = 0;
         this.bonus = "";
         this.description = "";

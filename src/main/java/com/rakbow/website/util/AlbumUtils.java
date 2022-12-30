@@ -3,7 +3,7 @@ package com.rakbow.website.util;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.ImageType;
+import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.album.PublishFormat;

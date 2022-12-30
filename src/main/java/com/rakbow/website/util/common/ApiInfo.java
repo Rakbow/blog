@@ -90,9 +90,25 @@ public class ApiInfo {
 
     public static final String DISC_NAME_EMPTY = "未填写专辑名称！";
     public static final String DISC_RELEASE_DATE_EMPTY = "未填写发行日期！";
-    public static final String DISC_SERIES_EMPTY = "未选择专辑所属系列！";
-    public static final String DISC_PRODUCTS_EMPTY = "未选择专辑所属作品！";
+    public static final String DISC_SERIES_EMPTY = "未选择碟片所属系列！";
+    public static final String DISC_PRODUCTS_EMPTY = "未选择碟片所属作品！";
     public static final String DISC_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
+    //endregion
+
+    //region book相关
+    public static final String UPDATE_BOOK_AUTHOR_SUCCESS = "图书作者信息更新成功！";
+    public static final String UPDATE_BOOK_SPEC_SUCCESS = "图书规格信息更新成功！";
+    public static final String UPDATE_BOOK_DESCRIPTION_SUCCESS = "图书描述更新成功！";
+    public static final String UPDATE_BOOK_BONUS_SUCCESS = "图书特典信息更新成功！";
+
+    public static final String BOOK_TITLE_EMPTY = "未填写图书名称！";
+    public static final String BOOK_ISBN10_LENGTH_EXCEPTION = "ISBN-10无效！";
+    public static final String BOOK_ISBN13_LENGTH_EXCEPTION = "ISBN-13无效！";
+    public static final String BOOK_SERIES_EMPTY = "未选择图书所属系列！";
+    public static final String BOOK_PRODUCTS_EMPTY = "未选择图书所属作品！";
+    public static final String BOOK_TYPE_EMPTY = "未选择图书所属分类！";
+    public static final String BOOK_PUBLISH_DATE_EMPTY = "未填写出版日期！";
+
     //endregion
 
     //region 七牛云

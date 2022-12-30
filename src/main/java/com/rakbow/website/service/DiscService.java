@@ -4,15 +4,12 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
-import com.rakbow.website.data.EntityType;
-import com.rakbow.website.data.ImageType;
+import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.MediaFormat;
-import com.rakbow.website.data.album.AlbumFormat;
-import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.product.ProductClass;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.entity.Music;
+import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.Image.QiniuImageUtils;
 import com.rakbow.website.util.common.*;
@@ -26,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -43,7 +39,7 @@ public class DiscService {
     @Autowired
     private DiscMapper discMapper;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private CommonImageUtils commonImageUtils;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -484,37 +480,8 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
-        //最终保存到数据库的json信息
-        JSONArray finalImageJson = new JSONArray();
-
-        //新增图片信息json
-        JSONArray addImageJson = new JSONArray();
-
-        //创建存储链接前缀
-        String filePath = EntityType.DISC.getNameEn().toLowerCase() + "/" + id + "/";
-
-        for (int i = 0; i < images.length; i++) {
-            //上传图片
-            ActionResult ar = qiniuImageUtils.uploadImageToQiniu(images[i], filePath);
-            if (ar.state) {
-                JSONObject jo = new JSONObject();
-                jo.put("url", ar.data.toString());
-                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
-                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
-                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", CommonUtils.getCurrentTime());
-                if (imageInfos.getJSONObject(i).getString("description") == null) {
-                    jo.put("description", "");
-                } else {
-                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
-                }
-                addImageJson.add(jo);
-            }
-        }
-
-        //汇总
-        finalImageJson.addAll(originalImagesJson);
-        finalImageJson.addAll(addImageJson);
+        JSONArray finalImageJson = commonImageUtils.commonAddImages
+                (id, EntityType.DISC, images, originalImagesJson, imageInfos);
 
         discMapper.updateDiscImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
@@ -540,43 +507,13 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String deleteDiscImages(int id, JSONArray deleteImages) {
+    public String deleteDiscImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getDiscById(id).getImages());
 
-        //从七牛云上删除
-        //删除结果
-        List<String> deleteResult = new ArrayList<>();
-        //若删除的图片只有一张，调用单张删除方法
-        if (deleteImages.size() == 1) {
-            ActionResult ar = qiniuImageUtils.deleteImageFromQiniu(deleteImages.getJSONObject(0).getString("url"));
-            if (!ar.state) {
-                return ar.message;
-            }
-            deleteResult.add(deleteImages.getJSONObject(0).getString("url"));
-        } else {
-            String[] fullImageUrlList = new String[deleteImages.size()];
-            for (int i = 0; i < deleteImages.size(); i++) {
-                fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
-            }
-            ActionResult ar = qiniuImageUtils.deleteImagesFromQiniu(fullImageUrlList);
-            deleteResult = (List<String>) ar.data;
-        }
+        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
-        //根据删除结果循环删除图片信息json数组
-        // 迭代器
-
-        for (String s : deleteResult) {
-            Iterator<Object> iterator = images.iterator();
-            while (iterator.hasNext()) {
-                JSONObject itJson = (JSONObject) iterator.next();
-                if (StringUtils.equals(itJson.getString("url"), s)) {
-                    // 删除数组元素
-                    iterator.remove();
-                }
-            }
-        }
-        discMapper.updateDiscImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
+        discMapper.updateDiscImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
     }
 
@@ -590,17 +527,7 @@ public class DiscService {
     public String deleteAllDiscImages(int id) {
         Disc disc = getDiscById(id);
         JSONArray images = JSON.parseArray(disc.getImages());
-        String[] deleteImageKeyList = new String[images.size()];
-        //图片文件名
-        String deleteImageUrl;
-        for (int i = 0; i < images.size(); i++) {
-            JSONObject image = images.getJSONObject(i);
-            deleteImageUrl = image.getString("url");
-            //删除七牛服务器上对应图片文件
-            deleteImageKeyList[i] = deleteImageUrl;
-        }
-        qiniuImageUtils.deleteImagesFromQiniu(deleteImageKeyList);
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
+        return commonImageUtils.commonDeleteAllImages(EntityType.DISC, images);
     }
 
     /**

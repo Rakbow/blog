@@ -4,8 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
-import com.rakbow.website.data.EntityType;
-import com.rakbow.website.data.ImageType;
+import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.MediaFormat;
@@ -14,6 +14,7 @@ import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.AlbumUtils;
+import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.Image.QiniuImageUtils;
@@ -64,6 +65,8 @@ public class AlbumService {
     private String domain;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
+    @Autowired
+    private CommonImageUtils commonImageUtils;
     //endregion
 
     //region ------更删改查------
@@ -1064,7 +1067,7 @@ public class AlbumService {
         List<Music> musics = musicService.getMusicsByAlbumId(id);
 
         //若涉及封面类型图片，则更新相应的音频封面
-        String coverUrl = CommonImageUtils.getCoverUrl(addImageJson);
+        String coverUrl = CommonImageHandleUtils.getCoverUrl(addImageJson);
         if (!StringUtils.isBlank(coverUrl)) {
             for (Music music : musics) {
                 musicService.updateMusicCoverUrl(music.getId(), coverUrl);
@@ -1095,43 +1098,13 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public String deleteAlbumImages(int id, JSONArray deleteImages) {
+    public String deleteAlbumImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
 
-        //从七牛云上删除
-        //删除结果
-        List<String> deleteResult = new ArrayList<>();
-        //若删除的图片只有一张，调用单张删除方法
-        if (deleteImages.size() == 1) {
-            ActionResult ar = qiniuImageUtils.deleteImageFromQiniu(deleteImages.getJSONObject(0).getString("url"));
-            if (!ar.state) {
-                return ar.message;
-            }
-            deleteResult.add(deleteImages.getJSONObject(0).getString("url"));
-        }else {
-            String[] fullImageUrlList = new String[deleteImages.size()];
-            for (int i = 0; i < deleteImages.size(); i++) {
-                fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
-            }
-            ActionResult ar = qiniuImageUtils.deleteImagesFromQiniu(fullImageUrlList);
-            deleteResult = (List<String>) ar.data;
-        }
+        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
-        //根据删除结果循环删除图片信息json数组
-        // 迭代器
-
-        for (String s : deleteResult) {
-            Iterator<Object> iterator = images.iterator();
-            while (iterator.hasNext()) {
-                JSONObject itJson = (JSONObject) iterator.next();
-                if (StringUtils.equals(itJson.getString("url"), s)) {
-                    // 删除数组元素
-                    iterator.remove();
-                }
-            }
-        }
-        albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
+        albumMapper.updateAlbumImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
@@ -1145,17 +1118,8 @@ public class AlbumService {
     public String deleteAllAlbumImages(int id) {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
-        String[] deleteImageKeyList = new String[images.size()];
-        //图片文件名
-        String deleteImageUrl = "";
-        for (int i = 0; i < images.size(); i++) {
-            JSONObject image = images.getJSONObject(i);
-            deleteImageUrl = image.getString("url");
-            //删除七牛服务器上对应图片文件
-            deleteImageKeyList[i] = deleteImageUrl;
-        }
-        qiniuImageUtils.deleteImagesFromQiniu(deleteImageKeyList);
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
+
+        return commonImageUtils.commonDeleteAllImages(EntityType.ALBUM, images);
     }
 
     /**

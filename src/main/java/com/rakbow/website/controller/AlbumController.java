@@ -3,14 +3,14 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.DataActionType;
-import com.rakbow.website.data.EntityType;
+import com.rakbow.website.data.common.DataActionType;
+import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.AlbumUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
+import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.CommonUtils;
@@ -388,7 +388,7 @@ public class AlbumController {
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+                String errorMessage = CommonImageHandleUtils.checkAddImages(imageInfosJson, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
@@ -429,7 +429,7 @@ public class AlbumController {
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
 
                     //检测是否存在多张封面
-                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                    String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
                     if (!StringUtils.equals("", errorMessage)) {
                         res.setErrorMessage(errorMessage);
                         return JSON.toJSONString(res);
@@ -594,7 +594,7 @@ public class AlbumController {
                 JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonImageHandleUtils.checkAddImages(imageInfosTmp, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
