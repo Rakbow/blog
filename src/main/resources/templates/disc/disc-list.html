@@ -144,7 +144,7 @@
                         {{formatCurrency(slotProps.data.price)}}
                     </template>
                 </p-column>
-                <p-column header="所属系列" field="seriesId" :show-filter-menu="false" style="flex: 0 0 9rem">
+                <p-column header="所属系列" field="series" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
                         {{slotProps.data.series.name}}
                     </template>
@@ -239,8 +239,8 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="disc.seriesId" :options="seriesSet" placeholder="选择所属系列"
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="disc.series" :options="seriesSet" placeholder="选择所属系列"
                                         option-label="label" option-value="value" @change="getProducts">
                             </p-dropdown>
                         </div>
@@ -348,7 +348,7 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown v-model="discEdit.series" :options="seriesSet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
@@ -483,7 +483,7 @@
             const filters = ref({
                 'catalogNo': {value: '', matchMode: 'contains'},
                 'name': {value: '', matchMode: 'contains'},
-                'seriesId': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'series': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
                 'mediaFormat': {value: null, matchMode: FilterMatchMode.IN},
                 'isLimited': {value: null, matchMode: FilterMatchMode.EQUALS},

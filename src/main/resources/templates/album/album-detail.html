@@ -102,7 +102,7 @@
                             <template #header>
                                 <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
-                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{album.nameJp}}</h5>
+                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{album.name}}</h5>
                                     <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{album.nameEn}}</small></h5>
                                     <h5 v-if="album.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
                                         style="text-align: left"><small>{{album.nameZh}}</small></h5>
@@ -160,7 +160,7 @@
                                                 <strong>发行价格</strong>
                                             </td>
                                             <td>
-                                                {{album.publishPrice != 0 ? album.publishPrice + "日元(含税)" :"N/A"}}
+                                                {{album.price != 0 ? album.price + "日元(含税)" :"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -430,7 +430,7 @@
                                                 <a class="small_font"
                                                    :href="'/db/album/'+ relatedAlbum.id ">
                                                     <span class="text-truncate-2 mr-4" lang="ja">
-                                                        {{relatedAlbum.nameJp}}
+                                                        {{relatedAlbum.name}}
                                                     </span>
                                                 </a>
                                             </li>
@@ -530,8 +530,8 @@
                           :style="{width: '800px'}" :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
-                            <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
+                            <label htmlFor="name">专辑名称<span style="color: red">*</span></label>
+                            <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
                             <label htmlFor="nameEn">专辑名称(英语)</label>
@@ -560,8 +560,8 @@
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publishPrice">发行价格(含税)</label>
-                            <p-inputnumber id="publishPrice" v-model="albumEdit.publishPrice" mode="currency"
+                            <label htmlFor="price">发行价格(含税)</label>
+                            <p-inputnumber id="price" v-model="albumEdit.price" mode="currency"
                                            currency="JPY"
                                            locale="ja-JP"></p-inputnumber>
                         </div>

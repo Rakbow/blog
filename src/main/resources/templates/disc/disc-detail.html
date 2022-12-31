@@ -431,7 +431,7 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown v-model="discEdit.series" :options="seriesSet"
                                         option-label="label" option-value="value"
                                         :disabled="seriesBool">
@@ -708,8 +708,7 @@
             //region ------基础------
             const disc = ref([[${disc}]]);
             const visitNum = ref([[${visitNum}]]);
-            // const relatedDiscs = ref([[${relatedAlbums}]]);
-            const relatedDiscs = ref([]);
+            const relatedDiscs = ref([[${relatedDiscs}]]);
             const toast = useToast();
             const edits = ref([
                 {

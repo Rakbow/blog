@@ -85,7 +85,7 @@
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row"
-                         :globalFilterFields="['nameJp','catalogNo']"
+                         :globalFilterFields="['name','catalogNo']"
                          :paginator="true" :rows="10" striped-rows
                          :resizable-columns="true" column-resize-mode="expand"
                          v-model:selection="selectedAlbums" dataKey="id"
@@ -126,11 +126,11 @@
                                      class="p-column-filter" placeholder="专辑编号"></p-inputtext>
                     </template>
                 </p-column>
-                <p-column header="专辑原名" field="nameJp" :show-filter-menu="false"
+                <p-column header="专辑原名" field="name" :show-filter-menu="false"
                           style="flex: 0 0 25rem">
                     <template #body="slotProps">
                         <a :href="domainUrl + '/db/album/' + slotProps.data.id">
-                            {{slotProps.data.nameJp}}
+                            {{slotProps.data.name}}
                         </a>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
@@ -139,9 +139,9 @@
                     </template>
                 </p-column>
                 <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
-                <p-column header="发售价格" field="publishPrice" :sortable="true" style="flex: 0 0 7rem">
+                <p-column header="发售价格" field="price" :sortable="true" style="flex: 0 0 7rem">
                     <template #body="slotProps">
-                        {{formatCurrency(slotProps.data.publishPrice)}}
+                        {{formatCurrency(slotProps.data.price)}}
                     </template>
                 </p-column>
                 <p-column header="所属系列" field="series" :show-filter-menu="false" style="flex: 0 0 9rem">
@@ -238,8 +238,8 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
-                            <p-inputtext id="nameJp" v-model.trim="album.nameJp"></p-inputtext>
+                            <label htmlFor="name">专辑名称<span style="color: red">*</span></label>
+                            <p-inputtext id="name" v-model.trim="album.name"></p-inputtext>
                         </div>
                         <div class="field col">
                             <label htmlFor="nameEn">专辑名称(英语)</label>
@@ -268,8 +268,8 @@
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publishPrice">发行价格(含税)</label>
-                            <p-inputnumber id="publishPrice" v-model="album.publishPrice" mode="currency" currency="JPY"></p-inputnumber>
+                            <label htmlFor="price">发行价格(含税)</label>
+                            <p-inputnumber id="price" v-model="album.price" mode="currency" currency="JPY"></p-inputnumber>
                         </div>
                     </div>
                     <div class="formgrid grid">
@@ -376,8 +376,8 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameJp">专辑名称<span style="color: red">*</span></label>
-                            <p-inputtext id="nameJp" v-model.trim="albumEdit.nameJp"></p-inputtext>
+                            <label htmlFor="name">专辑名称<span style="color: red">*</span></label>
+                            <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
                             <label htmlFor="nameEn">专辑名称(英语)</label>
@@ -406,8 +406,8 @@
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publishPrice">发行价格(含税)</label>
-                            <p-inputnumber id="publishPrice" v-model="albumEdit.publishPrice" mode="currency" currency="JPY"></p-inputnumber>
+                            <label htmlFor="price">发行价格(含税)</label>
+                            <p-inputnumber id="price" v-model="albumEdit.price" mode="currency" currency="JPY"></p-inputnumber>
                         </div>
                     </div>
                     <div class="formgrid grid">
@@ -560,7 +560,7 @@
             };
             const filters = ref({
                 'catalogNo': {value: '', matchMode: 'contains'},
-                'nameJp': {value: '', matchMode: 'contains'},
+                'name': {value: '', matchMode: 'contains'},
                 'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'publishFormat': {value: null, matchMode: FilterMatchMode.IN},
                 'albumFormat': {value: null, matchMode: FilterMatchMode.IN},
@@ -581,7 +581,11 @@
                 getAlbums();
             };
             const getAlbums = () => {
-                axiosPostRequest(GET_ALBUMS_LIST_URL, queryParams.value)
+                let json = {
+                    pageLabel: "list",
+                    queryParams: queryParams.value
+                }
+                axiosPostRequest(GET_ALBUMS_LIST_URL, json)
                     .then(res => {
                         albums.value = res.data;
                         totalRecords.value = res.total;

@@ -55,7 +55,7 @@
 
                     <div v-if="type == '专辑'">
                         <div v-for="result in searchResult">
-                            <a :href="domainUrl + '/db/album/' + result.id">{{result.nameJp}}</a>
+                            <a :href="domainUrl + '/db/album/' + result.id">{{result.name}}</a>
                         </div>
                     </div>
                 </div>

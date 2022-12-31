@@ -431,7 +431,7 @@
                                                 <a class="small_font"
                                                    :href="'/db/book/'+ relatedBook.id ">
                                                     <span class="text-truncate-2 mr-4" lang="ja">
-                                                        {{relatedBook.name}}
+                                                        {{relatedBook.title}}
                                                     </span>
                                                 </a>
                                             </li>
@@ -981,7 +981,7 @@
             //region ------基础------
             const book = ref([[${book}]]);
             const visitNum = ref([[${visitNum}]]);
-            const relatedBooks = ref([]);
+            const relatedBooks = ref([[${relatedBooks}]]);
             const toast = useToast();
             const edits = ref([
                 {
