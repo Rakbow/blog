@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -53,6 +54,10 @@ public class ProductController {
     @Autowired
     private AlbumService albumService;
     @Autowired
+    private BookService bookService;
+    @Autowired
+    private DiscService discService;
+    @Autowired
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
@@ -67,7 +72,7 @@ public class ProductController {
         return "/product/product-list";
     }
 
-    //获取单个专辑详细信息页面
+    //获取单个产品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getProductDetail(@PathVariable("id") int productId, Model model) throws IOException {
         if (productService.getProductById(productId) == null) {
@@ -82,8 +87,18 @@ public class ProductController {
         model.addAttribute("user", hostHolder.getUser());
         model.addAttribute("productClassSet", ProductUtils.getProductClassSet());
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("relatedAlbums", albumService.getRelatedAlbumsByProductId(productId));
         model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
+
+        if (product.getClassification() == ProductClass.ANIMATION.getIndex()
+                || product.getClassification() == ProductClass.GAME.getIndex()
+                || product.getClassification() == ProductClass.LIVE_ACTION_MOVIE.getIndex()) {
+            model.addAttribute("albums", albumService.getAlbumsByProductId(productId));
+            model.addAttribute("discs", discService.getDiscsByProductId(productId));
+        }
+        if (product.getClassification() == ProductClass.BOOK.getIndex()) {
+            model.addAttribute("books", bookService.getBooksByProductId(productId));
+        }
+
         //获取页面访问量
         model.addAttribute("visitNum",
                 visitService.getVisit(EntityType.PRODUCT.getId(), productId).getVisitNum());

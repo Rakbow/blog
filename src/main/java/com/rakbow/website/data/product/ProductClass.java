@@ -10,7 +10,9 @@ public enum ProductClass {
     UNCLASSIFIED(0,"未分类", "unclassified"),
     GAME(1, "游戏", "Game"),
     ANIMATION(2, "TV动画", "Animation"),
-    LIVE_ACTION_MOVIE(3, "真人电影", "Movie");
+    LIVE_ACTION_MOVIE(3, "真人电影", "Movie"),
+    BOOK(4, "图书", "Book"),
+    MISC(5, "杂项", "Misc");
 
     private int index;
     private String nameZh;

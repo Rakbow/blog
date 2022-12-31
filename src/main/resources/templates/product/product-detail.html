@@ -160,16 +160,16 @@
                         </template>
                         <article id="description" class="markdown-body" style="width: 100%;"></article>
                     </p-fieldset>
-                    <p-fieldset :toggleable="true" class="mt-2">
+                    <p-fieldset :toggleable="true" class="mt-2" v-if="albums">
                         <template #legend>
                             <i class="pi iconfont icon-24gl-musicAlbum2 mr-2" style="font-size: 2rem"></i>
                             <b>专辑</b>
                         </template>
-                        <div v-if="relatedAlbums.length == 0">
+                        <div v-if="albums.length == 0">
                             <span class="emptyInfo"><em>暂无专辑</em></span>
                         </div>
                         <div v-else>
-                            <p-timeline :value="relatedAlbums">
+                            <p-timeline :value="albums">
                                 <template #opposite="slotProps">
                                     <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
                                 </template>
@@ -177,6 +177,46 @@
                                     <a :href="'/db/album/' + slotProps.item.id"><em>{{slotProps.item.nameJp}}</em></a>&nbsp;
                                     <small><b>{{slotProps.item.catalogNo}}</b>&nbsp;
                                         {{slotProps.item.albumFormat.join(", ")}}</small>
+                                </template>
+                            </p-timeline>
+                        </div>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true" class="mt-2" v-if="books">
+                        <template #legend>
+                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
+                            <b>图书</b>
+                        </template>
+                        <div v-if="books.length == 0">
+                            <span class="emptyInfo"><em>暂无图书</em></span>
+                        </div>
+                        <div v-else>
+                            <p-timeline :value="books">
+                                <template #opposite="slotProps">
+                                    <small class="p-text-secondary">{{slotProps.item.publishDate}}</small>
+                                </template>
+                                <template #content="slotProps">
+                                    <a :href="'/db/book/' + slotProps.item.id"><em>{{slotProps.item.title}}</em></a>&nbsp;
+                                    <small><b>{{slotProps.item.isbn13}}</b>&nbsp;({{slotProps.item.bookType.nameZh}})</small>
+                                </template>
+                            </p-timeline>
+                        </div>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true" class="mt-2" v-if="discs">
+                        <template #legend>
+                            <i class="pi iconfont icon-Video-Disc mr-2" style="font-size: 2rem"></i>
+                            <b>DVD/BD</b>
+                        </template>
+                        <div v-if="discs.length == 0">
+                            <span class="emptyInfo"><em>暂无碟片</em></span>
+                        </div>
+                        <div v-else>
+                            <p-timeline :value="discs">
+                                <template #opposite="slotProps">
+                                    <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
+                                </template>
+                                <template #content="slotProps">
+                                    <a :href="'/db/disc/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a>&nbsp;
+                                    <small><b>{{slotProps.item.catalogNo}}</b>&nbsp;({{slotProps.item.mediaFormat.join("/")}})</small>
                                 </template>
                             </p-timeline>
                         </div>
@@ -328,7 +368,8 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="classification" class="mb-3">作品分类<span style="color: red">*</span></label>
+                            <label htmlFor="classification" class="mb-3">作品分类<span
+                                    style="color: red">*</span></label>
                             <p-dropdown v-model="productEdit.classification" :options="productClassSet"
                                         placeholder="选择作品分类" option-label="label" option-value="value">
                             </p-dropdown>
@@ -398,7 +439,8 @@
                         </div>
                         <div class="field col">
                             <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                        option-value="value" placeholder="选择图片类型" style="width: 280px"></p-dropdown>
+                                        option-value="value" placeholder="选择图片类型"
+                                        style="width: 280px"></p-dropdown>
                         </div>
                         <div class="field col">
                             <p-textarea v-model="imageInfo.description" rows="1" cols="20"
@@ -442,7 +484,8 @@
                             <p-column :row-reorder="true" header-style="width: 3%"></p-column>
                             <p-column header="图片" header-style="width: 8%">
                                 <template #body="slotProps">
-                                    <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn" class="edit-image" />
+                                    <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn"
+                                         class="edit-image"/>
                                 </template>
                             </p-column>
                             <p-column field="url" header="url" header-style="width: 10%"></p-column>
@@ -481,7 +524,8 @@
                     </div>
                 </p-panel>
                 <template #footer>
-                    <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog" class="p-button-text"></p-button>
+                    <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                              class="p-button-text"></p-button>
                     <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                 </template>
             </p-dialog>
@@ -606,7 +650,9 @@
             const productClassSet = ref([[${productClassSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
             const relatedProducts = ref([[${relatedProducts}]]);
-            const relatedAlbums = ref([[${relatedAlbums}]]);
+            const albums = ref([[${albums}]]);
+            const books = ref([[${books}]]);
+            const discs = ref([[${discs}]]);
             const edits = ref([
                 {
                     label: '图片管理',
@@ -754,7 +800,7 @@
             };
             const editingImages = ref([]);
             const imgRowEditSave = (ev) => {
-                let { newData, index } = ev;
+                let {newData, index} = ev;
                 product.value.images[index] = newData;
             };
             const getImageTypeLabel = (type) => {
@@ -824,7 +870,7 @@
                 for (const img of imageInfos.value) {
                     imageHtml.value += '<div align=""center>';
                     imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
-                    imageHtml.value += '<p>图片类型: ' + (img.type==="1"?"封面":(img.type==="0"?"展示":"其他")) + '</p>';
+                    imageHtml.value += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
                     imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
                     imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
                     imageHtml.value += '<p>描述: ' + img.description + '</p>';
@@ -1002,7 +1048,8 @@
                 submitDescription,
                 activeIndex, responsiveOptions, displayCustom, initGalleriaImageClass, imageClick,
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
-                product, visitNum, productClassSet, edits, relatedProducts, seriesSet, relatedAlbums,
+                product, visitNum, productClassSet, edits, relatedProducts, seriesSet, albums,
+                books, discs,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
             }
         },
@@ -1047,9 +1094,11 @@
         .mount("#app");
 </script>
 <style>
-    .p-timeline-event-content {
+    .p-timeline.p-timeline-vertical .p-timeline-event-content {
+        padding: 0 1rem;
         width: 800px;
     }
+
     .p-timeline-event-opposite {
 
     }
