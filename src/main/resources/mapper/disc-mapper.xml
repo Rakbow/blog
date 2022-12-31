@@ -5,12 +5,12 @@
 <mapper namespace="com.rakbow.website.dao.DiscMapper">
 
     <sql id="selectFields">
-        id, catalog_no, name, name_zh, name_en, barcode, series_id, products, release_date, price, media_format,
+        id, catalog_no, name, name_zh, name_en, barcode, series, products, release_date, price, media_format,
         is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        catalog_no, name, name_zh, name_en, barcode, series_id, products, release_date, price, media_format,
+        catalog_no, name, name_zh, name_en, barcode, series, products, release_date, price, media_format,
         is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
@@ -34,7 +34,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into disc (<include refid="insertFields"></include>)
-        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{seriesId}, #{productId}, #{releaseDate},
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{series}, #{productId}, #{releaseDate},
         #{price}, #{mediaFormat}, #{isLimited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -43,7 +43,7 @@
         update disc
         set
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
-        barcode = #{disc.barcode}, series_id = #{disc.seriesId}, products = #{disc.products},
+        barcode = #{disc.barcode}, series = #{disc.series}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
         is_limited = #{disc.isLimited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
         edited_time = #{disc.editedTime}, _s = #{disc._s}
@@ -102,8 +102,8 @@
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="seriesId != 0 ">
-                and series_id = #{seriesId}
+            <if test="series != 0 ">
+                and series = #{series}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -152,7 +152,9 @@
         <if test="sortField == null">
             order by id desc
         </if>
-        limit #{first}, #{row}
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
     </select>
 
     <select id="getDiscsRowsByFilterList" resultType="int">
@@ -165,8 +167,8 @@
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="seriesId != 0 ">
-                and series_id = #{seriesId}
+            <if test="series != 0 ">
+                and series = #{series}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -188,6 +190,24 @@
             </if>
             and _s = 1
         </where>
+    </select>
+
+    <select id="getDiscOrderByAddedTime" resultType="Disc">
+        select
+        <include refid="selectFields"></include>
+        from disc
+        where _s = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="getDiscOrderByEditedTime" resultType="Disc">
+        select
+        <include refid="selectFields"></include>
+        from disc
+        where _s = 1
+        order by edited_time desc
+        limit #{limit}
     </select>
 
 </mapper>

@@ -23,13 +23,13 @@ public interface AlbumMapper {
                                   List<Integer> albumFormat, List<Integer> mediaFormat, String hasBonus);
 
     //超详细查询
-    List<Album> getAlbumsByFilterList(String catalogNo, String nameJp, int seriesId, List<Integer> productId,
+    List<Album> getAlbumsByFilterList(String catalogNo, String name, int seriesId, List<Integer> productId,
                                        List<Integer> publishFormat, List<Integer> albumFormat,
                                        List<Integer> mediaFormat, String hasBonus, String sortField, int sortOrder,
                                       int first, int row);
 
     //超详细查询条数
-    int getAlbumRowsByFilterList(String catalogNo, String nameJp, int seriesId, List<Integer> productId,
+    int getAlbumRowsByFilterList(String catalogNo, String name, int seriesId, List<Integer> productId,
                                  List<Integer> publishFormat, List<Integer> albumFormat,
                                  List<Integer> mediaFormat, String hasBonus);
 
@@ -44,9 +44,6 @@ public interface AlbumMapper {
 
     //查询所有专辑信息 offset：每页起始行行号，limit：每页显示数量
     List<Album> getAll();
-
-    //获取指定起始行和指定数量的数据
-    List<Album> getAlbumLimit(int offset, int limit, String where);
 
     //查询表里有多少条数据
     //如果sql语句中有动态的条件并且在<if>里使用

@@ -105,7 +105,7 @@ public class BookController {
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.BOOK.getId(), id).getVisitNum());
         //获取相关图书
-        // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
+        model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/book/book-detail";
     }
 

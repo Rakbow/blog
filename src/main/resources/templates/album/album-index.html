@@ -16,6 +16,7 @@
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue css -->
     <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
@@ -60,11 +61,12 @@
             <!-- 头部 -->
             <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-            <div class="grid card mt-2">
+            <div class="grid mt-2">
                 <p-toast></p-toast>
-                <div class="col-12 sm:col-12 md:col-6 lg:col-9">
-                    <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="albumsRows" :sort-order="sortOrder"
-                                :sort-field="sortField">
+                <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
+                    <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="albumsRows"
+                                :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
+                                :lazy="true" @page="onPage($event)" :total-records="totalRecords">
                         <template #empty>
                             <div align="center" class="mt-2 mb-2">
                                 <span class="emptyInfo">暂无符合条件的结果</span>
@@ -72,18 +74,24 @@
                         </template>
                         <template #header>
                             <div class="grid grid-nogutter">
-                                <div class="col-6" style="text-align: left">
+                                <div class="col-4" style="text-align: left">
                                     <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
                                                 placeholder="按发行时间排序"
                                                 @change="onSortChange($event)"></p-dropdown>
                                 </div>
-                                <div class="col-6" style="text-align: right">
+                                <div class="col-4" style="text-align: center">
+                                    <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
+<!--                                    <div class="container mt-0 mb-0 ml-0">-->
+<!--                                        <h3>专辑</h3>-->
+<!--                                    </div>-->
+                                </div>
+                                <div class="col-4" style="text-align: right">
                                     <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
                                 </div>
                             </div>
                         </template>
                         <template #grid="slotProps">
-                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12 single-card ml-2">
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12 single-card ml-3">
                                 <p-card>
                                     <template #header>
                                         <a :href="'/db/album/'+ slotProps.data.id">
@@ -100,7 +108,7 @@
                                     </template>
                                     <template #title>
                                         <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
-                                            {{slotProps.data.nameJp}}
+                                            {{slotProps.data.name}}
                                         </span>
                                     </template>
                                     <template #subtitle>
@@ -135,11 +143,11 @@
                             <div class="col-12">
                                 <div class="product-list-item">
                                     <a :href="'/db/album/'+ slotProps.data.id">
-                                        <img :src="slotProps.data.cover.url" :alt="slotProps.data.cover.name"/>
+                                        <img :src="slotProps.data.cover.thumbUrl" :alt="slotProps.data.cover.name"/>
                                     </a>
                                     <div class="product-list-detail">
                                         <a :href="'/db/album/'+ slotProps.data.id">
-                                            <div class="product-name">{{slotProps.data.nameJp}}</div>
+                                            <div class="product-name">{{slotProps.data.name}}</div>
                                         </a>
                                         <span class="small-font" style="margin: 0 0 .5rem 0;">
                                             <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
@@ -166,7 +174,7 @@
                         </template>
                     </p-dataview>
                 </div>
-                <div class="col-12 sm:col-12 md:col-6 lg:col-3">
+                <div class="col-12 sm:col-12 md:col-3 lg:col-3">
                     <p-panel>
                         <template #header>
                             <i class="pi pi-search mr-2" style="font-size: 2rem"></i>
@@ -174,16 +182,24 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="seriesId">所属系列</label>
-                                <p-dropdown v-model="queryParam.seriesId" :options="seriesSet"
+                                <label htmlFor="name">名称</label>
+                                <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
+                            </div>
+                            <div class="col-12 md:col-6 sm:col-6">
+                                <label htmlFor="catalogNo">编号</label>
+                                <p-inputtext v-model.trim="queryParams.filters.catalogNo.value"></p-inputtext>
+                            </div>
+                            <div class="col-12 md:col-6 sm:col-6">
+                                <label htmlFor="series">所属系列</label>
+                                <p-dropdown v-model="queryParams.filters.series.value" :options="seriesSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value"
                                             @change="getProducts">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="productId">所属作品</label>
-                                <p-multiselect v-model="queryParam.productId" :options="productSet"
+                                <label htmlFor="products">所属作品</label>
+                                <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
                                                option-label="label" option-value="value"
                                                placeholder="请先选择所属系列"
                                                display="chip" :filter="true"
@@ -192,14 +208,14 @@
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label htmlFor="hasBonus">是否包含特典</label>
-                                <p-dropdown v-model="queryParam.hasBonus" :options="hasBonusSet"
+                                <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label htmlFor="publishFormat">出版形式</label>
-                                <p-multiselect v-model="queryParam.publishFormat"
+                                <p-multiselect v-model="queryParams.filters.publishFormat.value"
                                                :options="publishFormatSet"
                                                option-label="label" option-value="value"
                                                placeholder="所有"
@@ -208,7 +224,7 @@
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label htmlFor="albumFormat">专辑分类</label>
-                                <p-multiselect v-model="queryParam.albumFormat"
+                                <p-multiselect v-model="queryParams.filters.albumFormat.value"
                                                :options="albumFormatSet"
                                                option-label="label" option-value="value"
                                                placeholder="所有"
@@ -217,7 +233,7 @@
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label htmlFor="mediaFormatSet">媒体格式</label>
-                                <p-multiselect v-model="queryParam.mediaFormat"
+                                <p-multiselect v-model="queryParams.filters.mediaFormat.value"
                                                :options="mediaFormatSet"
                                                option-label="label" option-value="value"
                                                placeholder="所有"
@@ -233,7 +249,7 @@
                             <div class="col-12 md:col-4 sm:col-3" style="text-align: left">
                                 <p-button icon="pi pi-search" label="搜索"
                                           class="p-button-raised p-button-success"
-                                          @click="searchAlbum"></p-button>
+                                          @click="getAlbums"></p-button>
                             </div>
                         </div>
                     </p-panel>
@@ -261,7 +277,7 @@
                                             <a class="small-font"
                                                :href="'/db/album/'+ addAlbum.id ">
                                                 <span class="text-truncate-2" lang="ja">
-                                                    {{addAlbum.nameJp}}
+                                                    {{addAlbum.name}}
                                                 </span>
                                             </a>
                                         </li>
@@ -303,7 +319,7 @@
                                                 <a class="small-font album-anime"
                                                    :href="'/db/album/'+ editAlbum.id ">
                                                     <span class="text-truncate-2" lang="ja">
-                                                        {{editAlbum.nameJp}}
+                                                        {{editAlbum.name}}
                                                     </span>
                                                 </a>
                                             </li>
@@ -335,8 +351,8 @@
                                         <div class="col-2 ml-0 mr-0 mt-0 mb-0">
                                             <div class="grid">
                                                 <div class="col-12 text-center">
-                                                    <p-badge :value="index+1" class="mr-2"></p-badge>
-                                                    <!--                                                    <b style="font-size: 20px">{{index+1}}</b>-->
+<!--                                                    <p-badge :value="index+1" class="mr-2"></p-badge>-->
+                                                    <i :class="'pi remixicon ri-number-' + index" style="font-size: 2rem"></i>
                                                 </div>
                                                 <div class="col-12">
                                                     <i class="pi pi-eye" style="font-size: 0.5rem"></i>
@@ -356,7 +372,7 @@
                                                 <a class="small-font album-anime"
                                                    :href="'/db/album/'+ album.id ">
                                                     <span class="text-truncate-2" lang="ja">
-                                                        {{album.nameJp}}
+                                                        {{album.name}}
                                                     </span>
                                                 </a>
                                             </li>
@@ -391,61 +407,8 @@
     const App = {
         setup() {
             onMounted(() => {
+                init();
             });
-
-            const toast = useToast();
-            const seriesSet = ref([[${seriesSet}]]);
-
-            //region ------ 搜索 ------
-            const publishFormatSet = ref([[${publishFormatSet}]]);
-            const albumFormatSet = ref([[${albumFormatSet}]]);
-            const mediaFormatSet = ref([[${mediaFormatSet}]]);
-            const productSelect = ref(true);
-            const hasBonusSet = ref([
-                {label: "全部", value: "all"},
-                {label: "有", value: "has"},
-                {label: "无", value: "no"}
-            ]);
-            const queryParam = ref({
-                seriesId: null,
-                productId: [],
-                publishFormat: [],
-                albumFormat: [],
-                mediaFormat: [],
-                hasBonus: null
-            });
-            const clearSearch = () => {
-                queryParam.value = {
-                    seriesId: null,
-                    productId: [],
-                    publishFormat: [],
-                    albumFormat: [],
-                    mediaFormat: [],
-                    hasBonus: null
-                };
-                searchAlbum();
-            }
-            const productSet = ref();
-            const getProducts = (ev) => {
-                let json = {series: ev.value};
-                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
-                    .then(res => {
-                        queryParam.value.productIds = [];
-                        productSet.value = res;
-                        productSelect.value = false;
-                    })
-            };
-            const searchAlbum = () => {
-                axiosPostRequest(GET_ALBUMS_URL, queryParam.value)
-                    .then(res => {
-                        if (res.state === 1) {
-                            albums.value = res.data;
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    });
-            }
-            //endregion
 
             //region 页面header
             const domainUrl = DOMAIN_URL;
@@ -459,15 +422,15 @@
             const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
             //endregion
 
-            const albums = ref([[${albums}]]);
+            //region ------基础------
+            const albums = ref();
+            const seriesSet = ref([[${seriesSet}]]);
             const justEditedAlbums = ref([[${justEditedAlbums}]]);
             const justAddedAlbums = ref([[${justAddedAlbums}]]);
             const popularAlbums = ref([[${popularAlbums}]]);
-            const albumsRows = ref(30);
+            const albumsRows = ref(20);
             const layout = ref('grid');
             const sortKey = ref();
-            const sortOrder = ref();
-            const sortField = ref();
             const sortOptions = ref([
                 {label: '按发售时间正序', value: 'releaseDate'},
                 {label: '按发售时间逆序', value: '!releaseDate'},
@@ -475,34 +438,115 @@
 
             watch(() => layout.value, (newValue, oldValue) => {
                 if(newValue === "grid"){
-                    albumsRows.value = 30;
+                    albumsRows.value = 20;
                 }else {
                     albumsRows.value = 20;
                 }
             }, {deep: true});
+            //endregion
 
+            //region ------ 搜索 ------
+            const totalRecords = ref();
+            const publishFormatSet = ref([[${publishFormatSet}]]);
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const productSelect = ref(true);
+            const hasBonusSet = ref([
+                {label: "全部", value: null},
+                {label: "有", value: 1},
+                {label: "无", value: 0}
+            ]);
+            const queryParams = ref({
+                first: 0,
+                rows: 0,
+                sortField: null,
+                sortOrder: 0,
+                filters: {
+                    name: {value: null},
+                    catalogNo: {value: null},
+                    hasBonus: {value: null},
+                    publishFormat: {value: null},
+                    albumFormat: {value: null},
+                    mediaFormat: {value: null},
+                    series: {value: null},
+                    products: {value: null},
+                }
+            });
+            const clearSearch = () => {
+                queryParams.value = {
+                    first: 0,
+                    rows: 0,
+                    sortField: null,
+                    sortOrder: 0,
+                    filters: {
+                        name: {value: null},
+                        catalogNo: {value: null},
+                        hasBonus: {value: null},
+                        publishFormat: {value: null},
+                        albumFormat: {value: null},
+                        mediaFormat: {value: null},
+                        series: {value: null},
+                        products: {value: null},
+                    }
+                };
+                getAlbums();
+            }
+            const productSet = ref();
+            const getProducts = (ev) => {
+                let json = {series: ev.value};
+                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
+                    .then(res => {
+                        queryParams.value.filters.products.value = [];
+                        productSet.value = res;
+                        productSelect.value = false;
+                    })
+            };
+            const onPage = (event) => {
+                queryParams.value.first = event.first;
+                queryParams.value.rows = event.rows;
+                getAlbums();
+            }
+            const getAlbums = () => {
+                queryParams.value.rows = albumsRows.value;
+                let json = {
+                    pageLabel: "index",
+                    queryParams: queryParams.value
+                }
+                axiosPostRequest(GET_ALBUMS_LIST_URL, json)
+                    .then(res => {
+                        albums.value = res.data;
+                        totalRecords.value = res.total;
+                    })
+            };
             const onSortChange = (event) => {
                 const value = event.value.value;
                 const sortValue = event.value;
 
                 if (value.indexOf('!') === 0) {
-                    sortOrder.value = -1;
-                    sortField.value = value.substring(1, value.length);
+                    queryParams.value.sortOrder = -1;
+                    queryParams.value.sortField = value.substring(1, value.length);
                     sortKey.value = sortValue;
+                    getAlbums();
                 } else {
-                    sortOrder.value = 1;
-                    sortField.value = value;
+                    queryParams.value.sortOrder = 1;
+                    queryParams.value.sortField = value;
                     sortKey.value = sortValue;
+                    getAlbums();
                 }
+            };
+            //endregion
+
+            const init = () => {
+                getAlbums();
             };
 
             return {
                 clearSearch, hasBonusSet, albumsRows,
                 publishFormatSet, albumFormatSet, mediaFormatSet,
-                getProducts, seriesSet, productSet, queryParam, productSelect,
+                getProducts, seriesSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
                 justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
-                sortKey, sortOrder, sortField, sortOptions, searchAlbum
+                sortKey, sortOptions, getAlbums, totalRecords, onPage
             }
         },
         components: {
@@ -652,10 +696,8 @@
         height: 200px;
         position: relative;
         background-repeat: no-repeat;
-        background-size: 100% 100%;
-        /*top: 50%;*/
-        /*left: 50%;*/
-        /*transform: translate(-50%, -50%);*/
+        background-color: black;
+        background-position:center center;
     }
 
     .catalog {

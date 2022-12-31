@@ -22,12 +22,12 @@ public interface DiscMapper {
     List<Disc> getAllDisc();
 
     //根据过滤条件搜索disc
-    List<Disc> getDiscsByFilterList(String catalogNo, String name, int seriesId, List<Integer> products,
+    List<Disc> getDiscsByFilterList(String catalogNo, String name, int series, List<Integer> products,
                                     List<Integer> mediaFormat, String isLimited, String hasBonus, String sortField,
                                     int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getDiscsRowsByFilterList(String catalogNo, String name, int seriesId, List<Integer> products,
+    int getDiscsRowsByFilterList(String catalogNo, String name, int series, List<Integer> products,
                                  List<Integer> mediaFormat, String isLimited, String hasBonus);
 
     //新增disc

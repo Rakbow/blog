@@ -96,7 +96,7 @@ public class DiscController {
         Disc disc = discService.getDiscById(discId);
 
         model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(disc.getSeriesId()));
+        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(disc.getSeries()));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
 
         model.addAttribute("disc", discService.disc2Json(disc));
@@ -104,7 +104,7 @@ public class DiscController {
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.DISC.getId(), discId).getVisitNum());
         //获取相关碟片
-        // model.addAttribute("relatedDiscs", discService.getRelatedDiscs(discId));
+        model.addAttribute("relatedDiscs", discService.getRelatedDiscs(discId));
         return "/disc/disc-detail";
     }
 

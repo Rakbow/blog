@@ -92,8 +92,6 @@ public class AlbumController {
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getAlbumIndexPage(Model model) {
-        // model.addAttribute("totalRecords", albumService.getAlbumRows());
-        model.addAttribute("albums", albumService.album2JsonDisplay(albumService.getAll()));
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
@@ -136,121 +134,27 @@ public class AlbumController {
 
     //region ------增删改查------
 
-    //获取指定起始行，指定数量的专辑get-album-limit
-    @RequestMapping(value = "/get-album-limit", method = RequestMethod.POST)
-    @ResponseBody
-    public List<JSONObject> getAlbumLimit(@RequestBody String json) {
-        int offset = JSONObject.parseObject(json).getInteger("offset");
-        int limit = JSONObject.parseObject(json).getInteger("limit");
-        String where = JSONObject.parseObject(json).getString("where");
-        return albumService.album2JsonDisplay(albumService.getAlbumLimit(offset, limit, where));
-    }
-
-    //获得所有专辑
-    @RequestMapping(value = "/get-all", method = RequestMethod.GET)
-    @ResponseBody
-    public String getAllAlbum() {
-        return JSON.toJSONString(albumService.album2JsonDisplayList(albumService.getAll()));
-    }
-
-    //获取单个专辑信息
-    @RequestMapping(value = "/get-album", method = RequestMethod.GET)
-    @ResponseBody
-    public String getAlbum(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSONObject.parseObject(json).getInteger("id");
-            Album album = albumService.getAlbumById(id);
-            if (album == null) {
-                res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED, EntityType.ALBUM.getNameZh()));
-                return JSON.toJSONString(res);
-            }
-            res.data = JSON.toJSONString(albumService.album2Json(album));
-            return JSON.toJSONString(res);
-        } catch (Exception ex) {
-            res.setErrorMessage(ex);
-            return JSON.toJSONString(res);
-        }
-    }
-
     //根据搜索条件获取专辑
-    @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
-    @ResponseBody
-    public String getAlbumsByFilter(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            JSONObject queryParam = new JSONObject();
-            String series = JSONObject.parseObject(json).getString("seriesId");
-            queryParam.put("seriesId", series);
-
-            JSONArray productId = JSONObject.parseObject(json).getJSONArray("productId");
-            if (productId.size() != 0) {
-                String productIdString = productId.toString();
-                queryParam.put("productId", productIdString.substring(productIdString.indexOf("[") + 1, productIdString.indexOf("]")));
-            } else {
-                queryParam.put("productId", null);
-            }
-
-            JSONArray publishFormat = JSONObject.parseObject(json).getJSONArray("publishFormat");
-            if (publishFormat.size() != 0) {
-                String publishFormatString = publishFormat.toString();
-                queryParam.put("publishFormat", publishFormatString.substring(publishFormatString.indexOf("[") + 1, publishFormatString.indexOf("]")));
-            } else {
-                queryParam.put("publishFormat", null);
-            }
-
-            JSONArray albumFormat = JSONObject.parseObject(json).getJSONArray("albumFormat");
-            if (albumFormat.size() != 0) {
-                String albumFormatString = albumFormat.toString();
-                queryParam.put("albumFormat", albumFormatString.substring(albumFormatString.indexOf("[") + 1, albumFormatString.indexOf("]")));
-            } else {
-                queryParam.put("albumFormat", null);
-            }
-
-            JSONArray mediaFormat = JSONObject.parseObject(json).getJSONArray("mediaFormat");
-            if (mediaFormat.size() != 0) {
-                String mediaFormatString = mediaFormat.toString();
-                queryParam.put("mediaFormat", mediaFormatString.substring(mediaFormatString.indexOf("[") + 1, mediaFormatString.indexOf("]")));
-            } else {
-                queryParam.put("mediaFormat", null);
-            }
-
-            String hasBonus = JSONObject.parseObject(json).getString("hasBonus");
-            if (hasBonus == null || hasBonus.equals("")) {
-                queryParam.put("hasBonus", null);
-            } else {
-                if (hasBonus.equals("all")) {
-                    queryParam.put("hasBonus", null);
-                } else if (hasBonus.equals("has")) {
-                    queryParam.put("hasBonus", "1");
-                } else {
-                    queryParam.put("hasBonus", "0");
-                }
-            }
-            List<JSONObject> albums = new ArrayList<>();
-            List<Album> searchResult = albumService.getAlbumsByFilter(queryParam.toJSONString());
-            if (searchResult.size() != 0) {
-                searchResult.forEach(i -> albums.add(albumService.album2JsonDisplay(i)));
-            }
-            res.data = albums;
-            return JSON.toJSONString(res);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            res.state = 0;
-            res.message = ex.getMessage();
-            return JSON.toJSONString(res);
-        }
-    }
-
-    //根据搜索条件获取专辑--列表界面
     @RequestMapping(value = "/get-albums-list", method = RequestMethod.POST)
     @ResponseBody
     public String getAlbumsByFilterList(@RequestBody String json) {
-        JSONObject queryParams = JSON.parseObject(json);
+
+        JSONObject param = JSON.parseObject(json);
+        JSONObject queryParams = param.getJSONObject("queryParams");
+        String pageLabel = param.getString("pageLabel");
+
+        List<JSONObject> albums = new ArrayList<>();
 
         Map<String, Object> map = albumService.getAlbumsByFilterList(queryParams);
 
-        List<JSONObject> albums = albumService.album2JsonDisplayList((List<Album>) map.get("data"));
+        if (StringUtils.equals(pageLabel, "list")) {
+            albums = albumService.album2JsonList((List<Album>) map.get("data"));
+        }
+        if (StringUtils.equals(pageLabel, "index")) {
+            albums = albumService.album2JsonIndex((List<Album>) map.get("data"));
+        }
+
+
 
         JSONObject result = new JSONObject();
         result.put("data", albums);
@@ -577,6 +481,7 @@ public class AlbumController {
     //endregion
 
     //region 废弃
+
     @Deprecated
     public String insertAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();

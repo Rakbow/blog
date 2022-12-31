@@ -27,7 +27,7 @@ public class Album {
     @Field(type = FieldType.Text)
     private String catalogNo;//专辑编号
     @Field(type = FieldType.Text)
-    private String nameJp;//专辑名称（日语）
+    private String name;//专辑名称（日语）
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String nameZh;//专辑名称（中文）
     @Field(type = FieldType.Text)
@@ -42,7 +42,7 @@ public class Album {
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     private String mediaFormat;//媒体类型
     @Field(type = FieldType.Integer)
-    private int publishPrice;//发行价格（含税）
+    private int price;//发行价格（含税）
     @Field(type = FieldType.Text)
     private String label;//唱片公司
     @Field(type = FieldType.Text)
@@ -72,7 +72,7 @@ public class Album {
 
         this.id = 0;
         this.catalogNo = "";
-        this.nameJp = "";
+        this.name = "";
         this.nameZh = "";
         this.nameEn = "";
         this.barcode = "";
@@ -80,7 +80,7 @@ public class Album {
         this.publishFormat = "{\"ids\":[]}";
         this.albumFormat = "{\"ids\":[]}";
         this.mediaFormat = "{\"ids\":[]}";
-        this.publishPrice = 0;
+        this.price = 0;
         this.label = "";
         this.publisher = "";
         this.distributor = "";

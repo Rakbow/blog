@@ -4,15 +4,16 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
+import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.ImageType;
-import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
-import com.rakbow.website.util.Image.QiniuImageUtils;
-import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonConstant;
+import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -125,9 +127,9 @@ public class DiscService {
 
         int sortOrder = queryParams.getIntValue("sortOrder");
 
-        int seriesId = 0;
-        if (filter.getJSONObject("seriesId").getInteger("value") != null) {
-            seriesId = filter.getJSONObject("seriesId").getIntValue("value");
+        int series = 0;
+        if (filter.getJSONObject("series").getInteger("value") != null) {
+            series = filter.getJSONObject("series").getIntValue("value");
         }
 
         List<Integer> products = new ArrayList<>();
@@ -162,10 +164,10 @@ public class DiscService {
 
         int row = queryParams.getIntValue("rows");
 
-        List<Disc> discs = discMapper.getDiscsByFilterList(catalogNo, name, seriesId, products,
+        List<Disc> discs = discMapper.getDiscsByFilterList(catalogNo, name, series, products,
                 mediaFormat, isLimited, hasBonus, sortField, sortOrder,  first, row);
 
-        int total = discMapper.getDiscsRowsByFilterList(catalogNo, name, seriesId, products,
+        int total = discMapper.getDiscsRowsByFilterList(catalogNo, name, series, products,
                 mediaFormat, isLimited, hasBonus);
 
         Map<String, Object> res = new HashMap<>();
@@ -230,8 +232,8 @@ public class DiscService {
                 });
 
         JSONObject series = new JSONObject();
-        series.put("id", disc.getSeriesId());
-        series.put("name", seriesService.selectSeriesById(disc.getSeriesId()).getNameZh());
+        series.put("id", disc.getSeries());
+        series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
@@ -347,8 +349,8 @@ public class DiscService {
                 });
 
         JSONObject series = new JSONObject();
-        series.put("id", disc.getSeriesId());
-        series.put("name", seriesService.selectSeriesById(disc.getSeriesId()).getNameZh());
+        series.put("id", disc.getSeries());
+        series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
 
         //对封面图片进行处理
         JSONArray images = JSONArray.parseArray(disc.getImages());
@@ -415,6 +417,63 @@ public class DiscService {
     }
 
     /**
+     * Disc转极简Json
+     *
+     * @param disc
+     * @return JSONObject
+     * @author rakbow
+     */
+    public JSONObject disc2JsonSimple(Disc disc) {
+
+        JSONArray images = JSONArray.parseArray(disc.getImages());
+        //对Disc封面进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+
+        //媒体类型
+        List<String> mediaFormat = new ArrayList<>();
+        JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
+                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
+
+        JSONObject discJson = new JSONObject();
+        discJson.put("id", disc.getId());
+        discJson.put("mediaFormat", mediaFormat);
+        discJson.put("catalogNo", disc.getCatalogNo());
+        discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
+        discJson.put("name", disc.getName());
+        discJson.put("nameZh", disc.getNameZh());
+        discJson.put("cover", cover);
+        discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
+        discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
+        return discJson;
+    }
+
+    /**
+     * 列表转换, Disc转极简Json
+     *
+     * @param discs
+     * @return JSONObject
+     * @author rakbow
+     */
+    public List<JSONObject> disc2JsonSimple(List<Disc> discs) {
+        List<JSONObject> discJsons = new ArrayList<>();
+
+        discs.forEach(disc -> discJsons.add(disc2JsonSimple(disc)));
+
+        return discJsons;
+    }
+
+    /**
      * 检测数据合法性
      *
      * @param discJson
@@ -428,7 +487,7 @@ public class DiscService {
         if (StringUtils.isBlank(discJson.getString("releaseDate"))) {
             return ApiInfo.DISC_RELEASE_DATE_EMPTY;
         }
-        if (StringUtils.isBlank(discJson.getString("seriesId"))) {
+        if (StringUtils.isBlank(discJson.getString("series"))) {
             return ApiInfo.DISC_SERIES_EMPTY;
         }
         if (StringUtils.isBlank(discJson.getString("products"))
@@ -564,6 +623,96 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateDiscBonus(int id, String bonus) {
         discMapper.updateDiscBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
+    }
+
+    //endregion
+
+    //region ------特殊查询------
+
+    /**
+     * 获取相关联Disc
+     *
+     * @param id 碟片id
+     * @return list封装的Disc
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getRelatedDiscs(int id) {
+
+        List<Disc> result = new ArrayList<>();
+
+        Disc disc = getDiscById(id);
+
+        List<JSONObject> relatedDiscs = new ArrayList<>();
+
+        //该Disc包含的作品id
+        List<Integer> productIds = JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class);
+
+        //该系列所有Book
+        List<Disc> allDiscs = discMapper.getDiscsByFilterList(null, null, disc.getSeries(),
+                        null, null, null, null, "releaseDate",
+                        1, 0, 0)
+                .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
+
+        List<Disc> queryResult = allDiscs.stream().filter(tmpDisc ->
+                StringUtils.equals(tmpDisc.getProducts(), disc.getProducts())).collect(Collectors.toList());
+
+        if (queryResult.size() > 5) {//结果大于5
+            result.addAll(queryResult.subList(0, 5));
+        } else if (queryResult.size() == 5) {//结果等于5
+            result.addAll(queryResult);
+        } else if (queryResult.size() > 0) {//结果小于5不为空
+            List<Disc> tmp = new ArrayList<>(queryResult);
+
+            if (productIds.size() > 1) {
+                List<Disc> tmpQueryResult = allDiscs.stream().filter(tmpDisc ->
+                        JSONObject.parseObject(tmpDisc.getProducts()).getList("ids", Integer.class)
+                                .contains(productIds.get(1))).collect(Collectors.toList());
+
+                if (tmpQueryResult.size() >= 5 - queryResult.size()) {
+                    tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
+                } else if (tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5 - queryResult.size()) {
+                    tmp.addAll(tmpQueryResult);
+                }
+            }
+            result.addAll(tmp);
+        } else {
+            List<Disc> tmp = new ArrayList<>(queryResult);
+            for (int productId : productIds) {
+                tmp.addAll(
+                        allDiscs.stream().filter(tmpDisc ->
+                                JSONObject.parseObject(tmpDisc.getProducts()).getList("ids", Integer.class)
+                                        .contains(productId)).collect(Collectors.toList())
+                );
+            }
+            result = CommonUtils.removeDuplicateList(tmp);
+            if (result.size() >= 5) {
+                result = result.subList(0, 5);
+            }
+        }
+        result = CommonUtils.removeDuplicateList(result);
+        result.forEach(i -> relatedDiscs.add(disc2JsonSimple(i)));
+        return relatedDiscs;
+    }
+
+    /**
+     * 根据作品id获取关联disc
+     *
+     * @param productId 作品id
+     * @return List<JSONObject>
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getDiscsByProductId(int productId) {
+
+        List<Integer> products = new ArrayList<>();
+        products.add(productId);
+
+        List<Disc> discs = discMapper.getDiscsByFilterList(null, null, 0, products,
+                null, null, null, "releaseDate",
+                -1,  0, 0);
+
+        return disc2JsonSimple(discs);
     }
 
     //endregion

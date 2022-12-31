@@ -17,19 +17,16 @@ const DISC_INDEX_URL = DOMAIN_URL + "/db/disc";
 const DISC_LIST_URL = DOMAIN_URL + "/db/disc/list";
 
 const BOOK_INDEX_URL = DOMAIN_URL + "/db/book";
+const BOOK_LIST_URL = DOMAIN_URL + "/db/book/list";
 const GOODS_INDEX_URL = DOMAIN_URL + "/db/goods";
 const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
 
 //endregion
 
 //region album
-const GET_LIMIT_ALBUM_URL = DOMAIN_URL + "/db/album/get-album-limit";
-const GET_ALL_ALBUM_URL = DOMAIN_URL + "/db/album/get-all";
 const DELETE_ALBUM_URL = DOMAIN_URL + "/db/album/delete";
 const UPDATE_ALBUM_URL = DOMAIN_URL + "/db/album/update";
 const INSERT_ALBUM_URL = DOMAIN_URL + "/db/album/add";
-const GET_ALBUM_URL = DOMAIN_URL + "/db/album/get-album";
-const GET_ALBUMS_URL = DOMAIN_URL + "/db/album/get-albums";
 const GET_ALBUMS_LIST_URL = DOMAIN_URL + "/db/album/get-albums-list";
 
 const UPDATE_ALBUM_ARTISTS_URL = DOMAIN_URL + "/db/album/update-artists";
@@ -143,13 +140,13 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                     {label: '碟片列表', icon: 'pi pi-fw pi-list', url: DISC_LIST_URL}
                 ]
             },
-            // {
-            //     label: '书籍', icon: 'pi pi-fw pi-book',
-            //     items: [
-            //         {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
-            //         {label: '书籍列表', icon: 'pi pi-fw pi-list'}
-            //     ]
-            // },
+            {
+                label: '书籍', icon: 'pi pi-fw pi-book',
+                items: [
+                    // {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
+                        {label: '书籍列表', icon: 'pi pi-fw pi-list', url: BOOK_LIST_URL}
+                ]
+            },
             // {
             //     label: '周边', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
             //     items: [
@@ -234,21 +231,22 @@ const LOGIN_NAVBAR_ITEMS = [
                     }
                 ]
             },
-            // {
-            //     label: '书籍',
-            //     icon: 'pi pi-fw pi-book',
-            //     items: [
-            //         {
-            //             label: '书籍首页',
-            //             icon: 'pi pi-fw pi-book',
-            //             url: ALBUM_INDEX_URL
-            //         },
-            //         {
-            //             label: '书籍列表',
-            //             icon: 'pi pi-fw pi-list'
-            //         }
-            //     ]
-            // },
+            {
+                label: '书籍',
+                icon: 'pi pi-fw pi-book',
+                items: [
+                    // {
+                    //     label: '书籍首页',
+                    //     icon: 'pi pi-fw pi-book',
+                    //     url: ALBUM_INDEX_URL
+                    // },
+                    {
+                        label: '书籍列表',
+                        icon: 'pi pi-fw pi-list',
+                        url: BOOK_LIST_URL
+                    }
+                ]
+            },
             // {
             //     label: '周边',
             //     icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',

@@ -168,7 +168,9 @@
         <if test="sortField == null">
             order by id desc
         </if>
-        limit #{first}, #{row}
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
     </select>
 
     <select id="getBooksRowsByFilterList" resultType="int">
@@ -210,6 +212,24 @@
             </if>
             and _s = 1
         </where>
+    </select>
+
+    <select id="getBookOrderByAddedTime" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where _s = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="getBookOrderByEditedTime" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where _s = 1
+        order by edited_time desc
+        limit #{limit}
     </select>
 
 </mapper>

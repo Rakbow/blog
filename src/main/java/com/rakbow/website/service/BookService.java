@@ -4,12 +4,14 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
+import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.Area;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.common.Language;
 import com.rakbow.website.data.product.ProductClass;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
@@ -29,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -427,6 +430,72 @@ public class BookService {
     }
 
     /**
+     * Book转极简Json
+     *
+     * @param book
+     * @return JSONObject
+     * @author rakbow
+     */
+    public JSONObject book2JsonSimple(Book book) {
+
+        JSONArray images = JSONArray.parseArray(book.getImages());
+        //对图片封面进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+
+        JSONObject bookType = new JSONObject();
+        bookType.put("id", book.getBookType());
+        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
+
+        JSONObject area = new JSONObject();
+        area.put("code", book.getArea());
+        area.put("nameZh", Area.areaCode2NameZh(book.getArea()));
+
+        JSONObject publishLanguage = new JSONObject();
+        publishLanguage.put("code", book.getPublishLanguage());
+        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
+
+        JSONObject bookJson = new JSONObject();
+        bookJson.put("id", book.getId());
+        bookJson.put("isbn13", book.getIsbn13());
+        bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
+        bookJson.put("title", book.getTitle());
+        bookJson.put("titleZh", book.getTitleZh());
+        bookJson.put("area", area);
+        bookJson.put("publishLanguage", publishLanguage);
+        bookJson.put("bookType", bookType);
+        bookJson.put("cover", cover);
+        bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
+        bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
+        return bookJson;
+    }
+
+    /**
+     * 列表转换, Book转极简Json
+     *
+     * @param books
+     * @return JSONObject
+     * @author rakbow
+     */
+    public List<JSONObject> book2JsonSimple(List<Book> books) {
+        List<JSONObject> bookJsons = new ArrayList<>();
+
+        books.forEach(book -> bookJsons.add(book2JsonSimple(book)));
+
+        return bookJsons;
+    }
+
+    /**
      * 检测数据合法性
      *
      * @param bookJson
@@ -601,6 +670,95 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateBookBonus(int id, String bonus) {
         bookMapper.updateBookBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
+    }
+
+    //endregion
+
+    //region ------特殊查询------
+
+    /**
+     * 根据作品id获取关联图书
+     *
+     * @param productId 作品id
+     * @return List<JSONObject>
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getBooksByProductId(int productId) {
+        List<Integer> products = new ArrayList<>();
+        products.add(productId);
+
+        List<Book> books = bookMapper.getBooksByFilterList(null, null, null, null,
+                null, null, 100, 0, products, null, "publishDate",
+                -1,  0, 0);
+
+        return book2JsonSimple(books);
+    }
+
+    /**
+     * 获取相关联图书
+     *
+     * @param id 图书id
+     * @return list封装的Book
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getRelatedBooks(int id) {
+
+        List<Book> result = new ArrayList<>();
+
+        Book book = getBookById(id);
+
+        List<JSONObject> relatedBooks = new ArrayList<>();
+
+        //该Book包含的作品id
+        List<Integer> productIds = JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class);
+
+        //该系列所有Book
+        List<Book> allBooks = bookMapper.getBooksByFilterList(null, null, null, null,
+                null, null, 100, book.getSeries(), null, null,
+                "publishDate", 1, 0, 0)
+                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
+
+        List<Book> queryResult = allBooks.stream().filter(tmpBook ->
+                StringUtils.equals(tmpBook.getProducts(), book.getProducts())).collect(Collectors.toList());
+
+        if (queryResult.size() > 5) {//结果大于5
+            result.addAll(queryResult.subList(0, 5));
+        } else if (queryResult.size() == 5) {//结果等于5
+            result.addAll(queryResult);
+        } else if (queryResult.size() > 0) {//结果小于5不为空
+            List<Book> tmp = new ArrayList<>(queryResult);
+
+            if (productIds.size() > 1) {
+                List<Book> tmpQueryResult = allBooks.stream().filter(tmpBook ->
+                        JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
+                                .contains(productIds.get(1))).collect(Collectors.toList());
+
+                if (tmpQueryResult.size() >= 5 - queryResult.size()) {
+                    tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
+                } else if (tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5 - queryResult.size()) {
+                    tmp.addAll(tmpQueryResult);
+                }
+            }
+            result.addAll(tmp);
+        } else {
+            List<Book> tmp = new ArrayList<>(queryResult);
+            for (int productId : productIds) {
+                tmp.addAll(
+                        allBooks.stream().filter(tmpBook ->
+                                JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
+                                        .contains(productId)).collect(Collectors.toList())
+                );
+            }
+            result = CommonUtils.removeDuplicateList(tmp);
+            if (result.size() >= 5) {
+                result = result.subList(0, 5);
+            }
+        }
+        result = CommonUtils.removeDuplicateList(result);
+        result.forEach(i -> relatedBooks.add(book2JsonSimple(i)));
+        return relatedBooks;
     }
 
     //endregion
