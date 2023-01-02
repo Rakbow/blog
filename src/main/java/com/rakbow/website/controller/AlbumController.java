@@ -90,18 +90,6 @@ public class AlbumController {
         return view;
     }
 
-    @RequestMapping(path = "/index", method = RequestMethod.GET)
-    public String getAlbumIndexPage(Model model) {
-        model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
-        model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
-        model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-        model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
-        model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
-        return "/album/album-index";
-    }
-
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int albumId, Model model) throws IOException {
@@ -153,8 +141,6 @@ public class AlbumController {
         if (StringUtils.equals(pageLabel, "index")) {
             albums = albumService.album2JsonIndex((List<Album>) map.get("data"));
         }
-
-
 
         JSONObject result = new JSONObject();
         result.put("data", albums);

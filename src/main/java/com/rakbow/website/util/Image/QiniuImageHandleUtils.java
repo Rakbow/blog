@@ -21,6 +21,11 @@ public class QiniuImageHandleUtils {
         return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size;
     }
 
+    public static String getThumbBlackBackgroundUrl(String imageUrl, int size) {
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size
+                + "/extent/" + size + "x" + size + "/background/YmxhY2s=";
+    }
+
     /**
      * 通过外链获取图片key
      *

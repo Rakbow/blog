@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -70,19 +71,6 @@ public class DiscController {
         return view;
     }
 
-    // @RequestMapping(path = "/index", method = RequestMethod.GET)
-    // public String getAlbumIndexPage(Model model) {
-    //     model.addAttribute("albums", albumService.album2JsonDisplay(albumService.getAll()));
-    //     model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
-    //     model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
-    //     model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-    //     model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-    //     model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-    //     model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
-    //     model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
-    //     return "/album/album-index";
-    // }
-
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int discId, Model model) throws IOException {
@@ -116,11 +104,21 @@ public class DiscController {
     @RequestMapping(value = "/get-discs-list", method = RequestMethod.POST)
     @ResponseBody
     public String getDiscsByFilterList(@RequestBody String json) {
-        JSONObject queryParams = JSON.parseObject(json);
+
+        JSONObject param = JSON.parseObject(json);
+        JSONObject queryParams = param.getJSONObject("queryParams");
+        String pageLabel = param.getString("pageLabel");
+
+        List<JSONObject> discs = new ArrayList<>();
 
         Map<String, Object> map = discService.getDiscsByFilterList(queryParams);
 
-        List<JSONObject> discs = discService.disc2JsonList((List<Disc>) map.get("data"));
+        if (StringUtils.equals(pageLabel, "list")) {
+            discs = discService.disc2JsonList((List<Disc>) map.get("data"));
+        }
+        if (StringUtils.equals(pageLabel, "index")) {
+            discs = discService.disc2JsonIndex((List<Disc>) map.get("data"));
+        }
 
         JSONObject result = new JSONObject();
         result.put("data", discs);

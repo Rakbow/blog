@@ -4,7 +4,9 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
+import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.album.AlbumFormat;
+import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.Area;
 import com.rakbow.website.data.common.EntityType;
@@ -13,10 +15,9 @@ import com.rakbow.website.data.common.Language;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
+import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
-import com.rakbow.website.util.Image.QiniuImageUtils;
-import com.rakbow.website.util.common.ActionResult;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
@@ -52,6 +53,8 @@ public class BookService {
     private ProductService productService;
     @Autowired
     private SeriesService seriesService;
+    @Autowired
+    private VisitService visitService;
 
     //endregion
 
@@ -118,62 +121,6 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public void updateBook(int id, Book book) {
         bookMapper.updateBook(id, book);
-    }
-
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Map<String, Object> getBooksByFilterList(JSONObject queryParams) {
-
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-
-        String title = filter.getJSONObject("title").getString("value");
-        String isbn10 = filter.getJSONObject("isbn10").getString("value");
-        String isbn13 = filter.getJSONObject("isbn13").getString("value");
-        String area = filter.getJSONObject("area").getString("value");
-        String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
-        String publisher = filter.getJSONObject("publisher").getString("value");
-
-        int bookType = 100;
-        if (filter.getJSONObject("bookType").getInteger("value") != null) {
-            bookType = filter.getJSONObject("bookType").getIntValue("value");
-        }
-
-        int series = 0;
-        if (filter.getJSONObject("series").getInteger("value") != null) {
-            series = filter.getJSONObject("series").getIntValue("value");
-        }
-
-        List<Integer> products = new ArrayList<>();
-        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
-        if (tmpProducts != null) {
-            products.addAll(tmpProducts);
-        }
-
-        String hasBonus;
-        if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
-            hasBonus = null;
-        } else {
-            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
-                    ? Integer.toString(1) : Integer.toString(0);
-        }
-
-        int first = queryParams.getIntValue("first");
-
-        int row = queryParams.getIntValue("rows");
-
-        List<Book> books = bookMapper.getBooksByFilterList(title, isbn10, isbn13, publisher, area, publishLanguage,
-                bookType, series, products, hasBonus, sortField, sortOrder, first, row);
-
-        int total = bookMapper.getBooksRowsByFilterList(title, isbn10, isbn13, publisher, area, publishLanguage,
-                bookType, series, products, hasBonus);
-
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", books);
-        res.put("total", total);
-
-        return res;
     }
 
     //endregion
@@ -496,6 +443,98 @@ public class BookService {
     }
 
     /**
+     * Book转Json对象，供首页展示
+     *
+     * @param book
+     * @return JSONObject
+     * @author rakbow
+     */
+    public JSONObject book2JsonIndex(Book book) {
+
+        JSONObject bookJson = (JSONObject) JSON.toJSON(book);
+
+        JSONArray images = JSONArray.parseArray(book.getImages());
+
+        bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
+
+        List<JSONObject> products = new ArrayList<>();
+        JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class)
+                .forEach(id -> {
+                    JSONObject jo = new JSONObject();
+                    jo.put("id", id);
+                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
+                    products.add(jo);
+                });
+
+        JSONObject series = new JSONObject();
+        series.put("id", book.getSeries());
+        series.put("name", seriesService.selectSeriesById(book.getSeries()).getNameZh());
+
+        JSONObject bookType = new JSONObject();
+        bookType.put("id", book.getBookType());
+        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
+
+        JSONObject area = new JSONObject();
+        area.put("code", book.getArea());
+        area.put("nameZh", Area.areaCode2NameZh(book.getArea()));
+
+        JSONObject publishLanguage = new JSONObject();
+        publishLanguage.put("code", book.getPublishLanguage());
+        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
+
+        //对图片封面进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
+        cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
+                    cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 70));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+
+        bookJson.put("cover", cover);
+        bookJson.put("products", products);
+        bookJson.put("series", series);
+        bookJson.put("bookType", bookType);
+        bookJson.put("area", area);
+        bookJson.put("publishLanguage", publishLanguage);
+        bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
+        bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
+        bookJson.remove("summary");
+        bookJson.remove("authors");
+        bookJson.remove("spec");
+        bookJson.remove("bonus");
+        bookJson.remove("description");
+        bookJson.remove("images");
+        return bookJson;
+    }
+
+    /**
+     * 列表转换, Book转Json对象，供首页展示
+     *
+     * @param books
+     * @return List<JSONObject>
+     * @author rakbow
+     */
+    public List<JSONObject> book2JsonIndex(List<Book> books) {
+        List<JSONObject> bookJsons = new ArrayList<>();
+
+        books.forEach(book -> {
+            bookJsons.add(book2JsonIndex(book));
+        });
+        return bookJsons;
+    }
+
+    /**
      * 检测数据合法性
      *
      * @param bookJson
@@ -676,6 +715,64 @@ public class BookService {
 
     //region ------特殊查询------
 
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public Map<String, Object> getBooksByFilterList(JSONObject queryParams) {
+
+        JSONObject filter = queryParams.getJSONObject("filters");
+
+        String tmp111 = filter.toJSONString();
+
+        String sortField = queryParams.getString("sortField");
+        int sortOrder = queryParams.getIntValue("sortOrder");
+
+        String title = filter.getJSONObject("title").getString("value");
+        String isbn10 = filter.getJSONObject("isbn10").getString("value");
+        String isbn13 = filter.getJSONObject("isbn13").getString("value");
+        String area = filter.getJSONObject("area").getString("value");
+        String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
+        String publisher = filter.getJSONObject("publisher").getString("value");
+
+        int bookType = 100;
+        if (filter.getJSONObject("bookType").getInteger("value") != null) {
+            bookType = filter.getJSONObject("bookType").getIntValue("value");
+        }
+
+        int series = 0;
+        if (filter.getJSONObject("series").getInteger("value") != null) {
+            series = filter.getJSONObject("series").getIntValue("value");
+        }
+
+        List<Integer> products = new ArrayList<>();
+        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
+        if (tmpProducts != null) {
+            products.addAll(tmpProducts);
+        }
+
+        String hasBonus;
+        if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
+            hasBonus = null;
+        } else {
+            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
+                    ? Integer.toString(1) : Integer.toString(0);
+        }
+
+        int first = queryParams.getIntValue("first");
+
+        int row = queryParams.getIntValue("rows");
+
+        List<Book> books = bookMapper.getBooksByFilterList(title, isbn10, isbn13, publisher, area, publishLanguage,
+                bookType, series, products, hasBonus, sortField, sortOrder, first, row);
+
+        int total = bookMapper.getBooksRowsByFilterList(title, isbn10, isbn13, publisher, area, publishLanguage,
+                bookType, series, products, hasBonus);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("data", books);
+        res.put("total", total);
+
+        return res;
+    }
+
     /**
      * 根据作品id获取关联图书
      *
@@ -696,7 +793,7 @@ public class BookService {
     }
 
     /**
-     * 获取相关联图书
+     * 获取相关联Book
      *
      * @param id 图书id
      * @return list封装的Book
@@ -721,7 +818,8 @@ public class BookService {
                 .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
 
         List<Book> queryResult = allBooks.stream().filter(tmpBook ->
-                StringUtils.equals(tmpBook.getProducts(), book.getProducts())).collect(Collectors.toList());
+                StringUtils.equals(tmpBook.getProducts(), book.getProducts())
+                &&StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).collect(Collectors.toList());
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -759,6 +857,61 @@ public class BookService {
         result = CommonUtils.removeDuplicateList(result);
         result.forEach(i -> relatedBooks.add(book2JsonSimple(i)));
         return relatedBooks;
+    }
+
+    /**
+     * 获取最新收录的图书
+     *
+     * @param limit 获取条数
+     * @return list封装的图书
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getJustAddedBooks(int limit) {
+        List<JSONObject> justAddedBooks = new ArrayList<>();
+
+        bookMapper.getBooksOrderByAddedTime(limit)
+                .forEach(i -> justAddedBooks.add(book2JsonIndex(i)));
+
+        return justAddedBooks;
+    }
+
+    /**
+     * 获取最近编辑的Book
+     *
+     * @param limit 获取条数
+     * @return list封装的Book
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getJustEditedBooks(int limit) {
+        List<JSONObject> editedBooks = new ArrayList<>();
+
+        bookMapper.getBooksOrderByEditedTime(limit)
+                .forEach(i -> editedBooks.add(book2JsonIndex(i)));
+
+        return editedBooks;
+    }
+
+    /**
+     * 获取浏览量最高的Book
+     *
+     * @param limit 获取条数
+     * @return list封装的Book
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public List<JSONObject> getPopularBooks(int limit) {
+        List<JSONObject> popularBooks = new ArrayList<>();
+
+        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.BOOK.getId(), limit);
+
+        visits.forEach(visit -> {
+            JSONObject book = book2JsonIndex(getBookById(visit.getEntityId()));
+            book.put("visitNum", visit.getVisitNum());
+            popularBooks.add(book);
+        });
+        return popularBooks;
     }
 
     //endregion

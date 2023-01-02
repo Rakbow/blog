@@ -1,9 +1,8 @@
 package com.rakbow.website.controller;
 
-import com.rakbow.website.service.AlbumService;
-import com.rakbow.website.service.ProductService;
-import com.rakbow.website.service.SeriesService;
-import com.rakbow.website.service.TagService;
+import com.rakbow.website.service.*;
+import com.rakbow.website.util.AlbumUtils;
+import com.rakbow.website.util.BookUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
 import org.slf4j.Logger;
@@ -40,6 +39,10 @@ public class HomeController {
     @Autowired
     private AlbumService albumService;
     @Autowired
+    private DiscService discService;
+    @Autowired
+    private BookService bookService;
+    @Autowired
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
@@ -47,6 +50,8 @@ public class HomeController {
     private String filePath;
     @Value("${website.path.audio}")
     private String audioPath;
+
+    //region ------获取页面------
 
     //获取首页
     @RequestMapping(path = "", method = RequestMethod.GET)
@@ -61,6 +66,43 @@ public class HomeController {
         view.setViewName("/database");
         return view;
     }
+
+    //获取专辑首页
+    @RequestMapping(path = "/db/albums", method = RequestMethod.GET)
+    public String getAlbumIndexPage(Model model) {
+        model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
+        model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
+        model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
+        model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
+        model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
+        return "/album/album-index";
+    }
+
+    //获取图书首页
+    @RequestMapping(path = "/db/books", method = RequestMethod.GET)
+    public String getBookIndexPage(Model model) {
+        model.addAttribute("justAddedBooks", bookService.getJustAddedBooks(5));
+        model.addAttribute("justEditedBooks", bookService.getJustEditedBooks(5));
+        model.addAttribute("popularBooks", bookService.getPopularBooks(10));
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("bookTypeSet", BookUtils.getBookTypeSet());
+        return "/book/book-index";
+    }
+
+    //获取碟片首页
+    @RequestMapping(path = "/db/discs", method = RequestMethod.GET)
+    public String getDiscIndexPage(Model model) {
+        model.addAttribute("justAddedDiscs", discService.getJustAddedDiscs(5));
+        model.addAttribute("justEditedDiscs", discService.getJustEditedDiscs(5));
+        model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
+        return "/disc/disc-index";
+    }
+
+    //endregion
 
     //获取图像
     @RequestMapping(path = "/img/{fileName}", method = RequestMethod.GET)

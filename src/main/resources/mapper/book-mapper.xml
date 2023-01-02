@@ -214,7 +214,7 @@
         </where>
     </select>
 
-    <select id="getBookOrderByAddedTime" resultType="Book">
+    <select id="getBooksOrderByAddedTime" resultType="Book">
         select
         <include refid="selectFields"></include>
         from book
@@ -223,7 +223,7 @@
         limit #{limit}
     </select>
 
-    <select id="getBookOrderByEditedTime" resultType="Book">
+    <select id="getBooksOrderByEditedTime" resultType="Book">
         select
         <include refid="selectFields"></include>
         from book

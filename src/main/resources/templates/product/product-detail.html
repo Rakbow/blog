@@ -8,7 +8,7 @@
 
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- bootstrap -->
@@ -284,7 +284,7 @@
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/product/'+ relatedProduct.id ">
                                                 <img class="sidebar-panel-image-small" :src="relatedProduct.cover.url"
-                                                     style="border-radius: 20%;"
+
                                                      v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">
                                             </a>
                                         </div>

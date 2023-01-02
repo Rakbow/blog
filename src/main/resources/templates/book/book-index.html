@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Albums</title>
+    <title>Books</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -63,7 +63,7 @@
             <div class="grid mt-2">
                 <p-toast></p-toast>
                 <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
-                    <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="albumsRows"
+                    <p-dataview :value="books" :layout="layout" :paginator="true" :rows="booksRows"
                                 :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                                 :lazy="true" @page="onPage($event)" :total-records="totalRecords">
                         <template #empty>
@@ -75,14 +75,11 @@
                             <div class="grid grid-nogutter">
                                 <div class="col-4" style="text-align: left">
                                     <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
-                                                placeholder="按发行时间排序"
+                                                placeholder="按出版时间排序"
                                                 @change="onSortChange($event)"></p-dropdown>
                                 </div>
                                 <div class="col-4" style="text-align: center">
-                                    <i class="pi iconfont icon-24gl-musicAlbum2 mr-0" style="font-size: 2rem"></i>
-                                    <!--                                    <div class="container mt-0 mb-0 ml-0">-->
-                                    <!--                                        <h3>专辑</h3>-->
-                                    <!--                                    </div>-->
+                                    <i class="pi iconfont icon-book mr-0" style="font-size: 2rem"></i>
                                 </div>
                                 <div class="col-4" style="text-align: right">
                                     <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
@@ -94,36 +91,40 @@
                                 <div class="product-grid-item card">
                                     <p-card>
                                         <template #header>
-                                            <a :href="'/db/album/'+ slotProps.data.id">
+                                            <a :href="'/db/book/'+ slotProps.data.id">
                                                 <div class="block-img"
                                                      :style="'background-image:url('+ slotProps.data.cover.url+');' ">
-                                                    <p-tag class="catalog ml-1 mt-1">
-                                                        {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
-                                                    </p-tag>
+                                                    <!--                          <p-tag class="catalog ml-1 mt-1">-->
+                                                    <!--                            {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}-->
+                                                    <!--                          </p-tag>-->
                                                     <div class="absolute releaseDate">
-                                                        <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                                        <span class="text-center" style="color: white">{{slotProps.data.publishDate}}</span>
                                                     </div>
                                                 </div>
                                             </a>
                                         </template>
                                         <template #title>
                                             <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
-                                                {{slotProps.data.name}}
+                                                {{slotProps.data.title}}
                                             </span>
                                         </template>
                                         <template #content>
                                             <div class="grid mt-0 mb-0">
+                                                <div class="col-12 px-0 py-0">
+                                                    <span class="ml-2 text-end" style="color: white">
+                                                        {{slotProps.data.isbn10}}</span>
+                                                </div>
+                                                <div class="col-12 px-0 py-0">
+                                                    <span class="ml-2 text-end" style="color: white">
+                                                        {{slotProps.data.isbn13}}</span>
+                                                </div>
                                                 <div class="col-10 px-0 py-0">
                                                     <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.albumFormat.join("/")}}</span>
+                                                        {{slotProps.data.bookType.nameZh}}</span>
                                                 </div>
                                                 <div class="col-2 px-0 py-0" v-if="slotProps.data.hasBonus">
                                                     <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                        v-tooltip="'包含特典'"></i>
-                                                </div>
-                                                <div class="col-12 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.publishFormat.join("/")}}</span>
                                                 </div>
                                             </div>
                                         </template>
@@ -144,17 +145,17 @@
                         <template #list="slotProps">
                             <div class="col-12">
                                 <div class="product-list-item">
-                                    <a :href="'/db/album/'+ slotProps.data.id">
+                                    <a :href="'/db/book/'+ slotProps.data.id">
                                         <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
                                     </a>
                                     <div class="product-list-detail">
-                                        <a :href="'/db/album/'+ slotProps.data.id">
-                                            <div class="product-name">{{slotProps.data.name}}</div>
+                                        <a :href="'/db/book/'+ slotProps.data.id">
+                                            <div class="product-name">{{slotProps.data.title}}</div>
                                         </a>
                                         <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                            <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
+                                            <b>{{slotProps.data.isbn13}}</b> {{slotProps.data.publishDate}}
                                         </span>
-                                        <span class="ml-2 text-end">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                        <span class="ml-2 text-end">{{slotProps.data.bookType.nameZh}}</span>
                                         <br/>
                                         <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.series.name}}</span>
                                         <span class="col-2" v-if="slotProps.data.hasBonus == 1">
@@ -184,12 +185,23 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">名称</label>
-                                <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
+                                <label htmlFor="name">书名</label>
+                                <p-inputtext v-model.trim="queryParams.filters.title.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="catalogNo">编号</label>
-                                <p-inputtext v-model.trim="queryParams.filters.catalogNo.value"></p-inputtext>
+                                <label htmlFor="bookType">图书类型</label>
+                                <p-dropdown v-model="queryParams.filters.bookType.value" :options="bookTypeSet"
+                                            placeholder="所有" option-label="label"
+                                            option-value="value">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-12 md:col-6 sm:col-6">
+                                <label htmlFor="name">ISBN-10</label>
+                                <p-inputtext v-model.trim="queryParams.filters.isbn10.value"></p-inputtext>
+                            </div>
+                            <div class="col-12 md:col-6 sm:col-6">
+                                <label htmlFor="catalogNo">ISBN-13</label>
+                                <p-inputtext v-model.trim="queryParams.filters.isbn13.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label htmlFor="series">所属系列</label>
@@ -216,31 +228,22 @@
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="publishFormat">出版形式</label>
-                                <p-multiselect v-model="queryParams.filters.publishFormat.value"
-                                               :options="publishFormatSet"
-                                               option-label="label" option-value="value"
-                                               placeholder="所有"
-                                               display="chip" :filter="true">
-                                </p-multiselect>
+                                <label htmlFor="publisher">出版社</label>
+                                <p-inputtext v-model.trim="queryParams.filters.publisher.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="albumFormat">专辑分类</label>
-                                <p-multiselect v-model="queryParams.filters.albumFormat.value"
-                                               :options="albumFormatSet"
-                                               option-label="label" option-value="value"
-                                               placeholder="所有"
-                                               display="chip" :filter="true">
-                                </p-multiselect>
+                                <label htmlFor="area">区域</label>
+                                <p-dropdown v-model="queryParams.filters.area.value" :options="areaSet"
+                                            placeholder="所有" option-label="nameZh"
+                                            option-value="code">
+                                </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="mediaFormatSet">媒体格式</label>
-                                <p-multiselect v-model="queryParams.filters.mediaFormat.value"
-                                               :options="mediaFormatSet"
-                                               option-label="label" option-value="value"
-                                               placeholder="所有"
-                                               display="chip" :filter="true">
-                                </p-multiselect>
+                                <label htmlFor="publishLanguage">语言</label>
+                                <p-dropdown v-model="queryParams.filters.publishLanguage.value" :options="languageSet"
+                                            placeholder="所有" option-label="nameZh"
+                                            option-value="code">
+                                </p-dropdown>
                             </div>
                             <div class="col-12 md:col-4 md:col-offset-2 sm:col-3 sm:col-offset-3"
                                  style="text-align: right">
@@ -253,40 +256,40 @@
                                 <p-button icon="pi pi-search"
                                           class="p-button-rounded p-button-success"
                                           v-tooltip.bottom="'搜索'"
-                                          @click="getAlbums"></p-button>
+                                          @click="getBooks"></p-button>
                             </div>
                         </div>
                     </p-panel>
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
                             <b>最新收录</b>
                         </template>
                         <div class="grid">
                             <span class="small-font">
                                 <div class="info_bit_small small-font ml-0 grid"
-                                     v-if="justAddedAlbums.length != 0"
-                                     v-for="addAlbum of justAddedAlbums">
+                                     v-if="justAddedBooks.length != 0"
+                                     v-for="addBook of justAddedBooks">
                                     <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                        <a :href="'/db/album/'+ addAlbum.id ">
-                                            <img class="sidebar-panel-image-small" :src="addAlbum.cover.thumbUrl"
-                                                 v-tooltip.bottom="{value: '收录时间: ' + addAlbum.addedTime + '编辑时间: ' + addAlbum.editedTime, class: 'item-upload-time-tooltip'}">
+                                        <a :href="'/db/book/'+ addBook.id ">
+                                            <img class="sidebar-panel-image-small-no-radius" :src="addBook.cover.thumbUrl"
+                                                 v-tooltip.bottom="{value: '收录时间: ' + addBook.addedTime + '编辑时间: ' + addBook.editedTime, class: 'item-upload-time-tooltip'}">
                                         </a>
                                     </div>
                                     <div class="col-9">
                                         <ul class="info_bit_detail">
                                         <li>
                                             <a class="small-font"
-                                               :href="'/db/album/'+ addAlbum.id ">
+                                               :href="'/db/book/'+ addBook.id ">
                                                 <span class="text-truncate-2" lang="ja">
-                                                    {{addAlbum.name}}
+                                                    {{addBook.title}}
                                                 </span>
                                             </a>
                                         </li>
                                         <li>
                                             <span class="small-font">
-                                                <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
+                                                <b>{{addBook.isbn13}}</b> {{addBook.publishDate}}
                                             </span>
                                         </li>
 
@@ -301,33 +304,33 @@
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
                             <b>最新编辑</b>
                         </template>
                         <div class="grid">
                             <span class="small-font">
                                     <div class="info_bit_small small-font ml-0 grid"
-                                         v-if="justEditedAlbums.length != 0"
-                                         v-for="editAlbum of justEditedAlbums">
+                                         v-if="justEditedBooks.length != 0"
+                                         v-for="editBook of justEditedBooks">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/album/'+ editAlbum.id ">
-                                                <img class="sidebar-panel-image-small" :src="editAlbum.cover.thumbUrl"
-                                                     v-tooltip.bottom="{value: '收录时间: ' + editAlbum.addedTime + '编辑时间: ' + editAlbum.editedTime, class: 'item-upload-time-tooltip'}">
+                                            <a :href="'/db/book/'+ editBook.id ">
+                                                <img class="sidebar-panel-image-small-no-radius" :src="editBook.cover.thumbUrl"
+                                                     v-tooltip.bottom="{value: '收录时间: ' + editBook.addedTime + '编辑时间: ' + editBook.editedTime, class: 'item-upload-time-tooltip'}">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="info_bit_detail">
                                             <li>
-                                                <a class="small-font album-anime"
-                                                   :href="'/db/album/'+ editAlbum.id ">
+                                                <a class="small-font"
+                                                   :href="'/db/book/'+ editBook.id ">
                                                     <span class="text-truncate-2" lang="ja">
-                                                        {{editAlbum.name}}
+                                                        {{editBook.title}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="small-font album-anime">
-                                                    <b>{{editAlbum.catalogNo}}</b> {{editAlbum.releaseDate}}
+                                                <span class="small-font">
+                                                    <b>{{editBook.isbn13}}</b> {{editBook.publishDate}}
                                                 </span>
                                             </li>
 
@@ -342,46 +345,45 @@
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
                             <b>浏览排名</b>
                         </template>
                         <div class="grid">
                             <span class="small-font">
                                 <div class="info_bit_small small-font ml-0 grid"
-                                     v-if="popularAlbums.length != 0"
-                                     v-for="(album, index) of popularAlbums">
+                                     v-if="popularBooks.length != 0"
+                                     v-for="(book, index) of popularBooks">
                                         <div class="col-2 ml-0 mr-0 mt-0 mb-0">
                                             <div class="grid">
                                                 <div class="col-12 text-center">
-<!--                                                    <p-badge :value="index+1" class="mr-2"></p-badge>-->
                                                     <i :class="'pi remixicon ri-number-' + index"
                                                        style="font-size: 2rem"></i>
                                                 </div>
                                                 <div class="col-12">
                                                     <i class="pi pi-eye" style="font-size: 0.5rem"></i>
-                                                    {{album.visitNum}}
+                                                    {{book.visitNum}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/album/'+ album.id ">
-                                                <img class="sidebar-panel-image-small" :src="album.cover.thumbUrl"
+                                            <a :href="'/db/book/'+ book.id ">
+                                                <img class="sidebar-panel-image-small-no-radius" :src="book.cover.thumbUrl"
                                                 >
                                             </a>
                                         </div>
                                         <div class="col-7">
                                             <ul class="info_bit_detail">
                                             <li>
-                                                <a class="small-font album-anime"
-                                                   :href="'/db/album/'+ album.id ">
+                                                <a class="small-font"
+                                                   :href="'/db/book/'+ book.id ">
                                                     <span class="text-truncate-2" lang="ja">
-                                                        {{album.name}}
+                                                        {{book.title}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <span class="small-font">
-                                                    <b>{{album.catalogNo}}</b> {{album.releaseDate}}
+                                                    <b>{{book.isbn13}}</b> {{book.publishDate}}
                                                 </span>
                                             </li>
 
@@ -425,32 +427,32 @@
             //endregion
 
             //region ------基础------
-            const albums = ref();
+            const books = ref();
             const seriesSet = ref([[${seriesSet}]]);
-            const justEditedAlbums = ref([[${justEditedAlbums}]]);
-            const justAddedAlbums = ref([[${justAddedAlbums}]]);
-            const popularAlbums = ref([[${popularAlbums}]]);
-            const albumsRows = ref(20);
+            const bookTypeSet = ref([[${bookTypeSet}]]);
+            const justEditedBooks = ref([[${justEditedBooks}]]);
+            const justAddedBooks = ref([[${justAddedBooks}]]);
+            const popularBooks = ref([[${popularBooks}]]);
+            const booksRows = ref(20);
             const layout = ref('grid');
             const sortKey = ref();
             const sortOptions = ref([
-                {label: '按发售时间正序', value: 'releaseDate'},
-                {label: '按发售时间逆序', value: '!releaseDate'},
+                {label: '按出版时间正序', value: 'publishDate'},
+                {label: '按出版时间逆序', value: '!publishDate'},
             ]);
 
             watch(() => layout.value, (newValue, oldValue) => {
                 if (newValue === "grid") {
-                    albumsRows.value = 20;
+                    booksRows.value = 20;
                 } else {
-                    albumsRows.value = 20;
+                    booksRows.value = 20;
                 }
             }, {deep: true});
             //endregion
 
             //region ------ 搜索 ------
             const totalRecords = ref();
-            const publishFormatSet = ref([[${publishFormatSet}]]);
-            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const bookFormatSet = ref([[${bookFormatSet}]]);
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const productSelect = ref(true);
             const hasBonusSet = ref([
@@ -464,14 +466,16 @@
                 sortField: null,
                 sortOrder: 0,
                 filters: {
-                    name: {value: null},
-                    catalogNo: {value: null},
-                    hasBonus: {value: null},
-                    publishFormat: {value: null},
-                    albumFormat: {value: null},
-                    mediaFormat: {value: null},
+                    title: {value: null},
+                    bookType: {value: null},
+                    isbn10: {value: null},
+                    isbn13: {value: null},
                     series: {value: null},
                     products: {value: null},
+                    publisher: {value: null},
+                    hasBonus: {value: null},
+                    area: {value: null},
+                    publishLanguage: {value: null},
                 }
             });
             const clearSearch = () => {
@@ -481,17 +485,19 @@
                     sortField: null,
                     sortOrder: 0,
                     filters: {
-                        name: {value: null},
-                        catalogNo: {value: null},
-                        hasBonus: {value: null},
-                        publishFormat: {value: null},
-                        albumFormat: {value: null},
-                        mediaFormat: {value: null},
+                        title: {value: null},
+                        bookType: {value: null},
+                        isbn10: {value: null},
+                        isbn13: {value: null},
                         series: {value: null},
                         products: {value: null},
+                        publisher: {value: null},
+                        hasBonus: {value: null},
+                        area: {value: null},
+                        publishLanguage: {value: null},
                     }
                 };
-                getAlbums();
+                getBooks();
             }
             const productSet = ref();
             const getProducts = (ev) => {
@@ -506,17 +512,17 @@
             const onPage = (event) => {
                 queryParams.value.first = event.first;
                 queryParams.value.rows = event.rows;
-                getAlbums();
+                getBooks();
             }
-            const getAlbums = () => {
-                queryParams.value.rows = albumsRows.value;
+            const getBooks = () => {
+                queryParams.value.rows = booksRows.value;
                 let json = {
                     pageLabel: "index",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_ALBUMS_LIST_URL, json)
+                axiosPostRequest(GET_BOOKS_LIST_URL, json)
                     .then(res => {
-                        albums.value = res.data;
+                        books.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
@@ -528,31 +534,31 @@
                     queryParams.value.sortOrder = -1;
                     queryParams.value.sortField = value.substring(1, value.length);
                     queryParams.value.first = 0;
-                    queryParams.value.rows = albumsRows.value;
+                    queryParams.value.rows = booksRows.value;
                     sortKey.value = sortValue;
-                    getAlbums();
+                    getBooks();
                 } else {
                     queryParams.value.sortOrder = 1;
                     queryParams.value.sortField = value;
                     queryParams.value.first = 0;
-                    queryParams.value.rows = albumsRows.value;
+                    queryParams.value.rows = booksRows.value;
                     sortKey.value = sortValue;
-                    getAlbums();
+                    getBooks();
                 }
             };
             //endregion
 
             const init = () => {
-                getAlbums();
+                getBooks();
             };
 
             return {
-                clearSearch, hasBonusSet, albumsRows,
-                publishFormatSet, albumFormatSet, mediaFormatSet,
+                areaSet, languageSet, bookTypeSet,
+                clearSearch, hasBonusSet, booksRows, bookFormatSet, mediaFormatSet,
                 getProducts, seriesSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
-                justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
-                sortKey, sortOptions, getAlbums, totalRecords, onPage
+                justAddedBooks, justEditedBooks, popularBooks, books, layout,
+                sortKey, sortOptions, getBooks, totalRecords, onPage
             }
         },
         components: {

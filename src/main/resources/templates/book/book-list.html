@@ -8,7 +8,7 @@
 
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" th:href="@{/css/album-list.css}" />
 
@@ -112,7 +112,7 @@
                     加载中，别急~
                 </template>
                 <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>
-                <p-column header="序号" field="id" exportHeader="Book Id" :sortable="true" style="flex: 0 0 4rem">
+                <p-column header="序号" field="id" exportHeader="Book Id" :sortable="true" style="flex: 0 0 5rem">
                     <template #body="slotProps">
                         <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                             {{slotProps.data.id}}
@@ -561,7 +561,11 @@
                 getBooks();
             };
             const getBooks = () => {
-                axiosPostRequest(GET_BOOKS_LIST_URL, queryParams.value)
+                let json = {
+                    pageLabel: "list",
+                    queryParams: queryParams.value
+                }
+                axiosPostRequest(GET_BOOKS_LIST_URL, json)
                     .then(res => {
                         books.value = res.data;
                         totalRecords.value = res.total;

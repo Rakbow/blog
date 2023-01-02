@@ -1,5 +1,6 @@
 package com.rakbow.website.dao;
 
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -56,5 +57,11 @@ public interface BookMapper {
     int updateBookBonus(int id, String bonus, Timestamp editedTime);
 
     int updateStatusById(int id);
+
+    //获取最新添加Book, limit
+    List<Book> getBooksOrderByAddedTime(int limit);
+
+    //获取最新编辑Book, limit
+    List<Book> getBooksOrderByEditedTime(int limit);
 
 }

@@ -15,7 +15,7 @@
     <!--other css -->
     <!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
@@ -101,7 +101,7 @@
                     <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-Video-Disc mr-0" style="font-size: 2rem"></i>
+                                <i class="pi iconfont icon-book mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
                                     <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{book.title}}</h5>
                                     <h5 v-if="book.titleEn != ''" class="text-start ml-2 mt-0 mb-0"
@@ -132,7 +132,7 @@
                                         <tbody>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-dingdanbianhao mr-1"
+                                                <i class="pi iconfont icon-bar-code mr-1"
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>ISBN-10</strong>
                                             </td>
@@ -150,7 +150,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi pi-calendar mr-1" style="font-size: 1.3rem"></i>
+                                                <i class="pi pi-th-large mr-1" style="font-size: 1.3rem"></i>
                                                 <strong>分类</strong>
                                             </td>
                                             <td>
@@ -159,7 +159,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                <i class="pi pi-language mr-1"
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>语言</strong>
                                             </td>
@@ -169,7 +169,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                <i class="pi pi-calendar mr-1"
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>出版日期</strong>
                                             </td>
@@ -179,7 +179,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-wuliaojiage mr-1"
+                                                <i class="pi iconfont icon-gongsi mr-1"
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>出版社</strong>
                                             </td>
@@ -211,55 +211,6 @@
                                 </div>
                             </div>
                         </p-panel>
-
-                        <!-- 作者/规格 -->
-<!--                        <p-card class="mt-4">-->
-<!--                            <template #title>-->
-<!--                                <b>作者/规格</b>-->
-<!--                            </template>-->
-<!--                            <template #content>-->
-<!--                                <div class="grid">-->
-<!--                                    <div class="col-5 flex align-items-start justify-content-start">-->
-<!--                                        <div class="grid ml-4" v-if="book.authors.length != 0">-->
-<!--                                            <table class="table-borderless table-sm">-->
-<!--                                                <tbody>-->
-<!--                                                <tr v-for="author in book.authors">-->
-<!--                                                    <td width="120px"><strong>{{author.pos}}</strong></td>-->
-<!--                                                    <td>-->
-<!--                                                        {{author.name.join("/")}}-->
-<!--                                                    </td>-->
-<!--                                                </tr>-->
-<!--                                                </tbody>-->
-<!--                                            </table>-->
-<!--                                        </div>-->
-<!--                                        <div v-else>-->
-<!--                                            <span class="emptyInfo"><em>暂无作者信息</em></span>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-2">-->
-<!--                                        <p-divider layout="vertical"></p-divider>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-5 flex align-items-start justify-content-start">-->
-<!--                                        <div class="grid ml-4" v-if="book.spec.length != 0">-->
-<!--                                            <table class="table-borderless table-sm">-->
-<!--                                                <tbody>-->
-<!--                                                <tr v-for="specItem in book.spec">-->
-<!--                                                    <td width="120px"><strong>{{specItem.label}}</strong></td>-->
-<!--                                                    <td>-->
-<!--                                                        {{specItem.value}}-->
-<!--                                                    </td>-->
-<!--                                                </tr>-->
-<!--                                                </tbody>-->
-<!--                                            </table>-->
-<!--                                        </div>-->
-<!--                                        <div v-else>-->
-<!--                                            <span class="emptyInfo"><em>暂无规格信息</em></span>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </template>-->
-<!--                        </p-card>-->
-
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
@@ -308,7 +259,7 @@
                         <!-- 简介 -->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
-                                <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
+                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
                                 <b>简介</b>
                             </template>
                             <div v-if="book.summary == ''">
@@ -411,50 +362,6 @@
                         <br>
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-Video-Disc mr-2" style="font-size: 2rem"></i>
-                                <b>相关图书</b>
-                            </template>
-                            <div v-if="relatedBooks.length != 0" class="grid">
-                                <span class="small_font">
-                                    <div class="info_bit_small ml-0 grid"
-                                         v-for="relatedBook of relatedBooks">
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/book/'+ relatedBook.id ">
-                                                <img class="sidebar-panel-image-small" :src="relatedBook.cover.url"
-                                                     style="border-radius: 20%;"
-                                                     v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
-                                            </a>
-                                        </div>
-                                        <div class="col-9">
-                                            <ul class="info_bit_small">
-                                            <li>
-                                                <a class="small_font"
-                                                   :href="'/db/book/'+ relatedBook.id ">
-                                                    <span class="text-truncate-2 mr-4" lang="ja">
-                                                        {{relatedBook.title}}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <span class="small_font">
-                                                    <b>{{relatedBook.isbn13}}</b> {{relatedBook.publishDate}}
-                                                </span>
-                                            </li>
-
-                                        </ul>
-                                        </div>
-                                    </div>
-                                </span>
-                                <br>
-                                <b class="rbot"><b></b></b>
-                            </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>暂无相关书籍</em></span>
-                            </div>
-                        </p-panel>
-                        <br>
-                        <p-panel>
-                            <template #header>
                                 <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
                                 <b>图片</b>
                             </template>
@@ -499,6 +406,50 @@
                             </div>
                             <br>
                             <b class="rbot"><b></b></b>
+                        </p-panel>
+                        <br>
+                        <p-panel>
+                            <template #header>
+                                <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
+                                <b>相关图书</b>
+                            </template>
+                            <div v-if="relatedBooks.length != 0" class="grid">
+                                <span class="small_font">
+                                    <div class="info_bit_small ml-0 grid"
+                                         v-for="relatedBook of relatedBooks">
+                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
+                                            <a :href="'/db/book/'+ relatedBook.id ">
+                                                <img class="sidebar-panel-image-small-no-radius" :src="relatedBook.cover.url"
+
+                                                     v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
+                                            </a>
+                                        </div>
+                                        <div class="col-9">
+                                            <ul class="info_bit_small">
+                                            <li>
+                                                <a class="small_font"
+                                                   :href="'/db/book/'+ relatedBook.id ">
+                                                    <span class="text-truncate-2 mr-4" lang="ja">
+                                                        {{relatedBook.title}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="small_font">
+                                                    <b>{{relatedBook.isbn13}}</b> {{relatedBook.publishDate}}
+                                                </span>
+                                            </li>
+
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </span>
+                                <br>
+                                <b class="rbot"><b></b></b>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无相关书籍</em></span>
+                            </div>
                         </p-panel>
                         <br>
                         <p-panel>

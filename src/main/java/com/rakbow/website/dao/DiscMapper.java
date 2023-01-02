@@ -1,5 +1,6 @@
 package com.rakbow.website.dao;
 
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Disc;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -52,5 +53,11 @@ public interface DiscMapper {
     int updateDiscBonus(int id, String bonus, Timestamp editedTime);
 
     int updateStatusById(int id);
+
+    //获取最新添加Disc, limit
+    List<Disc> getDiscsOrderByAddedTime(int limit);
+
+    //获取最新编辑Disc, limit
+    List<Disc> getDiscsOrderByEditedTime(int limit);
 
 }

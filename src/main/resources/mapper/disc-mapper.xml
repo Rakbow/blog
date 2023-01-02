@@ -192,7 +192,7 @@
         </where>
     </select>
 
-    <select id="getDiscOrderByAddedTime" resultType="Disc">
+    <select id="getDiscsOrderByAddedTime" resultType="Disc">
         select
         <include refid="selectFields"></include>
         from disc
@@ -201,7 +201,7 @@
         limit #{limit}
     </select>
 
-    <select id="getDiscOrderByEditedTime" resultType="Disc">
+    <select id="getDiscsOrderByEditedTime" resultType="Disc">
         select
         <include refid="selectFields"></include>
         from disc

@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -71,19 +72,6 @@ public class BookController {
         return view;
     }
 
-    // @RequestMapping(path = "/index", method = RequestMethod.GET)
-    // public String getAlbumIndexPage(Model model) {
-    //     model.addAttribute("albums", albumService.album2JsonDisplay(albumService.getAll()));
-    //     model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
-    //     model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
-    //     model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-    //     model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-    //     model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-    //     model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
-    //     model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
-    //     return "/album/album-index";
-    // }
-
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getBookDetail(@PathVariable("id") int id, Model model) throws IOException {
@@ -112,23 +100,6 @@ public class BookController {
     //endregion
 
     //region ------增删改查------
-
-    //根据搜索条件获取图书--列表界面
-//    @RequestMapping(value = "/get-books-list", method = RequestMethod.POST)
-//    @ResponseBody
-//    public String getBooksByFilterList(@RequestBody String json) {
-//        JSONObject queryParams = JSON.parseObject(json);
-//
-//        Map<String, Object> map = bookService.getBooksByFilterList(queryParams);
-//
-//        List<JSONObject> books = bookService.book2JsonList((List<Book>) map.get("data"));
-//
-//        JSONObject result = new JSONObject();
-//        result.put("data", books);
-//        result.put("total", map.get("total"));
-//
-//        return JSON.toJSONString(result);
-//    }
 
     //新增图书
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -241,11 +212,20 @@ public class BookController {
      @RequestMapping(value = "/get-books-list", method = RequestMethod.POST)
      @ResponseBody
      public String getBooksByFilterList(@RequestBody String json) {
-         JSONObject queryParams = JSON.parseObject(json);
+         JSONObject param = JSON.parseObject(json);
+         JSONObject queryParams = param.getJSONObject("queryParams");
+         String pageLabel = param.getString("pageLabel");
+
+         List<JSONObject> books = new ArrayList<>();
 
          Map<String, Object> map = bookService.getBooksByFilterList(queryParams);
 
-         List<JSONObject> books = bookService.book2JsonList((List<Book>) map.get("data"));
+         if (StringUtils.equals(pageLabel, "list")) {
+             books = bookService.book2JsonList((List<Book>) map.get("data"));
+         }
+         if (StringUtils.equals(pageLabel, "index")) {
+             books = bookService.book2JsonIndex((List<Book>) map.get("data"));
+         }
 
          JSONObject result = new JSONObject();
          result.put("data", books);

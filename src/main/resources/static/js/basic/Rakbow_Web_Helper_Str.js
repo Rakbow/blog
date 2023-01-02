@@ -11,12 +11,12 @@ const SERIES_INDEX_URL = DOMAIN_URL + "/db/series";
 const PRODUCT_INDEX_URL = DOMAIN_URL + "/db/product/list";
 
 const ALBUM_LIST_URL = DOMAIN_URL + "/db/album/list";
-const ALBUM_INDEX_URL = DOMAIN_URL + "/db/album/index";
+const ALBUM_INDEX_URL = DOMAIN_URL + "/db/albums";
 
-const DISC_INDEX_URL = DOMAIN_URL + "/db/disc";
+const DISC_INDEX_URL = DOMAIN_URL + "/db/discs";
 const DISC_LIST_URL = DOMAIN_URL + "/db/disc/list";
 
-const BOOK_INDEX_URL = DOMAIN_URL + "/db/book";
+const BOOK_INDEX_URL = DOMAIN_URL + "/db/books";
 const BOOK_LIST_URL = DOMAIN_URL + "/db/book/list";
 const GOODS_INDEX_URL = DOMAIN_URL + "/db/goods";
 const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
@@ -136,15 +136,15 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
             {
                 label: 'BD/DVD', icon: 'pi pi-fw iconfont icon-Video-Disc',
                 items: [
-                    // {label: '碟片首页', icon: 'pi pi-fw iconfont icon-Video-Disc', url: DISC_INDEX_URL},
+                    {label: '碟片首页', icon: 'pi pi-fw iconfont icon-Video-Disc', url: DISC_INDEX_URL},
                     {label: '碟片列表', icon: 'pi pi-fw pi-list', url: DISC_LIST_URL}
                 ]
             },
             {
                 label: '书籍', icon: 'pi pi-fw pi-book',
                 items: [
-                    // {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
-                        {label: '书籍列表', icon: 'pi pi-fw pi-list', url: BOOK_LIST_URL}
+                    {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
+                    {label: '书籍列表', icon: 'pi pi-fw pi-list', url: BOOK_LIST_URL}
                 ]
             },
             // {
@@ -219,11 +219,11 @@ const LOGIN_NAVBAR_ITEMS = [
                 label: 'BD/DVD',
                 icon: 'pi pi-fw iconfont icon-Video-Disc',
                 items: [
-                    // {
-                    //     label: '碟片首页',
-                    //     icon: 'pi pi-fw iconfont icon-Video-Disc',
-                    //     url: DISC_INDEX_URL
-                    // },
+                    {
+                        label: '碟片首页',
+                        icon: 'pi pi-fw iconfont icon-Video-Disc',
+                        url: DISC_INDEX_URL
+                    },
                     {
                         label: '碟片列表',
                         icon: 'pi pi-fw pi-list',
@@ -235,11 +235,11 @@ const LOGIN_NAVBAR_ITEMS = [
                 label: '书籍',
                 icon: 'pi pi-fw pi-book',
                 items: [
-                    // {
-                    //     label: '书籍首页',
-                    //     icon: 'pi pi-fw pi-book',
-                    //     url: ALBUM_INDEX_URL
-                    // },
+                    {
+                        label: '书籍首页',
+                        icon: 'pi pi-fw pi-book',
+                        url: BOOK_INDEX_URL
+                    },
                     {
                         label: '书籍列表',
                         icon: 'pi pi-fw pi-list',
