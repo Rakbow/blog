@@ -15,7 +15,7 @@ public enum EntityType {
     ALBUM(1,"专辑", "Album"),
     DISC(2,"碟片", "Disc"),
     BOOK(3,"书籍", "Book"),
-    GOODS(4,"周边", "Goods"),
+    MERCH(4,"周边", "Goods"),
     GAME(5,"游戏", "Game"),
     SERIES(6,"系列", "Series"),
     PRODUCT(7,"作品", "Product"),

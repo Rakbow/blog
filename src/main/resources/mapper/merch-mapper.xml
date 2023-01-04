@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.website.dao.MerchMapper">
+
+    <sql id="selectFields">
+        id, name, name_zh, name_en, barcode, series, products, category, release_date, price, price_unit,
+        is_not_for_sale, spec, description, images, remark, added_time, edited_time, _s
+    </sql>
+
+    <sql id="insertFields">
+        name, name_zh, name_en, barcode, series, products, category, release_date, price, price_unit,
+        is_not_for_sale, spec, description, images, remark, added_time, edited_time, _s
+    </sql>
+
+    <select id="getMerchById" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where id = #{id} and _s = 1
+    </select>
+
+    <insert id="addMerch" parameterType="Merch" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into merch (<include refid="insertFields"></include>)
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{series}, #{products}, #{category}, #{releaseDate},#{price},
+         #{priceUnit}, #{isNotForSale}, #{spec}, #{description}, #{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+    </insert>
+
+    <update id="updateMerch" parameterType="Merch" keyProperty="id">
+        update merch
+        set
+        name = #{merch.name}, name_zh = #{merch.nameZh}, name_en = #{merch.nameEn}, barcode = #{merch.barcode},
+        series = #{merch.series}, products = #{merch.products}, category = #{merch.category},
+        release_date = #{merch.releaseDate}, price = #{merch.price}, price_unit = #{merch.priceUnit},
+        is_not_for_sale = #{merch.isNotForSale}, description = #{merch.description}, remark = #{merch.remark},
+        added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}, _s = #{merch._s}
+        where id = #{merch.id}
+    </update>
+
+    <delete id="deleteMerchById">
+        delete
+        from merch
+        where id = #{id}
+    </delete>
+
+    <update id="updateMerchImages" keyProperty="id">
+        update merch
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMerchSpec" keyProperty="id">
+        update merch
+        set
+        spec = #{spec}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMerchDescription" keyProperty="id">
+        update merch
+        set
+        description = #{description}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateStatusById" keyProperty="id">
+        update merch
+        set
+        _s = 0
+        where id = #{id}
+    </update>
+
+    <select id="getMerchsByFilterList" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="barcode != null and barcode != '' ">
+                and barcode like concat('%', #{barcode}, '%')
+            </if>
+            <if test="series != 0 ">
+                and series = #{series}
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="category != 100 ">
+                and category = #{category}
+            </if>
+            <if test="isNotForSale != null and isNotForSale != '' ">
+                and is_not_for_sale = #{isNotForSale}
+            </if>
+            and _s = 1
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'price'">
+            <if test="sortOrder == 1">
+                order by price asc
+            </if>
+            <if test="sortOrder == -1">
+                order by price desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getMerchsRowsByFilterList" resultType="int">
+        select count(id)
+        from merch
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="barcode != null and barcode != '' ">
+                and barcode like concat('%', #{barcode}, '%')
+            </if>
+            <if test="series != 0 ">
+                and series = #{series}
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="category != 100 ">
+                and category = #{category}
+            </if>
+            <if test="isNotForSale != null and isNotForSale != '' ">
+                and is_not_for_sale = #{isNotForSale}
+            </if>
+            and _s = 1
+        </where>
+    </select>
+
+    <select id="getMerchsOrderByAddedTime" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where _s = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="getMerchsOrderByEditedTime" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where _s = 1
+        order by edited_time desc
+        limit #{limit}
+    </select>
+
+</mapper>

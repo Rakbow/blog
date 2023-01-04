@@ -74,6 +74,18 @@ const label2value = (xFormat, xFormatSet) => {
     return tmp;
 };
 
+const productLabel2value = (xFormat, xFormatSet) => {
+    let tmp = [];
+    for (let item1 of xFormat) {
+        for (let item2 of xFormatSet) {
+            if (item1.name === item2.label) {
+                tmp.push(item2.value);
+            }
+        }
+    }
+    return tmp;
+};
+
 //根据图片url获取图片字节大小和长宽
 const getImgProp = (url) => {
     let imgProp = {
@@ -223,4 +235,11 @@ const languageSet = [
     {nameEn: 'Japanese', nameZh: '英语', code: 'en-US'},
 ];
 
+const priceUnitSet = [
+    {labelEn: 'JPY', label: '日元', value: 'JPY'},
+    {labelEn: 'CNY', label: '人民币', value: 'CNY'},
+    {labelEn: 'USD', label: '美元', value: 'USD'},
+    {labelEn: 'TWD', label: '新台币', value: 'TWD'},
+    {labelEn: 'OTHER', label: '其他', value: 'UNKNOWN'},
+];
 

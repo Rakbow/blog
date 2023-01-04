@@ -1,4 +1,4 @@
-const DOMAIN_URL = "http://localhost:8080";
+const DOMAIN_URL = "http://localhost:8083";
 
 //region page
 const HOME_INDEX_URL = DOMAIN_URL;
@@ -78,13 +78,9 @@ const UPDATE_DISC_BONUS_URL = DOMAIN_URL + "/db/disc/update-bonus";
 //endregion
 
 //region book
-const GET_LIMIT_BOOK_URL = DOMAIN_URL + "/db/book/get-book-limit";
-const GET_ALL_BOOK_URL = DOMAIN_URL + "/db/book/get-all";
 const DELETE_BOOK_URL = DOMAIN_URL + "/db/book/delete";
 const UPDATE_BOOK_URL = DOMAIN_URL + "/db/book/update";
 const INSERT_BOOK_URL = DOMAIN_URL + "/db/book/add";
-const GET_BOOK_URL = DOMAIN_URL + "/db/book/get-book";
-const GET_BOOKS_URL = DOMAIN_URL + "/db/book/get-books";
 const GET_BOOKS_LIST_URL = DOMAIN_URL + "/db/book/get-books-list";
 
 const INSERT_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/add-images";
@@ -93,6 +89,18 @@ const UPDATE_BOOK_AUTHORS_URL = DOMAIN_URL + "/db/book/update-authors";
 const UPDATE_BOOK_SPEC_URL = DOMAIN_URL + "/db/book/update-spec";
 const UPDATE_BOOK_DESCRIPTION_URL = DOMAIN_URL + "/db/book/update-description";
 const UPDATE_BOOK_BONUS_URL = DOMAIN_URL + "/db/book/update-bonus";
+//endregion
+
+//region merch
+const DELETE_MERCH_URL = DOMAIN_URL + "/db/merch/delete";
+const UPDATE_MERCH_URL = DOMAIN_URL + "/db/merch/update";
+const INSERT_MERCH_URL = DOMAIN_URL + "/db/merch/add";
+const GET_MERCHS_LIST_URL = DOMAIN_URL + "/db/merch/get-books-list";
+
+const INSERT_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/add-images";
+const UPDATE_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/update-images";
+const UPDATE_MERCH_SPEC_URL = DOMAIN_URL + "/db/merch/update-spec";
+const UPDATE_MERCH_DESCRIPTION_URL = DOMAIN_URL + "/db/merch/update-description";
 //endregion
 
 //region header
