@@ -6,7 +6,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Product;
+import com.rakbow.website.service.ProductService;
 import com.rakbow.website.util.common.CommonConstant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,11 @@ import java.util.List;
  * @Create: 2022-11-26 14:28
  * @Description:
  */
+@Component
 public class ProductUtils {
+
+    @Autowired
+    private ProductService productService;
 
     /**
      * 获取作品分类数组
@@ -25,7 +32,7 @@ public class ProductUtils {
      * @return list 作品分类数组
      * @author rakbow
      */
-    public static List<JSONObject> getProductClassSet() {
+    public List<JSONObject> getProductClassSet() {
         List<JSONObject> list = new ArrayList<>();
         for (ProductClass productClassSet : ProductClass.values()) {
             JSONObject jsonObject = new JSONObject();
@@ -44,7 +51,7 @@ public class ProductUtils {
      * @return coverUrl 作品封面图片url
      * @author rakbow
      */
-    public static String getProductCoverUrl(Product product) {
+    public String getProductCoverUrl(Product product) {
         //先赋值为404图片
         String coverUrl = CommonConstant.EMPTY_IMAGE_URL;
 
@@ -57,6 +64,26 @@ public class ProductUtils {
             }
         }
         return coverUrl;
+    }
+
+    /**
+     * 将数据库实体类product的json字符串转为List<JSONObject>
+     *
+     * @param productJson product的json字符串
+     * @return List<JSONObject>
+     * @author rakbow
+     */
+    public List<JSONObject> getProductList (String productJson) {
+        List<JSONObject> products = new ArrayList<>();
+        JSONObject.parseObject(productJson).getList("ids", Integer.class)
+                .forEach(id -> {
+                    JSONObject jo = new JSONObject();
+                    jo.put("id", id);
+                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
+                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
+                    products.add(jo);
+                });
+        return products;
     }
 
 }

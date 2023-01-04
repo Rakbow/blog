@@ -61,6 +61,8 @@ public class ProductController {
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
+    @Autowired
+    private ProductUtils productUtils;
     //endregion
 
     //region ------获取页面------
@@ -68,7 +70,7 @@ public class ProductController {
     public String getProductListPage(Model model) {
         model.addAttribute("products", productService.product2json(productService.getAllProduct()));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("productClassSet", ProductUtils.getProductClassSet());
+        model.addAttribute("productClassSet", productUtils.getProductClassSet());
         return "/product/product-list";
     }
 
@@ -85,7 +87,7 @@ public class ProductController {
         Product product = productService.getProductById(productId);
         model.addAttribute("product", productService.product2Json(product));
         model.addAttribute("user", hostHolder.getUser());
-        model.addAttribute("productClassSet", ProductUtils.getProductClassSet());
+        model.addAttribute("productClassSet", productUtils.getProductClassSet());
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
 

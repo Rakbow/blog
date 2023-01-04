@@ -665,7 +665,7 @@
                             axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, {series:dataTmp.series.id})
                                 .then(res => {
                                     productSet.value = res;
-                                    bookEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                                    bookEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
                                     bookEdit.value.series = dataTmp.series.id;
                                     bookEdit.value.bookType = dataTmp.bookType.id;
                                     bookEdit.value.area = dataTmp.area.code;

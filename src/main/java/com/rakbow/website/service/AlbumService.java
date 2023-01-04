@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.ImageType;
+import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.MediaFormat;
@@ -18,6 +19,7 @@ import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.Image.QiniuImageUtils;
+import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,8 @@ public class AlbumService {
     private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private CommonImageUtils commonImageUtils;
+    @Autowired
+    private ProductUtils productUtils;
     //endregion
 
     //region ------更删改查------
@@ -216,30 +220,20 @@ public class AlbumService {
      * @return JSONObject
      * @author rakbow
      */
-    public JSONObject album2Json(Album album) throws IOException {
+    public JSONObject album2Json(Album album) {
 
         JSONObject albumJson = (JSONObject) JSON.toJSON(album);
 
         List<Music> allMusics = musicService.getMusicsByAlbumId(album.getId());
+
+        //将图片分割处理
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(album.getImages());
 
         //是否包含特典
         boolean hasBonus = (album.getHasBonus() == 1);
 
         //相关创作人员
         JSONArray artists = JSONArray.parseArray(album.getArtists());
-
-        JSONArray images = JSONArray.parseArray(album.getImages());
-        if (!images.isEmpty()) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
-                image.put("thumbUrl50", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-
-                // image.put("thumbUrl", CommonUtils.getCompressImageUrl(imgPath,
-                //         StringUtils.lowerCase(EntityType.ALBUM.getNameEn()),
-                //         album.getId(), CommonUtils.getImageFileNameByUrl(image.getString("url"))));
-            }
-        }
 
         //发售时间转为string
         albumJson.put("releaseDate", CommonUtils.dateToString(album.getReleaseDate()));
@@ -259,12 +253,6 @@ public class AlbumService {
         JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
-        //所属产品（详细）
-        List<String> product = new ArrayList<>();
-        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
-
         //所属产品
         List<JSONObject> products = new ArrayList<>();
         JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
@@ -279,43 +267,6 @@ public class AlbumService {
         JSONObject series = new JSONObject();
         series.put("id", album.getSeries());
         series.put("name", seriesService.selectSeriesById(album.getSeries()).getNameZh());
-
-        //对封面图片进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
-
-        //对展示图片进行封装
-        List<JSONObject> displayImages = new ArrayList<>();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
-                        || image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    displayImages.add(image);
-                }
-            }
-        }
-
-        //对其他图片进行封装
-        List<JSONObject> otherImages = new ArrayList<>();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "2")) {
-                    otherImages.add(image);
-                }
-            }
-        }
 
         JSONArray editDiscList = new JSONArray();
         //可供编辑的editDiscList
@@ -414,19 +365,18 @@ public class AlbumService {
         }
 
 
-        albumJson.put("images", images);
+        albumJson.put("images", segmentImages.images);
+        albumJson.put("cover", segmentImages.cover);
+        albumJson.put("displayImages", segmentImages.displayImages);
+        albumJson.put("otherImages", segmentImages.otherImages);
         albumJson.put("editDiscList", editDiscList);
         albumJson.put("hasBonus", hasBonus);
         albumJson.put("publishFormat", publishFormat);
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
         albumJson.put("artists", artists);
-        albumJson.put("cover", cover);
-        albumJson.put("displayImages", displayImages);
-        albumJson.put("otherImages", otherImages);
         albumJson.put("trackInfo", trackInfo);
         albumJson.put("series", series);
-        albumJson.put("product", product);
         albumJson.put("products", products);
         albumJson.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
         albumJson.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));
@@ -444,11 +394,7 @@ public class AlbumService {
         List<JSONObject> albumJsons = new ArrayList<>();
 
         albums.forEach(album -> {
-            try {
-                albumJsons.add(album2Json(album));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            albumJsons.add(album2Json(album));
         });
         return albumJsons;
     }
@@ -464,7 +410,8 @@ public class AlbumService {
 
         JSONObject json = (JSONObject) JSON.toJSON(album);
 
-        JSONArray images = JSONArray.parseArray(album.getImages());
+        //封面
+        JSONObject cover = commonImageUtils.getIndexCover(album.getImages());
 
         if (StringUtils.isBlank(json.getString("catalogNo"))) {
             json.put("catalogNo", "N/A");
@@ -487,36 +434,12 @@ public class AlbumService {
         JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        //所属作品
+        List<JSONObject> products = productUtils.getProductList(album.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", album.getSeries());
         series.put("name", seriesService.selectSeriesById(album.getSeries()).getNameZh());
-        //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
-        cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
-                    cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 70));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
 
         json.put("publishFormat", publishFormat);
         json.put("albumFormat", albumFormat);
@@ -640,22 +563,8 @@ public class AlbumService {
         JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
-        //所属产品（详细）
-        List<String> product = new ArrayList<>();
-        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
-
         //所属产品
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        List<JSONObject> products = productUtils.getProductList(album.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", album.getSeries());
@@ -666,7 +575,6 @@ public class AlbumService {
         albumJson.put("albumFormat", albumFormat);
         albumJson.put("mediaFormat", mediaFormat);
         albumJson.put("series", series);
-        albumJson.put("product", product);
         albumJson.put("products", products);
         albumJson.put("addedTime", CommonUtils.timestampToString(album.getAddedTime()));
         albumJson.put("editedTime", CommonUtils.timestampToString(album.getEditedTime()));

@@ -111,6 +111,18 @@ public class ApiInfo {
 
     //endregion
 
+    //region merch相关
+    public static final String UPDATE_MERCH_SPEC_SUCCESS = "周边规格信息更新成功！";
+    public static final String UPDATE_MERCH_DESCRIPTION_SUCCESS = "周边描述更新成功！";
+
+    public static final String MERCH_NAME_EMPTY = "未填写周边名称！";
+    public static final String MERCH_SERIES_EMPTY = "未选择周边所属系列！";
+    public static final String MERCH_PRODUCTS_EMPTY = "未选择周边所属作品！";
+    public static final String MERCH_CATEGORY_EMPTY = "未选择图书所属分类！";
+    public static final String MERCH_RELEASE_DATE_EMPTY = "未填写发售日期！";
+
+    //endregion
+
     //region 七牛云
     public static final String QINIU_EXCEPTION = "七牛云异常: %s";
     //endregion

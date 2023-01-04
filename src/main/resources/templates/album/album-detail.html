@@ -1166,7 +1166,7 @@
                             albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                             albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
                             albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                            albumEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                            albumEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
                             albumEdit.value.series = dataTmp.series.id;
                             displayEditDialog.value = true;
                         }

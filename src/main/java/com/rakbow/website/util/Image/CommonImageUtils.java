@@ -4,9 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.entity.Book;
+import com.rakbow.website.data.common.ImageType;
+import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.util.common.ActionResult;
 import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -155,5 +156,105 @@ public class CommonImageUtils {
 
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, entityType.getNameZh());
     }
+
+    /**
+     * 将图片切分为封面、展示和其他图片
+     *
+     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @return segmentImagesResult
+     * @author rakbow
+     */
+    public segmentImagesResult segmentImages (String imagesJson) {
+
+        segmentImagesResult result = new segmentImagesResult();
+
+        JSONArray images = JSON.parseArray(imagesJson);
+
+        //添加缩略图
+        if (!images.isEmpty()) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
+                image.put("thumbUrl50", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+            }
+        }
+
+        //对封面图片进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+
+        //对展示图片进行封装
+        List<JSONObject> displayImages = new ArrayList<>();
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
+                        || image.getIntValue("type") == ImageType.COVER.getIndex()) {
+                    displayImages.add(image);
+                }
+            }
+        }
+
+        //对其他图片进行封装
+        List<JSONObject> otherImages = new ArrayList<>();
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "2")) {
+                    otherImages.add(image);
+                }
+            }
+        }
+
+        result.images = images;
+        result.cover = cover;
+        result.displayImages = displayImages;
+        result.otherImages = otherImages;
+
+        return result;
+
+    }
+
+    /**
+     * 获index首页取封面图片
+     *
+     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @return JSONObject
+     * @author rakbow
+     */
+    public JSONObject getIndexCover (String imagesJson) {
+
+        JSONArray images = JSONArray.parseArray(imagesJson);
+
+        //对图片封面进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
+        cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
+                    cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 70));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+        return cover;
+    }
+
 
 }

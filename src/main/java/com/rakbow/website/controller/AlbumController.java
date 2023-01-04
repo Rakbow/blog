@@ -92,7 +92,7 @@ public class AlbumController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) throws IOException {
+    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
         if (albumService.getAlbumById(albumId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";

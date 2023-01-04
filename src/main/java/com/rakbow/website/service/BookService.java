@@ -8,16 +8,14 @@ import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.book.BookType;
-import com.rakbow.website.data.common.Area;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.ImageType;
-import com.rakbow.website.data.common.Language;
+import com.rakbow.website.data.common.*;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
+import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
@@ -55,6 +53,8 @@ public class BookService {
     private SeriesService seriesService;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private ProductUtils productUtils;
 
     //endregion
 
@@ -141,14 +141,8 @@ public class BookService {
         //是否包含特典
         boolean hasBonus = (book.getHasBonus() == 1);
 
-        JSONArray images = JSONArray.parseArray(book.getImages());
-        if (!images.isEmpty()) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
-                image.put("thumbUrl50", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-            }
-        }
+        //将图片分割处理
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(book.getImages());
 
         JSONObject bookType = new JSONObject();
         bookType.put("id", book.getBookType());
@@ -157,22 +151,8 @@ public class BookService {
         JSONArray authors = JSON.parseArray(book.getAuthors());
         JSONArray spec = JSON.parseArray(book.getSpec());
 
-        //所属产品（详细）
-        List<String> product = new ArrayList<>();
-        JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
-
-        //所属产品
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        //所属作品
+        List<JSONObject> products = productUtils.getProductList(book.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", book.getSeries());
@@ -186,47 +166,8 @@ public class BookService {
         publishLanguage.put("code", book.getPublishLanguage());
         publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
 
-        //对封面图片进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
-
-        //对展示图片进行封装
-        List<JSONObject> displayImages = new ArrayList<>();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
-                        || image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    displayImages.add(image);
-                }
-            }
-        }
-
-        //对其他图片进行封装
-        List<JSONObject> otherImages = new ArrayList<>();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "2")) {
-                    otherImages.add(image);
-                }
-            }
-        }
-
-
         bookJson.put("bookType", bookType);
         bookJson.put("series", series);
-        bookJson.put("product", product);
         bookJson.put("products", products);
         bookJson.put("area", area);
         bookJson.put("currencyUnit", Area.areaCode2Currency(book.getArea()));
@@ -236,10 +177,10 @@ public class BookService {
 
         bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
         bookJson.put("hasBonus", hasBonus);
-        bookJson.put("images", images);
-        bookJson.put("cover", cover);
-        bookJson.put("displayImages", displayImages);
-        bookJson.put("otherImages", otherImages);
+        bookJson.put("images", segmentImages.images);
+        bookJson.put("cover", segmentImages.cover);
+        bookJson.put("displayImages", segmentImages.displayImages);
+        bookJson.put("otherImages", segmentImages.otherImages);
         bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
         bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
         return bookJson;
@@ -282,22 +223,8 @@ public class BookService {
         //发售时间转为string
         bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
 
-        //所属产品（详细）
-        List<String> product = new ArrayList<>();
-        JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
-
-        //所属产品
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        //所属作品
+        List<JSONObject> products = productUtils.getProductList(book.getProducts());
 
         //所属系列
         JSONObject series = new JSONObject();
@@ -331,7 +258,6 @@ public class BookService {
         bookJson.put("cover", cover);
         bookJson.put("series", series);
         bookJson.put("bookType", bookType);
-        bookJson.put("product", product);
         bookJson.put("products", products);
         bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
         bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
@@ -453,7 +379,8 @@ public class BookService {
 
         JSONObject bookJson = (JSONObject) JSON.toJSON(book);
 
-        JSONArray images = JSONArray.parseArray(book.getImages());
+        //封面
+        JSONObject cover = commonImageUtils.getIndexCover(book.getImages());
 
         bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
 
@@ -482,24 +409,6 @@ public class BookService {
         JSONObject publishLanguage = new JSONObject();
         publishLanguage.put("code", book.getPublishLanguage());
         publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-
-        //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
-        cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
-                    cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 70));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
 
         bookJson.put("cover", cover);
         bookJson.put("products", products);

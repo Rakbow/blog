@@ -7,11 +7,13 @@ import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.ImageType;
+import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
+import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
@@ -49,6 +51,8 @@ public class DiscService {
     private SeriesService seriesService;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private ProductUtils productUtils;
 
     //endregion
 
@@ -128,7 +132,7 @@ public class DiscService {
      * @return JSONObject
      * @author rakbow
      */
-    public JSONObject disc2Json(Disc disc) throws IOException {
+    public JSONObject disc2Json(Disc disc) {
 
         JSONObject discJson = (JSONObject) JSON.toJSON(disc);
 
@@ -137,14 +141,8 @@ public class DiscService {
         //是否为限定版
         boolean isLimited = (disc.getIsLimited() == 1);
 
-        JSONArray images = JSONArray.parseArray(disc.getImages());
-        if (!images.isEmpty()) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
-                image.put("thumbUrl50", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-            }
-        }
+        //将图片分割处理
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(disc.getImages());
 
         //发售时间转为string
         discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
@@ -154,73 +152,21 @@ public class DiscService {
         JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
-        //所属产品（详细）
-        List<String> product = new ArrayList<>();
-        JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
-
         //所属产品
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        List<JSONObject> products = productUtils.getProductList(disc.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", disc.getSeries());
         series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
 
-        //对封面图片进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
-
-        //对展示图片进行封装
-        List<JSONObject> displayImages = new ArrayList<>();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
-                        || image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    displayImages.add(image);
-                }
-            }
-        }
-
-        //对其他图片进行封装
-        List<JSONObject> otherImages = new ArrayList<>();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "2")) {
-                    otherImages.add(image);
-                }
-            }
-        }
-
         discJson.put("isLimited", isLimited);
         discJson.put("hasBonus", hasBonus);
         discJson.put("mediaFormat", mediaFormat);
-        discJson.put("images", images);
-        discJson.put("cover", cover);
-        discJson.put("displayImages", displayImages);
-        discJson.put("otherImages", otherImages);
+        discJson.put("images", segmentImages.images);
+        discJson.put("cover", segmentImages.cover);
+        discJson.put("displayImages", segmentImages.displayImages);
+        discJson.put("otherImages", segmentImages.otherImages);
         discJson.put("series", series);
-        discJson.put("product", product);
         discJson.put("products", products);
         discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
         discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
@@ -238,11 +184,7 @@ public class DiscService {
         List<JSONObject> discJsons = new ArrayList<>();
 
         discs.forEach(disc -> {
-            try {
-                discJsons.add(disc2Json(disc));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            discJsons.add(disc2Json(disc));
         });
         return discJsons;
     }
@@ -271,22 +213,8 @@ public class DiscService {
         JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
-        //所属产品（详细）
-        List<String> product = new ArrayList<>();
-        JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> product.add(productService.getProductById(id).getNameZh() + "(" +
-                        ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")"));
-
         //所属产品
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        List<JSONObject> products = productUtils.getProductList(disc.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", disc.getSeries());
@@ -312,7 +240,6 @@ public class DiscService {
         discJson.put("mediaFormat", mediaFormat);
         discJson.put("cover", cover);
         discJson.put("series", series);
-        discJson.put("product", product);
         discJson.put("products", products);
         discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
         discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
@@ -424,19 +351,12 @@ public class DiscService {
 
         JSONObject discJson = (JSONObject) JSON.toJSON(disc);
 
-        JSONArray images = JSONArray.parseArray(disc.getImages());
+        //封面
+        JSONObject cover = commonImageUtils.getIndexCover(disc.getImages());
 
         discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
 
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        List<JSONObject> products = productUtils.getProductList(disc.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", disc.getSeries());
@@ -446,24 +366,6 @@ public class DiscService {
         List<String> mediaFormat = new ArrayList<>();
         JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
-
-        //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
-        cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
-                    cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 70));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
 
         discJson.put("cover", cover);
         discJson.put("products", products);

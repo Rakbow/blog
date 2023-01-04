@@ -7,6 +7,7 @@ import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.service.VisitService;
+import com.rakbow.website.util.BookUtils;
 import com.rakbow.website.util.common.DataFinder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +126,17 @@ class WebSiteApplicationTests {
             System.out.println(album.getId());
         });
 
+    }
+
+    @Test
+    public void test111() {
+        String tmp = "しゅー カズー 連 珠洲城くるみ 剛田ナギ 片岡みちる ほりやゆ 凪妖女 両角潤香 相沢 山斗 楠見らんま 橘りた ドバト らすぷ～ あづま笙子 KANZUME にゃん味噌 にくばなれ";
+        System.out.println(tmp.replaceAll(" ", ","));
+    }
+
+    @Test
+    public void test112() {
+        System.out.println(BookUtils.getISBN10("9784776722779"));
     }
 
 }

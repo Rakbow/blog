@@ -1017,7 +1017,7 @@
                             let dataTmp = JSON.parse(JSON.stringify(book.value));
                             dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
                             bookEdit.value = dataTmp;
-                            bookEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                            bookEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
                             bookEdit.value.series = dataTmp.series.id;
                             bookEdit.value.bookType = dataTmp.bookType.id;
                             bookEdit.value.area = dataTmp.area.code;

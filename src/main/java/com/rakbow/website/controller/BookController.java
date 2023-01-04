@@ -65,7 +65,6 @@ public class BookController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getBookListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("books", null);
         model.addAttribute("bookTypeSet", BookUtils.getBookTypeSet());
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         view.setViewName("/book/book-list");
@@ -74,7 +73,7 @@ public class BookController {
 
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getBookDetail(@PathVariable("id") int id, Model model) throws IOException {
+    public String getBookDetail(@PathVariable("id") int id, Model model) {
         if (bookService.getBookById(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";

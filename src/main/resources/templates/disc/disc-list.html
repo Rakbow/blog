@@ -612,7 +612,7 @@
                                 .then(res => {
                                     productSet.value = res;
                                     discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                                    discEdit.value.products = label2value(dataTmp.product, productSet.value).concat();
+                                    discEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
                                     discEdit.value.series = dataTmp.series.id;
                                     discEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
                                     discEdit.value.isLimited = dataTmp.isLimited ? 1: 0;
