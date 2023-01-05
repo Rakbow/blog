@@ -1,8 +1,10 @@
 package com.rakbow.website.controller;
 
+import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.AlbumUtils;
 import com.rakbow.website.util.BookUtils;
+import com.rakbow.website.util.MerchUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
 import org.slf4j.Logger;
@@ -30,18 +32,20 @@ public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    //region ------引入实例------
+
     @Autowired
     private ProductService productService;
     @Autowired
     private SeriesService seriesService;
-    @Autowired
-    private TagService albumTagService;
     @Autowired
     private AlbumService albumService;
     @Autowired
     private DiscService discService;
     @Autowired
     private BookService bookService;
+    @Autowired
+    private MerchService merchService;
     @Autowired
     private HostHolder hostHolder;
     @Value("${website.path.img}")
@@ -50,6 +54,8 @@ public class HomeController {
     private String filePath;
     @Value("${website.path.audio}")
     private String audioPath;
+
+    //endregion
 
     //region ------获取页面------
 
@@ -100,6 +106,17 @@ public class HomeController {
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
         return "/disc/disc-index";
+    }
+
+    //获取周边首页
+    @RequestMapping(path = "/db/merchs", method = RequestMethod.GET)
+    public String getMerchIndexPage(Model model) {
+        model.addAttribute("justAddedMerchs", merchService.getJustAddedMerchs(5));
+        model.addAttribute("justEditedMerchs", merchService.getJustEditedMerchs(5));
+        model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
+        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("merchCategorySet", MerchUtils.getMerchCategorySet());
+        return "/merch/merch-index";
     }
 
     //endregion

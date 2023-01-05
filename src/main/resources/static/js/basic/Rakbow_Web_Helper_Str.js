@@ -1,4 +1,4 @@
-const DOMAIN_URL = "http://localhost:8083";
+const DOMAIN_URL = "http://localhost:8080";
 
 //region page
 const HOME_INDEX_URL = DOMAIN_URL;
@@ -18,8 +18,8 @@ const DISC_LIST_URL = DOMAIN_URL + "/db/disc/list";
 
 const BOOK_INDEX_URL = DOMAIN_URL + "/db/books";
 const BOOK_LIST_URL = DOMAIN_URL + "/db/book/list";
-const GOODS_INDEX_URL = DOMAIN_URL + "/db/goods";
-const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
+
+const GAME_INDEX_URL = DOMAIN_URL + "/db/games";
 
 //endregion
 
@@ -27,7 +27,7 @@ const GAME_INDEX_URL = DOMAIN_URL + "/db/game";
 const DELETE_ALBUM_URL = DOMAIN_URL + "/db/album/delete";
 const UPDATE_ALBUM_URL = DOMAIN_URL + "/db/album/update";
 const INSERT_ALBUM_URL = DOMAIN_URL + "/db/album/add";
-const GET_ALBUMS_LIST_URL = DOMAIN_URL + "/db/album/get-albums-list";
+const GET_ALBUMS_LIST_URL = DOMAIN_URL + "/db/album/get-albums";
 
 const UPDATE_ALBUM_ARTISTS_URL = DOMAIN_URL + "/db/album/update-artists";
 const UPDATE_ALBUM_TRACK_INFO_URL = DOMAIN_URL + "/db/album/update-trackInfo";
@@ -61,14 +61,10 @@ const UPDATE_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/update-images";
 //endregion
 
 //region disc
-const GET_LIMIT_DISC_URL = DOMAIN_URL + "/db/disc/get-disc-limit";
-const GET_ALL_DISC_URL = DOMAIN_URL + "/db/disc/get-all";
 const DELETE_DISC_URL = DOMAIN_URL + "/db/disc/delete";
 const UPDATE_DISC_URL = DOMAIN_URL + "/db/disc/update";
 const INSERT_DISC_URL = DOMAIN_URL + "/db/disc/add";
-const GET_DISC_URL = DOMAIN_URL + "/db/disc/get-disc";
-const GET_DISCS_URL = DOMAIN_URL + "/db/disc/get-discs";
-const GET_DISCS_LIST_URL = DOMAIN_URL + "/db/disc/get-discs-list";
+const GET_DISCS_LIST_URL = DOMAIN_URL + "/db/disc/get-discs";
 
 const INSERT_DISC_IMAGES_URL = DOMAIN_URL + "/db/disc/add-images";
 const UPDATE_DISC_IMAGES_URL = DOMAIN_URL + "/db/disc/update-images";
@@ -81,7 +77,7 @@ const UPDATE_DISC_BONUS_URL = DOMAIN_URL + "/db/disc/update-bonus";
 const DELETE_BOOK_URL = DOMAIN_URL + "/db/book/delete";
 const UPDATE_BOOK_URL = DOMAIN_URL + "/db/book/update";
 const INSERT_BOOK_URL = DOMAIN_URL + "/db/book/add";
-const GET_BOOKS_LIST_URL = DOMAIN_URL + "/db/book/get-books-list";
+const GET_BOOKS_LIST_URL = DOMAIN_URL + "/db/book/get-books";
 
 const INSERT_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/add-images";
 const UPDATE_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/update-images";
@@ -95,7 +91,7 @@ const UPDATE_BOOK_BONUS_URL = DOMAIN_URL + "/db/book/update-bonus";
 const DELETE_MERCH_URL = DOMAIN_URL + "/db/merch/delete";
 const UPDATE_MERCH_URL = DOMAIN_URL + "/db/merch/update";
 const INSERT_MERCH_URL = DOMAIN_URL + "/db/merch/add";
-const GET_MERCHS_LIST_URL = DOMAIN_URL + "/db/merch/get-books-list";
+const GET_MERCHS_LIST_URL = DOMAIN_URL + "/db/merch/get-merchs";
 
 const INSERT_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/add-images";
 const UPDATE_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/update-images";

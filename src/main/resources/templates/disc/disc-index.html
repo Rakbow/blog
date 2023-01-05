@@ -218,12 +218,18 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="hasBonus" class="mr-2">包含特典</label>
-                                <p-tristatecheckbox v-model="queryParams.filters.hasBonus.value"></p-tristatecheckbox>
+                                <label htmlFor="hasBonus">含特典</label>
+                                <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
+                                            placeholder="所有" option-label="label"
+                                            option-value="value">
+                                </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="isLimited" class="mr-2">限定版</label>
-                                <p-tristatecheckbox v-model="queryParams.filters.isLimited.value"></p-tristatecheckbox>
+                                <label htmlFor="isLimited">限定版</label>
+                                <p-dropdown v-model="queryParams.filters.isLimited.value" :options="isLimitedSet"
+                                            placeholder="所有" option-label="label"
+                                            option-value="value">
+                                </p-dropdown>
                             </div>
                             <div class="col-12 md:col-4 md:col-offset-2 sm:col-3 sm:col-offset-3"
                                  style="text-align: right">
@@ -436,16 +442,6 @@
             //region ------ 搜索 ------
             const totalRecords = ref();
             const productSelect = ref(true);
-            const hasBonusSet = ref([
-                {label: "全部", value: null},
-                {label: "有", value: 1},
-                {label: "无", value: 0}
-            ]);
-            const isLimitedSet = ref([
-                {label: "全部", value: null},
-                {label: "是", value: 1},
-                {label: "否", value: 0}
-            ]);
             const queryParams = ref({
                 first: 0,
                 rows: 0,

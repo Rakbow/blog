@@ -75,7 +75,7 @@ public class MerchController {
 
     //获取单个周边商品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMerchDetail(@PathVariable("id") int id, Model model) {
+    public String getMerchDetail(@PathVariable int id, Model model) {
         if (merchService.getMerchById(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MERCH.getNameZh()));
             return "/error/404";
@@ -210,7 +210,7 @@ public class MerchController {
     //region ------进阶信息增删改查------
 
     //根据搜索条件获取周边--列表界面
-    @RequestMapping(value = "/get-merchs-list", method = RequestMethod.POST)
+    @RequestMapping(value = "/get-merchs", method = RequestMethod.POST)
     @ResponseBody
     public String getMerchsByFilterList(@RequestBody String json) {
         JSONObject param = JSON.parseObject(json);

@@ -63,8 +63,6 @@ public class AlbumController {
     private VisitService visitService;
     // @Autowired
     // private ElasticsearchService elasticsearchService;
-    @Autowired
-    private TagService tagService;
     @Value("${website.path.upload}")
     private String uploadPath;
     @Value("${website.path.img}")
@@ -123,7 +121,7 @@ public class AlbumController {
     //region ------增删改查------
 
     //根据搜索条件获取专辑
-    @RequestMapping(value = "/get-albums-list", method = RequestMethod.POST)
+    @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
     public String getAlbumsByFilterList(@RequestBody String json) {
 

@@ -47,6 +47,9 @@
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
 
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
+
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
@@ -232,10 +235,22 @@
                                 <p-inputtext v-model.trim="queryParams.filters.publisher.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="area">区域</label>
-                                <p-dropdown v-model="queryParams.filters.area.value" :options="areaSet"
-                                            placeholder="所有" option-label="nameZh"
-                                            option-value="code">
+                                <label htmlFor="region">区域</label>
+                                <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
+                                            :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
+                                    <template #value="slotProps">
+                                        <div class="country-item" v-if="slotProps.value">
+                                            <span :class="'fi fi-' + slotProps.value"></span>
+                                            <div class="ml-2">{{regionCode2NameZh(slotProps.value)}}</div>
+                                        </div>
+                                        <span v-else>选择地区</span>
+                                    </template>
+                                    <template #option="slotProps">
+                                        <div class="country-item">
+                                            <span :class="'fi fi-' + slotProps.option.code"></span>
+                                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                        </div>
+                                    </template>
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
@@ -455,11 +470,6 @@
             const bookFormatSet = ref([[${bookFormatSet}]]);
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const productSelect = ref(true);
-            const hasBonusSet = ref([
-                {label: "全部", value: null},
-                {label: "有", value: 1},
-                {label: "无", value: 0}
-            ]);
             const queryParams = ref({
                 first: 0,
                 rows: 0,
@@ -474,7 +484,7 @@
                     products: {value: null},
                     publisher: {value: null},
                     hasBonus: {value: null},
-                    area: {value: null},
+                    region: {value: null},
                     publishLanguage: {value: null},
                 }
             });
@@ -493,7 +503,7 @@
                         products: {value: null},
                         publisher: {value: null},
                         hasBonus: {value: null},
-                        area: {value: null},
+                        region: {value: null},
                         publishLanguage: {value: null},
                     }
                 };
@@ -553,7 +563,7 @@
             };
 
             return {
-                areaSet, languageSet, bookTypeSet,
+                regionSet, languageSet, bookTypeSet, regionCode2NameZh,
                 clearSearch, hasBonusSet, booksRows, bookFormatSet, mediaFormatSet,
                 getProducts, seriesSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,

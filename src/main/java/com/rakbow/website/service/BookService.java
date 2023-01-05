@@ -4,13 +4,9 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
-import com.rakbow.website.data.MediaFormat;
-import com.rakbow.website.data.album.AlbumFormat;
-import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.*;
 import com.rakbow.website.data.product.ProductClass;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
@@ -158,9 +154,9 @@ public class BookService {
         series.put("id", book.getSeries());
         series.put("name", seriesService.selectSeriesById(book.getSeries()).getNameZh());
 
-        JSONObject area = new JSONObject();
-        area.put("code", book.getArea());
-        area.put("nameZh", Area.areaCode2NameZh(book.getArea()));
+        JSONObject region = new JSONObject();
+        region.put("code", book.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
 
         JSONObject publishLanguage = new JSONObject();
         publishLanguage.put("code", book.getPublishLanguage());
@@ -169,8 +165,8 @@ public class BookService {
         bookJson.put("bookType", bookType);
         bookJson.put("series", series);
         bookJson.put("products", products);
-        bookJson.put("area", area);
-        bookJson.put("currencyUnit", Area.areaCode2Currency(book.getArea()));
+        bookJson.put("region", region);
+        bookJson.put("currencyUnit", Region.regionCode2Currency(book.getRegion()));
         bookJson.put("publishLanguage", publishLanguage);
         bookJson.put("authors", authors);
         bookJson.put("spec", spec);
@@ -231,9 +227,9 @@ public class BookService {
         series.put("id", book.getSeries());
         series.put("name", seriesService.selectSeriesById(book.getSeries()).getNameZh());
 
-        JSONObject area = new JSONObject();
-        area.put("code", book.getArea());
-        area.put("nameZh", Area.areaCode2NameZh(book.getArea()));
+        JSONObject region = new JSONObject();
+        region.put("code", book.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
 
         JSONObject publishLanguage = new JSONObject();
         publishLanguage.put("code", book.getPublishLanguage());
@@ -262,8 +258,8 @@ public class BookService {
         bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
         bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
 
-        bookJson.put("area", area);
-        bookJson.put("currencyUnit", Area.areaCode2Currency(book.getArea()));
+        bookJson.put("region", region);
+        bookJson.put("currencyUnit", Region.regionCode2Currency(book.getRegion()));
         bookJson.put("publishLanguage", publishLanguage);
 
         bookJson.remove("bonus");
@@ -330,9 +326,9 @@ public class BookService {
         bookType.put("id", book.getBookType());
         bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
 
-        JSONObject area = new JSONObject();
-        area.put("code", book.getArea());
-        area.put("nameZh", Area.areaCode2NameZh(book.getArea()));
+        JSONObject region = new JSONObject();
+        region.put("code", book.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
 
         JSONObject publishLanguage = new JSONObject();
         publishLanguage.put("code", book.getPublishLanguage());
@@ -344,7 +340,7 @@ public class BookService {
         bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
         bookJson.put("title", book.getTitle());
         bookJson.put("titleZh", book.getTitleZh());
-        bookJson.put("area", area);
+        bookJson.put("region", region);
         bookJson.put("publishLanguage", publishLanguage);
         bookJson.put("bookType", bookType);
         bookJson.put("cover", cover);
@@ -402,9 +398,9 @@ public class BookService {
         bookType.put("id", book.getBookType());
         bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
 
-        JSONObject area = new JSONObject();
-        area.put("code", book.getArea());
-        area.put("nameZh", Area.areaCode2NameZh(book.getArea()));
+        JSONObject region = new JSONObject();
+        region.put("code", book.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
 
         JSONObject publishLanguage = new JSONObject();
         publishLanguage.put("code", book.getPublishLanguage());
@@ -414,7 +410,7 @@ public class BookService {
         bookJson.put("products", products);
         bookJson.put("series", series);
         bookJson.put("bookType", bookType);
-        bookJson.put("area", area);
+        bookJson.put("region", region);
         bookJson.put("publishLanguage", publishLanguage);
         bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
         bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
@@ -637,7 +633,7 @@ public class BookService {
         String title = filter.getJSONObject("title").getString("value");
         String isbn10 = filter.getJSONObject("isbn10").getString("value");
         String isbn13 = filter.getJSONObject("isbn13").getString("value");
-        String area = filter.getJSONObject("area").getString("value");
+        String region = filter.getJSONObject("region").getString("value");
         String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
         String publisher = filter.getJSONObject("publisher").getString("value");
 
@@ -669,10 +665,10 @@ public class BookService {
 
         int row = queryParams.getIntValue("rows");
 
-        List<Book> books = bookMapper.getBooksByFilterList(title, isbn10, isbn13, publisher, area, publishLanguage,
+        List<Book> books = bookMapper.getBooksByFilterList(title, isbn10, isbn13, publisher, region, publishLanguage,
                 bookType, series, products, hasBonus, sortField, sortOrder, first, row);
 
-        int total = bookMapper.getBooksRowsByFilterList(title, isbn10, isbn13, publisher, area, publishLanguage,
+        int total = bookMapper.getBooksRowsByFilterList(title, isbn10, isbn13, publisher, region, publishLanguage,
                 bookType, series, products, hasBonus);
 
         Map<String, Object> res = new HashMap<>();

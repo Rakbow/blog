@@ -101,7 +101,7 @@ public class DiscController {
     //region ------增删改查------
 
     //根据搜索条件获取碟片--列表界面
-    @RequestMapping(value = "/get-discs-list", method = RequestMethod.POST)
+    @RequestMapping(value = "/get-discs", method = RequestMethod.POST)
     @ResponseBody
     public String getDiscsByFilterList(@RequestBody String json) {
 
@@ -233,23 +233,6 @@ public class DiscController {
     //endregion
 
     //region ------进阶信息增删改查------
-
-    //根据搜索条件获取专辑--列表界面
-    // @RequestMapping(value = "/get-discs-list", method = RequestMethod.POST)
-    // @ResponseBody
-    // public String getDiscsByFilterList(@RequestBody String json) {
-    //     JSONObject queryParams = JSON.parseObject(json);
-    //
-    //     Map<String, Object> map = discService.getDiscsByFilterList(queryParams);
-    //
-    //     List<JSONObject> discs = discService.disc2JsonList((List<Disc>) map.get("data"));
-    //
-    //     JSONObject result = new JSONObject();
-    //     result.put("data", discs);
-    //     result.put("total", map.get("total"));
-    //
-    //     return JSON.toJSONString(result);
-    // }
 
     //新增图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)

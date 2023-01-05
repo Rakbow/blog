@@ -327,6 +327,8 @@ public class MerchService {
      */
     public JSONObject merch2JsonIndex(Merch merch) {
 
+        boolean isNotForSale = (merch.getIsNotForSale() == 1);
+
         JSONObject merchJson = (JSONObject) JSON.toJSON(merch);
 
         //封面
@@ -353,6 +355,7 @@ public class MerchService {
         category.put("nameZh", MerchCategory.index2NameZh(merch.getCategory()));
 
         merchJson.put("cover", cover);
+        merchJson.put("isNotForSale", isNotForSale);
         merchJson.put("products", products);
         merchJson.put("series", series);
         merchJson.put("category", category);
@@ -529,7 +532,7 @@ public class MerchService {
         int sortOrder = queryParams.getIntValue("sortOrder");
 
         String name = filter.getJSONObject("name").getString("value");
-        String barcode = filter.getJSONObject("isbn10").getString("value");
+        String barcode = filter.getJSONObject("barcode").getString("value");
 
         int category = 100;
         if (filter.getJSONObject("category").getInteger("value") != null) {

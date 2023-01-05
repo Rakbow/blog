@@ -73,7 +73,7 @@ public class BookController {
 
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getBookDetail(@PathVariable("id") int id, Model model) {
+    public String getBookDetail(@PathVariable("id") Integer id, Model model) {
         if (bookService.getBookById(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
@@ -208,7 +208,7 @@ public class BookController {
     //region ------进阶信息增删改查------
 
     //根据搜索条件获取图书--列表界面
-     @RequestMapping(value = "/get-books-list", method = RequestMethod.POST)
+     @RequestMapping(value = "/get-books", method = RequestMethod.POST)
      @ResponseBody
      public String getBooksByFilterList(@RequestBody String json) {
          JSONObject param = JSON.parseObject(json);
@@ -409,6 +409,5 @@ public class BookController {
     }
 
     //endregion
-
 
 }

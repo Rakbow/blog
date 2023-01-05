@@ -5,13 +5,13 @@
 <mapper namespace="com.rakbow.website.dao.BookMapper">
 
     <sql id="selectFields">
-        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, series, products, area, publish_language, authors,
+        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, series, products, region, publish_language, authors,
         publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        title, title_en, title_zh, isbn_10, isbn_13, book_type, series, products, area, publish_language, authors,
+        title, title_en, title_zh, isbn_10, isbn_13, book_type, series, products, region, publish_language, authors,
         publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, _s
     </sql>
@@ -36,7 +36,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into book (<include refid="insertFields"></include>)
-        values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{series}, #{products}, #{area},
+        values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{series}, #{products}, #{region},
         #{publishLanguage},#{authors}, #{publisher}, #{publishDate}, #{price}, #{summary}, #{spec}, #{hasBonus},
         #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -46,7 +46,7 @@
         set
         title = #{book.title}, title_en = #{book.titleEn}, title_zh = #{book.titleZh}, isbn_10 = #{book.isbn10},
         isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, series = #{book.series}, products = #{book.products},
-        area = #{book.area}, publish_language = #{book.publishLanguage}, publisher = #{book.publisher},
+        region = #{book.region}, publish_language = #{book.publishLanguage}, publisher = #{book.publisher},
         publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
         has_bonus = #{book.hasBonus}, remark = #{book.remark}, added_time = #{book.addedTime},
         edited_time = #{book.editedTime}, _s = #{book._s}
@@ -118,8 +118,8 @@
             <if test="publisher != null and publisher != '' ">
                 and publisher like concat('%', #{publisher}, '%')
             </if>
-            <if test="area != null and area != '' ">
-                and area = #{area}
+            <if test="region != null and region != '' ">
+                and region = #{region}
             </if>
             <if test="publishLanguage != null and publishLanguage != '' ">
                 and publish_language = #{publishLanguage}
@@ -189,8 +189,8 @@
             <if test="publisher != null and publisher != '' ">
                 and publisher like concat('%', #{publisher}, '%')
             </if>
-            <if test="area != null and area != '' ">
-                and area = #{area}
+            <if test="region != null and region != '' ">
+                and region = #{region}
             </if>
             <if test="publishLanguage != null and publishLanguage != '' ">
                 and publish_language = #{publishLanguage}

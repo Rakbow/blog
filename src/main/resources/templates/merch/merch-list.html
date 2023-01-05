@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Book List</title>
+    <title>Merch List</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -73,7 +73,7 @@
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
                               @click="openNewDialog"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                              :disabled="!selectedBooks || !selectedBooks.length"></p-button>&nbsp;
+                              :disabled="!selectedMerchs || !selectedMerchs.length"></p-button>&nbsp;
                 </template>
 
                 <template #end>
@@ -81,14 +81,14 @@
                               @click="exportCSV($event)"></p-button>
                 </template>
             </p-toolbar>
-            <p-datatable ref="dt" :value="books" class="p-datatable-customers p-datatable-sm"
+            <p-datatable ref="dt" :value="merchs" class="p-datatable-customers p-datatable-sm"
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row"
-                         :globalFilterFields="['title','isbn10','isbn13']"
+                         :globalFilterFields="['name', 'nameZh', 'barcode']"
                          :paginator="true" :rows="10" striped-rows
                          :resizable-columns="true" column-resize-mode="expand"
-                         v-model:selection="selectedBooks" dataKey="id"
+                         v-model:selection="selectedMerchs" dataKey="id"
                          :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                          paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                              LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -112,67 +112,48 @@
                     加载中，别急~
                 </template>
                 <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>
-                <p-column header="序号" field="id" exportHeader="Book Id" :sortable="true" style="flex: 0 0 5rem">
+                <p-column header="序号" field="id" exportHeader="Merch Id" :sortable="true" style="flex: 0 0 5rem">
                     <template #body="slotProps">
                         <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                             {{slotProps.data.id}}
                         </p-button>
                     </template>
                 </p-column>
-                <p-column header="ISBN-10" field="isbn10" :show-filter-menu="false"
+                <p-column header="商品名" field="name" :show-filter-menu="false"
                           style="flex: 0 0 10rem">
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="ISBN-10"></p-inputtext>
+                                     class="p-column-filter"></p-inputtext>
                     </template>
                 </p-column>
-                <p-column header="ISBN-13" field="isbn13" :show-filter-menu="false"
+                <p-column header="商品条形码" field="barcode" :show-filter-menu="false"
                           style="flex: 0 0 10rem">
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="ISBN-13"></p-inputtext>
+                                     class="p-column-filter"></p-inputtext>
                     </template>
                 </p-column>
-                <p-column header="书名" field="title" :show-filter-menu="false"
-                          style="flex: 0 0 20rem">
+                <p-column header="商品类型" field="category" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
-                        <a :href="domainUrl + '/db/book/' + slotProps.data.id">
-                            {{slotProps.data.title}}
-                        </a>
-                    </template>
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="书名"></p-inputtext>
-                    </template>
-                </p-column>
-                <p-column header="分类" field="bookType" :show-filter-menu="false" style="flex: 0 0 9rem">
-                    <template #body="slotProps">
-                        {{slotProps.data.bookType.nameZh}}
+                        {{slotProps.data.category.nameZh}}
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                    :options="bookTypeSet" option-label="label" option-value="value"
-                                    style="width: 8rem" placeholder="分类" class="p-column-filter">
+                                    :options="merchCategorySet" option-label="label" option-value="value"
+                                    style="width: 8rem" placeholder="类型" class="p-column-filter">
                         </p-dropdown>
                     </template>
                 </p-column>
-                <p-column header="出版社" field="publisher" :show-filter-menu="false"
-                          style="flex: 0 0 12rem">
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="出版社"></p-inputtext>
-                    </template>
-                </p-column>
-                <p-column header="出版时间" field="publishDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
-                <p-column header="出版价格" field="price" :sortable="true" style="flex: 0 0 7rem">
+                <p-column header="发售时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+                <p-column header="发售价格" field="price" :sortable="true" style="flex: 0 0 7rem">
                     <template #body="slotProps">
-                        {{slotProps.data.price}} {{slotProps.data.currencyUnit}}
+                        {{slotProps.data.releasePrice}} {{slotProps.data.priceUnit}}
                     </template>
                 </p-column>
-                <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
+                <p-column header="是否非卖品" field="isNotForSale" data-type="boolean" body-class="text-center"
                           style="flex: 0 0 5rem">
                     <template #body="{data}">
-                        <i class="pi" :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
+                        <i class="pi" :class="{'true-icon pi-check-circle': data.isNotForSale, 'false-icon pi-times-circle': !data.isNotForSale}"></i>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
@@ -210,28 +191,6 @@
                     </template>
 
                 </p-column>
-                <p-column header="地区" field="area" :show-filter-menu="false" style="flex: 0 0 9rem">
-                    <template #body="slotProps">
-                        {{slotProps.data.area.nameZh}}
-                    </template>
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                        :options="areaSet" option-label="nameZh" option-value="code"
-                        style="width: 8rem" placeholder="分类" class="p-column-filter">
-                        </p-dropdown>
-                    </template>
-                </p-column>
-                <p-column header="语言" field="publishLanguage" :show-filter-menu="false" style="flex: 0 0 9rem">
-                    <template #body="slotProps">
-                        {{slotProps.data.publishLanguage.nameZh}}
-                    </template>
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                        :options="languageSet" option-label="nameZh" option-value="code"
-                        style="width: 8rem" placeholder="分类" class="p-column-filter">
-                        </p-dropdown>
-                    </template>
-                </p-column>
                 <p-column v-for="(col, index) of selectedColumns" :field="col.field"
                           :header="col.header" :key="col.field + '_' + index" :sortable="true">
                 </p-column>
@@ -239,194 +198,40 @@
             <p-dialog v-model:visible="displayNewDialog" header="新增数据"
                       :style="{width: '600px'}" :modal="true" class="p-fluid">
                 <p-panel header="基础信息">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="book.isbn10"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="book.isbn13"></p-inputtext>
-                        </div>
+                    <div class="field">
+                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="merch.name"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="title">书名<span style="color: red">*</span></label>
-                        <p-inputtext v-model.trim="book.title"></p-inputtext>
+                        <label htmlFor="nameZh">商品名(中)</label>
+                        <p-inputtext v-model.trim="merch.nameZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleZh">书名(中)</label>
-                        <p-inputtext v-model.trim="book.titleZh"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="titleEn">书名(英)</label>
-                        <p-inputtext v-model.trim="book.titleEn"></p-inputtext>
+                        <label htmlFor="nameEn">商品名(英)</label>
+                        <p-inputtext v-model.trim="merch.nameEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
-                            <p-dropdown v-model="book.bookType" :options="bookTypeSet"
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext v-model.trim="merch.barcode"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="category">商品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="merch.category" :options="merchCategorySet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="book.hasBonus" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="area" class="mb-3">地区<span style="color: red">*</span></label>
-                            <p-dropdown v-model="book.area" :options="areaSet"
-                                        option-label="nameZh" option-value="code">
-                            </p-dropdown>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
-                            <p-dropdown v-model="book.publishLanguage" :options="languageSet"
-                                        option-label="nameZh" option-value="code">
-                            </p-dropdown>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="book.series" :options="seriesSet"
+                            <p-dropdown v-model="merch.series" :options="seriesSet"
                                         option-label="label" option-value="value" @change="getProducts">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
+                        <div class="field col-8">
                             <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect v-model="book.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
-                                           display="chip" :filter="true" :disabled="productSelect">
-                            </p-multiselect>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="book.publishDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="price">发行价格</label>
-                            <p-inputnumber v-model="book.price"></p-inputnumber>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="publisher">出版社</label>
-                            <p-inputtext v-model.trim="book.publisher"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="summary">简介</label>
-                        <p-textarea v-model="book.summary" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="remark">备注</label>
-                        <p-textarea v-model="book.remark" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
-                    </div>
-                </p-panel>
-                <p-panel header="进阶信息">
-                    <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewBook"></p-button>
-                </template>
-            </p-dialog>
-            <p-dialog v-model:visible="displayEditDialog" header="编辑数据"
-                      :style="{width: '600px'}" :modal="true" class="p-fluid">
-                <p-panel header="基础信息">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="title">书名<span style="color: red">*</span></label>
-                        <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="titleZh">书名(中)</label>
-                        <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="titleEn">书名(英)</label>
-                        <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
-                                        option-label="label" option-value="value">
-                            </p-dropdown>
-                        </div>
-                        <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="area" class="mb-3">地区<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.area" :options="areaSet"
-                                        option-label="nameZh" option-value="code">
-                            </p-dropdown>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
-                                        option-label="nameZh" option-value="code">
-                            </p-dropdown>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.series" :options="seriesSet"
-                                        option-label="label" option-value="value">
-                            </p-dropdown>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect v-model="bookEdit.products" :options="productSet"
+                            <p-multiselect v-model="merch.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
                                            display="chip" :filter="true">
                             </p-multiselect>
@@ -434,71 +239,163 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
+                            <label htmlFor="releaseDate">发售时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="merch.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
-                        <div class="field col">
-                            <label htmlFor="price">发行价格</label>
-                            <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
+                        <div class="field col-3">
+                            <label htmlFor="price">发售价格</label>
+                            <p-inputnumber v-model="merch.price"></p-inputnumber>
                         </div>
-                        <div class="field col">
-                            <label htmlFor="publisher">出版社</label>
-                            <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
+                        <div class="field col-3">
+                            <label htmlFor="priceUnit">单位</label>
+                            <p-dropdown v-model="merch.priceUnit" :options="priceUnitSet"
+                                        option-label="label" option-value="value" placeholder="单位">
+                            </p-dropdown>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="summary">简介</label>
-                        <p-textarea v-model="bookEdit.summary" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
+                        <div class="field col-2">
+                            <div class="col-12">
+                                <label htmlFor="isNotForSale" class="mb-3">非卖品</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="merch.isNotForSale" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
+                        </div>
                     </div>
                     <div class="field">
                         <label htmlFor="remark">备注</label>
-                        <p-textarea v-model="bookEdit.remark" rows="3" cols="20"
+                        <p-textarea v-model="merchEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
                 </p-panel>
                 <p-panel header="进阶信息">
-                    <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
-                    </div>
                     <p-divider align="center" type="dashed"><b>规格</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑规格信息，请到周边商品详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>描述</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑描述信息，请到周边商品详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑图片信息，请到周边商品详情页面进行</em></span>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewMerch"></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="displayEditDialog" header="编辑数据"
+                      :style="{width: '600px'}" :modal="true" class="p-fluid">
+                <p-panel header="基础信息">
+                    <div class="field">
+                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="merchEdit.name"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="nameZh">商品名(中)</label>
+                        <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="nameEn">商品名(英)</label>
+                        <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext v-model.trim="merchEdit.barcode"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="category">商品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="merchEdit.category" :options="merchCategorySet"
+                                        option-label="label" option-value="value">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col-4">
+                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="merchEdit.series" :options="seriesSet"
+                                        option-label="label" option-value="value" @change="getProducts">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col-8">
+                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect v-model="merchEdit.products" :options="productSet"
+                                           option-label="label" option-value="value" placeholder="选择所属产品"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发售时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="merchEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col-3">
+                            <label htmlFor="price">发售价格</label>
+                            <p-inputnumber v-model="merchEdit.price"></p-inputnumber>
+                        </div>
+                        <div class="field col-3">
+                            <label htmlFor="priceUnit">单位</label>
+                            <p-dropdown v-model="merchEdit.priceUnit" :options="priceUnitSet"
+                                        option-label="label" option-value="value" placeholder="单位">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col-2">
+                            <div class="col-12">
+                                <label htmlFor="isNotForSale" class="mb-3">非卖品</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="merchEdit.isNotForSale" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea v-model="merchEdit.remark" rows="3" cols="20"
+                                    :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+                <p-panel header="进阶信息">
+                    <p-divider align="center" type="dashed"><b>规格</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑规格信息，请到周边商品详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑描述信息，请到周边商品详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑图片信息，请到周边商品详情页面进行</em></span>
                     </div>
                 </p-panel>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text"
                               @click="closeEditDialog"></p-button>
                     <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                              @click="submitEditBook"></p-button>
+                              @click="submitEditMerch"></p-button>
                 </template>
             </p-dialog>
-            <p-dialog v-model:visible="deleteBooksDialog" header="删除数据"
+            <p-dialog v-model:visible="deleteMerchsDialog" header="删除数据"
                       :style="{width: '450px'}" :modal="true">
                 <div class="confirmation-content">
                     <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                    <span>确定删除所选图书？</span>
+                    <span>确定删除所选周边商品？</span>
                 </div>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                              @click="deleteBooksDialog = false"></p-button>
+                              @click="deleteMerchsDialog = false"></p-button>
                     <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                              @click="deleteSelectedBooks"></p-button>
+                              @click="deleteSelectedMerchs"></p-button>
                 </template>
             </p-dialog>
 
@@ -537,63 +434,58 @@
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const filters = ref({
-                'title': {value: '', matchMode: 'contains'},
-                'isbn10': {value: '', matchMode: 'contains'},
-                'isbn13': {value: '', matchMode: 'contains'},
-                'publisher': {value: '', matchMode: 'contains'},
-                'area': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'publishLanguage': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'bookType': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'name': {value: '', matchMode: 'contains'},
+                'barcode': {value: '', matchMode: 'contains'},
+                'category': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'series': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
-                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'isNotForSale': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
                 queryParams.value = event;
-                getBooks();
+                getMerchs();
             };
             const onSort = (event) => {
                 queryParams.value = event;
-                getBooks();
+                getMerchs();
             };
             const onFilter = () => {
                 queryParams.value.filters = filters.value ;
-                getBooks();
+                getMerchs();
             };
-            const getBooks = () => {
+            const getMerchs = () => {
                 let json = {
                     pageLabel: "list",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_BOOKS_LIST_URL, json)
+                axiosPostRequest(GET_MERCHS_LIST_URL, json)
                     .then(res => {
-                        books.value = res.data;
+                        merchs.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
             //endregion
 
             const displayEditDialog = ref(false);
-            const deleteBooksDialog = ref(false);
+            const deleteMerchsDialog = ref(false);
             const displayNewDialog = ref(false);
 
-            const selectedBooks = ref();
+            const selectedMerchs = ref();
 
-            const book = ref({});
-            const books = ref();
-
-            const bookTypeSet = ref([[${bookTypeSet}]]);
+            const merch = ref({});
+            const merchs = ref();
+            const merchCategorySet = ref([[${merchCategorySet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
             const seriesSet = ref([[${seriesSet}]]);
 
-            const bookEdit = ref({});
+            const merchEdit = ref({});
             const toast = useToast();
             const dt = ref();
             const loading = ref(true);
             const columns = ref([
-                {field: 'titleZh', header: '书名(中)'},
-                {field: 'titleEn', header: '书名(英)'},
+                {field: 'nameZh', header: '商品名(中)'},
+                {field: 'nameEn', header: '商品名(英)'},
                 {field: 'remark', header: '备注'},
                 {field: 'addedTime', header: '收录时间'},
                 {field: 'editedTime', header: '编辑时间'},
@@ -621,7 +513,7 @@
                     sortOrder: null,
                     filters: filters.value
                 };
-                getBooks();
+                getMerchs();
                 loading.value = false;
             };
 
@@ -633,19 +525,19 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            deleteBooksDialog.value = true;
+                            deleteMerchsDialog.value = true;
                         }
                     })
             };
 
             //删除数据
-            const deleteSelectedBooks = () => {
-                axiosDeleteRequest(DELETE_BOOK_URL, selectedBooks.value)
+            const deleteSelectedMerchs = () => {
+                axiosDeleteRequest(DELETE_MERCH_URL, selectedMerchs.value)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            deleteBooksDialog.value = false;
-                            selectedBooks.value = null;
+                            deleteMerchsDialog.value = false;
+                            selectedMerchs.value = null;
                             init();
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -661,16 +553,14 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            bookEdit.value = dataTmp;
+                            merchEdit.value = dataTmp;
                             axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, {series:dataTmp.series.id})
                                 .then(res => {
                                     productSet.value = res;
-                                    bookEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
-                                    bookEdit.value.series = dataTmp.series.id;
-                                    bookEdit.value.bookType = dataTmp.bookType.id;
-                                    bookEdit.value.area = dataTmp.area.code;
-                                    bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
-                                    bookEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
+                                    merchEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
+                                    merchEdit.value.series = dataTmp.series.id;
+                                    merchEdit.value.category = dataTmp.category.id;
+                                    merchEdit.value.isNotForSale = dataTmp.isNotForSale ? 1: 0;
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -679,15 +569,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                bookEdit.value = {};
+                merchEdit.value = {};
                 init();
             };
             //保存编辑数据
-            const submitEditBook = async () => {
-                await axiosPostRequest(UPDATE_BOOK_URL, bookEdit.value)
+            const submitEditMerch = async () => {
+                await axiosPostRequest(UPDATE_MERCH_URL, merchEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            bookEdit.value = {};
+                            merchEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -712,7 +602,7 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            book.value = {};
+                            merch.value = {};
                             productSelect.value = true;
                             displayNewDialog.value = true;
                         }
@@ -720,16 +610,16 @@
             };
             //关闭新增数据面板
             const closeNewDialog = () => {
-                book.value = {};
+                merch.value = {};
                 displayNewDialog.value = false;
             };
 
             //提交新增数据
-            const submitNewBook = () => {
-                axiosPostRequest(INSERT_BOOK_URL, book.value)
+            const submitNewMerch = () => {
+                axiosPostRequest(INSERT_MERCH_URL, merch.value)
                     .then(res => {
                         if (res.state === 1) {
-                            book.value = {};
+                            merch.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -758,14 +648,14 @@
 
 
             return {
-                areaSet, languageSet, bookTypeSet,
+                priceUnitSet, merchCategorySet,
                 onToggle, onPage, onSort, onFilter, filters, totalRecords,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
-                book, books, columns, selectedColumns,
+                merch, merchs, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
-                submitNewBook, confirmDeleteSelected, deleteBooksDialog, deleteSelectedBooks,
-                selectedBooks, displayEditDialog, init,
-                openEditDialog, closeEditDialog, submitEditBook, bookEdit,
+                submitNewMerch, confirmDeleteSelected, deleteMerchsDialog, deleteSelectedMerchs,
+                selectedMerchs, displayEditDialog, init,
+                openEditDialog, closeEditDialog, submitEditMerch, merchEdit,
                 productSet, seriesSet,
                 getProducts, productSelect
             }

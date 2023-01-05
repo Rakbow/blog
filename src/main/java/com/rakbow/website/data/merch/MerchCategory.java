@@ -9,11 +9,11 @@ package com.rakbow.website.data.merch;
 public enum MerchCategory {
 
     UNCLASSIFIED(0,"未分类", "Unclassified"),
-    NOVEL(1,"小说", "Novel"),
-    comic(2,"漫画", "comic"),
-    ANTHOLOGY(3,"作品集", "Anthology"),
-    ART_BOOK(4,"原画集/设定集", "Art Book"),
-    ELECTRONIC_BOOK(5,"电子书", "e-book"),
+    BADGE(1,"徽章", "Badge"),
+    ILLUSTRATE(2,"色纸", "Illustration"),
+    POSTERS(3,"海报", "Posters"),
+    TOY(4,"小玩具", "Toy"),
+    FIGURE(5,"手办", "Figure"),
     OTHER(6,"其他", "Other");
 
     private int index;

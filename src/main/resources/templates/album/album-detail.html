@@ -567,14 +567,14 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown id="seriesId" v-model="albumEdit.series" :options="seriesSet"
                                         option-label="label" option-value="value"
                                         :disabled="seriesBool">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
+                        <div class="field col-6">
                             <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
                             <p-multiselect id="products" v-model="albumEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"

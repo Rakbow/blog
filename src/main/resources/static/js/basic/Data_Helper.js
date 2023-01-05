@@ -220,12 +220,12 @@ const copy = () => {
     })
 };
 
-const areaSet = [
-    {nameEn: 'Japan', nameZh: '日本', code: 'JP', currency: 'JPY'},
-    {nameEn: 'China', nameZh: '中国大陆', code: 'CN', currency: 'CNY'},
-    {nameEn: 'Taiwan', nameZh: '台湾地区', code: 'TW', currency: 'TWD'},
-    {nameEn: 'Europe', nameZh: '欧洲', code: 'EU', currency: 'EUR'},
-    {nameEn: 'USA', nameZh: '美国', code: 'US', currency: 'USD'},
+const regionSet = [
+    {nameEn: 'Japan', nameZh: '日本', code: 'jp', currency: 'JPY'},
+    {nameEn: 'China', nameZh: '中国大陆', code: 'cn', currency: 'CNY'},
+    {nameEn: 'Taiwan', nameZh: '台湾地区', code: 'tw', currency: 'TWD'},
+    {nameEn: 'Europe', nameZh: '欧洲', code: 'eu', currency: 'EUR'},
+    {nameEn: 'USA', nameZh: '美国', code: 'us', currency: 'USD'},
 ];
 
 const languageSet = [
@@ -243,3 +243,28 @@ const priceUnitSet = [
     {labelEn: 'OTHER', label: '其他', value: 'UNKNOWN'},
 ];
 
+const hasBonusSet = [
+    {label: "全部", value: null},
+    {label: "有", value: 1},
+    {label: "无", value: 0}
+];
+
+const isLimitedSet = [
+    {label: "全部", value: null},
+    {label: "是", value: 1},
+    {label: "否", value: 0}
+];
+
+const isNotForSaleSet = [
+    {label: "所有", value: null},
+    {label: "是", value: true},
+    {label: "否", value: false}
+];
+
+const regionCode2NameZh = (code) => {
+    for (let region of regionSet) {
+        if (region.code === code) {
+            return region.nameZh;
+        }
+    }
+}

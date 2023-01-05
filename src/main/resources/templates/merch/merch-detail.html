@@ -103,7 +103,7 @@
                             <template #header>
                                 <i class="pi iconfont icon-yinshuabaozhuang mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
-                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{merch.title}}</h5>
+                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{merch.name}}</h5>
                                     <h5 v-if="merch.nameEn != ''" class="text-start ml-2 mt-0 mb-0"
                                         style="text-align: left"><small>{{merch.nameEn}}</small>
                                     </h5>
@@ -414,34 +414,32 @@
                     </div>
                     <div class="field">
                         <label htmlFor="nameZh">商品名(中)</label>
-                        <p-inputtext v-model.trim="merchEdit.titleZh"></p-inputtext>
+                        <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
                     </div>
                     <div class="field">
                         <label htmlFor="nameEn">商品名(英)</label>
-                        <p-inputtext v-model.trim="merchEdit.titleEn"></p-inputtext>
+                        <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
                     </div>
-
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="barcode">商品条形码</label>
                             <p-inputtext v-model.trim="merchEdit.barcode"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="category" class="mb-3">商品分类<span style="color: red">*</span></label>
+                            <label htmlFor="category">商品分类<span style="color: red">*</span></label>
                             <p-dropdown v-model="merchEdit.category" :options="merchCategorySet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                     </div>
-
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown v-model="merchEdit.series" :options="seriesSet"
                                         option-label="label" option-value="value" :disabled="seriesBool">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
+                        <div class="field col-8">
                             <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
                             <p-multiselect v-model="merchEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
@@ -449,7 +447,6 @@
                             </p-multiselect>
                         </div>
                     </div>
-
                     <div class="formgrid grid">
                         <div class="field col">
                             <label htmlFor="releaseDate">发售时间<span style="color: red">*</span></label>
@@ -457,15 +454,17 @@
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
-                        <div class="field col">
+                        <div class="field col-3">
                             <label htmlFor="price">发售价格</label>
                             <p-inputnumber v-model="merchEdit.price"></p-inputnumber>
+                        </div>
+                        <div class="field col-3">
                             <label htmlFor="priceUnit">单位</label>
                             <p-dropdown v-model="merchEdit.priceUnit" :options="priceUnitSet"
-                                        option-label="label" option-value="value">
+                                        option-label="label" option-value="value" placeholder="单位">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
+                        <div class="field col-2">
                             <div class="col-12">
                                 <label htmlFor="isNotForSale" class="mb-3">非卖品</label>
                             </div>

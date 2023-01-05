@@ -22,7 +22,7 @@ public class Book {
     private int bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private int series;//所属系列
     private String products;//所属产品
-    private String area;//地区
+    private String region;//地区
     private String publishLanguage;//语言
     private String authors;//作者（译者，插画，原作者等，json）
     private String publisher;//出版社
@@ -49,7 +49,7 @@ public class Book {
         this.bookType = 0;
         this.series = 0;
         this.products = "{\"ids\": []}";
-        this.area = "";
+        this.region = "";
         this.publishLanguage = "";
         this.authors = "[]";
         this.publisher = "";

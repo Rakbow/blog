@@ -273,14 +273,14 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown id="series" v-model="album.series" :options="seriesSet"
                                         placeholder="选择所属系列" option-label="label" option-value="value"
                                         @change="getProducts">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
+                        <div class="field col-6">
                             <label htmlFor="products" class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect id="products" v-model="album.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="请先选择所属系列"
@@ -411,14 +411,14 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown id="series" v-model="albumEdit.series" :options="seriesSet"
                                         placeholder="选择所属系列" option-label="label" option-value="value"
                                         @change="getProducts">
                             </p-dropdown>
                         </div>
-                        <div class="field col">
+                        <div class="field col-6">
                             <label htmlFor="products" class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect id="products" v-model="albumEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属作品"

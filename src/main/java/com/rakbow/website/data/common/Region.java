@@ -8,13 +8,13 @@ import org.apache.commons.lang3.StringUtils;
  * @Create: 2022-12-29 21:00
  * @Description:
  */
-public enum Area {
+public enum Region {
 
-    JAPAN("Japan", "日本", "JP", "JPY"),
-    CHINA("China", "中国大陆", "CN", "CNY"),
-    TAIWAN("Taiwan", "台湾地区", "TW", "TWD"),
-    EUROPE("Europe", "欧洲", "EU", "EUR"),
-    UNITED_STATES("United States", "美国", "US", "USD"),
+    JAPAN("Japan", "日本", "jp", "JPY"),
+    CHINA("China", "中国大陆", "cn", "CNY"),
+    TAIWAN("Taiwan", "台湾地区", "tw", "TWD"),
+    EUROPE("Europe", "欧洲", "eu", "EUR"),
+    UNITED_STATES("United States", "美国", "us", "USD"),
     OTHER("Other", "其他地区", "OTHER", "?");
 
     private String nameEn;
@@ -22,7 +22,7 @@ public enum Area {
     private String code;
     private String currency;
 
-    Area(String nameEn, String nameZh, String code, String currency) {
+    Region(String nameEn, String nameZh, String code, String currency) {
         this.nameEn = nameEn;
         this.nameZh = nameZh;
         this.code = code;
@@ -30,22 +30,22 @@ public enum Area {
     }
 
     //根据地区代码获取货币符号
-    public static String areaCode2Currency(String code){
+    public static String regionCode2Currency(String code){
         String currency = OTHER.currency;
-        for (Area area : Area.values()) {
-            if (StringUtils.equals(area.code, code)) {
-                currency = area.currency;
+        for (Region region : Region.values()) {
+            if (StringUtils.equals(region.code, code)) {
+                currency = region.currency;
             }
         }
         return currency;
     }
 
     //根据地区代码获取地区名称(中文)
-    public static String areaCode2NameZh(String code){
+    public static String regionCode2NameZh(String code){
         String nameZh = OTHER.nameZh;
-        for (Area area : Area.values()) {
-            if (StringUtils.equals(area.code, code)) {
-                nameZh = area.nameZh;
+        for (Region region : Region.values()) {
+            if (StringUtils.equals(region.code, code)) {
+                nameZh = region.nameZh;
             }
         }
         return nameZh;
