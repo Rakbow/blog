@@ -676,11 +676,6 @@
                     }
                 }
             ]);
-            const imageTypes = ref([
-                {label: '展示', value: '0'},
-                {label: '封面', value: '1'},
-                {label: '其他', value: '2'}
-            ]);
 
             //region ------staffs相关组件------
             const tmpStaffs = ref();
@@ -754,20 +749,6 @@
 
             //region ------侧边栏图片------
             const activeIndex = ref(0);
-            const responsiveOptions = [
-                {
-                    breakpoint: '1024px',
-                    numVisible: 5
-                },
-                {
-                    breakpoint: '768px',
-                    numVisible: 3
-                },
-                {
-                    breakpoint: '560px',
-                    numVisible: 1
-                }
-            ];
             const displayCustom = ref(false);
             const imageClick = (index) => {
                 activeIndex.value = index;
@@ -802,9 +783,6 @@
             const imgRowEditSave = (ev) => {
                 let {newData, index} = ev;
                 product.value.images[index] = newData;
-            };
-            const getImageTypeLabel = (type) => {
-                return value2Label(type, imageTypes.value);
             };
             const selectedImage = ref([]);
             const confirmDeleteSelectedImage = () => {

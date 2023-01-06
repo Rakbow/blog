@@ -3,12 +3,14 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.Language;
+import com.rakbow.website.data.common.Region;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.BookUtils;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
@@ -24,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,10 @@ public class BookController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    //图书类型
+    private static final List<JSONObject> bookType = BookType.getBookTypeSet();
+    private static final List<JSONObject> regionSet = Region.getRegionSet();
+    private static final List<JSONObject> languageSet = Language.getLanguageSet();
 
     @Autowired
     private BookService bookService;
@@ -65,7 +70,9 @@ public class BookController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getBookListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("bookTypeSet", BookUtils.getBookTypeSet());
+        model.addAttribute("bookTypeSet", bookType);
+        model.addAttribute("regionSet", regionSet);
+        model.addAttribute("languageSet", languageSet);
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         view.setViewName("/book/book-list");
         return view;
@@ -83,7 +90,9 @@ public class BookController {
 
         Book book = bookService.getBookById(id);
 
-        model.addAttribute("bookTypeSet", BookUtils.getBookTypeSet());
+        model.addAttribute("bookTypeSet", bookType);
+        model.addAttribute("regionSet", regionSet);
+        model.addAttribute("languageSet", languageSet);
         model.addAttribute("productSet", productService.getAllProductSetBySeriesId(book.getSeries()));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
 

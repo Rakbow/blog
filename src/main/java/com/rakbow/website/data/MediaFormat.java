@@ -1,7 +1,11 @@
 package com.rakbow.website.data;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -89,6 +93,24 @@ public enum MediaFormat {
             }
         }
         return 0;
+    }
+
+    /**
+     * 获取媒体类型数组
+     *
+     * @return list 媒体类型数组
+     * @author rakbow
+     */
+    public static List<JSONObject> getMediaFormatSet() {
+        List<JSONObject> list = new ArrayList<>();
+        for (MediaFormat mediaFormat : MediaFormat.values()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("label", mediaFormat.getName());
+            jsonObject.put("labelEn", mediaFormat.getNameEn());
+            jsonObject.put("value", mediaFormat.getIndex());
+            list.add(jsonObject);
+        }
+        return list;
     }
 
     public int getIndex() {

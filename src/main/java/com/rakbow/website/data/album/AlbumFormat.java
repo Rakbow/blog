@@ -1,7 +1,11 @@
 package com.rakbow.website.data.album;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -92,6 +96,24 @@ public enum AlbumFormat {
             }
         }
         return 0;
+    }
+
+    /**
+     * 获取专辑分类数组
+     *
+     * @return list 专辑分类数组
+     * @author rakbow
+     */
+    public static List<JSONObject> getAlbumFormatSet() {
+        List<JSONObject> list = new ArrayList<>();
+        for (AlbumFormat albumFormat : AlbumFormat.values()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("label", albumFormat.getName());
+            jsonObject.put("labelEn", albumFormat.getNameEn());
+            jsonObject.put("value", albumFormat.getIndex());
+            list.add(jsonObject);
+        }
+        return list;
     }
 
     public int getIndex() {

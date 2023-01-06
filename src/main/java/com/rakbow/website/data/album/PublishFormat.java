@@ -1,5 +1,10 @@
 package com.rakbow.website.data.album;
 
+import com.alibaba.fastjson2.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -40,6 +45,24 @@ public enum PublishFormat {
             }
         }
         return 0;
+    }
+
+    /**
+     * 获取出版形式数组
+     *
+     * @return list 出版形式数组
+     * @author rakbow
+     */
+    public static List<JSONObject> getPublishFormatSet() {
+        List<JSONObject> list = new ArrayList<>();
+        for (PublishFormat publishFormat : PublishFormat.values()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("label", publishFormat.getName());
+            jsonObject.put("labelEn", publishFormat.getNameEn());
+            jsonObject.put("value", publishFormat.getIndex());
+            list.add(jsonObject);
+        }
+        return list;
     }
 
     public int getIndex() {

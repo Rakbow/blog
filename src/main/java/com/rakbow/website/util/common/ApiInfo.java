@@ -123,6 +123,22 @@ public class ApiInfo {
 
     //endregion
 
+    //region game相关
+    public static final String UPDATE_GAME_ORGANIZATIONS_SUCCESS = "相关组织信息更新成功！";
+    public static final String UPDATE_GAME_STAFFS_SUCCESS = "开发制作人员信息更新成功！";
+    public static final String UPDATE_GAME_DESCRIPTION_SUCCESS = "游戏描述更新成功！";
+    public static final String UPDATE_GAME_BONUS_SUCCESS = "游戏特典信息更新成功！";
+
+    public static final String GAME_NAME_EMPTY = "未填写游戏名称！";
+    public static final String GAME_SERIES_EMPTY = "未选择游戏所属系列！";
+    public static final String GAME_PRODUCTS_EMPTY = "未选择游戏所属作品！";
+    public static final String GAME_RELEASE_DATE_EMPTY = "未填写游戏发售日期！";
+    public static final String GAME_RELEASE_TYPE_EMPTY = "未选择游戏发售类型！";
+    public static final String GAME_PLATFORM_EMPTY = "未选择游戏所属平台！";
+    public static final String GAME_REGION_EMPTY = "未选择发售地区！";
+
+    //endregion
+
     //region 七牛云
     public static final String QINIU_EXCEPTION = "七牛云异常: %s";
     //endregion

@@ -220,21 +220,6 @@ const copy = () => {
     })
 };
 
-const regionSet = [
-    {nameEn: 'Japan', nameZh: '日本', code: 'jp', currency: 'JPY'},
-    {nameEn: 'China', nameZh: '中国大陆', code: 'cn', currency: 'CNY'},
-    {nameEn: 'Taiwan', nameZh: '台湾地区', code: 'tw', currency: 'TWD'},
-    {nameEn: 'Europe', nameZh: '欧洲', code: 'eu', currency: 'EUR'},
-    {nameEn: 'USA', nameZh: '美国', code: 'us', currency: 'USD'},
-];
-
-const languageSet = [
-    {nameEn: 'Japanese', nameZh: '日语', code: 'ja-JP'},
-    {nameEn: 'Japanese', nameZh: '简体中文', code: 'zh-CN'},
-    {nameEn: 'Japanese', nameZh: '繁体中文', code: 'zh-TW'},
-    {nameEn: 'Japanese', nameZh: '英语', code: 'en-US'},
-];
-
 const priceUnitSet = [
     {labelEn: 'JPY', label: '日元', value: 'JPY'},
     {labelEn: 'CNY', label: '人民币', value: 'CNY'},
@@ -261,10 +246,35 @@ const isNotForSaleSet = [
     {label: "否", value: false}
 ];
 
-const regionCode2NameZh = (code) => {
+const imageTypes = [
+    {label: '展示', value: '0'},
+    {label: '封面', value: '1'},
+    {label: '其他', value: '2'}
+];
+
+const getImageTypeLabel = (type) => {
+    return value2Label(type, imageTypes);
+};
+
+const regionCode2NameZh = (code, regionSet) => {
     for (let region of regionSet) {
         if (region.code === code) {
             return region.nameZh;
         }
     }
 }
+
+const responsiveOptions = [
+    {
+        breakpoint: '1024px',
+        numVisible: 5
+    },
+    {
+        breakpoint: '768px',
+        numVisible: 3
+    },
+    {
+        breakpoint: '560px',
+        numVisible: 1
+    }
+];

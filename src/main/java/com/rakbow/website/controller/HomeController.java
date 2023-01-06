@@ -1,5 +1,12 @@
 package com.rakbow.website.controller;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.MediaFormat;
+import com.rakbow.website.data.album.AlbumFormat;
+import com.rakbow.website.data.album.PublishFormat;
+import com.rakbow.website.data.book.BookType;
+import com.rakbow.website.data.common.Language;
+import com.rakbow.website.data.common.Region;
 import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.AlbumUtils;
@@ -20,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -31,6 +39,13 @@ import java.io.OutputStream;
 public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final List<JSONObject> albumFormatSet = AlbumFormat.getAlbumFormatSet();
+    private static final List<JSONObject> mediaFormatSet = MediaFormat.getMediaFormatSet();
+    private static final List<JSONObject> publishFormatSet = PublishFormat.getPublishFormatSet();
+    private static final List<JSONObject> bookTypeSet = BookType.getBookTypeSet();
+    private static final List<JSONObject> merchCategorySet = MerchCategory.getMerchCategorySet();
+    private static final List<JSONObject> regionSet = Region.getRegionSet();
+    private static final List<JSONObject> languageSet = Language.getLanguageSet();
 
     //region ------引入实例------
 
@@ -50,8 +65,6 @@ public class HomeController {
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
-    @Value("${website.path.file}")
-    private String filePath;
     @Value("${website.path.audio}")
     private String audioPath;
 
@@ -80,9 +93,9 @@ public class HomeController {
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-        model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
-        model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
+        model.addAttribute("mediaFormatSet", mediaFormatSet);
+        model.addAttribute("albumFormatSet", albumFormatSet);
+        model.addAttribute("publishFormatSet", publishFormatSet);
         return "/album/album-index";
     }
 
@@ -93,7 +106,9 @@ public class HomeController {
         model.addAttribute("justEditedBooks", bookService.getJustEditedBooks(5));
         model.addAttribute("popularBooks", bookService.getPopularBooks(10));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("bookTypeSet", BookUtils.getBookTypeSet());
+        model.addAttribute("bookTypeSet", bookTypeSet);
+        model.addAttribute("regionSet", regionSet);
+        model.addAttribute("languageSet", languageSet);
         return "/book/book-index";
     }
 
@@ -104,7 +119,7 @@ public class HomeController {
         model.addAttribute("justEditedDiscs", discService.getJustEditedDiscs(5));
         model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
+        model.addAttribute("mediaFormatSet", mediaFormatSet);
         return "/disc/disc-index";
     }
 
@@ -115,7 +130,7 @@ public class HomeController {
         model.addAttribute("justEditedMerchs", merchService.getJustEditedMerchs(5));
         model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("merchCategorySet", MerchUtils.getMerchCategorySet());
+        model.addAttribute("merchCategorySet", merchCategorySet);
         return "/merch/merch-index";
     }
 

@@ -1,6 +1,10 @@
 package com.rakbow.website.data.book;
 
+import com.alibaba.fastjson2.JSONObject;
+
 import javax.print.DocFlavor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -36,6 +40,24 @@ public enum BookType {
             }
         }
         return nameZh;
+    }
+
+    /**
+     * 获取图书分类数组
+     *
+     * @return list 图书分类数组
+     * @author rakbow
+     */
+    public static List<JSONObject> getBookTypeSet() {
+        List<JSONObject> list = new ArrayList<>();
+        for (BookType bookType : BookType.values()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("label", bookType.getNameZh());
+            jsonObject.put("labelEn", bookType.getNameEn());
+            jsonObject.put("value", bookType.getIndex());
+            list.add(jsonObject);
+        }
+        return list;
     }
 
     public int getIndex() {

@@ -3,6 +3,9 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.MediaFormat;
+import com.rakbow.website.data.album.AlbumFormat;
+import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.entity.Album;
@@ -48,6 +51,9 @@ public class AlbumController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final List<JSONObject> mediaFormatSet = MediaFormat.getMediaFormatSet();
+    private static final List<JSONObject> albumFormatSet = AlbumFormat.getAlbumFormatSet();
+    private static final List<JSONObject> publishFormatSet = PublishFormat.getPublishFormatSet();
 
     @Autowired
     private AlbumService albumService;
@@ -80,9 +86,9 @@ public class AlbumController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getAlbumListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-        model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
-        model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
+        model.addAttribute("mediaFormatSet", mediaFormatSet);
+        model.addAttribute("albumFormatSet", albumFormatSet);
+        model.addAttribute("publishFormatSet", publishFormatSet);
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         view.setViewName("/album/album-list");
         return view;
@@ -90,19 +96,19 @@ public class AlbumController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int albumId, Model model) {
-        if (albumService.getAlbumById(albumId) == null) {
+    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+        if (albumService.getAlbumById(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
         //访问数+1
-        visitService.increaseVisit(EntityType.ALBUM.getId(), albumId);
+        visitService.increaseVisit(EntityType.ALBUM.getId(), id);
 
-        Album album = albumService.getAlbumById(albumId);
+        Album album = albumService.getAlbumById(id);
 
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
-        model.addAttribute("albumFormatSet", AlbumUtils.getAlbumFormatSet());
-        model.addAttribute("publishFormatSet", AlbumUtils.getPublishFormatSet());
+        model.addAttribute("mediaFormatSet", mediaFormatSet);
+        model.addAttribute("albumFormatSet", albumFormatSet);
+        model.addAttribute("publishFormatSet", publishFormatSet);
         model.addAttribute("productSet", productService.getAllProductSetBySeriesId(album.getSeries()));
 
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
@@ -110,9 +116,9 @@ public class AlbumController {
         model.addAttribute("album", albumService.album2Json(album));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), albumId).getVisitNum());
+        model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), id).getVisitNum());
         //获取相关专辑
-        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(albumId));
+        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(id));
         return "/album/album-detail";
     }
 

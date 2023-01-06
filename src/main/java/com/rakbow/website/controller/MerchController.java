@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
@@ -46,6 +47,7 @@ public class MerchController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final List<JSONObject> merchCategorySet = MerchCategory.getMerchCategorySet();
 
     @Autowired
     private MerchService merchService;
@@ -67,7 +69,7 @@ public class MerchController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getMerchListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("merchCategorySet", MerchUtils.getMerchCategorySet());
+        model.addAttribute("merchCategorySet", merchCategorySet);
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         view.setViewName("/merch/merch-list");
         return view;
@@ -85,7 +87,7 @@ public class MerchController {
 
         Merch merch = merchService.getMerchById(id);
 
-        model.addAttribute("merchCategorySet", MerchUtils.getMerchCategorySet());
+        model.addAttribute("merchCategorySet", merchCategorySet);
         model.addAttribute("productSet", productService.getAllProductSetBySeriesId(merch.getSeries()));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
 

@@ -224,7 +224,7 @@
                             <template #value="slotProps">
                                 <div class="country-item" v-if="slotProps.value">
                                     <span :class="'fi fi-' + slotProps.value"></span>
-                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value)}}</div>
+                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
                                 </div>
                                 <span v-else>选择地区</span>
                             </template>
@@ -291,7 +291,7 @@
                                 <template #value="slotProps">
                                     <div class="country-item" v-if="slotProps.value">
                                         <span :class="'fi fi-' + slotProps.value"></span>
-                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value)}}</div>
+                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
                                     </div>
                                     <span v-else>选择地区</span>
                                 </template>
@@ -427,7 +427,7 @@
                                 <template #value="slotProps">
                                     <div class="country-item" v-if="slotProps.value">
                                         <span :class="'fi fi-' + slotProps.value"></span>
-                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value)}}</div>
+                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
                                     </div>
                                     <span v-else>选择地区</span>
                                 </template>
@@ -621,6 +621,8 @@
             const books = ref();
 
             const bookTypeSet = ref([[${bookTypeSet}]]);
+            const regionSet = ref([[${regionSet}]]);
+            const languageSet = ref([[${languageSet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
             const seriesSet = ref([[${seriesSet}]]);

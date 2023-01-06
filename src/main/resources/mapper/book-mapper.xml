@@ -23,14 +23,6 @@
         where id = #{id} and _s = 1
     </select>
 
-    <select id="getAllBook" resultType="Book">
-        select
-        <include refid="selectFields"></include>
-        from book
-        where _s = 1
-        order by publish_date desc
-    </select>
-
     <insert id="addBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()

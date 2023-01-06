@@ -15,24 +15,6 @@ import java.util.List;
 public class BookUtils {
 
     /**
-     * 获取图书分类数组
-     *
-     * @return list 图书分类数组
-     * @author rakbow
-     */
-    public static List<JSONObject> getBookTypeSet() {
-        List<JSONObject> list = new ArrayList<>();
-        for (BookType bookType : BookType.values()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("label", bookType.getNameZh());
-            jsonObject.put("labelEn", bookType.getNameEn());
-            jsonObject.put("value", bookType.getIndex());
-            list.add(jsonObject);
-        }
-        return list;
-    }
-
-    /**
      * ISBN-10转ISBN-13
      *
      * @param isbn_10

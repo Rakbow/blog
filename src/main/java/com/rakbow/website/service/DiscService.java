@@ -8,7 +8,6 @@ import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.common.segmentImagesResult;
-import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
@@ -220,20 +219,8 @@ public class DiscService {
         series.put("id", disc.getSeries());
         series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
 
-        //对封面图片进行处理
-        JSONArray images = JSONArray.parseArray(disc.getImages());
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(disc.getImages(), 250);
 
         discJson.put("isLimited", isLimited);
         discJson.put("hasBonus", hasBonus);
@@ -292,20 +279,8 @@ public class DiscService {
      */
     public JSONObject disc2JsonSimple(Disc disc) {
 
-        JSONArray images = JSONArray.parseArray(disc.getImages());
-        //对Disc封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(disc.getImages(), 50);
 
         //媒体类型
         List<String> mediaFormat = new ArrayList<>();

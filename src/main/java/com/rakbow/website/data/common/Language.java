@@ -1,6 +1,11 @@
 package com.rakbow.website.data.common;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.github.mustachejava.Code;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -35,6 +40,25 @@ public enum Language {
         }
         return nameZh;
     }
+
+    /**
+    * 获取语言数组
+    *
+    * @return list
+    * @author rakbow
+    * */
+    public static List<JSONObject> getLanguageSet() {
+        List<JSONObject> list = new ArrayList<>();
+        for (Language language : Language.values()) {
+            JSONObject jo = new JSONObject();
+            jo.put("nameEn", language.nameZh);
+            jo.put("nameZh", language.nameZh);
+            jo.put("code", language.code);
+            list.add(jo);
+        }
+        return list;
+    }
+
 
     public String getNameEn() {
         return nameEn;

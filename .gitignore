@@ -42,3 +42,7 @@ out
 gen
 /src/main/resources/templates/album/album-index-tmp.html
 /src/main/resources/templates/album/album-detail-tmp.html
+!/src/main/resources/static/css/flag-icons/flags/
+/src/main/resources/static/css/flag-icons/flags/
+/src/main/resources/static/css/flag-icons/flags/1x1/
+/src/main/resources/static/css/flag-icons/flags/4x3/

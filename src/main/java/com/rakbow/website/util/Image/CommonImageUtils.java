@@ -226,7 +226,7 @@ public class CommonImageUtils {
     }
 
     /**
-     * 获index首页取封面图片
+     * 获取index首页封面图片
      *
      * @param imagesJson 数据库原图片合集的JSON字符串
      * @return JSONObject
@@ -256,5 +256,28 @@ public class CommonImageUtils {
         return cover;
     }
 
+    /**
+     * 获取list封面图片
+     *
+     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @return JSONObject
+     * @author rakbow
+     */
+    public JSONObject getCover(String imagesJson, int size) {
+        JSONObject cover = new JSONObject();
+        JSONArray images = JSONArray.parseArray(imagesJson);
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), size));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+        return cover;
+    }
 
 }

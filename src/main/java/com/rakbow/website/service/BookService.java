@@ -72,17 +72,6 @@ public class BookService {
     }
 
     /**
-     * 获取表中所有数据
-     *
-     * @return book表中所有专辑，用list封装
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<Book> getAll() {
-        return bookMapper.getAllBook();
-    }
-
-    /**
      * 根据Id获取图书
      *
      * @param id 图书id
@@ -235,20 +224,8 @@ public class BookService {
         publishLanguage.put("code", book.getPublishLanguage());
         publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
 
-        //对封面图片进行处理
-        JSONArray images = JSONArray.parseArray(book.getImages());
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(book.getImages(), 250);
 
         bookJson.put("hasBonus", hasBonus);
         bookJson.put("cover", cover);
@@ -307,20 +284,8 @@ public class BookService {
      */
     public JSONObject book2JsonSimple(Book book) {
 
-        JSONArray images = JSONArray.parseArray(book.getImages());
-        //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(book.getImages(), 50);
 
         JSONObject bookType = new JSONObject();
         bookType.put("id", book.getBookType());
@@ -380,15 +345,8 @@ public class BookService {
 
         bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
 
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        //所属作品
+        List<JSONObject> products = productUtils.getProductList(book.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", book.getSeries());
@@ -624,8 +582,6 @@ public class BookService {
     public Map<String, Object> getBooksByFilterList(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
-
-        String tmp111 = filter.toJSONString();
 
         String sortField = queryParams.getString("sortField");
         int sortOrder = queryParams.getIntValue("sortOrder");

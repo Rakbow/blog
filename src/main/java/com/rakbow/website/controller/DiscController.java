@@ -3,6 +3,7 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.entity.Disc;
@@ -43,6 +44,7 @@ public class DiscController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final List<JSONObject> mediaFormatSet = MediaFormat.getMediaFormatSet();
 
     @Autowired
     private DiscService discService;
@@ -64,8 +66,7 @@ public class DiscController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getDiscListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("discs", null);
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
+        model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
         view.setViewName("/disc/disc-list");
         return view;
@@ -73,26 +74,26 @@ public class DiscController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int discId, Model model) {
-        if (discService.getDiscById(discId) == null) {
+    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+        if (discService.getDiscById(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.DISC.getNameZh()));
             return "/error/404";
         }
         //访问数+1
-        visitService.increaseVisit(EntityType.DISC.getId(), discId);
+        visitService.increaseVisit(EntityType.DISC.getId(), id);
 
-        Disc disc = discService.getDiscById(discId);
+        Disc disc = discService.getDiscById(id);
 
-        model.addAttribute("mediaFormatSet", AlbumUtils.getMediaFormatSet());
+        model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("productSet", productService.getAllProductSetBySeriesId(disc.getSeries()));
         model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
 
         model.addAttribute("disc", discService.disc2Json(disc));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.DISC.getId(), discId).getVisitNum());
+        model.addAttribute("visitNum", visitService.getVisit(EntityType.DISC.getId(), id).getVisitNum());
         //获取相关碟片
-        model.addAttribute("relatedDiscs", discService.getRelatedDiscs(discId));
+        model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/disc/disc-detail";
     }
 

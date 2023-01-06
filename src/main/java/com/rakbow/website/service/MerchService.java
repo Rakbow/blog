@@ -205,20 +205,8 @@ public class MerchService {
         series.put("id", merch.getSeries());
         series.put("name", seriesService.selectSeriesById(merch.getSeries()).getNameZh());
 
-        //对封面图片进行处理
-        JSONArray images = JSONArray.parseArray(merch.getImages());
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(merch.getImages(), 250);
 
         merchJson.put("isNotForSale", isNotForSale);
         merchJson.put("cover", cover);
@@ -271,20 +259,8 @@ public class MerchService {
      */
     public JSONObject merch2JsonSimple(Merch merch) {
 
-        JSONArray images = JSONArray.parseArray(merch.getImages());
-        //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(merch.getImages(), 50);
 
         JSONObject category = new JSONObject();
         category.put("id", merch.getCategory());
@@ -336,15 +312,8 @@ public class MerchService {
 
         merchJson.put("releaseDate", CommonUtils.dateToString(merch.getReleaseDate()));
 
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(merch.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        //所属作品
+        List<JSONObject> products = productUtils.getProductList(merch.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", merch.getSeries());

@@ -253,16 +253,8 @@ public class AlbumService {
         JSONObject.parseObject(album.getMediaFormat()).getList("ids", Integer.class)
                 .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
 
-        //所属产品
-        List<JSONObject> products = new ArrayList<>();
-        JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class)
-                .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
-                    products.add(jo);
-                });
+        //所属作品
+        List<JSONObject> products = productUtils.getProductList(album.getProducts());
 
         JSONObject series = new JSONObject();
         series.put("id", album.getSeries());
@@ -482,20 +474,8 @@ public class AlbumService {
      */
     public JSONObject album2JsonSimple(Album album) {
 
-        JSONArray images = JSONArray.parseArray(album.getImages());
-        //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), Integer.toString(ImageType.COVER.getIndex()))) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("name", image.getString("nameEn"));
-                }
-            }
-        }
+        //封面
+        JSONObject cover = commonImageUtils.getCover(album.getImages(), 50);
 
         //专辑分类
         List<String> albumFormat = new ArrayList<>();

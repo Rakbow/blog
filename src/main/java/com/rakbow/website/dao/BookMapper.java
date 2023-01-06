@@ -19,9 +19,6 @@ public interface BookMapper {
     //通过id查询Book
     Book getBookById(int id);
 
-    //获取所有Book
-    List<Book> getAllBook();
-
     //根据过滤条件搜索Book
     List<Book> getBooksByFilterList(String title, String isbn10, String isbn13, String publisher, String region,
                                     String publishLanguage, int bookType, int series, List<Integer> products,

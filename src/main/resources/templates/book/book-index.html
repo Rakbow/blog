@@ -241,7 +241,7 @@
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
-                                            <div class="ml-2">{{regionCode2NameZh(slotProps.value)}}</div>
+                                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
                                         </div>
                                         <span v-else>选择地区</span>
                                     </template>
@@ -445,6 +445,8 @@
             const books = ref();
             const seriesSet = ref([[${seriesSet}]]);
             const bookTypeSet = ref([[${bookTypeSet}]]);
+            const languageSet = ref([[${languageSet}]]);
+            const regionSet = ref([[${regionSet}]]);
             const justEditedBooks = ref([[${justEditedBooks}]]);
             const justAddedBooks = ref([[${justAddedBooks}]]);
             const popularBooks = ref([[${popularBooks}]]);

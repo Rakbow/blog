@@ -1,4 +1,4 @@
-const DOMAIN_URL = "http://localhost:8080";
+const DOMAIN_URL = "http://localhost:8083";
 
 //region page
 const HOME_INDEX_URL = DOMAIN_URL;
@@ -97,6 +97,20 @@ const INSERT_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/add-images";
 const UPDATE_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/update-images";
 const UPDATE_MERCH_SPEC_URL = DOMAIN_URL + "/db/merch/update-spec";
 const UPDATE_MERCH_DESCRIPTION_URL = DOMAIN_URL + "/db/merch/update-description";
+//endregion
+
+//region game
+const DELETE_GAME_URL = DOMAIN_URL + "/db/game/delete";
+const UPDATE_GAME_URL = DOMAIN_URL + "/db/game/update";
+const INSERT_GAME_URL = DOMAIN_URL + "/db/game/add";
+const GET_GAMES_LIST_URL = DOMAIN_URL + "/db/game/get-games";
+
+const INSERT_GAME_IMAGES_URL = DOMAIN_URL + "/db/game/add-images";
+const UPDATE_GAME_IMAGES_URL = DOMAIN_URL + "/db/game/update-images";
+const UPDATE_GAME_ORGANIZATIONS_URL = DOMAIN_URL + "/db/game/update-organizations";
+const UPDATE_GAME_STAFFS_URL = DOMAIN_URL + "/db/game/update-staffs";
+const UPDATE_GAME_DESCRIPTION_URL = DOMAIN_URL + "/db/game/update-description";
+const UPDATE_GAME_BONUS_URL = DOMAIN_URL + "/db/game/update-bonus";
 //endregion
 
 //region header

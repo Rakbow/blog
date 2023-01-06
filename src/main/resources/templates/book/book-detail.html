@@ -272,12 +272,7 @@
                                 <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
                                 <b>简介</b>
                             </template>
-                            <div v-if="book.summary == ''">
-                                <span class="emptyInfo"><em>暂无简介</em></span>
-                            </div>
-                            <div v-else>
-                                <p>{{book.summary}}</p>
-                            </div>
+                            <article id="summary" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
                         <!-- 描述 -->
                         <p-fieldset :toggleable="true" class="mt-2">
@@ -431,7 +426,6 @@
                                             <a :href="'/db/book/'+ relatedBook.id ">
                                                 <img class="sidebar-panel-image-small-no-radius"
                                                      :src="relatedBook.cover.url"
-
                                                      v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
                                             </a>
                                         </div>
@@ -530,7 +524,7 @@
                                 <template #value="slotProps">
                                     <div class="country-item" v-if="slotProps.value">
                                         <span :class="'fi fi-' + slotProps.value"></span>
-                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value)}}</div>
+                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
                                     </div>
                                     <span v-else>选择地区</span>
                                 </template>
@@ -994,14 +988,11 @@
                 }
             ]);
             const bookTypeSet = ref([[${bookTypeSet}]]);
+            const regionSet = ref([[${regionSet}]]);
+            const languageSet = ref([[${languageSet}]]);
             const productSet = ref([[${productSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
             const blockedPanel = ref(false);
-            const imageTypes = ref([
-                {label: '展示', value: '0'},
-                {label: '封面', value: '1'},
-                {label: '其他', value: '2'}
-            ]);
             //endregion
 
             //region ------图片板块------
@@ -1013,9 +1004,6 @@
                 let {newData, index} = ev;
                 book.value.images[index] = newData;
             };
-            const getImageTypeLabel = (type) => {
-                return value2Label(type, imageTypes.value);
-            }
             const activeIndex = ref(0);
             const displayCustom = ref(false);
             const imageClick = (index) => {
@@ -1077,10 +1065,6 @@
                         console.error(error);
                     });
             };
-            //endregion
-
-            //region ------编辑规格------
-
             //endregion
 
             //region ------编辑描述------
@@ -1163,12 +1147,21 @@
 
                 const description = book.value.description;
                 const bonus = book.value.bonus;
+                const summary = book.value.summary;
 
                 if (description != null && description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(description);
                 } else {
                     //<![CDATA[
                     document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
+                    //]]>
+                }
+
+                if (summary != null && summary !== "") {
+                    document.getElementById("summary").innerHTML = marked.parse(summary);
+                } else {
+                    //<![CDATA[
+                    document.getElementById("summary").innerHTML = "<span class='emptyInfo'><em>暂无简介</em></span>";
                     //]]>
                 }
 
@@ -1204,21 +1197,6 @@
                 });
             };
             const galleriaItemClass = ref("");
-
-            const responsiveOptions = [
-                {
-                    breakpoint: '1024px',
-                    numVisible: 5
-                },
-                {
-                    breakpoint: '768px',
-                    numVisible: 3
-                },
-                {
-                    breakpoint: '560px',
-                    numVisible: 1
-                }
-            ];
             const selectedImage = ref([]);
             const confirmDeleteSelectedImage = () => {
                 deleteBookImageDialog.value = true;
