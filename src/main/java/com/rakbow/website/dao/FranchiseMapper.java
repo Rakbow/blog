@@ -1,6 +1,6 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.Series;
+import com.rakbow.website.entity.Franchise;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,21 +12,21 @@ import java.util.List;
  * @Description: 系列CRUD
  */
 @Mapper
-public interface SeriesMapper {
+public interface FranchiseMapper {
 
     //新增系列
-    int insertSeries(Series series);
+    int addFranchise(Franchise franchise);
 
     //通过id查找系列
-    Series selectSeriesById(int id);
+    Franchise getFranchise(int id);
 
     //修改系列信息
-    int updateSeries(int id, Series series);
+    int updateFranchise(int id, Franchise franchise);
 
     //删除系列
-    int deleteSeriesById(int id);
+    int deleteFranchise(int id);
 
     //获取所有系列
-    List<Series> getAll();
+    List<Franchise> getAll();
 
 }

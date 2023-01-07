@@ -5,12 +5,12 @@
 <mapper namespace="com.rakbow.website.dao.DiscMapper">
 
     <sql id="selectFields">
-        id, catalog_no, name, name_zh, name_en, barcode, series, products, release_date, price, media_format,
+        id, catalog_no, name, name_zh, name_en, barcode, franchise, products, release_date, price, media_format,
         is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        catalog_no, name, name_zh, name_en, barcode, series, products, release_date, price, media_format,
+        catalog_no, name, name_zh, name_en, barcode, franchise, products, release_date, price, media_format,
         is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
@@ -34,7 +34,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into disc (<include refid="insertFields"></include>)
-        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{series}, #{productId}, #{releaseDate},
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchise}, #{productId}, #{releaseDate},
         #{price}, #{mediaFormat}, #{isLimited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -43,7 +43,7 @@
         update disc
         set
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
-        barcode = #{disc.barcode}, series = #{disc.series}, products = #{disc.products},
+        barcode = #{disc.barcode}, franchise = #{disc.franchise}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
         is_limited = #{disc.isLimited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
         edited_time = #{disc.editedTime}, _s = #{disc._s}
@@ -102,8 +102,8 @@
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="series != 0 ">
-                and series = #{series}
+            <if test="franchise != 0 ">
+                and franchise = #{franchise}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -167,8 +167,8 @@
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="series != 0 ">
-                and series = #{series}
+            <if test="franchise != 0 ">
+                and franchise = #{franchise}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""

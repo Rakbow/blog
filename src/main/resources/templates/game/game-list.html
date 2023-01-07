@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Disc List</title>
+    <title>Game List</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -54,6 +54,9 @@
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
 
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
+
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
@@ -73,7 +76,7 @@
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
                               @click="openNewDialog"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                              :disabled="!selectedDiscs || !selectedDiscs.length"></p-button>&nbsp;
+                              :disabled="!selectedGames || !selectedGames.length"></p-button>&nbsp;
                 </template>
 
                 <template #end>
@@ -81,14 +84,14 @@
                               @click="exportCSV($event)"></p-button>
                 </template>
             </p-toolbar>
-            <p-datatable ref="dt" :value="discs" class="p-datatable-customers p-datatable-sm"
+            <p-datatable ref="dt" :value="games" class="p-datatable-customers p-datatable-sm"
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row"
-                         :globalFilterFields="['name','catalogNo']"
+                         :globalFilterFields="['name']"
                          :paginator="true" :rows="10" striped-rows
                          :resizable-columns="true" column-resize-mode="expand"
-                         v-model:selection="selectedDiscs" dataKey="id"
+                         v-model:selection="selectedGames" dataKey="id"
                          :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                          paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                              LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -112,38 +115,26 @@
                     加载中，别急~
                 </template>
                 <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>
-                <p-column header="序号" field="id" exportHeader="Disc Id" :sortable="true" style="flex: 0 0 6rem">
+                <p-column header="序号" field="id" exportHeader="Game Id" :sortable="true" style="flex: 0 0 5rem">
                     <template #body="slotProps">
                         <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                             {{slotProps.data.id}}
                         </p-button>
                     </template>
                 </p-column>
-                <p-column header="碟片编号" field="catalogNo" :show-filter-menu="false"
-                          style="flex: 0 0 10rem">
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="专辑编号"></p-inputtext>
-                    </template>
-                </p-column>
-                <p-column header="商品名" field="name" :show-filter-menu="false"
-                          style="flex: 0 0 25rem">
+                <p-column header="游戏名" field="name" :show-filter-menu="false"
+                          style="flex: 0 0 20rem">
                     <template #body="slotProps">
-                        <a :href="domainUrl + '/db/disc/' + slotProps.data.id">
+                        <a :href="domainUrl + '/db/game/' + slotProps.data.id">
                             {{slotProps.data.name}}
                         </a>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="名称"></p-inputtext>
+                                     class="p-column-filter" placeholder="游戏名"></p-inputtext>
                     </template>
                 </p-column>
-                <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
-                <p-column header="发售价格" field="price" :sortable="true" style="flex: 0 0 7rem">
-                    <template #body="slotProps">
-                        {{formatCurrency(slotProps.data.price)}}
-                    </template>
-                </p-column>
+                <p-column header="发售时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
                 <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
                         {{slotProps.data.franchise.name}}
@@ -154,6 +145,7 @@
                                     style="width: 8rem" placeholder="所属系列" class="p-column-filter">
                         </p-dropdown>
                     </template>
+
                 </p-column>
                 <p-column header="所属作品" filter-field="products" :show-filter-menu="false"
                           style="flex: 0 0 16rem">
@@ -173,30 +165,46 @@
                                        :disabled="productSelect" style="width: 15rem" >
                         </p-multiselect>
                     </template>
+
                 </p-column>
-                <p-column header="媒体类型" filter-field="mediaFormat" :show-filter-menu="false"
-                          style="flex: 0 0 9rem">
+                <p-column header="发售类型" field="releaseType" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
-                        <ul class="px-4">
-                            <li v-for="data in slotProps.data.mediaFormat">
-                                {{data}}
-                            </li>
-                        </ul>
-                    </template>
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 8rem"
-                                       :options="mediaFormatSet" placeholder="媒体类型" class="p-column-filter"
-                                       option-label="label" option-value="value" display="chip" :filter="true">
-                        </p-multiselect>
+                        {{slotProps.data.releaseType.nameZh}}
                     </template>
                 </p-column>
-                <p-column header="限定版" field="isLimited" data-type="boolean" body-class="text-center"
-                          style="flex: 0 0 5rem">
-                    <template #body="{data}">
-                        <i class="pi" :class="{'true-icon pi-check-circle': data.isLimited, 'false-icon pi-times-circle': !data.isLimited}"></i>
+                <p-column header="发售平台" field="platform" :show-filter-menu="false" style="flex: 0 0 9rem">
+                    <template #body="slotProps">
+                        {{slotProps.data.platform.nameEn}}
                     </template>
                     <template #filter="{filterModel,filterCallback}">
-                        <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
+                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                    :options="gamePlatformSet" option-label="labelEn" option-value="value"
+                                    style="width: 8rem" placeholder="发售类型" class="p-column-filter">
+                        </p-dropdown>
+                    </template>
+                </p-column>
+                <p-column header="地区" field="region" :show-filter-menu="false" style="flex: 0 0 9rem">
+                    <template #body="slotProps">
+                        {{slotProps.data.region.nameZh}} <span :class="'fi fi-' + slotProps.data.region.code"></span>
+                    </template>
+                    <template #filter="{filterModel,filterCallback}">
+                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                    :options="regionSet" option-label="nameZh" option-value="code"
+                                    style="width: 8rem" class="p-column-filter">
+                            <template #value="slotProps">
+                                <div class="country-item" v-if="slotProps.value">
+                                    <span :class="'fi fi-' + slotProps.value"></span>
+                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                </div>
+                                <span v-else>选择地区</span>
+                            </template>
+                            <template #option="slotProps">
+                                <div class="country-item">
+                                    <span :class="'fi fi-' + slotProps.option.code"></span>
+                                    <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                </div>
+                            </template>
+                        </p-dropdown>
                     </template>
                 </p-column>
                 <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
@@ -215,234 +223,250 @@
             <p-dialog v-model:visible="displayNewDialog" header="新增数据"
                       :style="{width: '600px'}" :modal="true" class="p-fluid">
                 <p-panel header="基础信息">
+                    <div class="field">
+                        <label htmlFor="title">游戏名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="game.name"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="titleZh">游戏名(中)</label>
+                        <p-inputtext v-model.trim="game.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="titleEn">游戏名(英)</label>
+                        <p-inputtext v-model.trim="game.nameEn"></p-inputtext>
+                    </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="catalogNo">碟片编号</label>
-                            <p-inputtext v-model.trim="disc.catalogNo"></p-inputtext>
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext v-model.trim="game.barcode"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
-                            <p-inputtext v-model.trim="disc.barcode"></p-inputtext>
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="game.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col-2">
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="game.hasBonus" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
                         </div>
                     </div>
-                    <div class="field">
-                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
-                        <p-inputtext v-model.trim="disc.name"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="nameZh">商品名(中)</label>
-                        <p-inputtext v-model.trim="disc.nameZh"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="nameEn">商品名(英)</label>
-                        <p-inputtext v-model.trim="disc.nameEn"></p-inputtext>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseType" class="mb-3">发售类型<span style="color: red">*</span></label>
+                            <p-dropdown v-model="game.releaseType" :options="releaseTypeSet"
+                                        option-label="labelZh" option-value="value">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="platform" class="mb-3">发售平台<span style="color: red">*</span></label>
+                            <p-dropdown v-model="game.platform" :options="gamePlatformSet"
+                                        option-label="labelEn" option-value="value">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
+                            <p-dropdown v-model="game.region" :options="regionSet" :filter="true"
+                                        :show-clear="true" option-label="nameZh" option-value="code">
+                                <template #value="slotProps">
+                                    <div class="country-item" v-if="slotProps.value">
+                                        <span :class="'fi fi-' + slotProps.value"></span>
+                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                    </div>
+                                    <span v-else>选择地区</span>
+                                </template>
+                                <template #option="slotProps">
+                                    <div class="country-item">
+                                        <span :class="'fi fi-' + slotProps.option.code"></span>
+                                        <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                    </div>
+                                </template>
+                            </p-dropdown>
+                        </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
                             <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="disc.franchise" :options="seriesSet" placeholder="选择所属系列"
+                            <p-dropdown v-model="game.franchise" :options="seriesSet"
                                         option-label="label" option-value="value" @change="getProducts">
                             </p-dropdown>
                         </div>
                         <div class="field col-8">
                             <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect v-model="disc.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="请先选择所属系列"
-                                           display="chip" :filter="true" :disabled="productSelect">
-                            </p-multiselect>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="disc.releaseDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="price">发行价格(含税)</label>
-                            <p-inputnumber v-model="disc.price" mode="currency"
-                                           currency="JPY" locale="ja-JP"></p-inputnumber>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
-                            <p-multiselect v-model="disc.mediaFormat" :options="mediaFormatSet"
-                                           option-label="label" option-value="value" placeholder="选择媒体类型"
-                                           display="chip">
-                            </p-multiselect>
-                        </div>
-                        <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="disc.hasBonus" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
-                        <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="isLimited" class="mb-3">限定版</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="disc.isLimited" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="remark">备注</label>
-                        <p-textarea v-model="disc.remark" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
-                    </div>
-                </p-panel>
-                <p-panel header="进阶信息">
-                    <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑规格信息，请到碟片详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑描述信息，请到碟片详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑特典信息，请到碟片详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewDisc"></p-button>
-                </template>
-            </p-dialog>
-            <p-dialog v-model:visible="displayEditDialog" header="编辑数据"
-                      :style="{width: '600px'}" :modal="true" class="p-fluid">
-                <p-panel header="基础信息">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="catalogNo">碟片编号</label>
-                            <p-inputtext v-model.trim="discEdit.catalogNo"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
-                            <p-inputtext v-model.trim="discEdit.barcode"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
-                        <p-inputtext v-model.trim="discEdit.name"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="nameZh">商品名(中)</label>
-                        <p-inputtext v-model.trim="discEdit.nameZh"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="nameEn">商品名(英)</label>
-                        <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col-4">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="discEdit.franchise" :options="seriesSet"
-                                        option-label="label" option-value="value">
-                            </p-dropdown>
-                        </div>
-                        <div class="field col-8">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect v-model="discEdit.products" :options="productSet"
+                            <p-multiselect v-model="game.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
                                            display="chip" :filter="true">
                             </p-multiselect>
                         </div>
                     </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="discEdit.releaseDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="price">发行价格(含税)</label>
-                            <p-inputnumber v-model="discEdit.price" mode="currency"
-                                           currency="JPY" locale="ja-JP"></p-inputnumber>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
-                            <p-multiselect v-model="discEdit.mediaFormat" :options="mediaFormatSet"
-                                           option-label="label" option-value="value" placeholder="选择媒体类型"
-                                           display="chip">
-                            </p-multiselect>
-                        </div>
-                        <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
-                        <div class="field col">
-                            <div class="col-12">
-                                <label htmlFor="isLimited" class="mb-3">限定版</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="discEdit.isLimited" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
-                    </div>
                     <div class="field">
                         <label htmlFor="remark">备注</label>
-                        <p-textarea v-model="discEdit.remark" rows="3" cols="20"
+                        <p-textarea v-model="game.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
                 </p-panel>
                 <p-panel header="进阶信息">
-                    <p-divider align="center" type="dashed"><b>规格</b></p-divider>
+                    <p-divider align="center" type="dashed"><b>关联组织信息</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑规格信息，请到碟片详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑关联组织信息，请到游戏详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>开发制作人员信息</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑开发制作人员信息，请到游戏详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>描述</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑描述信息，请到碟片详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑描述信息，请到游戏详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>特典</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑特典信息，请到碟片详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑特典信息，请到游戏详情页面进行</em></span>
                     </div>
                     <p-divider align="center" type="dashed"><b>图片</b></p-divider>
                     <div class="field">
-                        <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
+                        <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
+                    </div>
+                </p-panel>
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewGame"></p-button>
+                </template>
+            </p-dialog>
+            <p-dialog v-model:visible="displayEditDialog" header="编辑数据"
+                      :style="{width: '600px'}" :modal="true" class="p-fluid">
+                <p-panel header="基础信息">
+                    <div class="field">
+                        <label htmlFor="title">游戏名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="gameEdit.name"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="titleZh">游戏名(中)</label>
+                        <p-inputtext v-model.trim="gameEdit.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="titleEn">游戏名(英)</label>
+                        <p-inputtext v-model.trim="gameEdit.nameEn"></p-inputtext>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext v-model.trim="gameEdit.barcode"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="gameEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col-2">
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseType" class="mb-3">发售类型<span style="color: red">*</span></label>
+                            <p-dropdown v-model="gameEdit.releaseType" :options="releaseTypeSet"
+                                        option-label="labelZh" option-value="value">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="platform" class="mb-3">发售平台<span style="color: red">*</span></label>
+                            <p-dropdown v-model="gameEdit.platform" :options="gamePlatformSet"
+                                        option-label="labelEn" option-value="value">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
+                            <p-dropdown v-model="gameEdit.region" :options="regionSet" :filter="true"
+                                        :show-clear="true" option-label="nameZh" option-value="code">
+                                <template #value="slotProps">
+                                    <div class="country-item" v-if="slotProps.value">
+                                        <span :class="'fi fi-' + slotProps.value"></span>
+                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                    </div>
+                                    <span v-else>选择地区</span>
+                                </template>
+                                <template #option="slotProps">
+                                    <div class="country-item">
+                                        <span :class="'fi fi-' + slotProps.option.code"></span>
+                                        <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                    </div>
+                                </template>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col-4">
+                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="gameEdit.franchise" :options="seriesSet"
+                                        option-label="label" option-value="value" @change="getProducts">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col-8">
+                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect v-model="gameEdit.products" :options="productSet"
+                                           option-label="label" option-value="value" placeholder="选择所属产品"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="remark">备注</label>
+                        <p-textarea v-model="gameEdit.remark" rows="3" cols="20"
+                                    :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+                <p-panel header="进阶信息">
+                    <p-divider align="center" type="dashed"><b>关联组织信息</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑关联组织信息，请到游戏详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>开发制作人员信息</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑开发制作人员信息，请到游戏详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑描述信息，请到游戏详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>特典</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑特典信息，请到游戏详情页面进行</em></span>
+                    </div>
+                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                    <div class="field">
+                        <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
                     </div>
                 </p-panel>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text"
                               @click="closeEditDialog"></p-button>
                     <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                              @click="submitEditDisc"></p-button>
+                              @click="submitEditGame"></p-button>
                 </template>
             </p-dialog>
-            <p-dialog v-model:visible="deleteDiscsDialog" header="删除数据"
+            <p-dialog v-model:visible="deleteGamesDialog" header="删除数据"
                       :style="{width: '450px'}" :modal="true">
                 <div class="confirmation-content">
                     <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                    <span>确定删除所选商品？</span>
+                    <span>确定删除所选游戏？</span>
                 </div>
                 <template #footer>
                     <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                              @click="deleteDiscsDialog = false"></p-button>
+                              @click="deleteGamesDialog = false"></p-button>
                     <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                              @click="deleteSelectedDiscs"></p-button>
+                              @click="deleteSelectedGames"></p-button>
                 </template>
             </p-dialog>
 
@@ -481,70 +505,66 @@
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const filters = ref({
-                'catalogNo': {value: '', matchMode: 'contains'},
                 'name': {value: '', matchMode: 'contains'},
+                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'region': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'platform': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'franchise': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
-                'mediaFormat': {value: null, matchMode: FilterMatchMode.IN},
-                'isLimited': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
                 queryParams.value = event;
-                getDiscs();
+                getGames();
             };
             const onSort = (event) => {
                 queryParams.value = event;
-                getDiscs();
+                getGames();
             };
             const onFilter = () => {
                 queryParams.value.filters = filters.value ;
-                getDiscs();
+                getGames();
             };
-            const getDiscs = () => {
+            const getGames = () => {
                 let json = {
                     pageLabel: "list",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_DISCS_URL, json)
+                axiosPostRequest(GET_GAMES_URL, json)
                     .then(res => {
-                        discs.value = res.data;
+                        games.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
             //endregion
 
             const displayEditDialog = ref(false);
-            const deleteDiscsDialog = ref(false);
+            const deleteGamesDialog = ref(false);
             const displayNewDialog = ref(false);
 
-            const selectedDiscs = ref();
+            const selectedGames = ref();
 
-            const disc = ref({});
-            const discs = ref();
+            const game = ref({});
+            const games = ref();
 
-            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const releaseTypeSet = ref([[${releaseTypeSet}]]);
+            const regionSet = ref([[${regionSet}]]);
+            const gamePlatformSet = ref([[${gamePlatformSet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
             const seriesSet = ref([[${seriesSet}]]);
 
-            const discEdit = ref({});
+            const gameEdit = ref({});
             const toast = useToast();
             const dt = ref();
             const loading = ref(true);
             const columns = ref([
-                {field: 'nameEn', header: '商品名(英)'},
-                {field: 'nameZh', header: '商品名(中)'},
-                {field: 'barcode', header: '商品条形码'},
+                {field: 'nameZh', header: '游戏名(中)'},
+                {field: 'nameEn', header: '游戏名(英)'},
                 {field: 'remark', header: '备注'},
                 {field: 'addedTime', header: '收录时间'},
                 {field: 'editedTime', header: '编辑时间'},
             ]);
             const selectedColumns = ref();
-
-            const formatCurrency = (value) => {
-                return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
-            };
 
             const exportCSV = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
@@ -567,7 +587,7 @@
                     sortOrder: null,
                     filters: filters.value
                 };
-                getDiscs();
+                getGames();
                 loading.value = false;
             };
 
@@ -579,19 +599,19 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            deleteDiscsDialog.value = true;
+                            deleteGamesDialog.value = true;
                         }
                     })
             };
 
             //删除数据
-            const deleteSelectedDiscs = () => {
-                axiosDeleteRequest(DELETE_DISC_URL, selectedDiscs.value)
+            const deleteSelectedGames = () => {
+                axiosDeleteRequest(DELETE_GAME_URL, selectedGames.value)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            deleteDiscsDialog.value = false;
-                            selectedDiscs.value = null;
+                            deleteGamesDialog.value = false;
+                            selectedGames.value = null;
                             init();
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -607,15 +627,16 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            discEdit.value = dataTmp;
+                            gameEdit.value = dataTmp;
                             axiosPostRequest(GET_PRODUCT_SET_URL, {franchise:dataTmp.franchise.id})
                                 .then(res => {
                                     productSet.value = res;
-                                    discEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                                    discEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
-                                    discEdit.value.franchise = dataTmp.franchise.id;
-                                    discEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
-                                    discEdit.value.isLimited = dataTmp.isLimited ? 1: 0;
+                                    gameEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    gameEdit.value.franchise = dataTmp.franchise.id;
+                                    gameEdit.value.releaseType = dataTmp.releaseType.id;
+                                    gameEdit.value.region = dataTmp.region.code;
+                                    gameEdit.value.platform = dataTmp.platform.id;
+                                    gameEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -624,15 +645,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                discEdit.value = {};
+                gameEdit.value = {};
                 init();
             };
             //保存编辑数据
-            const submitEditDisc = async () => {
-                await axiosPostRequest(UPDATE_DISC_URL, discEdit.value)
+            const submitEditGame = async () => {
+                await axiosPostRequest(UPDATE_GAME_URL, gameEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            discEdit.value = {};
+                            gameEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -657,7 +678,7 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            disc.value = {};
+                            game.value = {};
                             productSelect.value = true;
                             displayNewDialog.value = true;
                         }
@@ -665,16 +686,16 @@
             };
             //关闭新增数据面板
             const closeNewDialog = () => {
-                disc.value = {};
+                game.value = {};
                 displayNewDialog.value = false;
             };
 
             //提交新增数据
-            const submitNewDisc = () => {
-                axiosPostRequest(INSERT_DISC_URL, disc.value)
+            const submitNewGame = () => {
+                axiosPostRequest(INSERT_GAME_URL, game.value)
                     .then(res => {
                         if (res.state === 1) {
-                            disc.value = {};
+                            game.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -703,14 +724,15 @@
 
 
             return {
+                regionSet, releaseTypeSet, gamePlatformSet, regionCode2NameZh,
                 onToggle, onPage, onSort, onFilter, filters, totalRecords,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
-                disc, discs, formatCurrency, columns, selectedColumns,
+                game, games, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
-                submitNewDisc, confirmDeleteSelected, deleteDiscsDialog, deleteSelectedDiscs,
-                selectedDiscs, displayEditDialog, init,
-                openEditDialog, closeEditDialog, submitEditDisc, discEdit,
-                mediaFormatSet, productSet, seriesSet,
+                submitNewGame, confirmDeleteSelected, deleteGamesDialog, deleteSelectedGames,
+                selectedGames, displayEditDialog, init,
+                openEditDialog, closeEditDialog, submitEditGame, gameEdit,
+                productSet, seriesSet,
                 getProducts, productSelect
             }
         },

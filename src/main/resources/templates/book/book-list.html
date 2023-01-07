@@ -181,9 +181,9 @@
                         <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
                     </template>
                 </p-column>
-                <p-column header="所属系列" field="series" :show-filter-menu="false" style="flex: 0 0 9rem">
+                <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 9rem">
                     <template #body="slotProps">
-                        {{slotProps.data.series.name}}
+                        {{slotProps.data.franchise.name}}
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-dropdown v-model="filterModel.value" @change="getProducts($event), filterCallback()"
@@ -312,8 +312,8 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="book.series" :options="seriesSet"
+                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="book.franchise" :options="seriesSet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
@@ -448,8 +448,8 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.series" :options="seriesSet"
+                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="bookEdit.franchise" :options="seriesSet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
@@ -582,7 +582,7 @@
                 'region': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'publishLanguage': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'bookType': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'series': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'franchise': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
                 'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
@@ -603,7 +603,7 @@
                     pageLabel: "list",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_BOOKS_LIST_URL, json)
+                axiosPostRequest(GET_BOOKS_URL, json)
                     .then(res => {
                         books.value = res.data;
                         totalRecords.value = res.total;
@@ -702,11 +702,11 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             bookEdit.value = dataTmp;
-                            axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, {series:dataTmp.series.id})
+                            axiosPostRequest(GET_PRODUCT_SET_URL, {franchise:dataTmp.franchise.id})
                                 .then(res => {
                                     productSet.value = res;
-                                    bookEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
-                                    bookEdit.value.series = dataTmp.series.id;
+                                    bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    bookEdit.value.franchise = dataTmp.franchise.id;
                                     bookEdit.value.bookType = dataTmp.bookType.id;
                                     bookEdit.value.region = dataTmp.region.code;
                                     bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
@@ -786,8 +786,8 @@
 
             //根据系列id获取该系列所有作品
             const getProducts = (ev) => {
-                let json = {series: ev.value};
-                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
+                let json = {franchise: ev.value};
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         productSet.value = res;
                         productSelect.value = false;

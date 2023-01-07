@@ -5,58 +5,43 @@
 <mapper namespace="com.rakbow.website.dao.ProductMapper">
 
     <sql id="selectFields">
-        id, series_id, name, name_zh, name_en, release_date, classification,
+        id, name, name_zh, name_en, release_date, franchise, category,
         images, staffs, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        series_id, name, name_zh, name_en, release_date, classification,
+        name, name_zh, name_en, release_date, franchise, category,
         images, staffs, description, remark, added_time, edited_time, _s
     </sql>
 
-    <select id="selectProductById" resultType="Product">
+    <select id="getProduct" resultType="Product">
         select
         <include refid="selectFields"></include>
         from product
         where id = #{id}
     </select>
 
-    <select id="getAll" resultType="Product">
-        select
-        <include refid="selectFields"></include>
-        from product
-        where _s = 1;
-    </select>
-
     <insert id="addProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
-        values (#{seriesId}, #{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{classification},
+        values (#{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{franchise}, #{category},
         #{images}, #{staffs}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
         update product
         set
-        series_id = #{product.seriesId}, name = #{product.name}, name_zh = #{product.nameZh},
-        name_en = #{product.nameEn}, release_date = #{product.releaseDate},
-        classification = #{product.classification}, remark = #{product.remark},
-        added_time = #{product.addedTime}, edited_time = #{product.editedTime}, _s = #{product._s}
+        name = #{product.name}, name_zh = #{product.nameZh}, name_en = #{product.nameEn},
+        release_date = #{product.releaseDate}, franchise = #{product.franchise}, category = #{product.category},
+        remark = #{product.remark}, added_time = #{product.addedTime}, edited_time = #{product.editedTime},
+        _s = #{product._s}
         where id = #{id}
     </update>
 
-    <delete id="deleteProductById">
+    <delete id="deleteProduct">
         delete
         from product
         where id = #{id}
     </delete>
-
-    <select id="selectAllProductsBySeriesId" resultType="Product">
-        select
-        <include refid="selectFields"></include>
-        from product
-        where series_id = #{seriesId}
-        order by release_date desc
-    </select>
 
     <update id="updateProductDescription" keyProperty="id">
         update product
@@ -78,5 +63,88 @@
         images = #{images}, edited_time = #{editedTime}
         where id = #{id}
     </update>
+
+    <select id="getProductsByFilter" resultType="Product">
+        select
+        <include refid="selectFields"></include>
+        from product
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="nameZh != null and nameZh != '' ">
+                and name_zh like concat('%', #{nameZh}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=" and franchise in ("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="categories != null and categories.size() != 0">
+                <foreach item="item" index="index" collection="categories" open=" and category in ("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            and _s = 1
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'category'">
+            <if test="sortOrder == 1">
+                order by category asc
+            </if>
+            <if test="sortOrder == -1">
+                order by category desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getProductsRowsByFilter" resultType="int">
+        select count(id)
+        from product
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="nameZh != null and nameZh != '' ">
+                and name_zh like concat('%', #{nameZh}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=" and franchise in ("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="categories != null and categories.size() != 0">
+                <foreach item="item" index="index" collection="categories" open=" and category in ("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            and _s = 1
+        </where>
+    </select>
 
 </mapper>

@@ -3,6 +3,7 @@ package com.rakbow.website.data.album;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.ArrayList;
 import java.util.List;

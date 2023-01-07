@@ -6,7 +6,7 @@ package com.rakbow.website.data.product;
  * @Create: 2022-08-20 2:54
  * @Description:
  */
-public enum ProductClass {
+public enum ProductCategory {
     UNCLASSIFIED(0,"未分类", "unclassified"),
     GAME(1, "游戏", "Game"),
     ANIMATION(2, "TV动画", "Animation"),
@@ -18,43 +18,43 @@ public enum ProductClass {
     private String nameZh;
     private String nameEn;
 
-    ProductClass(int index, String nameZh, String nameEn) {
+    ProductCategory(int index, String nameZh, String nameEn) {
         this.index = index;
         this.nameZh = nameZh;
         this.nameEn = nameEn;
     }
 
     public static String getNameZhByIndex (int index){
-        for (ProductClass productClass : ProductClass.values()) {
-            if (productClass.getIndex() == index) {
-                return productClass.getNameZh();
+        for (ProductCategory productCategory : ProductCategory.values()) {
+            if (productCategory.getIndex() == index) {
+                return productCategory.getNameZh();
             }
         }
         return "未分类";
     }
 
     public static String getNameEnByIndex (int index){
-        for (ProductClass productClass : ProductClass.values()) {
-            if (productClass.getIndex() == index) {
-                return productClass.getNameEn();
+        for (ProductCategory productCategory : ProductCategory.values()) {
+            if (productCategory.getIndex() == index) {
+                return productCategory.getNameEn();
             }
         }
         return "unclassified";
     }
 
     public static int getIndexByNameZh(String nameZh){
-        for (ProductClass productClass : ProductClass.values()) {
-            if (productClass.getNameZh().equals(nameZh)) {
-                return productClass.index;
+        for (ProductCategory productCategory : ProductCategory.values()) {
+            if (productCategory.getNameZh().equals(nameZh)) {
+                return productCategory.index;
             }
         }
         return 0;
     }
 
     public static int getIndexByNameEn(String nameEn){
-        for (ProductClass productClass : ProductClass.values()) {
-            if (productClass.getNameEn().equals(nameEn)) {
-                return productClass.index;
+        for (ProductCategory productCategory : ProductCategory.values()) {
+            if (productCategory.getNameEn().equals(nameEn)) {
+                return productCategory.index;
             }
         }
         return 0;

@@ -55,7 +55,7 @@ public class BookController {
     @Autowired
     private UserService userService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -73,7 +73,7 @@ public class BookController {
         model.addAttribute("bookTypeSet", bookType);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/book/book-list");
         return view;
     }
@@ -93,8 +93,9 @@ public class BookController {
         model.addAttribute("bookTypeSet", bookType);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(book.getSeries()));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("productSet", productService.getProductSet
+                (book.getSeries(), EntityType.BOOK.getId()));
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
 
         model.addAttribute("book", bookService.book2Json(book));
         model.addAttribute("user", hostHolder.getUser());

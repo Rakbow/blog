@@ -8,11 +8,11 @@ import com.rakbow.website.data.album.AlbumFormat;
 import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.AlbumUtils;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
@@ -62,7 +62,7 @@ public class AlbumController {
     @Autowired
     private UserService userService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -89,7 +89,7 @@ public class AlbumController {
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/album/album-list");
         return view;
     }
@@ -109,9 +109,7 @@ public class AlbumController {
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(album.getSeries()));
-
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
 
         model.addAttribute("album", albumService.album2Json(album));
         model.addAttribute("user", hostHolder.getUser());
@@ -137,18 +135,18 @@ public class AlbumController {
 
         List<JSONObject> albums = new ArrayList<>();
 
-        Map<String, Object> map = albumService.getAlbumsByFilterList(queryParams);
+        SearchResult searchResult = albumService.getAlbumsByFilter(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            albums = albumService.album2JsonList((List<Album>) map.get("data"));
+            albums = albumService.album2JsonList((List<Album>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            albums = albumService.album2JsonIndex((List<Album>) map.get("data"));
+            albums = albumService.album2JsonIndex((List<Album>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();
         result.put("data", albums);
-        result.put("total", map.get("total"));
+        result.put("total", searchResult.total);
 
         return JSON.toJSONString(result);
     }

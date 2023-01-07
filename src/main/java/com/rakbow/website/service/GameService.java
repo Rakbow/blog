@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.GameMapper;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.Region;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.data.game.GamePlatform;
 import com.rakbow.website.data.game.ReleaseType;
@@ -26,9 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +48,7 @@ public class GameService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private VisitService visitService;
     @Autowired
@@ -130,7 +129,7 @@ public class GameService {
         boolean hasBonus = (game.getHasBonus() == 1);
 
         //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(game.getImages());
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(game.getImages(), 200);
 
         JSONObject releaseType = new JSONObject();
         releaseType.put("id", game.getReleaseType());
@@ -144,7 +143,7 @@ public class GameService {
 
         JSONObject series = new JSONObject();
         series.put("id", game.getSeries());
-        series.put("name", seriesService.selectSeriesById(game.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(game.getSeries()).getNameZh());
 
         JSONObject region = new JSONObject();
         region.put("code", game.getRegion());
@@ -213,7 +212,7 @@ public class GameService {
         //所属系列
         JSONObject series = new JSONObject();
         series.put("id", game.getSeries());
-        series.put("name", seriesService.selectSeriesById(game.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(game.getSeries()).getNameZh());
 
         JSONObject region = new JSONObject();
         region.put("code", game.getRegion());
@@ -347,7 +346,7 @@ public class GameService {
 
         JSONObject series = new JSONObject();
         series.put("id", game.getSeries());
-        series.put("name", seriesService.selectSeriesById(game.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(game.getSeries()).getNameZh());
 
         JSONObject releaseType = new JSONObject();
         releaseType.put("id", game.getReleaseType());
@@ -416,7 +415,7 @@ public class GameService {
             return ApiInfo.GAME_REGION_EMPTY;
         }
         if (StringUtils.isBlank(gameJson.getString("series"))) {
-            return ApiInfo.GAME_SERIES_EMPTY;
+            return ApiInfo.GAME_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(gameJson.getString("products"))
                 || StringUtils.equals(gameJson.getString("products"), "[]")) {
@@ -562,7 +561,7 @@ public class GameService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Map<String, Object> getGamesByFilterList(JSONObject queryParams) {
+    public SearchResult getGamesByFilterList(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -606,11 +605,7 @@ public class GameService {
 
         int total = gameMapper.getGamesRowsByFilterList(name, hasBonus, series, products, platform, region);
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", games);
-        res.put("total", total);
-
-        return res;
+        return new SearchResult(total, games);
     }
 
     /**

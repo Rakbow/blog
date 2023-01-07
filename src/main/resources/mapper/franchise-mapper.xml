@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.website.dao.FranchiseMapper">
+
+    <sql id="selectFields">
+        id, name, name_zh, name_en, release_date, added_time, edited_time, description, remark, images
+    </sql>
+
+    <sql id="insertFields">
+        name, name_zh, name_en, release_date, added_time, edited_time, description, remark, images
+    </sql>
+
+    <select id="getFranchise" resultType="Franchise">
+        select
+        <include refid="selectFields"></include>
+        from franchise
+        where id = #{id}
+    </select>
+
+    <select id="getAll" resultType="Franchise">
+        select
+        <include refid="selectFields"></include>
+        from franchise
+        order by id desc
+    </select>
+
+    <insert id="addFranchise" parameterType="Franchise" keyProperty="id">
+        insert into franchise (<include refid="insertFields"></include>)
+        values (#{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images})
+    </insert>
+
+    <update id="updateFranchise" parameterType="Franchise" keyProperty="id">
+        update franchise
+        set
+        name = #{name}, name_zh = #{nameZh}, name_en = #{nameEn}, release_date = #{releaseDate},
+        added_time = #{addedTime}, edited_time = #{editedTime}, description = #{description}, remark = #{remark}, images = #{images}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFranchise">
+        delete
+        from franchise
+        where id = #{id}
+    </delete>
+</mapper>

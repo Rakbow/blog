@@ -5,12 +5,12 @@
 <mapper namespace="com.rakbow.website.dao.MerchMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, barcode, series, products, category, release_date, price, price_unit,
+        id, name, name_zh, name_en, barcode, franchise, products, category, release_date, price, price_unit,
         is_not_for_sale, spec, description, images, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, barcode, series, products, category, release_date, price, price_unit,
+        name, name_zh, name_en, barcode, franchise, products, category, release_date, price, price_unit,
         is_not_for_sale, spec, description, images, remark, added_time, edited_time, _s
     </sql>
 
@@ -26,7 +26,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into merch (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{series}, #{products}, #{category}, #{releaseDate},#{price},
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchise}, #{products}, #{category}, #{releaseDate},#{price},
          #{priceUnit}, #{isNotForSale}, #{spec}, #{description}, #{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
@@ -34,7 +34,7 @@
         update merch
         set
         name = #{merch.name}, name_zh = #{merch.nameZh}, name_en = #{merch.nameEn}, barcode = #{merch.barcode},
-        series = #{merch.series}, products = #{merch.products}, category = #{merch.category},
+        franchise = #{merch.franchise}, products = #{merch.products}, category = #{merch.category},
         release_date = #{merch.releaseDate}, price = #{merch.price}, price_unit = #{merch.priceUnit},
         is_not_for_sale = #{merch.isNotForSale}, description = #{merch.description}, remark = #{merch.remark},
         added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}, _s = #{merch._s}
@@ -86,8 +86,8 @@
             <if test="barcode != null and barcode != '' ">
                 and barcode like concat('%', #{barcode}, '%')
             </if>
-            <if test="series != 0 ">
-                and series = #{series}
+            <if test="franchise != 0 ">
+                and franchise = #{franchise}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -145,8 +145,8 @@
             <if test="barcode != null and barcode != '' ">
                 and barcode like concat('%', #{barcode}, '%')
             </if>
-            <if test="series != 0 ">
-                and series = #{series}
+            <if test="franchise != 0 ">
+                and franchise = #{franchise}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""

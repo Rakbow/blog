@@ -15,12 +15,12 @@ import java.util.Date;
 public class Product {
 
     private int id;//主键
-    private int seriesId;//所属系列id
     private String name;//原名
     private String nameZh;//中文译名
     private String nameEn;//英文译名
     private Date releaseDate;//发售日期
-    private int classification;//作品分类
+    private int franchise;//所属系列id
+    private int category;//作品分类
     private String images;//图片合集，json格式
     private String staffs;//staff
     private String description;//描述
@@ -31,12 +31,12 @@ public class Product {
 
     public Product() {
         id = 0;
-        seriesId = 0;
         name = "";
         nameZh = "";
         nameEn = "";
         releaseDate = null;
-        classification = 0;
+        franchise = 0;
+        category = 0;
         images = "[]";
         description = "";
         staffs = "[]";

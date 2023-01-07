@@ -113,7 +113,7 @@
                                 <tr>
                                     <td><strong>所属系列</strong></td>
                                     <td>
-                                        {{product.series.name}}
+                                        {{product.franchise.name}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -370,13 +370,13 @@
                         <div class="field col">
                             <label htmlFor="classification" class="mb-3">作品分类<span
                                     style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.classification" :options="productClassSet"
+                            <p-dropdown v-model="productEdit.classification" :options="productCategorySet"
                                         placeholder="选择作品分类" option-label="label" option-value="value">
                             </p-dropdown>
 
                         </div>
                         <div class="field col">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
                             <p-dropdown v-model="productEdit.seriesId" :options="seriesSet" :disabled="true"
                                         placeholder="选择所属系列" option-label="label" option-value="value">
                             </p-dropdown>
@@ -647,7 +647,7 @@
 
             const product = ref([[${product}]]);
             const visitNum = ref([[${visitNum}]]);
-            const productClassSet = ref([[${productClassSet}]]);
+            const productCategorySet = ref([[${productCategorySet}]]);
             const seriesSet = ref([[${seriesSet}]]);
             const relatedProducts = ref([[${relatedProducts}]]);
             const albums = ref([[${albums}]]);
@@ -966,7 +966,7 @@
             const openEditDialog = () => {
                 let dataTmp = JSON.parse(JSON.stringify(product.value));
                 productEdit.value = dataTmp;
-                productEdit.value.seriesId = dataTmp.series.id;
+                productEdit.value.seriesId = dataTmp.franchise.id;
                 productEdit.value.classification = dataTmp.classification.id;
                 displayEditDialog.value = true;
             };
@@ -1026,7 +1026,7 @@
                 submitDescription,
                 activeIndex, responsiveOptions, displayCustom, initGalleriaImageClass, imageClick,
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
-                product, visitNum, productClassSet, edits, relatedProducts, seriesSet, albums,
+                product, visitNum, productCategorySet, edits, relatedProducts, seriesSet, albums,
                 books, discs,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
             }

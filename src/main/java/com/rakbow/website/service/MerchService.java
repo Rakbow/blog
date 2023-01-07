@@ -5,17 +5,13 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MerchMapper;
 import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.data.merch.MerchCategory;
-import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +44,7 @@ public class MerchService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private VisitService visitService;
     @Autowired
@@ -129,7 +125,7 @@ public class MerchService {
         boolean isNotForSale = (merch.getIsNotForSale() == 1);
 
         //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(merch.getImages());
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(merch.getImages(), 250);
 
         JSONArray spec = JSON.parseArray(merch.getSpec());
 
@@ -142,7 +138,7 @@ public class MerchService {
 
         JSONObject series = new JSONObject();
         series.put("id", merch.getSeries());
-        series.put("name", seriesService.selectSeriesById(merch.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(merch.getSeries()).getNameZh());
 
         merchJson.put("category", category);
         merchJson.put("isNotForSale", isNotForSale);
@@ -203,7 +199,7 @@ public class MerchService {
         //所属系列
         JSONObject series = new JSONObject();
         series.put("id", merch.getSeries());
-        series.put("name", seriesService.selectSeriesById(merch.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(merch.getSeries()).getNameZh());
 
         //封面
         JSONObject cover = commonImageUtils.getCover(merch.getImages(), 250);
@@ -317,7 +313,7 @@ public class MerchService {
 
         JSONObject series = new JSONObject();
         series.put("id", merch.getSeries());
-        series.put("name", seriesService.selectSeriesById(merch.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(merch.getSeries()).getNameZh());
 
         JSONObject category = new JSONObject();
         category.put("id", merch.getCategory());
@@ -370,7 +366,7 @@ public class MerchService {
             return ApiInfo.MERCH_CATEGORY_EMPTY;
         }
         if (StringUtils.isBlank(merchJson.getString("series"))) {
-            return ApiInfo.MERCH_SERIES_EMPTY;
+            return ApiInfo.MERCH_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(merchJson.getString("products"))
                 || StringUtils.equals(merchJson.getString("products"), "[]")) {

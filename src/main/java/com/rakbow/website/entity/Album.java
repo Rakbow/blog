@@ -53,7 +53,7 @@ public class Album {
     private String copyright;//版权方
     private int hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
-    private int series;//所属系列
+    private String franchises;//所属系列
     private String products;//所属产品id 在mysql中以数组字符串形式存储
     private String description;//描述
     private String remark;//备注
@@ -87,6 +87,7 @@ public class Album {
         this.copyright = "";
         this.hasBonus = 0;
         this.bonus = "";
+        this.franchises = "{\"ids\":[]}";
         this.products = "{\"ids\":[]}";
         this.description = "";
         this.remark = "";

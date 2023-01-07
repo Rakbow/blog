@@ -62,7 +62,7 @@ function JPY2CNY(jpy) {
 }
 
 //根据选项set转换label -> value
-const label2value = (xFormat, xFormatSet) => {
+const commonLabel2value = (xFormat, xFormatSet) => {
     let tmp = [];
     for (let item1 of xFormat) {
         for (let item2 of xFormatSet) {
@@ -74,11 +74,11 @@ const label2value = (xFormat, xFormatSet) => {
     return tmp;
 };
 
-const productLabel2value = (xFormat, xFormatSet) => {
+const label2value = (xFormat, xFormatSet) => {
     let tmp = [];
     for (let item1 of xFormat) {
         for (let item2 of xFormatSet) {
-            if (item1.name === item2.label) {
+            if (item2.value === item1.value) {
                 tmp.push(item2.value);
             }
         }

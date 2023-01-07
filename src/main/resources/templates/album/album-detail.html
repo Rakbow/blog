@@ -93,8 +93,6 @@
             <div id="app">
                 <!-- 头部 -->
                 <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
-
-<!--                <div class="grid card mt-2" style="background-color: #20262E">-->
                 <div class="grid mt-2">
                     <p-toast></p-toast>
                     <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
@@ -116,7 +114,7 @@
                                         <span class="ml-2 flex align-items-center font-bold">编辑</span>
                                     </p-button>
                                 </p-splitbutton>
-                            </template>table-borderless
+                            </template>
                             <div class="grid">
                                 <div class="col-12 sm:col-12 md:col-6 lg:col-4">
                                     <div class="ml-3" style="transform:translateY(33.8px);width: 250px; height: 250px">
@@ -238,8 +236,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-
                             </div>
                         </p-panel>
                         <p-fieldset :toggleable="true" class="mt-2">
@@ -390,16 +386,22 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{album.series.name}}
+                                    <p class="mb-0" v-for="franchise of album.franchises">
+                                        <a :href="'/db/franchise/'+ franchise.value ">
+                                            <span lang="en" style="display:inline">
+                                                {{franchise.label}}
+                                            </span>
+                                        </a>
+                                    </p>
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    <p class="mb-0" v-for="item of album.products">
-                                        <a :href="'/db/product/'+ item.id ">
+                                    <p class="mb-0" v-for="product of album.products">
+                                        <a :href="'/db/product/'+ product.value ">
                                             <span lang="en" style="display:inline">
-                                                {{item.name}}
+                                                {{product.label}}
                                             </span>
                                         </a>
                                     </p>
@@ -530,37 +532,37 @@
                           :style="{width: '800px'}" :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">专辑名称<span style="color: red">*</span></label>
+                            <label>专辑名称<span style="color: red">*</span></label>
                             <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameEn">专辑名称(英语)</label>
+                            <label>专辑名称(英语)</label>
                             <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">专辑名称(中文)</label>
+                            <label>专辑名称(中文)</label>
                             <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="catalogNo">专辑编号</label>
+                            <label>专辑编号</label>
                             <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="price">发行价格(含税)</label>
+                            <label>发行价格(含税)</label>
                             <p-inputnumber id="price" v-model="albumEdit.price" mode="currency"
                                            currency="JPY"
                                            locale="ja-JP"></p-inputnumber>
@@ -568,22 +570,22 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="seriesId" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown id="seriesId" v-model="albumEdit.series" :options="seriesSet"
-                                        option-label="label" option-value="value"
-                                        :disabled="seriesBool">
-                            </p-dropdown>
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-multiselect v-model="albumEdit.franchises" @change="getProducts($event.value)"
+                                           :options="franchiseSet" placeholder="所属系列"
+                                           option-label="label" option-value="value" display="chip" :filter="true">
+                            </p-multiselect>
                         </div>
                         <div class="field col-6">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect id="products" v-model="albumEdit.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
+                            <label class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <p-multiselect v-model="albumEdit.products" :options="productSet"
+                                           option-label="label" option-value="value" placeholder="选择所属作品"
                                            display="chip" :filter="true">
                             </p-multiselect>
                         </div>
                         <div class="field col">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">特典</label>
+                                <label class="mb-3">特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
@@ -593,7 +595,7 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="publishFormat" class="mb-3">出版形式<span
+                            <label class="mb-3">出版形式<span
                                     style="color: red">*</span></label>
                             <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat"
                                            :options="publishFormatSet"
@@ -602,14 +604,14 @@
                             </p-multiselect>
                         </div>
                         <div class="field col">
-                            <label htmlFor="albumFormat" class="mb-3">专辑分类<span style="color: red">*</span></label>
+                            <label class="mb-3">专辑分类<span style="color: red">*</span></label>
                             <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
                                            option-label="label" option-value="value" placeholder="选择专辑分类"
                                            display="chip">
                             </p-multiselect>
                         </div>
                         <div class="field col">
-                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
+                            <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
                                            display="chip">
@@ -618,24 +620,24 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="label">唱片公司</label>
+                            <label>唱片公司</label>
                             <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publisher">发行商</label>
+                            <label>发行商</label>
                             <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="distributor">经销商</label>
+                            <label>经销商</label>
                             <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="copyright">版权方</label>
+                            <label>版权方</label>
                             <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -1074,6 +1076,8 @@
             const album = ref([[${album}]]);
             const visitNum = ref([[${visitNum}]]);
             const relatedAlbums = ref([[${relatedAlbums}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
+            const productSelect = ref(true);
             const toast = useToast();
             const edits = ref([
                 {
@@ -1115,8 +1119,7 @@
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const albumFormatSet = ref([[${albumFormatSet}]]);
             const publishFormatSet = ref([[${publishFormatSet}]]);
-            const productSet = ref([[${productSet}]]);
-            const seriesSet = ref([[${seriesSet}]]);
+            const productSet = ref([]);
             const blockedPanel = ref(false);
             //endregion
 
@@ -1146,7 +1149,7 @@
             const openEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(album.value));
@@ -1155,12 +1158,25 @@
                             dataTmp.albumFormat = album.value.albumFormat.split("/");
                             dataTmp.publishFormat = album.value.publishFormat.split("/");
                             albumEdit.value = dataTmp;
-                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                            albumEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
-                            albumEdit.value.series = dataTmp.series.id;
-                            displayEditDialog.value = true;
+                            albumEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            albumEdit.value.albumFormat = commonLabel2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                            albumEdit.value.publishFormat = commonLabel2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                            albumEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            let json = {
+                                franchises: albumEdit.value.franchises,
+                                entityType: ALBUM
+                            };
+                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                                .then(res => {
+                                    if (res.length !== 0) {
+                                        productSet.value = res;
+                                        productSelect.value = false;
+                                    }else {
+                                        productSelect.value = true;
+                                    }
+                                    albumEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    displayEditDialog.value = true;
+                                });
                         }
                     })
             };
@@ -1737,7 +1753,27 @@
                 }
             }
 
+            //根据系列id获取该系列所有作品
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: ALBUM
+                };
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                    .then(res => {
+                        if (res.length !== 0) {
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                        }
+                    });
+            };
+
             return {
+                getProducts,
+                productSelect,
+                franchiseSet,
                 blockedPanel,
                 clearUploadedImage,
                 closeImageEditDialog,
@@ -1808,7 +1844,6 @@
                 publishFormatSet,
                 productSet,
 
-                seriesSet,
                 visitNum,
                 updateImage,
                 cancelDeleteSelectedImage,

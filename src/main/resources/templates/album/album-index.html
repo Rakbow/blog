@@ -130,9 +130,9 @@
                                         <template #footer>
                                             <ul class="list-inline">
                                                 <li class="list-inline-item" v-for="product of slotProps.data.products">
-                                                    <a :href="domainUrl + '/db/product/' + product.id">
+                                                    <a :href="domainUrl + '/db/product/' + product.value">
                                                         <i class="pi pi-tag" style="color: white"
-                                                           v-tooltip.bottom="product.name"></i>
+                                                           v-tooltip.bottom="product.label"></i>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -156,7 +156,12 @@
                                         </span>
                                         <span class="ml-2 text-end">{{slotProps.data.albumFormat.join(" / ")}}</span>
                                         <br/>
-                                        <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.series.name}}</span>
+                                        <div v-for="franchise in slotProps.data.franchises">
+                                            <a :href="'/db/franchise/' + franchise.value">
+                                                <i class="pi pi-tags product-category-icon"></i>
+                                                <span class="product-category">{{franchise.label}}</span>
+                                            </a>
+                                        </div>
                                         <span class="col-2" v-if="slotProps.data.hasBonus == 1">
                                             <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                v-tooltip="'包含特典'"></i>
@@ -164,9 +169,9 @@
                                         <ul class="list-inline">
                                             <li class="list-inline-item mr-2"
                                                 v-for="product of slotProps.data.products">
-                                                <a :href="domainUrl + '/db/product/' + product.id">
+                                                <a :href="domainUrl + '/db/product/' + product.value">
                                                     <p-tag class="product-tag" icon="pi pi-tag"
-                                                           :value="product.name"></p-tag>
+                                                           :value="product.label"></p-tag>
                                                 </a>
                                             </li>
                                         </ul>
@@ -184,23 +189,22 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">名称</label>
+                                <label>名称</label>
                                 <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="catalogNo">编号</label>
+                                <label>编号</label>
                                 <p-inputtext v-model.trim="queryParams.filters.catalogNo.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="series">所属系列</label>
-                                <p-dropdown v-model="queryParams.filters.series.value" :options="seriesSet"
-                                            placeholder="所有" option-label="label"
-                                            option-value="value"
-                                            @change="getProducts">
-                                </p-dropdown>
+                                <label>所属系列</label>
+                                <p-multiselect v-model="queryParams.filters.franchises.value" @change="getProducts($event.value)"
+                                               :options="franchiseSet" placeholder="所属系列"
+                                               option-label="label" option-value="value" display="chip" :filter="true">
+                                </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="products">所属作品</label>
+                                <label>所属作品</label>
                                 <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
                                                option-label="label" option-value="value"
                                                placeholder="请先选择所属系列"
@@ -209,14 +213,14 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="hasBonus">是否包含特典</label>
+                                <label>是否包含特典</label>
                                 <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="publishFormat">出版形式</label>
+                                <label>出版形式</label>
                                 <p-multiselect v-model="queryParams.filters.publishFormat.value"
                                                :options="publishFormatSet"
                                                option-label="label" option-value="value"
@@ -225,7 +229,7 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="albumFormat">专辑分类</label>
+                                <label>专辑分类</label>
                                 <p-multiselect v-model="queryParams.filters.albumFormat.value"
                                                :options="albumFormatSet"
                                                option-label="label" option-value="value"
@@ -234,7 +238,7 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="mediaFormatSet">媒体格式</label>
+                                <label>媒体格式</label>
                                 <p-multiselect v-model="queryParams.filters.mediaFormat.value"
                                                :options="mediaFormatSet"
                                                option-label="label" option-value="value"
@@ -426,7 +430,7 @@
 
             //region ------基础------
             const albums = ref();
-            const seriesSet = ref([[${seriesSet}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             const justEditedAlbums = ref([[${justEditedAlbums}]]);
             const justAddedAlbums = ref([[${justAddedAlbums}]]);
             const popularAlbums = ref([[${popularAlbums}]]);
@@ -465,7 +469,7 @@
                     publishFormat: {value: null},
                     albumFormat: {value: null},
                     mediaFormat: {value: null},
-                    series: {value: null},
+                    franchises: {value: null},
                     products: {value: null},
                 }
             });
@@ -482,20 +486,29 @@
                         publishFormat: {value: null},
                         albumFormat: {value: null},
                         mediaFormat: {value: null},
-                        series: {value: null},
+                        franchises: {value: null},
                         products: {value: null},
                     }
                 };
                 getAlbums();
             }
             const productSet = ref();
-            const getProducts = (ev) => {
-                let json = {series: ev.value};
-                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
+
+            //根据系列id获取该系列所有作品
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: ALBUM
+                };
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        queryParams.value.filters.products.value = [];
-                        productSet.value = res;
-                        productSelect.value = false;
+                        if (res.length !== 0) {
+                            queryParams.value.filters.products.value = [];
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                        }
                     })
             };
             const onPage = (event) => {
@@ -509,7 +522,7 @@
                     pageLabel: "index",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_ALBUMS_LIST_URL, json)
+                axiosPostRequest(GET_ALBUMS_URL, json)
                     .then(res => {
                         albums.value = res.data;
                         totalRecords.value = res.total;
@@ -544,7 +557,7 @@
             return {
                 clearSearch, hasBonusSet, albumsRows,
                 publishFormatSet, albumFormatSet, mediaFormatSet,
-                getProducts, seriesSet, productSet, queryParams, productSelect,
+                getProducts, franchiseSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
                 justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
                 sortKey, sortOptions, getAlbums, totalRecords, onPage

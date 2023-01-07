@@ -5,11 +5,12 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.product.ProductClass;
+import com.rakbow.website.data.common.SearchResult;
+import com.rakbow.website.data.product.ProductCategory;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
-import com.rakbow.website.util.Image.QiniuImageUtils;
+import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Project_name: website
@@ -40,7 +38,7 @@ public class ProductService {
     @Autowired
     private ProductMapper productMapper;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Value("${website.path.img}")
     private String imgPath;
     @Autowired
@@ -55,8 +53,8 @@ public class ProductService {
     }
 
     //通过id查找作品
-    public Product getProductById(int id) {
-        return productMapper.selectProductById(id);
+    public Product getProduct(int id) {
+        return productMapper.getProduct(id);
     }
 
     //获取所有作品
@@ -70,29 +68,51 @@ public class ProductService {
     }
 
     //删除作品
-    public int deleteProductById(int id) {
+    public int deleteProduct(int id) {
         deleteAllProductImages(id);
-        return productMapper.deleteProductById(id);
-    }
-
-    //获取某系列所有作品
-    public List<Product> selectProductsBySeriesId(int seriesId) {
-        return productMapper.selectAllProductsBySeriesId(seriesId);
+        return productMapper.deleteProduct(id);
     }
 
     //通过系列Id获取所有作品的数组，供前端选项用
-    public List<JSONObject> getAllProductSetBySeriesId(int seriesId) {
+    public List<JSONObject> getProductSet(int franchiseId, int entityType) {
+
+        List<Integer> franchises = new ArrayList<>();
+        franchises.add(franchiseId);
+
+        List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);
+
         List<JSONObject> productSet = new ArrayList<>();
-        selectProductsBySeriesId(seriesId).forEach(product -> {
+        productMapper.getProductsByFilter(null, null, franchises, categories,
+                null, -1, 0, 0).forEach(product -> {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("label", product.getNameZh() + "(" + ProductClass.getNameZhByIndex(product.getClassification()) + ")");
+            jsonObject.put("label", product.getNameZh() + "(" + ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
             jsonObject.put("value", product.getId());
             productSet.add(jsonObject);
         });
         return productSet;
     }
 
+    //通过系列Id获取所有作品的数组，供前端选项用
+    public List<JSONObject> getProductSet(List<Integer> franchises, int entityType) {
+
+        List<JSONObject> productSet = new ArrayList<>();
+
+        if (franchises.size() != 0) {
+            List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);
+            productMapper.getProductsByFilter(null, null, franchises, categories,
+                    null, -1, 0, 0).forEach(product -> {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("value", product.getId());
+                jsonObject.put("label", product.getNameZh() + "(" + ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
+                productSet.add(jsonObject);
+            });
+        }
+        return productSet;
+    }
+
     //endregion
+
+    //region ------数据处理------
 
     /**
      * Product转Json对象，以便前端使用，转换量最大的
@@ -101,18 +121,17 @@ public class ProductService {
      * @return JSONObject
      * @author rakbow
      */
-    //region ------数据处理------
     public JSONObject product2Json (Product product) {
 
         JSONObject productJson = new JSONObject();
 
-        JSONObject series = new JSONObject();
-        series.put("id", product.getSeriesId());
-        series.put("name", seriesService.selectSeriesById(product.getSeriesId()).getNameZh());
+        JSONObject franchise = new JSONObject();
+        franchise.put("id", product.getFranchise());
+        franchise.put("nameZh", franchiseService.getFranchise(product.getFranchise()).getNameZh());
 
-        JSONObject classification = new JSONObject();
-        classification.put("id", product.getClassification());
-        classification.put("nameZh", ProductClass.getNameZhByIndex(product.getClassification()));
+        JSONObject category = new JSONObject();
+        category.put("id", product.getCategory());
+        category.put("nameZh", ProductCategory.getNameZhByIndex(product.getCategory()));
 
         JSONArray images = JSON.parseArray(product.getImages());
         if (!images.isEmpty()) {
@@ -139,12 +158,12 @@ public class ProductService {
         }
 
         productJson.put("id", product.getId());
-        productJson.put("series", series);
+        productJson.put("franchise", franchise);
         productJson.put("name", product.getName());
         productJson.put("nameZh", product.getNameZh());
         productJson.put("nameEn", product.getNameEn());
         productJson.put("releaseDate", CommonUtils.dateToString(product.getReleaseDate()));
-        productJson.put("classification", classification);
+        productJson.put("category", category);
         productJson.put("description", product.getDescription());
         productJson.put("staffs", staffs);
         productJson.put("remark", product.getRemark());
@@ -166,39 +185,37 @@ public class ProductService {
     public JSONObject product2JsonSimple(Product product) {
         JSONObject productJson = new JSONObject();
 
-        JSONObject series = new JSONObject();
-        series.put("id", product.getSeriesId());
-        series.put("name", seriesService.selectSeriesById(product.getSeriesId()).getNameZh());
+        JSONObject franchise = new JSONObject();
+        franchise.put("id", product.getFranchise());
+        franchise.put("nameZh", franchiseService.getFranchise(product.getFranchise()).getNameZh());
 
-        JSONObject classification = new JSONObject();
-        classification.put("id", product.getClassification());
-        classification.put("nameZh", ProductClass.getNameZhByIndex(product.getClassification()));
+        JSONObject category = new JSONObject();
+        category.put("id", product.getCategory());
+        category.put("nameZh", ProductCategory.getNameZhByIndex(product.getCategory()));
 
         JSONArray images = JSON.parseArray(product.getImages());
 
-        JSONArray staffs = JSON.parseArray(product.getStaffs());
-
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
+        cover.put("url", QiniuImageHandleUtils.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrlWidth(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
         }
 
         productJson.put("id", product.getId());
-        productJson.put("series", series);
+        productJson.put("franchise", franchise);
         productJson.put("name", product.getName());
         productJson.put("nameZh", product.getNameZh());
         productJson.put("nameEn", product.getNameEn());
         productJson.put("releaseDate", CommonUtils.dateToString(product.getReleaseDate()));
-        productJson.put("classification", classification);
+        productJson.put("category", category);
         productJson.put("cover", cover);
         productJson.put("addedTime", CommonUtils.timestampToString(product.getAddedTime()));
         productJson.put("editedTime", CommonUtils.timestampToString(product.getEditedTime()));
@@ -266,11 +283,11 @@ public class ProductService {
         if (StringUtils.isBlank(productJson.getString("releaseDate"))) {
             return ApiInfo.PRODUCT_RELEASE_DATE_EMPTY;
         }
-        if (StringUtils.isBlank(productJson.getString("seriesId"))) {
-            return ApiInfo.PRODUCT_SERIES_EMPTY;
+        if (StringUtils.isBlank(productJson.getString("franchise"))) {
+            return ApiInfo.PRODUCT_FRANCHISE_EMPTY;
         }
-        if (StringUtils.isBlank(productJson.getString("classification"))) {
-            return ApiInfo.PRODUCT_CLASSIFICATION_EMPTY;
+        if (StringUtils.isBlank(productJson.getString("category"))) {
+            return ApiInfo.PRODUCT_CATEGORY_EMPTY;
         }
         return "";
     }
@@ -337,7 +354,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteProductImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getProductById(id).getImages());
+        JSONArray images = JSONArray.parseArray(getProduct(id).getImages());
 
         JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
@@ -353,7 +370,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAllProductImages(int id) {
-        Product product = getProductById(id);
+        Product product = getProduct(id);
         JSONArray images = JSON.parseArray(product.getImages());
         return commonImageUtils.commonDeleteAllImages(EntityType.PRODUCT, images);
     }
@@ -369,10 +386,13 @@ public class ProductService {
     public List<JSONObject> getRelatedProducts (int productId) {
         List<JSONObject> relatedProducts;
 
-        Product product = getProductById(productId);
+        Product product = getProduct(productId);
 
-        List<Product> sameSeriesProducts = selectProductsBySeriesId(product.getSeriesId());
-        List<Product> products = DataFinder.findProductsByClassification(product.getClassification(), sameSeriesProducts);
+        List<Integer> franchises = new ArrayList<>(product.getFranchise());
+
+        List<Product> sameFranchiseProducts = productMapper.getProductsByFilter
+                (null, null, franchises, null, null, -1, 0, 0);
+        List<Product> products = DataFinder.findProductsByClassification(product.getCategory(), sameFranchiseProducts);
 
         products.removeIf(it -> it.getId() == productId);
 
@@ -383,6 +403,32 @@ public class ProductService {
         }
 
         return relatedProducts;
+    }
+
+    //endregion
+
+    //region ------特殊查询------
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    public SearchResult getProductsByFilter(JSONObject queryParams) {
+
+        JSONObject filter = queryParams.getJSONObject("filters");
+
+        String sortField = queryParams.getString("sortField");
+        int sortOrder = queryParams.getIntValue("sortOrder");
+        int first = queryParams.getIntValue("first");
+        int row = queryParams.getIntValue("rows");
+
+        String name = filter.getJSONObject("name").getString("value");
+        String nameZh = filter.getJSONObject("nameZh").getString("value");
+        List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
+        List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
+
+        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories,
+                sortField, sortOrder, first, row);
+        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories);
+
+        return new SearchResult(total, products);
     }
 
     //endregion

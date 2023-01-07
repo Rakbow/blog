@@ -120,7 +120,7 @@
                             </template>
                             <div class="grid">
                                 <div class="col-12 sm:col-12 md:col-6 lg:col-4">
-                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">
+                                    <div class="ml-3" style="transform:translateY(0px);width: 200px; height: 200px">
                                         <img :src="disc.cover.url" :alt="disc.cover.name"
                                              class="image-cover"/>
                                     </div>
@@ -267,7 +267,7 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{disc.series.name}}
+                                    {{disc.franchise.name}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
@@ -431,8 +431,8 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="discEdit.series" :options="seriesSet"
+                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="discEdit.franchise" :options="seriesSet"
                                         option-label="label" option-value="value"
                                         :disabled="seriesBool">
                             </p-dropdown>
@@ -780,9 +780,9 @@
                             dataTmp.isLimited = disc.value.isLimited ? 1 : 0;
                             dataTmp.mediaFormat = disc.value.mediaFormat.split("/");
                             discEdit.value = dataTmp;
-                            discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            discEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
-                            discEdit.value.series = dataTmp.series.id;
+                            discEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            discEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                            discEdit.value.franchise = dataTmp.franchise.id;
                             displayEditDialog.value = true;
                         }
                     })

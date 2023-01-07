@@ -151,7 +151,7 @@
                                         </span>
                                         <span class="ml-2 text-end">{{slotProps.data.category.nameZh}}</span>
                                         <br/>
-                                        <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.series.name}}</span>
+                                        <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.franchise.name}}</span>
                                         <span class="col-2" v-if="slotProps.data.isNotForSale == 1">
                                             <i class="pi pi-ban" style="font-size: 1.3rem"
                                                v-tooltip="'非卖品'"></i>
@@ -200,8 +200,8 @@
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="series">所属系列</label>
-                                <p-dropdown v-model="queryParams.filters.series.value" :options="seriesSet"
+                                <label htmlFor="franchise">所属系列</label>
+                                <p-dropdown v-model="queryParams.filters.franchise.value" :options="seriesSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value"
                                             @change="getProducts">
@@ -435,7 +435,7 @@
                 filters: {
                     name: {value: null},
                     barcode: {value: null},
-                    series: {value: null},
+                    franchise: {value: null},
                     products: {value: null},
                     category: {value: null},
                     isNotForSale: {value: null},
@@ -450,7 +450,7 @@
                     filters: {
                         name: {value: null},
                         barcode: {value: null},
-                        series: {value: null},
+                        franchise: {value: null},
                         products: {value: null},
                         category: {value: null},
                         isNotForSale: {value: null},
@@ -460,8 +460,8 @@
             }
             const productSet = ref();
             const getProducts = (ev) => {
-                let json = {series: ev.value};
-                axiosPostRequest(GET_PRODUCTS_BY_SERIES_ID_URL, json)
+                let json = {franchise: ev.value};
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         queryParams.value.filters.products.value = [];
                         productSet.value = res;
@@ -479,7 +479,7 @@
                     pageLabel: "index",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_MERCHS_LIST_URL, json)
+                axiosPostRequest(GET_MERCHS_URL, json)
                     .then(res => {
                         merchs.value = res.data;
                         totalRecords.value = res.total;

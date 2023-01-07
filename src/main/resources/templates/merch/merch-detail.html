@@ -268,7 +268,7 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{merch.series.name}}
+                                    {{merch.franchise.name}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
@@ -434,8 +434,8 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="merchEdit.series" :options="seriesSet"
+                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="merchEdit.franchise" :options="seriesSet"
                                         option-label="label" option-value="value" :disabled="seriesBool">
                             </p-dropdown>
                         </div>
@@ -815,8 +815,8 @@
                             let dataTmp = JSON.parse(JSON.stringify(merch.value));
                             dataTmp.isNotForSale = merch.value.isNotForSale ? 1 : 0;
                             merchEdit.value = dataTmp;
-                            merchEdit.value.products = productLabel2value(dataTmp.products, productSet.value).concat();
-                            merchEdit.value.series = dataTmp.series.id;
+                            merchEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                            merchEdit.value.franchise = dataTmp.franchise.id;
                             merchEdit.value.category = dataTmp.category.id;
                             displayEditDialog.value = true;
                         }

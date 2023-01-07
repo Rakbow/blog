@@ -5,7 +5,9 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.product.ProductClass;
+import com.rakbow.website.data.common.SearchResult;
+import com.rakbow.website.data.product.ProductCategory;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +49,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -68,36 +71,35 @@ public class ProductController {
     //region ------获取页面------
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public String getProductListPage(Model model) {
-        model.addAttribute("products", productService.product2json(productService.getAllProduct()));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
-        model.addAttribute("productClassSet", productUtils.getProductClassSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("productCategorySet", productUtils.getProductCategorySet());
         return "/product/product-list";
     }
 
     //获取单个产品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getProductDetail(@PathVariable("id") int productId, Model model) throws IOException {
-        if (productService.getProductById(productId) == null) {
+        if (productService.getProduct(productId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.PRODUCT.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.PRODUCT.getId(), productId);
 
-        Product product = productService.getProductById(productId);
+        Product product = productService.getProduct(productId);
         model.addAttribute("product", productService.product2Json(product));
         model.addAttribute("user", hostHolder.getUser());
-        model.addAttribute("productClassSet", productUtils.getProductClassSet());
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("productClassSet", productUtils.getProductCategorySet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
 
-        if (product.getClassification() == ProductClass.ANIMATION.getIndex()
-                || product.getClassification() == ProductClass.GAME.getIndex()
-                || product.getClassification() == ProductClass.LIVE_ACTION_MOVIE.getIndex()) {
+        if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
+                || product.getCategory() == ProductCategory.GAME.getIndex()
+                || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getIndex()) {
             model.addAttribute("albums", albumService.getAlbumsByProductId(productId));
             model.addAttribute("discs", discService.getDiscsByProductId(productId));
         }
-        if (product.getClassification() == ProductClass.BOOK.getIndex()) {
+        if (product.getCategory() == ProductCategory.BOOK.getIndex()) {
             model.addAttribute("books", bookService.getBooksByProductId(productId));
         }
 
@@ -234,16 +236,6 @@ public class ProductController {
 
     //endregion
 
-    /**
-     * 根据系列id获取该系列所有产品
-     * */
-    @RequestMapping(path = "/get-products-by-series-id", method = RequestMethod.POST)
-    @ResponseBody
-    public List<JSONObject> getAllProductBySeriesId(@RequestBody String json){
-        JSONObject param = JSON.parseObject(json);
-        return productService.getAllProductSetBySeriesId(param.getInteger("series"));
-    }
-
     //新增图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
@@ -258,7 +250,7 @@ public class ProductController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(productService.getProductById(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(productService.getProduct(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
@@ -327,4 +319,35 @@ public class ProductController {
         return JSON.toJSONString(res);
     }
 
+    //region ------特殊查询------
+
+    /**
+     * 根据系列id获取该系列所有产品
+     * */
+    @RequestMapping(path = "/get-product-set", method = RequestMethod.POST)
+    @ResponseBody
+    public List<JSONObject> getAllProductBySeriesId(@RequestBody String json){
+        JSONObject param = JSON.parseObject(json);
+        return productService.getProductSet(param.getList("franchises", Integer.class), param.getInteger("entityType"));
+    }
+
+    @RequestMapping(path = "/get-products", method = RequestMethod.POST)
+    @ResponseBody
+    public String getAllProductsByFilter(@RequestBody String json){
+
+        JSONObject param = JSON.parseObject(json);
+        JSONObject queryParams = param.getJSONObject("queryParams");
+
+        SearchResult searchResult = productService.getProductsByFilter(queryParams);
+
+        List<JSONObject> products = productService.product2JsonSimple((List<Product>) searchResult.data);
+
+        JSONObject result = new JSONObject();
+        result.put("data", products);
+        result.put("total", searchResult.total);
+
+        return JSON.toJSONString(result);
+    }
+
+    //endregion
 }

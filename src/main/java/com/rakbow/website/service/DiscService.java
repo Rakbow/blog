@@ -6,15 +6,12 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.ImageType;
 import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +44,7 @@ public class DiscService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private VisitService visitService;
     @Autowired
@@ -141,7 +138,7 @@ public class DiscService {
         boolean isLimited = (disc.getIsLimited() == 1);
 
         //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(disc.getImages());
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(disc.getImages(), 200);
 
         //发售时间转为string
         discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
@@ -156,7 +153,7 @@ public class DiscService {
 
         JSONObject series = new JSONObject();
         series.put("id", disc.getSeries());
-        series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(disc.getSeries()).getNameZh());
 
         discJson.put("isLimited", isLimited);
         discJson.put("hasBonus", hasBonus);
@@ -217,7 +214,7 @@ public class DiscService {
 
         JSONObject series = new JSONObject();
         series.put("id", disc.getSeries());
-        series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(disc.getSeries()).getNameZh());
 
         //封面
         JSONObject cover = commonImageUtils.getCover(disc.getImages(), 250);
@@ -335,7 +332,7 @@ public class DiscService {
 
         JSONObject series = new JSONObject();
         series.put("id", disc.getSeries());
-        series.put("name", seriesService.selectSeriesById(disc.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(disc.getSeries()).getNameZh());
 
         //媒体格式
         List<String> mediaFormat = new ArrayList<>();
@@ -386,7 +383,7 @@ public class DiscService {
             return ApiInfo.DISC_RELEASE_DATE_EMPTY;
         }
         if (StringUtils.isBlank(discJson.getString("series"))) {
-            return ApiInfo.DISC_SERIES_EMPTY;
+            return ApiInfo.DISC_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(discJson.getString("products"))
                 || StringUtils.equals(discJson.getString("products"), "[]")) {

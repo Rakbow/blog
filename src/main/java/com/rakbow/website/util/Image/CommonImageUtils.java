@@ -161,10 +161,11 @@ public class CommonImageUtils {
      * 将图片切分为封面、展示和其他图片
      *
      * @param imagesJson 数据库原图片合集的JSON字符串
+     * @param coverSize 封面图尺寸
      * @return segmentImagesResult
      * @author rakbow
      */
-    public segmentImagesResult segmentImages (String imagesJson) {
+    public segmentImagesResult segmentImages (String imagesJson, int coverSize) {
 
         segmentImagesResult result = new segmentImagesResult();
 
@@ -181,13 +182,13 @@ public class CommonImageUtils {
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 250));
+        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 250));
+                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), coverSize));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

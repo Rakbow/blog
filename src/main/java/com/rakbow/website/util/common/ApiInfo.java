@@ -53,7 +53,7 @@ public class ApiInfo {
 
      public static final String ALBUM_NAME_EMPTY = "未填写专辑名称！";
      public static final String ALBUM_RELEASE_DATE_EMPTY = "未填写发行日期！";
-     public static final String ALBUM_SERIES_EMPTY = "未选择专辑所属系列！";
+     public static final String ALBUM_FRANCHISES_EMPTY = "未选择专辑所属系列！";
      public static final String ALBUM_PRODUCTS_EMPTY = "未选择专辑所属作品！";
      public static final String ALBUM_PUBLISH_FORMAT_EMPTY = "未选择出版形式！";
      public static final String ALBUM_ALBUM_FORMAT_EMPTY = "未选择专辑分类！";
@@ -77,8 +77,8 @@ public class ApiInfo {
     public static final String PRODUCT_NAME_EMPTY = "未填写作品名称！";
     public static final String PRODUCT_NAME_ZH_EMPTY = "未填写作品译名(中)！";
     public static final String PRODUCT_RELEASE_DATE_EMPTY = "未填写发行日期！";
-    public static final String PRODUCT_SERIES_EMPTY = "未选择作品所属系列！";
-    public static final String PRODUCT_CLASSIFICATION_EMPTY = "未选择作品分类！";
+    public static final String PRODUCT_FRANCHISE_EMPTY = "未选择作品所属系列！";
+    public static final String PRODUCT_CATEGORY_EMPTY = "未选择作品分类！";
     public static final String UPDATE_PRODUCT_DESCRIPTION_SUCCESS = "描述信息更新成功！";
     public static final String UPDATE_PRODUCT_STAFFS_SUCCESS = "staff信息更新成功！";
     //endregion
@@ -90,7 +90,7 @@ public class ApiInfo {
 
     public static final String DISC_NAME_EMPTY = "未填写专辑名称！";
     public static final String DISC_RELEASE_DATE_EMPTY = "未填写发行日期！";
-    public static final String DISC_SERIES_EMPTY = "未选择碟片所属系列！";
+    public static final String DISC_FRANCHISES_EMPTY = "未选择碟片所属系列！";
     public static final String DISC_PRODUCTS_EMPTY = "未选择碟片所属作品！";
     public static final String DISC_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
     //endregion
@@ -104,7 +104,7 @@ public class ApiInfo {
     public static final String BOOK_TITLE_EMPTY = "未填写图书名称！";
     public static final String BOOK_ISBN10_LENGTH_EXCEPTION = "ISBN-10无效！";
     public static final String BOOK_ISBN13_LENGTH_EXCEPTION = "ISBN-13无效！";
-    public static final String BOOK_SERIES_EMPTY = "未选择图书所属系列！";
+    public static final String BOOK_FRANCHISES_EMPTY = "未选择图书所属系列！";
     public static final String BOOK_PRODUCTS_EMPTY = "未选择图书所属作品！";
     public static final String BOOK_TYPE_EMPTY = "未选择图书所属分类！";
     public static final String BOOK_PUBLISH_DATE_EMPTY = "未填写出版日期！";
@@ -116,7 +116,7 @@ public class ApiInfo {
     public static final String UPDATE_MERCH_DESCRIPTION_SUCCESS = "周边描述更新成功！";
 
     public static final String MERCH_NAME_EMPTY = "未填写周边名称！";
-    public static final String MERCH_SERIES_EMPTY = "未选择周边所属系列！";
+    public static final String MERCH_FRANCHISES_EMPTY = "未选择周边所属系列！";
     public static final String MERCH_PRODUCTS_EMPTY = "未选择周边所属作品！";
     public static final String MERCH_CATEGORY_EMPTY = "未选择图书所属分类！";
     public static final String MERCH_RELEASE_DATE_EMPTY = "未填写发售日期！";
@@ -130,7 +130,7 @@ public class ApiInfo {
     public static final String UPDATE_GAME_BONUS_SUCCESS = "游戏特典信息更新成功！";
 
     public static final String GAME_NAME_EMPTY = "未填写游戏名称！";
-    public static final String GAME_SERIES_EMPTY = "未选择游戏所属系列！";
+    public static final String GAME_FRANCHISES_EMPTY = "未选择游戏所属系列！";
     public static final String GAME_PRODUCTS_EMPTY = "未选择游戏所属作品！";
     public static final String GAME_RELEASE_DATE_EMPTY = "未填写游戏发售日期！";
     public static final String GAME_RELEASE_TYPE_EMPTY = "未选择游戏发售类型！";

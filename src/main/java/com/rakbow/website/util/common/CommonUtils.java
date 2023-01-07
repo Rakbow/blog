@@ -215,6 +215,17 @@ public class CommonUtils {
         return strArr;
     }
 
+    /**
+     * ids字符串转list
+     *
+     * @author rakbow
+     * @param idsJson ids字符串
+     * @return List<Integer>
+     * */
+    public static List<Integer> ids2List (String idsJson) {
+        return new ArrayList<>(JSONObject.parseObject(idsJson).getList("ids", Integer.class));
+    }
+
     //region ------暂时废弃------
 
     /**

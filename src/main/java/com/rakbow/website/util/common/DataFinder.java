@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -81,7 +80,7 @@ public class DataFinder {
     public static List<Product> findProductsByClassification(int classification, List<Product> products) {
         List<Product> result = new ArrayList<>();
         for (Product product : products) {
-            if (product.getClassification() == classification) {
+            if (product.getCategory() == classification) {
                 if (!result.contains(product)) {
                     result.add(product);
                 }

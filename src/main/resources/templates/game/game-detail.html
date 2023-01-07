@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Book Detail</title>
+    <title>Game Detail</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -100,14 +100,14 @@
                     <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-book mr-0" style="font-size: 2rem"></i>
+                                <i class="pi iconfont icon-youxi mr-0" style="font-size: 2rem"></i>
                                 <div class="container mt-0 mb-0 ml-0">
-                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{book.title}}</h5>
-                                    <h5 v-if="book.titleEn != ''" class="text-start ml-2 mt-0 mb-0"
-                                        style="text-align: left"><small>{{book.titleEn}}</small>
+                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{game.name}}</h5>
+                                    <h5 v-if="game.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
+                                        style="text-align: left"><small>{{game.nameZh}}</small></h5>
+                                    <h5 v-if="game.nameEn != ''" class="text-start ml-2 mt-0 mb-0"
+                                        style="text-align: left"><small>{{game.nameEn}}</small>
                                     </h5>
-                                    <h5 v-if="book.titleZh != ''" class="text-start ml-2 mt-0 mb-0"
-                                        style="text-align: left"><small>{{book.titleZh}}</small></h5>
                                 </div>
                             </template>
                             <template #icons th:if="${loginUser != null}">
@@ -121,8 +121,8 @@
                             </template>
                             <div class="grid">
                                 <div class="col-12 sm:col-12 md:col-6 lg:col-4">
-                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">
-                                        <img :src="book.cover.url" :alt="book.cover.name"
+                                    <div class="ml-3" style="transform:translateY(0px);width: 200px; height: 200px">
+                                        <img :src="game.cover.url" :alt="game.cover.name"
                                              class="image-cover"/>
                                     </div>
                                 </div>
@@ -131,29 +131,40 @@
                                         <tbody>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-bar-code mr-1"
+                                                <i class="pi pi-calendar mr-1"
                                                    style="font-size: 1.3rem"></i>
-                                                <strong>ISBN-10</strong>
+                                                <strong>发售日期</strong>
                                             </td>
                                             <td>
-                                                {{book.isbn10}}
+                                                {{game.releaseDate}}
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr v-if="game.barcode != '' && game.barcode != null">
                                             <td>
-                                                <i class="pi iconfont icon-bar-code mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>ISBN-13</strong>
+                                                <i class="pi iconfont icon-bar-code mr-1"
+                                                   style="font-size: 1.3rem"></i>
+                                                <strong>商品条形码</strong>
                                             </td>
-                                            <td>{{book.isbn13}}
+                                            <td>
+                                                {{game.barcode}}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <i class="pi pi-th-large mr-1" style="font-size: 1.3rem"></i>
-                                                <strong>分类</strong>
+                                                <strong>发售类型</strong>
                                             </td>
                                             <td>
-                                                {{book.bookType.nameZh}}
+                                                {{game.releaseType.nameZh}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-yingyong mr-1" style="font-size: 1.3rem"></i>
+                                                <strong>发售平台</strong>
+                                            </td>
+                                            <td>
+                                                {{game.platform.nameEn}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -163,48 +174,8 @@
                                                 <strong>地区</strong>
                                             </td>
                                             <td>
-                                                {{book.region.nameZh}} <span
-                                                    :class="'fi fi-' + book.region.code"></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-language mr-1"
-                                                   style="font-size: 1.3rem"></i>
-                                                <strong>语言</strong>
-                                            </td>
-                                            <td>
-                                                {{book.publishLanguage.nameZh}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar mr-1"
-                                                   style="font-size: 1.3rem"></i>
-                                                <strong>出版日期</strong>
-                                            </td>
-                                            <td>
-                                                {{book.publishDate}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-gongsi mr-1"
-                                                   style="font-size: 1.3rem"></i>
-                                                <strong>出版社</strong>
-                                            </td>
-                                            <td>
-                                                {{book.publisher}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-wuliaojiage mr-1"
-                                                   style="font-size: 1.3rem"></i>
-                                                <strong>出版价格</strong>
-                                            </td>
-                                            <td>
-                                                {{book.price != 0?book.price:" - "}} {{book.currencyUnit}}
+                                                {{game.region.nameZh}} <span
+                                                    :class="'fi fi-' + game.region.code"></span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -213,67 +184,50 @@
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>特典</strong>
                                             </td>
-                                            <td><a v-if="book.hasBonus" href="#bonus">有</a>{{(book.hasBonus)?"":"无"}}
+                                            <td><a v-if="game.hasBonus" href="#bonus">有</a>{{(game.hasBonus)?"":"无"}}
                                             </td>
                                         </tr>
+                                        <div v-if="game.organizations.length != 0">
+                                            <tr v-for="item in game.organizations">
+                                                <td>
+                                                    <i class="pi iconfont icon-gongsi mr-1"
+                                                       style="font-size: 1.3rem"></i>
+                                                    <strong>{{item.label}}</strong>
+                                                </td>
+                                                <td>
+                                                    {{item.value.join("/")}}
+                                                </td>
+                                            </tr>
+                                        </div>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </p-panel>
-                        <p-fieldset :toggleable="true" class="mt-2">
+                        <!-- 开发制作人员信息 -->
+                        <div v-if="game.staffs.length != 0">
+                            <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
                                 <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
-                                <b>作者/规格</b>
+                                <b>开发制作人员</b>
                             </template>
-                            <div class="grid">
-                                <div class="col-5 flex align-items-start justify-content-start">
-                                    <div class="grid ml-4" v-if="book.authors.length != 0">
-                                        <table class="table-borderless table-sm">
-                                            <tbody>
-                                            <tr v-for="author in book.authors">
-                                                <td width="80px"><strong>{{author.pos}}</strong></td>
-                                                <td>
-                                                    {{author.name.join("/")}}
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div v-else>
-                                        <span class="emptyInfo"><em>暂无作者信息</em></span>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <p-divider layout="vertical"></p-divider>
-                                </div>
-                                <div class="col-5 flex align-items-start justify-content-start">
-                                    <div class="grid ml-4" v-if="book.spec.length != 0">
-                                        <table class="table-borderless table-sm">
-                                            <tbody>
-                                            <tr v-for="specItem in book.spec">
-                                                <td width="80px"><strong>{{specItem.label}}</strong></td>
-                                                <td>
-                                                    {{specItem.value.join("/")}}
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div v-else>
-                                        <span class="emptyInfo"><em>暂无规格信息</em></span>
-                                    </div>
-                                </div>
+                            <div class="grid ml-4" v-if="game.staffs.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody>
+                                    <tr v-for="staff in game.staffs">
+                                        <td width="80px"><strong>{{staff.pos}}</strong></td>
+                                        <td>
+                                            {{staff.name.join("/")}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无开发制作人员信息</em></span>
                             </div>
                         </p-fieldset>
-                        <!-- 简介 -->
-                        <p-fieldset :toggleable="true" class="mt-2">
-                            <template #legend>
-                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
-                                <b>简介</b>
-                            </template>
-                            <article id="summary" class="markdown-body" style="width: 100%;"></article>
-                        </p-fieldset>
+                        </div>
                         <!-- 描述 -->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
@@ -283,7 +237,7 @@
                             <article id="description" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
                         <!-- 特典 -->
-                        <div v-if="book.hasBonus">
+                        <div v-if="game.hasBonus">
                             <p-fieldset :toggleable="true" class="mt-2">
                                 <template #legend>
                                     <i class="pi iconfont icon-gift mr-2" style="font-size: 2rem"></i>
@@ -298,7 +252,7 @@
                                 <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
                                 <b>图片</b>
                             </template>
-                            <div v-if="book.displayImages.length == 0">
+                            <div v-if="game.displayImages.length == 0">
                                 <span class="emptyInfo"><em>暂无图片</em></span>
                             </div>
                             <div v-else align="center">
@@ -308,7 +262,7 @@
                                         <span style="margin-left:.5rem; vertical-align: middle">加载图片</span>
                                     </template>
                                     <template #content>
-                                        <p-galleria :value="book.displayImages" :responsive-options="responsiveOptions"
+                                        <p-galleria :value="game.displayImages" :responsive-options="responsiveOptions"
                                                     :num-visible="5" container-style="width: 600px" :circular="true">
                                             <template #item="{item}">
                                                 <div id="galleria-div">
@@ -318,8 +272,8 @@
                                             </template>
                                             <template #caption="{item}">
                                                 <div class="custom-galleria-footer">
-                                            <span v-if="book.displayImages" class="title-container">
-                                                <span>共{{book.displayImages.length}}张</span>
+                                            <span v-if="game.displayImages" class="title-container">
+                                                <span>共{{game.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
                                                 <span style="font-size: 10px">{{item.description}}</span>
                                             </span>
@@ -348,13 +302,13 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{book.franchise.name}}
+                                    {{game.franchise.name}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    <p class="mb-0" v-for="item of book.products">
+                                    <p class="mb-0" v-for="item of game.products">
                                         <a :href="'/db/product/'+ item.id ">
                                             <span style="display:inline">
                                                 {{item.name}}
@@ -370,10 +324,10 @@
                                 <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
                                 <b>图片</b>
                             </template>
-                            <div v-if="book.displayImages.length == 0">
+                            <div v-if="game.displayImages.length == 0">
                                 <span class="emptyInfo"><em>暂无图片</em></span>
                             </div>
-                            <p-galleria v-if="book.displayImages" :value="book.displayImages"
+                            <p-galleria v-if="game.displayImages" :value="game.displayImages"
                                         v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
                                         :num-visible="7" container-style="max-width: 800px"
                                         :circular="true" :full-screen="true" :show-item-navigators="true"
@@ -385,23 +339,23 @@
                                 <template #caption="{item}">
                                     <div class="custom-galleria-footer">
                                         <div class="col-6">
-                                            <span v-if="book.displayImages" class="title-container">
-                                                <span>共{{book.displayImages.length}}张</span>
+                                            <span v-if="game.displayImages" class="title-container">
+                                                <span>共{{game.displayImages.length}}张</span>
                                                 <span class="title">{{item.nameZh}}</span>
                                                 <span style="font-size: 10px">{{item.description}}</span>
                                             </span>
                                         </div>
                                         <div class="col-6 text-end">
-                                            <span v-if="book.displayImages">
+                                            <span v-if="game.displayImages">
                                             <span>上传于 {{item.uploadTime}}</span>
                                         </span>
                                         </div>
                                     </div>
                                 </template>
                             </p-galleria>
-                            <div v-if="book.displayImages" class="grid justify-content-evenly justify-content-start">
+                            <div v-if="game.displayImages" class="grid justify-content-evenly justify-content-start">
                                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                                     v-for="(image, index) of book.displayImages" :key="index">
+                                     v-for="(image, index) of game.displayImages" :key="index">
                                     <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                                          draggable="false"
                                          oncontextmenu="return false"
@@ -415,33 +369,33 @@
                         <br>
                         <p-panel>
                             <template #header>
-                                <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
-                                <b>相关图书</b>
+                                <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
+                                <b>相关游戏</b>
                             </template>
-                            <div v-if="relatedBooks.length != 0" class="grid">
+                            <div v-if="relatedGames.length != 0" class="grid">
                                 <span class="small_font">
                                     <div class="info_bit_small ml-0 grid"
-                                         v-for="relatedBook of relatedBooks">
+                                         v-for="relatedGame of relatedGames">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/book/'+ relatedBook.id ">
+                                            <a :href="'/db/game/'+ relatedGame.id ">
                                                 <img class="sidebar-panel-image-small-no-radius"
-                                                     :src="relatedBook.cover.url"
-                                                     v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
+                                                     :src="relatedGame.cover.url"
+                                                     v-tooltip.bottom="'收录时间: ' + relatedGame.addedTime + '编辑时间: ' + relatedGame.editedTime">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="info_bit_small">
                                             <li>
                                                 <a class="small_font"
-                                                   :href="'/db/book/'+ relatedBook.id ">
+                                                   :href="'/db/game/'+ relatedGame.id ">
                                                     <span class="text-truncate-2 mr-4" lang="ja">
-                                                        {{relatedBook.title}}
+                                                        {{relatedGame.name}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <span class="small_font">
-                                                    <b>{{relatedBook.isbn13}}</b> {{relatedBook.publishDate}}
+                                                    <b>{{relatedGame.platform.nameEn}}</b> {{relatedGame.releaseDate}} <span :class="'fi fi-' + relatedGame.region.code"></span>
                                                 </span>
                                             </li>
 
@@ -453,7 +407,7 @@
                                 <b class="rbot"><b></b></b>
                             </div>
                             <div v-else>
-                                <span class="emptyInfo"><em>暂无相关书籍</em></span>
+                                <span class="emptyInfo"><em>暂无相关游戏</em></span>
                             </div>
                         </p-panel>
                         <br>
@@ -467,13 +421,13 @@
                                     <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{book.addedTime}}
+                                    {{game.addedTime}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{book.editedTime}}
+                                    {{game.editedTime}}
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
@@ -488,38 +442,55 @@
                 </div>
                 <p-dialog v-model:visible="displayEditDialog" header="编辑基础信息"
                           :style="{width: '600px'}" :modal="true" class="p-fluid">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
-                        </div>
+                    <div class="field">
+                        <label htmlFor="name">游戏名<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="gameEdit.name"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="title">书名<span style="color: red">*</span></label>
-                        <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
+                        <label htmlFor="nameZh">游戏名(中)</label>
+                        <p-inputtext v-model.trim="gameEdit.nameZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleZh">书名(中)</label>
-                        <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="titleEn">书名(英)</label>
-                        <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
+                        <label htmlFor="nameEn">游戏名(英)</label>
+                        <p-inputtext v-model.trim="gameEdit.nameEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
-                                        option-label="label" option-value="value">
+                            <label htmlFor="barcode">商品条形码</label>
+                            <p-inputtext v-model.trim="gameEdit.barcode"></p-inputtext>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <p-calendar v-model="gameEdit.releaseDate" date-format="yy/mm/dd"
+                                        :show-button-bar="true"
+                                        :show-icon="true"></p-calendar>
+                        </div>
+                        <div class="field col-2">
+                            <div class="col-12">
+                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
+                                               :false-value="0"></p-inputswitch>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label htmlFor="releaseType" class="mb-3">发售类型<span style="color: red">*</span></label>
+                            <p-dropdown v-model="gameEdit.releaseType" :options="releaseTypeSet"
+                                        option-label="labelZh" option-value="value">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col">
+                            <label htmlFor="platform" class="mb-3">发售平台<span style="color: red">*</span></label>
+                            <p-dropdown v-model="gameEdit.platform" :options="gamePlatformSet"
+                                        option-label="labelEn" option-value="value">
                             </p-dropdown>
                         </div>
                         <div class="field col">
                             <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
+                            <p-dropdown v-model="gameEdit.region" :options="regionSet" :filter="true"
                                         :show-clear="true" option-label="nameZh" option-value="code">
                                 <template #value="slotProps">
                                     <div class="country-item" v-if="slotProps.value">
@@ -536,68 +507,32 @@
                                 </template>
                             </p-dropdown>
                         </div>
-                        <div class="field col">
-                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
-                                        option-label="nameZh" option-value="code">
-                            </p-dropdown>
-                        </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
                             <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.franchise" :options="seriesSet"
+                            <p-dropdown v-model="gameEdit.franchise" :options="seriesSet"
                                         option-label="label" option-value="value" :disabled="seriesBool">
                             </p-dropdown>
                         </div>
-                        <div class="field col-6">
+                        <div class="field col-8">
                             <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
-                            <p-multiselect v-model="bookEdit.products" :options="productSet"
+                            <p-multiselect v-model="gameEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属产品"
                                            display="chip" :filter="true">
                             </p-multiselect>
                         </div>
-                        <div class="field col-2">
-                            <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
-                                               :false-value="0"></p-inputswitch>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="price">发行价格</label>
-                            <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
-                        </div>
-                        <div class="field col">
-                            <label htmlFor="publisher">出版社</label>
-                            <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label htmlFor="summary">简介</label>
-                        <p-textarea v-model="bookEdit.summary" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
                     </div>
                     <div class="field">
                         <label htmlFor="remark">备注</label>
-                        <p-textarea v-model="bookEdit.remark" rows="3" cols="20"
+                        <p-textarea v-model="gameEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
                     <template #footer>
                         <p-button label="取消" icon="pi pi-times" class="p-button-text"
                                   @click="closeEditDialog"></p-button>
                         <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                                  @click="submitEditBook"></p-button>
+                                  @click="submitEditGame"></p-button>
                     </template>
                 </p-dialog>
                 <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
@@ -678,8 +613,8 @@
                                 <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
                                 <b>编辑</b>
                             </template>
-                            <div v-if="book.images.length != 0">
-                                <p-datatable :value="book.images" class="p-datatable-sm"
+                            <div v-if="game.images.length != 0">
+                                <p-datatable :value="game.images" class="p-datatable-sm"
                                              @row-reorder="imgRowReorder" edit-mode="row" striped-rows
                                              :resizable-columns="true" column-resize-mode="expand"
                                              v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
@@ -745,7 +680,7 @@
                         <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="displayAuthorEditDialog" header="编辑作者信息"
+                <p-dialog v-model:visible="displayOrganizationEditDialog" header="编辑关联组织信息"
                           :style="{width: '800px'}" :modal="true">
                     <p-panel>
                         <template #header>
@@ -758,20 +693,20 @@
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                    <p-inputtext v-model="author.pos" placeholder="职位名称"></p-inputtext>
+                                    <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
                                 </div>
                             </div>
                             <div class="col-7">
                                 <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
+                                        <i class="pi iconfont icon-gongsi"></i>
                                     </span>
-                                    <p-chips v-model="author.name" placeholder="人员信息" separator=","></p-chips>
+                                    <p-chips v-model="organization.value" placeholder="组织名称" separator=","></p-chips>
                                 </div>
                             </div>
                             <div class="col-2">
                                 <p-button label="新增" icon="pi pi-save"
-                                          @click="addAuthor"></p-button>
+                                          @click="addOrganization"></p-button>
                             </div>
                         </div>
                     </p-panel>
@@ -780,11 +715,84 @@
                             <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
                             <b>编辑</b>
                         </template>
-                        <div v-if="tmpAuthors.length != 0">
-                            <p-datatable dataKey="id" :value="tmpAuthors" responsive-layout="scroll"
+                        <div v-if="tmpOrganizations.length != 0">
+                            <p-datatable dataKey="id" :value="tmpOrganizations" responsive-layout="scroll"
+                                         class="p-datatable-sm" striped-rows @row-reorder="organizationOnRowReorder"
+                                         context-menu v-model:context-menu-selection="selectedOrganization"
+                                         @row-contextmenu="organizationRowMenu" edit-mode="row"
+                                         v-model:editing-rows="organizationEditingRows" @row-edit-save="organizationOnRowEditSave">
+                                <p-column :row-reorder="true"></p-column>
+                                <p-column field="label" header="组织类型">
+                                    <template #editor="{ data, field }">
+                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                    </template>
+                                </p-column>
+                                <p-column field="value" header="组织名称">
+                                    <template #body="slotProps">
+                                        {{slotProps.data.value.join("/")}}
+                                    </template>
+                                    <template #editor="{ data, field }">
+                                        <p-chips v-model="data[field]"></p-chips>
+                                    </template>
+                                </p-column>
+                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                          bodyStyle="text-align:center"></p-column>
+                            </p-datatable>
+                            <p-contextmenu :model="organizationMenuModel" ref="organizationCm"></p-contextmenu>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo">暂无关联组织信息</span>
+                        </div>
+                    </p-panel>
+                    <template #footer>
+                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                                  @click="clearOrganizations"></p-button>
+                        <p-button label="取消" icon="pi pi-times" class="mr-4"
+                                  @click="cancelOrganizationsEdit"></p-button>
+                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                                  @click="submitOrganizations"></p-button>
+                    </template>
+                </p-dialog>
+                <p-dialog v-model:visible="displayStaffEditDialog" header="编辑开发制作人员信息"
+                          :style="{width: '800px'}" :modal="true">
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                            <b>新增</b>
+                        </template>
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                    <p-inputtext v-model="staff.pos" placeholder="职位名称"></p-inputtext>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                                    <p-chips v-model="staff.name" placeholder="人员信息" separator=","></p-chips>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <p-button label="新增" icon="pi pi-save"
+                                          @click="addStaff"></p-button>
+                            </div>
+                        </div>
+                    </p-panel>
+                    <p-panel>
+                        <template #header>
+                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                            <b>编辑</b>
+                        </template>
+                        <div v-if="tmpStaffs.length != 0">
+                            <p-datatable dataKey="id" :value="tmpStaffs" responsive-layout="scroll"
                                          class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
-                                         context-menu v-model:context-menu-selection="selectedAuthor"
-                                         @row-contextmenu="authorRowMenu" edit-mode="row"
+                                         context-menu v-model:context-menu-selection="selectedStaff"
+                                         @row-contextmenu="staffRowMenu" edit-mode="row"
                                          v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                                 <p-column :row-reorder="true"></p-column>
                                 <p-column field="pos" header="职位">
@@ -806,89 +814,16 @@
                             <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                         </div>
                         <div v-else>
-                            <span class="emptyInfo">暂无作者信息</span>
+                            <span class="emptyInfo">暂无开发制作人员信息</span>
                         </div>
                     </p-panel>
                     <template #footer>
                         <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                                  @click="clearAuthors"></p-button>
+                                  @click="clearStaffs"></p-button>
                         <p-button label="取消" icon="pi pi-times" class="mr-4"
-                                  @click="cancelAuthorEdit"></p-button>
+                                  @click="cancelStaffEdit"></p-button>
                         <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                                  @click="submitAuthor"></p-button>
-                    </template>
-                </p-dialog>
-                <p-dialog v-model:visible="displaySpecEditDialog" header="编辑规格信息"
-                          :style="{width: '800px'}" :modal="true">
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                            <b>新增</b>
-                        </template>
-                        <div class="grid">
-                            <div class="col-3">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                                    <p-inputtext v-model="specItem.label" placeholder="规格名称"></p-inputtext>
-                                </div>
-                            </div>
-                            <div class="col-7">
-                                <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
-                                    </span>
-                                    <p-chips v-model="specItem.value" placeholder="规格数据" separator=","></p-chips>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <p-button label="新增" icon="pi pi-save"
-                                          @click="addSpecItem"></p-button>
-                            </div>
-                        </div>
-                    </p-panel>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                            <b>编辑</b>
-                        </template>
-                        <div v-if="tmpSpec.length != 0">
-                            <p-datatable dataKey="id" :value="tmpSpec" responsive-layout="scroll"
-                                         class="p-datatable-sm" striped-rows @row-reorder="specOnRowReorder"
-                                         context-menu v-model:context-menu-selection="selectedSpecItem"
-                                         @row-contextmenu="specRowMenu" edit-mode="row"
-                                         v-model:editing-rows="specEditingRows" @row-edit-save="specOnRowEditSave">
-                                <p-column :row-reorder="true"></p-column>
-                                <p-column field="label" header="规格名称">
-                                    <template #editor="{ data, field }">
-                                        <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                                    </template>
-                                </p-column>
-                                <p-column field="value" header="规格数据">
-                                    <template #body="slotProps">
-                                        {{slotProps.data.value.join("/")}}
-                                    </template>
-                                    <template #editor="{ data, field }">
-                                        <p-chips v-model="data[field]"></p-chips>
-                                    </template>
-                                </p-column>
-                                <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                          bodyStyle="text-align:center"></p-column>
-                            </p-datatable>
-                            <p-contextmenu :model="specMenuModel" ref="specCm"></p-contextmenu>
-                        </div>
-                        <div v-else>
-                            <span class="emptyInfo">暂无规格信息</span>
-                        </div>
-                    </p-panel>
-                    <template #footer>
-                        <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                                  @click="clearSpec"></p-button>
-                        <p-button label="取消" icon="pi pi-times" class="mr-4"
-                                  @click="cancelSpecEdit"></p-button>
-                        <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                                  @click="submitSpec"></p-button>
+                                  @click="submitStaff"></p-button>
                     </template>
                 </p-dialog>
                 <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
@@ -913,11 +848,11 @@
                         <p-button label="保存" icon="pi pi-save" @click="submitBonus"></p-button>
                     </template>
                 </p-dialog>
-                <p-dialog v-model:visible="deleteBookImageDialog" header="删除图片"
+                <p-dialog v-model:visible="deleteGameImageDialog" header="删除图片"
                           :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
                     <div class="confirmation-content">
                         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                        <span v-if="book">确定删除所选的图片？</span>
+                        <span v-if="game">确定删除所选的图片？</span>
                     </div>
                     <template #footer>
                         <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -946,9 +881,9 @@
             })
 
             //region ------基础------
-            const book = ref([[${book}]]);
+            const game = ref([[${game}]]);
             const visitNum = ref([[${visitNum}]]);
-            const relatedBooks = ref([[${relatedBooks}]]);
+            const relatedGames = ref([[${relatedGames}]]);
             const toast = useToast();
             const edits = ref([
                 {
@@ -959,17 +894,17 @@
                     }
                 },
                 {
-                    label: '作者信息',
-                    icon: 'pi pi-users',
+                    label: '关联组织',
+                    icon: 'pi iconfont icon-gongsi',
                     command: () => {
-                        openAuthorEditDialog();
+                        openOrganizationEditDialog();
                     }
                 },
                 {
-                    label: '规格信息',
-                    icon: 'pi iconfont icon-miaoshu',
+                    label: '开发制作人员',
+                    icon: 'pi pi-users',
                     command: () => {
-                        openSpecEditDialog();
+                        openStaffEditDialog();
                     }
                 },
                 {
@@ -987,9 +922,9 @@
                     }
                 }
             ]);
-            const bookTypeSet = ref([[${bookTypeSet}]]);
+            const releaseTypeSet = ref([[${releaseTypeSet}]]);
             const regionSet = ref([[${regionSet}]]);
-            const languageSet = ref([[${languageSet}]]);
+            const gamePlatformSet = ref([[${gamePlatformSet}]]);
             const productSet = ref([[${productSet}]]);
             const seriesSet = ref([[${seriesSet}]]);
             const blockedPanel = ref(false);
@@ -997,12 +932,12 @@
 
             //region ------图片板块------
             const imgRowReorder = (ev) => {
-                book.value.images = ev.value;
+                game.value.images = ev.value;
             };
             const editingImages = ref([]);
             const imgRowEditSave = (ev) => {
                 let {newData, index} = ev;
-                book.value.images[index] = newData;
+                game.value.images[index] = newData;
             };
             const activeIndex = ref(0);
             const displayCustom = ref(false);
@@ -1012,9 +947,9 @@
             };
             //endregion
 
-            //region ------编辑书籍信息------
+            //region ------编辑游戏信息------
             const seriesBool = true;
-            const bookEdit = ref({});
+            const gameEdit = ref({});
             const displayEditDialog = ref(false);
 
             //打开编辑数据面板
@@ -1024,14 +959,14 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            let dataTmp = JSON.parse(JSON.stringify(book.value));
-                            dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
-                            bookEdit.value = dataTmp;
-                            bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
-                            bookEdit.value.franchise = dataTmp.franchise.id;
-                            bookEdit.value.bookType = dataTmp.bookType.id;
-                            bookEdit.value.region = dataTmp.region.code;
-                            bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
+                            let dataTmp = JSON.parse(JSON.stringify(game.value));
+                            dataTmp.hasBonus = game.value.hasBonus ? 1 : 0;
+                            gameEdit.value = dataTmp;
+                            gameEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                            gameEdit.value.franchise = dataTmp.franchise.id;
+                            gameEdit.value.releaseType = dataTmp.releaseType.id;
+                            gameEdit.value.region = dataTmp.region.code;
+                            gameEdit.value.platform = dataTmp.platform.id;
                             displayEditDialog.value = true;
                         }
                     })
@@ -1040,15 +975,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                bookEdit.value = {};
+                gameEdit.value = {};
             };
 
             //保存编辑数据
-            const submitEditBook = () => {
-                axiosPostRequest(UPDATE_BOOK_URL, bookEdit.value)
+            const submitEditGame = () => {
+                axiosPostRequest(UPDATE_GAME_URL, gameEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            bookEdit.value = {};
+                            gameEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -1076,7 +1011,7 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            descriptionMd.value = book.value.description;
+                            descriptionMd.value = game.value.description;
                             displayDescriptionDialog.value = true;
                         }
                     });
@@ -1087,13 +1022,13 @@
             }
             const submitDescription = () => {
                 let json = {
-                    id: book.value.id,
+                    id: game.value.id,
                     description: descriptionMd.value
                 }
-                axiosPostRequest(UPDATE_BOOK_DESCRIPTION_URL, json)
+                axiosPostRequest(UPDATE_GAME_DESCRIPTION_URL, json)
                     .then(res => {
                         if (res.state != 0) {
-                            book.value.description = descriptionMd.value;
+                            game.value.description = descriptionMd.value;
                             text2marked();
                             closeDescriptionEditDialog();
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
@@ -1113,7 +1048,7 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            bonusMd.value = book.value.bonus;
+                            bonusMd.value = game.value.bonus;
                             displayBonusDialog.value = true;
                         }
                     });
@@ -1124,13 +1059,13 @@
             }
             const submitBonus = () => {
                 let json = {
-                    id: book.value.id,
+                    id: game.value.id,
                     bonus: bonusMd.value
                 }
-                axiosPostRequest(UPDATE_BOOK_BONUS_URL, json)
+                axiosPostRequest(UPDATE_GAME_BONUS_URL, json)
                     .then(res => {
                         if (res.state !== 0) {
-                            book.value.bonus = bonusMd.value;
+                            game.value.bonus = bonusMd.value;
                             text2marked();
                             closeBonusEditDialog();
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
@@ -1145,9 +1080,8 @@
 
             const text2marked = () => {
 
-                const description = book.value.description;
-                const bonus = book.value.bonus;
-                const summary = book.value.summary;
+                const description = game.value.description;
+                const bonus = game.value.bonus;
 
                 if (description != null && description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(description);
@@ -1157,18 +1091,10 @@
                     //]]>
                 }
 
-                if (summary != null && summary !== "") {
-                    document.getElementById("summary").innerHTML = marked.parse(summary);
-                } else {
-                    //<![CDATA[
-                    document.getElementById("summary").innerHTML = "<span class='emptyInfo'><em>暂无简介</em></span>";
-                    //]]>
-                }
-
-                if (book.value.hasBonus && bonus != null && bonus !== "") {
+                if (game.value.hasBonus && bonus != null && bonus !== "") {
                     document.getElementById("bonus").innerHTML = marked.parse(bonus);
                 }
-                if ((bonus == null || bonus === "") && book.value.hasBonus) {
+                if ((bonus == null || bonus === "") && game.value.hasBonus) {
                     //<![CDATA[
                     document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
                     //]]>
@@ -1179,11 +1105,11 @@
             //region ------图片相关组件------
             const updateImage = () => {
                 let json = {
-                    id: book.value.id,
-                    images: book.value.images,
+                    id: game.value.id,
+                    images: game.value.images,
                     action: "1"
                 };
-                axiosPostRequest(UPDATE_BOOK_IMAGES_URL, json)
+                axiosPostRequest(UPDATE_GAME_IMAGES_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
@@ -1199,24 +1125,24 @@
             const galleriaItemClass = ref("");
             const selectedImage = ref([]);
             const confirmDeleteSelectedImage = () => {
-                deleteBookImageDialog.value = true;
+                deleteGameImageDialog.value = true;
             };
             const cancelDeleteSelectedImage = () => {
                 selectedImage.value = [];
-                deleteBookImageDialog.value = false;
+                deleteGameImageDialog.value = false;
             };
-            const deleteBookImageDialog = ref(false);
+            const deleteGameImageDialog = ref(false);
             const deleteImage = () => {
                 let json = {
-                    id: book.value.id,
+                    id: game.value.id,
                     images: selectedImage.value,
                     action: "2"
                 };
-                axiosPostRequest(UPDATE_BOOK_IMAGES_URL, json)
+                axiosPostRequest(UPDATE_GAME_IMAGES_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
-                            deleteBookImageDialog.value = false;
+                            deleteGameImageDialog.value = false;
                             closeImageEditDialog();
                             selectedImage.value = [];
                             location.reload(true);
@@ -1317,9 +1243,9 @@
                 for (const img of imageInfos.value) {
                     formData.append("images", img.image);
                 }
-                formData.append("id", book.value.id);
+                formData.append("id", game.value.id);
                 formData.append("imageInfos", JSON.stringify(imageInfos.value));
-                axiosRequest(INSERT_BOOK_IMAGES_URL, formData)
+                axiosRequest(INSERT_GAME_IMAGES_URL, formData)
                     .then(res => {
                         if (res.state === 1) {
                             blockedPanel.value = false;
@@ -1344,67 +1270,67 @@
             //endregion
 
             //region ------作者信息相关组件------
-            const tmpAuthors = ref();
+            const tmpStaffs = ref();
             const cm = ref();
-            const selectedAuthor = ref();
-            const author = ref({});
-            const authors = ref([]);
-            const displayAuthorEditDialog = ref(false);
+            const selectedStaff = ref();
+            const staff = ref({});
+            const staffs = ref([]);
+            const displayStaffEditDialog = ref(false);
             const menuModel = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteAuthor(selectedAuthor)}
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteStaff(selectedStaff)}
             ]);
             const onRowReorder = (ev) => {
-                tmpAuthors.value = ev.value;
+                tmpStaffs.value = ev.value;
             };
-            const authorRowMenu = (ev) => {
+            const staffRowMenu = (ev) => {
                 cm.value.show(ev.originalEvent);
             };
-            const deleteAuthor = (author) => {
-                tmpAuthors.value = tmpAuthors.value.filter((a) => a.pos !== author.value.pos);
-                toast.add({severity: 'error', summary: '已删除', detail: author.value.pos, life: 3000});
-                selectedAuthor.value = null;
+            const deleteStaff = (staff) => {
+                tmpStaffs.value = tmpStaffs.value.filter((s) => s.pos !== staff.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: staff.value.pos, life: 3000});
+                selectedStaff.value = null;
             };
             const editingRows = ref([]);
             const onRowEditSave = (ev) => {
                 let {newData, index} = ev;
 
-                tmpAuthors.value[index] = newData;
+                tmpStaffs.value[index] = newData;
             };
 
-            const openAuthorEditDialog = () => {
+            const openStaffEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            tmpAuthors.value = JSON.parse(JSON.stringify(book.value.authors));
-                            author.value = {};
-                            displayAuthorEditDialog.value = true;
+                            tmpStaffs.value = JSON.parse(JSON.stringify(game.value.staffs));
+                            staff.value = {};
+                            displayStaffEditDialog.value = true;
                         }
                     })
             };
-            const clearAuthors = () => {
-                tmpAuthors.value = [];
+            const clearStaffs = () => {
+                tmpStaffs.value = [];
             };
-            const addAuthor = () => {
-                tmpAuthors.value.push(author.value);
-                author.value = {};
+            const addStaff = () => {
+                tmpStaffs.value.push(staff.value);
+                staff.value = {};
             }
-            const cancelAuthorEdit = () => {
-                author.value = {};
-                displayAuthorEditDialog.value = false;
+            const cancelStaffEdit = () => {
+                staff.value = {};
+                displayStaffEditDialog.value = false;
             };
-            const submitAuthor = () => {
+            const submitStaff = () => {
                 let json = {
-                    id: book.value.id,
-                    authors: tmpAuthors.value
+                    id: game.value.id,
+                    Staffs: tmpStaffs.value
                 }
-                axiosPostRequest(UPDATE_BOOK_AUTHORS_URL, json)
+                axiosPostRequest(UPDATE_GAME_STAFFS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            displayAuthorEditDialog.value = false;
-                            author.value = {};
+                            displayStaffEditDialog.value = false;
+                            staff.value = {};
                             location.reload(true);
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -1414,67 +1340,67 @@
             //endregion
 
             //region ------规格信息相关组件------
-            const tmpSpec = ref();
-            const specCm = ref();
-            const selectedSpecItem = ref();
-            const specItem = ref({});
-            const spec = ref([]);
-            const displaySpecEditDialog = ref(false);
-            const specMenuModel = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteSpecItem(selectedSpecItem)}
+            const tmpOrganizations = ref();
+            const organizationCm = ref();
+            const selectedOrganization = ref();
+            const organization = ref({});
+            const organizations = ref([]);
+            const displayOrganizationEditDialog = ref(false);
+            const organizationMenuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteOrganization(selectedOrganization)}
             ]);
-            const specOnRowReorder = (ev) => {
-                tmpSpec.value = ev.value;
+            const organizationOnRowReorder = (ev) => {
+                tmpOrganizations.value = ev.value;
             };
-            const specRowMenu = (ev) => {
-                specCm.value.show(ev.originalEvent);
+            const organizationRowMenu = (ev) => {
+                organizationCm.value.show(ev.originalEvent);
             };
-            const deleteSpecItem = (SpecItem) => {
-                tmpSpec.value = tmpSpec.value.filter((s) => s.label !== SpecItem.value.label);
-                toast.add({severity: 'error', summary: '已删除', detail: SpecItem.value.value, life: 3000});
-                selectedSpecItem.value = null;
+            const deleteOrganization = (organization) => {
+                tmpOrganizations.value = tmpOrganizations.value.filter((o) => o.label !== organization.value.label);
+                toast.add({severity: 'error', summary: '已删除', detail: organization.value.value, life: 3000});
+                selectedOrganization.value = null;
             };
-            const specEditingRows = ref([]);
-            const specOnRowEditSave = (ev) => {
+            const organizationEditingRows = ref([]);
+            const organizationOnRowEditSave = (ev) => {
                 let {newData, index} = ev;
 
-                tmpSpec.value[index] = newData;
+                tmpOrganizations.value[index] = newData;
             };
 
-            const openSpecEditDialog = () => {
+            const openOrganizationEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            tmpSpec.value = JSON.parse(JSON.stringify(book.value.spec));
-                            specItem.value = {};
-                            displaySpecEditDialog.value = true;
+                            tmpOrganizations.value = JSON.parse(JSON.stringify(game.value.organizations));
+                            organization.value = {};
+                            displayOrganizationEditDialog.value = true;
                         }
                     })
             };
-            const clearSpec = () => {
-                tmpSpec.value = [];
+            const clearOrganizations = () => {
+                tmpOrganizations.value = [];
             };
-            const addSpecItem = () => {
-                tmpSpec.value.push(specItem.value);
-                specItem.value = {};
+            const addOrganization = () => {
+                tmpOrganizations.value.push(organization.value);
+                organization.value = {};
             }
-            const cancelSpecEdit = () => {
-                specItem.value = {};
-                displaySpecEditDialog.value = false;
+            const cancelOrganizationsEdit = () => {
+                organization.value = {};
+                displayOrganizationEditDialog.value = false;
             };
-            const submitSpec = () => {
+            const submitOrganizations = () => {
                 let json = {
-                    id: book.value.id,
-                    spec: tmpSpec.value
+                    id: game.value.id,
+                    organizations: tmpOrganizations.value
                 }
-                axiosPostRequest(UPDATE_BOOK_SPEC_URL, json)
+                axiosPostRequest(UPDATE_GAME_ORGANIZATIONS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            displaySpecEditDialog.value = false;
-                            specItem.value = {};
+                            displayOrganizationEditDialog.value = false;
+                            organization.value = {};
                             location.reload(true);
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -1497,12 +1423,12 @@
             }
 
             return {
-                displayAuthorEditDialog,
-                displaySpecEditDialog,
+                displayStaffEditDialog,
+                displayOrganizationEditDialog,
                 regionCode2NameZh,
                 regionSet,
-                languageSet,
-                relatedBooks,
+                gamePlatformSet,
+                relatedGames,
                 blockedPanel,
                 clearUploadedImage,
                 closeImageEditDialog,
@@ -1511,8 +1437,8 @@
                 editingImages,
                 imgRowEditSave,
                 imgRowReorder,
-                bookTypeSet,
-                book,
+                releaseTypeSet,
+                game,
 
                 initGalleriaImageClass,
                 imageClick,
@@ -1523,11 +1449,11 @@
                 edits,
                 seriesBool,
                 displayEditDialog,
-                bookEdit,
+                gameEdit,
                 openEditDialog,
                 closeEditDialog,
 
-                submitEditBook,
+                submitEditGame,
                 productSet,
 
                 seriesSet,
@@ -1536,7 +1462,7 @@
                 cancelDeleteSelectedImage,
                 deleteImage,
                 confirmDeleteSelectedImage,
-                deleteBookImageDialog,
+                deleteGameImageDialog,
                 initImageClass,
 
                 galleriaItemClass,
@@ -1562,37 +1488,37 @@
                 closeBonusEditDialog,
                 submitBonus,
 
-                tmpAuthors,
+                tmpStaffs,
                 cm,
-                author,
-                authors,
+                staff,
+                staffs,
                 menuModel,
                 editingRows,
-                selectedAuthor,
-                addAuthor,
-                clearAuthors,
-                submitAuthor,
-                deleteAuthor,
-                cancelAuthorEdit,
-                authorRowMenu,
+                selectedStaff,
+                addStaff,
+                clearStaffs,
+                submitStaff,
+                deleteStaff,
+                cancelStaffEdit,
+                staffRowMenu,
                 onRowEditSave,
                 onRowReorder,
 
-                tmpSpec,
-                specCm,
-                specItem,
-                spec,
-                specMenuModel,
-                specEditingRows,
-                selectedSpecItem,
-                addSpecItem,
-                clearSpec,
-                submitSpec,
-                deleteSpecItem,
-                cancelSpecEdit,
-                specRowMenu,
-                specOnRowEditSave,
-                specOnRowReorder,
+                tmpOrganizations,
+                organizationCm,
+                organization,
+                organizations,
+                organizationMenuModel,
+                organizationEditingRows,
+                selectedOrganization,
+                addOrganization,
+                clearOrganizations,
+                submitOrganizations,
+                deleteOrganization,
+                cancelOrganizationsEdit,
+                organizationRowMenu,
+                organizationOnRowEditSave,
+                organizationOnRowReorder,
             }
         },
         components: {

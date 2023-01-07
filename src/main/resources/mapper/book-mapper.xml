@@ -5,13 +5,13 @@
 <mapper namespace="com.rakbow.website.dao.BookMapper">
 
     <sql id="selectFields">
-        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, series, products, region, publish_language, authors,
+        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchise, products, region, publish_language, authors,
         publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        title, title_en, title_zh, isbn_10, isbn_13, book_type, series, products, region, publish_language, authors,
+        title, title_en, title_zh, isbn_10, isbn_13, book_type, franchise, products, region, publish_language, authors,
         publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, _s
     </sql>
@@ -28,7 +28,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into book (<include refid="insertFields"></include>)
-        values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{series}, #{products}, #{region},
+        values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{franchise}, #{products}, #{region},
         #{publishLanguage},#{authors}, #{publisher}, #{publishDate}, #{price}, #{summary}, #{spec}, #{hasBonus},
         #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -37,7 +37,7 @@
         update book
         set
         title = #{book.title}, title_en = #{book.titleEn}, title_zh = #{book.titleZh}, isbn_10 = #{book.isbn10},
-        isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, series = #{book.series}, products = #{book.products},
+        isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, franchise = #{book.franchise}, products = #{book.products},
         region = #{book.region}, publish_language = #{book.publishLanguage}, publisher = #{book.publisher},
         publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
         has_bonus = #{book.hasBonus}, remark = #{book.remark}, added_time = #{book.addedTime},
@@ -119,8 +119,8 @@
             <if test="bookType != 100 ">
                 and book_type = #{bookType}
             </if>
-            <if test="series != 0 ">
-                and series = #{series}
+            <if test="franchise != 0 ">
+                and franchise = #{franchise}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -190,8 +190,8 @@
             <if test="bookType != 100 ">
                 and book_type = #{bookType}
             </if>
-            <if test="series != 0 ">
-                and series = #{series}
+            <if test="franchise != 0 ">
+                and franchise = #{franchise}
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""

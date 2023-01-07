@@ -7,14 +7,14 @@
     <sql id="selectFields">
         id, catalog_no, name, name_zh, name_en, barcode, release_date, publish_format,
         price, album_format, media_format, label, publisher, distributor, copyright,
-        has_bonus, bonus, description, remark, series, products, artists, images, track_info,
+        has_bonus, bonus, description, remark, franchises, products, artists, images, track_info,
         added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         catalog_no, name, name_zh, name_en, barcode, release_date, publish_format, price,
         album_format, media_format, label, publisher, distributor, copyright, has_bonus, bonus, description,
-        remark, series, products, artists, images, track_info, added_time, edited_time, _s
+        remark, franchises, products, artists, images, track_info, added_time, edited_time, _s
     </sql>
 
     <select id="getAlbumById" resultType="Album">
@@ -22,125 +22,6 @@
         <include refid="selectFields"></include>
         from album
         where id = #{id} and _s = 1
-    </select>
-
-    <select id="getAlbumsByFilterList" resultType="Album">
-        select
-        <include refid="selectFields"></include>
-        from album
-        <where>
-            <if test="catalogNo != null and catalogNo != '' ">
-                and catalog_no like concat('%', #{catalogNo}, '%')
-            </if>
-            <if test="name != null and name != '' ">
-                and name like concat('%', #{name}, '%')
-            </if>
-            <if test="seriesId != 0 ">
-                and series = #{seriesId}
-            </if>
-            <if test="productId != null and productId.size() != 0">
-                <foreach item="item" index="index" collection="productId" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="publishFormat != null and publishFormat.size() != 0">
-                <foreach item="item" index="index" collection="publishFormat" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="albumFormat != null and albumFormat.size() != 0">
-                <foreach item="item" index="index" collection="albumFormat" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="mediaFormat != null and mediaFormat.size() != 0">
-                <foreach item="item" index="index" collection="mediaFormat" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="hasBonus != null and hasBonus != '' ">
-                and has_bonus = #{hasBonus}
-            </if>
-            and _s = 1
-        </where>
-        <if test="sortField == 'id'">
-            <if test="sortOrder == 1">
-                order by id asc
-            </if>
-            <if test="sortOrder == -1">
-                order by id desc
-            </if>
-        </if>
-        <if test="sortField == 'releaseDate'">
-            <if test="sortOrder == 1">
-                order by release_date asc
-            </if>
-            <if test="sortOrder == -1">
-                order by release_date desc
-            </if>
-        </if>
-        <if test="sortField == 'price'">
-            <if test="sortOrder == 1">
-                order by price asc
-            </if>
-            <if test="sortOrder == -1">
-                order by price desc
-            </if>
-        </if>
-        <if test="sortField == null">
-            order by id desc
-        </if>
-        <if test="row != 0">
-            limit #{first}, #{row}
-        </if>
-    </select>
-
-    <select id="getAlbumRowsByFilterList" resultType="int">
-        select count(id)
-        from album
-        <where>
-            <if test="catalogNo != null and catalogNo != '' ">
-                and catalog_no like concat('%', #{catalogNo}, '%')
-            </if>
-            <if test="name != null and name != '' ">
-                and name like concat('%', #{name}, '%')
-            </if>
-            <if test="seriesId != 0 ">
-                and series = #{seriesId}
-            </if>
-            <if test="productId != null and productId.size() != 0">
-                <foreach item="item" index="index" collection="productId" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="publishFormat != null and publishFormat.size() != 0">
-                <foreach item="item" index="index" collection="publishFormat" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="albumFormat != null and albumFormat.size() != 0">
-                <foreach item="item" index="index" collection="albumFormat" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="mediaFormat != null and mediaFormat.size() != 0">
-                <foreach item="item" index="index" collection="mediaFormat" open=""
-                         close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
-                </foreach>
-            </if>
-            <if test="hasBonus != null and hasBonus != '' ">
-                and has_bonus = #{hasBonus}
-            </if>
-            and _s = 1
-        </where>
     </select>
 
     <select id="getAlbumRows" resultType="int">
@@ -153,7 +34,7 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{price}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
-        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{series}, #{products}, #{artists}, #{images},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{artists}, #{images},
         #{trackInfo}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
@@ -164,7 +45,7 @@
         barcode = #{album.barcode}, release_date = #{album.releaseDate}, publish_format = #{album.publishFormat},
         price = #{album.price}, album_format = #{album.albumFormat}, media_format = #{album.mediaFormat},
         label = #{album.label}, publisher = #{album.publisher}, distributor = #{album.distributor}, copyright =
-        #{album.copyright}, has_bonus = #{album.hasBonus}, remark = #{album.remark}, series = #{album.series},
+        #{album.copyright}, has_bonus = #{album.hasBonus}, remark = #{album.remark}, franchises = #{album.franchises},
         products = #{album.products}, added_time = #{album.addedTime}, edited_time = #{album.editedTime}
         where id = #{album.id}
     </update>
@@ -226,6 +107,131 @@
         where _s = 1
         order by edited_time desc
         limit #{limit}
+    </select>
+
+    <select id="getAlbumsByFilter" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        <where>
+            <if test="catalogNo != null and catalogNo != '' ">
+                and catalog_no like concat('%', #{catalogNo}, '%')
+            </if>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="publishFormat != null and publishFormat.size() != 0">
+                <foreach item="item" index="index" collection="publishFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="albumFormat != null and albumFormat.size() != 0">
+                <foreach item="item" index="index" collection="albumFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="mediaFormat != null and mediaFormat.size() != 0">
+                <foreach item="item" index="index" collection="mediaFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            and _s = 1
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'price'">
+            <if test="sortOrder == 1">
+                order by price asc
+            </if>
+            <if test="sortOrder == -1">
+                order by price desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getAlbumRowsByFilter" resultType="int">
+        select count(id)
+        from album
+        <where>
+            <if test="catalogNo != null and catalogNo != '' ">
+                and catalog_no like concat('%', #{catalogNo}, '%')
+            </if>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="publishFormat != null and publishFormat.size() != 0">
+                <foreach item="item" index="index" collection="publishFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="albumFormat != null and albumFormat.size() != 0">
+                <foreach item="item" index="index" collection="albumFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="mediaFormat != null and mediaFormat.size() != 0">
+                <foreach item="item" index="index" collection="mediaFormat" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            and _s = 1
+        </where>
     </select>
 
 </mapper>

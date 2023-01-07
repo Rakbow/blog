@@ -9,7 +9,6 @@ import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.AlbumUtils;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ public class DiscController {
     @Autowired
     private UserService userService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -67,7 +65,7 @@ public class DiscController {
     public ModelAndView getDiscListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/disc/disc-list");
         return view;
     }
@@ -85,8 +83,9 @@ public class DiscController {
         Disc disc = discService.getDiscById(id);
 
         model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(disc.getSeries()));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("productSet", productService.getProductSet
+                (disc.getSeries(), EntityType.DISC.getId()));
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
 
         model.addAttribute("disc", discService.disc2Json(disc));
         model.addAttribute("user", hostHolder.getUser());

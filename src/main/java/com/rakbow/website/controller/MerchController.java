@@ -6,13 +6,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.merch.MerchCategory;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.BookUtils;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
-import com.rakbow.website.util.MerchUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
@@ -27,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +50,7 @@ public class MerchController {
     @Autowired
     private UserService userService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -70,7 +66,7 @@ public class MerchController {
     public ModelAndView getMerchListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/merch/merch-list");
         return view;
     }
@@ -88,8 +84,9 @@ public class MerchController {
         Merch merch = merchService.getMerchById(id);
 
         model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(merch.getSeries()));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("productSet", productService.getProductSet
+                (merch.getSeries(), EntityType.MERCH.getId()));
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
 
         model.addAttribute("merch", merchService.merch2Json(merch));
         model.addAttribute("user", hostHolder.getUser());

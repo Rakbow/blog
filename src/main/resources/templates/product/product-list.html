@@ -68,8 +68,6 @@
                 <template #start>
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
                               @click="openNewDialog"></p-button>&nbsp;
-<!--                    <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"-->
-<!--                              :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;-->
                 </template>
                 <template #end>
                     <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help"
@@ -77,14 +75,15 @@
                 </template>
             </p-toolbar>
             <p-datatable ref="dt" :value="products" class="p-datatable-customers p-datatable-sm"
-                         v-model:filters="filters" filter-display="row" responsive-layout="scroll"
-                         :paginator="true" :rows="10" striped-rows dataKey="id" :resizable-columns="true"
-                         column-resize-mode="expand" :scrollable="true" scroll-height="flex"
-                         :rows-per-page-options="[10,25,50]" show-gridlines
+                         :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
+                         @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                         filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
+                         :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
+                         :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                          paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                              LastPageLink CurrentPageReport RowsPerPageDropdown"
                          current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
-                         :global-filter-fields="['name','country.name','representative.name','balance','status']">
+                         responsive-layout="scroll">
                 <template #header>
                     <div class="grid p-fluid">
                         <div class="col-12 lg:col-3 md:col-3 sm:col-6" style="text-align:left">
@@ -99,14 +98,16 @@
                         没找到相关数据
                     </span>
                 </template>
-<!--                <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>-->
+                <template #loading>
+                    加载中，别急~
+                </template>
                 <p-column style="flex: 0 0 4rem">
                     <template #body="slotProps">
                         <p-button icon="pi pi-pencil" class="p-button-rounded p-button-text"
                                   @click="openEditDialog(slotProps.data)"></p-button>
                     </template>
                 </p-column>
-                <p-column field="id" header="Id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
+                <p-column header="Id" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
                 <p-column header="封面" style="flex: 0 0 16rem">
                     <template #body="slotProps">
                         <img :src="slotProps.data.cover.url" :alt="slotProps.data.name" class="product-image" />
@@ -123,32 +124,34 @@
                                      class="p-column-filter" placeholder="名称"></p-inputtext>
                     </template>
                 </p-column>
-                <p-column header="作品名称(中)" field="nameZh"  :show-filter-menu="false" style="flex: 0 0 15rem">
+                <p-column header="作品名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 15rem">
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
                                      class="p-column-filter" placeholder="名称"></p-inputtext>
                     </template>
                 </p-column>
-                <p-column header="作品分类" field="classification.id" :show-filter-menu="false" style="flex: 0 0 9rem">
+                <p-column header="作品分类" field="category" :show-filter-menu="false" style="flex: 0 0 16rem">
                     <template #body="slotProps">
-                        {{slotProps.data.classification.nameZh}}
+                        {{slotProps.data.category.nameZh}}
                     </template>
                     <template #filter="{filterModel,filterCallback}">
-                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                    :options="productClassSet" option-label="label" option-value="value"
-                                    style="width: 8rem" placeholder="作品分类" class="p-column-filter">
-                        </p-dropdown>
+                        <p-multiselect v-model="filterModel.value" @change="filterCallback()"
+                                       :options="productCategorySet" placeholder="作品类型" class="p-column-filter"
+                                       option-label="label" option-value="value" display="chip" :filter="true">
+                        </p-multiselect>
                     </template>
                 </p-column>
-                <p-column header="所属系列" field="series.id" :show-filter-menu="false" style="flex: 0 0 9rem">
+                <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 16rem">
                     <template #body="slotProps">
-                        {{slotProps.data.series.name}}
+                        <a :href="'/db/franchise/' + slotProps.data.franchise.id">
+                            {{slotProps.data.franchise.nameZh}}
+                        </a>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
-                        <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                    :options="seriesSet" option-label="label" option-value="value"
-                                    style="width: 8rem" placeholder="所属系列" class="p-column-filter">
-                        </p-dropdown>
+                        <p-multiselect v-model="filterModel.value" @change="filterCallback()"
+                                       :options="franchiseSet" placeholder="所属系列" class="p-column-filter"
+                                       option-label="label" option-value="value" display="chip" :filter="true">
+                        </p-multiselect>
                     </template>
                 </p-column>
                 <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
@@ -163,42 +166,42 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">作品名称<span style="color: red">*</span></label>
+                            <label>作品名称<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="product.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">作品名称(中文)<span style="color: red">*</span></label>
+                            <label>作品名称(中文)<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="product.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameEn">作品名称(英语)</label>
+                            <label>作品名称(英语)</label>
                             <p-inputtext v-model.trim="product.nameEn"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="product.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true" :show-icon="true"></p-calendar>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="classification" class="mb-3">作品分类<span style="color: red">*</span></label>
-                            <p-dropdown v-model="product.classification" :options="productClassSet"
+                            <label class="mb-3">作品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="product.category" :options="productCategorySet"
                                         placeholder="选择作品分类" option-label="label" option-value="value">
                             </p-dropdown>
 
                         </div>
                         <div class="field col">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="product.seriesId" :options="seriesSet"
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="product.franchise" :options="franchiseSet"
                                         placeholder="选择所属系列" option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="product.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
                     </div>
                 </p-panel>
@@ -222,42 +225,42 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">作品名称<span style="color: red">*</span></label>
+                            <label>作品名称<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="productEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">作品名称(中文)<span style="color: red">*</span></label>
+                            <label>作品名称(中文)<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="productEdit.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameEn">作品名称(英语)</label>
+                            <label>作品名称(英语)</label>
                             <p-inputtext v-model.trim="productEdit.nameEn"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="productEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true" :show-icon="true"></p-calendar>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="classification" class="mb-3">作品分类<span style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.classification" :options="productClassSet"
+                            <label class="mb-3">作品分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.category" :options="productCategorySet"
                                         placeholder="选择作品分类" option-label="label" option-value="value">
                             </p-dropdown>
 
                         </div>
                         <div class="field col">
-                            <label htmlFor="series" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.seriesId" :options="seriesSet"
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.franchise" :options="franchiseSet"
                                         placeholder="选择所属系列" option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="productEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
                     </div>
                 </p-panel>
@@ -293,13 +296,51 @@
     const App = {
         setup() {
             onMounted(() => {
+                init();
             });
 
-            const products = ref([[${products}]]);
-            const seriesSet = ref([[${seriesSet}]]);
-            const productClassSet = ref([[${productClassSet}]]);
+            //region ------基础------
+            const products = ref([]);
+            const franchiseSet = ref([[${franchiseSet}]]);
+            const productCategorySet = ref([[${productCategorySet}]]);
+            //endregion
 
-
+            //region ------搜索------
+            const totalRecords = ref(0);
+            const queryParams = ref({});
+            const onToggle = (val) => {
+                selectedColumns.value = columns.value.filter(col => val.includes(col));
+            };
+            const columns = ref([
+                {field: 'nameEn', header: '作品名称(英文)'},
+                {field: 'remark', header: '备注'},
+            ]);
+            const filters = ref({
+                'name': {value: '', matchMode: 'contains'},
+                'nameZh': {value: '', matchMode: 'contains'},
+                'franchise': {value: null, matchMode: FilterMatchMode.IN},
+                'category': {value: null, matchMode: FilterMatchMode.IN},
+            });
+            const onPage = (event) => {
+                queryParams.value = event;
+                getProducts();
+            };
+            const onSort = (event) => {
+                queryParams.value = event;
+                getProducts();
+            };
+            const onFilter = () => {
+                queryParams.value.filters = filters.value ;
+                getProducts();
+            };
+            const getProducts = () => {
+                axiosPostRequest(GET_PRODUCTS_URL, {queryParams: queryParams.value})
+                    .then(res => {
+                        products.value = res.data;
+                        totalRecords.value = res.total;
+                    })
+            };
+            //endregion
 
             //region ------新增、编辑------
             const product = ref({});
@@ -342,8 +383,8 @@
             const openEditDialog = (data) => {
                 let dataTmp = JSON.parse(JSON.stringify(data));
                 productEdit.value = dataTmp;
-                productEdit.value.seriesId = dataTmp.series.id;
-                productEdit.value.classification = dataTmp.classification.id;
+                productEdit.value.franchise = dataTmp.franchise.id;
+                productEdit.value.category = dataTmp.category.id;
                 displayEditDialog.value = true;
             };
             //关闭编辑数据面板
@@ -375,7 +416,10 @@
             };
             //endregion
 
-            //region 基础配置
+            //region ------基础配置------
+            const loading = ref(false);
+            const dt = ref();
+            const selectedColumns = ref();
             const toast = useToast();
             const domainUrl = DOMAIN_URL;
             const selectedEntity = ref();
@@ -394,31 +438,24 @@
             };
             //endregion
 
-            //region 过滤
-            const filters = ref({
-                'name': {value: null, matchMode: FilterMatchMode.CONTAINS},
-                'nameZh': {value: null, matchMode: FilterMatchMode.CONTAINS},
-                'series.id': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'classification.id': {value: null, matchMode: FilterMatchMode.EQUALS},
-            });
-            //endregion
-
-            const onToggle = (val) => {
-                selectedColumns.value = columns.value.filter(col => val.includes(col));
+            const init = () => {
+                loading.value = true;
+                queryParams.value = {
+                    first: 0,
+                    rows: dt.value.rows,
+                    sortField: null,
+                    sortOrder: null,
+                    filters: filters.value
+                };
+                getProducts();
+                loading.value = false;
             };
-            const columns = ref([
-                {field: 'nameEn', header: '作品名称(英文)'},
-                {field: 'remark', header: '备注'},
-            ]);
-
-            //region 列表
-            const selectedColumns = ref();
-            //endregion
 
             return {
+                dt, onToggle, onPage, onSort, onFilter, filters, totalRecords, loading,
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
                 product, displayNewDialog, openNewDialog, closeNewDialog, submitNewProduct,
-                filters, seriesSet, productClassSet,
+                filters, franchiseSet, productCategorySet,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, exportCSV,
                 products, selectedColumns, columns, onToggle
             }

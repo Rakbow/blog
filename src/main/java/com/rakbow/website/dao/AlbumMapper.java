@@ -23,15 +23,15 @@ public interface AlbumMapper {
                                   List<Integer> albumFormat, List<Integer> mediaFormat, String hasBonus);
 
     //超详细查询
-    List<Album> getAlbumsByFilterList(String catalogNo, String name, int seriesId, List<Integer> productId,
-                                       List<Integer> publishFormat, List<Integer> albumFormat,
-                                       List<Integer> mediaFormat, String hasBonus, String sortField, int sortOrder,
-                                      int first, int row);
+    List<Album> getAlbumsByFilter(String catalogNo, String name, List<Integer> franchises, List<Integer> products,
+                                  List<Integer> publishFormat, List<Integer> albumFormat,
+                                  List<Integer> mediaFormat, String hasBonus, String sortField, int sortOrder,
+                                  int first, int row);
 
     //超详细查询条数
-    int getAlbumRowsByFilterList(String catalogNo, String name, int seriesId, List<Integer> productId,
-                                 List<Integer> publishFormat, List<Integer> albumFormat,
-                                 List<Integer> mediaFormat, String hasBonus);
+    int getAlbumRowsByFilter(String catalogNo, String name, List<Integer> franchises, List<Integer> products,
+                             List<Integer> publishFormat, List<Integer> albumFormat,
+                             List<Integer> mediaFormat, String hasBonus);
 
     //新增专辑
     int addAlbum(Album album);

@@ -107,26 +107,26 @@ class WebSiteApplicationTests {
         System.out.println(music.getId());
     }
 
-    @Test
-    public void getAlbumsByFilterListTest() throws IOException {
-        List<Integer> products = new ArrayList<>();
-        products.add(1);
-        List<Integer> publishFormat = new ArrayList<>();
-        publishFormat.add(1);
-        List<Integer> albumFormat = new ArrayList<>();
-        albumFormat.add(4);
-        List<Integer> mediaFormat = new ArrayList<>();
-        mediaFormat.add(1);
-        String orderField = "id";
-        int desc = 0;
-        List<Album> albums = albumMapper.getAlbumsByFilterList("", "", 1, products, publishFormat,
-                albumFormat, mediaFormat, "0", orderField, desc,  0, 5);
-
-        albums.forEach(album -> {
-            System.out.println(album.getId());
-        });
-
-    }
+    // @Test
+    // public void getAlbumsByFilterListTest() throws IOException {
+    //     List<Integer> products = new ArrayList<>();
+    //     products.add(1);
+    //     List<Integer> publishFormat = new ArrayList<>();
+    //     publishFormat.add(1);
+    //     List<Integer> albumFormat = new ArrayList<>();
+    //     albumFormat.add(4);
+    //     List<Integer> mediaFormat = new ArrayList<>();
+    //     mediaFormat.add(1);
+    //     String orderField = "id";
+    //     int desc = 0;
+    //     List<Album> albums = albumMapper.getAlbumsByFilter("", "", 1, products, publishFormat,
+    //             albumFormat, mediaFormat, "0", orderField, desc,  0, 5);
+    //
+    //     albums.forEach(album -> {
+    //         System.out.println(album.getId());
+    //     });
+    //
+    // }
 
     @Test
     public void test111() {

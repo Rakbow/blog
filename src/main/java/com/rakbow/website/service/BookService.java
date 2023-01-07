@@ -6,14 +6,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
 import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.*;
-import com.rakbow.website.data.product.ProductClass;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
 import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +43,7 @@ public class BookService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private VisitService visitService;
     @Autowired
@@ -127,7 +124,7 @@ public class BookService {
         boolean hasBonus = (book.getHasBonus() == 1);
 
         //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(book.getImages());
+        segmentImagesResult segmentImages = commonImageUtils.segmentImages(book.getImages(), 250);
 
         JSONObject bookType = new JSONObject();
         bookType.put("id", book.getBookType());
@@ -141,7 +138,7 @@ public class BookService {
 
         JSONObject series = new JSONObject();
         series.put("id", book.getSeries());
-        series.put("name", seriesService.selectSeriesById(book.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(book.getSeries()).getNameZh());
 
         JSONObject region = new JSONObject();
         region.put("code", book.getRegion());
@@ -214,7 +211,7 @@ public class BookService {
         //所属系列
         JSONObject series = new JSONObject();
         series.put("id", book.getSeries());
-        series.put("name", seriesService.selectSeriesById(book.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(book.getSeries()).getNameZh());
 
         JSONObject region = new JSONObject();
         region.put("code", book.getRegion());
@@ -350,7 +347,7 @@ public class BookService {
 
         JSONObject series = new JSONObject();
         series.put("id", book.getSeries());
-        series.put("name", seriesService.selectSeriesById(book.getSeries()).getNameZh());
+        series.put("name", franchiseService.getFranchise(book.getSeries()).getNameZh());
 
         JSONObject bookType = new JSONObject();
         bookType.put("id", book.getBookType());
@@ -430,7 +427,7 @@ public class BookService {
             return ApiInfo.BOOK_TYPE_EMPTY;
         }
         if (StringUtils.isBlank(bookJson.getString("series"))) {
-            return ApiInfo.BOOK_SERIES_EMPTY;
+            return ApiInfo.BOOK_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(bookJson.getString("products"))
                 || StringUtils.equals(bookJson.getString("products"), "[]")) {

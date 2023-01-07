@@ -19,7 +19,7 @@ public interface ProductMapper {
     int addProduct(Product product);
 
     //通过id查找作品
-    Product selectProductById(int id);
+    Product getProduct(int id);
 
     //获取所有作品
     List<Product> getAll();
@@ -28,10 +28,7 @@ public interface ProductMapper {
     int updateProduct(int id, Product product);
 
     //删除产品
-    int deleteProductById(int id);
-
-    //获取某系列所有产品
-    List<Product> selectAllProductsBySeriesId(int seriesId);
+    int deleteProduct(int id);
 
     //更新描述
     int updateProductDescription(int id, String description, Timestamp editedTime);
@@ -41,5 +38,12 @@ public interface ProductMapper {
 
     //更新图片
     int updateProductImages(int id, String images, Timestamp editedTime);
+
+    //条件搜索
+    List<Product> getProductsByFilter(String name, String nameZh, List<Integer> franchises, List<Integer> categories,
+
+                                          String sortField, int sortOrder, int first, int row);
+    //条件搜索数量
+    int getProductsRowsByFilter(String name, String nameZh, List<Integer> franchises, List<Integer> categories);
 
 }

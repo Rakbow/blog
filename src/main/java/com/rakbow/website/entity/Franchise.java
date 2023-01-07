@@ -12,11 +12,11 @@ import java.util.Date;
  * @Description: 系列实体类
  */
 @Data
-public class Series {
+public class Franchise {
 
     private int id;//主键
+    private String name;//系列名
     private String nameZh;//系列名（中文）
-    private String nameJp;//系列名（日语）
     private String nameEn;//系列名（英语）
     private Date releaseDate;//发行日期
     private Date addedTime;//创建时间
@@ -25,10 +25,10 @@ public class Series {
     private String remark;//备注
     private String images;//图片
 
-    public Series() {
+    public Franchise() {
         this.id = 0;
+        this.name = "";
         this.nameZh = "";
-        this.nameJp = "";
         this.nameEn = "";
         this.releaseDate = null;
         this.addedTime = new Timestamp(System.currentTimeMillis());

@@ -9,9 +9,6 @@ import com.rakbow.website.data.common.Language;
 import com.rakbow.website.data.common.Region;
 import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.AlbumUtils;
-import com.rakbow.website.util.BookUtils;
-import com.rakbow.website.util.MerchUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
 import org.slf4j.Logger;
@@ -52,7 +49,7 @@ public class HomeController {
     @Autowired
     private ProductService productService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private AlbumService albumService;
     @Autowired
@@ -92,7 +89,7 @@ public class HomeController {
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
@@ -105,7 +102,7 @@ public class HomeController {
         model.addAttribute("justAddedBooks", bookService.getJustAddedBooks(5));
         model.addAttribute("justEditedBooks", bookService.getJustEditedBooks(5));
         model.addAttribute("popularBooks", bookService.getPopularBooks(10));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("bookTypeSet", bookTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
@@ -118,7 +115,7 @@ public class HomeController {
         model.addAttribute("justAddedDiscs", discService.getJustAddedDiscs(5));
         model.addAttribute("justEditedDiscs", discService.getJustEditedDiscs(5));
         model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         return "/disc/disc-index";
     }
@@ -129,7 +126,7 @@ public class HomeController {
         model.addAttribute("justAddedMerchs", merchService.getJustAddedMerchs(5));
         model.addAttribute("justEditedMerchs", merchService.getJustEditedMerchs(5));
         model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("merchCategorySet", merchCategorySet);
         return "/merch/merch-index";
     }

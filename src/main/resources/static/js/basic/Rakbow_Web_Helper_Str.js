@@ -1,5 +1,4 @@
-const DOMAIN_URL = "http://localhost:8083";
-
+const DOMAIN_URL = "http://localhost:8080";
 //region page
 const HOME_INDEX_URL = DOMAIN_URL;
 const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
@@ -19,7 +18,11 @@ const DISC_LIST_URL = DOMAIN_URL + "/db/disc/list";
 const BOOK_INDEX_URL = DOMAIN_URL + "/db/books";
 const BOOK_LIST_URL = DOMAIN_URL + "/db/book/list";
 
+const MERCH_INDEX_URL = DOMAIN_URL + "/db/merchs";
+const MERCH_LIST_URL = DOMAIN_URL + "/db/merch/list";
+
 const GAME_INDEX_URL = DOMAIN_URL + "/db/games";
+const GAME_LIST_URL = DOMAIN_URL + "/db/game/list";
 
 //endregion
 
@@ -27,7 +30,7 @@ const GAME_INDEX_URL = DOMAIN_URL + "/db/games";
 const DELETE_ALBUM_URL = DOMAIN_URL + "/db/album/delete";
 const UPDATE_ALBUM_URL = DOMAIN_URL + "/db/album/update";
 const INSERT_ALBUM_URL = DOMAIN_URL + "/db/album/add";
-const GET_ALBUMS_LIST_URL = DOMAIN_URL + "/db/album/get-albums";
+const GET_ALBUMS_URL = DOMAIN_URL + "/db/album/get-albums";
 
 const UPDATE_ALBUM_ARTISTS_URL = DOMAIN_URL + "/db/album/update-artists";
 const UPDATE_ALBUM_TRACK_INFO_URL = DOMAIN_URL + "/db/album/update-trackInfo";
@@ -51,7 +54,8 @@ const LOGOUT_URL = DOMAIN_URL + "/logout";
 //endregion
 
 //region product
-const GET_PRODUCTS_BY_SERIES_ID_URL = DOMAIN_URL + "/db/product/get-products-by-series-id";
+const GET_PRODUCTS_URL = DOMAIN_URL + "/db/product/get-products";
+const GET_PRODUCT_SET_URL = DOMAIN_URL + "/db/product/get-product-set";
 const ADD_PRODUCT_URL = DOMAIN_URL + "/db/product/add";
 const UPDATE_PRODUCT_URL = DOMAIN_URL + "/db/product/update";
 const UPDATE_PRODUCT_DESCRIPTION_URL = DOMAIN_URL + "/db/product/update-description";
@@ -64,7 +68,7 @@ const UPDATE_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/update-images";
 const DELETE_DISC_URL = DOMAIN_URL + "/db/disc/delete";
 const UPDATE_DISC_URL = DOMAIN_URL + "/db/disc/update";
 const INSERT_DISC_URL = DOMAIN_URL + "/db/disc/add";
-const GET_DISCS_LIST_URL = DOMAIN_URL + "/db/disc/get-discs";
+const GET_DISCS_URL = DOMAIN_URL + "/db/disc/get-discs";
 
 const INSERT_DISC_IMAGES_URL = DOMAIN_URL + "/db/disc/add-images";
 const UPDATE_DISC_IMAGES_URL = DOMAIN_URL + "/db/disc/update-images";
@@ -77,7 +81,7 @@ const UPDATE_DISC_BONUS_URL = DOMAIN_URL + "/db/disc/update-bonus";
 const DELETE_BOOK_URL = DOMAIN_URL + "/db/book/delete";
 const UPDATE_BOOK_URL = DOMAIN_URL + "/db/book/update";
 const INSERT_BOOK_URL = DOMAIN_URL + "/db/book/add";
-const GET_BOOKS_LIST_URL = DOMAIN_URL + "/db/book/get-books";
+const GET_BOOKS_URL = DOMAIN_URL + "/db/book/get-books";
 
 const INSERT_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/add-images";
 const UPDATE_BOOK_IMAGES_URL = DOMAIN_URL + "/db/book/update-images";
@@ -91,7 +95,7 @@ const UPDATE_BOOK_BONUS_URL = DOMAIN_URL + "/db/book/update-bonus";
 const DELETE_MERCH_URL = DOMAIN_URL + "/db/merch/delete";
 const UPDATE_MERCH_URL = DOMAIN_URL + "/db/merch/update";
 const INSERT_MERCH_URL = DOMAIN_URL + "/db/merch/add";
-const GET_MERCHS_LIST_URL = DOMAIN_URL + "/db/merch/get-merchs";
+const GET_MERCHS_URL = DOMAIN_URL + "/db/merch/get-merchs";
 
 const INSERT_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/add-images";
 const UPDATE_MERCH_IMAGES_URL = DOMAIN_URL + "/db/merch/update-images";
@@ -103,7 +107,7 @@ const UPDATE_MERCH_DESCRIPTION_URL = DOMAIN_URL + "/db/merch/update-description"
 const DELETE_GAME_URL = DOMAIN_URL + "/db/game/delete";
 const UPDATE_GAME_URL = DOMAIN_URL + "/db/game/update";
 const INSERT_GAME_URL = DOMAIN_URL + "/db/game/add";
-const GET_GAMES_LIST_URL = DOMAIN_URL + "/db/game/get-games";
+const GET_GAMES_URL = DOMAIN_URL + "/db/game/get-games";
 
 const INSERT_GAME_IMAGES_URL = DOMAIN_URL + "/db/game/add-images";
 const UPDATE_GAME_IMAGES_URL = DOMAIN_URL + "/db/game/update-images";
@@ -114,6 +118,15 @@ const UPDATE_GAME_BONUS_URL = DOMAIN_URL + "/db/game/update-bonus";
 //endregion
 
 //region header
+
+const ALBUM = 1;
+const DISC = 2;
+const BOOK = 3;
+const MERCH = 4;
+const GAME = 5;
+const FRANCHISE = 6;
+const PRODUCT = 7;
+
 const ENTITY_TYPE = [
     {label: '专辑', value: '1'},
     {label: 'BD/DVD', value: '2'},
@@ -165,20 +178,20 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                     {label: '书籍列表', icon: 'pi pi-fw pi-list', url: BOOK_LIST_URL}
                 ]
             },
-            // {
-            //     label: '周边', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
-            //     items: [
-            //         {label: '周边首页', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang', url: DISC_INDEX_URL},
-            //         {label: '周边列表', icon: 'pi pi-fw pi-list'}
-            //     ]
-            // },
-            // {
-            //     label: '游戏', icon: 'pi pi-fw iconfont icon-youxi',
-            //     items: [
-            //         {label: '游戏首页', icon: 'pi pi-fw iconfont icon-youxi', url: GAME_INDEX_URL},
-            //         {label: '游戏列表', icon: 'pi pi-fw pi-list'}
-            //     ]
-            // }
+            {
+                label: '周边', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
+                items: [
+                    {label: '周边首页', icon: 'pi pi-fw iconfont icon-yinshuabaozhuang', url: MERCH_INDEX_URL},
+                    {label: '周边列表', icon: 'pi pi-fw pi-list', url: MERCH_LIST_URL}
+                ]
+            },
+            {
+                label: '游戏', icon: 'pi pi-fw iconfont icon-youxi',
+                items: [
+                    {label: '游戏首页', icon: 'pi pi-fw iconfont icon-youxi', url: GAME_INDEX_URL},
+                    {label: '游戏列表', icon: 'pi pi-fw pi-list', url: GAME_LIST_URL}
+                ]
+            }
         ]
     },
     {
@@ -265,36 +278,38 @@ const LOGIN_NAVBAR_ITEMS = [
                     }
                 ]
             },
-            // {
-            //     label: '周边',
-            //     icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
-            //     items: [
-            //         {
-            //             label: '周边首页',
-            //             icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
-            //             url: DISC_INDEX_URL
-            //         },
-            //         {
-            //             label: '周边列表',
-            //             icon: 'pi pi-fw pi-list'
-            //         }
-            //     ]
-            // },
-            // {
-            //     label: '游戏',
-            //     icon: 'pi pi-fw iconfont icon-youxi',
-            //     items: [
-            //         {
-            //             label: '游戏首页',
-            //             icon: 'pi pi-fw iconfont icon-youxi',
-            //             url: GAME_INDEX_URL
-            //         },
-            //         {
-            //             label: '游戏列表',
-            //             icon: 'pi pi-fw pi-list'
-            //         }
-            //     ]
-            // }
+            {
+                label: '周边',
+                icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
+                items: [
+                    {
+                        label: '周边首页',
+                        icon: 'pi pi-fw iconfont icon-yinshuabaozhuang',
+                        url: MERCH_INDEX_URL
+                    },
+                    {
+                        label: '周边列表',
+                        icon: 'pi pi-fw pi-list',
+                        url: MERCH_LIST_URL
+                    }
+                ]
+            },
+            {
+                label: '游戏',
+                icon: 'pi pi-fw iconfont icon-youxi',
+                items: [
+                    {
+                        label: '游戏首页',
+                        icon: 'pi pi-fw iconfont icon-youxi',
+                        url: GAME_INDEX_URL
+                    },
+                    {
+                        label: '游戏列表',
+                        icon: 'pi pi-fw pi-list',
+                        url: GAME_LIST_URL
+                    }
+                ]
+            }
         ]
     },
     {

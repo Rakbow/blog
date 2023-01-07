@@ -3,8 +3,9 @@ package com.rakbow.website.util;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.ImageType;
-import com.rakbow.website.data.product.ProductClass;
+import com.rakbow.website.data.product.ProductCategory;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.util.common.CommonConstant;
@@ -32,13 +33,13 @@ public class ProductUtils {
      * @return list 作品分类数组
      * @author rakbow
      */
-    public List<JSONObject> getProductClassSet() {
+    public List<JSONObject> getProductCategorySet() {
         List<JSONObject> list = new ArrayList<>();
-        for (ProductClass productClassSet : ProductClass.values()) {
+        for (ProductCategory productCategorySet : ProductCategory.values()) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("label", productClassSet.getNameZh());
-            jsonObject.put("labelEn", productClassSet.getNameEn());
-            jsonObject.put("value", productClassSet.getIndex());
+            jsonObject.put("label", productCategorySet.getNameZh());
+            jsonObject.put("labelEn", productCategorySet.getNameEn());
+            jsonObject.put("value", productCategorySet.getIndex());
             list.add(jsonObject);
         }
         return list;
@@ -78,12 +79,55 @@ public class ProductUtils {
         JSONObject.parseObject(productJson).getList("ids", Integer.class)
                 .forEach(id -> {
                     JSONObject jo = new JSONObject();
-                    jo.put("id", id);
-                    jo.put("name", productService.getProductById(id).getNameZh() + "(" +
-                            ProductClass.getNameZhByIndex(productService.getProductById(id).getClassification()) + ")");
+                    Product product = productService.getProduct(id);
+                    jo.put("value", id);
+                    jo.put("label", product.getNameZh() + "(" +
+                            ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
                     products.add(jo);
                 });
         return products;
+    }
+
+    /**
+     * 通过实体类型id获取作品选项包含的作品类型
+     *
+     * @param entityType
+     * @return JSONObject
+     * @author rakbow
+     */
+    public static List<Integer> getCategoriesByEntityType (int entityType) {
+
+        List<Integer> categories = new ArrayList<>();
+        if (entityType == EntityType.PRODUCT.getId()) {
+            categories.add(ProductCategory.UNCLASSIFIED.getIndex());
+            categories.add(ProductCategory.GAME.getIndex());
+            categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
+            categories.add(ProductCategory.BOOK.getIndex());
+            categories.add(ProductCategory.MISC.getIndex());
+        }
+        if (entityType == EntityType.ALBUM.getId()) {
+            categories.add(ProductCategory.GAME.getIndex());
+            categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
+        }
+        if (entityType == EntityType.BOOK.getId()) {
+            categories.add(ProductCategory.BOOK.getIndex());
+        }
+        if (entityType == EntityType.DISC.getId()) {
+            categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
+        }
+        if (entityType == EntityType.GAME.getId()) {
+            categories.add(ProductCategory.GAME.getIndex());
+        }
+        if (entityType == EntityType.MERCH.getId()) {
+            categories.add(ProductCategory.GAME.getIndex());
+            categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
+            categories.add(ProductCategory.BOOK.getIndex());
+        }
+        return categories;
     }
 
 }

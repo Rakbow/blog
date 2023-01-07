@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.Region;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.data.game.GamePlatform;
 import com.rakbow.website.data.game.ReleaseType;
 import com.rakbow.website.entity.Game;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Project_name: website
@@ -54,7 +54,7 @@ public class GameController {
     @Autowired
     private UserService userService;
     @Autowired
-    private SeriesService seriesService;
+    private FranchiseService franchiseService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -72,7 +72,7 @@ public class GameController {
         model.addAttribute("releaseTypeSet", releaseTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/game/game-list");
         return view;
     }
@@ -92,8 +92,9 @@ public class GameController {
         model.addAttribute("releaseTypeSet", releaseTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("productSet", productService.getAllProductSetBySeriesId(game.getSeries()));
-        model.addAttribute("seriesSet", seriesService.getAllSeriesSet());
+        model.addAttribute("productSet", productService.getProductSet
+                (game.getSeries(), EntityType.GAME.getId()));
+        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
 
         model.addAttribute("game", gameService.game2Json(game));
         model.addAttribute("user", hostHolder.getUser());
@@ -225,18 +226,18 @@ public class GameController {
 
         List<JSONObject> games = new ArrayList<>();
 
-        Map<String, Object> map = gameService.getGamesByFilterList(queryParams);
+        SearchResult serchResult = gameService.getGamesByFilterList(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            games = gameService.game2JsonList((List<Game>) map.get("data"));
+            games = gameService.game2JsonList((List<Game>) serchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            games = gameService.game2JsonIndex((List<Game>) map.get("data"));
+            games = gameService.game2JsonIndex((List<Game>) serchResult.data);
         }
 
         JSONObject result = new JSONObject();
         result.put("data", games);
-        result.put("total", map.get("total"));
+        result.put("total", serchResult.total);
 
         return JSON.toJSONString(result);
     }
