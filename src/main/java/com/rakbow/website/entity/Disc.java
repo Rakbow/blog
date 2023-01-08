@@ -20,7 +20,7 @@ public class Disc {
     private String nameZh;//商品译名(中)
     private String nameEn;//商品译名(英)
     private String barcode;//商品条形码
-    private int series;//所属系列id
+    private String franchises;//所属系列id
     private String products;//所属作品id
     private Date releaseDate;//发行日期
     private int price;//发行价格
@@ -43,7 +43,7 @@ public class Disc {
         nameZh = "";
         nameEn = "";
         barcode = "";
-        series = 0;
+        franchises = "{\"ids\":[]}";
         products = "{\"ids\":[]}";
         releaseDate = null;
         price = 0;

@@ -56,8 +56,6 @@ public class GameController {
     @Autowired
     private FranchiseService franchiseService;
     @Autowired
-    private ProductService productService;
-    @Autowired
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
@@ -72,7 +70,7 @@ public class GameController {
         model.addAttribute("releaseTypeSet", releaseTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/game/game-list");
         return view;
     }
@@ -80,22 +78,19 @@ public class GameController {
     //获取单个游戏详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getGameDetail(@PathVariable("id") Integer id, Model model) {
-        if (gameService.getGameById(id) == null) {
+        if (gameService.getGame(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.GAME.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.GAME.getId(), id);
 
-        Game game = gameService.getGameById(id);
+        Game game = gameService.getGame(id);
 
         model.addAttribute("releaseTypeSet", releaseTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("productSet", productService.getProductSet
-                (game.getSeries(), EntityType.GAME.getId()));
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
-
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("game", gameService.game2Json(game));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -159,7 +154,7 @@ public class GameController {
                     int id = games.getJSONObject(i).getInteger("id");
 
                     //从数据库中删除游戏
-                    gameService.deleteGameById(id);
+                    gameService.deleteGame(id);
 
                     //从Elasticsearch服务器索引中删除游戏
                     // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
@@ -226,7 +221,7 @@ public class GameController {
 
         List<JSONObject> games = new ArrayList<>();
 
-        SearchResult serchResult = gameService.getGamesByFilterList(queryParams);
+        SearchResult serchResult = gameService.getGamesByFilter(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
             games = gameService.game2JsonList((List<Game>) serchResult.data);
@@ -256,7 +251,7 @@ public class GameController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(gameService.getGameById(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(gameService.getGame(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 

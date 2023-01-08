@@ -134,9 +134,9 @@
                                         <template #footer>
                                             <ul class="list-inline">
                                                 <li class="list-inline-item" v-for="product of slotProps.data.products">
-                                                    <a :href="domainUrl + '/db/product/' + product.id">
+                                                    <a :href="domainUrl + '/db/product/' + product.value">
                                                         <i class="pi pi-tag" style="color: white"
-                                                           v-tooltip.bottom="product.name"></i>
+                                                           v-tooltip.bottom="product.label"></i>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -160,7 +160,12 @@
                                         </span>
                                         <span class="ml-2 text-end">{{slotProps.data.bookType.nameZh}}</span>
                                         <br/>
-                                        <i class="pi pi-tags product-category-icon"></i><span class="product-category">{{slotProps.data.franchise.name}}</span>
+                                        <div v-for="franchise in slotProps.data.franchises">
+                                            <a :href="'/db/franchise/' + franchise.value">
+                                                <i class="pi pi-tags product-category-icon"></i>
+                                                <span class="product-category">{{franchise.label}}</span>
+                                            </a>
+                                        </div>
                                         <span class="col-2" v-if="slotProps.data.hasBonus == 1">
                                             <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                v-tooltip="'包含特典'"></i>
@@ -168,9 +173,9 @@
                                         <ul class="list-inline">
                                             <li class="list-inline-item mr-2"
                                                 v-for="product of slotProps.data.products">
-                                                <a :href="domainUrl + '/db/product/' + product.id">
+                                                <a :href="domainUrl + '/db/product/' + product.value">
                                                     <p-tag class="product-tag" icon="pi pi-tag"
-                                                           :value="product.name"></p-tag>
+                                                           :value="product.label"></p-tag>
                                                 </a>
                                             </li>
                                         </ul>
@@ -207,20 +212,17 @@
                                 <p-inputtext v-model.trim="queryParams.filters.isbn13.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="franchise">所属系列</label>
-                                <p-dropdown v-model="queryParams.filters.franchise.value" :options="seriesSet"
-                                            placeholder="所有" option-label="label"
-                                            option-value="value"
-                                            @change="getProducts">
-                                </p-dropdown>
+                                <label>所属系列</label>
+                                <p-multiselect v-model="queryParams.filters.franchises.value" @change="getProducts($event.value)"
+                                               :options="franchiseSet" placeholder="所属系列"
+                                               option-label="label" option-value="value" display="chip" :filter="true">
+                                </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="products">所属作品</label>
+                                <label>所属作品</label>
                                 <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
-                                               option-label="label" option-value="value"
-                                               placeholder="请先选择所属系列"
-                                               display="chip" :filter="true"
-                                               :disabled="productSelect">
+                                               option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                               display="chip" :filter="true" :disabled="productSelect">
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
@@ -443,7 +445,7 @@
 
             //region ------基础------
             const books = ref();
-            const seriesSet = ref([[${seriesSet}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             const bookTypeSet = ref([[${bookTypeSet}]]);
             const languageSet = ref([[${languageSet}]]);
             const regionSet = ref([[${regionSet}]]);
@@ -482,7 +484,7 @@
                     bookType: {value: null},
                     isbn10: {value: null},
                     isbn13: {value: null},
-                    franchise: {value: null},
+                    franchises: {value: null},
                     products: {value: null},
                     publisher: {value: null},
                     hasBonus: {value: null},
@@ -501,7 +503,7 @@
                         bookType: {value: null},
                         isbn10: {value: null},
                         isbn13: {value: null},
-                        franchise: {value: null},
+                        franchises: {value: null},
                         products: {value: null},
                         publisher: {value: null},
                         hasBonus: {value: null},
@@ -512,13 +514,21 @@
                 getBooks();
             }
             const productSet = ref();
-            const getProducts = (ev) => {
-                let json = {franchise: ev.value};
+            //根据系列id获取该系列所有作品
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: BOOK
+                };
                 axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        queryParams.value.filters.products.value = [];
-                        productSet.value = res;
-                        productSelect.value = false;
+                        if (res.length !== 0) {
+                            queryParams.value.filters.products.value = [];
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                        }
                     })
             };
             const onPage = (event) => {
@@ -567,7 +577,7 @@
             return {
                 regionSet, languageSet, bookTypeSet, regionCode2NameZh,
                 clearSearch, hasBonusSet, booksRows, bookFormatSet, mediaFormatSet,
-                getProducts, seriesSet, productSet, queryParams, productSelect,
+                getProducts, franchiseSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
                 justAddedBooks, justEditedBooks, popularBooks, books, layout,
                 sortKey, sortOptions, getBooks, totalRecords, onPage

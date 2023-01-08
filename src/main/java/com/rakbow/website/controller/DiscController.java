@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -51,8 +52,6 @@ public class DiscController {
     @Autowired
     private FranchiseService franchiseService;
     @Autowired
-    private ProductService productService;
-    @Autowired
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
@@ -65,7 +64,7 @@ public class DiscController {
     public ModelAndView getDiscListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/disc/disc-list");
         return view;
     }
@@ -73,20 +72,17 @@ public class DiscController {
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int id, Model model) {
-        if (discService.getDiscById(id) == null) {
+        if (discService.getDisc(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.DISC.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.DISC.getId(), id);
 
-        Disc disc = discService.getDiscById(id);
+        Disc disc = discService.getDisc(id);
 
         model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("productSet", productService.getProductSet
-                (disc.getSeries(), EntityType.DISC.getId()));
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
-
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("disc", discService.disc2Json(disc));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -111,18 +107,18 @@ public class DiscController {
 
         List<JSONObject> discs = new ArrayList<>();
 
-        Map<String, Object> map = discService.getDiscsByFilterList(queryParams);
+        SearchResult searchResult = discService.getDiscsByFilterList(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            discs = discService.disc2JsonList((List<Disc>) map.get("data"));
+            discs = discService.disc2JsonList((List<Disc>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            discs = discService.disc2JsonIndex((List<Disc>) map.get("data"));
+            discs = discService.disc2JsonIndex((List<Disc>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();
         result.put("data", discs);
-        result.put("total", map.get("total"));
+        result.put("total", searchResult.total);
 
         return JSON.toJSONString(result);
     }
@@ -177,7 +173,7 @@ public class DiscController {
                     int id = discs.getJSONObject(i).getInteger("id");
 
                     //从数据库中删除专辑
-                    discService.deleteDiscById(id);
+                    discService.deleteDisc(id);
 
                     //从Elasticsearch服务器索引中删除专辑
                     // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
@@ -248,7 +244,7 @@ public class DiscController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(discService.getDiscById(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(discService.getDisc(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 

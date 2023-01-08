@@ -6,7 +6,7 @@ const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
 const APP_INDEX_URL = DOMAIN_URL + "/app";
 const BLOG_INDEX_URL = DOMAIN_URL + "/blog";
 
-const SERIES_INDEX_URL = DOMAIN_URL + "/db/series";
+const FRANCHISE_INDEX_URL = DOMAIN_URL + "/db/franchises";
 const PRODUCT_INDEX_URL = DOMAIN_URL + "/db/product/list";
 
 const ALBUM_LIST_URL = DOMAIN_URL + "/db/album/list";
@@ -152,7 +152,7 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                 url: DATABASE_INDEX_URL
             },
             // {
-            //     label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: SERIES_INDEX_URL
+            //     label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: FRANCHISE_INDEX_URL
             // },
             {
                 label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_INDEX_URL
@@ -223,7 +223,7 @@ const LOGIN_NAVBAR_ITEMS = [
             // {
             //     label: '系列',
             //     icon: 'pi pi-fw iconfont icon-_classification',
-            //     url: SERIES_INDEX_URL
+            //     url: FRANCHISE_INDEX_URL
             // },
             {
                 label: '作品',

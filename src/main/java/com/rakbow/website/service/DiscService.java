@@ -6,9 +6,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.MediaFormat;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
+import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
@@ -49,6 +51,8 @@ public class DiscService {
     private VisitService visitService;
     @Autowired
     private ProductUtils productUtils;
+    @Autowired
+    private FranchiseUtils franchiseUtils;
 
     //endregion
 
@@ -70,17 +74,6 @@ public class DiscService {
     }
 
     /**
-     * 获取表中所有数据
-     *
-     * @return disc表中所有专辑，用list封装
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public List<Disc> getAll() {
-        return discMapper.getAllDisc();
-    }
-
-    /**
      * 根据Id获取碟片
      *
      * @param id 碟片id
@@ -88,8 +81,8 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Disc getDiscById(int id) {
-        return discMapper.getDiscById(id);
+    public Disc getDisc(int id) {
+        return discMapper.getDisc(id);
     }
 
     /**
@@ -99,11 +92,11 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void deleteDiscById(int id) {
+    public void deleteDisc(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllDiscImages(id);
 
-        discMapper.deleteDiscById(id);
+        discMapper.deleteDisc(id);
     }
 
     /**
@@ -151,9 +144,8 @@ public class DiscService {
         //所属产品
         List<JSONObject> products = productUtils.getProductList(disc.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", disc.getSeries());
-        series.put("name", franchiseService.getFranchise(disc.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(disc.getFranchises());
 
         discJson.put("isLimited", isLimited);
         discJson.put("hasBonus", hasBonus);
@@ -162,7 +154,7 @@ public class DiscService {
         discJson.put("cover", segmentImages.cover);
         discJson.put("displayImages", segmentImages.displayImages);
         discJson.put("otherImages", segmentImages.otherImages);
-        discJson.put("series", series);
+        discJson.put("franchises", franchises);
         discJson.put("products", products);
         discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
         discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
@@ -212,9 +204,8 @@ public class DiscService {
         //所属产品
         List<JSONObject> products = productUtils.getProductList(disc.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", disc.getSeries());
-        series.put("name", franchiseService.getFranchise(disc.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(disc.getFranchises());
 
         //封面
         JSONObject cover = commonImageUtils.getCover(disc.getImages(), 250);
@@ -223,7 +214,7 @@ public class DiscService {
         discJson.put("hasBonus", hasBonus);
         discJson.put("mediaFormat", mediaFormat);
         discJson.put("cover", cover);
-        discJson.put("series", series);
+        discJson.put("franchises", franchises);
         discJson.put("products", products);
         discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
         discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
@@ -330,9 +321,8 @@ public class DiscService {
 
         List<JSONObject> products = productUtils.getProductList(disc.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", disc.getSeries());
-        series.put("name", franchiseService.getFranchise(disc.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(disc.getFranchises());
 
         //媒体格式
         List<String> mediaFormat = new ArrayList<>();
@@ -342,7 +332,7 @@ public class DiscService {
         discJson.put("cover", cover);
         discJson.put("products", products);
         discJson.put("mediaFormat", mediaFormat);
-        discJson.put("series", series);
+        discJson.put("franchises", franchises);
         discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
         discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
         discJson.remove("spec");
@@ -382,7 +372,8 @@ public class DiscService {
         if (StringUtils.isBlank(discJson.getString("releaseDate"))) {
             return ApiInfo.DISC_RELEASE_DATE_EMPTY;
         }
-        if (StringUtils.isBlank(discJson.getString("series"))) {
+        if (StringUtils.isBlank(discJson.getString("franchises"))
+                || StringUtils.equals(discJson.getString("franchises"), "[]")) {
             return ApiInfo.DISC_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(discJson.getString("products"))
@@ -406,10 +397,12 @@ public class DiscService {
     public JSONObject handleDiscJson(JSONObject discJson) {
 
         String[] products = CommonUtils.str2SortedArray(discJson.getString("products"));
+        String[] franchises = CommonUtils.str2SortedArray(discJson.getString("franchises"));
         String[] mediaFormat = CommonUtils.str2SortedArray(discJson.getString("mediaFormat"));
 
         discJson.put("releaseDate", discJson.getDate("releaseDate"));
         discJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
+        discJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
         discJson.put("mediaFormat", "{\"ids\":[" + StringUtils.join(mediaFormat, ",") + "]}");
 
         return discJson;
@@ -460,7 +453,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteDiscImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getDiscById(id).getImages());
+        JSONArray images = JSONArray.parseArray(getDisc(id).getImages());
 
         JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
@@ -476,7 +469,7 @@ public class DiscService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAllDiscImages(int id) {
-        Disc disc = getDiscById(id);
+        Disc disc = getDisc(id);
         JSONArray images = JSON.parseArray(disc.getImages());
         return commonImageUtils.commonDeleteAllImages(EntityType.DISC, images);
     }
@@ -522,34 +515,21 @@ public class DiscService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Map<String, Object> getDiscsByFilterList (JSONObject queryParams) {
+    public SearchResult getDiscsByFilterList (JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
-        String catalogNo = filter.getJSONObject("catalogNo").getString("value");
+        String sortField = queryParams.getString("sortField");
+        int sortOrder = queryParams.getIntValue("sortOrder");
+        int first = queryParams.getIntValue("first");
+        int row = queryParams.getIntValue("rows");
 
+        String catalogNo = filter.getJSONObject("catalogNo").getString("value");
         String name = filter.getJSONObject("name").getString("value");
 
-        String sortField = queryParams.getString("sortField");
-
-        int sortOrder = queryParams.getIntValue("sortOrder");
-
-        int series = 0;
-        if (filter.getJSONObject("series").getInteger("value") != null) {
-            series = filter.getJSONObject("series").getIntValue("value");
-        }
-
-        List<Integer> products = new ArrayList<>();
-        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
-        if (tmpProducts != null) {
-            products.addAll(tmpProducts);
-        }
-
-        List<Integer> mediaFormat = new ArrayList<>();
-        List<Integer> tmpMediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
-        if (tmpMediaFormat != null) {
-            mediaFormat.addAll(tmpMediaFormat);
-        }
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         String isLimited;
         if (filter.getJSONObject("isLimited").getBoolean("value") == null) {
@@ -567,21 +547,13 @@ public class DiscService {
                     ?Integer.toString(1):Integer.toString(0);
         }
 
-        int first = queryParams.getIntValue("first");
-
-        int row = queryParams.getIntValue("rows");
-
-        List<Disc> discs = discMapper.getDiscsByFilterList(catalogNo, name, series, products,
+        List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, franchises, products,
                 mediaFormat, isLimited, hasBonus, sortField, sortOrder,  first, row);
 
-        int total = discMapper.getDiscsRowsByFilterList(catalogNo, name, series, products,
+        int total = discMapper.getDiscsRowsByFilter(catalogNo, name, franchises, products,
                 mediaFormat, isLimited, hasBonus);
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", discs);
-        res.put("total", total);
-
-        return res;
+        return new SearchResult(total, discs);
     }
 
     /**
@@ -596,7 +568,7 @@ public class DiscService {
 
         List<Disc> result = new ArrayList<>();
 
-        Disc disc = getDiscById(id);
+        Disc disc = getDisc(id);
 
         List<JSONObject> relatedDiscs = new ArrayList<>();
 
@@ -604,7 +576,7 @@ public class DiscService {
         List<Integer> productIds = JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Disc
-        List<Disc> allDiscs = discMapper.getDiscsByFilterList(null, null, disc.getSeries(),
+        List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, CommonUtils.ids2List(disc.getFranchises()),
                         null, null, null, null, "releaseDate",
                         1, 0, 0)
                 .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
@@ -663,7 +635,7 @@ public class DiscService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Disc> discs = discMapper.getDiscsByFilterList(null, null, 0, products,
+        List<Disc> discs = discMapper.getDiscsByFilter(null, null, null, products,
                 null, null, null, "releaseDate",
                 -1,  0, 0);
 
@@ -718,7 +690,7 @@ public class DiscService {
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.DISC.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject disc = disc2JsonIndex(getDiscById(visit.getEntityId()));
+            JSONObject disc = disc2JsonIndex(getDisc(visit.getEntityId()));
             disc.put("visitNum", visit.getVisitNum());
             popularDiscs.add(disc);
         });

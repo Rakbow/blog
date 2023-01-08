@@ -12,6 +12,7 @@ import com.rakbow.website.data.game.GamePlatform;
 import com.rakbow.website.data.game.ReleaseType;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
+import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
@@ -46,13 +47,13 @@ public class GameService {
     @Autowired
     private CommonImageUtils commonImageUtils;
     @Autowired
-    private ProductService productService;
-    @Autowired
     private FranchiseService franchiseService;
     @Autowired
     private VisitService visitService;
     @Autowired
     private ProductUtils productUtils;
+    @Autowired
+    private FranchiseUtils franchiseUtils;
 
     //endregion
 
@@ -81,8 +82,8 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Game getGameById(int id) {
-        return gameMapper.getGameById(id);
+    public Game getGame(int id) {
+        return gameMapper.getGame(id);
     }
 
     /**
@@ -92,11 +93,11 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void deleteGameById(int id) {
+    public void deleteGame(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllGameImages(id);
 
-        gameMapper.deleteGameById(id);
+        gameMapper.deleteGame(id);
     }
 
     /**
@@ -141,9 +142,8 @@ public class GameService {
         //所属作品
         List<JSONObject> products = productUtils.getProductList(game.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", game.getSeries());
-        series.put("name", franchiseService.getFranchise(game.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(game.getFranchises());
 
         JSONObject region = new JSONObject();
         region.put("code", game.getRegion());
@@ -156,7 +156,7 @@ public class GameService {
         gameJson.put("releaseType", releaseType);
         gameJson.put("platform", platform);
         gameJson.put("region", region);
-        gameJson.put("series", series);
+        gameJson.put("franchises", franchises);
         gameJson.put("products", products);
         gameJson.put("organizations", organizations);
         gameJson.put("staffs", staffs);
@@ -210,9 +210,7 @@ public class GameService {
         List<JSONObject> products = productUtils.getProductList(game.getProducts());
 
         //所属系列
-        JSONObject series = new JSONObject();
-        series.put("id", game.getSeries());
-        series.put("name", franchiseService.getFranchise(game.getSeries()).getNameZh());
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(game.getFranchises());
 
         JSONObject region = new JSONObject();
         region.put("code", game.getRegion());
@@ -228,7 +226,7 @@ public class GameService {
 
         gameJson.put("hasBonus", hasBonus);
         gameJson.put("cover", cover);
-        gameJson.put("series", series);
+        gameJson.put("franchises", franchises);
         gameJson.put("products", products);
         gameJson.put("addedTime", CommonUtils.timestampToString(game.getAddedTime()));
         gameJson.put("editedTime", CommonUtils.timestampToString(game.getEditedTime()));
@@ -344,9 +342,8 @@ public class GameService {
         //所属作品
         List<JSONObject> products = productUtils.getProductList(game.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", game.getSeries());
-        series.put("name", franchiseService.getFranchise(game.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(game.getFranchises());
 
         JSONObject releaseType = new JSONObject();
         releaseType.put("id", game.getReleaseType());
@@ -362,7 +359,7 @@ public class GameService {
 
         gameJson.put("cover", cover);
         gameJson.put("products", products);
-        gameJson.put("series", series);
+        gameJson.put("franchises", franchises);
         gameJson.put("releaseType", releaseType);
         gameJson.put("region", region);
         gameJson.put("platform", platform);
@@ -414,7 +411,7 @@ public class GameService {
         if (StringUtils.isBlank(gameJson.getString("region"))) {
             return ApiInfo.GAME_REGION_EMPTY;
         }
-        if (StringUtils.isBlank(gameJson.getString("series"))) {
+        if (StringUtils.isBlank(gameJson.getString("franchises"))) {
             return ApiInfo.GAME_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(gameJson.getString("products"))
@@ -434,8 +431,10 @@ public class GameService {
     public JSONObject handleGameJson(JSONObject gameJson) {
 
         String[] products = CommonUtils.str2SortedArray(gameJson.getString("products"));
+        String[] franchises = CommonUtils.str2SortedArray(gameJson.getString("franchises"));
         gameJson.put("releaseDate", gameJson.getDate("releaseDate"));
         gameJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
+        gameJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
 
         return gameJson;
     }
@@ -486,7 +485,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteGameImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getGameById(id).getImages());
+        JSONArray images = JSONArray.parseArray(getGame(id).getImages());
 
         JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
@@ -502,7 +501,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAllGameImages(int id) {
-        Game game = getGameById(id);
+        Game game = getGame(id);
         JSONArray images = JSON.parseArray(game.getImages());
 
         return commonImageUtils.commonDeleteAllImages(EntityType.GAME, images);
@@ -561,14 +560,17 @@ public class GameService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public SearchResult getGamesByFilterList(JSONObject queryParams) {
+    public SearchResult getGamesByFilter(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
         String sortField = queryParams.getString("sortField");
         int sortOrder = queryParams.getIntValue("sortOrder");
+        int first = queryParams.getIntValue("first");
+        int row = queryParams.getIntValue("rows");
 
         String name = filter.getJSONObject("name").getString("value");
+        String region = filter.getJSONObject("region").getString("value");
 
         String hasBonus;
         if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
@@ -578,32 +580,21 @@ public class GameService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        String region = filter.getJSONObject("region").getString("value");
 
         int platform = 100;
         if (filter.getJSONObject("platform").getInteger("value") != null) {
             platform = filter.getJSONObject("platform").getIntValue("value");
         }
 
-        int series = 0;
-        if (filter.getJSONObject("series").getInteger("value") != null) {
-            series = filter.getJSONObject("series").getIntValue("value");
-        }
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
 
-        List<Integer> products = new ArrayList<>();
-        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
-        if (tmpProducts != null) {
-            products.addAll(tmpProducts);
-        }
 
-        int first = queryParams.getIntValue("first");
 
-        int row = queryParams.getIntValue("rows");
-
-        List<Game> games = gameMapper.getGamesByFilterList(name, hasBonus, series, products, platform, region,
+        List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
                 sortField, sortOrder, first, row);
 
-        int total = gameMapper.getGamesRowsByFilterList(name, hasBonus, series, products, platform, region);
+        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region);
 
         return new SearchResult(total, games);
     }
@@ -620,7 +611,7 @@ public class GameService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Game> games = gameMapper.getGamesByFilterList(null, null, 0, products,
+        List<Game> games = gameMapper.getGamesByFilter(null, null, null, products,
                 100, null, "releaseDate", -1,  0, 0);
 
         return game2JsonSimple(games);
@@ -638,7 +629,7 @@ public class GameService {
 
         List<Game> result = new ArrayList<>();
 
-        Game game = getGameById(id);
+        Game game = getGame(id);
 
         List<JSONObject> relatedGames = new ArrayList<>();
 
@@ -646,8 +637,8 @@ public class GameService {
         List<Integer> productIds = JSONObject.parseObject(game.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Game
-        List<Game> allGames = gameMapper.getGamesByFilterList(null, null, game.getSeries(), null,
-                100, null, "releaseDate", 1, 0, 0)
+        List<Game> allGames = gameMapper.getGamesByFilter(null, null, CommonUtils.ids2List(game.getFranchises()),
+                        null, 100, null, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).collect(Collectors.toList());
 
         List<Game> queryResult = allGames.stream().filter(tmpGame ->
@@ -739,7 +730,7 @@ public class GameService {
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.GAME.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject game = game2JsonIndex(getGameById(visit.getEntityId()));
+            JSONObject game = game2JsonIndex(getGame(visit.getEntityId()));
             game.put("visitNum", visit.getVisitNum());
             popularGames.add(game);
         });

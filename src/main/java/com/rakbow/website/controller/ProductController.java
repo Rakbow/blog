@@ -7,7 +7,6 @@ import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.data.product.ProductCategory;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -29,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -326,7 +324,7 @@ public class ProductController {
      * */
     @RequestMapping(path = "/get-product-set", method = RequestMethod.POST)
     @ResponseBody
-    public List<JSONObject> getAllProductBySeriesId(@RequestBody String json){
+    public List<JSONObject> getAllProductByFranchiseId(@RequestBody String json){
         JSONObject param = JSON.parseObject(json);
         return productService.getProductSet(param.getList("franchises", Integer.class), param.getInteger("entityType"));
     }

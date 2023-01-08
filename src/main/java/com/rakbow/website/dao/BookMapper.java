@@ -1,6 +1,5 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,17 +16,17 @@ import java.util.List;
 public interface BookMapper {
 
     //通过id查询Book
-    Book getBookById(int id);
+    Book getBook(int id);
 
     //根据过滤条件搜索Book
-    List<Book> getBooksByFilterList(String title, String isbn10, String isbn13, String publisher, String region,
-                                    String publishLanguage, int bookType, int series, List<Integer> products,
-                                    String hasBonus, String sortField, int sortOrder, int first, int row);
+    List<Book> getBooksByFilter(String title, String isbn10, String isbn13, String publisher, String region,
+                                String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
+                                String hasBonus, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getBooksRowsByFilterList(String title, String isbn10, String isbn13, String publisher, String region,
-                                 String publishLanguage, int bookType, int series, List<Integer> products,
-                                 String hasBonus);
+    int getBooksRowsByFilter(String title, String isbn10, String isbn13, String publisher, String region,
+                             String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
+                             String hasBonus);
 
     //新增Book
     int addBook (Book book);
@@ -36,7 +35,7 @@ public interface BookMapper {
     int updateBook (int id, Book book);
 
     //删除单个Book
-    int deleteBookById(int id);
+    int deleteBook(int id);
 
     //更新图片
     int updateBookImages(int id, String images, Timestamp editedTime);

@@ -348,16 +348,22 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{book.franchise.name}}
+                                    <p class="mb-0" v-for="franchise of book.franchises">
+                                        <a :href="'/db/franchise/'+ franchise.value ">
+                                            <span lang="en" style="display:inline">
+                                                {{franchise.label}}
+                                            </span>
+                                        </a>
+                                    </p>
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
                                     <p class="mb-0" v-for="item of book.products">
-                                        <a :href="'/db/product/'+ item.id ">
+                                        <a :href="'/db/product/'+ item.value ">
                                             <span style="display:inline">
-                                                {{item.name}}
+                                                {{item.label}}
                                             </span>
                                         </a>
                                     </p>
@@ -545,16 +551,17 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="bookEdit.franchise" :options="seriesSet"
-                                        option-label="label" option-value="value" :disabled="seriesBool">
-                            </p-dropdown>
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-multiselect v-model="bookEdit.franchises" @change="getProducts($event.value)"
+                                           :options="franchiseSet" placeholder="所属系列"
+                                           option-label="label" option-value="value" display="chip" :filter="true">
+                            </p-multiselect>
                         </div>
                         <div class="field col-6">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <label class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect v-model="bookEdit.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
-                                           display="chip" :filter="true">
+                                           option-label="label" option-value="value" placeholder="选择所属作品"
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                         <div class="field col-2">
@@ -949,6 +956,7 @@
             const book = ref([[${book}]]);
             const visitNum = ref([[${visitNum}]]);
             const relatedBooks = ref([[${relatedBooks}]]);
+            const productSelect = ref(true);
             const toast = useToast();
             const edits = ref([
                 {
@@ -991,7 +999,7 @@
             const regionSet = ref([[${regionSet}]]);
             const languageSet = ref([[${languageSet}]]);
             const productSet = ref([[${productSet}]]);
-            const seriesSet = ref([[${seriesSet}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             const blockedPanel = ref(false);
             //endregion
 
@@ -1027,12 +1035,25 @@
                             let dataTmp = JSON.parse(JSON.stringify(book.value));
                             dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
                             bookEdit.value = dataTmp;
-                            bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
-                            bookEdit.value.franchise = dataTmp.franchise.id;
                             bookEdit.value.bookType = dataTmp.bookType.id;
                             bookEdit.value.region = dataTmp.region.code;
                             bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
-                            displayEditDialog.value = true;
+                            bookEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            let json = {
+                                franchises: bookEdit.value.franchises,
+                                entityType: BOOK
+                            };
+                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                                .then(res => {
+                                    if (res.length !== 0) {
+                                        productSet.value = res;
+                                        productSelect.value = false;
+                                    }else {
+                                        productSelect.value = true;
+                                    }
+                                    bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    displayEditDialog.value = true;
+                                });
                         }
                     })
             };
@@ -1494,9 +1515,28 @@
                 image.onload = function () {
                     galleriaItemClass.value = (this.naturalWidth > this.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
                 }
-            }
+            };
+
+            //根据系列id获取该系列所有作品
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: BOOK
+                };
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                    .then(res => {
+                        if (res.length !== 0) {
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                            bookEdit.value.products = [];
+                        }
+                    });
+            };
 
             return {
+                getProducts,
                 displayAuthorEditDialog,
                 displaySpecEditDialog,
                 regionCode2NameZh,
@@ -1530,7 +1570,7 @@
                 submitEditBook,
                 productSet,
 
-                seriesSet,
+                franchiseSet,
                 visitNum,
                 updateImage,
                 cancelDeleteSelectedImage,
@@ -1593,6 +1633,7 @@
                 specRowMenu,
                 specOnRowEditSave,
                 specOnRowReorder,
+                productSelect,
             }
         },
         components: {

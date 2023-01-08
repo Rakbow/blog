@@ -268,16 +268,22 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{merch.franchise.name}}
+                                    <p class="mb-0" v-for="franchise of merch.franchises">
+                                        <a :href="'/db/franchise/'+ franchise.value ">
+                                            <span lang="en" style="display:inline">
+                                                {{franchise.label}}
+                                            </span>
+                                        </a>
+                                    </p>
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
                                     <p class="mb-0" v-for="item of merch.products">
-                                        <a :href="'/db/product/'+ item.id ">
+                                        <a :href="'/db/product/'+ item.value ">
                                             <span style="display:inline">
-                                                {{item.name}}
+                                                {{item.label}}
                                             </span>
                                         </a>
                                     </p>
@@ -434,16 +440,17 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="merchEdit.franchise" :options="seriesSet"
-                                        option-label="label" option-value="value" :disabled="seriesBool">
-                            </p-dropdown>
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-multiselect v-model="merchEdit.franchises" @change="getProducts($event.value)"
+                                           :options="franchiseSet" placeholder="所属系列"
+                                           option-label="label" option-value="value" display="chip" :filter="true">
+                            </p-multiselect>
                         </div>
                         <div class="field col-8">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <label class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect v-model="merchEdit.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
-                                           display="chip" :filter="true">
+                                           option-label="label" option-value="value" placeholder="选择所属作品"
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                     </div>
@@ -754,6 +761,7 @@
             const visitNum = ref([[${visitNum}]]);
             const relatedMerchs = ref([[${relatedMerchs}]]);
             const toast = useToast();
+            const productSelect = ref(true);
             const edits = ref([
                 {
                     label: '图片管理',
@@ -779,7 +787,7 @@
             ]);
             const merchCategorySet = ref([[${merchCategorySet}]]);
             const productSet = ref([[${productSet}]]);
-            const seriesSet = ref([[${seriesSet}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             const blockedPanel = ref(false);
             //endregion
 
@@ -815,10 +823,23 @@
                             let dataTmp = JSON.parse(JSON.stringify(merch.value));
                             dataTmp.isNotForSale = merch.value.isNotForSale ? 1 : 0;
                             merchEdit.value = dataTmp;
-                            merchEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
-                            merchEdit.value.franchise = dataTmp.franchise.id;
                             merchEdit.value.category = dataTmp.category.id;
-                            displayEditDialog.value = true;
+                            merchEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            let json = {
+                                franchises: merchEdit.value.franchises,
+                                entityType: MERCH
+                            };
+                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                                .then(res => {
+                                    if (res.length !== 0) {
+                                        productSet.value = res;
+                                        productSelect.value = false;
+                                    }else {
+                                        productSelect.value = true;
+                                    }
+                                    merchEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    displayEditDialog.value = true;
+                                });
                         }
                     })
             };
@@ -1154,9 +1175,29 @@
                 image.onload = function () {
                     galleriaItemClass.value = (this.naturalWidth > this.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
                 }
-            }
+            };
+
+            //根据系列id获取该系列所有作品
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: MERCH
+                };
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                    .then(res => {
+                        if (res.length !== 0) {
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                            merchEdit.value.products = [];
+                        }
+                    });
+            };
 
             return {
+                productSelect,
+                getProducts,
                 merchCategorySet,
                 displaySpecEditDialog,
                 priceUnitSet,
@@ -1187,7 +1228,7 @@
                 submitEditMerch,
                 productSet,
 
-                seriesSet,
+                franchiseSet,
                 visitNum,
                 updateImage,
                 cancelDeleteSelectedImage,

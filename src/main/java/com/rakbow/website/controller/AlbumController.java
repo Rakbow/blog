@@ -110,7 +110,6 @@ public class AlbumController {
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
         model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
-
         model.addAttribute("album", albumService.album2Json(album));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量

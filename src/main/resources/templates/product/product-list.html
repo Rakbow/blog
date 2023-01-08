@@ -141,7 +141,7 @@
                         </p-multiselect>
                     </template>
                 </p-column>
-                <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 16rem">
+                <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 16rem">
                     <template #body="slotProps">
                         <a :href="'/db/franchise/' + slotProps.data.franchise.id">
                             {{slotProps.data.franchise.nameZh}}
@@ -330,10 +330,12 @@
                 getProducts();
             };
             const onFilter = () => {
-                queryParams.value.filters = filters.value ;
+                queryParams.value.filters = filters.value;
+                queryParams.value.first = 0;
                 getProducts();
             };
             const getProducts = () => {
+                console.log(queryParams.value);
                 axiosPostRequest(GET_PRODUCTS_URL, {queryParams: queryParams.value})
                     .then(res => {
                         products.value = res.data;

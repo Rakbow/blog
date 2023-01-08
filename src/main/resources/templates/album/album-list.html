@@ -291,11 +291,10 @@
                         </div>
                         <div class="field col-6">
                             <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                            <p-multiselect id="products" v-model="album.products" :options="productSet"
+                            <p-multiselect v-model="album.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="请先选择所属系列"
                                            display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
-
                         </div>
                         <div class="field col">
                             <div class="col-12">
@@ -431,7 +430,7 @@
                             <label class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect v-model="albumEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属作品"
-                                           display="chip" :filter="true">
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                         <div class="field col">
@@ -587,6 +586,7 @@
             };
             const onFilter = () => {
                 queryParams.value.filters = filters.value ;
+                queryParams.value.first = 0;
                 getAlbums();
             };
             const getAlbums = () => {
@@ -809,6 +809,8 @@
                             productSet.value = res;
                             productSelect.value = false;
                         }else {
+                            album.value.products = [];
+                            albumEdit.value.products = [];
                             productSelect.value = true;
                         }
                     })

@@ -18,10 +18,6 @@ public interface AlbumMapper {
     //根据id查询专辑信息
     Album getAlbumById(int id);
 
-    //详细查询
-    List<Album> getAlbumsByFilter(String seriesId, List<Integer> productId, List<Integer> publishFormat,
-                                  List<Integer> albumFormat, List<Integer> mediaFormat, String hasBonus);
-
     //超详细查询
     List<Album> getAlbumsByFilter(String catalogNo, String name, List<Integer> franchises, List<Integer> products,
                                   List<Integer> publishFormat, List<Integer> albumFormat,

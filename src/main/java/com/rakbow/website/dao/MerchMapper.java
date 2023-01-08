@@ -17,16 +17,16 @@ import java.util.List;
 public interface MerchMapper {
 
     //通过id查询Merch
-    Merch getMerchById(int id);
+    Merch getMerch(int id);
 
     //根据过滤条件搜索Merch
-    List<Merch> getMerchsByFilterList(String name, String barcode, int series, List<Integer> products,
-                                      int category, String isNotForSale, String sortField, int sortOrder,
-                                      int first, int row);
+    List<Merch> getMerchsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
+                                  int category, String isNotForSale, String sortField, int sortOrder,
+                                  int first, int row);
 
     //超详细查询条数
-    int getMerchsRowsByFilterList(String name, String barcode, int series, List<Integer> products,
-                                  int category, String isNotForSale);
+    int getMerchsRowsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
+                              int category, String isNotForSale);
 
     //新增Merch
     int addMerch (Merch merch);
@@ -35,7 +35,7 @@ public interface MerchMapper {
     int updateMerch (int id, Merch merch);
 
     //删除单个Merch
-    int deleteMerchById(int id);
+    int deleteMerch(int id);
 
     //更新规格信息
     int updateMerchSpec(int id, String spec, Timestamp editedTime);

@@ -20,7 +20,7 @@ public class Book {
     private String isbn10;//国际标准书号（10位）
     private String isbn13;//国际标准书号（13位）
     private int bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
-    private int series;//所属系列
+    private String franchises;//所属系列
     private String products;//所属产品
     private String region;//地区
     private String publishLanguage;//语言
@@ -47,7 +47,7 @@ public class Book {
         this.isbn10 = "";
         this.isbn13 = "";
         this.bookType = 0;
-        this.series = 0;
+        this.franchises = "{\"ids\": []}";
         this.products = "{\"ids\": []}";
         this.region = "";
         this.publishLanguage = "";

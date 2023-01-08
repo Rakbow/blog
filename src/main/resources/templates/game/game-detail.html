@@ -302,16 +302,22 @@
                                     <i class="pi pi-bookmark mr-2 ml-4"></i><b>所属系列</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
-                                    {{game.franchise.name}}
+                                    <p class="mb-0" v-for="franchise of game.franchises">
+                                        <a :href="'/db/franchise/'+ franchise.value ">
+                                            <span lang="en" style="display:inline">
+                                                {{franchise.label}}
+                                            </span>
+                                        </a>
+                                    </p>
                                 </div>
                                 <div class="col-fixed">
                                     <i class="pi pi-tags mr-2 ml-4"></i><b>所属作品</b>
                                 </div>
                                 <div class="col-10 col-offset-2">
                                     <p class="mb-0" v-for="item of game.products">
-                                        <a :href="'/db/product/'+ item.id ">
+                                        <a :href="'/db/product/'+ item.value ">
                                             <span style="display:inline">
-                                                {{item.name}}
+                                                {{item.label}}
                                             </span>
                                         </a>
                                     </p>
@@ -395,7 +401,7 @@
                                             </li>
                                             <li>
                                                 <span class="small_font">
-                                                    <b>{{relatedGame.platform.nameEn}}</b> {{relatedGame.releaseDate}} <span :class="'fi fi-' + relatedGame.region.code"></span>
+                                                    {{relatedGame.releaseDate}} <b>{{relatedGame.platform.nameEn}}</b> <span :class="'fi fi-' + relatedGame.region.code"></span>
                                                 </span>
                                             </li>
 
@@ -443,31 +449,31 @@
                 <p-dialog v-model:visible="displayEditDialog" header="编辑基础信息"
                           :style="{width: '600px'}" :modal="true" class="p-fluid">
                     <div class="field">
-                        <label htmlFor="name">游戏名<span style="color: red">*</span></label>
+                        <label>游戏名<span style="color: red">*</span></label>
                         <p-inputtext v-model.trim="gameEdit.name"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="nameZh">游戏名(中)</label>
+                        <label>游戏名(中)</label>
                         <p-inputtext v-model.trim="gameEdit.nameZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="nameEn">游戏名(英)</label>
+                        <label>游戏名(英)</label>
                         <p-inputtext v-model.trim="gameEdit.nameEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext v-model.trim="gameEdit.barcode"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="gameEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col-2">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                                <label class="mb-3">包含特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
@@ -477,19 +483,19 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseType" class="mb-3">发售类型<span style="color: red">*</span></label>
+                            <label class="mb-3">发售类型<span style="color: red">*</span></label>
                             <p-dropdown v-model="gameEdit.releaseType" :options="releaseTypeSet"
                                         option-label="labelZh" option-value="value">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="platform" class="mb-3">发售平台<span style="color: red">*</span></label>
+                            <label class="mb-3">发售平台<span style="color: red">*</span></label>
                             <p-dropdown v-model="gameEdit.platform" :options="gamePlatformSet"
                                         option-label="labelEn" option-value="value">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
+                            <label class="mb-3">地区<span style="color: red">*</span></label>
                             <p-dropdown v-model="gameEdit.region" :options="regionSet" :filter="true"
                                         :show-clear="true" option-label="nameZh" option-value="code">
                                 <template #value="slotProps">
@@ -510,21 +516,22 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="gameEdit.franchise" :options="seriesSet"
-                                        option-label="label" option-value="value" :disabled="seriesBool">
-                            </p-dropdown>
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-multiselect v-model="gameEdit.franchises" @change="getProducts($event.value)"
+                                           :options="franchiseSet" placeholder="所属系列"
+                                           option-label="label" option-value="value" display="chip" :filter="true">
+                            </p-multiselect>
                         </div>
                         <div class="field col-8">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <label class="mb-3">所属产品<span style="color: red">*</span></label>
                             <p-multiselect v-model="gameEdit.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
-                                           display="chip" :filter="true">
+                                           option-label="label" option-value="value" placeholder="选择所属作品"
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="gameEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -885,6 +892,7 @@
             const visitNum = ref([[${visitNum}]]);
             const relatedGames = ref([[${relatedGames}]]);
             const toast = useToast();
+            const productSelect = ref(true);
             const edits = ref([
                 {
                     label: '图片管理',
@@ -925,8 +933,8 @@
             const releaseTypeSet = ref([[${releaseTypeSet}]]);
             const regionSet = ref([[${regionSet}]]);
             const gamePlatformSet = ref([[${gamePlatformSet}]]);
-            const productSet = ref([[${productSet}]]);
-            const seriesSet = ref([[${seriesSet}]]);
+            const productSet = ref([]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             const blockedPanel = ref(false);
             //endregion
 
@@ -948,7 +956,6 @@
             //endregion
 
             //region ------编辑游戏信息------
-            const seriesBool = true;
             const gameEdit = ref({});
             const displayEditDialog = ref(false);
 
@@ -962,12 +969,25 @@
                             let dataTmp = JSON.parse(JSON.stringify(game.value));
                             dataTmp.hasBonus = game.value.hasBonus ? 1 : 0;
                             gameEdit.value = dataTmp;
-                            gameEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
-                            gameEdit.value.franchise = dataTmp.franchise.id;
                             gameEdit.value.releaseType = dataTmp.releaseType.id;
                             gameEdit.value.region = dataTmp.region.code;
                             gameEdit.value.platform = dataTmp.platform.id;
-                            displayEditDialog.value = true;
+                            gameEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            let json = {
+                                franchises: gameEdit.value.franchises,
+                                entityType: GAME
+                            };
+                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                                .then(res => {
+                                    if (res.length !== 0) {
+                                        productSet.value = res;
+                                        productSelect.value = false;
+                                    }else {
+                                        productSelect.value = true;
+                                    }
+                                    gameEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    displayEditDialog.value = true;
+                                });
                         }
                     })
             };
@@ -1409,6 +1429,24 @@
             };
             //endregion
 
+            //根据系列id获取该系列所有作品
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: GAME
+                };
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                    .then(res => {
+                        if (res.length !== 0) {
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                            gameEdit.value.products = [];
+                        }
+                    });
+            };
+
             const init = () => {
                 text2marked();
                 initImageClass($("#galleria-item").attr("src"));
@@ -1423,6 +1461,8 @@
             }
 
             return {
+                productSelect,
+                getProducts,
                 displayStaffEditDialog,
                 displayOrganizationEditDialog,
                 regionCode2NameZh,
@@ -1447,7 +1487,6 @@
 
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 edits,
-                seriesBool,
                 displayEditDialog,
                 gameEdit,
                 openEditDialog,
@@ -1456,7 +1495,7 @@
                 submitEditGame,
                 productSet,
 
-                seriesSet,
+                franchiseSet,
                 visitNum,
                 updateImage,
                 cancelDeleteSelectedImage,

@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.common.DataActionType;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
@@ -52,8 +53,6 @@ public class MerchController {
     @Autowired
     private FranchiseService franchiseService;
     @Autowired
-    private ProductService productService;
-    @Autowired
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
@@ -66,7 +65,7 @@ public class MerchController {
     public ModelAndView getMerchListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/merch/merch-list");
         return view;
     }
@@ -74,20 +73,17 @@ public class MerchController {
     //获取单个周边商品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getMerchDetail(@PathVariable int id, Model model) {
-        if (merchService.getMerchById(id) == null) {
+        if (merchService.getMerch(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MERCH.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.MERCH.getId(), id);
 
-        Merch merch = merchService.getMerchById(id);
+        Merch merch = merchService.getMerch(id);
 
         model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("productSet", productService.getProductSet
-                (merch.getSeries(), EntityType.MERCH.getId()));
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
-
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("merch", merchService.merch2Json(merch));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -151,7 +147,7 @@ public class MerchController {
                     int id = merchs.getJSONObject(i).getInteger("id");
 
                     //从数据库中删除周边
-                    merchService.deleteMerchById(id);
+                    merchService.deleteMerch(id);
 
                     //从Elasticsearch服务器索引中删除周边
                     // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
@@ -218,18 +214,18 @@ public class MerchController {
 
         List<JSONObject> merchs = new ArrayList<>();
 
-        Map<String, Object> map = merchService.getMerchsByFilterList(queryParams);
+        SearchResult searchResult = merchService.getMerchsByFilterList(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            merchs = merchService.merch2JsonList((List<Merch>) map.get("data"));
+            merchs = merchService.merch2JsonList((List<Merch>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            merchs = merchService.merch2JsonIndex((List<Merch>) map.get("data"));
+            merchs = merchService.merch2JsonIndex((List<Merch>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();
         result.put("data", merchs);
-        result.put("total", map.get("total"));
+        result.put("total", searchResult.total);
 
         return JSON.toJSONString(result);
     }
@@ -248,7 +244,7 @@ public class MerchController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(merchService.getMerchById(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(merchService.getMerch(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 

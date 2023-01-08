@@ -16,15 +16,15 @@ import java.util.List;
 public interface GameMapper {
 
     //通过id查询Game
-    Game getGameById(int id);
+    Game getGame(int id);
 
     //根据过滤条件搜索Game
-    List<Game> getGamesByFilterList(String name, String hasBonus, int series, List<Integer> products, int platform,
-                                    String region, String sortField, int sortOrder, int first, int row);
+    List<Game> getGamesByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
+                                String region, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getGamesRowsByFilterList(String name, String hasBonus, int series, List<Integer> products, int platform,
-                                 String region);
+    int getGamesRowsByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
+                             String region);
 
     //新增Game
     int addGame (Game game);
@@ -33,7 +33,7 @@ public interface GameMapper {
     int updateGame (int id, Game game);
 
     //删除单个Game
-    int deleteGameById(int id);
+    int deleteGame(int id);
 
     //更新相关组织
     int updateGameOrganizations(int id, String organizations, Timestamp editedTime);

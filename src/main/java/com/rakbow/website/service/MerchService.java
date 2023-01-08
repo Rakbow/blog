@@ -5,10 +5,12 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MerchMapper;
 import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.data.common.segmentImagesResult;
 import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
+import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
@@ -49,6 +51,8 @@ public class MerchService {
     private VisitService visitService;
     @Autowired
     private ProductUtils productUtils;
+    @Autowired
+    private FranchiseUtils franchiseUtils;
 
     //endregion
 
@@ -77,8 +81,8 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Merch getMerchById(int id) {
-        return merchMapper.getMerchById(id);
+    public Merch getMerch(int id) {
+        return merchMapper.getMerch(id);
     }
 
     /**
@@ -88,11 +92,11 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void deleteMerchById(int id) {
+    public void deleteMerch(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllMerchImages(id);
 
-        merchMapper.deleteMerchById(id);
+        merchMapper.deleteMerch(id);
     }
 
     /**
@@ -136,13 +140,12 @@ public class MerchService {
         //所属作品
         List<JSONObject> products = productUtils.getProductList(merch.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", merch.getSeries());
-        series.put("name", franchiseService.getFranchise(merch.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(merch.getFranchises());
 
         merchJson.put("category", category);
         merchJson.put("isNotForSale", isNotForSale);
-        merchJson.put("series", series);
+        merchJson.put("franchises", franchises);
         merchJson.put("products", products);
         merchJson.put("spec", spec);
 
@@ -197,16 +200,14 @@ public class MerchService {
         List<JSONObject> products = productUtils.getProductList(merch.getProducts());
 
         //所属系列
-        JSONObject series = new JSONObject();
-        series.put("id", merch.getSeries());
-        series.put("name", franchiseService.getFranchise(merch.getSeries()).getNameZh());
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(merch.getFranchises());
 
         //封面
         JSONObject cover = commonImageUtils.getCover(merch.getImages(), 250);
 
         merchJson.put("isNotForSale", isNotForSale);
         merchJson.put("cover", cover);
-        merchJson.put("series", series);
+        merchJson.put("franchises", franchises);
         merchJson.put("category", category);
         merchJson.put("products", products);
         merchJson.put("addedTime", CommonUtils.timestampToString(merch.getAddedTime()));
@@ -311,9 +312,8 @@ public class MerchService {
         //所属作品
         List<JSONObject> products = productUtils.getProductList(merch.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", merch.getSeries());
-        series.put("name", franchiseService.getFranchise(merch.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(merch.getFranchises());
 
         JSONObject category = new JSONObject();
         category.put("id", merch.getCategory());
@@ -322,7 +322,7 @@ public class MerchService {
         merchJson.put("cover", cover);
         merchJson.put("isNotForSale", isNotForSale);
         merchJson.put("products", products);
-        merchJson.put("series", series);
+        merchJson.put("franchises", franchises);
         merchJson.put("category", category);
         merchJson.put("addedTime", CommonUtils.timestampToString(merch.getAddedTime()));
         merchJson.put("editedTime", CommonUtils.timestampToString(merch.getEditedTime()));
@@ -365,7 +365,8 @@ public class MerchService {
         if (StringUtils.isBlank(merchJson.getString("category"))) {
             return ApiInfo.MERCH_CATEGORY_EMPTY;
         }
-        if (StringUtils.isBlank(merchJson.getString("series"))) {
+        if (StringUtils.isBlank(merchJson.getString("franchises"))
+                || StringUtils.equals(merchJson.getString("franchises"), "[]")) {
             return ApiInfo.MERCH_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(merchJson.getString("products"))
@@ -385,9 +386,11 @@ public class MerchService {
     public JSONObject handleMerchJson(JSONObject merchJson) {
 
         String[] products = CommonUtils.str2SortedArray(merchJson.getString("products"));
+        String[] franchises = CommonUtils.str2SortedArray(merchJson.getString("franchises"));
 
         merchJson.put("releaseDate", merchJson.getDate("releaseDate"));
         merchJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
+        merchJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
 
         return merchJson;
     }
@@ -438,7 +441,7 @@ public class MerchService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteMerchImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getMerchById(id).getImages());
+        JSONArray images = JSONArray.parseArray(getMerch(id).getImages());
 
         JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
@@ -454,7 +457,7 @@ public class MerchService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAllMerchImages(int id) {
-        Merch merch = getMerchById(id);
+        Merch merch = getMerch(id);
         JSONArray images = JSON.parseArray(merch.getImages());
 
         return commonImageUtils.commonDeleteAllImages(EntityType.MERCH, images);
@@ -489,12 +492,14 @@ public class MerchService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Map<String, Object> getMerchsByFilterList(JSONObject queryParams) {
+    public SearchResult getMerchsByFilterList(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
         String sortField = queryParams.getString("sortField");
         int sortOrder = queryParams.getIntValue("sortOrder");
+        int first = queryParams.getIntValue("first");
+        int row = queryParams.getIntValue("rows");
 
         String name = filter.getJSONObject("name").getString("value");
         String barcode = filter.getJSONObject("barcode").getString("value");
@@ -504,16 +509,8 @@ public class MerchService {
             category = filter.getJSONObject("category").getIntValue("value");
         }
 
-        int series = 0;
-        if (filter.getJSONObject("series").getInteger("value") != null) {
-            series = filter.getJSONObject("series").getIntValue("value");
-        }
-
-        List<Integer> products = new ArrayList<>();
-        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
-        if (tmpProducts != null) {
-            products.addAll(tmpProducts);
-        }
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
 
         String isNotForSale;
         if (filter.getJSONObject("isNotForSale").getBoolean("value") == null) {
@@ -523,20 +520,12 @@ public class MerchService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        int first = queryParams.getIntValue("first");
-
-        int row = queryParams.getIntValue("rows");
-
-        List<Merch> merchs = merchMapper.getMerchsByFilterList(name, barcode, series, products, category,
+        List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category,
                 isNotForSale, sortField, sortOrder, first, row);
 
-        int total = merchMapper.getMerchsRowsByFilterList(name, barcode, series, products, category, isNotForSale);
+        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, isNotForSale);
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", merchs);
-        res.put("total", total);
-
-        return res;
+        return new SearchResult(total, merchs);
     }
 
     /**
@@ -551,7 +540,7 @@ public class MerchService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Merch> merchs = merchMapper.getMerchsByFilterList(null, null, 0, products,
+        List<Merch> merchs = merchMapper.getMerchsByFilter(null, null, null, products,
                 100, null, "releaseDate", -1,  0, 0);
 
         return merch2JsonSimple(merchs);
@@ -569,7 +558,7 @@ public class MerchService {
 
         List<Merch> result = new ArrayList<>();
 
-        Merch merch = getMerchById(id);
+        Merch merch = getMerch(id);
 
         List<JSONObject> relatedMerchs = new ArrayList<>();
 
@@ -577,7 +566,7 @@ public class MerchService {
         List<Integer> productIds = JSONObject.parseObject(merch.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Merch
-        List<Merch> allMerchs = merchMapper.getMerchsByFilterList(null, null, merch.getSeries(),
+        List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtils.ids2List(merch.getFranchises()),
                 null, 100, null, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
 
@@ -670,7 +659,7 @@ public class MerchService {
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.MERCH.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject merch = merch2JsonIndex(getMerchById(visit.getEntityId()));
+            JSONObject merch = merch2JsonIndex(getMerch(visit.getEntityId()));
             merch.put("visitNum", visit.getVisitNum());
             popularMerchs.add(merch);
         });

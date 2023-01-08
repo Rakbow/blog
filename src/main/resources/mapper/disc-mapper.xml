@@ -5,28 +5,20 @@
 <mapper namespace="com.rakbow.website.dao.DiscMapper">
 
     <sql id="selectFields">
-        id, catalog_no, name, name_zh, name_en, barcode, franchise, products, release_date, price, media_format,
+        id, catalog_no, name, name_zh, name_en, barcode, franchises, products, release_date, price, media_format,
         is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        catalog_no, name, name_zh, name_en, barcode, franchise, products, release_date, price, media_format,
+        catalog_no, name, name_zh, name_en, barcode, franchises, products, release_date, price, media_format,
         is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
-    <select id="getDiscById" resultType="Disc">
+    <select id="getDisc" resultType="Disc">
         select
         <include refid="selectFields"></include>
         from disc
         where id = #{id} and _s = 1
-    </select>
-
-    <select id="getAllDisc" resultType="Disc">
-        select
-        <include refid="selectFields"></include>
-        from disc
-        where _s = 1
-        order by release_date desc
     </select>
 
     <insert id="addDisc" parameterType="Disc" useGeneratedKeys="true" keyProperty="id">
@@ -34,7 +26,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into disc (<include refid="insertFields"></include>)
-        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchise}, #{productId}, #{releaseDate},
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{productId}, #{releaseDate},
         #{price}, #{mediaFormat}, #{isLimited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -43,14 +35,14 @@
         update disc
         set
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
-        barcode = #{disc.barcode}, franchise = #{disc.franchise}, products = #{disc.products},
+        barcode = #{disc.barcode}, franchises = #{disc.franchises}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
         is_limited = #{disc.isLimited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
         edited_time = #{disc.editedTime}, _s = #{disc._s}
         where id = #{disc.id}
     </update>
 
-    <delete id="deleteDiscById">
+    <delete id="deleteDisc">
         delete
         from disc
         where id = #{id}
@@ -91,7 +83,7 @@
         where id = #{id}
     </update>
 
-    <select id="getDiscsByFilterList" resultType="Disc">
+    <select id="getDiscsByFilter" resultType="Disc">
         select
         <include refid="selectFields"></include>
         from disc
@@ -102,8 +94,11 @@
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="franchise != 0 ">
-                and franchise = #{franchise}
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -157,7 +152,7 @@
         </if>
     </select>
 
-    <select id="getDiscsRowsByFilterList" resultType="int">
+    <select id="getDiscsRowsByFilter" resultType="int">
         select count(id)
         from disc
         <where>
@@ -167,8 +162,11 @@
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
             </if>
-            <if test="franchise != 0 ">
-                and franchise = #{franchise}
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""

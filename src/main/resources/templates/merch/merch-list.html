@@ -121,6 +121,11 @@
                 </p-column>
                 <p-column header="商品名" field="name" :show-filter-menu="false"
                           style="flex: 0 0 10rem">
+                    <template #body="slotProps">
+                        <a :href="domainUrl + '/db/merch/' + slotProps.data.id">
+                            {{slotProps.data.name}}
+                        </a>
+                    </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
                                      class="p-column-filter"></p-inputtext>
@@ -151,7 +156,7 @@
                     </template>
                 </p-column>
                 <p-column header="是否非卖品" field="isNotForSale" data-type="boolean" body-class="text-center"
-                          style="flex: 0 0 5rem">
+                          style="flex: 0 0 7rem">
                     <template #body="{data}">
                         <i class="pi" :class="{'true-icon pi-check-circle': data.isNotForSale, 'false-icon pi-times-circle': !data.isNotForSale}"></i>
                     </template>
@@ -159,15 +164,22 @@
                         <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
                     </template>
                 </p-column>
-                <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 9rem">
+                <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 16rem">
                     <template #body="slotProps">
-                        {{slotProps.data.franchise.name}}
+                        <ul class="px-4">
+                            <li v-for="franchise in slotProps.data.franchises">
+                                <a :href="'/db/franchise/' + franchise.value ">
+                                    {{franchise.label}}
+                                </a>
+                            </li>
+                        </ul>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
-                        <p-dropdown v-model="filterModel.value" @change="getProducts($event), filterCallback()"
-                        :options="seriesSet" option-label="label" option-value="value"
-                        style="width: 8rem" placeholder="所属系列" class="p-column-filter">
-                        </p-dropdown>
+                        <p-multiselect v-model="filterModel.value" @change="getProducts($event.value), filterCallback()"
+                                       :options="franchiseSet" placeholder="所属系列" class="p-column-filter"
+                                       option-label="label" option-value="value" display="chip" :filter="true"
+                                       style="width: 15rem">
+                        </p-multiselect>
                     </template>
 
                 </p-column>
@@ -176,8 +188,8 @@
                     <template #body="slotProps">
                         <ul class="px-4">
                             <li v-for="data in slotProps.data.products">
-                                <a :href="'/db/product/' + data.id">
-                                    {{data.name}}
+                                <a :href="'/db/product/' + data.value">
+                                    {{data.label}}
                                 </a>
                             </li>
                         </ul>
@@ -224,16 +236,17 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="merch.franchise" :options="seriesSet"
-                                        option-label="label" option-value="value" @change="getProducts">
-                            </p-dropdown>
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-multiselect v-model="merch.franchises" @change="getProducts($event.value)"
+                                           :options="franchiseSet" placeholder="所属系列"
+                                           option-label="label" option-value="value" display="chip" :filter="true">
+                            </p-multiselect>
                         </div>
                         <div class="field col-8">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                            <label class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect v-model="merch.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
-                                           display="chip" :filter="true">
+                                           option-label="label" option-value="value" placeholder="选择所属作品"
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                     </div>
@@ -318,16 +331,17 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-4">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="merchEdit.franchise" :options="seriesSet"
-                                        option-label="label" option-value="value" @change="getProducts">
-                            </p-dropdown>
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-multiselect v-model="merchEdit.franchises" @change="getProducts($event.value)"
+                                           :options="franchiseSet" placeholder="所属系列"
+                                           option-label="label" option-value="value" display="chip" :filter="true">
+                            </p-multiselect>
                         </div>
-                        <div class="field col-8">
-                            <label htmlFor="products" class="mb-3">所属产品<span style="color: red">*</span></label>
+                        <div class="field col-6">
+                            <label class="mb-3">所属作品<span style="color: red">*</span></label>
                             <p-multiselect v-model="merchEdit.products" :options="productSet"
-                                           option-label="label" option-value="value" placeholder="选择所属产品"
-                                           display="chip" :filter="true">
+                                           option-label="label" option-value="value" placeholder="选择所属作品"
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                     </div>
@@ -437,7 +451,7 @@
                 'name': {value: '', matchMode: 'contains'},
                 'barcode': {value: '', matchMode: 'contains'},
                 'category': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'franchise': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'franchises': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
                 'isNotForSale': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
@@ -451,6 +465,7 @@
             };
             const onFilter = () => {
                 queryParams.value.filters = filters.value ;
+                queryParams.value.first = 0;
                 getMerchs();
             };
             const getMerchs = () => {
@@ -477,7 +492,7 @@
             const merchCategorySet = ref([[${merchCategorySet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
-            const seriesSet = ref([[${seriesSet}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
 
             const merchEdit = ref({});
             const toast = useToast();
@@ -554,13 +569,22 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             merchEdit.value = dataTmp;
-                            axiosPostRequest(GET_PRODUCT_SET_URL, {franchise:dataTmp.franchise.id})
+                            merchEdit.value.category = dataTmp.category.id;
+                            merchEdit.value.isNotForSale = dataTmp.isNotForSale ? 1: 0;
+                            merchEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            let json = {
+                                franchises: merchEdit.value.franchises,
+                                entityType: MERCH
+                            };
+                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
                                 .then(res => {
-                                    productSet.value = res;
+                                    if (res.length !== 0) {
+                                        productSet.value = res;
+                                        productSelect.value = false;
+                                    }else {
+                                        productSelect.value = true;
+                                    }
                                     merchEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
-                                    merchEdit.value.franchise = dataTmp.franchise.id;
-                                    merchEdit.value.category = dataTmp.category.id;
-                                    merchEdit.value.isNotForSale = dataTmp.isNotForSale ? 1: 0;
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -635,12 +659,21 @@
             };
 
             //根据系列id获取该系列所有作品
-            const getProducts = (ev) => {
-                let json = {franchise: ev.value};
+            const getProducts = (data) => {
+                let json = {
+                    franchises: data,
+                    entityType: MERCH
+                };
                 axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        productSet.value = res;
-                        productSelect.value = false;
+                        if (res.length !== 0) {
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            merch.value.products = [];
+                            merchEdit.value.products = [];
+                            productSelect.value = true;
+                        }
                     })
             };
 
@@ -656,7 +689,7 @@
                 submitNewMerch, confirmDeleteSelected, deleteMerchsDialog, deleteSelectedMerchs,
                 selectedMerchs, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditMerch, merchEdit,
-                productSet, seriesSet,
+                productSet, franchiseSet,
                 getProducts, productSelect
             }
         },

@@ -8,6 +8,7 @@ import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.*;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
+import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
@@ -48,6 +49,8 @@ public class BookService {
     private VisitService visitService;
     @Autowired
     private ProductUtils productUtils;
+    @Autowired
+    private FranchiseUtils franchiseUtils;
 
     //endregion
 
@@ -76,8 +79,8 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Book getBookById(int id) {
-        return bookMapper.getBookById(id);
+    public Book getBook(int id) {
+        return bookMapper.getBook(id);
     }
 
     /**
@@ -87,11 +90,11 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public void deleteBookById(int id) {
+    public void deleteBook(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllBookImages(id);
 
-        bookMapper.deleteBookById(id);
+        bookMapper.deleteBook(id);
     }
 
     /**
@@ -136,9 +139,8 @@ public class BookService {
         //所属作品
         List<JSONObject> products = productUtils.getProductList(book.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", book.getSeries());
-        series.put("name", franchiseService.getFranchise(book.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(book.getFranchises());
 
         JSONObject region = new JSONObject();
         region.put("code", book.getRegion());
@@ -149,7 +151,7 @@ public class BookService {
         publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
 
         bookJson.put("bookType", bookType);
-        bookJson.put("series", series);
+        bookJson.put("franchises", franchises);
         bookJson.put("products", products);
         bookJson.put("region", region);
         bookJson.put("currencyUnit", Region.regionCode2Currency(book.getRegion()));
@@ -209,9 +211,7 @@ public class BookService {
         List<JSONObject> products = productUtils.getProductList(book.getProducts());
 
         //所属系列
-        JSONObject series = new JSONObject();
-        series.put("id", book.getSeries());
-        series.put("name", franchiseService.getFranchise(book.getSeries()).getNameZh());
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(book.getFranchises());
 
         JSONObject region = new JSONObject();
         region.put("code", book.getRegion());
@@ -226,7 +226,7 @@ public class BookService {
 
         bookJson.put("hasBonus", hasBonus);
         bookJson.put("cover", cover);
-        bookJson.put("series", series);
+        bookJson.put("franchises", franchises);
         bookJson.put("bookType", bookType);
         bookJson.put("products", products);
         bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
@@ -345,9 +345,8 @@ public class BookService {
         //所属作品
         List<JSONObject> products = productUtils.getProductList(book.getProducts());
 
-        JSONObject series = new JSONObject();
-        series.put("id", book.getSeries());
-        series.put("name", franchiseService.getFranchise(book.getSeries()).getNameZh());
+        //所属系列
+        List<JSONObject> franchises = franchiseUtils.getFranchiseList(book.getFranchises());
 
         JSONObject bookType = new JSONObject();
         bookType.put("id", book.getBookType());
@@ -363,7 +362,7 @@ public class BookService {
 
         bookJson.put("cover", cover);
         bookJson.put("products", products);
-        bookJson.put("series", series);
+        bookJson.put("franchises", franchises);
         bookJson.put("bookType", bookType);
         bookJson.put("region", region);
         bookJson.put("publishLanguage", publishLanguage);
@@ -426,7 +425,8 @@ public class BookService {
         if (StringUtils.isBlank(bookJson.getString("bookType"))) {
             return ApiInfo.BOOK_TYPE_EMPTY;
         }
-        if (StringUtils.isBlank(bookJson.getString("series"))) {
+        if (StringUtils.isBlank(bookJson.getString("franchises"))
+                || StringUtils.equals(bookJson.getString("franchises"), "[]")) {
             return ApiInfo.BOOK_FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(bookJson.getString("products"))
@@ -446,11 +446,13 @@ public class BookService {
     public JSONObject handleBookJson(JSONObject bookJson) {
 
         String[] products = CommonUtils.str2SortedArray(bookJson.getString("products"));
+        String[] franchises = CommonUtils.str2SortedArray(bookJson.getString("franchises"));
 
         bookJson.put("isbn10", bookJson.getString("isbn10").replaceAll("-", ""));
         bookJson.put("isbn13", bookJson.getString("isbn13").replaceAll("-", ""));
         bookJson.put("publishDate", bookJson.getDate("publishDate"));
         bookJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
+        bookJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
 
         return bookJson;
     }
@@ -501,7 +503,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteBookImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getBookById(id).getImages());
+        JSONArray images = JSONArray.parseArray(getBook(id).getImages());
 
         JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
 
@@ -517,7 +519,7 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String deleteAllBookImages(int id) {
-        Book book = getBookById(id);
+        Book book = getBook(id);
         JSONArray images = JSON.parseArray(book.getImages());
 
         return commonImageUtils.commonDeleteAllImages(EntityType.BOOK, images);
@@ -576,12 +578,14 @@ public class BookService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-    public Map<String, Object> getBooksByFilterList(JSONObject queryParams) {
+    public SearchResult getBooksByFilter(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
         String sortField = queryParams.getString("sortField");
         int sortOrder = queryParams.getIntValue("sortOrder");
+        int first = queryParams.getIntValue("first");
+        int row = queryParams.getIntValue("rows");
 
         String title = filter.getJSONObject("title").getString("value");
         String isbn10 = filter.getJSONObject("isbn10").getString("value");
@@ -595,16 +599,8 @@ public class BookService {
             bookType = filter.getJSONObject("bookType").getIntValue("value");
         }
 
-        int series = 0;
-        if (filter.getJSONObject("series").getInteger("value") != null) {
-            series = filter.getJSONObject("series").getIntValue("value");
-        }
-
-        List<Integer> products = new ArrayList<>();
-        List<Integer> tmpProducts = filter.getJSONObject("products").getList("value", Integer.class);
-        if (tmpProducts != null) {
-            products.addAll(tmpProducts);
-        }
+        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
 
         String hasBonus;
         if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
@@ -614,21 +610,13 @@ public class BookService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        int first = queryParams.getIntValue("first");
+        List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
+                bookType, franchises, products, hasBonus, sortField, sortOrder, first, row);
 
-        int row = queryParams.getIntValue("rows");
+        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
+                bookType, franchises, products, hasBonus);
 
-        List<Book> books = bookMapper.getBooksByFilterList(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, series, products, hasBonus, sortField, sortOrder, first, row);
-
-        int total = bookMapper.getBooksRowsByFilterList(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, series, products, hasBonus);
-
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", books);
-        res.put("total", total);
-
-        return res;
+        return new SearchResult(total, books);
     }
 
     /**
@@ -643,8 +631,8 @@ public class BookService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Book> books = bookMapper.getBooksByFilterList(null, null, null, null,
-                null, null, 100, 0, products, null, "publishDate",
+        List<Book> books = bookMapper.getBooksByFilter(null, null, null, null,
+                null, null, 100, null, products, null, "publishDate",
                 -1,  0, 0);
 
         return book2JsonSimple(books);
@@ -662,7 +650,7 @@ public class BookService {
 
         List<Book> result = new ArrayList<>();
 
-        Book book = getBookById(id);
+        Book book = getBook(id);
 
         List<JSONObject> relatedBooks = new ArrayList<>();
 
@@ -670,9 +658,9 @@ public class BookService {
         List<Integer> productIds = JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Book
-        List<Book> allBooks = bookMapper.getBooksByFilterList(null, null, null, null,
-                null, null, 100, book.getSeries(), null, null,
-                "publishDate", 1, 0, 0)
+        List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, null,
+                null, null, 100, CommonUtils.ids2List(book.getFranchises()),
+                        null, null, "publishDate", 1, 0, 0)
                 .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
 
         List<Book> queryResult = allBooks.stream().filter(tmpBook ->
@@ -765,7 +753,7 @@ public class BookService {
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.BOOK.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject book = book2JsonIndex(getBookById(visit.getEntityId()));
+            JSONObject book = book2JsonIndex(getBook(visit.getEntityId()));
             book.put("visitNum", visit.getVisitNum());
             popularBooks.add(book);
         });

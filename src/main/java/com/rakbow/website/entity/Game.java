@@ -19,7 +19,7 @@ public class Game {
     private String nameZh;//游戏名（中文）
     private String nameEn;//游戏名（英文）
     private String barcode;//商品条形码
-    private int series;//所属系列
+    private String franchises;//所属系列
     private String products;//所属产品
     private Date releaseDate;//发售日期
     private int releaseType;//发售类型
@@ -42,7 +42,7 @@ public class Game {
         this.nameZh = "";
         this.nameEn = "";
         this.barcode = "";
-        this.series = 0;
+        this.franchises = "{\"ids\": []}";
         this.products = "{\"ids\": []}";
         this.releaseDate = null;
         this.releaseType = 0;

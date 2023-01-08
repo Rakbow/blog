@@ -19,7 +19,7 @@ public class Merch {
     private String nameZh;//商品名（中文）
     private String nameEn;//商品名（英文）
     private String barcode;//商品条形码
-    private int series;//所属系列
+    private String franchises;//所属系列
     private String products;//所属产品
     private int category;//商品分类
     private Date releaseDate;//发售日
@@ -40,7 +40,7 @@ public class Merch {
         this.nameEn = "";
         this.nameZh = "";
         this.barcode = "";
-        this.series = 0;
+        this.franchises = "{\"ids\": []}";
         this.products = "{\"ids\": []}";
         this.category = 0;
         this.releaseDate = null;

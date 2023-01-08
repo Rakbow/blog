@@ -580,7 +580,7 @@
                             <label class="mb-3">所属产品<span style="color: red">*</span></label>
                             <p-multiselect v-model="albumEdit.products" :options="productSet"
                                            option-label="label" option-value="value" placeholder="选择所属作品"
-                                           display="chip" :filter="true">
+                                           display="chip" :filter="true" :disabled="productSelect">
                             </p-multiselect>
                         </div>
                         <div class="field col">
@@ -1141,7 +1141,6 @@
             //endregion
 
             //region ------编辑专辑信息------
-            const seriesBool = true;
             const albumEdit = ref({});
             const displayEditDialog = ref(false);
 
@@ -1766,6 +1765,7 @@
                             productSelect.value = false;
                         }else {
                             productSelect.value = true;
+                            albumEdit.value.products = [];
                         }
                     });
             };
@@ -1832,7 +1832,6 @@
 
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 edits,
-                seriesBool,
                 displayEditDialog,
                 albumEdit,
                 openEditDialog,

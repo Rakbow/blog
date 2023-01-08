@@ -1,6 +1,5 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Disc;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,19 +16,16 @@ import java.util.List;
 public interface DiscMapper {
 
     //通过id查询disc
-    Disc getDiscById(int id);
-
-    //获取所有Disc
-    List<Disc> getAllDisc();
+    Disc getDisc(int id);
 
     //根据过滤条件搜索disc
-    List<Disc> getDiscsByFilterList(String catalogNo, String name, int series, List<Integer> products,
-                                    List<Integer> mediaFormat, String isLimited, String hasBonus, String sortField,
-                                    int sortOrder, int first, int row);
+    List<Disc> getDiscsByFilter(String catalogNo, String name, List<Integer> franchises, List<Integer> products,
+                                List<Integer> mediaFormat, String isLimited, String hasBonus, String sortField,
+                                int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getDiscsRowsByFilterList(String catalogNo, String name, int series, List<Integer> products,
-                                 List<Integer> mediaFormat, String isLimited, String hasBonus);
+    int getDiscsRowsByFilter(String catalogNo, String name, List<Integer> franchises, List<Integer> products,
+                             List<Integer> mediaFormat, String isLimited, String hasBonus);
 
     //新增disc
     int addDisc (Disc disc);
@@ -38,7 +34,7 @@ public interface DiscMapper {
     int updateDisc (int id, Disc disc);
 
     //删除单个disc
-    int deleteDiscById(int id);
+    int deleteDisc(int id);
 
     //更新图片
     int updateDiscImages(int id, String images, Timestamp editedTime);

@@ -206,10 +206,8 @@
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label>所属作品</label>
                                 <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
-                                               option-label="label" option-value="value"
-                                               placeholder="请先选择所属系列"
-                                               display="chip" :filter="true"
-                                               :disabled="productSelect">
+                                               option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                               display="chip" :filter="true" :disabled="productSelect">
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">

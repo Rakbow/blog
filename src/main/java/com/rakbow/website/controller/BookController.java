@@ -4,10 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.book.BookType;
-import com.rakbow.website.data.common.DataActionType;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.Language;
-import com.rakbow.website.data.common.Region;
+import com.rakbow.website.data.common.*;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -57,8 +54,6 @@ public class BookController {
     @Autowired
     private FranchiseService franchiseService;
     @Autowired
-    private ProductService productService;
-    @Autowired
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
@@ -73,7 +68,7 @@ public class BookController {
         model.addAttribute("bookTypeSet", bookType);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         view.setViewName("/book/book-list");
         return view;
     }
@@ -81,22 +76,19 @@ public class BookController {
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getBookDetail(@PathVariable("id") Integer id, Model model) {
-        if (bookService.getBookById(id) == null) {
+        if (bookService.getBook(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.BOOK.getId(), id);
 
-        Book book = bookService.getBookById(id);
+        Book book = bookService.getBook(id);
 
         model.addAttribute("bookTypeSet", bookType);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
-        model.addAttribute("productSet", productService.getProductSet
-                (book.getSeries(), EntityType.BOOK.getId()));
-        model.addAttribute("seriesSet", franchiseService.getAllFranchiseSet());
-
+        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
         model.addAttribute("book", bookService.book2Json(book));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -160,7 +152,7 @@ public class BookController {
                     int id = books.getJSONObject(i).getInteger("id");
 
                     //从数据库中删除图书
-                    bookService.deleteBookById(id);
+                    bookService.deleteBook(id);
 
                     //从Elasticsearch服务器索引中删除图书
                     // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
@@ -227,18 +219,18 @@ public class BookController {
 
          List<JSONObject> books = new ArrayList<>();
 
-         Map<String, Object> map = bookService.getBooksByFilterList(queryParams);
+         SearchResult searchResult = bookService.getBooksByFilter(queryParams);
 
          if (StringUtils.equals(pageLabel, "list")) {
-             books = bookService.book2JsonList((List<Book>) map.get("data"));
+             books = bookService.book2JsonList((List<Book>) searchResult.data);
          }
          if (StringUtils.equals(pageLabel, "index")) {
-             books = bookService.book2JsonIndex((List<Book>) map.get("data"));
+             books = bookService.book2JsonIndex((List<Book>) searchResult.data);
          }
 
          JSONObject result = new JSONObject();
          result.put("data", books);
-         result.put("total", map.get("total"));
+         result.put("total", searchResult.total);
 
          return JSON.toJSONString(result);
      }
@@ -257,7 +249,7 @@ public class BookController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(bookService.getBookById(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(bookService.getBook(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 

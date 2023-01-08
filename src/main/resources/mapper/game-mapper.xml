@@ -5,16 +5,16 @@
 <mapper namespace="com.rakbow.website.dao.GameMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, barcode, franchise, products, release_date, release_type, platform,
+        id, name, name_zh, name_en, barcode, franchises, products, release_date, release_type, platform,
         region, has_bonus, organizations, staffs, images, description, bonus, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, barcode, franchise, products, release_date, release_type, platform,
+        name, name_zh, name_en, barcode, franchises, products, release_date, release_type, platform,
         region, has_bonus, organizations, staffs, images, description, bonus, remark, added_time, edited_time, _s
     </sql>
 
-    <select id="getGameById" resultType="Game">
+    <select id="getGame" resultType="Game">
         select
         <include refid="selectFields"></include>
         from game
@@ -26,7 +26,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into game (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchise}, #{products}, #{releaseDate},#{releaseType},
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{releaseDate},#{releaseType},
         #{platform}, #{region}, #{hasBonus}, #{organizations}, #{staffs}, #{images}, #{description}, #{bonus}, #{remark},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
@@ -35,14 +35,14 @@
         update game
         set
         name = #{game.name}, name_zh = #{game.nameZh}, name_en = #{game.nameEn}, barcode = #{game.barcode},
-        franchise = #{game.franchise}, products = #{game.products}, release_date = #{game.releaseDate},
+        franchises = #{game.franchises}, products = #{game.products}, release_date = #{game.releaseDate},
         release_type = #{game.releaseType}, platform = #{game.platform}, region = #{game.region},
         has_bonus = #{game.hasBonus}, remark = #{game.remark}, added_time = #{game.addedTime},
         edited_time = #{game.editedTime}, _s = #{game._s}
         where id = #{game.id}
     </update>
 
-    <delete id="deleteGameById">
+    <delete id="deleteGame">
         delete
         from game
         where id = #{id}
@@ -90,7 +90,7 @@
         where id = #{id}
     </update>
 
-    <select id="getGamesByFilterList" resultType="Game">
+    <select id="getGamesByFilter" resultType="Game">
         select
         <include refid="selectFields"></include>
         from game
@@ -101,8 +101,11 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            <if test="franchise != 0 ">
-                and franchise = #{franchise}
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -142,7 +145,7 @@
         </if>
     </select>
 
-    <select id="getGamesRowsByFilterList" resultType="int">
+    <select id="getGamesRowsByFilter" resultType="int">
         select count(id)
         from game
         <where>
@@ -152,8 +155,11 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            <if test="franchise != 0 ">
-                and franchise = #{franchise}
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""

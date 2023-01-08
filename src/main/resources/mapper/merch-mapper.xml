@@ -5,16 +5,16 @@
 <mapper namespace="com.rakbow.website.dao.MerchMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, barcode, franchise, products, category, release_date, price, price_unit,
+        id, name, name_zh, name_en, barcode, franchises, products, category, release_date, price, price_unit,
         is_not_for_sale, spec, description, images, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, barcode, franchise, products, category, release_date, price, price_unit,
+        name, name_zh, name_en, barcode, franchises, products, category, release_date, price, price_unit,
         is_not_for_sale, spec, description, images, remark, added_time, edited_time, _s
     </sql>
 
-    <select id="getMerchById" resultType="Merch">
+    <select id="getMerch" resultType="Merch">
         select
         <include refid="selectFields"></include>
         from merch
@@ -26,7 +26,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into merch (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchise}, #{products}, #{category}, #{releaseDate},#{price},
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{category}, #{releaseDate},#{price},
          #{priceUnit}, #{isNotForSale}, #{spec}, #{description}, #{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
@@ -34,14 +34,14 @@
         update merch
         set
         name = #{merch.name}, name_zh = #{merch.nameZh}, name_en = #{merch.nameEn}, barcode = #{merch.barcode},
-        franchise = #{merch.franchise}, products = #{merch.products}, category = #{merch.category},
+        franchises = #{merch.franchises}, products = #{merch.products}, category = #{merch.category},
         release_date = #{merch.releaseDate}, price = #{merch.price}, price_unit = #{merch.priceUnit},
         is_not_for_sale = #{merch.isNotForSale}, description = #{merch.description}, remark = #{merch.remark},
         added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}, _s = #{merch._s}
         where id = #{merch.id}
     </update>
 
-    <delete id="deleteMerchById">
+    <delete id="deleteMerch">
         delete
         from merch
         where id = #{id}
@@ -75,7 +75,7 @@
         where id = #{id}
     </update>
 
-    <select id="getMerchsByFilterList" resultType="Merch">
+    <select id="getMerchsByFilter" resultType="Merch">
         select
         <include refid="selectFields"></include>
         from merch
@@ -86,8 +86,11 @@
             <if test="barcode != null and barcode != '' ">
                 and barcode like concat('%', #{barcode}, '%')
             </if>
-            <if test="franchise != 0 ">
-                and franchise = #{franchise}
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
@@ -135,7 +138,7 @@
         </if>
     </select>
 
-    <select id="getMerchsRowsByFilterList" resultType="int">
+    <select id="getMerchsRowsByFilter" resultType="int">
         select count(id)
         from merch
         <where>
@@ -145,8 +148,11 @@
             <if test="barcode != null and barcode != '' ">
                 and barcode like concat('%', #{barcode}, '%')
             </if>
-            <if test="franchise != 0 ">
-                and franchise = #{franchise}
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
