@@ -1,11 +1,15 @@
 package com.rakbow.website.data.product;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2022-08-20 2:54
  * @Description:
  */
+@AllArgsConstructor
 public enum ProductCategory {
     UNCLASSIFIED(0,"未分类", "unclassified"),
     GAME(1, "游戏", "Game"),
@@ -14,15 +18,12 @@ public enum ProductCategory {
     BOOK(4, "图书", "Book"),
     MISC(5, "杂项", "Misc");
 
-    private int index;
-    private String nameZh;
-    private String nameEn;
-
-    ProductCategory(int index, String nameZh, String nameEn) {
-        this.index = index;
-        this.nameZh = nameZh;
-        this.nameEn = nameEn;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String nameZh;
+    @Getter
+    private final String nameEn;
 
     public static String getNameZhByIndex (int index){
         for (ProductCategory productCategory : ProductCategory.values()) {
@@ -58,29 +59,5 @@ public enum ProductCategory {
             }
         }
         return 0;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
     }
 }

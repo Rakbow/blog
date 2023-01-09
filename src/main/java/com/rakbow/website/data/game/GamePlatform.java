@@ -1,10 +1,13 @@
 package com.rakbow.website.data.game;
 
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public enum GamePlatform {
 
     UNKNOWN(0, "Unknown", "未知"),
@@ -13,15 +16,12 @@ public enum GamePlatform {
     ANDROID(3, "Android", "安卓"),
     APPLE_IOS(4, "Apple iOS", "苹果");
 
-    private int index;
-    private String nameEn;
-    private String nameZh;
-
-    GamePlatform(int index, String nameEn, String nameZh) {
-        this.index = index;
-        this.nameEn = nameEn;
-        this.nameZh = nameZh;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String nameEn;
+    @Getter
+    private final String nameZh;
 
     public static String index2Name (int index) {
         String nameEn = UNKNOWN.nameEn;
@@ -45,27 +45,4 @@ public enum GamePlatform {
         return list;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
 }

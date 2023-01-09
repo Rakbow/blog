@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -69,7 +68,7 @@ public class GameService {
      * @param game 新增的游戏
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addGame(Game game) {
         gameMapper.addGame(game);
     }
@@ -81,7 +80,7 @@ public class GameService {
      * @return game
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Game getGame(int id) {
         return gameMapper.getGame(id);
     }
@@ -92,7 +91,7 @@ public class GameService {
      * @param id 游戏id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteGame(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllGameImages(id);
@@ -106,7 +105,7 @@ public class GameService {
      * @param id 游戏id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateGame(int id, Game game) {
         gameMapper.updateGame(id, game);
     }
@@ -452,7 +451,7 @@ public class GameService {
      * @param imageInfos         新增图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addGameImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos) throws IOException {
 
@@ -469,7 +468,7 @@ public class GameService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameImages(int id, String images) {
         gameMapper.updateGameImages(id, images, new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
@@ -482,7 +481,7 @@ public class GameService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteGameImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getGame(id).getImages());
@@ -499,7 +498,7 @@ public class GameService {
      * @param id 游戏id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAllGameImages(int id) {
         Game game = getGame(id);
         JSONArray images = JSON.parseArray(game.getImages());
@@ -514,7 +513,7 @@ public class GameService {
      * @param organizations 游戏的关联组织json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateGameOrganizations(int id, String organizations) {
         gameMapper.updateGameOrganizations(id, organizations, new Timestamp(System.currentTimeMillis()));
     }
@@ -526,7 +525,7 @@ public class GameService {
      * @param staffs 游戏的开发制作人员信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateGameStaffs(int id, String staffs) {
         gameMapper.updateGameStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
     }
@@ -538,7 +537,7 @@ public class GameService {
      * @param description 游戏的描述json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateGameDescription(int id, String description) {
         gameMapper.updateGameDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -550,7 +549,7 @@ public class GameService {
      * @param bonus 游戏的特典信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateGameBonus(int id, String bonus) {
         gameMapper.updateGameBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
     }
@@ -559,7 +558,7 @@ public class GameService {
 
     //region ------特殊查询------
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getGamesByFilter(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
@@ -606,7 +605,7 @@ public class GameService {
      * @return List<JSONObject>
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getGamesByProductId(int productId) {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
@@ -624,7 +623,7 @@ public class GameService {
      * @return list封装的Game
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedGames(int id) {
 
         List<Game> result = new ArrayList<>();
@@ -689,7 +688,7 @@ public class GameService {
      * @return list封装的游戏
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustAddedGames(int limit) {
         List<JSONObject> justAddedGames = new ArrayList<>();
 
@@ -706,7 +705,7 @@ public class GameService {
      * @return list封装的Game
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustEditedGames(int limit) {
         List<JSONObject> editedGames = new ArrayList<>();
 
@@ -723,7 +722,7 @@ public class GameService {
      * @return list封装的Game
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getPopularGames(int limit) {
         List<JSONObject> popularGames = new ArrayList<>();
 

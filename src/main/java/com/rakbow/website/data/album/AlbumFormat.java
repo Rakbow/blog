@@ -2,6 +2,8 @@ package com.rakbow.website.data.album;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -14,6 +16,7 @@ import java.util.List;
  * @Create: 2022-08-19 22:57
  * @Description: 专辑分类
  */
+@AllArgsConstructor
 public enum AlbumFormat {
     UNCLASSIFIED(0,"未分类","Unclassified"),
     VOCAL(1, "歌曲","Vocal"),
@@ -31,15 +34,12 @@ public enum AlbumFormat {
     DOUJIN_ARRANGEMENT(13,"同人改编","Doujin Arrangement"),
     VIDEO(14,"影片","Video");
 
-    private int index;
-    private String name;
-    private String nameEn;
-
-    AlbumFormat(int index, String name, String nameEn) {
-        this.index = index;
-        this.name = name;
-        this.nameEn = nameEn;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String name;
+    @Getter
+    private final String nameEn;
 
     public static String index2NameEnArray (JSONArray indexArr) {
         String[] nameEnArr = new String[indexArr.size()];
@@ -117,27 +117,4 @@ public enum AlbumFormat {
         return list;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
 }

@@ -1,6 +1,8 @@
 package com.rakbow.website.data.book;
 
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import javax.print.DocFlavor;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
  * @Create: 2022-12-29 21:29
  * @Description:
  */
+@AllArgsConstructor
 public enum BookType {
 
     UNCLASSIFIED(0,"未分类", "Unclassified"),
@@ -22,15 +25,12 @@ public enum BookType {
     ELECTRONIC_BOOK(5,"电子书", "e-book"),
     OTHER(6,"其他", "Other");
 
-    private int index;
-    private String nameZh;
-    private String nameEn;
-
-    BookType (int index, String nameZh, String nameEn) {
-        this.index = index;
-        this.nameZh = nameZh;
-        this.nameEn = nameEn;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String nameZh;
+    @Getter
+    private final String nameEn;
 
     public static String index2NameZh (int index) {
         String nameZh = UNCLASSIFIED.nameZh;
@@ -60,27 +60,4 @@ public enum BookType {
         return list;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
 }

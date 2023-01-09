@@ -7,10 +7,13 @@ import com.rakbow.website.data.album.PublishFormat;
 import com.rakbow.website.data.book.BookType;
 import com.rakbow.website.data.common.Language;
 import com.rakbow.website.data.common.Region;
+import com.rakbow.website.data.game.GamePlatform;
+import com.rakbow.website.data.game.ReleaseType;
 import com.rakbow.website.data.merch.MerchCategory;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,7 @@ public class HomeController {
     private static final List<JSONObject> merchCategorySet = MerchCategory.getMerchCategorySet();
     private static final List<JSONObject> regionSet = Region.getRegionSet();
     private static final List<JSONObject> languageSet = Language.getLanguageSet();
+    private static final List<JSONObject> gamePlatformSet = GamePlatform.getGamePlatformSet();
 
     //region ------引入实例------
 
@@ -59,11 +63,15 @@ public class HomeController {
     @Autowired
     private MerchService merchService;
     @Autowired
+    private GameService gameService;
+    @Autowired
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
     @Value("${website.path.audio}")
     private String audioPath;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //endregion
 
@@ -89,7 +97,7 @@ public class HomeController {
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
@@ -102,7 +110,7 @@ public class HomeController {
         model.addAttribute("justAddedBooks", bookService.getJustAddedBooks(5));
         model.addAttribute("justEditedBooks", bookService.getJustEditedBooks(5));
         model.addAttribute("popularBooks", bookService.getPopularBooks(10));
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("bookTypeSet", bookTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
@@ -115,7 +123,7 @@ public class HomeController {
         model.addAttribute("justAddedDiscs", discService.getJustAddedDiscs(5));
         model.addAttribute("justEditedDiscs", discService.getJustEditedDiscs(5));
         model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         return "/disc/disc-index";
     }
@@ -126,9 +134,21 @@ public class HomeController {
         model.addAttribute("justAddedMerchs", merchService.getJustAddedMerchs(5));
         model.addAttribute("justEditedMerchs", merchService.getJustEditedMerchs(5));
         model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("merchCategorySet", merchCategorySet);
         return "/merch/merch-index";
+    }
+
+    //获取周边首页
+    @RequestMapping(path = "/db/games", method = RequestMethod.GET)
+    public String getGameIndexPage(Model model) {
+        model.addAttribute("justAddedGames", gameService.getJustAddedGames(5));
+        model.addAttribute("justEditedGames", gameService.getJustEditedGames(5));
+        model.addAttribute("popularGames", gameService.getPopularGames(10));
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("gamePlatformSet", gamePlatformSet);
+        model.addAttribute("regionSet", regionSet);
+        return "/game/game-index";
     }
 
     //endregion

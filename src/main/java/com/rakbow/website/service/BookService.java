@@ -66,7 +66,7 @@ public class BookService {
      * @param book 新增的图书
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addBook(Book book) {
         bookMapper.addBook(book);
     }
@@ -78,7 +78,7 @@ public class BookService {
      * @return book
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Book getBook(int id) {
         return bookMapper.getBook(id);
     }
@@ -89,7 +89,7 @@ public class BookService {
      * @param id 图书id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteBook(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllBookImages(id);
@@ -103,7 +103,7 @@ public class BookService {
      * @param id 图书id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateBook(int id, Book book) {
         bookMapper.updateBook(id, book);
     }
@@ -470,7 +470,7 @@ public class BookService {
      * @param imageInfos         新增图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos) throws IOException {
 
@@ -487,7 +487,7 @@ public class BookService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBookImages(int id, String images) {
         bookMapper.updateBookImages(id, images, new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
@@ -500,7 +500,7 @@ public class BookService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteBookImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getBook(id).getImages());
@@ -517,7 +517,7 @@ public class BookService {
      * @param id 图书id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAllBookImages(int id) {
         Book book = getBook(id);
         JSONArray images = JSON.parseArray(book.getImages());
@@ -532,7 +532,7 @@ public class BookService {
      * @param authors 图书的作者信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateBookAuthors(int id, String authors) {
         bookMapper.updateBookAuthors(id, authors, new Timestamp(System.currentTimeMillis()));
     }
@@ -544,7 +544,7 @@ public class BookService {
      * @param spec 图书的规格信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateBookSpec(int id, String spec) {
         bookMapper.updateBookSpec(id, spec, new Timestamp(System.currentTimeMillis()));
     }
@@ -556,7 +556,7 @@ public class BookService {
      * @param description 图书的描述json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateBookDescription(int id, String description) {
         bookMapper.updateBookDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -568,7 +568,7 @@ public class BookService {
      * @param bonus 图书的特典信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateBookBonus(int id, String bonus) {
         bookMapper.updateBookBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
     }
@@ -577,7 +577,7 @@ public class BookService {
 
     //region ------特殊查询------
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getBooksByFilter(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
@@ -626,7 +626,7 @@ public class BookService {
      * @return List<JSONObject>
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getBooksByProductId(int productId) {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
@@ -645,7 +645,7 @@ public class BookService {
      * @return list封装的Book
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedBooks(int id) {
 
         List<Book> result = new ArrayList<>();
@@ -712,7 +712,7 @@ public class BookService {
      * @return list封装的图书
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustAddedBooks(int limit) {
         List<JSONObject> justAddedBooks = new ArrayList<>();
 
@@ -729,7 +729,7 @@ public class BookService {
      * @return list封装的Book
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustEditedBooks(int limit) {
         List<JSONObject> editedBooks = new ArrayList<>();
 
@@ -746,7 +746,7 @@ public class BookService {
      * @return list封装的Book
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getPopularBooks(int limit) {
         List<JSONObject> popularBooks = new ArrayList<>();
 

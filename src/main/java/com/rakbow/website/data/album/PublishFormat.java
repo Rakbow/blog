@@ -1,6 +1,7 @@
 package com.rakbow.website.data.album;
 
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @Create: 2022-08-19 22:34
  * @Description: 出版形式
  */
+@AllArgsConstructor
 public enum PublishFormat {
     UNCLASSIFIED(0, "未分类", "Unclassified"),
     COMMERCIAL(1, "商业发行", "Commercial"),
@@ -22,12 +24,6 @@ public enum PublishFormat {
     private int index;
     private String name;
     private String nameEn;
-
-    PublishFormat(int index, String name, String nameEn) {
-        this.index = index;
-        this.name = name;
-        this.nameEn = nameEn;
-    }
 
     public static String getNameByIndex (int index){
         for (PublishFormat publishFormat : PublishFormat.values()) {

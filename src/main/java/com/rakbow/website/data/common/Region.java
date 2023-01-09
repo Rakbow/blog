@@ -1,6 +1,8 @@
 package com.rakbow.website.data.common;
 
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
  * @Create: 2022-12-29 21:00
  * @Description:
  */
+@AllArgsConstructor
 public enum Region {
 
     JAPAN("Japan", "日本", "jp", "JPY"),
@@ -20,17 +23,14 @@ public enum Region {
     EUROPE("Europe", "欧洲", "eu", "EUR"),
     UNITED_STATES("United States", "美国", "us", "USD");
 
-    private String nameEn;
-    private String nameZh;
-    private String code;
-    private String currency;
-
-    Region(String nameEn, String nameZh, String code, String currency) {
-        this.nameEn = nameEn;
-        this.nameZh = nameZh;
-        this.code = code;
-        this.currency = currency;
-    }
+    @Getter
+    private final String nameEn;
+    @Getter
+    private final String nameZh;
+    @Getter
+    private final String code;
+    @Getter
+    private final String currency;
 
     //根据地区代码获取货币符号
     public static String regionCode2Currency(String code){
@@ -73,35 +73,4 @@ public enum Region {
         return list;
     }
 
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 }

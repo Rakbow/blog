@@ -1,24 +1,24 @@
 package com.rakbow.website.data.game;
 
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public enum ReleaseType {
 
     UNKNOWN(0, "Unknown", "未知"),
     OFFICIAL_RELEASE(1, "Official Release", "官方发行");
 
-    private int index;
-    private String nameEn;
-    private String nameZh;
-
-    ReleaseType(int index, String nameEn, String nameZh) {
-        this.index = index;
-        this.nameEn = nameEn;
-        this.nameZh = nameZh;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String nameEn;
+    @Getter
+    private final String nameZh;
 
     public static String index2NameZh (int index) {
         String nameZh = UNKNOWN.nameZh;

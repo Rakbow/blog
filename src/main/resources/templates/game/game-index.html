@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Books</title>
+    <title>Games</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -66,7 +66,7 @@
             <div class="grid mt-2">
                 <p-toast></p-toast>
                 <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
-                    <p-dataview :value="books" :layout="layout" :paginator="true" :rows="booksRows"
+                    <p-dataview :value="games" :layout="layout" :paginator="true" :rows="gamesRows"
                                 :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                                 :lazy="true" @page="onPage($event)" :total-records="totalRecords">
                         <template #empty>
@@ -82,7 +82,7 @@
                                                 @change="onSortChange($event)"></p-dropdown>
                                 </div>
                                 <div class="col-4" style="text-align: center">
-                                    <i class="pi iconfont icon-book mr-0" style="font-size: 2rem"></i>
+                                    <i class="pi iconfont icon-youxi mr-0" style="font-size: 2rem"></i>
                                 </div>
                                 <div class="col-4" style="text-align: right">
                                     <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
@@ -94,38 +94,36 @@
                                 <div class="product-grid-item card">
                                     <p-card>
                                         <template #header>
-                                            <a :href="'/db/book/'+ slotProps.data.id">
+                                            <a :href="'/db/game/'+ slotProps.data.id">
                                                 <div class="block-img"
                                                      :style="'background-image:url('+ slotProps.data.cover.url+');' ">
-                                                    <!--                          <p-tag class="catalog ml-1 mt-1">-->
-                                                    <!--                            {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}-->
-                                                    <!--                          </p-tag>-->
                                                     <div class="absolute releaseDate">
-                                                        <span class="text-center" style="color: white">{{slotProps.data.publishDate}}</span>
+                                                        <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
                                                     </div>
                                                 </div>
                                             </a>
                                         </template>
                                         <template #title>
                                             <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
-                                                {{slotProps.data.title}}
+                                                {{slotProps.data.name}}
+                                            </span>
+                                        </template>
+                                        <template #subtitle>
+                                            <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
+                                                {{slotProps.data.nameZh}}
                                             </span>
                                         </template>
                                         <template #content>
                                             <div class="grid mt-0 mb-0">
-                                                <div class="col-12 px-0 py-0">
+                                                <div class="field col-3 px-0 py-0">
                                                     <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.isbn10}}</span>
+                                                        {{slotProps.data.platform.nameEn}}</span>
                                                 </div>
-                                                <div class="col-12 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.isbn13}}</span>
+                                                <div class="field-3 col px-0 py-0">
+                                                    {{slotProps.data.region.nameZh}} <span
+                                                        :class="'fi fi-' + slotProps.data.region.code"></span>
                                                 </div>
-                                                <div class="col-10 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.bookType.nameZh}}</span>
-                                                </div>
-                                                <div class="col-2 px-0 py-0" v-if="slotProps.data.hasBonus">
+                                                <div class="field col-2 px-0 py-0" v-if="slotProps.data.hasBonus">
                                                     <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                        v-tooltip="'包含特典'"></i>
                                                 </div>
@@ -148,28 +146,31 @@
                         <template #list="slotProps">
                             <div class="col-12">
                                 <div class="product-list-item">
-                                    <a :href="'/db/book/'+ slotProps.data.id">
+                                    <a :href="'/db/game/'+ slotProps.data.id">
                                         <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
                                     </a>
                                     <div class="product-list-detail">
-                                        <a :href="'/db/book/'+ slotProps.data.id">
-                                            <div class="product-name">{{slotProps.data.title}}</div>
+                                        <a :href="'/db/game/'+ slotProps.data.id">
+                                            <div class="product-name">{{slotProps.data.name}}</div>
                                         </a>
                                         <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                            <b>{{slotProps.data.isbn13}}</b> {{slotProps.data.publishDate}}
+                                            {{slotProps.data.releaseDate}} <b>{{slotProps.data.platform.nameEn}}</b>
                                         </span>
-                                        <span class="ml-2 text-end">{{slotProps.data.bookType.nameZh}}</span>
+                                        {{slotProps.data.region.nameZh}} <span
+                                            :class="'fi fi-' + slotProps.data.region.code"></span>
                                         <br/>
-                                        <div v-for="franchise in slotProps.data.franchises">
-                                            <a :href="'/db/franchise/' + franchise.value">
-                                                <i class="pi pi-tags product-category-icon"></i>
-                                                <span class="product-category">{{franchise.label}}</span>
-                                            </a>
+                                        <div class="formgrid grid">
+                                            <div class="field col" v-for="franchise in slotProps.data.franchises">
+                                                <a :href="'/db/franchise/' + franchise.value">
+                                                    <i class="pi pi-tags product-category-icon"></i>
+                                                    <span class="product-category">{{franchise.label}}</span>
+                                                </a>
+                                            </div>
+                                            <span class="field col-2" v-if="slotProps.data.hasBonus == 1">
+                                                <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
+                                                   v-tooltip="'包含特典'"></i>
+                                            </span>
                                         </div>
-                                        <span class="col-2" v-if="slotProps.data.hasBonus == 1">
-                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
-                                               v-tooltip="'包含特典'"></i>
-                                        </span>
                                         <ul class="list-inline">
                                             <li class="list-inline-item mr-2"
                                                 v-for="product of slotProps.data.products">
@@ -193,27 +194,20 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">书名</label>
-                                <p-inputtext v-model.trim="queryParams.filters.title.value"></p-inputtext>
+                                <label htmlFor="name">游戏名</label>
+                                <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="bookType">图书类型</label>
-                                <p-dropdown v-model="queryParams.filters.bookType.value" :options="bookTypeSet"
+                                <label htmlFor="hasBonus">是否包含特典</label>
+                                <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">ISBN-10</label>
-                                <p-inputtext v-model.trim="queryParams.filters.isbn10.value"></p-inputtext>
-                            </div>
-                            <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="catalogNo">ISBN-13</label>
-                                <p-inputtext v-model.trim="queryParams.filters.isbn13.value"></p-inputtext>
-                            </div>
-                            <div class="col-12 md:col-6 sm:col-6">
                                 <label>所属系列</label>
-                                <p-multiselect v-model="queryParams.filters.franchises.value" @change="getProducts($event.value)"
+                                <p-multiselect v-model="queryParams.filters.franchises.value"
+                                               @change="getProducts($event.value)"
                                                :options="franchiseSet" placeholder="所属系列"
                                                option-label="label" option-value="value" display="chip" :filter="true">
                                 </p-multiselect>
@@ -226,15 +220,11 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="hasBonus">是否包含特典</label>
-                                <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
-                                            placeholder="所有" option-label="label"
+                                <label>平台</label>
+                                <p-dropdown v-model="queryParams.filters.platform.value" :options="gamePlatformSet"
+                                            placeholder="所有" option-label="labelEn"
                                             option-value="value">
                                 </p-dropdown>
-                            </div>
-                            <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="publisher">出版社</label>
-                                <p-inputtext v-model.trim="queryParams.filters.publisher.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
                                 <label htmlFor="region">区域</label>
@@ -255,62 +245,55 @@
                                     </template>
                                 </p-dropdown>
                             </div>
-                            <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="publishLanguage">语言</label>
-                                <p-dropdown v-model="queryParams.filters.publishLanguage.value" :options="languageSet"
-                                            placeholder="所有" option-label="nameZh"
-                                            option-value="code">
-                                </p-dropdown>
-                            </div>
-                            <div class="col-12 md:col-4 md:col-offset-2 sm:col-3 sm:col-offset-3"
-                                 style="text-align: right">
+                            <div class="col-4 col-offset-2" style="text-align: right">
                                 <p-button icon="pi pi-filter-slash"
                                           class="p-button-rounded p-button-info"
                                           v-tooltip.bottom="'清空'"
                                           @click="clearSearch"></p-button>
                             </div>
-                            <div class="col-12 md:col-4 sm:col-3" style="text-align: left">
+                            <div class="col-4" style="text-align: left">
                                 <p-button icon="pi pi-search"
                                           class="p-button-rounded p-button-success"
                                           v-tooltip.bottom="'搜索'"
-                                          @click="getBooks"></p-button>
+                                          @click="getGames"></p-button>
                             </div>
                         </div>
                     </p-panel>
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
                             <b>最新收录</b>
                         </template>
                         <div class="grid">
                             <span class="small-font">
                                 <div class="info_bit_small small-font ml-0 grid"
-                                     v-if="justAddedBooks.length != 0"
-                                     v-for="addBook of justAddedBooks">
+                                     v-if="justAddedGames.length != 0"
+                                     v-for="addGame of justAddedGames">
                                     <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                        <a :href="'/db/book/'+ addBook.id ">
-                                            <img class="sidebar-panel-image-small-no-radius" :src="addBook.cover.thumbUrl"
-                                                 v-tooltip.bottom="{value: '收录时间: ' + addBook.addedTime + '编辑时间: ' + addBook.editedTime, class: 'item-upload-time-tooltip'}">
+                                        <a :href="'/db/game/'+ addGame.id ">
+                                            <img class="sidebar-panel-image-small-no-radius"
+                                                 :src="addGame.cover.thumbUrl"
+                                                 v-tooltip.bottom="{value: '收录时间: ' + addGame.addedTime + '编辑时间: ' + addGame.editedTime, class: 'item-upload-time-tooltip'}">
                                         </a>
                                     </div>
                                     <div class="col-9">
                                         <ul class="info_bit_detail">
                                         <li>
                                             <a class="small-font"
-                                               :href="'/db/book/'+ addBook.id ">
+                                               :href="'/db/game/'+ addGame.id ">
                                                 <span class="text-truncate-2" lang="ja">
-                                                    {{addBook.title}}
+                                                    {{addGame.name}}
                                                 </span>
                                             </a>
                                         </li>
                                         <li>
                                             <span class="small-font">
-                                                <b>{{addBook.isbn13}}</b> {{addBook.publishDate}}
+                                                <b>{{addGame.releaseDate}}</b> {{addGame.platform.nameEn}} {{addGame.region.nameZh}} <span
+                                                    :class="'fi fi-' + addGame.region.code"></span>
                                             </span>
                                         </li>
-
-                                    </ul>
+                                        </ul>
                                     </div>
                                 </div>
                             </span>
@@ -321,36 +304,37 @@
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
                             <b>最新编辑</b>
                         </template>
                         <div class="grid">
                             <span class="small-font">
                                     <div class="info_bit_small small-font ml-0 grid"
-                                         v-if="justEditedBooks.length != 0"
-                                         v-for="editBook of justEditedBooks">
+                                         v-if="justEditedGames.length != 0"
+                                         v-for="editGame of justEditedGames">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/book/'+ editBook.id ">
-                                                <img class="sidebar-panel-image-small-no-radius" :src="editBook.cover.thumbUrl"
-                                                     v-tooltip.bottom="{value: '收录时间: ' + editBook.addedTime + '编辑时间: ' + editBook.editedTime, class: 'item-upload-time-tooltip'}">
+                                            <a :href="'/db/game/'+ editGame.id ">
+                                                <img class="sidebar-panel-image-small-no-radius"
+                                                     :src="editGame.cover.thumbUrl"
+                                                     v-tooltip.bottom="{value: '收录时间: ' + editGame.addedTime + '编辑时间: ' + editGame.editedTime, class: 'item-upload-time-tooltip'}">
                                             </a>
                                         </div>
                                         <div class="col-9">
                                             <ul class="info_bit_detail">
                                             <li>
-                                                <a class="small-font"
-                                                   :href="'/db/book/'+ editBook.id ">
-                                                    <span class="text-truncate-2" lang="ja">
-                                                        {{editBook.title}}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <span class="small-font">
-                                                    <b>{{editBook.isbn13}}</b> {{editBook.publishDate}}
+                                            <a class="small-font"
+                                               :href="'/db/game/'+ editGame.id ">
+                                                <span class="text-truncate-2" lang="ja">
+                                                    {{editGame.name}}
                                                 </span>
-                                            </li>
-
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small-font">
+                                                <b>{{editGame.releaseDate}}</b> {{editGame.platform.nameEn}} {{editGame.region.nameZh}} <span
+                                                    :class="'fi fi-' + editGame.region.code"></span>
+                                            </span>
+                                        </li>
                                         </ul>
                                         </div>
                                     </div>
@@ -362,14 +346,14 @@
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
+                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
                             <b>浏览排名</b>
                         </template>
                         <div class="grid">
                             <span class="small-font">
                                 <div class="info_bit_small small-font ml-0 grid"
-                                     v-if="popularBooks.length != 0"
-                                     v-for="(book, index) of popularBooks">
+                                     v-if="popularGames.length != 0"
+                                     v-for="(game, index) of popularGames">
                                         <div class="col-2 ml-0 mr-0 mt-0 mb-0">
                                             <div class="grid">
                                                 <div class="col-12 text-center">
@@ -378,13 +362,15 @@
                                                 </div>
                                                 <div class="col-12">
                                                     <i class="pi pi-eye" style="font-size: 0.5rem"></i>
-                                                    {{book.visitNum}}
+                                                    {{game.visitNum}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/book/'+ book.id ">
-                                                <img class="sidebar-panel-image-small-no-radius" :src="book.cover.thumbUrl"
+                                            <a :href="'/db/game/'+ game.id ">
+                                                <img class="sidebar-panel-image-small-no-radius"
+                                                     :src="
+                                                     game.cover.thumbUrl"
                                                 >
                                             </a>
                                         </div>
@@ -392,19 +378,19 @@
                                             <ul class="info_bit_detail">
                                             <li>
                                                 <a class="small-font"
-                                                   :href="'/db/book/'+ book.id ">
+                                                   :href="'/db/game/'+ game.id ">
                                                     <span class="text-truncate-2" lang="ja">
-                                                        {{book.title}}
+                                                        {{game.name}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <span class="small-font">
-                                                    <b>{{book.isbn13}}</b> {{book.publishDate}}
+                                                    <b>{{game.releaseDate}}</b> {{game.platform.nameEn}} {{game.region.nameZh}} <span
+                                                        :class="'fi fi-' + game.region.code"></span>
                                                 </span>
                                             </li>
-
-                                        </ul>
+                                            </ul>
                                         </div>
                                     </div>
                             </span>
@@ -444,35 +430,32 @@
             //endregion
 
             //region ------基础------
-            const books = ref();
+            const games = ref();
             const franchiseSet = ref([[${franchiseSet}]]);
-            const bookTypeSet = ref([[${bookTypeSet}]]);
-            const languageSet = ref([[${languageSet}]]);
+            const gamePlatformSet = ref([[${gamePlatformSet}]]);
             const regionSet = ref([[${regionSet}]]);
-            const justEditedBooks = ref([[${justEditedBooks}]]);
-            const justAddedBooks = ref([[${justAddedBooks}]]);
-            const popularBooks = ref([[${popularBooks}]]);
-            const booksRows = ref(20);
+            const justEditedGames = ref([[${justEditedGames}]]);
+            const justAddedGames = ref([[${justAddedGames}]]);
+            const popularGames = ref([[${popularGames}]]);
+            const gamesRows = ref(20);
             const layout = ref('grid');
             const sortKey = ref();
             const sortOptions = ref([
-                {label: '按出版时间正序', value: 'publishDate'},
-                {label: '按出版时间逆序', value: '!publishDate'},
+                {label: '按发售时间正序', value: 'releaseDate'},
+                {label: '按发售时间逆序', value: '!releaseDate'},
             ]);
 
             watch(() => layout.value, (newValue, oldValue) => {
                 if (newValue === "grid") {
-                    booksRows.value = 20;
+                    gamesRows.value = 20;
                 } else {
-                    booksRows.value = 20;
+                    gamesRows.value = 20;
                 }
             }, {deep: true});
             //endregion
 
             //region ------ 搜索 ------
             const totalRecords = ref();
-            const bookFormatSet = ref([[${bookFormatSet}]]);
-            const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const productSelect = ref(true);
             const queryParams = ref({
                 first: 0,
@@ -480,16 +463,12 @@
                 sortField: null,
                 sortOrder: 0,
                 filters: {
-                    title: {value: null},
-                    bookType: {value: null},
-                    isbn10: {value: null},
-                    isbn13: {value: null},
+                    name: {value: null},
+                    hasBonus: {value: null},
                     franchises: {value: null},
                     products: {value: null},
-                    publisher: {value: null},
-                    hasBonus: {value: null},
+                    platform: {value: null},
                     region: {value: null},
-                    publishLanguage: {value: null},
                 }
             });
             const clearSearch = () => {
@@ -499,19 +478,15 @@
                     sortField: null,
                     sortOrder: 0,
                     filters: {
-                        title: {value: null},
-                        bookType: {value: null},
-                        isbn10: {value: null},
-                        isbn13: {value: null},
+                        name: {value: null},
+                        hasBonus: {value: null},
                         franchises: {value: null},
                         products: {value: null},
-                        publisher: {value: null},
-                        hasBonus: {value: null},
+                        platform: {value: null},
                         region: {value: null},
-                        publishLanguage: {value: null},
                     }
                 };
-                getBooks();
+                getGames();
             }
             const productSet = ref();
             //根据系列id获取该系列所有作品
@@ -526,7 +501,7 @@
                             queryParams.value.filters.products.value = [];
                             productSet.value = res;
                             productSelect.value = false;
-                        }else {
+                        } else {
                             productSelect.value = true;
                         }
                     })
@@ -534,17 +509,17 @@
             const onPage = (event) => {
                 queryParams.value.first = event.first;
                 queryParams.value.rows = event.rows;
-                getBooks();
+                getGames();
             }
-            const getBooks = () => {
-                queryParams.value.rows = booksRows.value;
+            const getGames = () => {
+                queryParams.value.rows = gamesRows.value;
                 let json = {
                     pageLabel: "index",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_BOOKS_URL, json)
+                axiosPostRequest(GET_GAMES_URL, json)
                     .then(res => {
-                        books.value = res.data;
+                        games.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
@@ -556,31 +531,30 @@
                     queryParams.value.sortOrder = -1;
                     queryParams.value.sortField = value.substring(1, value.length);
                     queryParams.value.first = 0;
-                    queryParams.value.rows = booksRows.value;
+                    queryParams.value.rows = gamesRows.value;
                     sortKey.value = sortValue;
-                    getBooks();
+                    getGames();
                 } else {
                     queryParams.value.sortOrder = 1;
                     queryParams.value.sortField = value;
                     queryParams.value.first = 0;
-                    queryParams.value.rows = booksRows.value;
+                    queryParams.value.rows = gamesRows.value;
                     sortKey.value = sortValue;
-                    getBooks();
+                    getGames();
                 }
             };
             //endregion
 
             const init = () => {
-                getBooks();
+                getGames();
             };
 
             return {
-                regionSet, languageSet, bookTypeSet, regionCode2NameZh,
-                clearSearch, hasBonusSet, booksRows, bookFormatSet, mediaFormatSet,
+                regionSet, gamePlatformSet, regionCode2NameZh, clearSearch, hasBonusSet, gamesRows,
                 getProducts, franchiseSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
-                justAddedBooks, justEditedBooks, popularBooks, books, layout,
-                sortKey, sortOptions, getBooks, totalRecords, onPage
+                justAddedGames, justEditedGames, popularGames, games, layout,
+                sortKey, sortOptions, getGames, totalRecords, onPage
             }
         },
         components: {

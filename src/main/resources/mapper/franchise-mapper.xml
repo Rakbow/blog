@@ -23,7 +23,6 @@
         select
         <include refid="selectFields"></include>
         from franchise
-        order by id desc
     </select>
 
     <insert id="addFranchise" parameterType="Franchise" keyProperty="id">

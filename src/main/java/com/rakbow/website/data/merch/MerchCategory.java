@@ -1,6 +1,8 @@
 package com.rakbow.website.data.merch;
 
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
  * @Create: 2023-01-04 14:29
  * @Description:
  */
+@AllArgsConstructor
 public enum MerchCategory {
 
     UNCLASSIFIED(0,"未分类", "Unclassified"),
@@ -21,15 +24,12 @@ public enum MerchCategory {
     FIGURE(5,"手办", "Figure"),
     OTHER(6,"其他", "Other");
 
-    private int index;
-    private String nameZh;
-    private String nameEn;
-
-    MerchCategory (int index, String nameZh, String nameEn) {
-        this.index = index;
-        this.nameZh = nameZh;
-        this.nameEn = nameEn;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String nameZh;
+    @Getter
+    private final String nameEn;
 
     public static String index2NameZh (int index) {
         String nameZh = UNCLASSIFIED.nameZh;
@@ -57,30 +57,6 @@ public enum MerchCategory {
             list.add(jsonObject);
         }
         return list;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
     }
 
 }

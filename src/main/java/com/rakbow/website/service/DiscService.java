@@ -68,7 +68,7 @@ public class DiscService {
      * @param disc 新增的碟片
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addDisc(Disc disc) {
         discMapper.addDisc(disc);
     }
@@ -80,7 +80,7 @@ public class DiscService {
      * @return disc
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Disc getDisc(int id) {
         return discMapper.getDisc(id);
     }
@@ -91,7 +91,7 @@ public class DiscService {
      * @param id 碟片id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteDisc(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllDiscImages(id);
@@ -105,7 +105,7 @@ public class DiscService {
      * @param id 碟片id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateDisc(int id, Disc disc) {
         discMapper.updateDisc(id, disc);
     }
@@ -421,7 +421,7 @@ public class DiscService {
      * @param imageInfos         新增图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
         JSONArray finalImageJson = commonImageUtils.commonAddImages
@@ -437,7 +437,7 @@ public class DiscService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateDiscImages(int id, String images) {
         discMapper.updateDiscImages(id, images, new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
@@ -450,7 +450,7 @@ public class DiscService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteDiscImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getDisc(id).getImages());
@@ -467,7 +467,7 @@ public class DiscService {
      * @param id 碟片id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAllDiscImages(int id) {
         Disc disc = getDisc(id);
         JSONArray images = JSON.parseArray(disc.getImages());
@@ -481,7 +481,7 @@ public class DiscService {
      * @param spec 碟片的规格信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateDiscSpec(int id, String spec) {
         discMapper.updateDiscSpec(id, spec, new Timestamp(System.currentTimeMillis()));
     }
@@ -493,7 +493,7 @@ public class DiscService {
      * @param description 碟片的描述json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateDiscDescription(int id, String description) {
         discMapper.updateDiscDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -505,7 +505,7 @@ public class DiscService {
      * @param bonus 碟片的特典信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateDiscBonus(int id, String bonus) {
         discMapper.updateDiscBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
     }
@@ -514,7 +514,7 @@ public class DiscService {
 
     //region ------特殊查询------
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getDiscsByFilterList (JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
@@ -563,7 +563,7 @@ public class DiscService {
      * @return list封装的Disc
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedDiscs(int id) {
 
         List<Disc> result = new ArrayList<>();
@@ -629,7 +629,7 @@ public class DiscService {
      * @return List<JSONObject>
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getDiscsByProductId(int productId) {
 
         List<Integer> products = new ArrayList<>();
@@ -649,7 +649,7 @@ public class DiscService {
      * @return list封装的Disc
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustAddedDiscs(int limit) {
         List<JSONObject> justAddedDiscs = new ArrayList<>();
 
@@ -666,7 +666,7 @@ public class DiscService {
      * @return list封装的Disc
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustEditedDiscs(int limit) {
         List<JSONObject> editedDiscs = new ArrayList<>();
 
@@ -683,7 +683,7 @@ public class DiscService {
      * @return list封装的Disc
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getPopularDiscs(int limit) {
         List<JSONObject> popularDiscs = new ArrayList<>();
 

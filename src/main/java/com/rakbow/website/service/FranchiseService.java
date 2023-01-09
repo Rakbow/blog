@@ -2,9 +2,13 @@ package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.FranchiseMapper;
+import com.rakbow.website.data.product.ProductCategory;
 import com.rakbow.website.entity.Franchise;
+import com.rakbow.website.util.system.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,8 @@ public class FranchiseService {
 
     @Autowired
     private FranchiseMapper franchiseMapper;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //新增系列
     public int addFranchise(Franchise franchise){
@@ -52,6 +58,22 @@ public class FranchiseService {
             franchiseSet.add(jsonObject);
         }
         return franchiseSet;
+    }
+
+    /**
+     * 刷新Redis缓存中的franchises数据
+     *
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public void refreshRedisFranchises () {
+
+        List<JSONObject> franchises = getAllFranchiseSet();
+
+        redisUtil.set("franchises", franchises);
+        //缓存时间1个月
+        redisUtil.expire("franchises", 2592000);
+
     }
 
 }

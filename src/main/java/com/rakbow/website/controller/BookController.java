@@ -12,6 +12,7 @@ import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,8 @@ public class BookController {
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //endregion
 
@@ -68,7 +71,7 @@ public class BookController {
         model.addAttribute("bookTypeSet", bookType);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         view.setViewName("/book/book-list");
         return view;
     }
@@ -88,7 +91,7 @@ public class BookController {
         model.addAttribute("bookTypeSet", bookType);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("languageSet", languageSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("book", bookService.book2Json(book));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -292,7 +295,7 @@ public class BookController {
                 }
 
                 //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
                     String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
@@ -303,7 +306,7 @@ public class BookController {
 
                     res.message = bookService.updateBookImages(id, images.toJSONString());
                 }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = bookService.deleteBookImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);

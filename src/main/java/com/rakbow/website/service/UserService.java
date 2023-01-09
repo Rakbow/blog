@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -48,6 +50,7 @@ public class UserService{
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Transactional( readOnly = true )
     public User findUserById(int id) {
         return userMapper.selectUserById(id);
     }

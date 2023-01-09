@@ -86,7 +86,7 @@ public class AlbumService {
      * @param album 新增的专辑
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addAlbum(Album album) {
         albumMapper.addAlbum(album);
     }
@@ -98,7 +98,7 @@ public class AlbumService {
      * @return album
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Album getAlbumById(int id) {
         return albumMapper.getAlbumById(id);
     }
@@ -109,7 +109,7 @@ public class AlbumService {
      * @param id 专辑id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteAlbumById(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllAlbumImages(id);
@@ -124,7 +124,7 @@ public class AlbumService {
      * @param id 专辑id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbum(int id, Album album) {
         albumMapper.updateAlbum(id, album);
     }
@@ -607,7 +607,7 @@ public class AlbumService {
      * @param imageInfos 新增图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addAlbumImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
         //最终保存到数据库的json信息
@@ -662,7 +662,7 @@ public class AlbumService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateAlbumImages(int id, String images) {
         albumMapper.updateAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
@@ -675,7 +675,7 @@ public class AlbumService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAlbumImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
@@ -692,7 +692,7 @@ public class AlbumService {
      * @param id 专辑id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAllAlbumImages(int id) {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
@@ -707,7 +707,7 @@ public class AlbumService {
      * @param artists 专辑的创作相关信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbumArtists(int id, String artists) {
         albumMapper.updateAlbumArtists(id, artists, new Timestamp(System.currentTimeMillis()));
     }
@@ -719,7 +719,7 @@ public class AlbumService {
      * @param _discList 专辑的音轨信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbumTrackInfo(int id, String _discList) throws Exception {
 
         //获取该专辑对应的音乐合集
@@ -810,7 +810,7 @@ public class AlbumService {
      * @param description 专辑的描述json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbumDescription(int id, String description) {
         albumMapper.updateAlbumDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -822,7 +822,7 @@ public class AlbumService {
      * @param bonus 专辑的特典信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbumBonus(int id, String bonus) {
         albumMapper.updateAlbumBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
     }
@@ -831,7 +831,7 @@ public class AlbumService {
 
     //region ------特殊查询------
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getAlbumsByFilter(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
@@ -875,7 +875,7 @@ public class AlbumService {
      * @return list封装的Album
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedAlbums(int id) {
 
         List<Album> result = new ArrayList<>();
@@ -940,7 +940,7 @@ public class AlbumService {
      * @return list封装的Album
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustAddedAlbums(int limit) {
         List<JSONObject> justAddedAlbums = new ArrayList<>();
 
@@ -957,7 +957,7 @@ public class AlbumService {
      * @return list封装的Album
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustEditedAlbums(int limit) {
         List<JSONObject> editedAlbums = new ArrayList<>();
 
@@ -974,7 +974,7 @@ public class AlbumService {
      * @return list封装的Album
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getPopularAlbums(int limit) {
         List<JSONObject> popularAlbums = new ArrayList<>();
 
@@ -995,7 +995,7 @@ public class AlbumService {
      * @return List<JSONObject>
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getAlbumsByProductId(int productId) {
 
         List<Integer> products = new ArrayList<>();
@@ -1019,7 +1019,6 @@ public class AlbumService {
      * @return 图片url
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public String getAlbumCoverUrl(int id) {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
@@ -1045,7 +1044,7 @@ public class AlbumService {
      * @author rakbow
      */
     @Deprecated
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String DeprecatedDeleteAlbumImages(int id, JSONArray deleteImages) {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());

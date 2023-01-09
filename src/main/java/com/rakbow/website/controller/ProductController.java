@@ -15,6 +15,7 @@ import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,12 +65,14 @@ public class ProductController {
     private String imgPath;
     @Autowired
     private ProductUtils productUtils;
+    @Autowired
+    private RedisUtil redisUtil;
     //endregion
 
     //region ------获取页面------
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public String getProductListPage(Model model) {
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("productCategorySet", productUtils.getProductCategorySet());
         return "/product/product-list";
     }
@@ -88,7 +91,7 @@ public class ProductController {
         model.addAttribute("product", productService.product2Json(product));
         model.addAttribute("user", hostHolder.getUser());
         model.addAttribute("productClassSet", productUtils.getProductCategorySet());
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
 
         if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
@@ -131,6 +134,9 @@ public class ProductController {
                 //保存新增专辑
                 productService.addProduct(product);
 
+                //刷新redis缓存
+                productService.refreshRedisProducts();
+
                 // //将新增的专辑保存到Elasticsearch服务器索引中
                 // elasticsearchService.saveAlbum(album);
 
@@ -151,7 +157,7 @@ public class ProductController {
     //更新作品基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbum(@RequestBody String json, HttpServletRequest request) {
+    public String updateProduct(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -168,6 +174,9 @@ public class ProductController {
                 product.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
                 productService.updateProduct(product.getId(), product);
+
+                //刷新redis缓存
+                productService.refreshRedisProducts();
 
                 //将更新的专辑保存到Elasticsearch服务器索引中
                 // elasticsearchService.saveAlbum(product);
@@ -193,6 +202,9 @@ public class ProductController {
                 int id = JSON.parseObject(json).getInteger("id");
                 String description = JSON.parseObject(json).get("description").toString();
                 productService.updateProductDescription(id, description);
+                //刷新redis缓存
+                productService.refreshRedisProducts();
+
                 res.message = ApiInfo.UPDATE_PRODUCT_DESCRIPTION_SUCCESS;
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -219,6 +231,9 @@ public class ProductController {
                     return JSON.toJSONString(res);
                 }
                 productService.updateProductStaffs(id, staffs);
+                //刷新redis缓存
+                productService.refreshRedisProducts();
+
                 res.message = ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
                 // //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
@@ -261,6 +276,9 @@ public class ProductController {
 
                 productService.addProductImages(id, images, imagesJson, imageInfosJson);
 
+                //刷新redis缓存
+                productService.refreshRedisProducts();
+
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
 
@@ -291,7 +309,7 @@ public class ProductController {
                 }
 
                 //更改图片
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
                     String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
@@ -302,11 +320,14 @@ public class ProductController {
 
                     res.message = productService.updateProductImages(id, images.toJSONString());
                 }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = productService.deleteProductImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
+
+                //刷新redis缓存
+                productService.refreshRedisProducts();
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);

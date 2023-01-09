@@ -85,7 +85,7 @@
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row"
-                         :globalFilterFields="['name','catalogNo']"
+                         :global-filter-fields="['name','catalogNo']"
                          :paginator="true" :rows="10" striped-rows
                          :resizable-columns="true" column-resize-mode="expand"
                          v-model:selection="selectedAlbums" dataKey="id"
@@ -748,7 +748,6 @@
                             closeEditDialog();
                             init();
                         } else {
-                            console.log(res);
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(e => {

@@ -1,8 +1,8 @@
 package com.rakbow.website.util;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.entity.Franchise;
-import com.rakbow.website.service.FranchiseService;
+import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,26 +19,30 @@ import java.util.List;
 public class FranchiseUtils {
 
     @Autowired
-    private FranchiseService franchiseService;
+    private RedisUtil redisUtil;
 
     /**
      * 将数据库实体类franchise的json字符串转为List<JSONObject>
      *
-     * @param franchiseJson franchise的json字符串
+     * @param franchisesJson franchise的json字符串
      * @return List<JSONObject>
      * @author rakbow
      */
-    public List<JSONObject> getFranchiseList (String franchiseJson) {
-        List<JSONObject> franchiseSet = new ArrayList<>();
-        JSONObject.parseObject(franchiseJson).getList("ids", Integer.class)
+    public List<JSONObject> getFranchiseList (String franchisesJson) {
+
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchises");
+
+        List<JSONObject> franchises = new ArrayList<>();
+
+        JSONObject.parseObject(franchisesJson).getList("ids", Integer.class)
                 .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    Franchise franchise = franchiseService.getFranchise(id);
-                    jo.put("value", id);
-                    jo.put("label", franchise.getNameZh());
-                    franchiseSet.add(jo);
+                    JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
+                    if (franchise != null) {
+                        franchises.add(franchise);
+                    }
                 });
-        return franchiseSet;
+
+        return franchises;
     }
 
 }

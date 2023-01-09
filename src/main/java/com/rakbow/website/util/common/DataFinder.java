@@ -1,5 +1,6 @@
 package com.rakbow.website.util.common;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Product;
 import org.apache.commons.lang3.StringUtils;
@@ -87,6 +88,42 @@ public class DataFinder {
             }
         }
         return result;
+    }
+
+    /**
+     * 根据jsonId从指定json列表中查找
+     *
+     * @param id,jsons 查找id和json列表
+     * @return json
+     * @author rakbow
+     */
+    public static JSONObject findJsonById(int id, List<JSONObject> jsons) {
+        JSONObject json = new JSONObject();
+        json.put("id", id);
+        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSortById);
+        if (idx >= 0) {
+            return jsons.get(idx);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 根据jsonValue从指定json列表中查找
+     *
+     * @param id,jsons 查找id和json列表
+     * @return json
+     * @author rakbow
+     */
+    public static JSONObject findJsonByIdInSet(int id, List<JSONObject> jsons) {
+        JSONObject json = new JSONObject();
+        json.put("value", id);
+        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSetSortByValue);
+        if (idx >= 0) {
+            return jsons.get(idx);
+        } else {
+            return null;
+        }
     }
 
     //endregion

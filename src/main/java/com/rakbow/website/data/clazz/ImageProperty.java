@@ -1,6 +1,9 @@
 package com.rakbow.website.data.clazz;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * @Project_name: website
@@ -9,10 +12,15 @@ import lombok.Data;
  * @Description:
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ImageProperty {
 
+    @Getter
     private long size;
+    @Getter
     private int height;
+    @Getter
     private int width;
 
 }

@@ -1,5 +1,8 @@
 package com.rakbow.website.data.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +12,7 @@ import java.util.List;
  * @Create: 2022-08-13 22:16
  * @Description:
  */
+@AllArgsConstructor
 public enum EntityType {
 
     UNCLASSIFIED(0,"未分类", "Unclassified"),
@@ -22,15 +26,12 @@ public enum EntityType {
     ARTICLE(8,"文章", "Article"),
     MUSIC(9,"音乐", "Music");
 
-    private int id;
-    private String nameZh;
-    private String nameEn;
-
-    EntityType(int id, String nameZh, String nameEn) {
-        this.id = id;
-        this.nameZh = nameZh;
-        this.nameEn = nameEn;
-    }
+    @Getter
+    private final int id;
+    @Getter
+    private final String nameZh;
+    @Getter
+    private final String nameEn;
 
     public static String getItemNameZhByIndex(int id){
         for (EntityType itemType : EntityType.values()) {
@@ -67,27 +68,4 @@ public enum EntityType {
         return items;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
 }

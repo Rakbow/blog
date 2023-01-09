@@ -107,7 +107,6 @@
                     .then(res => {
                         toast.add({severity: 'success', summary: 'Successful', detail: '注册成功！', life: 3000});
                     }).catch(err => {
-                    console.log(err);
                     toast.add({severity: 'error', summary: 'Error', detail: '注册失败！', life: 3000});
                 });
             }

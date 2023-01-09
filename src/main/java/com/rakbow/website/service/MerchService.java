@@ -68,7 +68,7 @@ public class MerchService {
      * @param merch 新增的周边
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMerch(Merch merch) {
         merchMapper.addMerch(merch);
     }
@@ -80,7 +80,7 @@ public class MerchService {
      * @return merch
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Merch getMerch(int id) {
         return merchMapper.getMerch(id);
     }
@@ -91,7 +91,7 @@ public class MerchService {
      * @param id 周边id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteMerch(int id) {
         //删除前先把服务器上对应图片全部删除
         deleteAllMerchImages(id);
@@ -105,7 +105,7 @@ public class MerchService {
      * @param id 周边id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMerch(int id, Merch merch) {
         merchMapper.updateMerch(id, merch);
     }
@@ -408,7 +408,7 @@ public class MerchService {
      * @param imageInfos         新增图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos) throws IOException {
 
@@ -425,7 +425,7 @@ public class MerchService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMerchImages(int id, String images) {
         merchMapper.updateMerchImages(id, images, new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
@@ -438,7 +438,7 @@ public class MerchService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteMerchImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getMerch(id).getImages());
@@ -455,7 +455,7 @@ public class MerchService {
      * @param id 周边id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAllMerchImages(int id) {
         Merch merch = getMerch(id);
         JSONArray images = JSON.parseArray(merch.getImages());
@@ -470,7 +470,7 @@ public class MerchService {
      * @param spec 周边的规格信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMerchSpec(int id, String spec) {
         merchMapper.updateMerchSpec(id, spec, new Timestamp(System.currentTimeMillis()));
     }
@@ -482,7 +482,7 @@ public class MerchService {
      * @param description 周边的描述json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMerchDescription(int id, String description) {
         merchMapper.updateMerchDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -491,7 +491,7 @@ public class MerchService {
 
     //region ------特殊查询------
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getMerchsByFilterList(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
@@ -535,7 +535,7 @@ public class MerchService {
      * @return List<JSONObject>
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getMerchsByProductId(int productId) {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
@@ -553,7 +553,7 @@ public class MerchService {
      * @return list封装的Merch
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedMerchs(int id) {
 
         List<Merch> result = new ArrayList<>();
@@ -618,7 +618,7 @@ public class MerchService {
      * @return list封装的周边
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustAddedMerchs(int limit) {
         List<JSONObject> justAddedMerchs = new ArrayList<>();
 
@@ -635,7 +635,7 @@ public class MerchService {
      * @return list封装的Merch
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getJustEditedMerchs(int limit) {
         List<JSONObject> editedMerchs = new ArrayList<>();
 
@@ -652,7 +652,7 @@ public class MerchService {
      * @return list封装的Merch
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getPopularMerchs(int limit) {
         List<JSONObject> popularMerchs = new ArrayList<>();
 

@@ -46,7 +46,7 @@ public class CommonImageUtils {
      * @return finalImageJson 最终保存到数据库的json信息
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public JSONArray commonAddImages(int entityId, EntityType entityType, MultipartFile[] images,
                                      JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
         //最终保存到数据库的json信息
@@ -93,7 +93,7 @@ public class CommonImageUtils {
      * @return images 最终保存到数据库的json信息
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public JSONArray commonDeleteImages(int entityId, JSONArray images, JSONArray deleteImages) throws Exception {
 
         //从七牛云上删除
@@ -140,7 +140,7 @@ public class CommonImageUtils {
      * @param entityType 实体类型
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String commonDeleteAllImages(EntityType entityType, JSONArray images) {
 
         String[] deleteImageKeyList = new String[images.size()];

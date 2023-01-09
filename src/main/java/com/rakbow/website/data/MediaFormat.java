@@ -2,6 +2,8 @@ package com.rakbow.website.data;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
  * @Create: 2022-08-19 23:04
  * @Description: 媒体类型
  */
+@AllArgsConstructor
 public enum MediaFormat {
     UNCLASSIFIED(0, "未分类", "Unclassified"),
     CD(1, "CD", "CD"),
@@ -20,15 +23,12 @@ public enum MediaFormat {
     BLU_RAY(3, "Blu-ray", "Blu-ray"),
     DIGITAL(4, "数字专辑", "Digital");
 
-    private int index;
-    private String name;
-    private String nameEn;
-
-    MediaFormat(int index, String name, String nameEn) {
-        this.index = index;
-        this.name = name;
-        this.nameEn = nameEn;
-    }
+    @Getter
+    private final int index;
+    @Getter
+    private final String name;
+    @Getter
+    private final String nameEn;
 
     /**
      * index列表转用逗号隔开的nameEn数组字符串
@@ -113,27 +113,4 @@ public enum MediaFormat {
         return list;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
 }

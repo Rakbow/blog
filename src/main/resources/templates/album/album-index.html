@@ -244,14 +244,13 @@
                                                display="chip" :filter="true">
                                 </p-multiselect>
                             </div>
-                            <div class="col-12 md:col-4 md:col-offset-2 sm:col-3 sm:col-offset-3"
-                                 style="text-align: right">
+                            <div class="col-4 col-offset-2" style="text-align: right">
                                 <p-button icon="pi pi-filter-slash"
                                           class="p-button-rounded p-button-info"
                                           v-tooltip.bottom="'清空'"
                                           @click="clearSearch"></p-button>
                             </div>
-                            <div class="col-12 md:col-4 sm:col-3" style="text-align: left">
+                            <div class="col-4" style="text-align: left">
                                 <p-button icon="pi pi-search"
                                           class="p-button-rounded p-button-success"
                                           v-tooltip.bottom="'搜索'"
@@ -291,7 +290,6 @@
                                                 <b>{{addAlbum.catalogNo}}</b> {{addAlbum.releaseDate}}
                                             </span>
                                         </li>
-
                                     </ul>
                                     </div>
                                 </div>

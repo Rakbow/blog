@@ -12,10 +12,12 @@ import com.rakbow.website.data.game.ReleaseType;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,8 @@ public class GameController {
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //endregion
 
@@ -70,7 +74,7 @@ public class GameController {
         model.addAttribute("releaseTypeSet", releaseTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         view.setViewName("/game/game-list");
         return view;
     }
@@ -90,7 +94,7 @@ public class GameController {
         model.addAttribute("releaseTypeSet", releaseTypeSet);
         model.addAttribute("regionSet", regionSet);
         model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("game", gameService.game2Json(game));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -294,7 +298,7 @@ public class GameController {
                 }
 
                 //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
                     String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
@@ -305,7 +309,7 @@ public class GameController {
 
                     res.message = gameService.updateGameImages(id, images.toJSONString());
                 }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = gameService.deleteGameImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);

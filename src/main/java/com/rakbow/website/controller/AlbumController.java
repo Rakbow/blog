@@ -18,6 +18,7 @@ import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,8 @@ public class AlbumController {
     private String contextPath;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private RedisUtil redisUtil;
     //endregion
 
     //region ------获取页面------
@@ -89,7 +92,7 @@ public class AlbumController {
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         view.setViewName("/album/album-list");
         return view;
     }
@@ -109,7 +112,7 @@ public class AlbumController {
         model.addAttribute("mediaFormatSet", mediaFormatSet);
         model.addAttribute("albumFormatSet", albumFormatSet);
         model.addAttribute("publishFormatSet", publishFormatSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("album", albumService.album2Json(album));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -317,7 +320,7 @@ public class AlbumController {
                 }
 
                 //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
                     String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
@@ -328,7 +331,7 @@ public class AlbumController {
 
                     res.message = albumService.updateAlbumImages(id, images.toJSONString());
                 }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = albumService.deleteAlbumImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);

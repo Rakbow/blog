@@ -12,6 +12,7 @@ import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.Image.QiniuImageHandleUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,31 +44,38 @@ public class ProductService {
     private String imgPath;
     @Autowired
     private CommonImageUtils commonImageUtils;
+    @Autowired
+    private RedisUtil redisUtil;
     //endregion
 
     //region ------基础增删改查------
 
     //新增作品
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public int addProduct(Product product) {
         return productMapper.addProduct(product);
     }
 
     //通过id查找作品
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Product getProduct(int id) {
         return productMapper.getProduct(id);
     }
 
     //获取所有作品
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<Product> getAllProduct() {
         return productMapper.getAll();
     }
 
     //更新作品信息
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public int updateProduct(int id, Product product) {
         return productMapper.updateProduct(id, product);
     }
 
     //删除作品
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public int deleteProduct(int id) {
         deleteAllProductImages(id);
         return productMapper.deleteProduct(id);
@@ -298,7 +306,7 @@ public class ProductService {
      * @param id 作品id
      * @param description 描述信息
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateProductDescription(int id, String description) {
         productMapper.updateProductDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -310,7 +318,7 @@ public class ProductService {
      * @param staffs staff相关信息json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateProductStaffs(int id, String staffs) {
         productMapper.updateProductStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
     }
@@ -322,7 +330,7 @@ public class ProductService {
      * @param images 图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
         JSONArray finalImageJson = commonImageUtils.commonAddImages
@@ -338,7 +346,7 @@ public class ProductService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductImages(int id, String images) {
         productMapper.updateProductImages(id, images, new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
@@ -351,7 +359,7 @@ public class ProductService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteProductImages(int id, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getProduct(id).getImages());
@@ -368,7 +376,7 @@ public class ProductService {
      * @param id 作品id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteAllProductImages(int id) {
         Product product = getProduct(id);
         JSONArray images = JSON.parseArray(product.getImages());
@@ -382,7 +390,7 @@ public class ProductService {
      * @author rakbow
      * @return list
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedProducts (int productId) {
         List<JSONObject> relatedProducts;
 
@@ -409,7 +417,7 @@ public class ProductService {
 
     //region ------特殊查询------
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getProductsByFilter(JSONObject queryParams) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
@@ -429,6 +437,29 @@ public class ProductService {
         int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories);
 
         return new SearchResult(total, products);
+    }
+
+    /**
+     * 刷新Redis缓存中的products数据
+     *
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public void refreshRedisProducts () {
+
+        List<JSONObject> products = new ArrayList<>();
+        getAllProduct().forEach(product -> {
+            JSONObject jo = new JSONObject();
+            jo.put("value", product.getId());
+            jo.put("label", product.getNameZh() + "(" +
+                    ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
+            products.add(jo);
+        });
+
+        redisUtil.set("products", products);
+        //缓存时间1个月
+        redisUtil.expire("products", 2592000);
+
     }
 
     //endregion

@@ -1,6 +1,8 @@
 package com.rakbow.website.data;
 
 import com.rakbow.website.entity.Music;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
  * @Create: 2022-11-12 18:04
  * @Description: 专辑，音乐的创作人员职位类型枚举类
  */
+@AllArgsConstructor
 public enum ArtistType {
     VOCAL(1,"演唱", "Vocal"),
     COMPOSER(2,"作曲", "Composer"),
@@ -61,37 +64,11 @@ public enum ArtistType {
     ARTIST_MANAGEMENT(9,"", "Artist Management"),
     SPECIAL_THANKS(9,"特别鸣谢", "Special Thanks");
 
-    private int id;
-    private String nameZh;
-    private String nameEn;
+    @Getter
+    private final int id;
+    @Getter
+    private final String nameZh;
+    @Getter
+    private final String nameEn;
 
-    ArtistType(int id, String nameZh, String nameEn) {
-        this.id = id;
-        this.nameZh = nameZh;
-        this.nameEn = nameEn;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNameZh() {
-        return nameZh;
-    }
-
-    public void setNameZh(String nameZh) {
-        this.nameZh = nameZh;
-    }
-
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
 }

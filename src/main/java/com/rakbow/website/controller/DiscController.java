@@ -9,11 +9,15 @@ import com.rakbow.website.data.common.EntityType;
 import com.rakbow.website.data.common.SearchResult;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.service.*;
+import com.rakbow.website.service.DiscService;
+import com.rakbow.website.service.FranchiseService;
+import com.rakbow.website.service.UserService;
+import com.rakbow.website.service.VisitService;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Project_name: website
@@ -55,6 +58,8 @@ public class DiscController {
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //endregion
 
@@ -64,7 +69,7 @@ public class DiscController {
     public ModelAndView getDiscListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         view.setViewName("/disc/disc-list");
         return view;
     }
@@ -82,7 +87,7 @@ public class DiscController {
         Disc disc = discService.getDisc(id);
 
         model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("disc", discService.disc2Json(disc));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -287,7 +292,7 @@ public class DiscController {
                 }
 
                 //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
                     String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
@@ -298,7 +303,7 @@ public class DiscController {
 
                     res.message = discService.updateDiscImages(id, images.toJSONString());
                 }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = discService.deleteDiscImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);

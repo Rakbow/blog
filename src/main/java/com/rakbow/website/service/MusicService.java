@@ -48,7 +48,7 @@ public class MusicService {
      * @param id 音乐id
      * @return music
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Music getMusicById(int id) {
         return musicMapper.getMusicById(id);
     }
@@ -58,7 +58,7 @@ public class MusicService {
      * @author rakbow
      * @return list
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<Music> getAll() {
         return musicMapper.getAll();
     }
@@ -69,12 +69,12 @@ public class MusicService {
      * @param albumId 专辑id
      * @return list
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<Music> getMusicsByAlbumId(int albumId) {
         return musicMapper.getMusicsByAlbumId(albumId);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public int getMusicRows() {
         return musicMapper.getMusicRows();
     }
@@ -84,7 +84,7 @@ public class MusicService {
      * @param music
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMusic(Music music) throws Exception {
         try {
             musicMapper.addMusic(music);
@@ -102,7 +102,7 @@ public class MusicService {
      * @author rakbow
      * @param albumJson
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMusicsFromAlbum(JSONObject albumJson){
 
         int albumId = albumJson.getInteger("id");
@@ -143,7 +143,7 @@ public class MusicService {
      * @param id,music music的id和music
      * @return apiInfo
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusic(int id, Music music) throws Exception {
         try {
             musicMapper.updateMusic(id, music);
@@ -153,7 +153,7 @@ public class MusicService {
         }
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteMusicById(int id) throws Exception {
         try {
             musicMapper.deleteMusicById(id);
@@ -168,7 +168,7 @@ public class MusicService {
      * @author rakbow
      * @param albumId 专辑id
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteMusicByAlbumId(int albumId) throws Exception {
         try {
             musicMapper.deleteMusicByAlbumId(albumId);
@@ -182,7 +182,7 @@ public class MusicService {
      * @author rakbow
      * @param id 音乐id
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateStatusById(int id) throws Exception {
         try {
             musicMapper.updateStatusById(id);
@@ -197,7 +197,6 @@ public class MusicService {
      * @param music 音乐
      * @return JSONObject
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public JSONObject music2Json(Music music) {
         JSONObject musicJson = (JSONObject) JSON.toJSON(music);
 
@@ -228,7 +227,6 @@ public class MusicService {
      * @param music 音乐
      * @return JSONObject
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public JSONObject music2JsonSimple(Music music) {
         JSONObject musicJson = new JSONObject();
 
@@ -275,7 +273,6 @@ public class MusicService {
      * @param musicJson
      * @return music
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
     public Music json2Music(@RequestBody JSONObject musicJson) {
         return musicJson.toJavaObject(Music.class);
     }
@@ -286,7 +283,7 @@ public class MusicService {
      * @param id 音乐id
      * @return list
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<JSONObject> getRelatedMusics(int id) {
         List<JSONObject> relatedMusics = new ArrayList<>();
 
@@ -312,7 +309,7 @@ public class MusicService {
      * @param id 音乐id
      * @param artists 创作人员信息
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMusicArtists(int id, String artists) {
         musicMapper.updateMusicArtists(id, artists, new Timestamp(System.currentTimeMillis()));
     }
@@ -323,7 +320,7 @@ public class MusicService {
      * @param id 音乐id
      * @param lrcText 歌词文本
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMusicLyricsText(int id, String lrcText) {
         musicMapper.updateMusicLyricsText(id, lrcText, new Timestamp(System.currentTimeMillis()));
     }
@@ -334,7 +331,7 @@ public class MusicService {
      * @param id 音乐id
      * @param description 描述信息
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMusicDescription(int id, String description) {
         musicMapper.updateMusicDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
@@ -345,7 +342,7 @@ public class MusicService {
      * @param id 音乐id
      * @param coverUrl 封面url
      * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMusicCoverUrl(int id, String coverUrl) {
         musicMapper.updateMusicCoverUrl(id, coverUrl);
     }

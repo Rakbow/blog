@@ -9,6 +9,8 @@ import com.rakbow.website.data.product.ProductCategory;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.util.common.CommonConstant;
+import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,7 @@ import java.util.List;
 public class ProductUtils {
 
     @Autowired
-    private ProductService productService;
+    private RedisUtil redisUtil;
 
     /**
      * 获取作品分类数组
@@ -75,16 +77,19 @@ public class ProductUtils {
      * @author rakbow
      */
     public List<JSONObject> getProductList (String productJson) {
+
+        List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get("products");
+
         List<JSONObject> products = new ArrayList<>();
+
         JSONObject.parseObject(productJson).getList("ids", Integer.class)
                 .forEach(id -> {
-                    JSONObject jo = new JSONObject();
-                    Product product = productService.getProduct(id);
-                    jo.put("value", id);
-                    jo.put("label", product.getNameZh() + "(" +
-                            ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
-                    products.add(jo);
+                    JSONObject product = DataFinder.findJsonByIdInSet(id, allProducts);
+                    if (product != null) {
+                        products.add(product);
+                    }
                 });
+
         return products;
     }
 

@@ -14,6 +14,7 @@ import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,8 @@ public class MerchController {
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //endregion
 
@@ -65,7 +68,7 @@ public class MerchController {
     public ModelAndView getMerchListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         view.setViewName("/merch/merch-list");
         return view;
     }
@@ -83,7 +86,7 @@ public class MerchController {
         Merch merch = merchService.getMerch(id);
 
         model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("franchiseSet", franchiseService.getAllFranchiseSet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
         model.addAttribute("merch", merchService.merch2Json(merch));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
@@ -287,7 +290,7 @@ public class MerchController {
                 }
 
                 //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.id) {
+                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
                     String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
@@ -298,7 +301,7 @@ public class MerchController {
 
                     res.message = merchService.updateMerchImages(id, images.toJSONString());
                 }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.id) {
+                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = merchService.deleteMerchImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);

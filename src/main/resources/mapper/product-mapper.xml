@@ -18,7 +18,14 @@
         select
         <include refid="selectFields"></include>
         from product
-        where id = #{id}
+        where id = #{id} and _s = 1
+    </select>
+
+    <select id="getAll" resultType="Product">
+        select
+        <include refid="selectFields"></include>
+        from product
+        where _s = 1
     </select>
 
     <insert id="addProduct" parameterType="Product" keyProperty="id">

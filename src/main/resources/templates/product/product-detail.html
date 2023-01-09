@@ -990,7 +990,6 @@
                             closeEditDialog();
                             location.reload(true);
                         } else {
-                            console.log(res);
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(e => {
