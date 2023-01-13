@@ -1,15 +1,14 @@
 package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.MediaFormat;
-import com.rakbow.website.data.album.AlbumFormat;
-import com.rakbow.website.data.album.PublishFormat;
-import com.rakbow.website.data.book.BookType;
-import com.rakbow.website.data.common.Language;
-import com.rakbow.website.data.common.Region;
-import com.rakbow.website.data.game.GamePlatform;
-import com.rakbow.website.data.game.ReleaseType;
-import com.rakbow.website.data.merch.MerchCategory;
+import com.rakbow.website.data.emun.MediaFormat;
+import com.rakbow.website.data.emun.album.AlbumFormat;
+import com.rakbow.website.data.emun.album.PublishFormat;
+import com.rakbow.website.data.emun.book.BookType;
+import com.rakbow.website.data.emun.common.Language;
+import com.rakbow.website.data.emun.common.Region;
+import com.rakbow.website.data.emun.game.GamePlatform;
+import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
@@ -39,14 +38,6 @@ import java.util.List;
 public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final List<JSONObject> albumFormatSet = AlbumFormat.getAlbumFormatSet();
-    private static final List<JSONObject> mediaFormatSet = MediaFormat.getMediaFormatSet();
-    private static final List<JSONObject> publishFormatSet = PublishFormat.getPublishFormatSet();
-    private static final List<JSONObject> bookTypeSet = BookType.getBookTypeSet();
-    private static final List<JSONObject> merchCategorySet = MerchCategory.getMerchCategorySet();
-    private static final List<JSONObject> regionSet = Region.getRegionSet();
-    private static final List<JSONObject> languageSet = Language.getLanguageSet();
-    private static final List<JSONObject> gamePlatformSet = GamePlatform.getGamePlatformSet();
 
     //region ------引入实例------
 
@@ -97,10 +88,10 @@ public class HomeController {
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
         model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("albumFormatSet", albumFormatSet);
-        model.addAttribute("publishFormatSet", publishFormatSet);
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
+        model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
         return "/album/album-index";
     }
 
@@ -110,10 +101,10 @@ public class HomeController {
         model.addAttribute("justAddedBooks", bookService.getJustAddedBooks(5));
         model.addAttribute("justEditedBooks", bookService.getJustEditedBooks(5));
         model.addAttribute("popularBooks", bookService.getPopularBooks(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("bookTypeSet", bookTypeSet);
-        model.addAttribute("regionSet", regionSet);
-        model.addAttribute("languageSet", languageSet);
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
+        model.addAttribute("languageSet", redisUtil.get("languageSet"));
         return "/book/book-index";
     }
 
@@ -123,8 +114,8 @@ public class HomeController {
         model.addAttribute("justAddedDiscs", discService.getJustAddedDiscs(5));
         model.addAttribute("justEditedDiscs", discService.getJustEditedDiscs(5));
         model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("mediaFormatSet", mediaFormatSet);
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
         return "/disc/disc-index";
     }
 
@@ -134,8 +125,8 @@ public class HomeController {
         model.addAttribute("justAddedMerchs", merchService.getJustAddedMerchs(5));
         model.addAttribute("justEditedMerchs", merchService.getJustEditedMerchs(5));
         model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("merchCategorySet", merchCategorySet);
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
         return "/merch/merch-index";
     }
 
@@ -145,9 +136,9 @@ public class HomeController {
         model.addAttribute("justAddedGames", gameService.getJustAddedGames(5));
         model.addAttribute("justEditedGames", gameService.getJustEditedGames(5));
         model.addAttribute("popularGames", gameService.getPopularGames(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("regionSet", regionSet);
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
         return "/game/game-index";
     }
 

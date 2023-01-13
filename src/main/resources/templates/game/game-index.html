@@ -194,11 +194,11 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">游戏名</label>
+                                <label>游戏名</label>
                                 <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="hasBonus">是否包含特典</label>
+                                <label>是否包含特典</label>
                                 <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
@@ -227,7 +227,7 @@
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="region">区域</label>
+                                <label>区域</label>
                                 <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
                                             :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
                                     <template #value="slotProps">

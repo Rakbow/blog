@@ -43,6 +43,7 @@
     <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
@@ -114,16 +115,28 @@
                                         <template #content>
                                             <div class="grid mt-0 mb-0">
                                                 <div class="col-10 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.albumFormat.join("/")}}</span>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item mr-1"
+                                                            v-for="format of slotProps.data.albumFormat">
+                                                            <p-tag class="product-tag" :value="format.label"></p-tag>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                                 <div class="col-2 px-0 py-0" v-if="slotProps.data.hasBonus">
                                                     <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                        v-tooltip="'包含特典'"></i>
                                                 </div>
                                                 <div class="col-12 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.publishFormat.join("/")}}</span>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item" v-for="format of slotProps.data.publishFormat">
+                                                            {{format.label}}
+                                                        </li>
+                                                    </ul>
+<!--                                                    <span class="ml-2 text-end" style="color: white">-->
+<!--                                                        <div v-for="format in slotProps.data.publishFormat">-->
+<!--                                                            {{format.label}}-->
+<!--                                                        </div>-->
+<!--                                                    </span>-->
                                                 </div>
                                             </div>
                                         </template>
@@ -154,7 +167,11 @@
                                         <span class="small-font" style="margin: 0 0 .5rem 0;">
                                             <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
                                         </span>
-                                        <span class="ml-2 text-end">{{slotProps.data.albumFormat.join(" / ")}}</span>
+                                        <span class="ml-2">
+                                            <div v-for="format of slotProps.data.albumFormat" style="display:inline">
+                                                <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                                            </div>
+                                        </span>
                                         <br/>
                                         <div v-for="franchise in slotProps.data.franchises">
                                             <a :href="'/db/franchise/' + franchise.value">
@@ -162,7 +179,7 @@
                                                 <span class="product-category">{{franchise.label}}</span>
                                             </a>
                                         </div>
-                                        <span class="col-2" v-if="slotProps.data.hasBonus == 1">
+                                        <span class="col-2" v-if="slotProps.data.hasBonus">
                                             <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                v-tooltip="'包含特典'"></i>
                                         </span>
@@ -271,7 +288,7 @@
                                      v-for="addAlbum of justAddedAlbums">
                                     <div class="col-3 sidebar-panel-image-small-div mt-2">
                                         <a :href="'/db/album/'+ addAlbum.id ">
-                                            <img class="sidebar-panel-image-small" :src="addAlbum.cover.thumbUrl"
+                                            <img class="sidebar-panel-image-small" :src="addAlbum.cover.url"
                                                  v-tooltip.bottom="{value: '收录时间: ' + addAlbum.addedTime + '编辑时间: ' + addAlbum.editedTime, class: 'item-upload-time-tooltip'}">
                                         </a>
                                     </div>
@@ -311,7 +328,7 @@
                                          v-for="editAlbum of justEditedAlbums">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/album/'+ editAlbum.id ">
-                                                <img class="sidebar-panel-image-small" :src="editAlbum.cover.thumbUrl"
+                                                <img class="sidebar-panel-image-small" :src="editAlbum.cover.url"
                                                      v-tooltip.bottom="{value: '收录时间: ' + editAlbum.addedTime + '编辑时间: ' + editAlbum.editedTime, class: 'item-upload-time-tooltip'}">
                                             </a>
                                         </div>
@@ -573,7 +590,8 @@
             "p-inputtext": primevue.inputtext,
             "p-badge": primevue.badge,
             "p-multiselect": primevue.multiselect,
-            "p-toast": primevue.toast
+            "p-toast": primevue.toast,
+            "p-chip": primevue.chip,
         }
     };
 

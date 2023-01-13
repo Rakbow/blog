@@ -6,7 +6,7 @@ import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

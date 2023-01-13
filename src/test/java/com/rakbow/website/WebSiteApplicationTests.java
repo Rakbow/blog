@@ -1,13 +1,11 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.dao.MusicMapper;
-import com.rakbow.website.data.game.GameVo;
-import com.rakbow.website.data.game.GameVoMapper;
+import com.rakbow.website.data.vo.album.AlbumVO;
+import com.rakbow.website.util.convertMapper.AlbumVOMapper;
+//import com.rakbow.website.util.convertMapper.GameVoMapper;
 import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Franchise;
-import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.BookUtils;
@@ -18,11 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 class WebSiteApplicationTests {
@@ -43,6 +38,8 @@ class WebSiteApplicationTests {
     private FranchiseService franchiseService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CommonService commonService;
     @Autowired
     private RedisUtil redisUtil;
     @Value("${website.path.img}")
@@ -151,12 +148,41 @@ class WebSiteApplicationTests {
     public void redisTest() {
 
        productService.refreshRedisProducts();
-
+//
        franchiseService.refreshRedisFranchises();
-       //
-       //  System.out.println(redisUtil.getExpire("franchises"));
-       //  System.out.println(redisUtil.getExpire("products"));
+
+//        commonService.refreshRedisEmunData();
 
     }
+
+    @Test
+    public void mapStructTest () {
+
+//        List<Album> albums = albumMapper.getAlbumsByFilter(null, null, null, null,
+//                null, null, null, null,
+//                null, -1, 0, 10);
+
+        Album album = albumService.getAlbumById(11);
+
+        Timestamp t1 = new Timestamp(System.currentTimeMillis());
+
+
+
+//        List<JSONObject> albumJsons = albumService.album2JsonList(albums);
+
+        Timestamp t2 = new Timestamp(System.currentTimeMillis());
+        System.out.println(t2.getTime() - t1.getTime());
+
+        Timestamp t3 = new Timestamp(System.currentTimeMillis());
+
+        AlbumVO albumVo = AlbumVOMapper.INSTANCES.album2VO(album);
+
+//        List<AlbumVoList> albumVoLists = AlbumVoMapper.INSTANCES.album2VoLists(albums);
+
+        Timestamp t4 = new Timestamp(System.currentTimeMillis());
+
+        System.out.println(t4.getTime() - t3.getTime());
+    }
+
 
 }

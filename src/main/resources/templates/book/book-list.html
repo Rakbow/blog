@@ -265,35 +265,35 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
+                            <label>ISBN-10<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="book.isbn10"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
+                            <label>ISBN-13<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="book.isbn13"></p-inputtext>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="title">书名<span style="color: red">*</span></label>
+                        <label>书名<span style="color: red">*</span></label>
                         <p-inputtext v-model.trim="book.title"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleZh">书名(中)</label>
+                        <label>书名(中)</label>
                         <p-inputtext v-model.trim="book.titleZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleEn">书名(英)</label>
+                        <label>书名(英)</label>
                         <p-inputtext v-model.trim="book.titleEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
+                            <label class="mb-3">图书分类<span style="color: red">*</span></label>
                             <p-dropdown v-model="book.bookType" :options="bookTypeSet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
+                            <label class="mb-3">地区<span style="color: red">*</span></label>
                             <p-dropdown v-model="book.region" :options="regionSet" :filter="true"
                                         :show-clear="true" option-label="nameZh" option-value="code">
                                 <template #value="slotProps">
@@ -312,7 +312,7 @@
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
+                            <label class="mb-3">语言<span style="color: red">*</span></label>
                             <p-dropdown v-model="book.publishLanguage" :options="languageSet"
                                         option-label="nameZh" option-value="code">
                             </p-dropdown>
@@ -335,7 +335,7 @@
                         </div>
                         <div class="field col-2">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                                <label class="mb-3">包含特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="book.hasBonus" :true-value="1"
@@ -345,27 +345,27 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="book.publishDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="price">发行价格</label>
+                            <label>发行价格</label>
                             <p-inputnumber v-model="book.price"></p-inputnumber>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publisher">出版社</label>
+                            <label>出版社</label>
                             <p-inputtext v-model.trim="book.publisher"></p-inputtext>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="summary">简介</label>
+                        <label>简介</label>
                         <p-textarea v-model="book.summary" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="book.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -402,35 +402,35 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
+                            <label>ISBN-10<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
+                            <label>ISBN-13<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="title">书名<span style="color: red">*</span></label>
+                        <label>书名<span style="color: red">*</span></label>
                         <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleZh">书名(中)</label>
+                        <label>书名(中)</label>
                         <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleEn">书名(英)</label>
+                        <label>书名(英)</label>
                         <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
+                            <label class="mb-3">图书分类<span style="color: red">*</span></label>
                             <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
+                            <label class="mb-3">地区<span style="color: red">*</span></label>
                             <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
                                         :show-clear="true" option-label="nameZh" option-value="code">
                                 <template #value="slotProps">
@@ -449,7 +449,7 @@
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
+                            <label class="mb-3">语言<span style="color: red">*</span></label>
                             <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
                                         option-label="nameZh" option-value="code">
                             </p-dropdown>
@@ -472,7 +472,7 @@
                         </div>
                         <div class="field col-2">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                                <label class="mb-3">包含特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
@@ -482,7 +482,7 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>

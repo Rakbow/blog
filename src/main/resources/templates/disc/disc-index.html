@@ -112,14 +112,18 @@
                                         <template #content>
                                             <div class="grid mt-0 mb-0">
                                                 <div class="col-8 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.mediaFormat.join("/")}}</span>
+                                                    <ul class="list-inline">
+                                                        <li class="list-inline-item mr-1"
+                                                            v-for="format of slotProps.data.mediaFormat">
+                                                            <p-tag class="product-tag" :value="format.label"></p-tag>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                                 <div class="col-2 px-0 py-0" v-if="slotProps.data.hasBonus">
                                                     <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
                                                        v-tooltip="'包含特典'"></i>
                                                 </div>
-                                                <div class="col-2 px-0 py-0" v-if="slotProps.data.isLimited">
+                                                <div class="col-2 px-0 py-0" v-if="slotProps.data.limited">
                                                     <i class="pi pi-check-circle" style="font-size: 1.3rem"
                                                        v-tooltip="'限定版'"></i>
                                                 </div>
@@ -152,7 +156,15 @@
                                         <span class="small-font" style="margin: 0 0 .5rem 0;">
                                             <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
                                         </span>
-                                        <span class="ml-2 text-end">{{slotProps.data.mediaFormat.join("/")}}</span>
+                                        <span class="col-2" v-if="slotProps.data.hasBonus == 1">
+                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
+                                               v-tooltip="'包含特典'"></i>
+                                        </span>
+                                        <span class="ml-2">
+                                            <div v-for="format of slotProps.data.mediaFormat" style="display:inline">
+                                                <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                                            </div>
+                                        </span>
                                         <br/>
                                         <div v-for="franchise in slotProps.data.franchises">
                                             <a :href="'/db/franchise/' + franchise.value">
@@ -160,11 +172,7 @@
                                                 <span class="product-category">{{franchise.label}}</span>
                                             </a>
                                         </div>
-                                        <span class="col-2" v-if="slotProps.data.hasBonus == 1">
-                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
-                                               v-tooltip="'包含特典'"></i>
-                                        </span>
-                                        <span class="col-2" v-if="slotProps.data.isLimited == 1">
+                                        <span class="col-2" v-if="slotProps.data.limited == 1">
                                             <i class="pi pi-check-circle" style="font-size: 1.3rem"
                                                v-tooltip="'限定版'"></i>
                                         </span>
@@ -191,15 +199,15 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-12 sm:col-12">
-                                <label htmlFor="name">名称</label>
+                                <label>名称</label>
                                 <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="catalogNo">编号</label>
+                                <label>编号</label>
                                 <p-inputtext v-model.trim="queryParams.filters.catalogNo.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">媒体介质</label>
+                                <label>媒体介质</label>
                                 <p-multiselect id="mediaFormat" v-model="queryParams.filters.mediaFormat.value" :options="mediaFormatSet"
                                                option-label="label" option-value="value" placeholder="选择媒体类型"
                                                display="chip">
@@ -220,15 +228,15 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="hasBonus">含特典</label>
+                                <label>含特典</label>
                                 <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="isLimited">限定版</label>
-                                <p-dropdown v-model="queryParams.filters.isLimited.value" :options="isLimitedSet"
+                                <label>限定版</label>
+                                <p-dropdown v-model="queryParams.filters.limited.value" :options="limited"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
@@ -454,7 +462,7 @@
                     mediaFormat: {value: null},
                     franchises: {value: null},
                     products: {value: null},
-                    isLimited: {value: null},
+                    limited: {value: null},
                     hasBonus: {value: null},
                 }
             });
@@ -470,7 +478,7 @@
                         mediaFormat: {value: null},
                         franchises: {value: null},
                         products: {value: null},
-                        isLimited: {value: null},
+                        limited: {value: null},
                         hasBonus: {value: null},
                     }
                 };
@@ -581,6 +589,10 @@
 </script>
 <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 <style>
+    ul li{
+        list-style: none;
+        display: inline;
+    }
 </style>
 </body>
 </html>

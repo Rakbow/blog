@@ -5,18 +5,18 @@
 <mapper namespace="com.rakbow.website.dao.FranchiseMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, release_date, added_time, edited_time, description, remark, images
+        id, name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, release_date, added_time, edited_time, description, remark, images
+        name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, _s
     </sql>
 
     <select id="getFranchise" resultType="Franchise">
         select
         <include refid="selectFields"></include>
         from franchise
-        where id = #{id}
+        where id = #{id} and _s = 1
     </select>
 
     <select id="getAll" resultType="Franchise">
@@ -27,14 +27,16 @@
 
     <insert id="addFranchise" parameterType="Franchise" keyProperty="id">
         insert into franchise (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images})
+        values (#{name}, #{nameZh}, #{nameEn}, #{originDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images}, #{_s})
     </insert>
 
     <update id="updateFranchise" parameterType="Franchise" keyProperty="id">
         update franchise
         set
-        name = #{name}, name_zh = #{nameZh}, name_en = #{nameEn}, release_date = #{releaseDate},
-        added_time = #{addedTime}, edited_time = #{editedTime}, description = #{description}, remark = #{remark}, images = #{images}
+        name = #{franchise.name}, name_zh = #{franchise.nameZh}, name_en = #{franchise.nameEn},
+         origin_date = #{franchise.originDate}, added_time = #{franchise.addedTime},
+         edited_time = #{franchise.editedTime}, description = #{franchise.description}, remark = #{franchise.remark},
+          images = #{franchise.images}, _s = #{franchise._s}
         where id = #{id}
     </update>
 

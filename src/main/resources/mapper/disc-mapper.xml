@@ -6,12 +6,12 @@
 
     <sql id="selectFields">
         id, catalog_no, name, name_zh, name_en, barcode, franchises, products, release_date, price, media_format,
-        is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         catalog_no, name, name_zh, name_en, barcode, franchises, products, release_date, price, media_format,
-        is_limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="getDisc" resultType="Disc">
@@ -27,7 +27,7 @@
         </selectKey>
         insert into disc (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{productId}, #{releaseDate},
-        #{price}, #{mediaFormat}, #{isLimited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
+        #{price}, #{mediaFormat}, #{limited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
         #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
@@ -37,7 +37,7 @@
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
         barcode = #{disc.barcode}, franchises = #{disc.franchises}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
-        is_limited = #{disc.isLimited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
+        limited = #{disc.limited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
         edited_time = #{disc.editedTime}, _s = #{disc._s}
         where id = #{disc.id}
     </update>
@@ -112,8 +112,8 @@
                     and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
                 </foreach>
             </if>
-            <if test="isLimited != null and isLimited != '' ">
-                and is_limited = #{isLimited}
+            <if test="limited != null and limited != '' ">
+                and limited = #{limited}
             </if>
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
@@ -180,8 +180,8 @@
                     and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
                 </foreach>
             </if>
-            <if test="isLimited != null and isLimited != '' ">
-                and is_limited = #{isLimited}
+            <if test="limited != null and limited != '' ">
+                and limited = #{limited}
             </if>
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}

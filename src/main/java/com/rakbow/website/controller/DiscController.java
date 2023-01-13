@@ -3,10 +3,11 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.MediaFormat;
-import com.rakbow.website.data.common.DataActionType;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.SearchResult;
+import com.rakbow.website.data.emun.MediaFormat;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.DiscService;
@@ -17,6 +18,7 @@ import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +48,6 @@ public class DiscController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final List<JSONObject> mediaFormatSet = MediaFormat.getMediaFormatSet();
 
     @Autowired
     private DiscService discService;
@@ -60,6 +61,8 @@ public class DiscController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
     //endregion
 
@@ -68,8 +71,8 @@ public class DiscController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getDiscListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         view.setViewName("/disc/disc-list");
         return view;
     }
@@ -86,9 +89,9 @@ public class DiscController {
 
         Disc disc = discService.getDisc(id);
 
-        model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("disc", discService.disc2Json(disc));
+        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("disc", discVOMapper.disc2VO(disc));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.DISC.getId(), id).getVisitNum());
@@ -110,15 +113,15 @@ public class DiscController {
         JSONObject queryParams = param.getJSONObject("queryParams");
         String pageLabel = param.getString("pageLabel");
 
-        List<JSONObject> discs = new ArrayList<>();
+        List<DiscVOAlpha> discs = new ArrayList<>();
 
         SearchResult searchResult = discService.getDiscsByFilterList(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            discs = discService.disc2JsonList((List<Disc>) searchResult.data);
+            discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            discs = discService.disc2JsonIndex((List<Disc>) searchResult.data);
+            discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();

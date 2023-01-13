@@ -186,7 +186,7 @@
                     <template #body="slotProps">
                         <ul class="px-4">
                             <li v-for="data in slotProps.data.mediaFormat">
-                                {{data}}
+                                {{data.label}}
                             </li>
                         </ul>
                     </template>
@@ -197,10 +197,10 @@
                         </p-multiselect>
                     </template>
                 </p-column>
-                <p-column header="限定版" field="isLimited" data-type="boolean" body-class="text-center"
+                <p-column header="限定版" field="limited" data-type="boolean" body-class="text-center"
                           style="flex: 0 0 5rem">
                     <template #body="{data}">
-                        <i class="pi" :class="{'true-icon pi-check-circle': data.isLimited, 'false-icon pi-times-circle': !data.isLimited}"></i>
+                        <i class="pi" :class="{'true-icon pi-check-circle': data.limited, 'false-icon pi-times-circle': !data.limited}"></i>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
@@ -224,32 +224,32 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="catalogNo">碟片编号</label>
+                            <label>碟片编号</label>
                             <p-inputtext v-model.trim="disc.catalogNo"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext v-model.trim="disc.barcode"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                            <label>商品名<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="disc.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">商品名(中)</label>
+                            <label>商品名(中)</label>
                             <p-inputtext v-model.trim="disc.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-6">
-                            <label htmlFor="nameEn">商品名(英)</label>
+                            <label>商品名(英)</label>
                             <p-inputtext v-model.trim="disc.nameEn"></p-inputtext>
                         </div>
                         <div class="field col-3">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                                <label class="mb-3">包含特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="disc.hasBonus" :true-value="1"
@@ -258,10 +258,10 @@
                         </div>
                         <div class="field col-3">
                             <div class="col-12">
-                                <label htmlFor="isLimited" class="mb-3">限定版</label>
+                                <label class="mb-3">限定版</label>
                             </div>
                             <div class="col-12 mt-2">
-                                <p-inputswitch v-model="disc.isLimited" :true-value="1"
+                                <p-inputswitch v-model="disc.limited" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>
                         </div>
@@ -282,7 +282,7 @@
                             </p-multiselect>
                         </div>
                         <div class="field col-4">
-                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
+                            <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect v-model="disc.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
                                            display="chip">
@@ -291,19 +291,19 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="disc.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="price">发行价格(含税)</label>
+                            <label>发行价格(含税)</label>
                             <p-inputnumber v-model="disc.price" mode="currency"
                                            currency="JPY" locale="ja-JP"></p-inputnumber>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="disc.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -336,32 +336,32 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="catalogNo">碟片编号</label>
+                            <label>碟片编号</label>
                             <p-inputtext v-model.trim="discEdit.catalogNo"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext v-model.trim="discEdit.barcode"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                            <label>商品名<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="discEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">商品名(中)</label>
+                            <label>商品名(中)</label>
                             <p-inputtext v-model.trim="discEdit.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-6">
-                            <label htmlFor="nameEn">商品名(英)</label>
+                            <label>商品名(英)</label>
                             <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
                         </div>
                         <div class="field col-3">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                                <label class="mb-3">包含特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
@@ -370,10 +370,10 @@
                         </div>
                         <div class="field col-3">
                             <div class="col-12">
-                                <label htmlFor="isLimited" class="mb-3">限定版</label>
+                                <label class="mb-3">限定版</label>
                             </div>
                             <div class="col-12 mt-2">
-                                <p-inputswitch v-model="discEdit.isLimited" :true-value="1"
+                                <p-inputswitch v-model="discEdit.limited" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>
                         </div>
@@ -394,7 +394,7 @@
                             </p-multiselect>
                         </div>
                         <div class="field col-4">
-                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
+                            <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect v-model="discEdit.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
                                            display="chip">
@@ -403,19 +403,19 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="discEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="price">发行价格(含税)</label>
+                            <label>发行价格(含税)</label>
                             <p-inputnumber v-model="discEdit.price" mode="currency"
                                            currency="JPY" locale="ja-JP"></p-inputnumber>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="discEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -499,7 +499,7 @@
                 'franchises': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
                 'mediaFormat': {value: null, matchMode: FilterMatchMode.IN},
-                'isLimited': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'limited': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
@@ -622,9 +622,9 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             discEdit.value = dataTmp;
-                            discEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                             discEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
-                            discEdit.value.isLimited = dataTmp.isLimited ? 1: 0;
+                            discEdit.value.limited = dataTmp.limited ? 1: 0;
                             discEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: discEdit.value.franchises,

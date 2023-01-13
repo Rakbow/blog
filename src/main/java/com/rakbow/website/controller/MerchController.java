@@ -3,10 +3,12 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.common.DataActionType;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.SearchResult;
-import com.rakbow.website.data.merch.MerchCategory;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.merch.MerchCategory;
+import com.rakbow.website.data.vo.merch.MerchVO;
+import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -14,6 +16,7 @@ import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Project_name: website
@@ -45,7 +47,6 @@ public class MerchController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final List<JSONObject> merchCategorySet = MerchCategory.getMerchCategorySet();
 
     @Autowired
     private MerchService merchService;
@@ -59,6 +60,8 @@ public class MerchController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
     //endregion
 
@@ -67,8 +70,8 @@ public class MerchController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getMerchListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         view.setViewName("/merch/merch-list");
         return view;
     }
@@ -85,9 +88,10 @@ public class MerchController {
 
         Merch merch = merchService.getMerch(id);
 
-        model.addAttribute("merchCategorySet", merchCategorySet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("merch", merchService.merch2Json(merch));
+        model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("merch", merchVOMapper.merch2VO(merch));
+        MerchVO merchVO = merchVOMapper.merch2VO(merch);
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.MERCH.getId(), id).getVisitNum());
@@ -215,15 +219,15 @@ public class MerchController {
         JSONObject queryParams = param.getJSONObject("queryParams");
         String pageLabel = param.getString("pageLabel");
 
-        List<JSONObject> merchs = new ArrayList<>();
+        List<MerchVOAlpha> merchs = new ArrayList<>();
 
         SearchResult searchResult = merchService.getMerchsByFilterList(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            merchs = merchService.merch2JsonList((List<Merch>) searchResult.data);
+            merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            merchs = merchService.merch2JsonIndex((List<Merch>) searchResult.data);
+            merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();

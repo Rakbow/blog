@@ -25,7 +25,7 @@ public class Disc {
     private Date releaseDate;//发行日期
     private int price;//发行价格
     private String mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
-    private int isLimited;//发售版本是否为限定版 0-否 1-是
+    private int limited;//发售版本是否为限定版 0-否 1-是
     private String spec;//商品规格
     private int hasBonus;//是否包含特典
     private String bonus;//特典信息
@@ -48,7 +48,7 @@ public class Disc {
         releaseDate = null;
         price = 0;
         mediaFormat = "{\"ids\":[]}";
-        isLimited = 0;
+        limited = 0;
         spec = "";
         hasBonus = 0;
         bonus = "";

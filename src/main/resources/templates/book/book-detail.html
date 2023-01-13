@@ -496,35 +496,35 @@
                           :style="{width: '600px'}" :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="isbn10">ISBN-10<span style="color: red">*</span></label>
+                            <label>ISBN-10<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="isbn13">ISBN-13<span style="color: red">*</span></label>
+                            <label>ISBN-13<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="title">书名<span style="color: red">*</span></label>
+                        <label>书名<span style="color: red">*</span></label>
                         <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleZh">书名(中)</label>
+                        <label>书名(中)</label>
                         <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="titleEn">书名(英)</label>
+                        <label>书名(英)</label>
                         <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="bookType" class="mb-3">图书分类<span style="color: red">*</span></label>
+                            <label class="mb-3">图书分类<span style="color: red">*</span></label>
                             <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="region" class="mb-3">地区<span style="color: red">*</span></label>
+                            <label class="mb-3">地区<span style="color: red">*</span></label>
                             <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
                                         :show-clear="true" option-label="nameZh" option-value="code">
                                 <template #value="slotProps">
@@ -543,7 +543,7 @@
                             </p-dropdown>
                         </div>
                         <div class="field col">
-                            <label htmlFor="publishLanguage" class="mb-3">语言<span style="color: red">*</span></label>
+                            <label class="mb-3">语言<span style="color: red">*</span></label>
                             <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
                                         option-label="nameZh" option-value="code">
                             </p-dropdown>

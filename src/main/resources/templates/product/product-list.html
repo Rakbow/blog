@@ -143,8 +143,8 @@
                 </p-column>
                 <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 16rem">
                     <template #body="slotProps">
-                        <a :href="'/db/franchise/' + slotProps.data.franchise.id">
-                            {{slotProps.data.franchise.nameZh}}
+                        <a :href="'/db/franchise/' + slotProps.data.franchise.value">
+                            {{slotProps.data.franchise.label}}
                         </a>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
@@ -384,7 +384,7 @@
             const openEditDialog = (data) => {
                 let dataTmp = JSON.parse(JSON.stringify(data));
                 productEdit.value = dataTmp;
-                productEdit.value.franchise = dataTmp.franchise.id;
+                productEdit.value.franchise = dataTmp.franchise.value;
                 productEdit.value.category = dataTmp.category.id;
                 displayEditDialog.value = true;
             };

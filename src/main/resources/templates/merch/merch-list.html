@@ -152,13 +152,13 @@
                 <p-column header="发售时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
                 <p-column header="发售价格" field="price" :sortable="true" style="flex: 0 0 7rem">
                     <template #body="slotProps">
-                        {{slotProps.data.releasePrice}} {{slotProps.data.priceUnit}}
+                        {{slotProps.data.price}} {{slotProps.data.priceUnit}}
                     </template>
                 </p-column>
-                <p-column header="是否非卖品" field="isNotForSale" data-type="boolean" body-class="text-center"
+                <p-column header="是否非卖品" field="notForSale" data-type="boolean" body-class="text-center"
                           style="flex: 0 0 7rem">
                     <template #body="{data}">
-                        <i class="pi" :class="{'true-icon pi-check-circle': data.isNotForSale, 'false-icon pi-times-circle': !data.isNotForSale}"></i>
+                        <i class="pi" :class="{'true-icon pi-check-circle': data.notForSale, 'false-icon pi-times-circle': !data.notForSale}"></i>
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
@@ -211,24 +211,24 @@
                       :style="{width: '600px'}" :modal="true" class="p-fluid">
                 <p-panel header="基础信息">
                     <div class="field">
-                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                        <label>商品名<span style="color: red">*</span></label>
                         <p-inputtext v-model.trim="merch.name"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="nameZh">商品名(中)</label>
+                        <label>商品名(中)</label>
                         <p-inputtext v-model.trim="merch.nameZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="nameEn">商品名(英)</label>
+                        <label>商品名(英)</label>
                         <p-inputtext v-model.trim="merch.nameEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext v-model.trim="merch.barcode"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="category">商品分类<span style="color: red">*</span></label>
+                            <label>商品分类<span style="color: red">*</span></label>
                             <p-dropdown v-model="merch.category" :options="merchCategorySet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
@@ -252,33 +252,33 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发售时间<span style="color: red">*</span></label>
+                            <label>发售时间<span style="color: red">*</span></label>
                             <p-calendar v-model="merch.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col-3">
-                            <label htmlFor="price">发售价格</label>
+                            <label>发售价格</label>
                             <p-inputnumber v-model="merch.price"></p-inputnumber>
                         </div>
                         <div class="field col-3">
-                            <label htmlFor="priceUnit">单位</label>
+                            <label>单位</label>
                             <p-dropdown v-model="merch.priceUnit" :options="priceUnitSet"
                                         option-label="label" option-value="value" placeholder="单位">
                             </p-dropdown>
                         </div>
                         <div class="field col-2">
                             <div class="col-12">
-                                <label htmlFor="isNotForSale" class="mb-3">非卖品</label>
+                                <label class="mb-3">非卖品</label>
                             </div>
                             <div class="col-12 mt-2">
-                                <p-inputswitch v-model="merch.isNotForSale" :true-value="1"
+                                <p-inputswitch v-model="merch.notForSale" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="merchEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -306,24 +306,24 @@
                       :style="{width: '600px'}" :modal="true" class="p-fluid">
                 <p-panel header="基础信息">
                     <div class="field">
-                        <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                        <label>商品名<span style="color: red">*</span></label>
                         <p-inputtext v-model.trim="merchEdit.name"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="nameZh">商品名(中)</label>
+                        <label>商品名(中)</label>
                         <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
                     </div>
                     <div class="field">
-                        <label htmlFor="nameEn">商品名(英)</label>
+                        <label>商品名(英)</label>
                         <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext v-model.trim="merchEdit.barcode"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="category">商品分类<span style="color: red">*</span></label>
+                            <label>商品分类<span style="color: red">*</span></label>
                             <p-dropdown v-model="merchEdit.category" :options="merchCategorySet"
                                         option-label="label" option-value="value">
                             </p-dropdown>
@@ -347,33 +347,33 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发售时间<span style="color: red">*</span></label>
+                            <label>发售时间<span style="color: red">*</span></label>
                             <p-calendar v-model="merchEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col-3">
-                            <label htmlFor="price">发售价格</label>
+                            <label>发售价格</label>
                             <p-inputnumber v-model="merchEdit.price"></p-inputnumber>
                         </div>
                         <div class="field col-3">
-                            <label htmlFor="priceUnit">单位</label>
+                            <label>单位</label>
                             <p-dropdown v-model="merchEdit.priceUnit" :options="priceUnitSet"
                                         option-label="label" option-value="value" placeholder="单位">
                             </p-dropdown>
                         </div>
                         <div class="field col-2">
                             <div class="col-12">
-                                <label htmlFor="isNotForSale" class="mb-3">非卖品</label>
+                                <label class="mb-3">非卖品</label>
                             </div>
                             <div class="col-12 mt-2">
-                                <p-inputswitch v-model="merchEdit.isNotForSale" :true-value="1"
+                                <p-inputswitch v-model="merchEdit.notForSale" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="merchEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -453,7 +453,7 @@
                 'category': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'franchises': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
-                'isNotForSale': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'notForSale': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
                 queryParams.value = event;
@@ -570,7 +570,7 @@
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             merchEdit.value = dataTmp;
                             merchEdit.value.category = dataTmp.category.id;
-                            merchEdit.value.isNotForSale = dataTmp.isNotForSale ? 1: 0;
+                            merchEdit.value.notForSale = dataTmp.notForSale ? 1: 0;
                             merchEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: merchEdit.value.franchises,

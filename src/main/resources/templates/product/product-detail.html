@@ -48,6 +48,7 @@
     <script th:src="@{/js/primevue/components/timeline.min.js}"></script>
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/chips.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
@@ -113,13 +114,13 @@
                                 <tr>
                                     <td><strong>所属系列</strong></td>
                                     <td>
-                                        {{product.franchise.name}}
+                                        {{product.franchise.label}}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><strong>作品分类</strong></td>
                                     <td>
-                                        {{product.classification.nameZh}}
+                                        {{product.category.nameZh}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -174,9 +175,13 @@
                                     <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
                                 </template>
                                 <template #content="slotProps">
-                                    <a :href="'/db/album/' + slotProps.item.id"><em>{{slotProps.item.nameJp}}</em></a>&nbsp;
-                                    <small><b>{{slotProps.item.catalogNo}}</b>&nbsp;
-                                        {{slotProps.item.albumFormat.join(", ")}}</small>
+                                    <a :href="'/db/album/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a>&nbsp;
+                                    <small>
+                                        <b>{{slotProps.item.catalogNo}}</b>&nbsp
+                                        <span v-for="format in slotProps.item.albumFormat" style="display:inline;">
+                                            <p-tag class="ml-1" :value="format.label"></p-tag>
+                                        </span>
+                                    </small>
                                 </template>
                             </p-timeline>
                         </div>
@@ -216,7 +221,12 @@
                                 </template>
                                 <template #content="slotProps">
                                     <a :href="'/db/disc/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a>&nbsp;
-                                    <small><b>{{slotProps.item.catalogNo}}</b>&nbsp;({{slotProps.item.mediaFormat.join("/")}})</small>
+                                    <small>
+                                        <b>{{slotProps.item.catalogNo}}</b>&nbsp;
+                                        <span v-for="format in slotProps.item.mediaFormat" style="display:inline;">
+                                            <p-tag class="ml-1" :value="format.label"></p-tag>
+                                        </span>
+                                    </small>
                                 </template>
                             </p-timeline>
                         </div>
@@ -281,14 +291,14 @@
                                     <div class="info_bit_small small_font ml-0 grid"
                                          v-if="relatedProducts.length != 0"
                                          v-for="relatedProduct of relatedProducts">
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
+                                        <div class="col-6 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/product/'+ relatedProduct.id ">
-                                                <img class="sidebar-panel-image-small" :src="relatedProduct.cover.url"
+                                                <img class="sidebar-panel-image-small-no-radius" :src="relatedProduct.cover.url"
 
                                                      v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">
                                             </a>
                                         </div>
-                                        <div class="col-9">
+                                        <div class="col-6">
                                             <ul class="info_bit_small">
                                             <li>
                                                 <a class="small_font"
@@ -347,43 +357,43 @@
                 <p-panel header="基础信息">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">作品名称<span style="color: red">*</span></label>
+                            <label>作品名称<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="productEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">作品名称(中文)<span style="color: red">*</span></label>
+                            <label>作品名称(中文)<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="productEdit.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="nameEn">作品名称(英语)</label>
+                            <label>作品名称(英语)</label>
                             <p-inputtext v-model.trim="productEdit.nameEn"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="productEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true" :show-icon="true"></p-calendar>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="classification" class="mb-3">作品分类<span
+                            <label class="mb-3">作品分类<span
                                     style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.classification" :options="productCategorySet"
+                            <p-dropdown v-model="productEdit.category" :options="productCategorySet"
                                         placeholder="选择作品分类" option-label="label" option-value="value">
                             </p-dropdown>
 
                         </div>
                         <div class="field col">
-                            <label htmlFor="franchise" class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.seriesId" :options="franchiseSet" :disabled="true"
+                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                            <p-dropdown v-model="productEdit.franchise" :options="franchiseSet" :disabled="true"
                                         placeholder="选择所属系列" option-label="label" option-value="value">
                             </p-dropdown>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="productEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
                     </div>
                 </p-panel>
@@ -966,8 +976,8 @@
             const openEditDialog = () => {
                 let dataTmp = JSON.parse(JSON.stringify(product.value));
                 productEdit.value = dataTmp;
-                productEdit.value.seriesId = dataTmp.franchise.id;
-                productEdit.value.classification = dataTmp.classification.id;
+                productEdit.value.franchise = dataTmp.franchise.value;
+                productEdit.value.category = dataTmp.category.id;
                 displayEditDialog.value = true;
             };
             //关闭编辑数据面板
@@ -1051,6 +1061,7 @@
             "p-timeline": primevue.timeline,
             "p-chips": primevue.chips,
             "p-contextmenu": primevue.contextmenu,
+            "p-tag": primevue.tag,
         }
     };
 

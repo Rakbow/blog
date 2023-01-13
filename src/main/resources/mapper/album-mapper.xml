@@ -24,6 +24,13 @@
         where id = #{id} and _s = 1
     </select>
 
+    <select id="getAll" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where _s = 1
+    </select>
+
     <select id="getAlbumRows" resultType="int">
         select count(id)
         from album

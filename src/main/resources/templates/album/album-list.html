@@ -186,7 +186,7 @@
                     <template #body="slotProps">
                         <ul class="px-4">
                             <li v-for="data in slotProps.data.publishFormat">
-                                {{data}}
+                                {{data.label}}
                             </li>
                         </ul>
                     </template>
@@ -202,7 +202,7 @@
                     <template #body="slotProps">
                         <ul class="px-4">
                             <li v-for="data in slotProps.data.albumFormat">
-                                {{data}}
+                                {{data.label}}
                             </li>
                         </ul>
                     </template>
@@ -218,7 +218,7 @@
                     <template #body="slotProps">
                         <ul class="px-4">
                             <li v-for="data in slotProps.data.mediaFormat">
-                                {{data}}
+                                {{data.label}}
                             </li>
                         </ul>
                     </template>
@@ -306,7 +306,7 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">出版形式<span style="color: red">*</span></label>
                             <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
                                            option-label="label" option-value="value" placeholder="选择出版形式"
@@ -314,14 +314,14 @@
                                 </template>
                             </p-multiselect>
                         </div>
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">专辑分类<span style="color: red">*</span></label>
                             <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
                                            option-label="label" option-value="value" placeholder="选择专辑分类"
                                            display="chip" :filter="true">
                             </p-multiselect>
                         </div>
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
@@ -444,21 +444,21 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">出版形式<span style="color: red">*</span></label>
                             <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
                                            option-label="label" option-value="value" placeholder="选择出版形式"
                                            display="chip">
                             </p-multiselect>
                         </div>
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">专辑分类<span style="color: red">*</span></label>
                             <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
                                            option-label="label" option-value="value" placeholder="选择专辑分类"
                                            display="chip">
                             </p-multiselect>
                         </div>
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
@@ -705,9 +705,9 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
                             albumEdit.value = dataTmp;
-                            albumEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            albumEdit.value.albumFormat = commonLabel2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                            albumEdit.value.publishFormat = commonLabel2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
                             albumEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: albumEdit.value.franchises,

@@ -1,6 +1,6 @@
 package com.rakbow.website;
 
-import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.VisitService;

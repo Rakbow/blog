@@ -4,26 +4,27 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
-import com.rakbow.website.data.book.BookType;
-import com.rakbow.website.data.common.*;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.book.BookVOAlpha;
+import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.FranchiseUtils;
+import com.rakbow.website.util.CommonUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.convertMapper.BookVOMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -48,9 +49,7 @@ public class BookService {
     @Autowired
     private VisitService visitService;
     @Autowired
-    private ProductUtils productUtils;
-    @Autowired
-    private FranchiseUtils franchiseUtils;
+    private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
     //endregion
 
@@ -113,155 +112,6 @@ public class BookService {
     //region ------数据处理------
 
     /**
-     * Book转Json对象，以便前端使用，转换量最大的
-     *
-     * @param book
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject book2Json(Book book) {
-
-        JSONObject bookJson = (JSONObject) JSON.toJSON(book);
-
-        //是否包含特典
-        boolean hasBonus = (book.getHasBonus() == 1);
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(book.getImages(), 250);
-
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-
-        JSONArray authors = JSON.parseArray(book.getAuthors());
-        JSONArray spec = JSON.parseArray(book.getSpec());
-
-        //所属作品
-        List<JSONObject> products = productUtils.getProductList(book.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(book.getFranchises());
-
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-
-        bookJson.put("bookType", bookType);
-        bookJson.put("franchises", franchises);
-        bookJson.put("products", products);
-        bookJson.put("region", region);
-        bookJson.put("currencyUnit", Region.regionCode2Currency(book.getRegion()));
-        bookJson.put("publishLanguage", publishLanguage);
-        bookJson.put("authors", authors);
-        bookJson.put("spec", spec);
-
-        bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
-        bookJson.put("hasBonus", hasBonus);
-        bookJson.put("images", segmentImages.images);
-        bookJson.put("cover", segmentImages.cover);
-        bookJson.put("displayImages", segmentImages.displayImages);
-        bookJson.put("otherImages", segmentImages.otherImages);
-        bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
-        bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
-        return bookJson;
-    }
-
-    /**
-     * 列表转换, Book转Json对象，以便前端使用，转换量最大的
-     *
-     * @param books
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> book2Json(List<Book> books) {
-        List<JSONObject> bookJsons = new ArrayList<>();
-
-        books.forEach(book -> {
-            bookJsons.add(book2Json(book));
-        });
-        return bookJsons;
-    }
-
-    /**
-     * Book转Json对象，以便前端list界面展示使用
-     *
-     * @param book
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public JSONObject book2JsonList(Book book) {
-
-        JSONObject bookJson = (JSONObject) JSON.toJSON(book);
-
-        //是否包含特典
-        boolean hasBonus = (book.getHasBonus() == 1);
-
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-
-        //发售时间转为string
-        bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
-
-        //所属作品
-        List<JSONObject> products = productUtils.getProductList(book.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(book.getFranchises());
-
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-
-        //封面
-        JSONObject cover = commonImageUtils.getCover(book.getImages(), 250);
-
-        bookJson.put("hasBonus", hasBonus);
-        bookJson.put("cover", cover);
-        bookJson.put("franchises", franchises);
-        bookJson.put("bookType", bookType);
-        bookJson.put("products", products);
-        bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
-        bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
-
-        bookJson.put("region", region);
-        bookJson.put("currencyUnit", Region.regionCode2Currency(book.getRegion()));
-        bookJson.put("publishLanguage", publishLanguage);
-
-        bookJson.remove("bonus");
-        bookJson.remove("authors");
-        bookJson.remove("description");
-        bookJson.remove("images");
-        bookJson.remove("spec");
-
-        return bookJson;
-    }
-
-    /**
-     * 列表转换, book转Json对象，以便前端list界面展示使用
-     *
-     * @param books
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> book2JsonList(List<Book> books) {
-        List<JSONObject> bookJsons = new ArrayList<>();
-
-        books.forEach(book -> {
-            bookJsons.add(book2JsonList(book));
-        });
-        return bookJsons;
-    }
-
-    /**
      * json对象转Book，以便保存到数据库
      *
      * @param bookJson
@@ -270,127 +120,6 @@ public class BookService {
      */
     public Book json2Book(JSONObject bookJson) {
         return bookJson.toJavaObject(Book.class);
-    }
-
-    /**
-     * Book转极简Json
-     *
-     * @param book
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject book2JsonSimple(Book book) {
-
-        //封面
-        JSONObject cover = commonImageUtils.getCover(book.getImages(), 50);
-
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-
-        JSONObject bookJson = new JSONObject();
-        bookJson.put("id", book.getId());
-        bookJson.put("isbn13", book.getIsbn13());
-        bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
-        bookJson.put("title", book.getTitle());
-        bookJson.put("titleZh", book.getTitleZh());
-        bookJson.put("region", region);
-        bookJson.put("publishLanguage", publishLanguage);
-        bookJson.put("bookType", bookType);
-        bookJson.put("cover", cover);
-        bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
-        bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
-        return bookJson;
-    }
-
-    /**
-     * 列表转换, Book转极简Json
-     *
-     * @param books
-     * @return JSONObject
-     * @author rakbow
-     */
-    public List<JSONObject> book2JsonSimple(List<Book> books) {
-        List<JSONObject> bookJsons = new ArrayList<>();
-
-        books.forEach(book -> bookJsons.add(book2JsonSimple(book)));
-
-        return bookJsons;
-    }
-
-    /**
-     * Book转Json对象，供首页展示
-     *
-     * @param book
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject book2JsonIndex(Book book) {
-
-        JSONObject bookJson = (JSONObject) JSON.toJSON(book);
-
-        //封面
-        JSONObject cover = commonImageUtils.getIndexCover(book.getImages());
-
-        bookJson.put("publishDate", CommonUtils.dateToString(book.getPublishDate()));
-
-        //所属作品
-        List<JSONObject> products = productUtils.getProductList(book.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(book.getFranchises());
-
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-
-        bookJson.put("cover", cover);
-        bookJson.put("products", products);
-        bookJson.put("franchises", franchises);
-        bookJson.put("bookType", bookType);
-        bookJson.put("region", region);
-        bookJson.put("publishLanguage", publishLanguage);
-        bookJson.put("addedTime", CommonUtils.timestampToString(book.getAddedTime()));
-        bookJson.put("editedTime", CommonUtils.timestampToString(book.getEditedTime()));
-        bookJson.remove("summary");
-        bookJson.remove("authors");
-        bookJson.remove("spec");
-        bookJson.remove("bonus");
-        bookJson.remove("description");
-        bookJson.remove("images");
-        return bookJson;
-    }
-
-    /**
-     * 列表转换, Book转Json对象，供首页展示
-     *
-     * @param books
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> book2JsonIndex(List<Book> books) {
-        List<JSONObject> bookJsons = new ArrayList<>();
-
-        books.forEach(book -> {
-            bookJsons.add(book2JsonIndex(book));
-        });
-        return bookJsons;
     }
 
     /**
@@ -627,7 +356,7 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getBooksByProductId(int productId) {
+    public List<BookVOBeta> getBooksByProductId(int productId) {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
@@ -635,7 +364,7 @@ public class BookService {
                 null, null, 100, null, products, null, "publishDate",
                 -1,  0, 0);
 
-        return book2JsonSimple(books);
+        return bookVOMapper.book2VOBeta(books);
     }
 
     /**
@@ -646,13 +375,11 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getRelatedBooks(int id) {
+    public List<BookVOBeta> getRelatedBooks(int id) {
 
         List<Book> result = new ArrayList<>();
 
         Book book = getBook(id);
-
-        List<JSONObject> relatedBooks = new ArrayList<>();
 
         //该Book包含的作品id
         List<Integer> productIds = JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class);
@@ -700,9 +427,8 @@ public class BookService {
                 result = result.subList(0, 5);
             }
         }
-        result = CommonUtils.removeDuplicateList(result);
-        result.forEach(i -> relatedBooks.add(book2JsonSimple(i)));
-        return relatedBooks;
+
+        return bookVOMapper.book2VOBeta(CommonUtils.removeDuplicateList(result));
     }
 
     /**
@@ -713,13 +439,8 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getJustAddedBooks(int limit) {
-        List<JSONObject> justAddedBooks = new ArrayList<>();
-
-        bookMapper.getBooksOrderByAddedTime(limit)
-                .forEach(i -> justAddedBooks.add(book2JsonIndex(i)));
-
-        return justAddedBooks;
+    public List<BookVOBeta> getJustAddedBooks(int limit) {
+        return bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByAddedTime(limit));
     }
 
     /**
@@ -730,13 +451,8 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getJustEditedBooks(int limit) {
-        List<JSONObject> editedBooks = new ArrayList<>();
-
-        bookMapper.getBooksOrderByEditedTime(limit)
-                .forEach(i -> editedBooks.add(book2JsonIndex(i)));
-
-        return editedBooks;
+    public List<BookVOBeta> getJustEditedBooks(int limit) {
+        return bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByEditedTime(limit));
     }
 
     /**
@@ -747,14 +463,14 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getPopularBooks(int limit) {
-        List<JSONObject> popularBooks = new ArrayList<>();
+    public List<BookVOBeta> getPopularBooks(int limit) {
+        List<BookVOBeta> popularBooks = new ArrayList<>();
 
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.BOOK.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject book = book2JsonIndex(getBook(visit.getEntityId()));
-            book.put("visitNum", visit.getVisitNum());
+            BookVOBeta book = bookVOMapper.book2VOBeta(getBook(visit.getEntityId()));
+            book.setVisitNum(visit.getVisitNum());
             popularBooks.add(book);
         });
         return popularBooks;

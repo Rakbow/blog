@@ -3,22 +3,20 @@ package com.rakbow.website.util.Image;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.ImageType;
-import com.rakbow.website.data.common.segmentImagesResult;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.image.ImageType;
+import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.util.common.ActionResult;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -165,7 +163,7 @@ public class CommonImageUtils {
      * @return segmentImagesResult
      * @author rakbow
      */
-    public segmentImagesResult segmentImages (String imagesJson, int coverSize) {
+    public static segmentImagesResult segmentImages (String imagesJson, int coverSize) {
 
         segmentImagesResult result = new segmentImagesResult();
 
@@ -195,7 +193,7 @@ public class CommonImageUtils {
         }
 
         //对展示图片进行封装
-        List<JSONObject> displayImages = new ArrayList<>();
+        JSONArray displayImages = new JSONArray();
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
@@ -207,7 +205,7 @@ public class CommonImageUtils {
         }
 
         //对其他图片进行封装
-        List<JSONObject> otherImages = new ArrayList<>();
+        JSONArray otherImages = new JSONArray();
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
@@ -227,13 +225,13 @@ public class CommonImageUtils {
     }
 
     /**
-     * 获取index首页封面图片
+     * 获取各尺寸封面图片
      *
      * @param imagesJson 数据库原图片合集的JSON字符串
      * @return JSONObject
      * @author rakbow
      */
-    public JSONObject getIndexCover (String imagesJson) {
+    public static JSONObject getCover(String imagesJson) {
 
         JSONArray images = JSONArray.parseArray(imagesJson);
 
@@ -258,13 +256,13 @@ public class CommonImageUtils {
     }
 
     /**
-     * 获取list封面图片
+     * 获取封面图片缩略图
      *
      * @param imagesJson 数据库原图片合集的JSON字符串
      * @return JSONObject
      * @author rakbow
      */
-    public JSONObject getCover(String imagesJson, int size) {
+    public static JSONObject getThumbCover(String imagesJson, int size) {
         JSONObject cover = new JSONObject();
         JSONArray images = JSONArray.parseArray(imagesJson);
         cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));

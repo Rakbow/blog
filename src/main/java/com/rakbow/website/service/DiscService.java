@@ -4,28 +4,27 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
-import com.rakbow.website.data.MediaFormat;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.SearchResult;
-import com.rakbow.website.data.common.segmentImagesResult;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.disc.DiscVOAlpha;
+import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.FranchiseUtils;
+import com.rakbow.website.util.CommonUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -50,9 +49,7 @@ public class DiscService {
     @Autowired
     private VisitService visitService;
     @Autowired
-    private ProductUtils productUtils;
-    @Autowired
-    private FranchiseUtils franchiseUtils;
+    private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
     //endregion
 
@@ -115,139 +112,6 @@ public class DiscService {
     //region ------数据处理------
 
     /**
-     * Disc转Json对象，以便前端使用，转换量最大的
-     *
-     * @param disc
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject disc2Json(Disc disc) {
-
-        JSONObject discJson = (JSONObject) JSON.toJSON(disc);
-
-        //是否包含特典
-        boolean hasBonus = (disc.getHasBonus() == 1);
-        //是否为限定版
-        boolean isLimited = (disc.getIsLimited() == 1);
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(disc.getImages(), 200);
-
-        //发售时间转为string
-        discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
-
-        //媒体格式
-        List<String> mediaFormat = new ArrayList<>();
-        JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
-                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
-
-        //所属产品
-        List<JSONObject> products = productUtils.getProductList(disc.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(disc.getFranchises());
-
-        discJson.put("isLimited", isLimited);
-        discJson.put("hasBonus", hasBonus);
-        discJson.put("mediaFormat", mediaFormat);
-        discJson.put("images", segmentImages.images);
-        discJson.put("cover", segmentImages.cover);
-        discJson.put("displayImages", segmentImages.displayImages);
-        discJson.put("otherImages", segmentImages.otherImages);
-        discJson.put("franchises", franchises);
-        discJson.put("products", products);
-        discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
-        discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
-        return discJson;
-    }
-
-    /**
-     * 列表转换, Disc转Json对象，以便前端使用，转换量最大的
-     *
-     * @param discs
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> disc2Json(List<Disc> discs) {
-        List<JSONObject> discJsons = new ArrayList<>();
-
-        discs.forEach(disc -> {
-            discJsons.add(disc2Json(disc));
-        });
-        return discJsons;
-    }
-
-    /**
-     * Disc转Json对象，以便前端list界面展示使用
-     *
-     * @param disc
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public JSONObject disc2JsonList(Disc disc) throws IOException {
-
-        JSONObject discJson = (JSONObject) JSON.toJSON(disc);
-
-        //是否包含特典
-        boolean hasBonus = (disc.getHasBonus() == 1);
-        //是否为限定版
-        boolean isLimited = (disc.getIsLimited() == 1);
-
-        //发售时间转为string
-        discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
-
-        //媒体格式
-        List<String> mediaFormat = new ArrayList<>();
-        JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
-                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
-
-        //所属产品
-        List<JSONObject> products = productUtils.getProductList(disc.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(disc.getFranchises());
-
-        //封面
-        JSONObject cover = commonImageUtils.getCover(disc.getImages(), 250);
-
-        discJson.put("isLimited", isLimited);
-        discJson.put("hasBonus", hasBonus);
-        discJson.put("mediaFormat", mediaFormat);
-        discJson.put("cover", cover);
-        discJson.put("franchises", franchises);
-        discJson.put("products", products);
-        discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
-        discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
-
-        discJson.remove("bonus");
-        discJson.remove("description");
-        discJson.remove("images");
-        discJson.remove("spec");
-
-        return discJson;
-    }
-
-    /**
-     * 列表转换, Disc转Json对象，以便前端list界面展示使用
-     *
-     * @param discs
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> disc2JsonList(List<Disc> discs) {
-        List<JSONObject> discJsons = new ArrayList<>();
-
-        discs.forEach(disc -> {
-            try {
-                discJsons.add(disc2JsonList(disc));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return discJsons;
-    }
-
-    /**
      * json对象转Disc，以便保存到数据库
      *
      * @param discJson
@@ -256,106 +120,6 @@ public class DiscService {
      */
     public Disc json2Disc(JSONObject discJson) {
         return discJson.toJavaObject(Disc.class);
-    }
-
-    /**
-     * Disc转极简Json
-     *
-     * @param disc
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject disc2JsonSimple(Disc disc) {
-
-        //封面
-        JSONObject cover = commonImageUtils.getCover(disc.getImages(), 50);
-
-        //媒体类型
-        List<String> mediaFormat = new ArrayList<>();
-        JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
-                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
-
-        JSONObject discJson = new JSONObject();
-        discJson.put("id", disc.getId());
-        discJson.put("mediaFormat", mediaFormat);
-        discJson.put("catalogNo", disc.getCatalogNo());
-        discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
-        discJson.put("name", disc.getName());
-        discJson.put("nameZh", disc.getNameZh());
-        discJson.put("cover", cover);
-        discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
-        discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
-        return discJson;
-    }
-
-    /**
-     * 列表转换, Disc转极简Json
-     *
-     * @param discs
-     * @return JSONObject
-     * @author rakbow
-     */
-    public List<JSONObject> disc2JsonSimple(List<Disc> discs) {
-        List<JSONObject> discJsons = new ArrayList<>();
-
-        discs.forEach(disc -> discJsons.add(disc2JsonSimple(disc)));
-
-        return discJsons;
-    }
-
-    /**
-     * Disc转Json对象，供首页展示
-     *
-     * @param disc
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject disc2JsonIndex(Disc disc) {
-
-        JSONObject discJson = (JSONObject) JSON.toJSON(disc);
-
-        //封面
-        JSONObject cover = commonImageUtils.getIndexCover(disc.getImages());
-
-        discJson.put("releaseDate", CommonUtils.dateToString(disc.getReleaseDate()));
-
-        List<JSONObject> products = productUtils.getProductList(disc.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(disc.getFranchises());
-
-        //媒体格式
-        List<String> mediaFormat = new ArrayList<>();
-        JSONObject.parseObject(disc.getMediaFormat()).getList("ids", Integer.class)
-                .forEach(id -> mediaFormat.add(MediaFormat.getNameByIndex(id)));
-
-        discJson.put("cover", cover);
-        discJson.put("products", products);
-        discJson.put("mediaFormat", mediaFormat);
-        discJson.put("franchises", franchises);
-        discJson.put("addedTime", CommonUtils.timestampToString(disc.getAddedTime()));
-        discJson.put("editedTime", CommonUtils.timestampToString(disc.getEditedTime()));
-        discJson.remove("spec");
-        discJson.remove("bonus");
-        discJson.remove("description");
-        discJson.remove("images");
-        return discJson;
-    }
-
-    /**
-     * 列表转换, Disc转Json对象，供首页展示
-     *
-     * @param discs
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> disc2JsonIndex(List<Disc> discs) {
-        List<JSONObject> discJsons = new ArrayList<>();
-
-        discs.forEach(disc -> {
-            discJsons.add(disc2JsonIndex(disc));
-        });
-        return discJsons;
     }
 
     /**
@@ -531,11 +295,11 @@ public class DiscService {
         List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
-        String isLimited;
-        if (filter.getJSONObject("isLimited").getBoolean("value") == null) {
-            isLimited = null;
+        String limited;
+        if (filter.getJSONObject("limited").getBoolean("value") == null) {
+            limited = null;
         }else {
-            isLimited = filter.getJSONObject("isLimited").getBoolean("value")
+            limited = filter.getJSONObject("limited").getBoolean("value")
                     ?Integer.toString(1):Integer.toString(0);
         }
 
@@ -548,10 +312,10 @@ public class DiscService {
         }
 
         List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, franchises, products,
-                mediaFormat, isLimited, hasBonus, sortField, sortOrder,  first, row);
+                mediaFormat, limited, hasBonus, sortField, sortOrder,  first, row);
 
         int total = discMapper.getDiscsRowsByFilter(catalogNo, name, franchises, products,
-                mediaFormat, isLimited, hasBonus);
+                mediaFormat, limited, hasBonus);
 
         return new SearchResult(total, discs);
     }
@@ -564,13 +328,11 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getRelatedDiscs(int id) {
+    public List<DiscVOBeta> getRelatedDiscs(int id) {
 
         List<Disc> result = new ArrayList<>();
 
         Disc disc = getDisc(id);
-
-        List<JSONObject> relatedDiscs = new ArrayList<>();
 
         //该Disc包含的作品id
         List<Integer> productIds = JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class);
@@ -617,9 +379,8 @@ public class DiscService {
                 result = result.subList(0, 5);
             }
         }
-        result = CommonUtils.removeDuplicateList(result);
-        result.forEach(i -> relatedDiscs.add(disc2JsonSimple(i)));
-        return relatedDiscs;
+
+        return discVOMapper.disc2VOBeta(CommonUtils.removeDuplicateList(result));
     }
 
     /**
@@ -630,7 +391,7 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getDiscsByProductId(int productId) {
+    public List<DiscVOBeta> getDiscsByProductId(int productId) {
 
         List<Integer> products = new ArrayList<>();
         products.add(productId);
@@ -639,7 +400,7 @@ public class DiscService {
                 null, null, null, "releaseDate",
                 -1,  0, 0);
 
-        return disc2JsonSimple(discs);
+        return discVOMapper.disc2VOBeta(discs);
     }
 
     /**
@@ -650,13 +411,8 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getJustAddedDiscs(int limit) {
-        List<JSONObject> justAddedDiscs = new ArrayList<>();
-
-        discMapper.getDiscsOrderByAddedTime(limit)
-                .forEach(i -> justAddedDiscs.add(disc2JsonIndex(i)));
-
-        return justAddedDiscs;
+    public List<DiscVOAlpha> getJustAddedDiscs(int limit) {
+        return discVOMapper.disc2VOAlpha(discMapper.getDiscsOrderByAddedTime(limit));
     }
 
     /**
@@ -667,13 +423,8 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getJustEditedDiscs(int limit) {
-        List<JSONObject> editedDiscs = new ArrayList<>();
-
-        discMapper.getDiscsOrderByEditedTime(limit)
-                .forEach(i -> editedDiscs.add(disc2JsonIndex(i)));
-
-        return editedDiscs;
+    public List<DiscVOAlpha> getJustEditedDiscs(int limit) {
+        return discVOMapper.disc2VOAlpha(discMapper.getDiscsOrderByEditedTime(limit));
     }
 
     /**
@@ -684,14 +435,14 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getPopularDiscs(int limit) {
-        List<JSONObject> popularDiscs = new ArrayList<>();
+    public List<DiscVOAlpha> getPopularDiscs(int limit) {
+        List<DiscVOAlpha> popularDiscs = new ArrayList<>();
 
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.DISC.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject disc = disc2JsonIndex(getDisc(visit.getEntityId()));
-            disc.put("visitNum", visit.getVisitNum());
+            DiscVOAlpha disc = discVOMapper.disc2VOAlpha(getDisc(visit.getEntityId()));
+            disc.setVisitNum(visit.getVisitNum());
             popularDiscs.add(disc);
         });
         return popularDiscs;

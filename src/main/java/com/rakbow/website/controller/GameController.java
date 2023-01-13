@@ -3,20 +3,21 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.common.DataActionType;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.Region;
-import com.rakbow.website.data.common.SearchResult;
-import com.rakbow.website.data.game.GamePlatform;
-import com.rakbow.website.data.game.ReleaseType;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Region;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.game.GamePlatform;
+import com.rakbow.website.data.emun.game.ReleaseType;
+import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,9 +48,6 @@ public class GameController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final List<JSONObject> releaseTypeSet = ReleaseType.getReleaseTypeSet();
-    private static final List<JSONObject> regionSet = Region.getRegionSet();
-    private static final List<JSONObject> gamePlatformSet = GamePlatform.getGamePlatformSet();
 
     @Autowired
     private GameService gameService;
@@ -63,6 +61,8 @@ public class GameController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
     //endregion
 
@@ -71,10 +71,10 @@ public class GameController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getGameListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("releaseTypeSet", releaseTypeSet);
-        model.addAttribute("regionSet", regionSet);
-        model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("releaseTypeSet", redisUtil.get("releaseTypeSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
+        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         view.setViewName("/game/game-list");
         return view;
     }
@@ -91,11 +91,11 @@ public class GameController {
 
         Game game = gameService.getGame(id);
 
-        model.addAttribute("releaseTypeSet", releaseTypeSet);
-        model.addAttribute("regionSet", regionSet);
-        model.addAttribute("gamePlatformSet", gamePlatformSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("game", gameService.game2Json(game));
+        model.addAttribute("releaseTypeSet", redisUtil.get("releaseTypeSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
+        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("game", gameVOMapper.game2VO(game));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.GAME.getId(), id).getVisitNum());
@@ -223,15 +223,15 @@ public class GameController {
         JSONObject queryParams = param.getJSONObject("queryParams");
         String pageLabel = param.getString("pageLabel");
 
-        List<JSONObject> games = new ArrayList<>();
+        List<GameVOAlpha> games = new ArrayList<>();
 
         SearchResult serchResult = gameService.getGamesByFilter(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            games = gameService.game2JsonList((List<Game>) serchResult.data);
+            games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            games = gameService.game2JsonIndex((List<Game>) serchResult.data);
+            games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
         }
 
         JSONObject result = new JSONObject();

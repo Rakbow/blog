@@ -2,12 +2,13 @@ package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.common.EntityType;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.MusicUtil;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
+import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,7 +60,7 @@ public class MusicController {
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(musicId));
         //获取所属专辑的信息
-        model.addAttribute("relatedAlbum",albumService.album2JsonSimple(albumService.getAlbumById(music.getAlbumId())));
+        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(albumService.getAlbumById(music.getAlbumId())));
 
         return "/music/music-detail";
 

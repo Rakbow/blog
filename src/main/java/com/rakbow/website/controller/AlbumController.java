@@ -3,12 +3,13 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.MediaFormat;
-import com.rakbow.website.data.album.AlbumFormat;
-import com.rakbow.website.data.album.PublishFormat;
-import com.rakbow.website.data.common.DataActionType;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.SearchResult;
+import com.rakbow.website.data.emun.MediaFormat;
+import com.rakbow.website.data.emun.album.AlbumFormat;
+import com.rakbow.website.data.emun.album.PublishFormat;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
@@ -16,8 +17,9 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -52,9 +54,6 @@ public class AlbumController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final List<JSONObject> mediaFormatSet = MediaFormat.getMediaFormatSet();
-    private static final List<JSONObject> albumFormatSet = AlbumFormat.getAlbumFormatSet();
-    private static final List<JSONObject> publishFormatSet = PublishFormat.getPublishFormatSet();
 
     @Autowired
     private AlbumService albumService;
@@ -89,10 +88,10 @@ public class AlbumController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getAlbumListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("albumFormatSet", albumFormatSet);
-        model.addAttribute("publishFormatSet", publishFormatSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
+        model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         view.setViewName("/album/album-list");
         return view;
     }
@@ -109,11 +108,11 @@ public class AlbumController {
 
         Album album = albumService.getAlbumById(id);
 
-        model.addAttribute("mediaFormatSet", mediaFormatSet);
-        model.addAttribute("albumFormatSet", albumFormatSet);
-        model.addAttribute("publishFormatSet", publishFormatSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("album", albumService.album2Json(album));
+        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
+        model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("album", AlbumVOMapper.INSTANCES.album2VO(album));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), id).getVisitNum());
@@ -135,15 +134,15 @@ public class AlbumController {
         JSONObject queryParams = param.getJSONObject("queryParams");
         String pageLabel = param.getString("pageLabel");
 
-        List<JSONObject> albums = new ArrayList<>();
+        List<AlbumVOAlpha> albums = new ArrayList<>();
 
         SearchResult searchResult = albumService.getAlbumsByFilter(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            albums = albumService.album2JsonList((List<Album>) searchResult.data);
+            albums = AlbumVOMapper.INSTANCES.album2VOAlpha((List<Album>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            albums = albumService.album2JsonIndex((List<Album>) searchResult.data);
+            albums = AlbumVOMapper.INSTANCES.album2VOAlpha((List<Album>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();

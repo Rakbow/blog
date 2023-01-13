@@ -55,6 +55,7 @@
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/inplace.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
@@ -175,8 +176,8 @@
                                                 <i class="pi pi-print mr-1" style="font-size: 1.3rem"></i>
                                                 <strong>出版形式</strong>
                                             </td>
-                                            <td>
-                                                {{album.publishFormat?album.publishFormat:"N/A"}}
+                                            <td v-for="format of album.publishFormat" style="display:inline">
+                                                <p-tag class="ml-1" :value="format.label"></p-tag>
                                             </td>
                                         </tr>
                                         <tr>
@@ -185,8 +186,8 @@
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>媒体类型</strong>
                                             </td>
-                                            <td>
-                                                {{album.mediaFormat?album.mediaFormat:"N/A"}}
+                                            <td v-for="format of album.mediaFormat" style="display:inline">
+                                                <p-tag class="ml-1" :value="format.label"></p-tag>
                                             </td>
                                         </tr>
                                         <tr>
@@ -194,8 +195,8 @@
                                                 <i class="pi iconfont icon-musicfill mr-1" style="font-size: 1.3rem"></i>
                                                 <strong>专辑类型</strong>
                                             </td>
-                                            <td>
-                                                {{album.albumFormat?album.albumFormat:"N/A"}}
+                                            <td v-for="format of album.albumFormat" style="display:inline">
+                                                <p-tag class="ml-1" :value="format.label"></p-tag>
                                             </td>
                                         </tr>
                                         <tr>
@@ -594,7 +595,7 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">出版形式<span
                                     style="color: red">*</span></label>
                             <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat"
@@ -603,14 +604,14 @@
                                            display="chip">
                             </p-multiselect>
                         </div>
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">专辑分类<span style="color: red">*</span></label>
                             <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
                                            option-label="label" option-value="value" placeholder="选择专辑分类"
                                            display="chip">
                             </p-multiselect>
                         </div>
-                        <div class="field col">
+                        <div class="field col-4">
                             <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
@@ -1070,6 +1071,7 @@
         setup() {
             onMounted(() => {
                 init();
+                console.log(album.value);
             })
 
             //region ------基础------
@@ -1153,13 +1155,10 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(album.value));
                             dataTmp.hasBonus = album.value.hasBonus ? 1 : 0;
-                            dataTmp.mediaFormat = album.value.mediaFormat.split("/");
-                            dataTmp.albumFormat = album.value.albumFormat.split("/");
-                            dataTmp.publishFormat = album.value.publishFormat.split("/");
                             albumEdit.value = dataTmp;
-                            albumEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            albumEdit.value.albumFormat = commonLabel2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                            albumEdit.value.publishFormat = commonLabel2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
                             albumEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: albumEdit.value.franchises,
@@ -1739,9 +1738,6 @@
             const init = () => {
                 text2marked();
                 initImageClass($("#galleria-item").attr("src"));
-                album.value.publishFormat = album.value.publishFormat.join("/");
-                album.value.mediaFormat = album.value.mediaFormat.join("/");
-                album.value.albumFormat = album.value.albumFormat.join("/");
             };
 
             const initImageClass = (url) => {
@@ -1902,6 +1898,7 @@
             "p-contextmenu": primevue.contextmenu,
             "p-inplace": primevue.inplace,
             "p-blockui": primevue.blockui,
+            "p-tag": primevue.tag,
         }
     };
 
@@ -2079,6 +2076,13 @@
 
     .p-panel .p-panel-content {
         padding: 0.5rem;
+    }
+
+    .product-tag {
+        align-items: flex-start;
+        justify-content: space-around;
+        background: #788990 !important;
+        color: #ffffff;
     }
 </style>
 </body>

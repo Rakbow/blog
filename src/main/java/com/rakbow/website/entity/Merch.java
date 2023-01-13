@@ -25,7 +25,7 @@ public class Merch {
     private Date releaseDate;//发售日
     private int price;//价格
     private String priceUnit;//价格单位
-    private int isNotForSale;//是否非卖品
+    private int notForSale;//是否非卖品
     private String spec;//规格
     private String description;//描述
     private String images;//图片（json）
@@ -46,7 +46,7 @@ public class Merch {
         this.releaseDate = null;
         this.price = 0;
         this.priceUnit = "";
-        this.isNotForSale = 0;
+        this.notForSale = 0;
         this.spec = "[]";
         this.description = "";
         this.images = "[]";

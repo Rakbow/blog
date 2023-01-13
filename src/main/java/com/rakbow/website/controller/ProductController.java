@@ -3,10 +3,12 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.common.DataActionType;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.SearchResult;
-import com.rakbow.website.data.product.ProductCategory;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.vo.product.ProductVO;
+import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -15,6 +17,7 @@ import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.convertMapper.ProductVOMapper;
 import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,22 +67,22 @@ public class ProductController {
     @Value("${website.path.img}")
     private String imgPath;
     @Autowired
-    private ProductUtils productUtils;
-    @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
 
     //region ------获取页面------
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public String getProductListPage(Model model) {
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("productCategorySet", productUtils.getProductCategorySet());
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("productCategorySet", redisUtil.get("ProductCategorySet"));
         return "/product/product-list";
     }
 
     //获取单个产品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getProductDetail(@PathVariable("id") int productId, Model model) throws IOException {
+    public String getProductDetail(@PathVariable("id") int productId, Model model) {
         if (productService.getProduct(productId) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.PRODUCT.getNameZh()));
             return "/error/404";
@@ -88,10 +91,10 @@ public class ProductController {
         visitService.increaseVisit(EntityType.PRODUCT.getId(), productId);
 
         Product product = productService.getProduct(productId);
-        model.addAttribute("product", productService.product2Json(product));
+        model.addAttribute("product", productVOMapper.product2VO(product));
         model.addAttribute("user", hostHolder.getUser());
-        model.addAttribute("productClassSet", productUtils.getProductCategorySet());
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("productClassSet", redisUtil.get("ProductCategorySet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
 
         if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
@@ -359,7 +362,7 @@ public class ProductController {
 
         SearchResult searchResult = productService.getProductsByFilter(queryParams);
 
-        List<JSONObject> products = productService.product2JsonSimple((List<Product>) searchResult.data);
+        List<ProductVOAlpha> products = productVOMapper.product2VOAlpha((List<Product>) searchResult.data);
 
         JSONObject result = new JSONObject();
         result.put("data", products);

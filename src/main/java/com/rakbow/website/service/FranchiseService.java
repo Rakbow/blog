@@ -1,8 +1,8 @@
 package com.rakbow.website.service;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.FranchiseMapper;
-import com.rakbow.website.data.product.ProductCategory;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.system.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,19 +47,6 @@ public class FranchiseService {
         return franchiseMapper.deleteFranchise(id);
     };
 
-    //获取所有系列数组选项
-    public List<JSONObject> getAllFranchiseSet(){
-        List<JSONObject> franchiseSet = new ArrayList<>();
-        List<Franchise> franchises = franchiseMapper.getAll();
-        for (Franchise franchise : franchises) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("value", franchise.getId());
-            jsonObject.put("label", franchise.getNameZh());
-            franchiseSet.add(jsonObject);
-        }
-        return franchiseSet;
-    }
-
     /**
      * 刷新Redis缓存中的franchises数据
      *
@@ -68,11 +55,18 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public void refreshRedisFranchises () {
 
-        List<JSONObject> franchises = getAllFranchiseSet();
+        JSONArray franchiseSet = new JSONArray();
+        List<Franchise> franchises = franchiseMapper.getAll();
+        for (Franchise franchise : franchises) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("value", franchise.getId());
+            jsonObject.put("label", franchise.getNameZh());
+            franchiseSet.add(jsonObject);
+        }
 
-        redisUtil.set("franchises", franchises);
+        redisUtil.set("franchiseSet", franchiseSet);
         //缓存时间1个月
-        redisUtil.expire("franchises", 2592000);
+        redisUtil.expire("franchiseSet", 2592000);
 
     }
 

@@ -193,22 +193,22 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">书名</label>
+                                <label>书名</label>
                                 <p-inputtext v-model.trim="queryParams.filters.title.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="bookType">图书类型</label>
+                                <label>图书类型</label>
                                 <p-dropdown v-model="queryParams.filters.bookType.value" :options="bookTypeSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">ISBN-10</label>
+                                <label>ISBN-10</label>
                                 <p-inputtext v-model.trim="queryParams.filters.isbn10.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="catalogNo">ISBN-13</label>
+                                <label>ISBN-13</label>
                                 <p-inputtext v-model.trim="queryParams.filters.isbn13.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
@@ -226,18 +226,18 @@
                                 </p-multiselect>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="hasBonus">是否包含特典</label>
+                                <label>是否包含特典</label>
                                 <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="publisher">出版社</label>
+                                <label>出版社</label>
                                 <p-inputtext v-model.trim="queryParams.filters.publisher.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="region">区域</label>
+                                <label>区域</label>
                                 <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
                                             :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
                                     <template #value="slotProps">
@@ -256,7 +256,7 @@
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="publishLanguage">语言</label>
+                                <label>语言</label>
                                 <p-dropdown v-model="queryParams.filters.publishLanguage.value" :options="languageSet"
                                             placeholder="所有" option-label="nameZh"
                                             option-value="code">
@@ -289,7 +289,7 @@
                                      v-for="addBook of justAddedBooks">
                                     <div class="col-3 sidebar-panel-image-small-div mt-2">
                                         <a :href="'/db/book/'+ addBook.id ">
-                                            <img class="sidebar-panel-image-small-no-radius" :src="addBook.cover.thumbUrl"
+                                            <img class="sidebar-panel-image-small-no-radius" :src="addBook.cover.url"
                                                  v-tooltip.bottom="{value: '收录时间: ' + addBook.addedTime + '编辑时间: ' + addBook.editedTime, class: 'item-upload-time-tooltip'}">
                                         </a>
                                     </div>
@@ -330,7 +330,7 @@
                                          v-for="editBook of justEditedBooks">
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/book/'+ editBook.id ">
-                                                <img class="sidebar-panel-image-small-no-radius" :src="editBook.cover.thumbUrl"
+                                                <img class="sidebar-panel-image-small-no-radius" :src="editBook.cover.url"
                                                      v-tooltip.bottom="{value: '收录时间: ' + editBook.addedTime + '编辑时间: ' + editBook.editedTime, class: 'item-upload-time-tooltip'}">
                                             </a>
                                         </div>
@@ -383,7 +383,7 @@
                                         </div>
                                         <div class="col-3 sidebar-panel-image-small-div mt-2">
                                             <a :href="'/db/book/'+ book.id ">
-                                                <img class="sidebar-panel-image-small-no-radius" :src="book.cover.thumbUrl"
+                                                <img class="sidebar-panel-image-small-no-radius" :src="book.cover.url"
                                                 >
                                             </a>
                                         </div>

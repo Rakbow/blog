@@ -116,7 +116,7 @@
                                                     <span class="ml-2 text-end" style="color: white">
                                                         {{slotProps.data.category.nameZh}}</span>
                                                 </div>
-                                                <div class="col-2 px-0 py-0" v-if="slotProps.data.isNotForSale">
+                                                <div class="col-2 px-0 py-0" v-if="slotProps.data.notForSale">
                                                     <i class="pi pi-ban" style="font-size: 1.3rem"
                                                        v-tooltip="'非卖品'"></i>
                                                 </div>
@@ -157,7 +157,7 @@
                                                 <span class="product-category">{{franchise.label}}</span>
                                             </a>
                                         </div>
-                                        <span class="col-2" v-if="slotProps.data.isNotForSale == 1">
+                                        <span class="col-2" v-if="slotProps.data.notForSale">
                                             <i class="pi pi-ban" style="font-size: 1.3rem"
                                                v-tooltip="'非卖品'"></i>
                                         </span>
@@ -199,8 +199,8 @@
                                 </p-dropdown>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="isNotForSale" class="mr-2">是否非卖品</label>
-                                <p-dropdown v-model="queryParams.filters.isNotForSale.value" :options="isNotForSaleSet"
+                                <label class="mr-2">是否非卖品</label>
+                                <p-dropdown v-model="queryParams.filters.notForSale.value" :options="isNotForSaleSet"
                                             placeholder="所有" option-label="label" option-value="value">
                                 </p-dropdown>
                             </div>
@@ -439,7 +439,7 @@
                     franchises: {value: null},
                     products: {value: null},
                     category: {value: null},
-                    isNotForSale: {value: null},
+                    notForSale: {value: null},
                 }
             });
             const clearSearch = () => {
@@ -454,7 +454,7 @@
                         franchises: {value: null},
                         products: {value: null},
                         category: {value: null},
-                        isNotForSale: {value: null},
+                        notForSale: {value: null},
                     }
                 };
                 getMerchs();

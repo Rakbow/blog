@@ -55,6 +55,7 @@
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/inplace.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
@@ -119,13 +120,13 @@
                                 </p-splitbutton>
                             </template>
                             <div class="grid">
-                                <div class="col-12 sm:col-12 md:col-6 lg:col-4">
+                                <div class="col-12 sm:col-12 md:col-6 lg:col-3">
                                     <div class="ml-3" style="transform:translateY(0px);width: 200px; height: 200px">
                                         <img :src="disc.cover.url" :alt="disc.cover.name"
                                              class="image-cover"/>
                                     </div>
                                 </div>
-                                <div class="col-12 sm:col-12 md:col-6 lg:col-8">
+                                <div class="col-12 sm:col-12 md:col-6 lg:col-9">
                                     <table class="table-borderless table-sm ml-3">
                                         <tbody>
                                         <tr>
@@ -180,8 +181,8 @@
                                                    style="font-size: 1.3rem"></i>
                                                 <strong>媒体类型</strong>
                                             </td>
-                                            <td>
-                                                {{disc.mediaFormat?disc.mediaFormat:"N/A"}}
+                                            <td v-for="format of disc.mediaFormat" style="display:inline">
+                                                <p-tag class="ml-1" :value="format.label"></p-tag>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -449,10 +450,10 @@
                         </div>
                         <div class="field col-3">
                             <div class="col-12">
-                                <label htmlFor="isLimited" class="mb-3">限定版</label>
+                                <label class="mb-3">限定版</label>
                             </div>
                             <div class="col-12 mt-2">
-                                <p-inputswitch v-model="discEdit.isLimited" :true-value="1"
+                                <p-inputswitch v-model="discEdit.limited" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>
                         </div>
@@ -786,10 +787,9 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(disc.value));
                             dataTmp.hasBonus = disc.value.hasBonus ? 1 : 0;
-                            dataTmp.isLimited = disc.value.isLimited ? 1 : 0;
-                            dataTmp.mediaFormat = disc.value.mediaFormat.split("/");
+                            dataTmp.limited = disc.value.limited ? 1 : 0;
                             discEdit.value = dataTmp;
-                            discEdit.value.mediaFormat = commonLabel2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                             discEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: discEdit.value.franchises,
@@ -1156,7 +1156,6 @@
             const init = () => {
                 text2marked();
                 initImageClass($("#galleria-item").attr("src"));
-                disc.value.mediaFormat = disc.value.mediaFormat.join("/");
             };
 
             const initImageClass = (url) => {
@@ -1261,6 +1260,7 @@
             "p-contextmenu": primevue.contextmenu,
             "p-inplace": primevue.inplace,
             "p-blockui": primevue.blockui,
+            "p-tag": primevue.tag,
         }
     };
 

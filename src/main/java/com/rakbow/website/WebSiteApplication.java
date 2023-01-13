@@ -1,8 +1,9 @@
 package com.rakbow.website;
 
+import com.rakbow.website.util.common.SpringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.PostConstruct;
 
@@ -17,7 +18,8 @@ public class WebSiteApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(WebSiteApplication.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(WebSiteApplication.class, args);
+		SpringUtils.set(context);
 	}
 
 }

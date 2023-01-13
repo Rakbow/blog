@@ -3,8 +3,13 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.book.BookType;
-import com.rakbow.website.data.common.*;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Language;
+import com.rakbow.website.data.emun.common.Region;
+import com.rakbow.website.data.emun.book.BookType;
+import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -12,6 +17,7 @@ import com.rakbow.website.util.Image.CommonImageHandleUtils;
 import com.rakbow.website.util.common.ApiInfo;
 import com.rakbow.website.util.common.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.system.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Project_name: website
@@ -43,10 +48,6 @@ public class BookController {
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    //图书类型
-    private static final List<JSONObject> bookType = BookType.getBookTypeSet();
-    private static final List<JSONObject> regionSet = Region.getRegionSet();
-    private static final List<JSONObject> languageSet = Language.getLanguageSet();
 
     @Autowired
     private BookService bookService;
@@ -60,6 +61,8 @@ public class BookController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
     //endregion
 
@@ -68,10 +71,10 @@ public class BookController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getBookListPage(Model model) {
         ModelAndView view = new ModelAndView();
-        model.addAttribute("bookTypeSet", bookType);
-        model.addAttribute("regionSet", regionSet);
-        model.addAttribute("languageSet", languageSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
+        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
+        model.addAttribute("languageSet", redisUtil.get("languageSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         view.setViewName("/book/book-list");
         return view;
     }
@@ -88,11 +91,11 @@ public class BookController {
 
         Book book = bookService.getBook(id);
 
-        model.addAttribute("bookTypeSet", bookType);
-        model.addAttribute("regionSet", regionSet);
-        model.addAttribute("languageSet", languageSet);
-        model.addAttribute("franchiseSet", redisUtil.get("franchises"));
-        model.addAttribute("book", bookService.book2Json(book));
+        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
+        model.addAttribute("languageSet", redisUtil.get("languageSet"));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("book", bookVOMapper.book2VO(book));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.BOOK.getId(), id).getVisitNum());
@@ -220,15 +223,15 @@ public class BookController {
          JSONObject queryParams = param.getJSONObject("queryParams");
          String pageLabel = param.getString("pageLabel");
 
-         List<JSONObject> books = new ArrayList<>();
+         List<BookVOAlpha> books = new ArrayList<>();
 
          SearchResult searchResult = bookService.getBooksByFilter(queryParams);
 
          if (StringUtils.equals(pageLabel, "list")) {
-             books = bookService.book2JsonList((List<Book>) searchResult.data);
+             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
          }
          if (StringUtils.equals(pageLabel, "index")) {
-             books = bookService.book2JsonIndex((List<Book>) searchResult.data);
+             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
          }
 
          JSONObject result = new JSONObject();

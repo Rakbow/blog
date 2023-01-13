@@ -4,19 +4,22 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.GameMapper;
-import com.rakbow.website.data.common.EntityType;
-import com.rakbow.website.data.common.Region;
-import com.rakbow.website.data.common.SearchResult;
-import com.rakbow.website.data.common.segmentImagesResult;
-import com.rakbow.website.data.game.GamePlatform;
-import com.rakbow.website.data.game.ReleaseType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Region;
+import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.segmentImagesResult;
+import com.rakbow.website.data.emun.game.GamePlatform;
+import com.rakbow.website.data.emun.game.ReleaseType;
+import com.rakbow.website.data.vo.game.GameVOAlpha;
+import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.FranchiseUtils;
 import com.rakbow.website.util.Image.CommonImageUtils;
 import com.rakbow.website.util.ProductUtils;
 import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.CommonUtils;
+import com.rakbow.website.util.convertMapper.GameVOMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,9 +53,7 @@ public class GameService {
     @Autowired
     private VisitService visitService;
     @Autowired
-    private ProductUtils productUtils;
-    @Autowired
-    private FranchiseUtils franchiseUtils;
+    private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
     //endregion
 
@@ -115,149 +116,6 @@ public class GameService {
     //region ------数据处理------
 
     /**
-     * Game转Json对象，以便前端使用，转换量最大的
-     *
-     * @param game
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject game2Json(Game game) {
-
-        JSONObject gameJson = (JSONObject) JSON.toJSON(game);
-
-        //是否包含特典
-        boolean hasBonus = (game.getHasBonus() == 1);
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = commonImageUtils.segmentImages(game.getImages(), 200);
-
-        JSONObject releaseType = new JSONObject();
-        releaseType.put("id", game.getReleaseType());
-        releaseType.put("nameZh", ReleaseType.index2NameZh(game.getReleaseType()));
-
-        JSONArray organizations = JSON.parseArray(game.getOrganizations());
-        JSONArray staffs = JSON.parseArray(game.getStaffs());
-
-        //所属作品
-        List<JSONObject> products = productUtils.getProductList(game.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(game.getFranchises());
-
-        JSONObject region = new JSONObject();
-        region.put("code", game.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(game.getRegion()));
-
-        JSONObject platform = new JSONObject();
-        platform.put("id", game.getPlatform());
-        platform.put("nameEn", GamePlatform.index2Name(game.getPlatform()));
-
-        gameJson.put("releaseType", releaseType);
-        gameJson.put("platform", platform);
-        gameJson.put("region", region);
-        gameJson.put("franchises", franchises);
-        gameJson.put("products", products);
-        gameJson.put("organizations", organizations);
-        gameJson.put("staffs", staffs);
-
-        gameJson.put("releaseDate", CommonUtils.dateToString(game.getReleaseDate()));
-        gameJson.put("hasBonus", hasBonus);
-        gameJson.put("images", segmentImages.images);
-        gameJson.put("cover", segmentImages.cover);
-        gameJson.put("displayImages", segmentImages.displayImages);
-        gameJson.put("otherImages", segmentImages.otherImages);
-        gameJson.put("addedTime", CommonUtils.timestampToString(game.getAddedTime()));
-        gameJson.put("editedTime", CommonUtils.timestampToString(game.getEditedTime()));
-        return gameJson;
-    }
-
-    /**
-     * 列表转换, Game转Json对象，以便前端使用，转换量最大的
-     *
-     * @param games
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> game2Json(List<Game> games) {
-        List<JSONObject> gameJsons = new ArrayList<>();
-        games.forEach(game -> gameJsons.add(game2Json(game)));
-        return gameJsons;
-    }
-
-    /**
-     * Game转Json对象，以便前端list界面展示使用
-     *
-     * @param game
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public JSONObject game2JsonList(Game game) {
-
-        JSONObject gameJson = (JSONObject) JSON.toJSON(game);
-
-        //是否包含特典
-        boolean hasBonus = (game.getHasBonus() == 1);
-
-        JSONObject releaseType = new JSONObject();
-        releaseType.put("id", game.getReleaseType());
-        releaseType.put("nameZh", ReleaseType.index2NameZh(game.getReleaseType()));
-
-        //发售时间转为string
-        gameJson.put("releaseDate", CommonUtils.dateToString(game.getReleaseDate()));
-
-        //所属作品
-        List<JSONObject> products = productUtils.getProductList(game.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(game.getFranchises());
-
-        JSONObject region = new JSONObject();
-        region.put("code", game.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(game.getRegion()));
-
-        JSONObject platform = new JSONObject();
-        platform.put("id", game.getPlatform());
-        platform.put("nameEn", GamePlatform.index2Name(game.getPlatform()));
-
-        //封面
-        JSONObject cover = commonImageUtils.getCover(game.getImages(), 250);
-
-
-        gameJson.put("hasBonus", hasBonus);
-        gameJson.put("cover", cover);
-        gameJson.put("franchises", franchises);
-        gameJson.put("products", products);
-        gameJson.put("addedTime", CommonUtils.timestampToString(game.getAddedTime()));
-        gameJson.put("editedTime", CommonUtils.timestampToString(game.getEditedTime()));
-
-        gameJson.put("region", region);
-        gameJson.put("platform", platform);
-        gameJson.put("releaseType", releaseType);
-
-        gameJson.remove("bonus");
-        gameJson.remove("organizations");
-        gameJson.remove("staffs");
-        gameJson.remove("description");
-        gameJson.remove("images");
-
-        return gameJson;
-    }
-
-    /**
-     * 列表转换, game转Json对象，以便前端list界面展示使用
-     *
-     * @param games
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> game2JsonList(List<Game> games) {
-        List<JSONObject> gameJsons = new ArrayList<>();
-
-        games.forEach(game -> gameJsons.add(game2JsonList(game)));
-        return gameJsons;
-    }
-
-    /**
      * json对象转Game，以便保存到数据库
      *
      * @param gameJson
@@ -266,124 +124,6 @@ public class GameService {
      */
     public Game json2Game(JSONObject gameJson) {
         return gameJson.toJavaObject(Game.class);
-    }
-
-    /**
-     * Game转极简Json
-     *
-     * @param game
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject game2JsonSimple(Game game) {
-
-        //封面
-        JSONObject cover = commonImageUtils.getCover(game.getImages(), 50);
-
-        JSONObject releaseType = new JSONObject();
-        releaseType.put("id", game.getReleaseType());
-        releaseType.put("nameZh", ReleaseType.index2NameZh(game.getReleaseType()));
-
-        JSONObject region = new JSONObject();
-        region.put("code", game.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(game.getRegion()));
-
-        JSONObject platform = new JSONObject();
-        platform.put("id", game.getPlatform());
-        platform.put("nameEn", GamePlatform.index2Name(game.getPlatform()));
-
-        JSONObject gameJson = new JSONObject();
-        gameJson.put("id", game.getId());
-        gameJson.put("releaseType", releaseType);
-        gameJson.put("platform", platform);
-        gameJson.put("region", region);
-
-        gameJson.put("releaseDate", CommonUtils.dateToString(game.getReleaseDate()));
-        gameJson.put("name", game.getName());
-        gameJson.put("nameZh", game.getNameZh());
-        gameJson.put("cover", cover);
-        gameJson.put("addedTime", CommonUtils.timestampToString(game.getAddedTime()));
-        gameJson.put("editedTime", CommonUtils.timestampToString(game.getEditedTime()));
-        return gameJson;
-    }
-
-    /**
-     * 列表转换, Game转极简Json
-     *
-     * @param games
-     * @return JSONObject
-     * @author rakbow
-     */
-    public List<JSONObject> game2JsonSimple(List<Game> games) {
-        List<JSONObject> gameJsons = new ArrayList<>();
-
-        games.forEach(game -> gameJsons.add(game2JsonSimple(game)));
-
-        return gameJsons;
-    }
-
-    /**
-     * Game转Json对象，供首页展示
-     *
-     * @param game
-     * @return JSONObject
-     * @author rakbow
-     */
-    public JSONObject game2JsonIndex(Game game) {
-
-        JSONObject gameJson = (JSONObject) JSON.toJSON(game);
-
-        //封面
-        JSONObject cover = commonImageUtils.getIndexCover(game.getImages());
-
-        gameJson.put("releaseDate", CommonUtils.dateToString(game.getReleaseDate()));
-
-        //所属作品
-        List<JSONObject> products = productUtils.getProductList(game.getProducts());
-
-        //所属系列
-        List<JSONObject> franchises = franchiseUtils.getFranchiseList(game.getFranchises());
-
-        JSONObject releaseType = new JSONObject();
-        releaseType.put("id", game.getReleaseType());
-        releaseType.put("nameZh", ReleaseType.index2NameZh(game.getReleaseType()));
-
-        JSONObject region = new JSONObject();
-        region.put("code", game.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(game.getRegion()));
-
-        JSONObject platform = new JSONObject();
-        platform.put("id", game.getPlatform());
-        platform.put("nameEn", GamePlatform.index2Name(game.getPlatform()));
-
-        gameJson.put("cover", cover);
-        gameJson.put("products", products);
-        gameJson.put("franchises", franchises);
-        gameJson.put("releaseType", releaseType);
-        gameJson.put("region", region);
-        gameJson.put("platform", platform);
-        gameJson.put("addedTime", CommonUtils.timestampToString(game.getAddedTime()));
-        gameJson.put("editedTime", CommonUtils.timestampToString(game.getEditedTime()));
-        gameJson.remove("organizations");
-        gameJson.remove("staffs");
-        gameJson.remove("images");
-        gameJson.remove("bonus");
-        gameJson.remove("description");
-        return gameJson;
-    }
-
-    /**
-     * 列表转换, Game转Json对象，供首页展示
-     *
-     * @param games
-     * @return List<JSONObject>
-     * @author rakbow
-     */
-    public List<JSONObject> game2JsonIndex(List<Game> games) {
-        List<JSONObject> gameJsons = new ArrayList<>();
-
-        games.forEach(game -> gameJsons.add(game2JsonIndex(game)));
-        return gameJsons;
     }
 
     /**
@@ -606,14 +346,14 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getGamesByProductId(int productId) {
+    public List<GameVOBeta> getGamesByProductId(int productId) {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
         List<Game> games = gameMapper.getGamesByFilter(null, null, null, products,
                 100, null, "releaseDate", -1,  0, 0);
 
-        return game2JsonSimple(games);
+        return gameVOMapper.game2VOBeta(games);
     }
 
     /**
@@ -624,13 +364,11 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getRelatedGames(int id) {
+    public List<GameVOBeta> getRelatedGames(int id) {
 
         List<Game> result = new ArrayList<>();
 
         Game game = getGame(id);
-
-        List<JSONObject> relatedGames = new ArrayList<>();
 
         //该Game包含的作品id
         List<Integer> productIds = JSONObject.parseObject(game.getProducts()).getList("ids", Integer.class);
@@ -676,9 +414,8 @@ public class GameService {
                 result = result.subList(0, 5);
             }
         }
-        result = CommonUtils.removeDuplicateList(result);
-        result.forEach(i -> relatedGames.add(game2JsonSimple(i)));
-        return relatedGames;
+
+        return gameVOMapper.game2VOBeta(CommonUtils.removeDuplicateList(result));
     }
 
     /**
@@ -689,13 +426,8 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getJustAddedGames(int limit) {
-        List<JSONObject> justAddedGames = new ArrayList<>();
-
-        gameMapper.getGamesOrderByAddedTime(limit)
-                .forEach(i -> justAddedGames.add(game2JsonIndex(i)));
-
-        return justAddedGames;
+    public List<GameVOAlpha> getJustAddedGames(int limit) {
+        return gameVOMapper.game2VOAlpha(gameMapper.getGamesOrderByAddedTime(limit));
     }
 
     /**
@@ -706,13 +438,8 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getJustEditedGames(int limit) {
-        List<JSONObject> editedGames = new ArrayList<>();
-
-        gameMapper.getGamesOrderByEditedTime(limit)
-                .forEach(i -> editedGames.add(game2JsonIndex(i)));
-
-        return editedGames;
+    public List<GameVOAlpha> getJustEditedGames(int limit) {
+        return gameVOMapper.game2VOAlpha(gameMapper.getGamesOrderByEditedTime(limit));
     }
 
     /**
@@ -723,14 +450,14 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getPopularGames(int limit) {
-        List<JSONObject> popularGames = new ArrayList<>();
+    public List<GameVOAlpha> getPopularGames(int limit) {
+        List<GameVOAlpha> popularGames = new ArrayList<>();
 
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.GAME.getId(), limit);
 
         visits.forEach(visit -> {
-            JSONObject game = game2JsonIndex(getGame(visit.getEntityId()));
-            game.put("visitNum", visit.getVisitNum());
+            GameVOAlpha game = gameVOMapper.game2VOAlpha(getGame(visit.getEntityId()));
+            game.setVisitNum(visit.getVisitNum());
             popularGames.add(game);
         });
         return popularGames;
