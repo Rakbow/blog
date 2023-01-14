@@ -7,18 +7,16 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.Image.CommonImageHandleUtils;
-import com.rakbow.website.util.ProductUtils;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.ApiResult;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
-import com.rakbow.website.util.system.RedisUtil;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -50,8 +47,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-    @Autowired
-    private FranchiseService franchiseService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -271,7 +266,7 @@ public class ProductController {
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageHandleUtils.checkAddImages(imageInfosJson, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
@@ -315,7 +310,7 @@ public class ProductController {
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
-                    String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
+                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
                     if (!StringUtils.equals("", errorMessage)) {
                         res.setErrorMessage(errorMessage);
                         return JSON.toJSONString(res);

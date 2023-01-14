@@ -1,10 +1,9 @@
-package com.rakbow.website.Event;
+package com.rakbow.website.event;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
 
 /**
  * @Project_name: website

@@ -4,22 +4,19 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.Image.QiniuImageHandleUtils;
-import com.rakbow.website.util.ProductUtils;
+import com.rakbow.website.util.entity.ProductUtils;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
-import com.rakbow.website.util.system.RedisUtil;
+import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,11 +39,7 @@ public class ProductService {
     @Autowired
     private ProductMapper productMapper;
     @Autowired
-    private FranchiseService franchiseService;
-    @Value("${website.path.img}")
-    private String imgPath;
-    @Autowired
-    private CommonImageUtils commonImageUtils;
+    private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
@@ -135,7 +128,7 @@ public class ProductService {
      * @author rakbow
      */
     public Product json2Product(JSONObject productJson) {
-        return productJson.toJavaObject(Product.class);
+        return JSON.to(Product.class, productJson);
     }
 
     /**
@@ -197,7 +190,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
-        JSONArray finalImageJson = commonImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.PRODUCT, images, originalImagesJson, imageInfos);
 
         productMapper.updateProductImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -228,7 +221,7 @@ public class ProductService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getProduct(id).getImages());
 
-        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
 
         productMapper.updateProductImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
@@ -244,7 +237,9 @@ public class ProductService {
     public String deleteAllProductImages(int id) {
         Product product = getProduct(id);
         JSONArray images = JSON.parseArray(product.getImages());
-        return commonImageUtils.commonDeleteAllImages(EntityType.PRODUCT, images);
+        qiniuImageUtils.commonDeleteAllImages(EntityType.PRODUCT, images);
+
+        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
     /**
@@ -330,6 +325,9 @@ public class ProductService {
 
     }
 
+    //endregion
+
+    //region ------图片操作------
     //endregion
 
 }

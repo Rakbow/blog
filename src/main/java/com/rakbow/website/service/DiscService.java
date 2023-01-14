@@ -4,16 +4,16 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
+import com.rakbow.website.util.image.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,33 +31,25 @@ import java.util.stream.Collectors;
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2022-12-14 23:24
- * @Description:
+ * @Description: disc业务层
  */
 @Service
 public class DiscService {
 
-    //region ------引入实例------
+    //region ------注入依赖------
 
     @Autowired
     private DiscMapper discMapper;
     @Autowired
-    private CommonImageUtils commonImageUtils;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private FranchiseService franchiseService;
+    private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private VisitService visitService;
-    @Autowired
+
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
     //endregion
 
     //region ------更删改查------
-
-    // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
-    // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
-    // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
     /**
      * 新增碟片
@@ -114,18 +106,18 @@ public class DiscService {
     /**
      * json对象转Disc，以便保存到数据库
      *
-     * @param discJson
+     * @param discJson discJson
      * @return Disc
      * @author rakbow
      */
     public Disc json2Disc(JSONObject discJson) {
-        return discJson.toJavaObject(Disc.class);
+        return JSON.to(Disc.class, discJson);
     }
 
     /**
      * 检测数据合法性
      *
-     * @param discJson
+     * @param discJson discJson
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
@@ -154,7 +146,7 @@ public class DiscService {
     /**
      * 处理前端传送碟片数据
      *
-     * @param discJson
+     * @param discJson discJson
      * @return 处理后的disc json格式数据
      * @author rakbow
      */
@@ -174,7 +166,7 @@ public class DiscService {
 
     //endregion
 
-    //region ------更新专辑数据------
+    //region ------图片操作------
 
     /**
      * 新增碟片图片
@@ -188,7 +180,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
 
-        JSONArray finalImageJson = commonImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.DISC, images, originalImagesJson, imageInfos);
 
         discMapper.updateDiscImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -219,7 +211,7 @@ public class DiscService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getDisc(id).getImages());
 
-        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
 
         discMapper.updateDiscImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
@@ -232,11 +224,15 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAllDiscImages(int id) {
+    public void deleteAllDiscImages(int id) {
         Disc disc = getDisc(id);
         JSONArray images = JSON.parseArray(disc.getImages());
-        return commonImageUtils.commonDeleteAllImages(EntityType.DISC, images);
+        qiniuImageUtils.commonDeleteAllImages(EntityType.DISC, images);
     }
+
+    //endregion
+
+    //region ------更新数据------
 
     /**
      * 更新碟片规格信息

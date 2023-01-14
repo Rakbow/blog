@@ -5,13 +5,12 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.music.AudioType;
+import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.Image.QiniuImageHandleUtils;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.CommonUtils;
+import com.rakbow.website.util.convertMapper.MusicVOMapper;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +27,7 @@ import java.util.Objects;
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2022-11-06 2:04
- * @Description:
+ * @Description: music业务层
  */
 @Service
 public class MusicService {
@@ -39,7 +37,11 @@ public class MusicService {
     private MusicMapper musicMapper;
     @Autowired
     private VisitService visitService;
+
+    private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
+
+    //region -----曾删改查------
 
     /**
      * 根据音乐id获取音乐
@@ -80,7 +82,7 @@ public class MusicService {
 
     /**
      * 新增music
-     * @param music
+     * @param music music
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -99,7 +101,7 @@ public class MusicService {
     /**
      * 从专辑数据中新增music
      * @author rakbow
-     * @param albumJson
+     * @param albumJson albumJson
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMusicsFromAlbum(JSONObject albumJson){
@@ -139,24 +141,24 @@ public class MusicService {
     /**
      * 更新music基础信息
      * @author rakbow
-     * @param id,music music的id和music
-     * @return apiInfo
-     * */
+     * @param id,music music的id和music */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateMusic(int id, Music music) throws Exception {
+    public void updateMusic(int id, Music music) throws Exception {
         try {
             musicMapper.updateMusic(id, music);
-            return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
     }
 
+    /**
+     * 根据id删除对应的music
+     * @author rakbow
+     * @param id id  */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteMusicById(int id) throws Exception {
+    public void deleteMusicById(int id) throws Exception {
         try {
             musicMapper.deleteMusicById(id);
-            return String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -190,67 +192,14 @@ public class MusicService {
         }
     }
 
-    /**
-     * music对象转json
-     * @author rakbow
-     * @param music 音乐
-     * @return JSONObject
-     * */
-    public JSONObject music2Json(Music music) {
-        JSONObject musicJson = (JSONObject) JSON.toJSON(music);
+    //endregion
 
-        JSONObject audioTypeObj = new JSONObject();
-        audioTypeObj.put("id", music.getAudioType());
-        audioTypeObj.put("name", AudioType.getNameByIndex(music.getAudioType()));
-        audioTypeObj.put("nameEn", AudioType.getNameEnByIndex(music.getAudioType()));
-
-        //音乐创作
-        JSONArray artists = JSON.parseArray(music.getArtists());
-
-        if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
-        }else {
-            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(music.getCoverUrl(), 200));
-        }
-        musicJson.put("audioTypeObj", audioTypeObj);
-        musicJson.put("addedTime", CommonUtils.timestampToString(music.getAddedTime()));
-        musicJson.put("editedTime", CommonUtils.timestampToString(music.getEditedTime()));
-        musicJson.put("artists", artists);
-
-        return musicJson;
-    }
-
-    /**
-     * music对象转json（极简）
-     * @author rakbow
-     * @param music 音乐
-     * @return JSONObject
-     * */
-    public JSONObject music2JsonSimple(Music music) {
-        JSONObject musicJson = new JSONObject();
-
-        if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        }else {
-            musicJson.put("cover", QiniuImageHandleUtils.getThumbUrl(music.getCoverUrl(), 50));
-        }
-
-        musicJson.put("id", music.getId());
-        musicJson.put("name", music.getName());
-        musicJson.put("nameEb", music.getNameEn());
-        musicJson.put("audioLength", music.getAudioLength());
-        musicJson.put("discSerial", music.getDiscSerial());
-        musicJson.put("trackSerial", music.getTrackSerial());
-        musicJson.put("addedTime", CommonUtils.timestampToString(music.getAddedTime()));
-        musicJson.put("editedTime", CommonUtils.timestampToString(music.getEditedTime()));
-
-        return musicJson;
-    }
+    //region ------处理数据------
 
     /**
      * 检测music数据
      * @author rakbow
-     * @param musicJson
+     * @param musicJson musicJson
      * @return 错误信息
      * */
     public String checkMusicJson(JSONObject musicJson) {
@@ -269,12 +218,16 @@ public class MusicService {
     /**
      * json转music
      * @author rakbow
-     * @param musicJson
+     * @param musicJson musicJson
      * @return music
      * */
     public Music json2Music(@RequestBody JSONObject musicJson) {
-        return musicJson.toJavaObject(Music.class);
+        return JSON.to(Music.class, musicJson);
     }
+
+    //endregion
+
+    //region ------特殊查询------
 
     /**
      * 获取同属一张碟片的音频
@@ -283,8 +236,7 @@ public class MusicService {
      * @return list
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<JSONObject> getRelatedMusics(int id) {
-        List<JSONObject> relatedMusics = new ArrayList<>();
+    public List<MusicVOAlpha> getRelatedMusics(int id) {
 
         Music music = getMusicById(id);
 
@@ -296,11 +248,13 @@ public class MusicService {
         }
 
         //筛选出同一张碟片的音频，并按照序号排序
-        DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics)
-                .forEach(m -> relatedMusics.add(music2JsonSimple(m)));
-
-        return relatedMusics;
+        return musicVOMapper.music2VOAlpha(DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics));
     }
+
+    //endregion
+
+
+    //region -----更新数据------
 
     /**
      * 更新创作人员信息
@@ -345,5 +299,7 @@ public class MusicService {
     public void updateMusicCoverUrl(int id, String coverUrl) {
         musicMapper.updateMusicCoverUrl(id, coverUrl);
     }
+
+    //endregion
 
 }

@@ -4,74 +4,57 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.image.ImageType;
+import com.rakbow.website.data.ActionResult;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.MediaFormat;
-import com.rakbow.website.data.emun.album.PublishFormat;
+import com.rakbow.website.data.emun.album.AlbumFormat;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.AlbumUtils;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageHandleUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.Image.QiniuImageUtils;
-import com.rakbow.website.util.ProductUtils;
-import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.image.QiniuBaseUtils;
+import com.rakbow.website.util.image.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2022-07-25 1:42
- * @Description:
+ * @Description: album业务层
  */
 @Service
 public class AlbumService {
 
-
-    //region ------引入实例------
+    //region ------依赖注入------
     @Autowired
     private AlbumMapper albumMapper;
-    @Autowired
-    private FranchiseService franchiseService;
-    @Autowired
-    private ProductService productService;
     @Autowired
     private VisitService visitService;
     @Autowired
     private MusicService musicService;
-    // @Autowired
-    // private ObjectMapper objectMapper;
-    @Value("${website.path.img}")
-    private String imgPath;
-    @Value("${website.path.domain}")
-    private String domain;
+    @Autowired
+    private QiniuBaseUtils qiniuBaseUtils;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
-    @Autowired
-    private CommonImageUtils commonImageUtils;
-    @Autowired
+
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
 
@@ -137,7 +120,7 @@ public class AlbumService {
     /**
      * 检测数据合法性
      *
-     * @param albumJson
+     * @param albumJson 专辑json
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
@@ -174,7 +157,7 @@ public class AlbumService {
     /**
      * 处理前端传送专辑数据
      *
-     * @param albumJson
+     * @param albumJson 专辑json
      * @return 处理后的album json格式数据
      * @author rakbow
      */
@@ -202,17 +185,17 @@ public class AlbumService {
     /**
      * json对象转Album，以便保存到数据库
      *
-     * @param albumJson
+     * @param albumJson 专辑json
      * @return Album
      * @author rakbow
      */
     public Album json2Album(JSONObject albumJson) {
-        return albumJson.toJavaObject(Album.class);
+        return JSON.to(Album.class, albumJson);
     }
 
     //endregion
 
-    //region ------更新专辑数据------
+    //region ------图片操作------
 
     /**
      * 新增专辑图片
@@ -237,7 +220,7 @@ public class AlbumService {
 
         for (int i = 0; i < images.length; i++) {
             //上传图片
-            ActionResult ar = qiniuImageUtils.uploadImageToQiniu(images[i], filePath);
+            ActionResult ar = qiniuBaseUtils.uploadImageToQiniu(images[i], filePath);
             if (ar.state) {
                 JSONObject jo = new JSONObject();
                 jo.put("url", ar.data.toString());
@@ -261,7 +244,7 @@ public class AlbumService {
         List<Music> musics = musicService.getMusicsByAlbumId(id);
 
         //若涉及封面类型图片，则更新相应的音频封面
-        String coverUrl = CommonImageHandleUtils.getCoverUrl(addImageJson);
+        String coverUrl = CommonImageUtils.getCoverUrl(addImageJson);
         if (!StringUtils.isBlank(coverUrl)) {
             for (Music music : musics) {
                 musicService.updateMusicCoverUrl(music.getId(), coverUrl);
@@ -296,7 +279,7 @@ public class AlbumService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
 
-        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
 
         albumMapper.updateAlbumImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
@@ -308,13 +291,16 @@ public class AlbumService {
      * @param id 专辑id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAllAlbumImages(int id) {
+    public void deleteAllAlbumImages(int id) {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
-
-        return commonImageUtils.commonDeleteAllImages(EntityType.ALBUM, images);
+        //删除七牛云上的图片
+        qiniuImageUtils.commonDeleteAllImages(EntityType.ALBUM, images);
     }
+
+    //endregion
+
+    //region ------更新复杂数据------
 
     /**
      * 更新专辑Artists
@@ -347,7 +333,7 @@ public class AlbumService {
 
         int discSerial = 1;
 
-        String trackSerial = "";
+        String trackSerial;
 
         for (Object _disc : JSON.parseArray(_discList)) {
             JSONObject disc = new JSONObject();
@@ -385,6 +371,7 @@ public class AlbumService {
                     track_list.add(music.getId());
                 } else {//若musicId不为0则代表之前已经添加进music表中，需要进一步更新
                     Music currentMusic = DataFinder.findMusicById(track.getInteger("musicId"), musics);
+                    assert currentMusic != null;
                     currentMusic.setName(track.getString("name"));
                     currentMusic.setAudioLength(track.getString("length"));
                     currentMusic.setDiscSerial(discSerial);
@@ -622,79 +609,13 @@ public class AlbumService {
      * @return 图片url
      * @author rakbow
      */
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public String getAlbumCoverUrl(int id) {
         Album album = getAlbumById(id);
-        JSONArray images = JSON.parseArray(album.getImages());
 
-        for (int i = 0; i < images.size(); i++) {
-            JSONObject image = images.getJSONObject(i);
-            //若图片中包含封面类型图片
-            if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                return image.getString("url");
-            }
-        }
-        return "";
+        return CommonImageUtils.getCoverUrl(JSON.parseArray(album.getImages()));
     }
 
-    //endregion
-
-    //region ------暂时用不到------
-
-    public int getAlbumRows() {
-        return albumMapper.getAlbumRows();
-    }
-
-    //获取所有字段信息
-    public List<String> getAlbumFields() {
-        List<String> AlbumFields = null;
-        Field[] f = Album.class.getClass().getFields();
-        for (int i = 0; i < f.length; i++) {
-            AlbumFields.add(f[i].getName());
-        }
-        return AlbumFields;
-    }
-
-    //endregion
-
-    //region ------废弃------
-    /**
-     * 删除专辑图片
-     *
-     * @param id           专辑id
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Deprecated
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String DeprecatedDeleteAlbumImages(int id, JSONArray deleteImages) {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
-
-        //图片文件名
-        String fileName = "";
-
-        //循环删除
-        for (int i = 0; i < deleteImages.size(); i++) {
-            JSONObject image = deleteImages.getJSONObject(i);
-            // 迭代器
-            Iterator<Object> iterator = images.iterator();
-            while (iterator.hasNext()) {
-                JSONObject itJson = (JSONObject) iterator.next();
-                if (image.getString("url").equals(itJson.getString("url"))) {
-                    // 删除数组元素
-                    String deleteImageUrl = itJson.getString("url");
-                    fileName = deleteImageUrl.substring(
-                            deleteImageUrl.lastIndexOf("/") + 1, deleteImageUrl.lastIndexOf("."));
-                    iterator.remove();
-                }
-                //删除服务器上对应图片文件
-                Path albumImgPath = Paths.get(imgPath + "/album/" + id);
-                CommonUtils.deleteFile(albumImgPath, fileName);
-            }
-        }
-        albumMapper.updateAlbumImages(id, images.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
-    }
     //endregion
 
 }

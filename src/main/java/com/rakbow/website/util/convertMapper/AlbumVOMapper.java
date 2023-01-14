@@ -9,11 +9,11 @@ import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
-import com.rakbow.website.util.AlbumUtils;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
+import com.rakbow.website.util.entity.AlbumUtils;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.entity.ProductUtils;
 import com.rakbow.website.util.common.SpringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -129,7 +129,7 @@ public interface AlbumVOMapper {
         albumVOAlpha.setHasBonus(album.getHasBonus() == 1);
 
         //图片相关
-        albumVOAlpha.setCover(CommonImageUtils.getCover(album.getImages()));
+        albumVOAlpha.setCover(CommonImageUtils.generateCover(album.getImages()));
 
         //关联信息
         albumVOAlpha.setProducts(ProductUtils.getProductList(album.getProducts()));
@@ -193,7 +193,7 @@ public interface AlbumVOMapper {
         albumVOBeta.setNameEn(album.getNameEn());
         albumVOBeta.setNameZh(album.getNameZh());
         albumVOBeta.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
-        albumVOBeta.setCover(CommonImageUtils.getThumbCover(album.getImages(), 50));
+        albumVOBeta.setCover(CommonImageUtils.generateThumbCover(album.getImages(), 50));
         albumVOBeta.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
         albumVOBeta.setAddedTime(CommonUtils.timestampToString(album.getAddedTime()));
         albumVOBeta.setEditedTime(CommonUtils.timestampToString(album.getEditedTime()));

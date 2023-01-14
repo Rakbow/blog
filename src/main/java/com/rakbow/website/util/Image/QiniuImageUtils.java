@@ -1,241 +1,183 @@
-package com.rakbow.website.util.Image;
+package com.rakbow.website.util.image;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.qiniu.common.QiniuException;
-import com.qiniu.http.Response;
-import com.qiniu.storage.BucketManager;
-import com.qiniu.storage.Configuration;
-import com.qiniu.storage.Region;
-import com.qiniu.storage.UploadManager;
-import com.qiniu.storage.model.BatchStatus;
-import com.qiniu.util.Auth;
-import com.rakbow.website.util.FileUtil;
-import com.rakbow.website.util.common.ActionResult;
-import com.rakbow.website.util.common.ApiInfo;
-import org.springframework.beans.factory.annotation.Value;
+import com.rakbow.website.data.ActionResult;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.util.common.CommonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @Project_name: website
  * @Author: Rakbow
- * @Create: 2022-12-01 1:44
- * @Description: 通过七牛云api实现图片的增删改查
+ * @Create: 2022-12-01 21:25
+ * @Description:
  */
 @Component
 public class QiniuImageUtils {
 
-    @Value("${website.qiniu.access-key}")
-    private String ACCESS_KEY;
-    @Value("${website.qiniu.secret-key}")
-    private String SECRET_KEY;
-    @Value("${website.qiniu.image.domain}")
-    private String IMAGE_DOMAIN;
-    @Value("${website.qiniu.bucketName}")
-    private String BUCKET_NAME;
+    private final QiniuBaseUtils qiniuBaseUtils;
 
-    /**
-     * 获取上传文件的token值
-     */
-    public String getUpToken() {
-        // 密钥配置
-        Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
-        return auth.uploadToken(BUCKET_NAME);
+    public QiniuImageUtils(QiniuBaseUtils qiniuBaseUtils) {
+        this.qiniuBaseUtils = qiniuBaseUtils;
     }
 
     /**
-     * 统一上传图片方法，单张
+     * 通用新增图片
      *
-     * @param file,filePath file图片文件，filePath 图片路径
-     * @return ActionResult
+     * @param entityId                 实体id
+     * @param entityType               实体类型
+     * @param images             新增图片文件数组
+     * @param originalImagesJson 数据库中现存的图片json数据
+     * @param imageInfos         新增图片json数据
+     * @return finalImageJson 最终保存到数据库的json信息
+     * @author rakbow
      */
-    public ActionResult uploadImageToQiniu(MultipartFile file, String filePath) throws IOException {
-        ActionResult ar = new ActionResult();
-        try {
-            // 构造一个带指定Zone对象的配置类,不同的七云牛存储区域调用不同的zone
-            // 华东-浙江2 CnEast2
-            Configuration cfg = new Configuration(Region.regionCnEast2());
-            // 创建上传对象
-            UploadManager uploadManager = new UploadManager(cfg);
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public JSONArray commonAddImages(int entityId, EntityType entityType, MultipartFile[] images,
+                                     JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
+        //最终保存到数据库的json信息
+        JSONArray finalImageJson = new JSONArray();
 
-            // 检测图片是否为空
-            if (file.isEmpty()) {
-                ar.setErrorMessage(ApiInfo.INPUT_IMAGE_EMPTY);
-                return ar;
-            }
+        //新增图片信息json
+        JSONArray addImageJson = new JSONArray();
 
-            // 检测图片文件格式是否合法
-            int dotPos = file.getOriginalFilename().lastIndexOf(".");
-            if (dotPos < 0) {
-                ar.setErrorMessage(ApiInfo.IMAGE_FORMAT_EXCEPTION);
-                return ar;
-            }
+        //创建存储链接前缀
+        String filePath = entityType.getNameEn().toLowerCase() + "/" + entityId + "/";
 
-            // 获取图片文件后缀名
-            String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
-            // 检测图片格式是否支持
-            if (!FileUtil.isFileAllowed(fileExt)) {
-                ar.setErrorMessage(ApiInfo.IMAGE_FORMAT_EXCEPTION);
-                return ar;
-            }
-
-            // 通过随机UUID生成唯一文件名 长度：16
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "." + fileExt;
-
-            // 生成完整文件名，例：album/11/xxx.jpg
-            String fullFileName = filePath + fileName;
-
-            // 调用put方法上传
-            Response res = uploadManager.put(file.getBytes(), fullFileName, getUpToken());
-
-            // 打印返回的信息
-            if (res.isOK() && res.isJson()) {
-                // 返回这张存储照片的地址
-                ar.data = IMAGE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key");
-            } else {
-                ar.setErrorMessage(String.format(ApiInfo.QINIU_EXCEPTION, res.bodyString()));
-            }
-            return ar;
-        } catch (QiniuException ex) {
-            // 请求失败时打印的异常的信息
-            ar.setErrorMessage(String.format(ApiInfo.QINIU_EXCEPTION, ex.getMessage()));
-            return ar;
-        }
-    }
-
-    /**
-     * 统一上传图片方法，多张，同一实体类型
-     *
-     * @param files,filePath file图片文件数组，filePath 图片路径
-     * @return ActionResult
-     */
-    public ActionResult uploadImagesToQiniu(MultipartFile[] files, String filePath) throws IOException {
-        ActionResult ar = new ActionResult();
-        try {
-            // 上传后存放文件全路径名的列表
-            List<String> fullFileNames = new ArrayList<>();
-
-            // 构造一个带指定Zone对象的配置类,不同的七云牛存储区域调用不同的zone
-            // 华东-浙江2 CnEast2
-            Configuration cfg = new Configuration(Region.regionCnEast2());
-            // 创建上传对象
-            UploadManager uploadManager = new UploadManager(cfg);
-
-
-            for (MultipartFile file : files) {
-
-                // 检测图片文件格式是否合法
-                int dotPos = file.getOriginalFilename().lastIndexOf(".");
-                if (dotPos < 0) {
-                    ar.setErrorMessage(ApiInfo.IMAGE_FORMAT_EXCEPTION);
-                    return ar;
-                }
-
-                // 获取图片文件后缀名
-                String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
-                // 检测图片格式是否支持
-                if (!FileUtil.isFileAllowed(fileExt)) {
-                    ar.setErrorMessage(ApiInfo.IMAGE_FORMAT_EXCEPTION);
-                    return ar;
-                }
-
-                // 通过随机UUID生成唯一文件名 长度：16
-                String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "." + fileExt;
-
-                // 生成完整文件名，例：album/11/xxx.jpg
-                String fullFileName = filePath + fileName;
-
-                // 调用put方法上传
-                Response res = uploadManager.put(file.getBytes(), fullFileName, getUpToken());
-
-                // 打印返回的信息
-                if (res.isOK() && res.isJson()) {
-                    // 返回这张存储照片的地址并存入fullFileNames
-                    fullFileNames.add(IMAGE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key"));
+        for (int i = 0; i < images.length; i++) {
+            //上传图片
+            ActionResult ar = qiniuBaseUtils.uploadImageToQiniu(images[i], filePath);
+            if (ar.state) {
+                JSONObject jo = new JSONObject();
+                jo.put("url", ar.data.toString());
+                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
+                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
+                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
+                jo.put("uploadTime", CommonUtils.getCurrentTime());
+                if (imageInfos.getJSONObject(i).getString("description") == null) {
+                    jo.put("description", "");
                 } else {
-                    ar.setErrorMessage(String.format(ApiInfo.QINIU_EXCEPTION, res.bodyString()));
+                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
                 }
+                addImageJson.add(jo);
             }
-            ar.data = fullFileNames;
-            return ar;
-        } catch (QiniuException ex) {
-            // 请求失败时打印的异常的信息
-            ar.setErrorMessage(String.format(ApiInfo.QINIU_EXCEPTION, ex.getMessage()));
-            return ar;
         }
+
+        //汇总
+        finalImageJson.addAll(originalImagesJson);
+        finalImageJson.addAll(addImageJson);
+
+        return finalImageJson;
     }
 
     /**
-     * 统一删除图片方法，单张
+     * 通用删除图片
      *
-     * @param fullFileName 需要删除图片的全路径文件名
-     * @return ActionResult
+     * @param entityId     实体id
+     * @param images       原始图片json数组
+     * @param deleteImages 需要删除的图片jsonArray
+     * @return images 最终保存到数据库的json信息
+     * @author rakbow
      */
-    public ActionResult deleteImageFromQiniu(String fullFileName){
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public JSONArray commonDeleteImages(int entityId, JSONArray images, JSONArray deleteImages) throws Exception {
 
-        ActionResult ar = new ActionResult();
-        try{
-            //构造一个带指定Zone对象的配置类
-            Configuration cfg = new Configuration(Region.regionCnEast2());
-            Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
-            BucketManager bucketManager = new BucketManager(auth, cfg);
-
-            //去除前缀，获得图片的key
-            String key = fullFileName.replace(IMAGE_DOMAIN, "");
-
-            bucketManager.delete(BUCKET_NAME, key);
-        }catch (QiniuException ex) {
-            //如果遇到异常，说明删除失败
-            ar.setErrorMessage(String.format(ApiInfo.QINIU_EXCEPTION, ex.response.toString()));
+        //从七牛云上删除
+        //删除结果
+        List<String> deleteResult = new ArrayList<>();
+        //若删除的图片只有一张，调用单张删除方法
+        if (deleteImages.size() == 1) {
+            ActionResult ar = qiniuBaseUtils.deleteImageFromQiniu
+                    (deleteImages.getJSONObject(0).getString("url"));
+            if (!ar.state) {
+                throw new Exception(ar.message);
+            }
+            deleteResult.add(deleteImages.getJSONObject(0).getString("url"));
+        } else {
+            String[] fullImageUrlList = new String[deleteImages.size()];
+            for (int i = 0; i < deleteImages.size(); i++) {
+                fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
+            }
+            ActionResult ar = qiniuBaseUtils.deleteImagesFromQiniu(fullImageUrlList);
+            deleteResult = (List<String>) ar.data;
         }
-        return ar;
+
+        //根据删除结果循环删除图片信息json数组
+        // 迭代器
+
+        for (String s : deleteResult) {
+            Iterator<Object> iterator = images.iterator();
+            while (iterator.hasNext()) {
+                JSONObject itJson = (JSONObject) iterator.next();
+                if (StringUtils.equals(itJson.getString("url"), s)) {
+                    // 删除数组元素
+                    iterator.remove();
+                }
+            }
+        }
+
+        return images;
     }
 
     /**
-     * 统一删除图片方法，多张，同一实体类型
+     * 通用删除所有图片
      *
-     * @param fullFileNames 需要删除图片的全路径文件名数组
-     * @return ActionResult
+     * @param images 删除图片合集
+     * @param entityType 实体类型
+     * @author rakbow
      */
-    public ActionResult deleteImagesFromQiniu(String[] fullFileNames){
+    public void commonDeleteAllImages(EntityType entityType, JSONArray images) {
 
-        ActionResult ar = new ActionResult();
-        try{
-            // 删除结果map，key为文件名，value为删除状态，true为删除成功，false为删除失败
-            List<String> deleteResults = new ArrayList<>();
-
-            //对删除url数组进行处理，去除前缀获得key
-            String[] keyList = new String[fullFileNames.length];
-            for (int i = 0; i < fullFileNames.length; i++) {
-                keyList[i] = fullFileNames[i].replace(IMAGE_DOMAIN, "");
-            }
-
-            //构造一个带指定Zone对象的配置类
-            Configuration cfg = new Configuration(Region.regionCnEast2());
-            Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
-            BucketManager bucketManager = new BucketManager(auth, cfg);
-            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
-
-            batchOperations.addDeleteOp(BUCKET_NAME, keyList);
-
-            Response response = bucketManager.batch(batchOperations);
-            BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
-            for (int i = 0; i < fullFileNames.length; i++) {
-                BatchStatus status = batchStatusList[i];
-                if (status.code == 200) {
-                    deleteResults.add(fullFileNames[i]);
-                }
-            }
-            ar.data = deleteResults;
-        }catch (QiniuException ex) {
-            //如果遇到异常，说明删除失败
-            ar.setErrorMessage(String.format(ApiInfo.QINIU_EXCEPTION, ex.response.toString()));
+        String[] deleteImageKeyList = new String[images.size()];
+        //图片文件名
+        String deleteImageUrl;
+        for (int i = 0; i < images.size(); i++) {
+            JSONObject image = images.getJSONObject(i);
+            deleteImageUrl = image.getString("url");
+            //删除七牛服务器上对应图片文件
+            deleteImageKeyList[i] = deleteImageUrl;
         }
-        return ar;
+        qiniuBaseUtils.deleteImagesFromQiniu(deleteImageKeyList);
+    }
+
+    /**
+     * 获取等比固定高宽的缩略图URL
+     *
+     * @param imageUrl,size 原始图url，缩略图宽高
+     * @return thumbImageUrl
+     */
+    public static String getThumbUrl(String imageUrl, int size) {
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size;
+    }
+
+    public static String getThumbUrlWidth(String imageUrl, int size) {
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + "x" + size;
+    }
+
+    public static String getThumbBlackBackgroundUrl(String imageUrl, int size) {
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size
+                + "/extent/" + size + "x" + size + "/background/YmxhY2s=";
+    }
+
+    /**
+     * 通过外链获取图片key
+     *
+     * @param fullImageUrl 原始图url
+     * @return thumbImageUrl
+     */
+    public static String getImageKeyByFullUrl(String fullImageUrl) {
+        String IMAGE_DOMAIN = "https://img.rakbow.com/";
+        return fullImageUrl.replace(IMAGE_DOMAIN, "");
     }
 
 }

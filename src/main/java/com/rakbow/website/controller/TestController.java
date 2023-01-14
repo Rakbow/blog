@@ -1,6 +1,6 @@
 package com.rakbow.website.controller;
 
-import com.rakbow.website.util.system.RedisUtil;
+import com.rakbow.website.util.common.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

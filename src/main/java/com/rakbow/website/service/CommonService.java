@@ -1,7 +1,5 @@
 package com.rakbow.website.service;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -12,14 +10,9 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.util.system.RedisUtil;
+import com.rakbow.website.util.common.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Project_name: website
@@ -34,7 +27,7 @@ public class CommonService {
     private RedisUtil redisUtil;
 
     /**
-     * 刷新Redis缓存中的products数据
+     * 刷新Redis缓存中的枚举类数据
      *
      * @author rakbow
      */

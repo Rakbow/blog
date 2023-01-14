@@ -3,9 +3,6 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.emun.MediaFormat;
-import com.rakbow.website.data.emun.album.AlbumFormat;
-import com.rakbow.website.data.emun.album.PublishFormat;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
@@ -14,13 +11,13 @@ import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.Image.CommonImageHandleUtils;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.ApiResult;
-import com.rakbow.website.util.CommonUtils;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
-import com.rakbow.website.util.system.RedisUtil;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +59,6 @@ public class AlbumController {
     @Autowired
     private UserService userService;
     @Autowired
-    private FranchiseService franchiseService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
     private VisitService visitService;
     // @Autowired
     // private ElasticsearchService elasticsearchService;
@@ -81,6 +74,8 @@ public class AlbumController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
+
+    private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
 
     //region ------获取页面------
@@ -112,7 +107,7 @@ public class AlbumController {
         model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
         model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("album", AlbumVOMapper.INSTANCES.album2VO(album));
+        model.addAttribute("album", albumVOMapper.album2VO(album));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), id).getVisitNum());
@@ -139,10 +134,10 @@ public class AlbumController {
         SearchResult searchResult = albumService.getAlbumsByFilter(queryParams);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            albums = AlbumVOMapper.INSTANCES.album2VOAlpha((List<Album>) searchResult.data);
+            albums = albumVOMapper.album2VOAlpha((List<Album>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            albums = AlbumVOMapper.INSTANCES.album2VOAlpha((List<Album>) searchResult.data);
+            albums = albumVOMapper.album2VOAlpha((List<Album>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();
@@ -281,7 +276,7 @@ public class AlbumController {
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageHandleUtils.checkAddImages(imageInfosJson, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
@@ -322,7 +317,7 @@ public class AlbumController {
                 if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
 
                     //检测是否存在多张封面
-                    String errorMessage = CommonImageHandleUtils.checkUpdateImages(images);
+                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
                     if (!StringUtils.equals("", errorMessage)) {
                         res.setErrorMessage(errorMessage);
                         return JSON.toJSONString(res);
@@ -488,7 +483,7 @@ public class AlbumController {
                 JSONArray imageInfosTmp = JSON.parseArray(imageInfos);
 
                 //检测数据合法性
-                String errorMessage = CommonImageHandleUtils.checkAddImages(imageInfosTmp, imagesJson);
+                String errorMessage = CommonImageUtils.checkAddImages(imageInfosTmp, imagesJson);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);

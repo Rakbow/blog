@@ -8,11 +8,11 @@ import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.Image.QiniuImageHandleUtils;
-import com.rakbow.website.util.common.CommonConstant;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.data.CommonConstant;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -97,13 +97,13 @@ public interface ProductVOMapper {
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
         JSONArray images = JSON.parseArray(product.getImages());
-        cover.put("url", QiniuImageHandleUtils.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
+        cover.put("url", QiniuImageUtils.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrlWidth(image.getString("url"), 50));
+                    cover.put("url", QiniuImageUtils.getThumbUrlWidth(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

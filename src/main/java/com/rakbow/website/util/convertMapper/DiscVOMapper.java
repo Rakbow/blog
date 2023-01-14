@@ -6,11 +6,11 @@ import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.util.AlbumUtils;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
+import com.rakbow.website.util.entity.AlbumUtils;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.entity.ProductUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -108,7 +108,7 @@ public interface DiscVOMapper {
         discVOAlpha.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
 
         //将图片分割处理
-        discVOAlpha.setCover(CommonImageUtils.getCover(disc.getImages()));
+        discVOAlpha.setCover(CommonImageUtils.generateCover(disc.getImages()));
 
         discVOAlpha.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
         discVOAlpha.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));
@@ -158,7 +158,7 @@ public interface DiscVOMapper {
 
         discVOBeta.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
 
-        discVOBeta.setCover(CommonImageUtils.getThumbCover(disc.getImages(), 50));
+        discVOBeta.setCover(CommonImageUtils.generateThumbCover(disc.getImages(), 50));
 
         discVOBeta.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
         discVOBeta.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));

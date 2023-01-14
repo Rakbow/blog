@@ -9,10 +9,10 @@ import com.rakbow.website.data.vo.game.GameVO;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.entity.ProductUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -120,7 +120,7 @@ public interface GameVOMapper {
         gameVOAlpha.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
 
         //将图片分割处理
-        gameVOAlpha.setCover(CommonImageUtils.getCover(game.getImages()));
+        gameVOAlpha.setCover(CommonImageUtils.generateCover(game.getImages()));
 
         //审计字段
         gameVOAlpha.setAddedTime(CommonUtils.timestampToString(game.getAddedTime()));
@@ -174,7 +174,7 @@ public interface GameVOMapper {
         gameVOBeta.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
 
         //图片
-        gameVOBeta.setCover(CommonImageUtils.getThumbCover(game.getImages(), 50));
+        gameVOBeta.setCover(CommonImageUtils.generateThumbCover(game.getImages(), 50));
 
         //审计字段
         gameVOBeta.setAddedTime(CommonUtils.timestampToString(game.getAddedTime()));

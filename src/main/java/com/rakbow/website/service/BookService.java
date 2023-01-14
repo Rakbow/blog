@@ -6,14 +6,13 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.common.ApiInfo;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
+import com.rakbow.website.util.image.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,33 +30,25 @@ import java.util.stream.Collectors;
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2022-12-28 23:45
- * @Description:
+ * @Description: book业务层
  */
 @Service
 public class BookService {
 
-    //region ------引入实例------
+    //region ------注入依赖------
 
     @Autowired
     private BookMapper bookMapper;
     @Autowired
-    private CommonImageUtils commonImageUtils;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private FranchiseService franchiseService;
+    private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private VisitService visitService;
-    @Autowired
+
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
     //endregion
 
     //region ------更删改查------
-
-    // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
-    // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
-    // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
     /**
      * 新增图书
@@ -114,18 +105,18 @@ public class BookService {
     /**
      * json对象转Book，以便保存到数据库
      *
-     * @param bookJson
+     * @param bookJson bookJson
      * @return book
      * @author rakbow
      */
     public Book json2Book(JSONObject bookJson) {
-        return bookJson.toJavaObject(Book.class);
+        return JSON.to(Book.class, bookJson);
     }
 
     /**
      * 检测数据合法性
      *
-     * @param bookJson
+     * @param bookJson bookJson
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
@@ -168,7 +159,7 @@ public class BookService {
     /**
      * 处理前端传送图书数据
      *
-     * @param bookJson
+     * @param bookJson bookJson
      * @return 处理后的book json格式数据
      * @author rakbow
      */
@@ -188,7 +179,7 @@ public class BookService {
 
     //endregion
 
-    //region ------更新book数据------
+    //region ------图片操作------
 
     /**
      * 新增图书图片
@@ -203,7 +194,7 @@ public class BookService {
     public void addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos) throws IOException {
 
-        JSONArray finalImageJson = commonImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.BOOK, images, originalImagesJson, imageInfos);
 
         bookMapper.updateBookImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -234,7 +225,7 @@ public class BookService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getBook(id).getImages());
 
-        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
 
         bookMapper.updateBookImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
@@ -247,12 +238,15 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAllBookImages(int id) {
+    public void deleteAllBookImages(int id) {
         Book book = getBook(id);
         JSONArray images = JSON.parseArray(book.getImages());
-
-        return commonImageUtils.commonDeleteAllImages(EntityType.BOOK, images);
+        qiniuImageUtils.commonDeleteAllImages(EntityType.BOOK, images);
     }
+
+    //endregion
+
+    //region ------更新book数据------
 
     /**
      * 更新图书作者信息
@@ -349,7 +343,7 @@ public class BookService {
     }
 
     /**
-     * 根据作品id获取关联图书
+     * 根据作品id获取图书
      *
      * @param productId 作品id
      * @return List<JSONObject>

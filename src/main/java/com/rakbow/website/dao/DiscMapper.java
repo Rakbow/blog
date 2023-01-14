@@ -28,25 +28,25 @@ public interface DiscMapper {
                              List<Integer> mediaFormat, String limited, String hasBonus);
 
     //新增disc
-    int addDisc (Disc disc);
+    void addDisc (Disc disc);
 
     //更新disc基础信息
-    int updateDisc (int id, Disc disc);
+    void updateDisc (int id, Disc disc);
 
     //删除单个disc
-    int deleteDisc(int id);
+    void deleteDisc(int id);
 
     //更新图片
-    int updateDiscImages(int id, String images, Timestamp editedTime);
+    void updateDiscImages(int id, String images, Timestamp editedTime);
 
     //更新规格信息
-    int updateDiscSpec(int id, String spec, Timestamp editedTime);
+    void updateDiscSpec(int id, String spec, Timestamp editedTime);
 
     //更新描述信息
-    int updateDiscDescription(int id, String description, Timestamp editedTime);
+    void updateDiscDescription(int id, String description, Timestamp editedTime);
 
     //更新特典信息
-    int updateDiscBonus(int id, String bonus, Timestamp editedTime);
+    void updateDiscBonus(int id, String bonus, Timestamp editedTime);
 
     int updateStatusById(int id);
 

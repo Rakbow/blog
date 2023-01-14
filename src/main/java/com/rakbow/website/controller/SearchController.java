@@ -7,7 +7,7 @@
 // import com.rakbow.website.service.AlbumService;
 // import com.rakbow.website.service.ElasticsearchService;
 // import com.rakbow.website.service.UserService;
-// import com.rakbow.website.util.common.ApiResult;
+// import com.rakbow.website.data.ApiResult;
 // import org.apache.commons.lang3.StringUtils;
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.stereotype.Controller;

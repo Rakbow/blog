@@ -3,6 +3,7 @@ package com.rakbow.website.dao;
 import com.rakbow.website.entity.Franchise;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -28,5 +29,11 @@ public interface FranchiseMapper {
 
     //获取所有系列
     List<Franchise> getAll();
+
+    //更新描述信息
+    void updateFranchiseDescription(int id, String description, Timestamp editedTime);
+
+    //更新图片
+    void updateFranchiseImages(int id, String images, Timestamp editedTime);
 
 }

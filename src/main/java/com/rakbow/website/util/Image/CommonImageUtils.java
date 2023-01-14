@@ -1,25 +1,20 @@
-package com.rakbow.website.util.Image;
+package com.rakbow.website.util.image;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.emun.image.ImageProperty;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.segmentImagesResult;
-import com.rakbow.website.util.common.ActionResult;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.CommonUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import com.rakbow.website.data.CommonConstant;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 /**
  * @Project_name: website
@@ -27,132 +22,109 @@ import java.util.List;
  * @Create: 2022-12-31 1:18
  * @Description:
  */
-@Component
 public class CommonImageUtils {
 
-    @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    //region ------检测------
 
     /**
-     * 通用新增图片
+     * 对新增图片信息合法性进行检测，图片类型
      *
-     * @param entityId                 实体id
-     * @param entityType               实体类型
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @return finalImageJson 最终保存到数据库的json信息
+     * @param imageInfos,images 新增图片信息，专辑原图片集合
+     * @return boolean
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public JSONArray commonAddImages(int entityId, EntityType entityType, MultipartFile[] images,
-                                     JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
-        //最终保存到数据库的json信息
-        JSONArray finalImageJson = new JSONArray();
+    public static String checkAddImages(JSONArray imageInfos, JSONArray images) {
 
-        //新增图片信息json
-        JSONArray addImageJson = new JSONArray();
+        int coverCount = 0;
 
-        //创建存储链接前缀
-        String filePath = entityType.getNameEn().toLowerCase() + "/" + entityId + "/";
+        if (images.size() != 0) {
 
-        for (int i = 0; i < images.length; i++) {
-            //上传图片
-            ActionResult ar = qiniuImageUtils.uploadImageToQiniu(images[i], filePath);
-            if (ar.state) {
-                JSONObject jo = new JSONObject();
-                jo.put("url", ar.data.toString());
-                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
-                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
-                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", CommonUtils.getCurrentTime());
-                if (imageInfos.getJSONObject(i).getString("description") == null) {
-                    jo.put("description", "");
-                } else {
-                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
+            for (int i = 0; i < images.size(); i++) {
+                if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                    coverCount++;
                 }
-                addImageJson.add(jo);
             }
-        }
-
-        //汇总
-        finalImageJson.addAll(originalImagesJson);
-        finalImageJson.addAll(addImageJson);
-
-        return finalImageJson;
-    }
-
-    /**
-     * 通用删除图片
-     *
-     * @param entityId     实体id
-     * @param images       原始图片json数组
-     * @param deleteImages 需要删除的图片jsonArray
-     * @return images 最终保存到数据库的json信息
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public JSONArray commonDeleteImages(int entityId, JSONArray images, JSONArray deleteImages) throws Exception {
-
-        //从七牛云上删除
-        //删除结果
-        List<String> deleteResult = new ArrayList<>();
-        //若删除的图片只有一张，调用单张删除方法
-        if (deleteImages.size() == 1) {
-            ActionResult ar = qiniuImageUtils.deleteImageFromQiniu
-                    (deleteImages.getJSONObject(0).getString("url"));
-            if (!ar.state) {
-                throw new Exception(ar.message);
+            for (int i = 0; i < imageInfos.size(); i++) {
+                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                    coverCount++;
+                }
             }
-            deleteResult.add(deleteImages.getJSONObject(0).getString("url"));
         } else {
-            String[] fullImageUrlList = new String[deleteImages.size()];
-            for (int i = 0; i < deleteImages.size(); i++) {
-                fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
-            }
-            ActionResult ar = qiniuImageUtils.deleteImagesFromQiniu(fullImageUrlList);
-            deleteResult = (List<String>) ar.data;
-        }
 
-        //根据删除结果循环删除图片信息json数组
-        // 迭代器
-
-        for (String s : deleteResult) {
-            Iterator<Object> iterator = images.iterator();
-            while (iterator.hasNext()) {
-                JSONObject itJson = (JSONObject) iterator.next();
-                if (StringUtils.equals(itJson.getString("url"), s)) {
-                    // 删除数组元素
-                    iterator.remove();
+            for (int i = 0; i < imageInfos.size(); i++) {
+                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                    coverCount++;
                 }
             }
+
         }
 
-        return images;
+        //检测图片类型为封面的个数是否大于1
+        if (coverCount > 1) {
+            return ApiInfo.COVER_COUNT_EXCEPTION;
+        }
+
+        return "";
     }
 
     /**
-     * 通用删除所有图片
+     * 对更新图片信息合法性进行检测，图片英文名和图片类型
      *
-     * @param images 删除图片合集
-     * @param entityType 实体类型
+     * @param images 图片json数组
+     * @return 报错信息
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String commonDeleteAllImages(EntityType entityType, JSONArray images) {
-
-        String[] deleteImageKeyList = new String[images.size()];
-        //图片文件名
-        String deleteImageUrl;
+    public static String checkUpdateImages(JSONArray images) {
+        //封面类型的图片个数
+        int coverCount = 0;
         for (int i = 0; i < images.size(); i++) {
-            JSONObject image = images.getJSONObject(i);
-            deleteImageUrl = image.getString("url");
-            //删除七牛服务器上对应图片文件
-            deleteImageKeyList[i] = deleteImageUrl;
+            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                coverCount++;
+            }
         }
-        qiniuImageUtils.deleteImagesFromQiniu(deleteImageKeyList);
+        if (coverCount > 1) {
+            return ApiInfo.COVER_COUNT_EXCEPTION;
+        }
 
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, entityType.getNameZh());
+        return "";
+    }
+
+    //endregion
+
+    /**
+     * 使用 通过图片url获取字节大小，长宽
+     * @param imgUrl 图片URL
+     */
+    public static ImageProperty getImageProperty(String imgUrl) throws IOException {
+        ImageProperty img = new ImageProperty();
+
+        File file = new File(imgUrl);
+
+        // 图片对象
+        BufferedImage bufferedImage = ImageIO.read(new FileInputStream(file));
+
+        img.setSize(file.length());
+        img.setWidth(bufferedImage.getWidth());
+        img.setHeight(bufferedImage.getHeight());
+
+        return img;
+    }
+
+    /**
+     * 通过遍历通用图片信息json数组获取封面url
+     *
+     * @param imageJson 图片信息
+     * @return coverUrl
+     * @author rakbow
+     */
+    public static String getCoverUrl (JSONArray imageJson) {
+        for (int i = 0; i < imageJson.size(); i++) {
+            JSONObject image = imageJson.getJSONObject(i);
+            if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
+                return image.getString("url");
+            }
+        }
+        return "";
     }
 
     /**
@@ -173,20 +145,20 @@ public class CommonImageUtils {
         if (!images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 100));
-                image.put("thumbUrl50", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
+                image.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 100));
+                image.put("thumbUrl50", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
             }
         }
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
+        cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), coverSize));
+                    cover.put("url", QiniuImageUtils.getThumbUrl(image.getString("url"), coverSize));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -231,23 +203,23 @@ public class CommonImageUtils {
      * @return JSONObject
      * @author rakbow
      */
-    public static JSONObject getCover(String imagesJson) {
+    public static JSONObject generateCover(String imagesJson) {
 
         JSONArray images = JSONArray.parseArray(imagesJson);
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
-        cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
+        cover.put("url", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
+        cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
-                    cover.put("thumbUrl", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), 70));
+                    cover.put("url", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
+                    cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
+                    cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(image.getString("url"), 70));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -262,16 +234,16 @@ public class CommonImageUtils {
      * @return JSONObject
      * @author rakbow
      */
-    public static JSONObject getThumbCover(String imagesJson, int size) {
+    public static JSONObject generateThumbCover(String imagesJson, int size) {
         JSONObject cover = new JSONObject();
         JSONArray images = JSONArray.parseArray(imagesJson);
-        cover.put("url", QiniuImageHandleUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));
+        cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageHandleUtils.getThumbUrl(image.getString("url"), size));
+                    cover.put("url", QiniuImageUtils.getThumbUrl(image.getString("url"), size));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

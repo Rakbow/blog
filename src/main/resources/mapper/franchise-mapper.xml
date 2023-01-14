@@ -40,9 +40,24 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteFranchise">
-        delete
-        from franchise
+<!--    <delete id="deleteFranchise">-->
+<!--        delete-->
+<!--        from franchise-->
+<!--        where id = #{id}-->
+<!--    </delete>-->
+
+    <update id="updateFranchiseDescription" keyProperty="id">
+        update franchise
+        set
+        description = #{description}, edited_time = #{editedTime}
         where id = #{id}
-    </delete>
+    </update>
+
+    <update id="updateFranchiseImages" keyProperty="id">
+        update franchise
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
 </mapper>

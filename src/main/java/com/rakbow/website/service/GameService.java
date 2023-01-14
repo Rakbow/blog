@@ -4,22 +4,16 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.GameMapper;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.common.Region;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.segmentImagesResult;
-import com.rakbow.website.data.emun.game.GamePlatform;
-import com.rakbow.website.data.emun.game.ReleaseType;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.CommonUtils;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
+import com.rakbow.website.util.image.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,31 +31,25 @@ import java.util.stream.Collectors;
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2023-01-06 14:43
- * @Description:
+ * @Description: game业务层
  */
 @Service
 public class GameService {
 
-    //region ------引入实例------
+    //region ------注入依赖------
 
     @Autowired
     private GameMapper gameMapper;
     @Autowired
-    private CommonImageUtils commonImageUtils;
-    @Autowired
-    private FranchiseService franchiseService;
+    private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private VisitService visitService;
-    @Autowired
+
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
     //endregion
 
     //region ------更删改查------
-
-    // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
-    // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
-    // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
     /**
      * 新增游戏
@@ -118,18 +106,18 @@ public class GameService {
     /**
      * json对象转Game，以便保存到数据库
      *
-     * @param gameJson
+     * @param gameJson gameJson
      * @return game
      * @author rakbow
      */
     public Game json2Game(JSONObject gameJson) {
-        return gameJson.toJavaObject(Game.class);
+        return JSON.to(Game.class, gameJson);
     }
 
     /**
      * 检测数据合法性
      *
-     * @param gameJson
+     * @param gameJson gameJson
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
@@ -163,7 +151,7 @@ public class GameService {
     /**
      * 处理前端传送游戏数据
      *
-     * @param gameJson
+     * @param gameJson gameJson
      * @return 处理后的game json格式数据
      * @author rakbow
      */
@@ -180,7 +168,7 @@ public class GameService {
 
     //endregion
 
-    //region ------更新game数据------
+    //region ------图片操作------
 
     /**
      * 新增游戏图片
@@ -195,7 +183,7 @@ public class GameService {
     public void addGameImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos) throws IOException {
 
-        JSONArray finalImageJson = commonImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.GAME, images, originalImagesJson, imageInfos);
 
         gameMapper.updateGameImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -226,7 +214,7 @@ public class GameService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getGame(id).getImages());
 
-        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
 
         gameMapper.updateGameImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
@@ -239,12 +227,15 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAllGameImages(int id) {
+    public void deleteAllGameImages(int id) {
         Game game = getGame(id);
         JSONArray images = JSON.parseArray(game.getImages());
-
-        return commonImageUtils.commonDeleteAllImages(EntityType.GAME, images);
+        qiniuImageUtils.commonDeleteAllImages(EntityType.GAME, images);
     }
+
+    //endregion
+
+    //region ------更新game数据------
 
     /**
      * 更新游戏关联组织信息

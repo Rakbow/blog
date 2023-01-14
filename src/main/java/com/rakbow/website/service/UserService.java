@@ -4,12 +4,12 @@ import com.rakbow.website.dao.LoginTicketMapper;
 import com.rakbow.website.dao.UserMapper;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.util.CookieUtil;
-import com.rakbow.website.util.common.ActionResult;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.MailClient;
+import com.rakbow.website.util.common.CookieUtil;
+import com.rakbow.website.data.ActionResult;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.CommonConstant;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -217,5 +217,8 @@ public class UserService{
         }
         return res;
     }
+
+    //region ------图片操作------
+    //endregion
 
 }

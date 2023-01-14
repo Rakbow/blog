@@ -131,7 +131,7 @@
                                     <tr>
                                         <td><strong>音频类型</strong></td>
                                         <td>
-                                            {{music.audioTypeObj.name}}
+                                            {{music.audioType.name}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -317,11 +317,11 @@
                         <div class="field col">
                             <label htmlFor="discSerial">碟片序号<span style="color: red">*</span></label>
                             <p-inputnumber id="discSerial" v-model="musicEdit.discSerial"
-                                           disabled="true"></p-inputnumber>
+                                           :disabled="true"></p-inputnumber>
                         </div>
                         <div class="field col">
                             <label htmlFor="trackSerial">曲目序号<span style="color: red">*</span></label>
-                            <p-inputtext id="trackSerial" v-model="musicEdit.trackSerial" disabled="true"></p-inputtext>
+                            <p-inputtext id="trackSerial" v-model="musicEdit.trackSerial" :disabled="true"></p-inputtext>
                         </div>
                     </div>
                     <div class="field">

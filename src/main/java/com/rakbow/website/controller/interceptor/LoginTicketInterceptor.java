@@ -3,7 +3,7 @@ package com.rakbow.website.controller.interceptor;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.util.CookieUtil;
+import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

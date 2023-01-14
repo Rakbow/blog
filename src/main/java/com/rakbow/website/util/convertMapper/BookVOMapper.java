@@ -10,10 +10,10 @@ import com.rakbow.website.data.vo.book.BookVO;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.entity.ProductUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -147,7 +147,7 @@ public interface BookVOMapper {
         bookVOAlpha.setFranchises(FranchiseUtils.getFranchiseList(book.getFranchises()));
 
         //将图片分割处理
-        bookVOAlpha.setCover(CommonImageUtils.getCover(book.getImages()));
+        bookVOAlpha.setCover(CommonImageUtils.generateCover(book.getImages()));
 
         //审计字段
         bookVOAlpha.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));
@@ -212,7 +212,7 @@ public interface BookVOMapper {
         bookVOBeta.setPublishLanguage(publishLanguage);
 
         //将图片分割处理
-        bookVOBeta.setCover(CommonImageUtils.getThumbCover(book.getImages(), 50));
+        bookVOBeta.setCover(CommonImageUtils.generateThumbCover(book.getImages(), 50));
 
         //审计字段
         bookVOBeta.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));

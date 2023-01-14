@@ -7,10 +7,10 @@ import com.rakbow.website.data.vo.merch.MerchVO;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
-import com.rakbow.website.util.CommonUtils;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
+import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
+import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.entity.ProductUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -112,7 +112,7 @@ public interface MerchVOMapper {
         merchVOAlpha.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
 
         //图片
-        merchVOAlpha.setCover(CommonImageUtils.getCover(merch.getImages()));
+        merchVOAlpha.setCover(CommonImageUtils.generateCover(merch.getImages()));
 
         //审计字段
         merchVOAlpha.setAddedTime(CommonUtils.timestampToString(merch.getAddedTime()));
@@ -170,7 +170,7 @@ public interface MerchVOMapper {
         merchVOBeta.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
 
         //图片
-        merchVOBeta.setCover(CommonImageUtils.getThumbCover(merch.getImages(), 50));
+        merchVOBeta.setCover(CommonImageUtils.generateThumbCover(merch.getImages(), 50));
 
         //审计字段
         merchVOBeta.setAddedTime(CommonUtils.timestampToString(merch.getAddedTime()));

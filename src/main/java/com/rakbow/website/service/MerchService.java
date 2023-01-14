@@ -4,20 +4,16 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MerchMapper;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.segmentImagesResult;
-import com.rakbow.website.data.emun.merch.MerchCategory;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.FranchiseUtils;
-import com.rakbow.website.util.Image.CommonImageUtils;
-import com.rakbow.website.util.ProductUtils;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.CommonUtils;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
+import com.rakbow.website.util.image.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,14 +23,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
  * @Author: Rakbow
  * @Create: 2023-01-04 14:19
- * @Description:
+ * @Description: merch业务层
  */
 @Service
 public class MerchService {
@@ -44,23 +41,15 @@ public class MerchService {
     @Autowired
     private MerchMapper merchMapper;
     @Autowired
-    private CommonImageUtils commonImageUtils;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private FranchiseService franchiseService;
+    private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private VisitService visitService;
-    @Autowired
+
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
     //endregion
 
     //region ------更删改查------
-
-    // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
-    // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
-    // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
     /**
      * 新增周边
@@ -112,69 +101,7 @@ public class MerchService {
 
     //endregion
 
-    //region ------数据处理------
-
-    /**
-     * json对象转Merch，以便保存到数据库
-     *
-     * @param merchJson
-     * @return merch
-     * @author rakbow
-     */
-    public Merch json2Merch(JSONObject merchJson) {
-        return merchJson.toJavaObject(Merch.class);
-    }
-
-    /**
-     * 检测数据合法性
-     *
-     * @param merchJson
-     * @return string类型错误消息，若为空则数据检测通过
-     * @author rakbow
-     */
-    public String checkMerchJson(JSONObject merchJson) {
-        if (StringUtils.isBlank(merchJson.getString("name"))) {
-            return ApiInfo.MERCH_NAME_EMPTY;
-        }
-        if (StringUtils.isBlank(merchJson.getString("releaseDate"))) {
-            return ApiInfo.MERCH_RELEASE_DATE_EMPTY;
-        }
-        if (StringUtils.isBlank(merchJson.getString("category"))) {
-            return ApiInfo.MERCH_CATEGORY_EMPTY;
-        }
-        if (StringUtils.isBlank(merchJson.getString("franchises"))
-                || StringUtils.equals(merchJson.getString("franchises"), "[]")) {
-            return ApiInfo.MERCH_FRANCHISES_EMPTY;
-        }
-        if (StringUtils.isBlank(merchJson.getString("products"))
-                || StringUtils.equals(merchJson.getString("products"), "[]")) {
-            return ApiInfo.MERCH_PRODUCTS_EMPTY;
-        }
-        return "";
-    }
-
-    /**
-     * 处理前端传送周边数据
-     *
-     * @param merchJson
-     * @return 处理后的merch json格式数据
-     * @author rakbow
-     */
-    public JSONObject handleMerchJson(JSONObject merchJson) {
-
-        String[] products = CommonUtils.str2SortedArray(merchJson.getString("products"));
-        String[] franchises = CommonUtils.str2SortedArray(merchJson.getString("franchises"));
-
-        merchJson.put("releaseDate", merchJson.getDate("releaseDate"));
-        merchJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
-        merchJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
-
-        return merchJson;
-    }
-
-    //endregion
-
-    //region ------更新merch数据------
+    //region ------图片操作------
 
     /**
      * 新增周边图片
@@ -187,9 +114,9 @@ public class MerchService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos) throws IOException {
+                               JSONArray imageInfos) throws IOException {
 
-        JSONArray finalImageJson = commonImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.MERCH, images, originalImagesJson, imageInfos);
 
         merchMapper.updateMerchImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -220,7 +147,7 @@ public class MerchService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getMerch(id).getImages());
 
-        JSONArray finalImageJson = commonImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
 
         merchMapper.updateMerchImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
@@ -233,12 +160,78 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAllMerchImages(int id) {
+    public void deleteAllMerchImages(int id) {
         Merch merch = getMerch(id);
         JSONArray images = JSON.parseArray(merch.getImages());
 
-        return commonImageUtils.commonDeleteAllImages(EntityType.MERCH, images);
+        qiniuImageUtils.commonDeleteAllImages(EntityType.MERCH, images);
     }
+
+    //endregion
+
+    //region ------数据处理------
+
+    /**
+     * json对象转Merch，以便保存到数据库
+     *
+     * @param merchJson merchJson
+     * @return merch
+     * @author rakbow
+     */
+    public Merch json2Merch(JSONObject merchJson) {
+        return JSON.to(Merch.class, merchJson);
+    }
+
+    /**
+     * 检测数据合法性
+     *
+     * @param merchJson merchJson
+     * @return string类型错误消息，若为空则数据检测通过
+     * @author rakbow
+     */
+    public String checkMerchJson(JSONObject merchJson) {
+        if (StringUtils.isBlank(merchJson.getString("name"))) {
+            return ApiInfo.MERCH_NAME_EMPTY;
+        }
+        if (StringUtils.isBlank(merchJson.getString("releaseDate"))) {
+            return ApiInfo.MERCH_RELEASE_DATE_EMPTY;
+        }
+        if (StringUtils.isBlank(merchJson.getString("category"))) {
+            return ApiInfo.MERCH_CATEGORY_EMPTY;
+        }
+        if (StringUtils.isBlank(merchJson.getString("franchises"))
+                || StringUtils.equals(merchJson.getString("franchises"), "[]")) {
+            return ApiInfo.MERCH_FRANCHISES_EMPTY;
+        }
+        if (StringUtils.isBlank(merchJson.getString("products"))
+                || StringUtils.equals(merchJson.getString("products"), "[]")) {
+            return ApiInfo.MERCH_PRODUCTS_EMPTY;
+        }
+        return "";
+    }
+
+    /**
+     * 处理前端传送周边数据
+     *
+     * @param merchJson merchJson
+     * @return 处理后的merch json格式数据
+     * @author rakbow
+     */
+    public JSONObject handleMerchJson(JSONObject merchJson) {
+
+        String[] products = CommonUtils.str2SortedArray(merchJson.getString("products"));
+        String[] franchises = CommonUtils.str2SortedArray(merchJson.getString("franchises"));
+
+        merchJson.put("releaseDate", merchJson.getDate("releaseDate"));
+        merchJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
+        merchJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
+
+        return merchJson;
+    }
+
+    //endregion
+
+    //region ------更新merch数据------
 
     /**
      * 更新周边规格信息

@@ -1,9 +1,9 @@
 package com.rakbow.website.config;
 
 import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.util.common.ApiResult;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.CommonConstant;
+import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.CommonConstant;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

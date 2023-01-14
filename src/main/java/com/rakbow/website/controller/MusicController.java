@@ -5,10 +5,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.MusicUtil;
-import com.rakbow.website.util.common.ApiInfo;
-import com.rakbow.website.util.common.ApiResult;
+import com.rakbow.website.util.entity.MusicUtil;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
+import com.rakbow.website.util.convertMapper.MusicVOMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,8 +38,8 @@ public class MusicController {
     private VisitService visitService;
     @Autowired
     private UserService userService;
-    // @Autowired
-    // private ElasticsearchService elasticsearchService;
+
+    private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
 
     //获取单个音频详细信息页面
@@ -54,7 +55,7 @@ public class MusicController {
         Music music = musicService.getMusicById(musicId);
 
         model.addAttribute("audioTypeSet", MusicUtil.getAudioTypeSet());
-        model.addAttribute("music", musicService.music2Json(music));
+        model.addAttribute("music", musicVOMapper.music2VO(music));
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.MUSIC.getId(), music.getId()).getVisitNum());
         //获取同属一张碟片的音频

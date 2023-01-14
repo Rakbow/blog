@@ -1,6 +1,5 @@
 const DOMAIN_URL = "http://localhost:8080";
 //region page
-const HOME_INDEX_URL = DOMAIN_URL;
 const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
 
 const APP_INDEX_URL = DOMAIN_URL + "/app";
@@ -115,6 +114,18 @@ const UPDATE_GAME_ORGANIZATIONS_URL = DOMAIN_URL + "/db/game/update-organization
 const UPDATE_GAME_STAFFS_URL = DOMAIN_URL + "/db/game/update-staffs";
 const UPDATE_GAME_DESCRIPTION_URL = DOMAIN_URL + "/db/game/update-description";
 const UPDATE_GAME_BONUS_URL = DOMAIN_URL + "/db/game/update-bonus";
+//endregion
+
+//region franchise
+const DELETE_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/delete";
+const UPDATE_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/update";
+const INSERT_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/add";
+const GET_FRANCHISES_URL = DOMAIN_URL + "/db/franchise/get-franchises";
+
+const INSERT_FRANCHISE_IMAGES_URL = DOMAIN_URL + "/db/franchise/add-images";
+const UPDATE_FRANCHISE_IMAGES_URL = DOMAIN_URL + "/db/franchise/update-images";
+const UPDATE_FRANCHISE_DESCRIPTION_URL = DOMAIN_URL + "/db/franchise/update-description";
+
 //endregion
 
 //region header

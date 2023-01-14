@@ -30,13 +30,13 @@ public interface AlbumMapper {
                              List<Integer> mediaFormat, String hasBonus);
 
     //新增专辑
-    int addAlbum(Album album);
+    void addAlbum(Album album);
 
     //更新专辑信息
-    int updateAlbum(int id, Album album);
+    void updateAlbum(int id, Album album);
 
     //删除单个专辑
-    int deleteAlbumById(int id);
+    void deleteAlbumById(int id);
 
     //查询所有专辑信息 offset：每页起始行行号，limit：每页显示数量
     List<Album> getAll();
@@ -48,19 +48,19 @@ public interface AlbumMapper {
     int getAlbumRows();
 
     //更新专辑图片
-    int updateAlbumImages(int id, String images, Timestamp editedTime);
+    void updateAlbumImages(int id, String images, Timestamp editedTime);
 
     //更新专辑Artists
-    int updateAlbumArtists(int id, String artists, Timestamp editedTime);
+    void updateAlbumArtists(int id, String artists, Timestamp editedTime);
 
     //更新音轨信息
-    int updateAlbumTrackInfo(int id, String trackInfo, Timestamp editedTime);
+    void updateAlbumTrackInfo(int id, String trackInfo, Timestamp editedTime);
 
     //更新描述信息
-    int updateAlbumDescription(int id, String description, Timestamp editedTime);
+    void updateAlbumDescription(int id, String description, Timestamp editedTime);
 
     //更新特典信息
-    int updateAlbumBonus(int id, String bonus, Timestamp editedTime);
+    void updateAlbumBonus(int id, String bonus, Timestamp editedTime);
 
     //获取最新添加专辑, limit
     List<Album> getAlbumOrderByAddedTime(int limit);
