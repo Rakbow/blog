@@ -129,25 +129,6 @@
                                 <div class="col-12 sm:col-12 md:col-6 lg:col-8">
                                     <table class="table-borderless table-sm ml-3">
                                         <tbody>
-<!--                                        <tr>-->
-<!--                                            <td>-->
-<!--                                                <i class="pi iconfont icon-bar-code mr-1"-->
-<!--                                                   style="font-size: 1.3rem"></i>-->
-<!--                                                <strong>商品条形码</strong>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                {{merch.barcode}}-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>-->
-<!--                                                <i class="pi pi-th-large mr-1" style="font-size: 1.3rem"></i>-->
-<!--                                                <strong>分类</strong>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                {{merch.category.nameZh}}-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
                                         <tr>
                                             <td>
                                                 <i class="pi pi-calendar mr-1"
@@ -158,29 +139,35 @@
                                                 {{franchise.originDate}}
                                             </td>
                                         </tr>
-<!--                                        <tr>-->
-<!--                                            <td>-->
-<!--                                                <i class="pi iconfont icon-wuliaojiage mr-1"-->
-<!--                                                   style="font-size: 1.3rem"></i>-->
-<!--                                                <strong>发售价格</strong>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                {{merch.price != 0?merch.price:" - "}} {{merch.priceUnit}}-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr v-if="merch.notForSale">-->
-<!--                                            <td>-->
-<!--                                                <i class="pi pi-ban mr-1"-->
-<!--                                                   style="font-size: 1.3rem"></i>-->
-<!--                                                <strong></strong>-->
-<!--                                            </td>-->
-<!--                                            <td>非卖品</td>-->
-<!--                                        </tr>-->
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </p-panel>
+                        <!-- 作品 -->
+                        <p-fieldset :toggleable="true" class="mt-2">
+                            <template #legend>
+                                <i class="pi iconfont icon-_classification mr-2" style="font-size: 2rem"></i>
+                                <b>作品</b>
+                            </template>
+                            <div class="grid ml-4" v-if="products != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody>
+                                    <tr v-for="product in products">
+                                        <td width="120px">{{product.releaseDate}}</td>
+                                        <td>
+                                            <a :href="'/db/product/' + product.id">
+                                                {{product.name}}
+                                            </a> ({{product.category.nameZh}})
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无作品</em></span>
+                            </div>
+                        </p-fieldset>
                         <!-- 描述 -->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
@@ -497,6 +484,7 @@
             //region ------基础------
             const franchise = ref([[${franchise}]]);
             const visitNum = ref([[${visitNum}]]);
+            const products = ref([[${products}]]);
             const toast = useToast();
             const edits = ref([
                 {
@@ -802,6 +790,7 @@
             };
 
             return {
+                products,
                 blockedPanel,
                 clearUploadedImage,
                 closeImageEditDialog,

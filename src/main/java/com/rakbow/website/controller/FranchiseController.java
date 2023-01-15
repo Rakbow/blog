@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.FranchiseService;
+import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.service.VisitService;
 import com.rakbow.website.util.common.HostHolder;
@@ -42,6 +43,8 @@ public class FranchiseController {
     @Autowired
     private HostHolder hostHolder;
     @Autowired
+    private ProductService productService;
+    @Autowired
     private UserService userService;
 
     private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
@@ -61,6 +64,7 @@ public class FranchiseController {
         Franchise franchise = franchiseService.getFranchise(id);
 
         model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
+        model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
         model.addAttribute("visitNum", visitService.getVisit(EntityType.FRANCHISE.getId(), id).getVisitNum());

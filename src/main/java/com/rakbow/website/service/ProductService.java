@@ -42,7 +42,7 @@ public class ProductService {
     private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
+
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
 
@@ -323,6 +323,18 @@ public class ProductService {
         //缓存时间1个月
         redisUtil.expire("productSet", 2592000);
 
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public List<ProductVOAlpha> getProductsByFranchiseId(int franchiseId) {
+
+        List<Integer> franchise = new ArrayList<>();
+        franchise.add(franchiseId);
+
+        List<Product> products = productMapper.getProductsByFilter(null, null, franchise,
+                null, "releaseDate", 1, 0 ,0);
+
+        return productVOMapper.product2VOAlpha(products);
     }
 
     //endregion
