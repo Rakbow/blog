@@ -81,8 +81,8 @@ public class FranchiseController {
         model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
         model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
         model.addAttribute("user", hostHolder.getUser());
-        //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.FRANCHISE.getId(), id).getVisitNum());
+        //获取页面数据
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime()));
         return "/franchise/franchise-detail";
     }
 
@@ -100,7 +100,8 @@ public class FranchiseController {
 
         SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams);
 
-        List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);;
+        List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
+        ;
 
         JSONObject result = new JSONObject();
         result.put("data", franchises);
@@ -119,7 +120,7 @@ public class FranchiseController {
             if (userService.checkAuthority(request).state) {
 
                 //检测数据
-                if(!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
+                if (!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
                     res.setErrorMessage(franchiseService.checkFranchiseJson(param));
                     return JSON.toJSONString(res);
                 }
@@ -189,7 +190,7 @@ public class FranchiseController {
         try {
             if (userService.checkAuthority(request).state) {
                 //检测数据
-                if(!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
+                if (!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
                     res.setErrorMessage(franchiseService.checkFranchiseJson(param));
                     return JSON.toJSONString(res);
                 }
@@ -312,7 +313,7 @@ public class FranchiseController {
                 }//删除图片
                 else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
                     res.message = franchiseService.deleteFranchiseImages(id, images);
-                }else {
+                } else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
 

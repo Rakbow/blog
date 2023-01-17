@@ -20,9 +20,9 @@
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
-    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
-    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>-->
+    <!--    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>-->
+    <!--        <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
@@ -89,453 +89,349 @@
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 </head>
 <body style="background-color: #001122">
-<div class="nk-container" style="background-color: #001122">
-    <div class="main">
-        <div class="container">
-            <div id="app">
-                <!-- 头部 -->
-                <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-                <!--                <div class="grid card mt-2" style="background-color: #20262E">-->
-                <div class="grid mt-2">
-                    <p-toast></p-toast>
-                    <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
-                        <p-card>
-                            <template #title>
-                                <div class="grid">
-                                    <h3 class="col text-start ml-2 mt-0 mb-0" style="text-align: left">
-                                        <b class="rakbow-franchise-title">{{franchise.name}}</b>
-                                    </h3>
-                                    <div class="col text-end" th:if="${loginUser != null}">
-                                        <p-splitbutton :model="edits" class="p-button-sm bg-primary"
-                                                       th:if="${loginUser.type == 1}">
-                                            <p-button @click="openEditDialog">
-                                                <i class="pi pi-pencil"></i>
-                                                <span class="ml-2 flex align-items-center font-bold">编辑</span>
-                                            </p-button>
-                                        </p-splitbutton>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #subtitle>
-                                <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
-                                    style="text-align: left"><small>{{franchise.nameEn}}</small>
-                                </h5>
-                                <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
-                                    style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
-                            </template>
-                            <template #content>
-                                <!-- 作品 -->
-                                <p-fieldset :toggleable="true" class="mt-2">
-                                    <template #legend>
-                                        <div style="color: #788990;">
-                                            <i class="pi iconfont icon-_classification mr-2" style="font-size: 1rem"></i>
-                                            <b>作品</b>
-                                        </div>
-                                    </template>
-                                    <div class="grid ml-4" v-if="products != 0">
-                                        <table class="table table-sm table-borderless">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col" class="text-start rakbow-table-title">日&nbsp期</th>
-                                                    <th scope="col" class="text-start rakbow-table-title">作&nbsp品</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="product in products">
-                                                    <td width="120px" class="pb-0 rakbow-table-date">{{product.releaseDate}}</td>
-                                                    <td class="pb-0">
-                                                        <a :href="'/db/product/' + product.id">
+    <div id="main" class="grid mt-2">
+        <p-toast></p-toast>
+        <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
+            <p-card style="min-height: 100%">
+                <template #title>
+                    <div class="grid">
+                        <h3 class="col text-start ml-2 mt-0 mb-0" style="text-align: left">
+                            <b class="rakbow-franchise-title">{{franchise.name}}</b>
+                        </h3>
+                        <div class="col text-end" th:if="${loginUser != null}">
+                            <p-splitbutton :model="edits" class="p-button-sm bg-primary"
+                                           th:if="${loginUser.type == 1}">
+                                <p-button @click="openEditDialog">
+                                    <i class="pi pi-pencil"></i>
+                                    <span class="ml-2 flex align-items-center font-bold">编辑</span>
+                                </p-button>
+                            </p-splitbutton>
+                        </div>
+                    </div>
+                </template>
+                <template #subtitle>
+                    <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
+                        style="text-align: left"><small>{{franchise.nameEn}}</small>
+                    </h5>
+                    <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
+                        style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
+                </template>
+                <template #content>
+                    <!-- 作品 -->
+                    <p-fieldset :toggleable="true" class="mt-2">
+                        <template #legend>
+                            <div style="color: #788990;">
+                                <i class="pi iconfont icon-_classification mr-2" style="font-size: 1rem"></i>
+                                <b>作品</b>
+                            </div>
+                        </template>
+                        <div class="grid ml-4" v-if="products != 0">
+                            <table class="table table-sm table-borderless">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="text-start rakbow-table-title">日&nbsp期</th>
+                                    <th scope="col" class="text-start rakbow-table-title">作&nbsp品</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="product in products">
+                                    <td width="80px" class="pb-0 rakbow-table-date">{{product.releaseDate}}</td>
+                                    <td class="pb-0">
+                                        <a :href="'/db/product/' + product.id">
                                                             <span :class="'rakbow-product-category-' + product.category.id">
                                                                 {{product.name}}
                                                             </span>
-                                                        </a> <span class="rakbow-table-date">({{product.category.nameZh}})</span>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div v-else>
-                                        <span class="emptyInfo"><em>暂无作品</em></span>
-                                    </div>
-                                </p-fieldset>
-                            </template>
-                        </p-card>
-<!--                        <p-panel>-->
-<!--                            <template #header>-->
-<!--                                <div class="container mt-0 mb-0 ml-0">-->
-<!--                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{franchise.name}}</h5>-->
-<!--                                    <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0"-->
-<!--                                        style="text-align: left"><small>{{franchise.nameEn}}</small>-->
-<!--                                    </h5>-->
-<!--                                    <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0"-->
-<!--                                        style="text-align: left"><small>{{franchise.nameZh}}</small></h5>-->
-<!--                                </div>-->
-<!--                            </template>-->
-<!--                            <template #icons th:if="${loginUser != null}">-->
-<!--                                <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"-->
-<!--                                               th:if="${loginUser.type == 1}">-->
-<!--                                    <p-button @click="openEditDialog">-->
-<!--                                        <i class="pi pi-pencil"></i>-->
-<!--                                        <span class="ml-2 flex align-items-center font-bold">编辑</span>-->
-<!--                                    </p-button>-->
-<!--                                </p-splitbutton>-->
-<!--                            </template>-->
-<!--                            <div class="grid">-->
-<!--                                <div class="col-12 sm:col-12 md:col-6 lg:col-4">-->
-<!--                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">-->
-<!--                                        <img :src="franchise.cover.url" :alt="franchise.cover.name"-->
-<!--                                             class="image-cover"/>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <div class="col-12 sm:col-12 md:col-6 lg:col-8">-->
-<!--                                    <table class="table-borderless table-sm ml-3">-->
-<!--                                        <tbody>-->
-<!--                                        <tr>-->
-<!--                                            <td>-->
-<!--                                                <i class="pi pi-calendar mr-1"-->
-<!--                                                   style="font-size: 1.3rem"></i>-->
-<!--                                                <strong>起始日期</strong>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                {{franchise.originDate}}-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        </tbody>-->
-<!--                                    </table>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </p-panel>-->
-<!--                        &lt;!&ndash; 作品 &ndash;&gt;-->
-<!--                        <p-fieldset :toggleable="true" class="mt-2">-->
-<!--                            <template #legend>-->
-<!--                                <i class="pi iconfont icon-_classification mr-2" style="font-size: 2rem"></i>-->
-<!--                                <b>作品</b>-->
-<!--                            </template>-->
-<!--                            <div class="grid ml-4" v-if="products != 0">-->
-<!--                                <table class="table-borderless table-sm">-->
-<!--                                    <tbody>-->
-<!--                                    <tr>-->
-<!--                                        <th class="text-start"><strong>日&nbsp期</strong></th>-->
-<!--                                        <th class="text-start"><strong>作&nbsp品</strong></th>-->
-<!--                                    </tr>-->
-<!--                                    <tr v-for="product in products">-->
-<!--                                        <td width="120px">{{product.releaseDate}}</td>-->
-<!--                                        <td>-->
-<!--                                            <a :href="'/db/product/' + product.id">-->
-<!--                                                {{product.name}}-->
-<!--                                            </a> ({{product.category.nameZh}})-->
-<!--                                        </td>-->
-<!--                                    </tr>-->
-<!--                                    </tbody>-->
-<!--                                </table>-->
-<!--                            </div>-->
-<!--                            <div v-else>-->
-<!--                                <span class="emptyInfo"><em>暂无作品</em></span>-->
-<!--                            </div>-->
-<!--                        </p-fieldset>-->
-                        <!-- 描述 -->
-                        <p-fieldset :toggleable="true" class="mt-2">
-                            <template #legend>
-                                <div style="color: #788990;">
-                                    <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 1rem"></i>
-                                    <b>描述</b>
-                                </div>
-                            </template>
-                            <article id="description" class="markdown-body" style="width: 100%;"></article>
-                        </p-fieldset>
-                    </div>
-                    <div class="col-12 sm:col-12 md:col-3 lg:col-3">
-                        <p-panel>
-                            <template #header>
-                                <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
-                                <b>图片</b>
-                            </template>
-                            <div v-if="franchise.displayImages.length == 0">
-                                <span class="emptyInfo"><em>暂无图片</em></span>
+                                        </a> <span class="rakbow-table-date">({{product.category.nameZh}})</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo"><em>暂无作品</em></span>
+                        </div>
+                    </p-fieldset>
+                    <!-- 描述 -->
+                    <p-fieldset :toggleable="true" class="mt-4" v-if="franchise.description">
+                        <template #legend>
+                            <div style="color: #788990;">
+                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 1rem"></i>
+                                <b>描述</b>
                             </div>
-                            <p-galleria v-if="franchise.displayImages" :value="franchise.displayImages"
-                                        v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
-                                        :num-visible="7" container-style="max-width: 800px"
-                                        :circular="true" :full-screen="true" :show-item-navigators="true"
-                                        :show-thumbnails="false" v-model:visible="displayCustom">
-                                <template #item="{item}">
-                                    <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
-                                         oncontextmenu="return false"/>
-                                </template>
-                                <template #caption="{item}">
-                                    <div class="custom-galleria-footer">
-                                        <div class="col-6">
-                                            <span v-if="franchise.displayImages" class="title-container">
-                                                <span>共{{franchise.displayImages.length}}张</span>
-                                                <span class="title">{{item.nameZh}}</span>
-                                                <span style="font-size: 10px">{{item.description}}</span>
-                                            </span>
-                                        </div>
-                                        <div class="col-6 text-end">
-                                            <span v-if="franchise.displayImages">
-                                            <span>上传于 {{item.uploadTime}}</span>
-                                        </span>
-                                        </div>
-                                    </div>
-                                </template>
-                            </p-galleria>
-                            <div v-if="franchise.displayImages" class="grid justify-content-evenly justify-content-start">
-                                <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                                     v-for="(image, index) of franchise.displayImages" :key="index">
-                                    <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
-                                         draggable="false"
-                                         oncontextmenu="return false"
-                                         v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
-                                         @click="imageClick(index)"/>
-                                </div>
+                        </template>
+                        <article id="description" class="markdown-body" style="width: 100%;"></article>
+                    </p-fieldset>
+                </template>
+            </p-card>
+        </div>
+        <div class="col-12 sm:col-12 md:col-3 lg:col-3">
+            <p-panel>
+                <template #header>
+                                <span class="text-start">
+                                    <i class="pi pi-images mr-3"
+                                       style="font-size: 1.5rem"></i><span><strong>图片</strong></span>
+                                </span>
+                </template>
+                <div v-if="franchise.displayImages.length == 0">
+                    <span class="emptyInfo" style="color: white"><em>暂无图片</em></span>
+                </div>
+                <p-galleria v-if="franchise.displayImages" :value="franchise.displayImages"
+                            v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
+                            :num-visible="7" container-style="max-width: 800px"
+                            :circular="true" :full-screen="true" :show-item-navigators="true"
+                            :show-thumbnails="false" v-model:visible="displayCustom">
+                    <template #item="{item}">
+                        <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
+                             oncontextmenu="return false"/>
+                    </template>
+                    <template #caption="{item}">
+                        <div class="custom-galleria-footer">
+                            <div class="col-6">
+                                <span v-if="franchise.displayImages" class="title-container">
+                                    <span>共{{franchise.displayImages.length}}张</span>
+                                    <span class="title">{{item.nameZh}}</span>
+                                    <span style="font-size: 10px">{{item.description}}</span>
+                                </span>
                             </div>
-                            <br>
-                            <b class="rbot"><b></b></b>
-                        </p-panel>
-                        <br>
-                        <p-panel>
-                            <template #header>
-                                <i class="pi pi-info-circle mr-2" style="font-size: 2rem"></i>
-                                <b>页面信息</b>
-                            </template>
-                            <div class="grid">
-                                <div class="col-fixed">
-                                    <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
-                                </div>
-                                <div class="col-10 col-offset-2">
-                                    {{franchise.addedTime}}
-                                </div>
-                                <div class="col-fixed">
-                                    <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
-                                </div>
-                                <div class="col-10 col-offset-2">
-                                    {{franchise.editedTime}}
-                                </div>
-                                <div class="col-fixed">
-                                    <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
-                                </div>
-                                <div class="col-10 col-offset-2">
-                                    <i class="pi pi-eye mr-2"></i><b>访问数：</b>
-                                    <span class="text-center">{{visitNum}}</span>
-                                </div>
+                            <div class="col-6 text-end">
+                                <span v-if="franchise.displayImages">
+                                    <span>上传于 {{item.uploadTime}}</span>
+                                </span>
                             </div>
-                        </p-panel>
+                        </div>
+                    </template>
+                </p-galleria>
+                <div v-if="franchise.displayImages" class="grid justify-content-evenly justify-content-start">
+                    <div class="col-4 mt-2 mb-2" id="panel-image-div"
+                         v-for="(image, index) of franchise.displayImages" :key="index">
+                        <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
+                             draggable="false"
+                             oncontextmenu="return false"
+                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
+                             @click="imageClick(index)"/>
                     </div>
                 </div>
-                <p-dialog v-model:visible="displayEditDialog" header="编辑基础信息"
-                          :style="{width: '600px'}" :modal="true" class="p-fluid">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>名称<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>名称(中)<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>名称(英)</label>
-                            <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>发售时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>备注</label>
-                        <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
-                    </div>
-                    <template #footer>
-                        <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                                  @click="closeEditDialog"></p-button>
-                        <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                                  @click="submitEditFranchise"></p-button>
-                    </template>
-                </p-dialog>
-                <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
-                          :style="{width: '1200px'}" :modal="true">
-                    <p-blockui :blocked="blockedPanel">
-                        <p-panel>
-                            <template #header>
-                                <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                                <b>新增</b>
-                            </template>
-                            <div class="grid">
-                                <div class="col-6" align="left">
-                                    <p-fileupload
-                                            mode="basic"
-                                            :custom-upload="true"
-                                            accept="image/*"
-                                            :auto="true"
-                                            choose-label="上传图片"
-                                            :max-file-size="2000000" :preview-width="100"
-                                            invalid-file-size-message="{0}大小已超过{1}"
-                                            @uploader="onUpload"
-                                            @select="selectFile">
-                                    </p-fileupload>
-                                </div>
-                                <div class="col-6" align="right">
-                                    <p-button class="ml-2 p-button-text" icon="pi pi-trash"
-                                              label="清空所选" @click="clearUploadedImage"></p-button>
-                                </div>
-                            </div>
-                            <div class="formgrid grid mt-2">
-                                <div class="field col">
-                                    <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-image"></i>
-                                        </span>
-                                        <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
-                                    </div>
-                                </div>
-                                <div class="field col">
-                                    <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-image"></i>
-                                        </span>
-                                        <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
-                                    </div>
-                                </div>
-                                <div class="field col">
-                                    <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                                option-value="value" placeholder="选择图片类型"
-                                                style="width: 280px"></p-dropdown>
-                                </div>
-                                <div class="field col">
-                                    <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                                :auto-resize="true" placeholder="图片描述"
-                                                style="width: 280px"></p-textarea>
-                                </div>
-                            </div>
-                            <div class="formgrid grid mt-2">
-                                <div class="field col" align="left">
-                                    <p-button label="新增图片" icon="pi pi-save"
-                                              @click="save2imageInfos"></p-button>
-                                </div>
-                                <div class="field col" align="right">
-                                    <p-button label="提交新增" icon="pi pi-save"
-                                              @click="submitImages" class="p-button-success"></p-button>
-                                </div>
-                            </div>
-                            <p-divider></p-divider>
-                            <div class="field">
-                                <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
-                                <section>
-                                    <div id="imgBox" v-html="imageHtml"></div>
-                                </section>
-                            </div>
-                        </p-panel>
-                        <p-panel>
-                            <template #header>
-                                <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                                <b>编辑</b>
-                            </template>
-                            <div v-if="franchise.images.length != 0">
-                                <p-datatable :value="franchise.images" class="p-datatable-sm"
-                                             @row-reorder="imgRowReorder" edit-mode="row" striped-rows
-                                             :resizable-columns="true" column-resize-mode="expand"
-                                             v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
-                                             v-model:selection="selectedImage">
-                                    <template #header>
-                                        <p-button icon="pi pi-trash" class="p-button-danger"
-                                                  @click="confirmDeleteSelectedImage"></p-button>
-                                    </template>
-                                    <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
-                                    <p-column :row-reorder="true" header-style="width: 3%"></p-column>
-                                    <p-column header="图片" header-style="width: 8%">
-                                        <template #body="slotProps">
-                                            <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
-                                                 class="edit-image"/>
-                                        </template>
-                                    </p-column>
-                                    <p-column field="url" header="URL" header-style="width: 10%">
-                                        <template #body="slotProps">
-                                            {{slotProps.data.url.substr(22)}}
-                                        </template>
-                                    </p-column>
-                                    <p-column field="nameZh" header="名(中)" header-style="width: 10%">
-                                        <template #editor="{ data, field }">
-                                            <p-inputtext v-model="data[field]" autofocus
-                                                         style="width: 100px"></p-inputtext>
-                                        </template>
-                                    </p-column>
-                                    <p-column field="nameEn" header="名(英)" header-style="width: 10%">
-                                        <template #editor="{ data, field }">
-                                            <p-inputtext v-model="data[field]" autofocus
-                                                         style="width: 100px"></p-inputtext>
-                                        </template>
-                                    </p-column>
-                                    <p-column field="type" header="类型" header-style="width: 8%">
-                                        <template #editor="{ data, field }">
-                                            <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
-                                                        option-value="value" placeholder="图片类型">
-
-                                            </p-dropdown>
-                                        </template>
-                                        <template #body="slotProps">
-                                            {{getImageTypeLabel(slotProps.data.type)}}
-                                        </template>
-                                    </p-column>
-                                    <p-column field="description" header="描述" header-style="width: 15%">
-                                        <template #editor="{ data, field }">
-                                            <p-inputtext v-model="data[field]" autofocus
-                                                         style="width: 100px"></p-inputtext>
-                                        </template>
-                                    </p-column>
-                                    <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
-                                    <p-column :row-editor="true" header-style="width: 15%"></p-column>
-                                </p-datatable>
-                            </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>暂无图片</em></span>
-                            </div>
-                        </p-panel>
-                    </p-blockui>
-                    <template #footer>
-                        <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
-                                  class="p-button-text"></p-button>
-                        <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
-                    </template>
-                </p-dialog>
-                <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
-                    <!--                    <div id="md-editor-v3">-->
-                    <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-                    </md-editor-v3>
-                    <!--                    </div>-->
-                    <template #footer>
-                        <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                                  class="p-button-text">
-                        </p-button>
-                        <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
-                    </template>
-                </p-dialog>
-                <p-dialog v-model:visible="deleteFranchiseImageDialog" header="删除图片"
-                          :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
-                    <div class="confirmation-content">
-                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                        <span v-if="franchise">确定删除所选的图片？</span>
-                    </div>
-                    <template #footer>
-                        <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                                  @click="cancelDeleteSelectedImage"></p-button>
-                        <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                                  @click="deleteImage"></p-button>
-                    </template>
-                </p-dialog>
-
-                <!-- 尾部 -->
-                <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
-            </div>
+                <br>
+                <b class="rbot"><b></b></b>
+            </p-panel>
+            <br>
+            <div th:insert="~{template/common-template :: page_info_card}"></div>
         </div>
     </div>
+    <p-dialog v-model:visible="displayEditDialog" header="编辑基础信息"
+              :style="{width: '600px'}" :modal="true" class="p-fluid">
+        <div class="formgrid grid">
+            <div class="field col">
+                <label>名称<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
+            </div>
+            <div class="field col">
+                <label>名称(中)<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
+            </div>
+        </div>
+        <div class="formgrid grid">
+            <div class="field col">
+                <label>名称(英)</label>
+                <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
+            </div>
+            <div class="field col">
+                <label>发售时间<span style="color: red">*</span></label>
+                <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
+                            :show-button-bar="true"
+                            :show-icon="true"></p-calendar>
+            </div>
+        </div>
+        <div class="field">
+            <label>备注</label>
+            <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
+                        :auto-resize="true"></p-textarea>
+        </div>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="closeEditDialog"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitEditFranchise"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
+              :style="{width: '1200px'}" :modal="true">
+        <p-blockui :blocked="blockedPanel">
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                    <b>新增</b>
+                </template>
+                <div class="grid">
+                    <div class="col-6" align="left">
+                        <p-fileupload
+                                mode="basic"
+                                :custom-upload="true"
+                                accept="image/*"
+                                :auto="true"
+                                choose-label="上传图片"
+                                :max-file-size="2000000" :preview-width="100"
+                                invalid-file-size-message="{0}大小已超过{1}"
+                                @uploader="onUpload"
+                                @select="selectFile">
+                        </p-fileupload>
+                    </div>
+                    <div class="col-6" align="right">
+                        <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                  label="清空所选" @click="clearUploadedImage"></p-button>
+                    </div>
+                </div>
+                <div class="formgrid grid mt-2">
+                    <div class="field col">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-image"></i>
+                                        </span>
+                            <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="field col">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-image"></i>
+                                        </span>
+                            <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="field col">
+                        <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                                    option-value="value" placeholder="选择图片类型"
+                                    style="width: 280px"></p-dropdown>
+                    </div>
+                    <div class="field col">
+                        <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                                    :auto-resize="true" placeholder="图片描述"
+                                    style="width: 280px"></p-textarea>
+                    </div>
+                </div>
+                <div class="formgrid grid mt-2">
+                    <div class="field col" align="left">
+                        <p-button label="新增图片" icon="pi pi-save"
+                                  @click="save2imageInfos"></p-button>
+                    </div>
+                    <div class="field col" align="right">
+                        <p-button label="提交新增" icon="pi pi-save"
+                                  @click="submitImages" class="p-button-success"></p-button>
+                    </div>
+                </div>
+                <p-divider></p-divider>
+                <div class="field">
+                    <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
+                    <section>
+                        <div id="imgBox" v-html="imageHtml"></div>
+                    </section>
+                </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                    <b>编辑</b>
+                </template>
+                <div v-if="franchise.images.length != 0">
+                    <p-datatable :value="franchise.images" class="p-datatable-sm"
+                                 @row-reorder="imgRowReorder" edit-mode="row" striped-rows
+                                 :resizable-columns="true" column-resize-mode="expand"
+                                 v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
+                                 v-model:selection="selectedImage">
+                        <template #header>
+                            <p-button icon="pi pi-trash" class="p-button-danger"
+                                      @click="confirmDeleteSelectedImage"></p-button>
+                        </template>
+                        <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
+                        <p-column :row-reorder="true" header-style="width: 3%"></p-column>
+                        <p-column header="图片" header-style="width: 8%">
+                            <template #body="slotProps">
+                                <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
+                                     class="edit-image"/>
+                            </template>
+                        </p-column>
+                        <p-column field="url" header="URL" header-style="width: 10%">
+                            <template #body="slotProps">
+                                {{slotProps.data.url.substr(22)}}
+                            </template>
+                        </p-column>
+                        <p-column field="nameZh" header="名(中)" header-style="width: 10%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus
+                                             style="width: 100px"></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="nameEn" header="名(英)" header-style="width: 10%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus
+                                             style="width: 100px"></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="type" header="类型" header-style="width: 8%">
+                            <template #editor="{ data, field }">
+                                <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
+                                            option-value="value" placeholder="图片类型">
+
+                                </p-dropdown>
+                            </template>
+                            <template #body="slotProps">
+                                {{getImageTypeLabel(slotProps.data.type)}}
+                            </template>
+                        </p-column>
+                        <p-column field="description" header="描述" header-style="width: 15%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus
+                                             style="width: 100px"></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                        <p-column :row-editor="true" header-style="width: 15%"></p-column>
+                    </p-datatable>
+                </div>
+                <div v-else>
+                    <span class="emptyInfo"><em>暂无图片</em></span>
+                </div>
+            </p-panel>
+        </p-blockui>
+        <template #footer>
+            <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                      class="p-button-text"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+        <!--                    <div id="md-editor-v3">-->
+        <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+        </md-editor-v3>
+        <!--                    </div>-->
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                      class="p-button-text">
+            </p-button>
+            <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="deleteFranchiseImageDialog" header="删除图片"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span v-if="franchise">确定删除所选的图片？</span>
+        </div>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="cancelDeleteSelectedImage"></p-button>
+            <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                      @click="deleteImage"></p-button>
+        </template>
+    </p-dialog>
+
+    <!-- 尾部 -->
+    <footer th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
 
@@ -547,11 +443,14 @@
         setup() {
             onMounted(() => {
                 init();
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
             })
 
             //region ------基础------
             const franchise = ref([[${franchise}]]);
-            const visitNum = ref([[${visitNum}]]);
+            const pageInfo = ref([[${pageInfo}]]);
             const products = ref([[${products}]]);
             const toast = useToast();
             const edits = ref([
@@ -673,15 +572,8 @@
                     });
             }
             const text2marked = () => {
-
-                const description = franchise.value.description;
-
-                if (description != null && description !== "") {
-                    document.getElementById("description").innerHTML = marked.parse(description);
-                } else {
-                    //<![CDATA[
-                    document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
-                    //]]>
+                if (franchise.value.description != null && franchise.value.description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(franchise.value.description);
                 }
             };
             //endregion
@@ -854,6 +746,9 @@
             //endregion
 
             const init = () => {
+
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+
                 text2marked();
             };
 
@@ -882,7 +777,7 @@
                 closeEditDialog,
 
                 submitEditFranchise,
-                visitNum,
+                pageInfo,
                 updateImage,
                 cancelDeleteSelectedImage,
                 deleteImage,
@@ -958,9 +853,11 @@
     .p-card {
         background-color: #1B273D;
     }
+
     .rakbow-franchise-title {
         color: #beb993;
     }
+
     .rakbow-franchise-subtitle {
         color: #788990;
     }
@@ -968,25 +865,59 @@
     .rakbow-table-title {
         color: #beb993;
     }
+
     .rakbow-table-date {
         color: #788990;
     }
+
     .rakbow-table-link {
         color: #ceffff;
     }
 
+    .rkw-page-info .p-card {
+        background: #2f364f;
+    }
 
+    .rkw-page-info .p-card-body {
+        padding: 6px 10px 6px 10px;
+    }
+
+    .rkw-page-info .p-card .p-card-content {
+        padding: 0;
+    }
+
+
+    .rkw-page-info-title {
+        color: #788990;
+    }
+
+
+    .p-panel .p-panel-header {
+        /* border: 1px solid #dee2e6; */
+        padding: 0.5rem;
+        background: #1B273D;
+        color: #beb993;
+        border-top-right-radius: 3px;
+        border-top-left-radius: 3px;
+    }
+
+    .p-panel .p-panel-content {
+        background: #2f364f;
+    }
 
 
     .p-fieldset {
         background-color: #2F364F;
     }
+
     .p-fieldset .p-fieldset-legend {
         background-color: #2F364F;
     }
+
     .p-fieldset .p-fieldset-toggleable {
         color: #788990;
     }
+
     .p-fieldset .p-fieldset-content {
         padding: 5px;
     }
@@ -1100,15 +1031,6 @@
 
     #imgBox img {
         height: 200px;
-    }
-
-    .p-panel .p-panel-header {
-        /* border: 1px solid #dee2e6; */
-        padding: 0.5rem;
-        background: #6d7c8b;
-        color: #d0da9a;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
     }
 
     /*.p-panel .p-panel-content {*/

@@ -1,13 +1,18 @@
 package com.rakbow.website.service;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.VisitMapper;
+import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.entity.Visit;
+import com.rakbow.website.util.common.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -57,6 +62,13 @@ public class VisitService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public List<Visit> selectVisitOrderByVisitNum(int entityType, int limit) {
         return visitMapper.selectVisitOrderByVisitNum(entityType, limit);
+    }
+
+    public pageInfo getPageInfo(int entityType, int entityId, Timestamp addedTime, Timestamp editedTime) {
+        return new pageInfo(
+                CommonUtils.timestampToString(addedTime),
+                CommonUtils.timestampToString(editedTime),
+                getVisit(entityType, entityId).getVisitNum());
     }
 
 }

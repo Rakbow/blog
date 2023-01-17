@@ -1,4 +1,4 @@
-const DOMAIN_URL = "http://localhost:8083";
+const DOMAIN_URL = "http://localhost:8080";
 //region page
 const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
 
