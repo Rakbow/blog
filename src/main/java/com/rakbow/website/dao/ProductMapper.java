@@ -31,13 +31,16 @@ public interface ProductMapper {
     int deleteProduct(int id);
 
     //更新描述
-    int updateProductDescription(int id, String description, Timestamp editedTime);
+    void updateProductDescription(int id, String description, Timestamp editedTime);
 
     //更新staff
-    int updateProductStaffs(int id, String staffs, Timestamp editedTime);
+    void updateProductStaffs(int id, String staffs, Timestamp editedTime);
 
     //更新图片
-    int updateProductImages(int id, String images, Timestamp editedTime);
+    void updateProductImages(int id, String images, Timestamp editedTime);
+
+    //更新组织
+    void updateProductOrganizations(int id, String organizations, Timestamp editedTime);
 
     //条件搜索
     List<Product> getProductsByFilter(String name, String nameZh, List<Integer> franchises, List<Integer> categories,

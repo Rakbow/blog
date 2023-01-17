@@ -61,6 +61,7 @@ public interface ProductVOMapper {
         productVO.setDisplayImages(segmentImages.displayImages);
         productVO.setOtherImages(segmentImages.otherImages);
 
+        productVO.setOrganizations(JSON.parseArray(product.getOrganizations()));
         productVO.setStaffs(JSON.parseArray(product.getStaffs()));
         productVO.setDescription(product.getDescription());
 

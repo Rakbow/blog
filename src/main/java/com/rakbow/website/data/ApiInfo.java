@@ -79,6 +79,7 @@ public class ApiInfo {
     public static final String PRODUCT_RELEASE_DATE_EMPTY = "未填写发行日期！";
     public static final String PRODUCT_FRANCHISE_EMPTY = "未选择作品所属系列！";
     public static final String PRODUCT_CATEGORY_EMPTY = "未选择作品分类！";
+    public static final String UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS = "相关组织信息更新成功！";
     public static final String UPDATE_PRODUCT_DESCRIPTION_SUCCESS = "描述信息更新成功！";
     public static final String UPDATE_PRODUCT_STAFFS_SUCCESS = "staff信息更新成功！";
     //endregion

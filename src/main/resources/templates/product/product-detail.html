@@ -49,6 +49,8 @@
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/chips.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
@@ -67,6 +69,9 @@
     <!-- marked -->
     <script src="https://cdn.staticfile.org/marked/4.2.4/marked.min.js"></script>
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
+
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -114,7 +119,9 @@
                                 <tr>
                                     <td><strong>所属系列</strong></td>
                                     <td>
-                                        {{product.franchise.label}}
+                                        <a :href="'/db/franchise/' + product.franchise.value">
+                                            {{product.franchise.label}}
+                                        </a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -129,11 +136,57 @@
                                         {{product.releaseDate}}
                                     </td>
                                 </tr>
+                                <div v-if="product.organizations.length != 0">
+                                    <tr v-for="organization in product.organizations">
+                                        <td>
+                                            <i class="pi iconfont icon-gongsi mr-1"
+                                               style="font-size: 1.3rem"></i>
+                                            <strong>{{organization.label}}</strong>
+                                        </td>
+                                        <td v-if="organization.special == 1" v-for="item in organization.value">
+                                            {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
+                                        </td>
+                                        <td v-if="organization.special == 0" v-for="item in organization.value">
+                                            {{item.name}}
+                                        </td>
+                                    </tr>
+                                </div>
                                 </tbody>
                             </table>
                         </div>
                     </p-panel>
-                    <p-fieldset :toggleable="true" class="mt-2">
+                    <p-fieldset :toggleable="true" class="mt-2" v-if="games">
+                        <template #legend>
+                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
+                            <b>游戏</b>
+                        </template>
+                        <div class="grid ml-4" v-if="games != 0">
+                            <table class="table-borderless table-sm">
+                                <tbody>
+                                <tr>
+                                    <th class="text-start"><strong>日&nbsp期</strong></th>
+                                    <th class="text-start"><strong>游&nbsp戏</strong></th>
+                                    <th class="text-start"><strong>地&nbsp区</strong></th>
+                                    <th class="text-start"><strong>平&nbsp台</strong></th>
+                                </tr>
+                                <tr v-for="game in games">
+                                    <td width="120px">{{game.releaseDate}}</td>
+                                    <td>
+                                        <a :href="'/db/game/' + game.id">
+                                            {{game.name}}
+                                        </a>
+                                    </td>
+                                    <td>{{game.region.nameZh}} <span :class="'fi fi-' + game.region.code"></span></td>
+                                    <td>{{game.platform.nameEn}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo"><em>暂无游戏</em></span>
+                        </div>
+                    </p-fieldset>
+                    <p-fieldset :toggleable="true" class="mt-2" v-if="product.staffs.length != 0">
                         <template #legend>
                             <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
                             <b>Staff信息</b>
@@ -539,19 +592,122 @@
                     <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
                 </template>
             </p-dialog>
-            <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
-                <!--                    <div id="md-editor-v3">-->
-                <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-                </md-editor-v3>
-                <!--                    </div>-->
+
+            <p-dialog v-model:visible="displayOrganizationEditDialog" header="编辑关联组织信息"
+                      :style="{width: '800px'}" :modal="true">
+                <p-panel>
+                    <template #header>
+                        <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                        <b>新增</b>
+                    </template>
+                    <div class="grid">
+                        <div class="col-3">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                                <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi iconfont icon-gongsi"></i>
+                                    </span>
+                                <p-inputtext v-model="organizationItem.name" placeholder="组织名称"></p-inputtext>
+                            </div>
+                        </div>
+                        <div class="col-6" v-if="organization.special == 1">
+                            <div class="col-3">
+                            <p-dropdown v-model="organizationItem.region" :options="regionSet" :filter="true"
+                                        :show-clear="true" option-label="nameZh" option-value="code">
+                                <template #value="slotProps">
+                                    <div class="country-item" v-if="slotProps.value">
+                                        <span :class="'fi fi-' + slotProps.value"></span>
+                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                    </div>
+                                    <span v-else>选择地区</span>
+                                </template>
+                                <template #option="slotProps">
+                                    <div class="country-item">
+                                        <span :class="'fi fi-' + slotProps.option.code"></span>
+                                        <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                    </div>
+                                </template>
+                            </p-dropdown>
+                        </div>
+                            <div class="col-3">
+                            <p-multiselect v-model="organizationItem.platforms" :options="platformSet"
+                                           placeholder="所属平台" option-label="labelEn" option-value="labelEn"
+                                           display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                        </div>
+                        <div class="col-2">
+                            <span>是否特殊项</span><p-inputswitch v-model="organization.special" :true-value="1" :false-value="0"></p-inputswitch>
+                        </div>
+                        <div class="col-2">
+                            <p-button label="新增组织成员" icon="pi pi-save"
+                                      @click="addOrganizationItem"></p-button>
+                        </div>
+                        <div class="col-2">
+                            <p-button label="新增组织" icon="pi pi-save"
+                                      @click="addOrganization"></p-button>
+                        </div>
+                    </div>
+                </p-panel>
+                <p-panel>
+                    <template #header>
+                        <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                        <b>编辑</b>
+                    </template>
+                    <div v-if="tmpOrganizations.length != 0">
+                        <p-datatable dataKey="id" :value="tmpOrganizations" responsive-layout="scroll"
+                                     class="p-datatable-sm" striped-rows @row-reorder="organizationOnRowReorder"
+                                     context-menu v-model:context-menu-selection="selectedOrganization"
+                                     @row-contextmenu="organizationRowMenu" edit-mode="row"
+                                     v-model:editing-rows="organizationEditingRows" @row-edit-save="organizationOnRowEditSave">
+                            <p-column :row-reorder="true"></p-column>
+                            <p-column field="label" header="组织类型">
+                                <template #editor="{ data, field }">
+                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                </template>
+                            </p-column>
+                            <p-column field="value" header="组织">
+                                <template #body="slotProps">
+                                    <div v-if="slotProps.data.special == 1">
+                                        <ul class="px-4">
+                                            <li v-for="item in slotProps.data.value">
+                                                {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(",")}})
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div v-else>
+                                        <div v-for="item in slotProps.data.value" style="display:inline">
+                                            {{item.name}}
+                                        </div>
+                                    </div>
+                                </template>
+                            </p-column>
+                            <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                      bodyStyle="text-align:center"></p-column>
+                        </p-datatable>
+                        <p-contextmenu :model="organizationMenuModel" ref="organizationCm"></p-contextmenu>
+                    </div>
+                    <div v-else>
+                        <span class="emptyInfo">暂无关联组织信息</span>
+                    </div>
+                </p-panel>
                 <template #footer>
-                    <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                              class="p-button-text">
-                    </p-button>
-                    <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                    <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                              @click="clearOrganizations"></p-button>
+                    <p-button label="取消" icon="pi pi-times" class="mr-4"
+                              @click="cancelOrganizationsEdit"></p-button>
+                    <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                              @click="submitOrganizations"></p-button>
                 </template>
             </p-dialog>
+
             <p-dialog v-model:visible="displayStaffEditDialog" header="编辑Staff信息"
                       :style="{width: '800px'}" :modal="true">
                 <p-panel>
@@ -625,6 +781,19 @@
                               @click="submitStaff"></p-button>
                 </template>
             </p-dialog>
+            <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+                <!--                    <div id="md-editor-v3">-->
+                <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+                </md-editor-v3>
+                <!--                    </div>-->
+                <template #footer>
+                    <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                              class="p-button-text">
+                    </p-button>
+                    <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                </template>
+            </p-dialog>
             <p-dialog v-model:visible="deleteProductImageDialog" header="删除图片"
                       :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
                 <div class="confirmation-content">
@@ -659,16 +828,26 @@
             const visitNum = ref([[${visitNum}]]);
             const productCategorySet = ref([[${productCategorySet}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
+            const platformSet = ref([[${platformSet}]]);
+            const regionSet = ref([[${regionSet}]]);
             const relatedProducts = ref([[${relatedProducts}]]);
             const albums = ref([[${albums}]]);
             const books = ref([[${books}]]);
             const discs = ref([[${discs}]]);
+            const games = ref([[${games}]]);
             const edits = ref([
                 {
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
                         openImageEditDialog();
+                    }
+                },
+                {
+                    label: '关联组织',
+                    icon: 'pi iconfont icon-gongsi',
+                    command: () => {
+                        openOrganizationEditDialog();
                     }
                 },
                 {
@@ -686,6 +865,91 @@
                     }
                 }
             ]);
+
+            //region ------相关组织组件------
+            const organizationItem = ref({});
+            const tmpOrganizations = ref();
+            const organizationCm = ref();
+            const selectedOrganization = ref();
+            const organization = ref({
+                label: "",
+                value: []
+            });
+            const organizations = ref([]);
+            const displayOrganizationEditDialog = ref(false);
+            const organizationMenuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteOrganization(selectedOrganization)}
+            ]);
+            const organizationOnRowReorder = (ev) => {
+                tmpOrganizations.value = ev.value;
+            };
+            const organizationRowMenu = (ev) => {
+                organizationCm.value.show(ev.originalEvent);
+            };
+            const deleteOrganization = (organization) => {
+                tmpOrganizations.value = tmpOrganizations.value.filter((o) => o.label !== organization.value.label);
+                toast.add({severity: 'error', summary: '已删除', detail: organization.value.value, life: 3000});
+                selectedOrganization.value = null;
+            };
+            const organizationEditingRows = ref([]);
+            const organizationOnRowEditSave = (ev) => {
+                let {newData, index} = ev;
+
+                tmpOrganizations.value[index] = newData;
+            };
+
+            const openOrganizationEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            tmpOrganizations.value = JSON.parse(JSON.stringify(product.value.organizations));
+                            organization.value = {};
+                            displayOrganizationEditDialog.value = true;
+                        }
+                    })
+            };
+            const clearOrganizations = () => {
+                tmpOrganizations.value = [];
+            };
+            const addOrganizationItem = () => {
+                if (organization.value.value === null || organization.value.value === undefined
+                || organization.value.value.length === 0) {
+                    organization.value.value = [];
+                }
+                organization.value.value.push(organizationItem.value);
+                organizationItem.value = {};
+            };
+            const addOrganization = () => {
+                if (organization.value.special === null || organization.value.special === undefined) {
+                    organization.value.special = 0;
+                }
+                tmpOrganizations.value.push(organization.value);
+                organization.value = {};
+            };
+            const cancelOrganizationsEdit = () => {
+                organization.value = {};
+                displayOrganizationEditDialog.value = false;
+            };
+            const submitOrganizations = () => {
+                let json = {
+                    id: product.value.id,
+                    organizations: tmpOrganizations.value
+                }
+                axiosPostRequest(UPDATE_PRODUCT_ORGANIZATIONS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            displayOrganizationEditDialog.value = false;
+                            organization.value = {};
+                            location.reload(true);
+                        } else {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    })
+            };
+            //endregion
 
             //region ------staffs相关组件------
             const tmpStaffs = ref();
@@ -1022,6 +1286,7 @@
             //endregion
 
             return {
+                regionCode2NameZh, organizationItem, regionSet, platformSet, addOrganizationItem, displayOrganizationEditDialog,
                 tmpStaffs, cm, selectedStaff, staff, staffs, displayStaffEditDialog, menuModel, onRowReorder,
                 staffRowMenu, deleteStaff, editingRows, onRowEditSave, openStaffEditDialog, clearStaffs, addStaff,
                 cancelStaffEdit, submitStaff,
@@ -1036,8 +1301,13 @@
                 activeIndex, responsiveOptions, displayCustom, initGalleriaImageClass, imageClick,
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
                 product, visitNum, productCategorySet, edits, relatedProducts, franchiseSet, albums,
-                books, discs,
+                books, discs, games,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+
+                tmpOrganizations, organizationCm, organization, organizations, organizationMenuModel,
+                organizationEditingRows, selectedOrganization, addOrganization, clearOrganizations,
+                submitOrganizations, deleteOrganization, cancelOrganizationsEdit, organizationRowMenu,
+                organizationOnRowEditSave, organizationOnRowReorder,
             }
         },
         components: {
@@ -1062,6 +1332,8 @@
             "p-chips": primevue.chips,
             "p-contextmenu": primevue.contextmenu,
             "p-tag": primevue.tag,
+            "p-multiselect": primevue.multiselect,
+            "p-inputswitch": primevue.inputswitch,
         }
     };
 

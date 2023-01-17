@@ -17,7 +17,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 public enum Region {
-
+    GLOBAL("Global", "全球", "global", ""),
     JAPAN("Japan", "日本", "jp", "JPY"),
     CHINA("China", "中国大陆", "cn", "CNY"),
     TAIWAN("Taiwan", "台湾地区", "tw", "TWD"),

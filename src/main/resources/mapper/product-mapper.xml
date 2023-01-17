@@ -6,12 +6,12 @@
 
     <sql id="selectFields">
         id, name, name_zh, name_en, release_date, franchise, category,
-        images, staffs, description, remark, added_time, edited_time, _s
+        images, organizations, staffs, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
         name, name_zh, name_en, release_date, franchise, category,
-        images, staffs, description, remark, added_time, edited_time, _s
+        images, organizations, staffs, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="getProduct" resultType="Product">
@@ -153,5 +153,12 @@
             and _s = 1
         </where>
     </select>
+
+    <update id="updateProductOrganizations" keyProperty="id">
+        update product
+        set
+        organizations = #{organizations}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
 
 </mapper>

@@ -58,6 +58,8 @@ public class ProductController {
     @Autowired
     private DiscService discService;
     @Autowired
+    private GameService gameService;
+    @Autowired
     private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
@@ -90,16 +92,21 @@ public class ProductController {
         model.addAttribute("user", hostHolder.getUser());
         model.addAttribute("productClassSet", redisUtil.get("ProductCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
+        model.addAttribute("platformSet", redisUtil.get("platformSet"));
         model.addAttribute("relatedProducts", productService.getRelatedProducts(productId));
 
         if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
-                || product.getCategory() == ProductCategory.GAME.getIndex()
                 || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getIndex()) {
             model.addAttribute("albums", albumService.getAlbumsByProductId(productId));
             model.addAttribute("discs", discService.getDiscsByProductId(productId));
         }
         if (product.getCategory() == ProductCategory.BOOK.getIndex()) {
             model.addAttribute("books", bookService.getBooksByProductId(productId));
+        }
+        if (product.getCategory() == ProductCategory.GAME.getIndex()) {
+            model.addAttribute("albums", albumService.getAlbumsByProductId(productId));
+            model.addAttribute("games", gameService.getGamesByProductId(productId));
         }
 
         //获取页面访问量
@@ -190,6 +197,29 @@ public class ProductController {
         return JSON.toJSONString(res);
     }
 
+    //更新游戏作者信息
+    @RequestMapping(path = "/update-organizations", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateProductOrganizations(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+                int id = JSON.parseObject(json).getInteger("id");
+                String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
+                productService.updateProductOrganizations(id, organizations);
+                res.message = ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
+                //更新elasticsearch中的专辑
+                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+            return JSON.toJSONString(res);
+        }
+    }
+
     //更新描述信息
     @RequestMapping(path = "/update-description", method = RequestMethod.POST)
     @ResponseBody
@@ -246,6 +276,8 @@ public class ProductController {
     }
 
     //endregion
+
+    //region ------图片操纵-------
 
     //新增图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
@@ -335,6 +367,8 @@ public class ProductController {
         }
         return JSON.toJSONString(res);
     }
+
+    //endregion
 
     //region ------特殊查询------
 

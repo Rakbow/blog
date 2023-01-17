@@ -60,4 +60,55 @@
         where id = #{id}
     </update>
 
+    <select id="getFranchisesByFilter" resultType="Franchise">
+        select
+        <include refid="selectFields"></include>
+        from franchise
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="nameZh != null and nameZh != '' ">
+                and name_zh like concat('%', #{nameZh}, '%')
+            </if>
+            and _s = 1
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'originDate'">
+            <if test="sortOrder == 1">
+                order by origin_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by origin_date desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getFranchisesRowsByFilter" resultType="int">
+        select count(id)
+        from franchise
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="nameZh != null and nameZh != '' ">
+                and name_zh like concat('%', #{nameZh}, '%')
+            </if>
+            and _s = 1
+        </where>
+    </select>
+
 </mapper>

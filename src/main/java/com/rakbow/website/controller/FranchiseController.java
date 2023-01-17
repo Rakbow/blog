@@ -5,8 +5,10 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.FranchiseService;
@@ -22,9 +24,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -35,6 +39,8 @@ import java.sql.Timestamp;
 @Controller
 @RequestMapping("/db/franchise")
 public class FranchiseController {
+
+    //region ------注入依赖------
 
     @Autowired
     private FranchiseService franchiseService;
@@ -49,7 +55,16 @@ public class FranchiseController {
 
     private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
 
+    //endregion
+
     //region ------获取页面------
+
+    @RequestMapping(path = "/list", method = RequestMethod.GET)
+    public ModelAndView getFranchiseListPage(Model model) {
+        ModelAndView view = new ModelAndView();
+        view.setViewName("/franchise/franchise-list");
+        return view;
+    }
 
     //获取单个系列详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
@@ -76,31 +91,23 @@ public class FranchiseController {
     //region ------增删改查------
 
     //根据搜索条件获取专辑
-//    @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
-//    @ResponseBody
-//    public String getAlbumsByFilterList(@RequestBody String json) {
-//
-//        JSONObject param = JSON.parseObject(json);
-//        JSONObject queryParams = param.getJSONObject("queryParams");
-//        String pageLabel = param.getString("pageLabel");
-//
-//        List<AlbumVOAlpha> albums = new ArrayList<>();
-//
-//        SearchResult searchResult = albumService.getAlbumsByFilter(queryParams);
-//
-//        if (StringUtils.equals(pageLabel, "list")) {
-//            albums = AlbumVOMapper.INSTANCES.album2VOAlpha((List<Album>) searchResult.data);
-//        }
-//        if (StringUtils.equals(pageLabel, "index")) {
-//            albums = AlbumVOMapper.INSTANCES.album2VOAlpha((List<Album>) searchResult.data);
-//        }
-//
-//        JSONObject result = new JSONObject();
-//        result.put("data", albums);
-//        result.put("total", searchResult.total);
-//
-//        return JSON.toJSONString(result);
-//    }
+    @RequestMapping(value = "/get-franchises", method = RequestMethod.POST)
+    @ResponseBody
+    public String getFranchisesByFilterList(@RequestBody String json) {
+
+        JSONObject param = JSON.parseObject(json);
+        JSONObject queryParams = param.getJSONObject("queryParams");
+
+        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams);
+
+        List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);;
+
+        JSONObject result = new JSONObject();
+        result.put("data", franchises);
+        result.put("total", searchResult.total);
+
+        return JSON.toJSONString(result);
+    }
 
     //新增
     @RequestMapping(value = "/add", method = RequestMethod.POST)

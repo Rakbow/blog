@@ -33,6 +33,7 @@ public class ProductVO {
     private JSONArray otherImages;
 
     //其他
+    private JSONArray organizations;//相关组织
     private JSONArray staffs;//staff
     private String description;//描述
 

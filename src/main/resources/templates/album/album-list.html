@@ -141,7 +141,7 @@
                 <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
                 <p-column header="发售价格" field="price" :sortable="true" style="flex: 0 0 7rem">
                     <template #body="slotProps">
-                        {{formatCurrency(slotProps.data.price)}}
+                        {{slotProps.data.price}} {{slotProps.data.currencyUnit}}
                     </template>
                 </p-column>
                 <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 16rem">
@@ -270,15 +270,21 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-6">
                             <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
-                        <div class="field col">
-                            <label>发行价格(含税)</label>
-                            <p-inputnumber id="price" v-model="album.price" mode="currency" currency="JPY"></p-inputnumber>
+                        <div class="field col-3">
+                            <label>发行价格</label>
+                            <p-inputnumber id="price" v-model="album.price"></p-inputnumber>
+                        </div>
+                        <div class="field col-3">
+                            <label>货币单位</label>
+                            <p-dropdown v-model="album.currencyUnit" :options="priceUnitSet"
+                                        option-label="label" option-value="value" placeholder="单位">
+                            </p-dropdown>
                         </div>
                     </div>
                     <div class="formgrid grid">
@@ -407,15 +413,21 @@
                         </div>
                     </div>
                     <div class="formgrid grid">
-                        <div class="field col">
+                        <div class="field col-6">
                             <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
-                        <div class="field col">
-                            <label>发行价格(含税)</label>
-                            <p-inputnumber id="price" v-model="albumEdit.price" mode="currency" currency="JPY"></p-inputnumber>
+                        <div class="field col-3">
+                            <label>发行价格</label>
+                            <p-inputnumber id="price" v-model="albumEdit.price"></p-inputnumber>
+                        </div>
+                        <div class="field col-3">
+                            <label>货币单位</label>
+                            <p-dropdown v-model="albumEdit.currencyUnit" :options="priceUnitSet"
+                                        option-label="label" option-value="value" placeholder="单位">
+                            </p-dropdown>
                         </div>
                     </div>
                     <div class="formgrid grid">
@@ -819,7 +831,7 @@
 
 
             return {
-                onToggle, onPage, onSort, onFilter, filters, totalRecords,
+                onToggle, onPage, onSort, onFilter, filters, totalRecords, priceUnitSet,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 album, albums, formatCurrency, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,

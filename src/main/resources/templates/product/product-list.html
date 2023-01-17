@@ -108,12 +108,12 @@
                     </template>
                 </p-column>
                 <p-column header="Id" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
-                <p-column header="封面" style="flex: 0 0 16rem">
-                    <template #body="slotProps">
-                        <img :src="slotProps.data.cover.url" :alt="slotProps.data.name" class="product-image" />
-                    </template>
-                </p-column>
-                <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
+<!--                <p-column header="封面" style="flex: 0 0 16rem">-->
+<!--                    <template #body="slotProps">-->
+<!--                        <img :src="slotProps.data.cover.url" :alt="slotProps.data.name" class="product-image" />-->
+<!--                    </template>-->
+<!--                </p-column>-->
+                <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 20rem">
                     <template #body="slotProps">
                         <a :href="'/db/product/' + slotProps.data.id">
                             {{slotProps.data.name}}

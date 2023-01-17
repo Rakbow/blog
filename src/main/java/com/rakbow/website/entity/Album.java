@@ -43,6 +43,7 @@ public class Album {
     private String mediaFormat;//媒体类型
     @Field(type = FieldType.Integer)
     private int price;//发行价格（含税）
+    private String currencyUnit;
     @Field(type = FieldType.Text)
     private String label;//唱片公司
     @Field(type = FieldType.Text)
@@ -81,6 +82,7 @@ public class Album {
         this.albumFormat = "{\"ids\":[]}";
         this.mediaFormat = "{\"ids\":[]}";
         this.price = 0;
+        this.currencyUnit = "";
         this.label = "";
         this.publisher = "";
         this.distributor = "";

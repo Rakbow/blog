@@ -148,10 +148,10 @@ class WebSiteApplicationTests {
     public void redisTest() {
 
        productService.refreshRedisProducts();
-//
+
        franchiseService.refreshRedisFranchises();
 
-//        commonService.refreshRedisEmunData();
+       commonService.refreshRedisEmunData();
 
     }
 

@@ -22,6 +22,7 @@ public class Product {
     private int franchise;//所属系列id
     private int category;//作品分类
     private String images;//图片合集，json格式
+    private String organizations;//相关组织
     private String staffs;//staff
     private String description;//描述
     private String remark;//备注
@@ -38,6 +39,7 @@ public class Product {
         franchise = 0;
         category = 0;
         images = "[]";
+        organizations = "[]";
         description = "";
         staffs = "[]";
         remark = "";

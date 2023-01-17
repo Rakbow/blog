@@ -342,7 +342,7 @@ public class GameService {
         products.add(productId);
 
         List<Game> games = gameMapper.getGamesByFilter(null, null, null, products,
-                100, null, "releaseDate", -1,  0, 0);
+                100, null, "releaseDate", 1,  0, 0);
 
         return gameVOMapper.game2VOBeta(games);
     }

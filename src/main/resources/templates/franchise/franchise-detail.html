@@ -16,6 +16,7 @@
     <!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/product-category.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
@@ -87,8 +88,8 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 </head>
-<body>
-<div class="nk-container">
+<body style="background-color: #001122">
+<div class="nk-container" style="background-color: #001122">
     <div class="main">
         <div class="container">
             <div id="app">
@@ -99,80 +100,147 @@
                 <div class="grid mt-2">
                     <p-toast></p-toast>
                     <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
-                        <p-panel>
-                            <template #header>
-                                <div class="container mt-0 mb-0 ml-0">
-                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{franchise.name}}</h5>
-                                    <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0"
-                                        style="text-align: left"><small>{{franchise.nameEn}}</small>
-                                    </h5>
-                                    <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
-                                        style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
-                                </div>
-                            </template>
-                            <template #icons th:if="${loginUser != null}">
-                                <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"
-                                               th:if="${loginUser.type == 1}">
-                                    <p-button @click="openEditDialog">
-                                        <i class="pi pi-pencil"></i>
-                                        <span class="ml-2 flex align-items-center font-bold">编辑</span>
-                                    </p-button>
-                                </p-splitbutton>
-                            </template>
-                            <div class="grid">
-                                <div class="col-12 sm:col-12 md:col-6 lg:col-4">
-                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">
-                                        <img :src="franchise.cover.url" :alt="franchise.cover.name"
-                                             class="image-cover"/>
+                        <p-card>
+                            <template #title>
+                                <div class="grid">
+                                    <h3 class="col text-start ml-2 mt-0 mb-0" style="text-align: left">
+                                        <b class="rakbow-franchise-title">{{franchise.name}}</b>
+                                    </h3>
+                                    <div class="col text-end" th:if="${loginUser != null}">
+                                        <p-splitbutton :model="edits" class="p-button-sm bg-primary"
+                                                       th:if="${loginUser.type == 1}">
+                                            <p-button @click="openEditDialog">
+                                                <i class="pi pi-pencil"></i>
+                                                <span class="ml-2 flex align-items-center font-bold">编辑</span>
+                                            </p-button>
+                                        </p-splitbutton>
                                     </div>
                                 </div>
-                                <div class="col-12 sm:col-12 md:col-6 lg:col-8">
-                                    <table class="table-borderless table-sm ml-3">
-                                        <tbody>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar mr-1"
-                                                   style="font-size: 1.3rem"></i>
-                                                <strong>起始日期</strong>
-                                            </td>
-                                            <td>
-                                                {{franchise.originDate}}
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </p-panel>
-                        <!-- 作品 -->
-                        <p-fieldset :toggleable="true" class="mt-2">
-                            <template #legend>
-                                <i class="pi iconfont icon-_classification mr-2" style="font-size: 2rem"></i>
-                                <b>作品</b>
                             </template>
-                            <div class="grid ml-4" v-if="products != 0">
-                                <table class="table-borderless table-sm">
-                                    <tbody>
-                                    <tr v-for="product in products">
-                                        <td width="120px">{{product.releaseDate}}</td>
-                                        <td>
-                                            <a :href="'/db/product/' + product.id">
-                                                {{product.name}}
-                                            </a> ({{product.category.nameZh}})
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>暂无作品</em></span>
-                            </div>
-                        </p-fieldset>
+                            <template #subtitle>
+                                <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
+                                    style="text-align: left"><small>{{franchise.nameEn}}</small>
+                                </h5>
+                                <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
+                                    style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
+                            </template>
+                            <template #content>
+                                <!-- 作品 -->
+                                <p-fieldset :toggleable="true" class="mt-2">
+                                    <template #legend>
+                                        <div style="color: #788990;">
+                                            <i class="pi iconfont icon-_classification mr-2" style="font-size: 1rem"></i>
+                                            <b>作品</b>
+                                        </div>
+                                    </template>
+                                    <div class="grid ml-4" v-if="products != 0">
+                                        <table class="table table-sm table-borderless">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="text-start rakbow-table-title">日&nbsp期</th>
+                                                    <th scope="col" class="text-start rakbow-table-title">作&nbsp品</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="product in products">
+                                                    <td width="120px" class="pb-0 rakbow-table-date">{{product.releaseDate}}</td>
+                                                    <td class="pb-0">
+                                                        <a :href="'/db/product/' + product.id">
+                                                            <span :class="'rakbow-product-category-' + product.category.id">
+                                                                {{product.name}}
+                                                            </span>
+                                                        </a> <span class="rakbow-table-date">({{product.category.nameZh}})</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>暂无作品</em></span>
+                                    </div>
+                                </p-fieldset>
+                            </template>
+                        </p-card>
+<!--                        <p-panel>-->
+<!--                            <template #header>-->
+<!--                                <div class="container mt-0 mb-0 ml-0">-->
+<!--                                    <h5 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{franchise.name}}</h5>-->
+<!--                                    <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0"-->
+<!--                                        style="text-align: left"><small>{{franchise.nameEn}}</small>-->
+<!--                                    </h5>-->
+<!--                                    <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0"-->
+<!--                                        style="text-align: left"><small>{{franchise.nameZh}}</small></h5>-->
+<!--                                </div>-->
+<!--                            </template>-->
+<!--                            <template #icons th:if="${loginUser != null}">-->
+<!--                                <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"-->
+<!--                                               th:if="${loginUser.type == 1}">-->
+<!--                                    <p-button @click="openEditDialog">-->
+<!--                                        <i class="pi pi-pencil"></i>-->
+<!--                                        <span class="ml-2 flex align-items-center font-bold">编辑</span>-->
+<!--                                    </p-button>-->
+<!--                                </p-splitbutton>-->
+<!--                            </template>-->
+<!--                            <div class="grid">-->
+<!--                                <div class="col-12 sm:col-12 md:col-6 lg:col-4">-->
+<!--                                    <div class="ml-3" style="transform:translateY(0px);width: 250px; height: 250px">-->
+<!--                                        <img :src="franchise.cover.url" :alt="franchise.cover.name"-->
+<!--                                             class="image-cover"/>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-12 sm:col-12 md:col-6 lg:col-8">-->
+<!--                                    <table class="table-borderless table-sm ml-3">-->
+<!--                                        <tbody>-->
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <i class="pi pi-calendar mr-1"-->
+<!--                                                   style="font-size: 1.3rem"></i>-->
+<!--                                                <strong>起始日期</strong>-->
+<!--                                            </td>-->
+<!--                                            <td>-->
+<!--                                                {{franchise.originDate}}-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        </tbody>-->
+<!--                                    </table>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </p-panel>-->
+<!--                        &lt;!&ndash; 作品 &ndash;&gt;-->
+<!--                        <p-fieldset :toggleable="true" class="mt-2">-->
+<!--                            <template #legend>-->
+<!--                                <i class="pi iconfont icon-_classification mr-2" style="font-size: 2rem"></i>-->
+<!--                                <b>作品</b>-->
+<!--                            </template>-->
+<!--                            <div class="grid ml-4" v-if="products != 0">-->
+<!--                                <table class="table-borderless table-sm">-->
+<!--                                    <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <th class="text-start"><strong>日&nbsp期</strong></th>-->
+<!--                                        <th class="text-start"><strong>作&nbsp品</strong></th>-->
+<!--                                    </tr>-->
+<!--                                    <tr v-for="product in products">-->
+<!--                                        <td width="120px">{{product.releaseDate}}</td>-->
+<!--                                        <td>-->
+<!--                                            <a :href="'/db/product/' + product.id">-->
+<!--                                                {{product.name}}-->
+<!--                                            </a> ({{product.category.nameZh}})-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                            <div v-else>-->
+<!--                                <span class="emptyInfo"><em>暂无作品</em></span>-->
+<!--                            </div>-->
+<!--                        </p-fieldset>-->
                         <!-- 描述 -->
                         <p-fieldset :toggleable="true" class="mt-2">
                             <template #legend>
-                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
-                                <b>描述</b>
+                                <div style="color: #788990;">
+                                    <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 1rem"></i>
+                                    <b>描述</b>
+                                </div>
                             </template>
                             <article id="description" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
@@ -886,6 +954,43 @@
         .mount("#app");
 </script>
 <style>
+    /* rakbow */
+    .p-card {
+        background-color: #1B273D;
+    }
+    .rakbow-franchise-title {
+        color: #beb993;
+    }
+    .rakbow-franchise-subtitle {
+        color: #788990;
+    }
+
+    .rakbow-table-title {
+        color: #beb993;
+    }
+    .rakbow-table-date {
+        color: #788990;
+    }
+    .rakbow-table-link {
+        color: #ceffff;
+    }
+
+
+
+
+    .p-fieldset {
+        background-color: #2F364F;
+    }
+    .p-fieldset .p-fieldset-legend {
+        background-color: #2F364F;
+    }
+    .p-fieldset .p-fieldset-toggleable {
+        color: #788990;
+    }
+    .p-fieldset .p-fieldset-content {
+        padding: 5px;
+    }
+
     .image-cover {
         position: absolute;
         top: 50%;

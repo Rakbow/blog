@@ -56,6 +56,7 @@ public interface AlbumVOMapper {
         albumVo.setNameZh(album.getNameZh());
         albumVo.setBarcode(album.getBarcode());
         albumVo.setPrice(album.getPrice());
+        albumVo.setCurrencyUnit(album.getCurrencyUnit());
         albumVo.setRemark(album.getRemark());
         albumVo.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
         albumVo.setHasBonus(album.getHasBonus() == 1);
@@ -124,6 +125,7 @@ public interface AlbumVOMapper {
         albumVOAlpha.setNameZh(album.getNameZh());
         albumVOAlpha.setBarcode(album.getBarcode());
         albumVOAlpha.setPrice(album.getPrice());
+        albumVOAlpha.setCurrencyUnit(album.getCurrencyUnit());
         albumVOAlpha.setRemark(album.getRemark());
         albumVOAlpha.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
         albumVOAlpha.setHasBonus(album.getHasBonus() == 1);

@@ -138,7 +138,7 @@ public class ProductService {
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
-    public String checkProductJson (JSONObject productJson) {
+    public String checkProductJson(JSONObject productJson) {
         if (StringUtils.isBlank(productJson.getString("name"))) {
             return ApiInfo.PRODUCT_NAME_EMPTY;
         }
@@ -158,11 +158,24 @@ public class ProductService {
     }
 
     /**
-     * 更新描述信息
+     * 更新关联组织信息
+     *
+     * @param id            id
+     * @param organizations 关联组织json数据
      * @author rakbow
-     * @param id 作品id
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void updateProductOrganizations(int id, String organizations) {
+        productMapper.updateProductOrganizations(id, organizations, new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
+     * 更新描述信息
+     *
+     * @param id          作品id
      * @param description 描述信息
-     * */
+     * @author rakbow
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateProductDescription(int id, String description) {
         productMapper.updateProductDescription(id, description, new Timestamp(System.currentTimeMillis()));
@@ -171,7 +184,7 @@ public class ProductService {
     /**
      * 更新Staff
      *
-     * @param id 作品id
+     * @param id     作品id
      * @param staffs staff相关信息json数据
      * @author rakbow
      */
@@ -199,7 +212,7 @@ public class ProductService {
     /**
      * 更新图片
      *
-     * @param id id
+     * @param id     id
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
@@ -246,11 +259,11 @@ public class ProductService {
      * 获取相关作品
      *
      * @param productId 作品id
-     * @author rakbow
      * @return list
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<ProductVOAlpha> getRelatedProducts (int productId) {
+    public List<ProductVOAlpha> getRelatedProducts(int productId) {
         List<ProductVOAlpha> relatedProducts;
 
         Product product = getProduct(productId);
@@ -308,7 +321,7 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void refreshRedisProducts () {
+    public void refreshRedisProducts() {
 
         JSONArray products = new JSONArray();
         getAllProduct().forEach(product -> {
@@ -332,7 +345,7 @@ public class ProductService {
         franchise.add(franchiseId);
 
         List<Product> products = productMapper.getProductsByFilter(null, null, franchise,
-                null, "releaseDate", 1, 0 ,0);
+                null, "releaseDate", 1, 0, 0);
 
         return productVOMapper.product2VOAlpha(products);
     }

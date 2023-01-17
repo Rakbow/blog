@@ -16,13 +16,19 @@ import java.util.List;
 public interface FranchiseMapper {
 
     //新增系列
-    int addFranchise(Franchise franchise);
+    void addFranchise(Franchise franchise);
 
     //通过id查找系列
     Franchise getFranchise(int id);
 
+    //根据过滤条件搜索Book
+    List<Franchise> getFranchisesByFilter(String name, String nameZh, String sortField, int sortOrder, int first, int row);
+
+    //超详细查询条数
+    int getFranchisesRowsByFilter(String name, String nameZh);
+
     //修改系列信息
-    int updateFranchise(int id, Franchise franchise);
+    void updateFranchise(int id, Franchise franchise);
 
     //删除系列
     int deleteFranchise(int id);

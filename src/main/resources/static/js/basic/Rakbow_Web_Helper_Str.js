@@ -1,12 +1,12 @@
-const DOMAIN_URL = "http://localhost:8080";
+const DOMAIN_URL = "http://localhost:8083";
 //region page
 const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
 
 const APP_INDEX_URL = DOMAIN_URL + "/app";
 const BLOG_INDEX_URL = DOMAIN_URL + "/blog";
 
-const FRANCHISE_INDEX_URL = DOMAIN_URL + "/db/franchises";
-const PRODUCT_INDEX_URL = DOMAIN_URL + "/db/product/list";
+const FRANCHISE_LIST_URL = DOMAIN_URL + "/db/franchise/list";
+const PRODUCT_LIST_URL = DOMAIN_URL + "/db/product/list";
 
 const ALBUM_LIST_URL = DOMAIN_URL + "/db/album/list";
 const ALBUM_INDEX_URL = DOMAIN_URL + "/db/albums";
@@ -57,6 +57,7 @@ const GET_PRODUCTS_URL = DOMAIN_URL + "/db/product/get-products";
 const GET_PRODUCT_SET_URL = DOMAIN_URL + "/db/product/get-product-set";
 const ADD_PRODUCT_URL = DOMAIN_URL + "/db/product/add";
 const UPDATE_PRODUCT_URL = DOMAIN_URL + "/db/product/update";
+const UPDATE_PRODUCT_ORGANIZATIONS_URL = DOMAIN_URL + "/db/product/update-organizations";
 const UPDATE_PRODUCT_DESCRIPTION_URL = DOMAIN_URL + "/db/product/update-description";
 const UPDATE_PRODUCT_STAFF_URL = DOMAIN_URL + "/db/product/update-staffs";
 const INSERT_PRODUCT_IMAGES_URL = DOMAIN_URL + "/db/product/add-images";
@@ -119,7 +120,7 @@ const UPDATE_GAME_BONUS_URL = DOMAIN_URL + "/db/game/update-bonus";
 //region franchise
 const DELETE_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/delete";
 const UPDATE_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/update";
-const INSERT_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/add";
+const ADD_FRANCHISE_URL = DOMAIN_URL + "/db/franchise/add";
 const GET_FRANCHISES_URL = DOMAIN_URL + "/db/franchise/get-franchises";
 
 const INSERT_FRANCHISE_IMAGES_URL = DOMAIN_URL + "/db/franchise/add-images";
@@ -162,11 +163,11 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
                 icon: 'pi pi-fw iconfont icon-database',
                 url: DATABASE_INDEX_URL
             },
-            // {
-            //     label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: FRANCHISE_INDEX_URL
-            // },
             {
-                label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_INDEX_URL
+                label: '系列', icon: 'pi pi-fw iconfont icon-_classification', url: FRANCHISE_LIST_URL
+            },
+            {
+                label: '作品', icon: 'pi pi-fw iconfont icon-_classification', url: PRODUCT_LIST_URL
             },
             {
                 label: '专辑', icon: 'pi pi-fw iconfont icon-24gl-musicAlbum2',
@@ -185,7 +186,7 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
             {
                 label: '书籍', icon: 'pi pi-fw pi-book',
                 items: [
-                    {label: '书籍首页', icon: 'pi pi-fw pi-book', url: ALBUM_INDEX_URL},
+                    {label: '书籍首页', icon: 'pi pi-fw pi-book', url: BOOK_INDEX_URL},
                     {label: '书籍列表', icon: 'pi pi-fw pi-list', url: BOOK_LIST_URL}
                 ]
             },
@@ -205,12 +206,12 @@ const NOT_LOGIN_NAVBAR_ITEMS = [
             }
         ]
     },
-    {
-        label: '博客', icon: 'pi pi-fw pi-book', url: BLOG_INDEX_URL
-    },
-    {
-        label: '应用', icon: 'pi iconfont icon-yingyong', url: APP_INDEX_URL
-    },
+    // {
+    //     label: '博客', icon: 'pi pi-fw pi-book', url: BLOG_INDEX_URL
+    // },
+    // {
+    //     label: '应用', icon: 'pi iconfont icon-yingyong', url: APP_INDEX_URL
+    // },
     {
         label: '后台', icon: 'pi iconfont icon-login', url: LOGIN_URL
     }
@@ -231,15 +232,15 @@ const LOGIN_NAVBAR_ITEMS = [
                 icon: 'pi pi-fw iconfont icon-database',
                 url: DATABASE_INDEX_URL
             },
-            // {
-            //     label: '系列',
-            //     icon: 'pi pi-fw iconfont icon-_classification',
-            //     url: FRANCHISE_INDEX_URL
-            // },
+            {
+                label: '系列',
+                icon: 'pi pi-fw iconfont icon-_classification',
+                url: FRANCHISE_LIST_URL
+            },
             {
                 label: '作品',
                 icon: 'pi pi-fw iconfont icon-_classification',
-                url: PRODUCT_INDEX_URL
+                url: PRODUCT_LIST_URL
             },
             {
                 label: '专辑',
@@ -323,16 +324,16 @@ const LOGIN_NAVBAR_ITEMS = [
             }
         ]
     },
-    {
-        label: '博客',
-        icon: 'pi pi-fw pi-book',
-        url: BLOG_INDEX_URL
-    },
-    {
-        label: '应用',
-        icon: 'pi iconfont icon-yingyong',
-        url: APP_INDEX_URL
-    },
+    // {
+    //     label: '博客',
+    //     icon: 'pi pi-fw pi-book',
+    //     url: BLOG_INDEX_URL
+    // },
+    // {
+    //     label: '应用',
+    //     icon: 'pi iconfont icon-yingyong',
+    //     url: APP_INDEX_URL
+    // },
     {
         label: '登出', icon: 'pi iconfont icon-logout', url: LOGOUT_URL
     }

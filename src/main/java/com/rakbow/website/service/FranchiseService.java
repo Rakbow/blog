@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.RedisUtil;
@@ -29,6 +30,8 @@ import java.util.List;
 @Service
 public class FranchiseService {
 
+    //region ------依赖注入------
+
     @Autowired
     private FranchiseMapper franchiseMapper;
     @Autowired
@@ -36,12 +39,15 @@ public class FranchiseService {
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
 
+    //endregion
+
     //region ------曾删改查------
 
     //新增系列
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addFranchise(Franchise franchise){
         franchiseMapper.addFranchise(franchise);
+        refreshRedisFranchises();
     }
 
     //通过id查找系列
@@ -54,6 +60,7 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateFranchise(int id, Franchise franchise){
         franchiseMapper.updateFranchise(id, franchise);
+        refreshRedisFranchises();
     }
 
     //删除系列
@@ -200,6 +207,30 @@ public class FranchiseService {
         //缓存时间1个月
         redisUtil.expire("franchiseSet", 2592000);
 
+    }
+
+    //endregion
+
+    //region ------特殊查询------
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public SearchResult getFranchisesByFilter(JSONObject queryParams) {
+
+        JSONObject filter = queryParams.getJSONObject("filters");
+
+        String sortField = queryParams.getString("sortField");
+        int sortOrder = queryParams.getIntValue("sortOrder");
+        int first = queryParams.getIntValue("first");
+        int row = queryParams.getIntValue("rows");
+
+        String name = filter.getJSONObject("name").getString("value");
+        String nameZh = filter.getJSONObject("nameZh").getString("value");
+
+        List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, sortField, sortOrder, first, row);
+
+        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh);
+
+        return new SearchResult(total, franchises);
     }
 
     //endregion
