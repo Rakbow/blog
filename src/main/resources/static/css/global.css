@@ -215,7 +215,6 @@ img.flag {
     justify-content: center;
     font-weight: 600;
     display: flex;
-    color: black;
     /*color: #B0C4DE;*/
 }
 
@@ -233,13 +232,17 @@ img.flag {
     -webkit-box-orient: vertical;
 }
 
+.text-truncate-2 a:hover {
+    border-bottom: 1px solid #ceffff;
+}
+
 .sidebar-panel-image-middle {
     position: absolute;
     top: 50%;
     left: 50%;
     display: block;
     transform: translate(-50%, -50%);
-    cursor: pointer;
+    cursor: url("/img/common/zoomin.cur"), pointer;
     /*pointer-events: none;*/
 }
 
@@ -274,18 +277,30 @@ img.flag {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 20%;
 }
 
 .sidebar-panel-image-small-div {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 66px;
+    height: 66px;
+}
+
+.sidebar-panel-image-small-div a:hover {
+    text-decoration: none;//a去掉下划线
 }
 
 .info_bit_small {
     clear: left;
-    height: 76px;
+    height: 80px;
+    padding: 4px 6px 4px 4px;
+    overflow: hidden;
+    border-top: 1px solid #464A64;
+    border-bottom: 1px solid #1B273D;
+}
+
+.info_bit_small_other {
+    clear: left;
+    height: 80px;
     padding: 4px 6px 4px 4px;
     overflow: hidden;
 }
@@ -350,8 +365,8 @@ ul.info_bit_small {
 #panel-image-div {
     display: flex;
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     overflow: hidden;
     background-color: black;
     border: 1px solid black;

@@ -109,8 +109,8 @@ public class AlbumController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("album", albumVOMapper.album2VO(album));
         model.addAttribute("user", hostHolder.getUser());
-        //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.ALBUM.getId(), id).getVisitNum());
+        //获取页面数据
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(id));
         return "/album/album-detail";

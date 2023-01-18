@@ -145,7 +145,7 @@ public class CommonImageUtils {
         if (!images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 100));
+                image.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 70));
                 image.put("thumbUrl50", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
             }
         }
@@ -238,12 +238,14 @@ public class CommonImageUtils {
         JSONObject cover = new JSONObject();
         JSONArray images = JSONArray.parseArray(imagesJson);
         cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, size));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
                     cover.put("url", QiniuImageUtils.getThumbUrl(image.getString("url"), size));
+                    cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), size));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

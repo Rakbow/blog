@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>common-template</title>
 </head>
 <body>
 <div th:fragment="page_info_card">
-    <div class="rkw-page-info">
+    <div class="page-info">
         <p-card>
             <template #content>
                 <div class="formgrid grid">
                     <div class="col-fixed">
                         <i class="pi pi-chevron-circle-right mr-2 ml-2"></i><strong
-                            class="rkw-page-info-title">录入时间</strong>
+                            class="page-info-title">录入时间</strong>
                     </div>
                     <div class="col-11 col-offset-1 mb-2">
                         {{pageInfo.addedTime}}
                     </div>
                     <div class="col-fixed">
                         <i class="pi pi-chevron-circle-right mr-2 ml-2"></i><strong
-                            class="rkw-page-info-title">编辑时间</strong>
+                            class="page-info-title">编辑时间</strong>
                     </div>
                     <div class="col-11 col-offset-1 mb-2">
                         {{pageInfo.editedTime}}
                     </div>
                     <div class="col-fixed">
-                        <i class="pi pi-chart-bar mr-2 ml-2"></i><strong class="rkw-page-info-title">页面流量</strong>
+                        <i class="pi pi-chart-bar mr-2 ml-2"></i><strong class="page-info-title">页面流量</strong>
                     </div>
                     <div class="col-11 col-offset-1 mb-2">
                         <i class="pi pi-eye mr-2"></i><strong>访问数：</strong>

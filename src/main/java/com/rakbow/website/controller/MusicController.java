@@ -57,7 +57,7 @@ public class MusicController {
         model.addAttribute("audioTypeSet", MusicUtil.getAudioTypeSet());
         model.addAttribute("music", musicVOMapper.music2VO(music));
         //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.MUSIC.getId(), music.getId()).getVisitNum());
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), musicId, music.getAddedTime(), music.getEditedTime()));
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(musicId));
         //获取所属专辑的信息

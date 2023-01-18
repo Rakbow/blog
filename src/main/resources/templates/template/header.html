@@ -6,9 +6,7 @@
         <div th:if="${loginUser == null}">
             <p-menubar :model="notLoginNavbarItems">
                 <template #start>
-                    <a :href="domainUrl">
-                        <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
-                    </a>
+                    <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
                 </template>
                 <template #end>
                     <div class="grid mt-0 mb-0 pt-0 pb-0">
@@ -27,9 +25,7 @@
         <div th:if="${loginUser != null}">
             <p-menubar :model="loginNavbarItems">
                 <template #start>
-                    <a :href="domainUrl">
-                        <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
-                    </a>
+                    <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
                 </template>
                 <template #end>
                     <div class="grid mt-0 mb-0 pt-0 pb-0">

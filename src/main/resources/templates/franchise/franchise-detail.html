@@ -87,8 +87,10 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
-<body style="background-color: #001122">
+<body>
 <div id="app">
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
@@ -99,10 +101,12 @@
             <p-card style="min-height: 100%">
                 <template #title>
                     <div class="grid">
-                        <h3 class="col text-start ml-2 mt-0 mb-0" style="text-align: left">
-                            <b class="rakbow-franchise-title">{{franchise.name}}</b>
-                        </h3>
-                        <div class="col text-end" th:if="${loginUser != null}">
+                        <div class="col-9 text-start">
+                            <h3 class="ml-2 mt-0 mb-0" style="text-align: left">
+                                <b class="detail-item-title">{{franchise.name}}</b>
+                            </h3>
+                        </div>
+                        <div class="col-2 text-end" th:if="${loginUser != null}">
                             <p-splitbutton :model="edits" class="p-button-sm bg-primary"
                                            th:if="${loginUser.type == 1}">
                                 <p-button @click="openEditDialog">
@@ -114,38 +118,36 @@
                     </div>
                 </template>
                 <template #subtitle>
-                    <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
+                    <h5 v-if="franchise.nameEn != ''" class="text-start ml-2 mt-0 mb-0 detail-item-subtitle"
                         style="text-align: left"><small>{{franchise.nameEn}}</small>
                     </h5>
-                    <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0 rakbow-franchise-subtitle"
+                    <h5 v-if="franchise.nameZh != ''" class="text-start ml-2 mt-0 mb-0 detail-item-subtitle"
                         style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
                 </template>
                 <template #content>
                     <!-- 作品 -->
                     <p-fieldset :toggleable="true" class="mt-2">
                         <template #legend>
-                            <div style="color: #788990;">
-                                <i class="pi iconfont icon-_classification mr-2" style="font-size: 1rem"></i>
-                                <b>作品</b>
-                            </div>
+                            <i class="pi iconfont icon-_classification"></i>
+                            <b>作品</b>
                         </template>
                         <div class="grid ml-4" v-if="products != 0">
-                            <table class="table table-sm table-borderless">
+                            <table class="table product-table table-sm table-borderless">
                                 <thead>
                                 <tr>
-                                    <th scope="col" class="text-start rakbow-table-title">日&nbsp期</th>
-                                    <th scope="col" class="text-start rakbow-table-title">作&nbsp品</th>
+                                    <th scope="col" class="text-start detail-item-table-title">日&nbsp期</th>
+                                    <th scope="col" class="text-start detail-item-table-title">作&nbsp品</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="product in products">
-                                    <td width="80px" class="pb-0 rakbow-table-date">{{product.releaseDate}}</td>
-                                    <td class="pb-0">
+                                    <td width="80px" class="detail-item-table-date">{{product.releaseDate}}</td>
+                                    <td>
                                         <a :href="'/db/product/' + product.id">
                                                             <span :class="'rakbow-product-category-' + product.category.id">
                                                                 {{product.name}}
                                                             </span>
-                                        </a> <span class="rakbow-table-date">({{product.category.nameZh}})</span>
+                                        </a> <span class="detail-item-table-date">({{product.category.nameZh}})</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -171,14 +173,12 @@
         <div class="col-12 sm:col-12 md:col-3 lg:col-3">
             <p-panel>
                 <template #header>
-                                <span class="text-start">
-                                    <i class="pi pi-images mr-3"
-                                       style="font-size: 1.5rem"></i><span><strong>图片</strong></span>
-                                </span>
+                    <span class="text-start side-panel-header">
+                        <i class="pi pi-images"></i><span><strong>图片</strong></span>
+                    </span>
                 </template>
-                <div v-if="franchise.displayImages.length == 0">
-                    <span class="emptyInfo" style="color: white"><em>暂无图片</em></span>
-                </div>
+                    <i v-if="franchise.displayImages.length == 0" class="rkw-side-empty-info">暂无图片</i>
+<!--                    <span class="emptyInfo text-start" style="color: white"><em>暂无图片</em></span>-->
                 <p-galleria v-if="franchise.displayImages" :value="franchise.displayImages"
                             v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
                             :num-visible="7" container-style="max-width: 800px"
@@ -849,79 +849,6 @@
         .mount("#app");
 </script>
 <style>
-    /* rakbow */
-    .p-card {
-        background-color: #1B273D;
-    }
-
-    .rakbow-franchise-title {
-        color: #beb993;
-    }
-
-    .rakbow-franchise-subtitle {
-        color: #788990;
-    }
-
-    .rakbow-table-title {
-        color: #beb993;
-    }
-
-    .rakbow-table-date {
-        color: #788990;
-    }
-
-    .rakbow-table-link {
-        color: #ceffff;
-    }
-
-    .rkw-page-info .p-card {
-        background: #2f364f;
-    }
-
-    .rkw-page-info .p-card-body {
-        padding: 6px 10px 6px 10px;
-    }
-
-    .rkw-page-info .p-card .p-card-content {
-        padding: 0;
-    }
-
-
-    .rkw-page-info-title {
-        color: #788990;
-    }
-
-
-    .p-panel .p-panel-header {
-        /* border: 1px solid #dee2e6; */
-        padding: 0.5rem;
-        background: #1B273D;
-        color: #beb993;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-
-    .p-panel .p-panel-content {
-        background: #2f364f;
-    }
-
-
-    .p-fieldset {
-        background-color: #2F364F;
-    }
-
-    .p-fieldset .p-fieldset-legend {
-        background-color: #2F364F;
-    }
-
-    .p-fieldset .p-fieldset-toggleable {
-        color: #788990;
-    }
-
-    .p-fieldset .p-fieldset-content {
-        padding: 5px;
-    }
-
     .image-cover {
         position: absolute;
         top: 50%;
