@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
@@ -38,6 +39,8 @@ public class MusicController {
     private VisitService visitService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -54,9 +57,9 @@ public class MusicController {
 
         Music music = musicService.getMusicById(musicId);
 
-        model.addAttribute("audioTypeSet", MusicUtil.getAudioTypeSet());
+        model.addAttribute("audioTypeSet", redisUtil.get("audioTypeSet"));
         model.addAttribute("music", musicVOMapper.music2VO(music));
-        //获取页面访问量
+        //获取页面信息
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), musicId, music.getAddedTime(), music.getEditedTime()));
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(musicId));

@@ -49,19 +49,18 @@ public interface MusicVOMapper {
         musicVO.setTrackSerial(music.getTrackSerial());
 
         JSONObject audioTypeObj = new JSONObject();
-        audioTypeObj.put("id", music.getAudioType());
-        audioTypeObj.put("name", AudioType.getNameByIndex(music.getAudioType()));
-        audioTypeObj.put("nameEn", AudioType.getNameEnByIndex(music.getAudioType()));
+        audioTypeObj.put("value", music.getAudioType());
+        audioTypeObj.put("label", AudioType.getNameByIndex(music.getAudioType()));
+        audioTypeObj.put("labelEn", AudioType.getNameEnByIndex(music.getAudioType()));
         musicVO.setAudioType(audioTypeObj);
 
         musicVO.setAudioUrl(music.getAudioUrl());
 
         if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicVO.setCover(QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
+            musicVO.setCover(QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
         }else {
-            musicVO.setCover(QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 200));
+            musicVO.setCover(QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 80));
         }
-
         musicVO.setLrcUrl(music.getLrcUrl());
         musicVO.setLrcText(music.getLrcText());
         musicVO.setAudioLength(music.getAudioLength());

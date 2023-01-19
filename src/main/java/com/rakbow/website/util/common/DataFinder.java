@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -44,16 +45,9 @@ public class DataFinder {
     }
 
     public static List<Music> findMusicByDiscSerial(int discSerial, List<Music> musics) {
-        List<Music> result = new ArrayList<>();
-        for (Music music : musics) {
-            if (music.getDiscSerial() == discSerial) {
-                if (!result.contains(music)) {
-                    result.add(music);
-                }
-            }
-        }
-        result.sort(DataSorter.musicSortByTrackSerial);
-        return result;
+
+        return musics.stream().filter(music -> music.getDiscSerial() == discSerial)
+                .sorted(DataSorter.musicSortByTrackSerial).collect(Collectors.toList());
     }
 
     public static Music findMusicByNameAndAlbumId(String name, String nameType, int albumId, List<Music> musics) {

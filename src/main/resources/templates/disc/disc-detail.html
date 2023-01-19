@@ -416,32 +416,32 @@
                           :style="{width: '600px'}" :modal="true" class="p-fluid">
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="catalogNo">碟片编号</label>
+                            <label>碟片编号</label>
                             <p-inputtext v-model.trim="discEdit.catalogNo"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="barcode">商品条形码</label>
+                            <label>商品条形码</label>
                             <p-inputtext v-model.trim="discEdit.barcode"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="name">商品名<span style="color: red">*</span></label>
+                            <label>商品名<span style="color: red">*</span></label>
                             <p-inputtext v-model.trim="discEdit.name"></p-inputtext>
                         </div>
                         <div class="field col">
-                            <label htmlFor="nameZh">商品名(中)</label>
+                            <label>商品名(中)</label>
                             <p-inputtext v-model.trim="discEdit.nameZh"></p-inputtext>
                         </div>
                     </div>
                     <div class="formgrid grid">
                         <div class="field col-6">
-                            <label htmlFor="nameEn">商品名(英)</label>
+                            <label>商品名(英)</label>
                             <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
                         </div>
                         <div class="field col-3">
                             <div class="col-12">
-                                <label htmlFor="hasBonus" class="mb-3">包含特典</label>
+                                <label class="mb-3">包含特典</label>
                             </div>
                             <div class="col-12 mt-2">
                                 <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
@@ -474,7 +474,7 @@
                             </p-multiselect>
                         </div>
                         <div class="field col-4">
-                            <label htmlFor="mediaFormat" class="mb-3">媒体类型<span style="color: red">*</span></label>
+                            <label class="mb-3">媒体类型<span style="color: red">*</span></label>
                             <p-multiselect v-model="discEdit.mediaFormat" :options="mediaFormatSet"
                                            option-label="label" option-value="value" placeholder="选择媒体类型"
                                            display="chip">
@@ -483,19 +483,19 @@
                     </div>
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label htmlFor="releaseDate">发行时间<span style="color: red">*</span></label>
+                            <label>发行时间<span style="color: red">*</span></label>
                             <p-calendar v-model="discEdit.releaseDate" date-format="yy/mm/dd"
                                         :show-button-bar="true"
                                         :show-icon="true"></p-calendar>
                         </div>
                         <div class="field col">
-                            <label htmlFor="price">发行价格(含税)</label>
+                            <label>发行价格(含税)</label>
                             <p-inputnumber v-model="discEdit.price" mode="currency"
                                            currency="JPY" locale="ja-JP"></p-inputnumber>
                         </div>
                     </div>
                     <div class="field">
-                        <label htmlFor="remark">备注</label>
+                        <label>备注</label>
                         <p-textarea v-model="discEdit.remark" rows="3" cols="20"
                                     :auto-resize="true"></p-textarea>
                     </div>
@@ -1291,65 +1291,15 @@
         pointer-events: none;
     }
 
-    .edit-image {
-        pointer-events: none;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
-    }
 
-    .orders-subtable {
-        padding: 1rem;
-    }
 
-    .p-tooltip-text {
-        width: 16rem;
-    }
 
-    .card {
-        padding: 0rem;
-    }
 
-    .edit-image-div {
-        position: relative;
-        width: 240px;
-        height: 240px;
-        overflow: auto;
-        background-color: black;
-    }
 
-    #edit-image-img {
-        width: 200px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
 
-    #galleria-div {
-        position: relative;
-        width: 600px;
-        height: 600px;
-        overflow: hidden;
-        background-color: black;
-    }
 
-    .galleria-thumb-image {
-        display: block;
-        /*height: 500px;*/
-        /*width: 500px;*/
-        max-width: 100px;
-        max-height: 100px;
-        height: auto;
-        width: auto;
-        /*overflow: auto;*/
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
 
-    /*.p-galleria .p-galleria-thumbnail-items-container {*/
-    /*    width: 100%;*/
-    /*}*/
+
 
     .p-galleria .p-galleria-item-wrapper {
         width: 600px;
@@ -1407,9 +1357,7 @@
         width: 100px;
     }
 
-    #imgBox img {
-        height: 200px;
-    }
+
 
     .p-panel .p-panel-header {
         /* border: 1px solid #dee2e6; */
@@ -1428,9 +1376,7 @@
     /*    background-color: #343e4c;*/
     /*}*/
 
-    .label {
-        color: #788990;
-    }
+
 
     b.rbot {
         background-position: 0 -8px;

@@ -247,8 +247,15 @@ public class MusicService {
             sameAlbumMusics = sameAlbumMusics.subList(0, 5);
         }
 
+        List<Music> tmpList = DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics);
+        for (int i = 0; i < tmpList.size(); i++) {
+            if (tmpList.get(i).getId() == id) {
+                tmpList.remove(tmpList.get(i));
+            }
+        }
+
         //筛选出同一张碟片的音频，并按照序号排序
-        return musicVOMapper.music2VOAlpha(DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics));
+        return musicVOMapper.music2VOAlpha(tmpList);
     }
 
     //endregion

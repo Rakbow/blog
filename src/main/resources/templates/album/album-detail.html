@@ -93,21 +93,25 @@
 <div id="app">
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
-    <div class="grid mt-2">
+
+    <div id="main" class="grid mt-2">
         <p-toast></p-toast>
-        <div class="col-12 sm:col-12 md:col-12 lg:col-8 lg:col-offset-1">
-            <p-card style="min-height: 100%">
+        <div class="detail-card col-8 lg:col-offset-1">
+            <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h5 class="col-10">
-                            <b class="detail-item-title">{{album.name}}</b>
-                        </h5>
-                        <div class="col-2 text-end" th:if="${loginUser != null}" style="padding: 0">
+                        <h4 class="col-10">
+                            <b class="detail-item-title">
+<!--                                <i class="pi iconfont icon-24gl-musicAlbum2" style="font-size: 1.5rem"></i>-->
+                                {{album.name}}
+                            </b>
+                        </h4>
+                        <div class="col-2 text-end p-0 m-0" th:if="${loginUser != null}">
                             <p-splitbutton :model="edits" class="p-button-sm bg-primary"
                                            th:if="${loginUser.type == 1}">
                                 <p-button @click="openEditDialog">
                                     <i class="pi pi-pencil"></i>
-                                    <span class="ml-2 flex align-items-center font-bold">编辑</span>
+<!--                                    <span class="ml-2 flex align-items-center font-bold">编辑</span>-->
                                 </p-button>
                             </p-splitbutton>
                         </div>
@@ -121,12 +125,12 @@
                 </template>
                 <template #content>
                     <div class="grid">
-                        <div class="col-12 sm:col-12 md:col-6 lg:col-4" style="width: 280px">
-                            <div class="ml-3 album-detail-cover">
+                        <div class="col-4" style="width: 260px">
+                            <div class="album-detail-cover">
                                 <img :src="album.cover.url" :alt="album.cover.name"/>
                             </div>
                         </div>
-                        <div class="col-12 sm:col-12 md:col-6 lg:col detail-item-header-card">
+                        <div class="col detail-item-header-card">
                             <p-card>
                                 <template #content>
                                     <table class="table-borderless table-sm ml-2">
@@ -380,7 +384,7 @@
                 </template>
             </p-card>
         </div>
-        <div class="col-12 sm:col-12 md:col-12 lg:col-2" style="min-width: 300px">
+        <div class="col-2" style="min-width: 300px">
             <p-panel>
                 <template #header>
                     <span class="text-start side-panel-header">
@@ -428,8 +432,7 @@
                              v-for="relatedAlbum of relatedAlbums">
                             <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
                                 <a :href="'/db/album/'+ relatedAlbum.id">
-                                    <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.blackUrl"
-                                         v-tooltip.bottom="'收录时间: ' + relatedAlbum.addedTime + '编辑时间: ' + relatedAlbum.editedTime">
+                                    <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedAlbum.addedTime + '编辑时间: ' + relatedAlbum.editedTime">
                                 </a>
                             </div>
                             <div class="col p-0" style="height: 80px">
@@ -437,7 +440,7 @@
                                     <li>
                                         <a class="small_font"
                                            :href="'/db/album/'+ relatedAlbum.id ">
-                                            <span class="text-truncate-2 mr-2" lang="ja">
+                                            <span class="text-truncate-2 mr-2">
                                                 {{relatedAlbum.name}}
                                             </span>
                                         </a>
@@ -454,8 +457,6 @@
                             </div>
                         </div>
                     </span>
-                    <br>
-                    <b class="rbot"><b></b></b>
                 </div>
             </p-panel>
             <br>
@@ -1897,75 +1898,10 @@
         .mount("#app");
 </script>
 <style>
-    .image-cover {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: block;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-        pointer-events: none;
-    }
-
-    .edit-image {
-        pointer-events: none;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
-    }
 
     .orders-subtable {
         padding: 1rem;
     }
-
-    .p-tooltip-text {
-        width: 16rem;
-    }
-
-    .card {
-        padding: 0rem;
-    }
-
-    .edit-image-div {
-        position: relative;
-        width: 240px;
-        height: 240px;
-        overflow: auto;
-        background-color: black;
-    }
-
-    #edit-image-img {
-        width: 200px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-    #galleria-div {
-        position: relative;
-        width: 600px;
-        height: 600px;
-        overflow: hidden;
-        background-color: black;
-    }
-
-    .galleria-thumb-image {
-        display: block;
-        /*height: 500px;*/
-        /*width: 500px;*/
-        max-width: 100px;
-        max-height: 100px;
-        height: auto;
-        width: auto;
-        /*overflow: auto;*/
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-
-    /*.p-galleria .p-galleria-thumbnail-items-container {*/
-    /*    width: 100%;*/
-    /*}*/
 
     .p-galleria .p-galleria-item-wrapper {
         width: 600px;
@@ -2023,19 +1959,10 @@
         width: 100px;
     }
 
-    #imgBox img {
-        height: 200px;
-    }
-
-    .label {
-        color: #788990;
-    }
-
-    .product-tag {
-        align-items: flex-start;
-        justify-content: space-around;
-        background: #788990 !important;
-        color: #ffffff;
+    .album-detail-cover {
+        transform:translateY(7px);
+        width: 250px;
+        height: 250px;
     }
 </style>
 </body>

@@ -184,15 +184,15 @@
                         </template>
                         <div class="grid p-fluid">
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="name">商品名</label>
+                                <label>商品名</label>
                                 <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="barcode">商品条形码</label>
+                                <label>商品条形码</label>
                                 <p-inputtext v-model.trim="queryParams.filters.barcode.value"></p-inputtext>
                             </div>
                             <div class="col-12 md:col-6 sm:col-6">
-                                <label htmlFor="category">商品类型</label>
+                                <label>商品类型</label>
                                 <p-dropdown v-model="queryParams.filters.category.value" :options="merchCategorySet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">

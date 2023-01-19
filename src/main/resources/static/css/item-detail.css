@@ -1,7 +1,18 @@
 /* rakbow */
 
 body {
-    background-color: #001122
+    background-color: #001122;
+    min-width: 1250px;
+}
+
+.detail-card .p-card .p-card-title {
+    padding: 0;
+    margin: 0;
+}
+
+.detail-card .p-card .p-card-subtitle {
+    padding: 0;
+    margin: 0;
 }
 
 .product-table td {
@@ -73,13 +84,6 @@ b.rbot {
     color: #788990;
 }
 
-
-.album-detail-cover {
-    transform:translateY(14px);
-    width: 250px;
-    height: 250px;
-}
-
 .album-detail-cover img {
     position: absolute;
     top: 50%;
@@ -116,7 +120,7 @@ b.rbot {
 
 
 /* rakbow detail通用table */
-.detail-item-header-title h5 {
+.detail-item-header-title h4 {
     text-align: left;
     margin: 0;
     padding-top: 0;
@@ -126,10 +130,6 @@ b.rbot {
 
 .detail-item-table-title {
     color: #beb993;
-}
-
-.detail-item-table-date {
-    color: #788990;
 }
 
 .detail-item-table-link {
@@ -148,10 +148,6 @@ b.rbot {
 
 .page-info .p-card .p-card-content {
     padding: 0;
-}
-
-.page-info-title {
-    color: #788990;
 }
 
 /* rakbow detail通用fieldset */
@@ -264,7 +260,7 @@ b.rbot {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/album/border_thumb.png") 0 0 no-repeat;
+    background: transparent url("/img/common/album_border_thumb.png") 0 0 no-repeat;
 }
 
 .markdown-body {
@@ -282,4 +278,43 @@ b.rbot {
 .p-tag {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.p-tooltip-text {
+    width: 16rem;
+}
+
+.edit-image {
+    pointer-events: none;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+
+#galleria-div {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    overflow: hidden;
+    background-color: black;
+}
+
+.galleria-thumb-image {
+    display: block;
+    /*height: 500px;*/
+    /*width: 500px;*/
+    max-width: 100px;
+    max-height: 100px;
+    height: auto;
+    width: auto;
+    /*overflow: auto;*/
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#imgBox img {
+    height: 200px;
+}
+
+.label {
+    color: #788990;
 }

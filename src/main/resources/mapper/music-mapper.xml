@@ -56,9 +56,8 @@
         update music
         set
         name = #{music.name}, name_en = #{music.nameEn}, audio_type = #{music.audioType},
-        album_id = #{music.albumId}, disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial},
-        audio_url = #{music.audioUrl}, cover_url = #{music.coverUrl}, lrc_url = #{music.lrcUrl},
-        audio_length = #{music.audioLength}, remark = #{music.remark},
+        disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial}, audio_url = #{music.audioUrl},
+        lrc_url = #{music.lrcUrl}, audio_length = #{music.audioLength}, remark = #{music.remark},
         added_time = #{music.addedTime}, edited_time = #{music.editedTime}
         where id = #{music.id}
     </update>

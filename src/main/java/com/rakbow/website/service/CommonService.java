@@ -11,6 +11,7 @@ import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.entity.MusicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,7 @@ public class CommonService {
         redisUtil.set("platformSet", GamePlatform.getGamePlatformSet());
         redisUtil.set("releaseTypeSet", ReleaseType.getReleaseTypeSet());
         redisUtil.set("ProductCategorySet", ProductCategory.getProductCategorySet());
+        redisUtil.set("audioTypeSet", MusicUtil.getAudioTypeSet());
 
     }
 

@@ -84,237 +84,260 @@
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-    <div class="grid mt-2">
+    <div id="main" class="grid mt-2">
         <p-toast></p-toast>
-        <div class="col-12 sm:col-12 md:col-6 lg:col-7 lg:col-offset-1">
-            <p-panel>
-                <template #header>
-                    <i class="pi iconfont icon-music mr-0" style="font-size: 2rem"></i>
-                    <div class="container mt-0 mb-0 ml-0">
-                        <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{music.name}}</h4>
-                        <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left"><small>{{music.nameEn}}</small>
+        <div class="detail-card col-8 lg:col-offset-1 md:col-offset-1">
+            <p-card>
+                <template #title>
+                    <div class="grid detail-item-header-title">
+                        <h4 class="col-10">
+                            <b class="detail-item-title">
+                                <i class="pi iconfont icon-music" style="font-size: 1.5rem"></i>
+                                {{music.name}}
+                            </b>
                         </h4>
+                        <div class="col-2 text-end p-0 m-0" th:if="${loginUser != null}">
+                            <p-splitbutton :model="edits" class="p-button-sm bg-primary"
+                                           th:if="${loginUser.type == 1}">
+                                <p-button @click="openEditDialog">
+                                    <i class="pi pi-pencil"></i>
+                                </p-button>
+                            </p-splitbutton>
+                        </div>
                     </div>
                 </template>
-                <template #icons th:if="${loginUser != null}">
-                    <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"
-                                   th:if="${loginUser.type == 1}">
-                        <p-button @click="openEditDialog">
-                            <i class="pi pi-pencil"></i>
-                            <span class="ml-2 flex align-items-center font-bold">编辑</span>
-                        </p-button>
-                    </p-splitbutton>
+                <template #subtitle>
+                    <h5 v-if="music.nameEn != ''" class="detail-item-subtitle"><small class="ml-4">{{music.nameEn}}</small></h5>
+                    <h5 v-else><small></small></h5>
                 </template>
-                <div class="grid">
-                    <div class="ml-3" style="width: 200px; height: 200px">
-                        <img :src="music.cover" alt="cover" class="music-cover"/>
+                <template #content>
+                    <div class="grid">
+                        <div class="col-4" style="width: 90px">
+                            <div class="music-detail-cover">
+                                <img :src="music.cover" alt="cover"/>
+                            </div>
+                        </div>
+                        <div class="col detail-item-header-card">
+                            <p-card>
+                                <template #content>
+                                    <table class="table-borderless table-sm ml-2">
+                                        <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td><strong>音频长度</strong></td>
+                                                <td>
+                                                    {{music.audioLength}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>音频类型</strong></td>
+                                                <td>
+                                                    {{music.audioType.label}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>碟片序号</strong></td>
+                                                <td>
+                                                    {{music.discSerial}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>曲目序号</strong></td>
+                                                <td>
+                                                    {{music.trackSerial}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </template>
+                            </p-card>
+                        </div>
                     </div>
-                    <table class="table-borderless table-sm ml-3">
-                        <tbody>
-                        <tr>
-                            <td><strong>曲目(日语)</strong></td>
-                            <td>
-                                {{music.name?music.name:"N/A"}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>曲目(英语)</strong></td>
-                            <td>
-                                {{music.nameEn?music.nameEn:" - "}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>音频长度</strong></td>
-                            <td>
-                                {{music.audioLength}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>音频类型</strong></td>
-                            <td>
-                                {{music.audioType.name}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>碟片序号</strong></td>
-                            <td>
-                                {{music.discSerial}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>曲目序号</strong></td>
-                            <td>
-                                {{music.trackSerial}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </p-panel>
-            <p-fieldset :toggleable="true" class="mt-2">
-                <template #legend>
-                    <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
-                    <b>音乐创作</b>
+                    <div class="detail-item-field">
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi pi-users"></i>
+                                <b>音乐创作</b>
+                            </template>
+                            <div class="grid ml-4" v-if="music.artists.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr v-for="artist in music.artists">
+                                        <td width="120px"><strong>{{artist.pos}}</strong></td>
+                                        <td>
+                                            {{artist.name.join(", ")}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
+                            </div>
+                        </p-fieldset>
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi iconfont icon-miaoshu"></i>
+                                <b>描述</b>
+                            </template>
+                            <article id="description" class="markdown-body" style="width: 100%;"></article>
+                        </p-fieldset>
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi iconfont icon-music"></i>
+                                <b>歌词</b>
+                            </template>
+                            <article id="lyrics" class="markdown-body" style="width: 100%;"></article>
+                        </p-fieldset>
+                    </div>
                 </template>
-                <div class="grid ml-4" v-if="music.artists.length != 0">
-                    <table class="table-borderless table-sm ml-10">
-                        <tbody>
-                        <tr v-for="artist in music.artists">
-                            <td width="120px"><strong>{{artist.pos}}</strong></td>
-                            <td>
-                                {{artist.name.join("/")}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div v-else>
-                    <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
-                </div>
-            </p-fieldset>
-            <p-fieldset :toggleable="true" class="mt-2">
-                <template #legend>
-                    <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
-                    <b>描述</b>
-                </template>
-                <article id="description" class="markdown-body" style="width: 100%;"></article>
-            </p-fieldset>
-            <p-fieldset :toggleable="true" class="mt-2">
-                <template #legend>
-                    <i class="pi iconfont icon-music mr-2" style="font-size: 2rem"></i>
-                    <b>歌词</b>
-                </template>
-                <article id="lyrics" class="markdown-body" style="width: 100%;"></article>
-            </p-fieldset>
+            </p-card>
         </div>
-        <div class="col-12 sm:col-12 md:col-6 lg:col-3">
+        <div class="col-2" style="min-width: 300px">
             <p-panel>
                 <template #header>
-                    <i class="pi pi-th-large mr-2" style="font-size: 2rem"></i>
-                    <b>相关信息</b>
+                    <span class="text-start side-panel-header">
+                        <i class="pi pi-th-large"></i><span><strong>相关信息</strong></span>
+                    </span>
                 </template>
                 <p-divider align="center">
                     <i class="pi iconfont icon-24gl-musicAlbum2 mr-1" style="font-size: 1.5rem"></i>
                     <span><b>所属专辑</b></span>
                 </p-divider>
-                <div class="ml-2 mt-2 mb-2 mr-2 grid"
-                     style="border: solid black">
-                    <div class="col-3 sidebar-panel-image-small-div mt-4">
-                        <a :href="'/db/album/'+ relatedAlbum.id">
-                            <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.url"
-                            >
-                        </a>
-                    </div>
-                    <div class="col-9">
-                        <ul class="px-1">
-                            <li>
+                <div class="grid">
+                    <span class="small_font">
+                        <div class="info_bit_small small_font grid related-album">
+                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
                                 <a :href="'/db/album/'+ relatedAlbum.id">
-                                                <span class="text-truncate-2 small_font" lang="ja">
-                                                    {{relatedAlbum.nameJp}}
-                                                </span>
+                                    <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.blackUrl">
                                 </a>
-                            </li>
-                            <li>
-                                            <span class="small_font">
-                                                <b>{{relatedAlbum.catalogNo}}</b> {{relatedAlbum.releaseDate}}
+                            </div>
+                            <div class="col p-0" style="height: 80px">
+                                <ul class="info_bit_small_other">
+                                    <li>
+                                        <a class="small_font" :href="'/db/album/'+ relatedAlbum.id ">
+                                            <span class="text-truncate-2 mr-2">
+                                                {{relatedAlbum.name}}
                                             </span>
-                            </li>
-                        </ul>
-                    </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span class="small_font col-6 related-item-catalog">
+                                            {{relatedAlbum.catalogNo ? relatedAlbum.catalogNo : 'N/A'}}
+                                        </span>
+                                        <span class="small_font col-6 related-item-date">
+                                            {{relatedAlbum.releaseDate}}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </span>
                 </div>
-                <span class="ml-4">所属该专辑的第<b>{{music.discSerial}}</b>
+                <span class="ml-3">所属该专辑的第<b>{{music.discSerial}}</b>
                                         张碟片，第<b>{{music.trackSerial}}</b>首曲目</span>
                 <p-divider align="center">
                     <i class="pi iconfont icon-music mr-1" style="font-size: 1.5rem"></i>
                     <span><b>相关曲目</b></span>
                 </p-divider>
-                <div class="grid"
-                     v-if="relatedMusics.length != 0"
-                     v-for="relatedMusic of relatedMusics">
-                    <div class="col-3">
-                        <a class="ml-4" :href="'/db/music/'+ relatedMusic.id ">
-                            <img class="sidebar-panel-image-small" :src="relatedMusic.cover"
-
-                                 v-tooltip.bottom="{value: '收录时间: ' + relatedMusic.addedTime + '编辑时间: ' + relatedMusic.editedTime, class: 'item-upload-time-tooltip'}">
-                        </a>
-                    </div>
-                    <div class="col-9">
-                        <ul class="info_bit_detail ml-4">
-                            <li>
-                                <a class="small-font"
-                                   :href="'/db/music/'+ relatedMusic.id ">
-                                                    <span class="text-truncate-2" lang="ja">
-                                                        {{relatedMusic.name}}
-                                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                                <span class="small-font">
-                                                    <b>{{relatedMusic.audioLength}}</b>
-                                                </span>
-                            </li>
-
-                        </ul>
-                    </div>
-                </div>
+                <table class="table table-sm table-hover">
+                    <tbody class="detail-item-track-table">
+                    <tr v-for="music in relatedMusics">
+                        <th>{{music.trackSerial}}</th>
+                        <td nowrap="nowrap">
+                            <a :href="'/db/music/' + music.id">
+                                {{music.name}}
+                            </a>
+                        </td>
+                        <td class="text-end" style="color: #b0c4de">
+                            <span v-if="music.audioLength == '00:00'">
+                                N/A
+                            </span>
+                            <span v-else>
+                                {{music.audioLength}}
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+<!--                <div class="grid"-->
+<!--                     v-if="relatedMusics.length != 0"-->
+<!--                     v-for="relatedMusic of relatedMusics">-->
+<!--                    <div class="col-3">-->
+<!--                        <a class="ml-4" :href="'/db/music/'+ relatedMusic.id ">-->
+<!--                            <img class="sidebar-panel-image-small" :src="relatedMusic.cover"-->
+<!--                                 v-tooltip.bottom="{value: '收录时间: ' + relatedMusic.addedTime + '编辑时间:' + relatedMusic.editedTime, class: 'item-upload-time-tooltip'}">-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                    <div class="col-9">-->
+<!--                        <ul class="info_bit_detail ml-4">-->
+<!--                            <li>-->
+<!--                                <a class="small-font"-->
+<!--                                   :href="'/db/music/'+ relatedMusic.id ">-->
+<!--                                    <span class="text-truncate-2" lang="ja">-->
+<!--                                        {{relatedMusic.name}}-->
+<!--                                    </span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <span class="small-font">-->
+<!--                                    <b>{{relatedMusic.audioLength}}</b>-->
+<!--                                </span>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </div>-->
             </p-panel>
             <br>
             <div th:insert="~{template/common-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息"
-              :modal="true"
+    <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息" :modal="true"
               class="p-fluid">
         <div class="formgrid grid">
             <div class="field col">
-                <label htmlFor="name">曲名<span style="color: red">*</span></label>
-                <p-inputtext id="name" v-model.trim="musicEdit.name"></p-inputtext>
+                <label>曲名<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="musicEdit.name"></p-inputtext>
             </div>
             <div class="field col">
-                <label htmlFor="nameEn">曲名(英语)</label>
-                <p-inputtext id="nameEn" v-model.trim="musicEdit.nameEn"></p-inputtext>
+                <label>曲名(英语)</label>
+                <p-inputtext v-model.trim="musicEdit.nameEn"></p-inputtext>
             </div>
         </div>
         <div class="formgrid grid">
             <div class="field col">
-                <label htmlFor="catalogNo">音频类型<span style="color: red">*</span></label>
-                <p-dropdown id="audioType" v-model="musicEdit.audioType" :options="audioTypeSet"
+                <label>音频类型<span style="color: red">*</span></label>
+                <p-dropdown v-model="musicEdit.audioType" :options="audioTypeSet"
                             option-label="label" option-value="value">
                 </p-dropdown>
             </div>
             <div class="field col">
-                <label htmlFor="audioLength">音频长度<span style="color: red">*</span></label>
-                <p-inputtext id="audioLength" v-model.trim="musicEdit.audioLength"
+                <label>音频长度<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="musicEdit.audioLength"
                              placeholder="00:00"></p-inputtext>
             </div>
         </div>
         <div class="formgrid grid">
             <div class="field col">
-                <label htmlFor="discSerial">碟片序号<span style="color: red">*</span></label>
-                <p-inputnumber id="discSerial" v-model="musicEdit.discSerial"
+                <label>碟片序号<span style="color: red">*</span></label>
+                <p-inputnumber v-model="musicEdit.discSerial"
                                :disabled="true"></p-inputnumber>
             </div>
             <div class="field col">
-                <label htmlFor="trackSerial">曲目序号<span style="color: red">*</span></label>
-                <p-inputtext id="trackSerial" v-model="musicEdit.trackSerial" :disabled="true"></p-inputtext>
+                <label>曲目序号<span style="color: red">*</span></label>
+                <p-inputtext v-model="musicEdit.trackSerial" :disabled="true"></p-inputtext>
             </div>
         </div>
         <div class="field">
-            <label htmlFor="audioUrl">音频链接</label>
-            <p-inputtext id="audioUrl" v-model.trim="musicEdit.audioUrl"></p-inputtext>
+            <label>音频文件链接</label>
+            <p-inputtext v-model.trim="musicEdit.audioUrl"></p-inputtext>
         </div>
         <div class="field">
-            <label htmlFor="coverUrl">封面链接</label>
-            <p-inputtext id="coverUrl" v-model.trim="musicEdit.coverUrl"></p-inputtext>
-        </div>
-        <div class="field">
-            <label htmlFor="lrcUrl">歌词文件链接(lrc)</label>
+            <label>歌词文件链接(lrc)</label>
             <p-inputtext id="lrcUrl" v-model.trim="musicEdit.lrcUrl"></p-inputtext>
         </div>
         <div class="field">
-            <label htmlFor="remark">备注</label>
-            <p-textarea id="remark" v-model.trim="musicEdit.remark" rows="3" cols="20"
-                        :auto-resize="true"></p-textarea>
+            <label>备注</label>
+            <p-textarea v-model.trim="musicEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
         </div>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -431,6 +454,9 @@
         setup() {
             onMounted(() => {
                 init();
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
             })
 
             //region ------页面header------
@@ -442,15 +468,10 @@
             //endregion
 
             const music = ref([[${music}]]);
-
             const pageInfo = ref([[${pageInfo}]]);
-
             const relatedAlbum = ref([[${relatedAlbum}]]);
-
             const toast = useToast();
-
             const audioTypeSet = ref([[${audioTypeSet}]]);
-
             const relatedMusics = ref([[${relatedMusics}]]);
 
             const edits = ref([
@@ -477,12 +498,6 @@
                 }
             ]);
 
-            const imageTypes = ref([
-                {label: '展示', value: '0'},
-                {label: '封面', value: '1'},
-                {label: '其他', value: '2'}
-            ]);
-
             //region ------编辑music信息------
             const musicEdit = ref({});
             const displayEditDialog = ref(false);
@@ -496,6 +511,7 @@
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(music.value));
                             musicEdit.value = dataTmp;
+                            musicEdit.value.audioType = dataTmp.audioType.value;
                             displayEditDialog.value = true;
                         }
                     })
@@ -606,7 +622,7 @@
             const openDescriptionEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
-                        if (res.state == 0) {
+                        if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             descriptionMd.value = music.value.description;
@@ -701,6 +717,7 @@
 
             const init = () => {
                 text2marked();
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
             };
 
             return {
@@ -787,39 +804,19 @@
         .mount("#app");
 </script>
 <style>
-    .music-cover {
-        max-width: 100%;
-        max-height: 100%;
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
+    .related-album {
+        margin: 0 0 0 1.25rem;
+        padding: 0;
+    }
+
+    .music-detail-cover {
+        transform:translateY(5px);
+        width: 80px;
+        height: 80px;
     }
 
     .p-tooltip-text {
         width: 15rem;
-    }
-
-    .card {
-        padding: 0rem;
-    }
-
-    .edit-image-div {
-        position: relative;
-        width: 240px;
-        height: 240px;
-        overflow: auto;
-        background-color: black;
-    }
-
-    #edit-image-img {
-        width: 200px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
     }
 
     .title-container > span {
@@ -829,27 +826,6 @@
 
     .title-container > span.title {
         font-weight: bold;
-    }
-
-    .p-panel .p-panel-header {
-        /* border: 1px solid #dee2e6; */
-        padding: 0.5rem;
-        background: #6d7c8b;
-        color: #d0da9a;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-
-    .label {
-        color: #788990;
-    }
-
-    b.rbot {
-        background-position: 0 -8px;
-    }
-
-    .p-panel .p-panel-content {
-        padding: 0.5rem;
     }
 </style>
 </body>

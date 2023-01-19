@@ -1,5 +1,6 @@
 package com.rakbow.website.util.entity;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.music.AudioType;
 import com.rakbow.website.service.MusicService;
@@ -24,8 +25,8 @@ public class MusicUtil {
      * @author rakbow
      * @return list
      * */
-    public static List<JSONObject> getAudioTypeSet(){
-        List<JSONObject> audioTypeSet = new ArrayList<>();
+    public static JSONArray getAudioTypeSet(){
+        JSONArray audioTypeSet = new JSONArray();
         for(AudioType audioType : AudioType.values()){
             JSONObject audioTypeJson = new JSONObject();
             audioTypeJson.put("label",audioType.getName());
