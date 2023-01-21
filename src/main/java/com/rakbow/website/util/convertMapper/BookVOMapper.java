@@ -85,7 +85,7 @@ public interface BookVOMapper {
         bookVO.setDescription(book.getDescription());
 
         //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(book.getImages(), 250);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(book.getImages(), 180);
         bookVO.setImages(segmentImages.images);
         bookVO.setCover(segmentImages.cover);
         bookVO.setDisplayImages(segmentImages.displayImages);

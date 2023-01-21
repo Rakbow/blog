@@ -174,7 +174,7 @@
                                 <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
                             </div>
                         </p-fieldset>
-                        <p-fieldset :toggleable="true">
+                        <p-fieldset :toggleable="true" v-if="music.description">
                             <template #legend>
                                 <i class="pi iconfont icon-miaoshu"></i>
                                 <b>描述</b>
@@ -259,33 +259,6 @@
                     </tr>
                     </tbody>
                 </table>
-<!--                <div class="grid"-->
-<!--                     v-if="relatedMusics.length != 0"-->
-<!--                     v-for="relatedMusic of relatedMusics">-->
-<!--                    <div class="col-3">-->
-<!--                        <a class="ml-4" :href="'/db/music/'+ relatedMusic.id ">-->
-<!--                            <img class="sidebar-panel-image-small" :src="relatedMusic.cover"-->
-<!--                                 v-tooltip.bottom="{value: '收录时间: ' + relatedMusic.addedTime + '编辑时间:' + relatedMusic.editedTime, class: 'item-upload-time-tooltip'}">-->
-<!--                        </a>-->
-<!--                    </div>-->
-<!--                    <div class="col-9">-->
-<!--                        <ul class="info_bit_detail ml-4">-->
-<!--                            <li>-->
-<!--                                <a class="small-font"-->
-<!--                                   :href="'/db/music/'+ relatedMusic.id ">-->
-<!--                                    <span class="text-truncate-2" lang="ja">-->
-<!--                                        {{relatedMusic.name}}-->
-<!--                                    </span>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <span class="small-font">-->
-<!--                                    <b>{{relatedMusic.audioLength}}</b>-->
-<!--                                </span>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </div>-->
-<!--                </div>-->
             </p-panel>
             <br>
             <div th:insert="~{template/common-template :: page_info_card}"></div>
@@ -694,19 +667,12 @@
 
             const text2marked = () => {
 
-                const description = music.value.description;
-                const lyrics = music.value.lrcText;
-
-                if (description != null && description !== "") {
-                    document.getElementById("description").innerHTML = marked.parse(description);
-                } else {
-                    //<![CDATA[
-                    document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
-                    //]]>
+                if (music.value.description != null && music.value.description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(music.value.description);
                 }
 
-                if (lyrics != null && lyrics !== "") {
-                    document.getElementById("lyrics").innerHTML = marked.parse(lyrics);
+                if (music.value.lrcText != null && music.value.lrcText !== "") {
+                    document.getElementById("lyrics").innerHTML = marked.parse(music.value.lrcText);
                 } else {
                     //<![CDATA[
                     document.getElementById("lyrics").innerHTML = "<span class='emptyInfo'><em>暂无歌词</em></span>";

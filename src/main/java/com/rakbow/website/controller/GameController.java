@@ -56,7 +56,7 @@ public class GameController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
+
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
     //endregion
@@ -93,7 +93,7 @@ public class GameController {
         model.addAttribute("game", gameVOMapper.game2VO(game));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.GAME.getId(), id).getVisitNum());
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
         //获取相关游戏
         model.addAttribute("relatedGames", gameService.getRelatedGames(id));
         return "/game/game-detail";

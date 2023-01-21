@@ -100,12 +100,12 @@
             <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h4 class="col-10">
+                        <h5 class="col-10">
                             <b class="detail-item-title">
 <!--                                <i class="pi iconfont icon-24gl-musicAlbum2" style="font-size: 1.5rem"></i>-->
                                 {{album.name}}
                             </b>
-                        </h4>
+                        </h5>
                         <div class="col-2 text-end p-0 m-0" th:if="${loginUser != null}">
                             <p-splitbutton :model="edits" class="p-button-sm bg-primary"
                                            th:if="${loginUser.type == 1}">
@@ -479,16 +479,16 @@
                     <template #caption="{item}">
                         <div class="custom-galleria-footer">
                             <div class="col-6">
-                                            <span v-if="album.displayImages" class="title-container">
-                                                <span>共{{album.displayImages.length}}张</span>
-                                                <span class="title">{{item.nameZh}}</span>
-                                                <span style="font-size: 10px">{{item.description}}</span>
-                                            </span>
+                                <span v-if="album.displayImages" class="title-container">
+                                    <span>共{{album.displayImages.length}}张</span>
+                                    <span class="title">{{item.nameZh}}</span>
+                                    <span style="font-size: 10px">{{item.description}}</span>
+                                </span>
                             </div>
                             <div class="col-6 text-end">
-                                            <span v-if="album.displayImages">
-                                            <span>上传于 {{item.uploadTime}}</span>
-                                        </span>
+                                <span v-if="album.displayImages">
+                                    <span>上传于 {{item.uploadTime}}</span>
+                                </span>
                             </div>
                         </div>
                     </template>

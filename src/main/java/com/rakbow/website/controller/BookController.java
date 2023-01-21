@@ -56,7 +56,7 @@ public class BookController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
+
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
     //endregion
@@ -92,8 +92,8 @@ public class BookController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("book", bookVOMapper.book2VO(book));
         model.addAttribute("user", hostHolder.getUser());
-        //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.BOOK.getId(), id).getVisitNum());
+        //获取页信息
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
         //获取相关图书
         model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/book/book-detail";

@@ -213,13 +213,18 @@ img.flag {
 .emptyInfo {
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    font-weight: 400;
     display: flex;
     /*color: #B0C4DE;*/
 }
 
 .time-tooltip .p-tooltip-text {
     width: 15rem;
+}
+
+.region-tooltip .p-tooltip-text {
+    text-align: center;
+    width: 5rem;
 }
 
 .text-truncate-2 {

@@ -57,7 +57,7 @@ public class DiscController {
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
+
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
     //endregion
@@ -89,8 +89,8 @@ public class DiscController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("disc", discVOMapper.disc2VO(disc));
         model.addAttribute("user", hostHolder.getUser());
-        //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.DISC.getId(), id).getVisitNum());
+        //获取页面数据
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
         //获取相关碟片
         model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/disc/disc-detail";
