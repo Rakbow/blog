@@ -1,0 +1,18 @@
+a:visited,
+
+a:link {
+    color: #ceffff;
+}
+
+.p-datatable {
+    font-size: 13px;
+}
+
+.p-datatable .p-datatable-tbody {
+    padding: 0;
+}
+
+.p-datatable.p-datatable-gridlines.p-datatable-scrollable .p-datatable-tbody > tr > td + td {
+    border-left-width: 0;
+    padding: 0 0.5rem 0 0.5rem;
+}

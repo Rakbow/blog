@@ -74,7 +74,7 @@
                               @click="exportCSV($event)"></p-button>
                 </template>
             </p-toolbar>
-            <p-datatable ref="dt" :value="products" class="p-datatable-customers p-datatable-sm"
+            <p-datatable ref="dt" :value="products" class=" p-datatable-sm"
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"

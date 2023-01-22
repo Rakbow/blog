@@ -65,7 +65,7 @@ public class ProductController {
     private String imgPath;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
+
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
 

@@ -10,7 +10,6 @@
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
     <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" th:href="@{/css/album-list.css}" />
 
     <!-- bootstrap -->
     <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
@@ -58,6 +57,8 @@
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+
+    <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="nk-container">
@@ -81,7 +82,7 @@
                               @click="exportCSV($event)"></p-button>
                 </template>
             </p-toolbar>
-            <p-datatable ref="dt" :value="albums" class="p-datatable-customers p-datatable-sm"
+            <p-datatable ref="dt" :value="albums" class="p-datatable-sm"
                          :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                          @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                          filter-display="row"
@@ -146,7 +147,7 @@
                 </p-column>
                 <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 16rem">
                     <template #body="slotProps">
-                        <ul class="px-4">
+                        <ul class="px-4 mt-0 mb-0">
                             <li v-for="franchise in slotProps.data.franchises">
                                 <a :href="'/db/franchise/' + franchise.value ">
                                     {{franchise.label}}
@@ -165,7 +166,7 @@
                 <p-column header="所属作品" filter-field="products" :show-filter-menu="false"
                           style="flex: 0 0 16rem">
                     <template #body="slotProps">
-                        <ul class="px-4">
+                        <ul class="px-4 mt-0 mb-0">
                             <li v-for="product in slotProps.data.products">
                                 <a :href="'/db/product/' + product.value ">
                                     {{product.label}}
@@ -184,7 +185,7 @@
                 <p-column header="出版形式" filter-field="publishFormat" :show-filter-menu="false"
                           style="flex: 0 0 9rem">
                     <template #body="slotProps">
-                        <ul class="px-4">
+                        <ul class="px-4 mt-0 mb-0">
                             <li v-for="data in slotProps.data.publishFormat">
                                 {{data.label}}
                             </li>
@@ -200,7 +201,7 @@
                 <p-column header="专辑分类" filter-field="albumFormat" :show-filter-menu="false"
                           style="flex: 0 0 9rem">
                     <template #body="slotProps">
-                        <ul class="px-4">
+                        <ul class="px-4 mt-0 mb-0">
                             <li v-for="data in slotProps.data.albumFormat">
                                 {{data.label}}
                             </li>
@@ -216,7 +217,7 @@
                 <p-column header="媒体类型" filter-field="mediaFormat" :show-filter-menu="false"
                           style="flex: 0 0 9rem">
                     <template #body="slotProps">
-                        <ul class="px-4">
+                        <ul class="px-4 mt-0 mb-0">
                             <li v-for="data in slotProps.data.mediaFormat">
                                 {{data.label}}
                             </li>
@@ -306,7 +307,7 @@
                             <div class="col-12">
                                 <label class="mb-3">特典</label>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mt-4">
                                 <p-inputswitch v-model="album.hasBonus" :true-value="1" :false-value="0"></p-inputswitch>
                             </div>
                         </div>
@@ -449,7 +450,7 @@
                             <div class="col-12">
                                 <label class="mb-3">特典</label>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mt-4">
                                 <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
                                                :false-value="0"></p-inputswitch>
                             </div>

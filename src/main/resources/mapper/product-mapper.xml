@@ -31,7 +31,7 @@
     <insert id="addProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
         values (#{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{franchise}, #{category},
-        #{images}, #{staffs}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{images}, #{organizations}, #{staffs}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
