@@ -16,9 +16,7 @@
     <script src="https://cdn.staticfile.org/marked/4.2.4/marked.min.js"></script>
     <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
 
-    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
@@ -85,7 +83,9 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
-    <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
 <div id="app">
@@ -571,7 +571,7 @@
                 <div class="col-12">
                     <label class="mb-3">特典</label>
                 </div>
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-4">
                     <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
                                    :false-value="0"></p-inputswitch>
                 </div>

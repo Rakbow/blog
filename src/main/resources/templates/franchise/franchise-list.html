@@ -6,9 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
-    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-    <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
     <!-- bootstrap -->
@@ -18,7 +16,7 @@
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!-- PrimeVue css-->
-    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
@@ -55,183 +53,182 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet" />
+    <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="nk-container">
-    <div class="main">
-        <div id="app">
-            <!-- 头部 -->
-            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
-
-            <p-toast></p-toast>
-            <p-toolbar class="mb-4">
-                <template #start>
-                    <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
-                              @click="openNewDialog"></p-button>&nbsp;
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+    <div>
+        <p-toast></p-toast>
+        <p-toolbar>
+            <template #start>
+                <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
+                          @click="openNewDialog"></p-button>&nbsp;
+            </template>
+            <template #end>
+                <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help"
+                          @click="exportCSV($event)"></p-button>
+            </template>
+        </p-toolbar>
+        <p-datatable ref="dt" :value="franchises" class=" p-datatable-sm"
+                     :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
+                     @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                     filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
+                     :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
+                     :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
+                     paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
+                                 LastPageLink CurrentPageReport RowsPerPageDropdown"
+                     current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
+                     responsive-layout="scroll">
+            <template #header>
+                <div class="grid p-fluid">
+                    <div class="col-12 lg:col-3 md:col-3 sm:col-6" style="text-align:left">
+                        <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
+                                       @update:model-value="onToggle"
+                                       placeholder="可选显示列" style="width: 20em"></p-multiselect>
+                    </div>
+                </div>
+            </template>
+            <template #empty>
+                        <span class="emptyInfo">
+                            未检索到符合条件的数据
+                        </span>
+            </template>
+            <template #loading>
+                加载中，别急~
+            </template>
+            <p-column style="flex: 0 0 4rem">
+                <template #body="slotProps">
+                    <p-button icon="pi pi-pencil" class="p-button-rounded p-button-text"
+                              @click="openEditDialog(slotProps.data)"></p-button>
                 </template>
-                <template #end>
-                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help"
-                              @click="exportCSV($event)"></p-button>
+            </p-column>
+            <p-column header="序号" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
+            <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
+                <template #body="slotProps">
+                    <a :href="'/db/franchise/' + slotProps.data.id">
+                        {{slotProps.data.name}}
+                    </a>
                 </template>
-            </p-toolbar>
-            <p-datatable ref="dt" :value="franchises" class=" p-datatable-sm"
-                         :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
-                         @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
-                         filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
-                         :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
-                         :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
-                         paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
-                             LastPageLink CurrentPageReport RowsPerPageDropdown"
-                         current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
-                         responsive-layout="scroll">
-                <template #header>
-                    <div class="grid p-fluid">
-                        <div class="col-12 lg:col-3 md:col-3 sm:col-6" style="text-align:left">
-                            <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
-                                           @update:model-value="onToggle"
-                                           placeholder="可选显示列" style="width: 20em"></p-multiselect>
-                        </div>
-                    </div>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
                 </template>
-                <template #empty>
-                    <span class="emptyInfo">
-                        没找到相关数据
-                    </span>
+            </p-column>
+            <p-column header="名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 15rem">
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
                 </template>
-                <template #loading>
-                    加载中，别急~
-                </template>
-                <p-column style="flex: 0 0 4rem">
-                    <template #body="slotProps">
-                        <p-button icon="pi pi-pencil" class="p-button-rounded p-button-text"
-                                  @click="openEditDialog(slotProps.data)"></p-button>
-                    </template>
-                </p-column>
-                <p-column header="Id" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
-                <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
-                    <template #body="slotProps">
-                        <a :href="'/db/franchise/' + slotProps.data.id">
-                            {{slotProps.data.name}}
-                        </a>
-                    </template>
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="名称"></p-inputtext>
-                    </template>
-                </p-column>
-                <p-column header="名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 15rem">
-                    <template #filter="{filterModel,filterCallback}">
-                        <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="名称"></p-inputtext>
-                    </template>
-                </p-column>
-                <p-column header="名称(英)" field="nameEn" style="flex: 0 0 15rem"></p-column>
-                <p-column header="起始时间" field="originDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
-                <p-column header="收录时间" field="addedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
-                <p-column header="编辑时间" field="editedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
-                <p-column v-for="(col, index) of selectedColumns" :field="col.field"
-                          :header="col.header" :key="col.field + '_' + index">
-                </p-column>
-            </p-datatable>
-            <p-dialog v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据" :modal="true"
-                      class="p-fluid">
-                <p-panel header="基础信息">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>名称<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="franchise.name"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>名称(中)<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="franchise.nameZh"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>名称(英)</label>
-                            <p-inputtext v-model.trim="franchise.nameEn"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>发售时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="franchise.originDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>备注</label>
-                        <p-textarea v-model="franchise.remark" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
-                    </div>
-                </p-panel>
-                <p-panel header="其他信息">
-                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewFranchise"></p-button>
-                </template>
-            </p-dialog>
-            <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
-                      class="p-fluid">
-                <p-panel header="基础信息">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>名称<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>名称(中)<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>名称(英)</label>
-                            <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>发售时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true"
-                                        :show-icon="true"></p-calendar>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>备注</label>
-                        <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
-                                    :auto-resize="true"></p-textarea>
-                    </div>
-                </p-panel>
-                <p-panel header="其他信息">
-                    <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
-                    </div>
-                    <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-                    <div class="field">
-                        <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                              @click="closeEditDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                              @click="submitEditFranchise"></p-button>
-                </template>
-            </p-dialog>
-
-            <!-- 尾部 -->
-            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
-        </div>
+            </p-column>
+            <p-column header="名称(英)" field="nameEn" style="flex: 0 0 15rem"></p-column>
+            <p-column header="起始时间" field="originDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+            <p-column header="收录时间" field="addedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
+            <p-column header="编辑时间" field="editedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
+            <p-column v-for="(col, index) of selectedColumns" :field="col.field"
+                      :header="col.header" :key="col.field + '_' + index">
+            </p-column>
+        </p-datatable>
     </div>
+    <!-- 尾部 -->
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
+
+    <p-dialog v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据" :modal="true"
+              class="p-fluid">
+        <p-panel header="基础信息">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchise.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>名称(中)<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchise.nameZh"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称(英)</label>
+                    <p-inputtext v-model.trim="franchise.nameEn"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发售时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="franchise.originDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="franchise.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+        <p-panel header="其他信息">
+            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewFranchise"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
+              class="p-fluid">
+        <p-panel header="基础信息">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>名称(中)<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称(英)</label>
+                    <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发售时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+        <p-panel header="其他信息">
+            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="closeEditDialog"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitEditFranchise"></p-button>
+        </template>
+    </p-dialog>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;

@@ -3,7 +3,8 @@ html {
 }
 
 body {
-    background-color: var(--surface-ground);
+    /*background-color: var(--surface-ground);*/
+    background-color: #001122;
     font-family: var(--font-family);
     font-weight: normal;
     color: var(--text-color);

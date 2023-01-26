@@ -12,14 +12,10 @@
     <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
-    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
-    <!--    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>-->
-    <!--    <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
@@ -86,6 +82,8 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -116,9 +114,11 @@
                     </div>
                 </template>
                 <template #subtitle>
-                    <h5 v-if="book.titleZh != ''" class="detail-item-subtitle"><small class="ml-4">{{book.titleZh}}</small></h5>
+                    <h5 v-if="book.titleZh != ''" class="detail-item-subtitle"><small
+                            class="ml-4">{{book.titleZh}}</small></h5>
                     <h5 v-else><small></small></h5>
-                    <h5 v-if="book.titleEn != ''" class="detail-item-subtitle"><small class="ml-4">{{book.titleEn}}</small></h5>
+                    <h5 v-if="book.titleEn != ''" class="detail-item-subtitle"><small
+                            class="ml-4">{{book.titleEn}}</small></h5>
                     <h5 v-else><small></small></h5>
                 </template>
                 <template #content>
@@ -203,8 +203,10 @@
                                             </td>
                                             <td>
                                                 {{book.price != 0?book.price:" - "}} <span
-                                                    v-if="book.currencyUnit == 'JPY'" style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span v-else>{{book.currencyUnit}}</span>
+                                                    v-if="book.currencyUnit == 'JPY'"
+                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                    v-else>{{book.currencyUnit}}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -213,7 +215,8 @@
                                                 <strong>特典</strong>
                                             </td>
                                             <td>
-                                                <a v-if="book.hasBonus" href="#bonus" style="color: #ceffff" class="ml-3">有</a>{{(book.hasBonus)?"":"无"}}
+                                                <a v-if="book.hasBonus" href="#bonus" style="color: #ceffff"
+                                                   class="ml-3">有</a>{{(book.hasBonus)?"":"无"}}
                                             </td>
                                         </tr>
                                         </tbody>
@@ -355,16 +358,16 @@
                     <template #caption="{item}">
                         <div class="custom-galleria-footer">
                             <div class="col-6">
-                                            <span v-if="book.displayImages" class="title-container">
-                                                <span>共{{book.displayImages.length}}张</span>
-                                                <span class="title">{{item.nameZh}}</span>
-                                                <span style="font-size: 10px">{{item.description}}</span>
-                                            </span>
+                                <span v-if="book.displayImages" class="title-container">
+                                    <span>共{{book.displayImages.length}}张</span>
+                                    <span class="title">{{item.nameZh}}</span>
+                                    <span style="font-size: 10px">{{item.description}}</span>
+                                </span>
                             </div>
                             <div class="col-6 text-end">
-                                            <span v-if="book.displayImages">
-                                            <span>上传于 {{item.uploadTime}}</span>
-                                        </span>
+                                <span v-if="book.displayImages">
+                                    <span>上传于 {{item.uploadTime}}</span>
+                                </span>
                             </div>
                         </div>
                     </template>
@@ -396,7 +399,8 @@
                              v-for="relatedBook of relatedBooks">
                             <div class="sidebar-panel-image-small-div book_info_bit_thumb mt-2">
                                 <a :href="'/db/book/'+ relatedBook.id">
-                                    <img class="sidebar-panel-image-small" :src="relatedBook.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
+                                    <img class="sidebar-panel-image-small" :src="relatedBook.cover.blackUrl"
+                                         v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
                                 </a>
                             </div>
                             <div class="col p-0" style="height: 80px">
@@ -501,9 +505,9 @@
             </div>
             <div class="field col-2">
                 <div class="col-12">
-                    <label class="mb-3">包含特典</label>
+                    <label class="mb-3">特典</label>
                 </div>
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-4">
                     <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
                                    :false-value="0"></p-inputswitch>
                 </div>
@@ -983,7 +987,7 @@
                                     if (res.length !== 0) {
                                         productSet.value = res;
                                         productSelect.value = false;
-                                    }else {
+                                    } else {
                                         productSelect.value = true;
                                     }
                                     bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
@@ -1459,7 +1463,7 @@
                         if (res.length !== 0) {
                             productSet.value = res;
                             productSelect.value = false;
-                        }else {
+                        } else {
                             productSelect.value = true;
                             bookEdit.value.products = [];
                         }
@@ -1615,7 +1619,7 @@
 </script>
 <style>
     .book-detail-cover {
-        transform:translateY(7px);
+        transform: translateY(7px);
         width: 180px;
         height: 180px;
     }

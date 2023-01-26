@@ -105,7 +105,7 @@
                 </template>
                 <template #empty>
                     <span class="emptyInfo">
-                        没找到相关数据
+                        未检索到符合条件的数据
                     </span>
                 </template>
                 <template #loading>
@@ -123,7 +123,7 @@
                           style="flex: 0 0 10rem">
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="专辑编号"></p-inputtext>
+                                      placeholder="专辑编号"></p-inputtext>
                     </template>
                 </p-column>
                 <p-column header="商品名" field="name" :show-filter-menu="false"
@@ -135,7 +135,7 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="名称"></p-inputtext>
+                                      placeholder="名称"></p-inputtext>
                     </template>
                 </p-column>
                 <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
@@ -156,7 +156,7 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-multiselect v-model="filterModel.value" @change="getProducts($event.value), filterCallback()"
-                                       :options="franchiseSet" placeholder="所属系列" class="p-column-filter"
+                                       :options="franchiseSet" placeholder="所属系列"
                                        option-label="label" option-value="value" display="chip" :filter="true"
                                        style="width: 15rem">
                         </p-multiselect>
@@ -175,7 +175,7 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-multiselect v-model="filterModel.value" @change="filterCallback()"
-                                       :options="productSet" placeholder="选择作品" class="p-column-filter"
+                                       :options="productSet" placeholder="选择作品"
                                        option-label="label" option-value="value" display="chip" :filter="true"
                                        :disabled="productSelect" style="width: 15rem" >
                         </p-multiselect>
@@ -192,7 +192,7 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 8rem"
-                                       :options="mediaFormatSet" placeholder="媒体类型" class="p-column-filter"
+                                       :options="mediaFormatSet" placeholder="媒体类型"
                                        option-label="label" option-value="value" display="chip" :filter="true">
                         </p-multiselect>
                     </template>

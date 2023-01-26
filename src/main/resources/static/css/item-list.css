@@ -13,6 +13,43 @@ a:link {
 }
 
 .p-datatable.p-datatable-gridlines.p-datatable-scrollable .p-datatable-tbody > tr > td + td {
+    text-align: center;
     border-left-width: 0;
-    padding: 0 0.5rem 0 0.5rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+}
+
+.p-datatable .p-datatable-emptymessage {
+    margin-right: 1rem;
+    font-size: 20px;
+}
+
+.p-multiselect {
+    font-size: 13px;
+}
+
+.p-multiselect .p-multiselect-items {
+    font-size: 13px;
+}
+
+.p-datatable ul {
+    padding-right: 1.5rem !important;
+    padding-left: 1.5rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.p-multiselect .p-multiselect-filter-container {
+    width: 10rem;
+}
+
+.p-multiselect-panel .p-component .p-ripple-disabled {
+    max-width: 200px;
+}
+
+.p-datatable .p-filter-column {
+    font-size: 13px;
+}
+
+.p-toolbar {
+    margin-bottom: 0.5rem;
 }

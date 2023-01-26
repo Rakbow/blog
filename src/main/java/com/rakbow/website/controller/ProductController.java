@@ -109,9 +109,9 @@ public class ProductController {
             model.addAttribute("games", gameService.getGamesByProductId(productId));
         }
 
-        //获取页面访问量
-        model.addAttribute("visitNum",
-                visitService.getVisit(EntityType.PRODUCT.getId(), productId).getVisitNum());
+        //获取页面数据
+        model.addAttribute("pageInfo",
+                visitService.getPageInfo(EntityType.PRODUCT.getId(), productId, product.getAddedTime(), product.getEditedTime()));
 
         return "/product/product-detail";
     }

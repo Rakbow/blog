@@ -95,7 +95,7 @@
                 </template>
                 <template #empty>
                     <span class="emptyInfo">
-                        没找到相关数据
+                        未检索到符合条件的数据
                     </span>
                 </template>
                 <template #loading>
@@ -121,13 +121,13 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="名称"></p-inputtext>
+                                      placeholder="名称"></p-inputtext>
                     </template>
                 </p-column>
                 <p-column header="作品名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 15rem">
                     <template #filter="{filterModel,filterCallback}">
                         <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                     class="p-column-filter" placeholder="名称"></p-inputtext>
+                                      placeholder="名称"></p-inputtext>
                     </template>
                 </p-column>
                 <p-column header="作品分类" field="category" :show-filter-menu="false" style="flex: 0 0 16rem">
@@ -136,7 +136,7 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-multiselect v-model="filterModel.value" @change="filterCallback()"
-                                       :options="productCategorySet" placeholder="作品类型" class="p-column-filter"
+                                       :options="productCategorySet" placeholder="作品类型"
                                        option-label="label" option-value="value" display="chip" :filter="true">
                         </p-multiselect>
                     </template>
@@ -149,7 +149,7 @@
                     </template>
                     <template #filter="{filterModel,filterCallback}">
                         <p-multiselect v-model="filterModel.value" @change="filterCallback()"
-                                       :options="franchiseSet" placeholder="所属系列" class="p-column-filter"
+                                       :options="franchiseSet" placeholder="所属系列"
                                        option-label="label" option-value="value" display="chip" :filter="true">
                         </p-multiselect>
                     </template>

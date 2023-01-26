@@ -12,9 +12,7 @@
     <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
-    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
@@ -84,6 +82,8 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -91,7 +91,6 @@
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-    <!--                <div class="grid card mt-2" style="background-color: #20262E">-->
     <div id="main" class="grid mt-2">
         <p-toast></p-toast>
         <div class="detail-card col-8 lg:col-offset-1">
@@ -127,7 +126,7 @@
                                 <img :src="game.cover.url" :alt="game.cover.name"/>
                             </div>
                         </div>
-                        <div class="col detail-item-header-card">
+                        <div class="col detail-item-header-card mt-4">
                             <p-card>
                                 <template #content>
                                     <table class="table-borderless table-sm ml-2">
@@ -448,9 +447,9 @@
             </div>
             <div class="field col-2">
                 <div class="col-12">
-                    <label class="mb-3">包含特典</label>
+                    <label class="mb-3">特典</label>
                 </div>
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-3">
                     <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
                                    :false-value="0"></p-inputswitch>
                 </div>
