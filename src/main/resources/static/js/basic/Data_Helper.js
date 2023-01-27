@@ -224,6 +224,7 @@ const priceUnitSet = [
     {labelEn: 'JPY', label: '日元', value: 'JPY'},
     {labelEn: 'CNY', label: '人民币', value: 'CNY'},
     {labelEn: 'USD', label: '美元', value: 'USD'},
+    {labelEn: 'EUR', label: '欧元', value: 'EUR'},
     {labelEn: 'TWD', label: '新台币', value: 'TWD'},
     {labelEn: 'OTHER', label: '其他', value: 'UNKNOWN'},
 ];

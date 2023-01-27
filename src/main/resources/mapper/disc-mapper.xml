@@ -5,13 +5,14 @@
 <mapper namespace="com.rakbow.website.dao.DiscMapper">
 
     <sql id="selectFields">
-        id, catalog_no, name, name_zh, name_en, barcode, franchises, products, release_date, price, media_format,
-        limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        id, catalog_no, name, name_zh, name_en, barcode, region, franchises, products, release_date, price,
+        currency_unit, media_format, limited, spec, has_bonus, bonus, images, description,
+        remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        catalog_no, name, name_zh, name_en, barcode, franchises, products, release_date, price, media_format,
-        limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        catalog_no, name, name_zh, name_en, barcode, region, franchises, products, release_date, price, currency_unit,
+        media_format, limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
     </sql>
 
     <select id="getDisc" resultType="Disc">
@@ -26,18 +27,18 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into disc (<include refid="insertFields"></include>)
-        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{productId}, #{releaseDate},
-        #{price}, #{mediaFormat}, #{limited}, #{spec}, #{hasBonus}, #{bonus}, #{images}, #{description}, #{remark},
-        #{addedTime}, #{editedTime}, #{_s})
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{region}, #{franchises}, #{products},
+        #{releaseDate}, #{price}, #{currencyUnit}, #{mediaFormat}, #{limited}, #{spec}, #{hasBonus}, #{bonus}, #{images},
+        #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateDisc" parameterType="Disc" keyProperty="id">
         update disc
         set
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
-        barcode = #{disc.barcode}, franchises = #{disc.franchises}, products = #{disc.products},
-        release_date = #{disc.releaseDate}, price = #{disc.price}, media_format = #{disc.mediaFormat},
-        limited = #{disc.limited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
+        barcode = #{disc.barcode}, region = ${disc.region}, franchises = #{disc.franchises}, products = #{disc.products},
+        release_date = #{disc.releaseDate}, price = #{disc.price}, currency_unit = #{disc.currencyUnit},
+        media_format = #{disc.mediaFormat}, limited = #{disc.limited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
         edited_time = #{disc.editedTime}, _s = #{disc._s}
         where id = #{disc.id}
     </update>
@@ -93,6 +94,9 @@
             </if>
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
+            </if>
+            <if test="region != null and region != '' ">
+                and region like concat('%', #{region}, '%')
             </if>
             <if test="franchises != null and franchises.size() != 0">
                 <foreach item="item" index="index" collection="franchises" open=""
@@ -161,6 +165,9 @@
             </if>
             <if test="name != null and name != '' ">
                 and name like concat('%', #{name}, '%')
+            </if>
+            <if test="region != null and region != '' ">
+                and region like concat('%', #{region}, '%')
             </if>
             <if test="franchises != null and franchises.size() != 0">
                 <foreach item="item" index="index" collection="franchises" open=""

@@ -140,6 +140,9 @@ public class DiscService {
                 || StringUtils.equals(discJson.getString("mediaFormat"), "[]")) {
             return ApiInfo.DISC_MEDIA_FORMAT_EMPTY;
         }
+        if (StringUtils.isBlank(discJson.getString("region"))) {
+            return ApiInfo.DISC_REGION_EMPTY;
+        }
         return "";
     }
 
@@ -286,6 +289,7 @@ public class DiscService {
 
         String catalogNo = filter.getJSONObject("catalogNo").getString("value");
         String name = filter.getJSONObject("name").getString("value");
+        String region = filter.getJSONObject("region").getString("value");
 
         List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
         List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
@@ -307,10 +311,10 @@ public class DiscService {
                     ?Integer.toString(1):Integer.toString(0);
         }
 
-        List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, franchises, products,
+        List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
                 mediaFormat, limited, hasBonus, sortField, sortOrder,  first, row);
 
-        int total = discMapper.getDiscsRowsByFilter(catalogNo, name, franchises, products,
+        int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
                 mediaFormat, limited, hasBonus);
 
         return new SearchResult(total, discs);
@@ -334,9 +338,9 @@ public class DiscService {
         List<Integer> productIds = JSONObject.parseObject(disc.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Disc
-        List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, CommonUtils.ids2List(disc.getFranchises()),
-                        null, null, null, null, "releaseDate",
-                        1, 0, 0)
+        List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, null,
+                        CommonUtils.ids2List(disc.getFranchises()), null, null, null,
+                        null, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
 
         List<Disc> queryResult = allDiscs.stream().filter(tmpDisc ->
@@ -392,9 +396,8 @@ public class DiscService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Disc> discs = discMapper.getDiscsByFilter(null, null, null, products,
-                null, null, null, "releaseDate",
-                -1,  0, 0);
+        List<Disc> discs = discMapper.getDiscsByFilter(null, null, null, null, products,
+                null, null, null, "releaseDate", -1,  0, 0);
 
         return discVOMapper.disc2VOBeta(discs);
     }

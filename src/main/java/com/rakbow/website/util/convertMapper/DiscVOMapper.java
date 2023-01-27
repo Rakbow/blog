@@ -1,6 +1,8 @@
 package com.rakbow.website.util.convertMapper;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -50,9 +52,15 @@ public interface DiscVOMapper {
         discVO.setBarcode(disc.getBarcode());
         discVO.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
         discVO.setPrice(disc.getPrice());
+        discVO.setCurrencyUnit(disc.getCurrencyUnit());
         discVO.setLimited(disc.getLimited() == 1);
         discVO.setHasBonus(disc.getHasBonus() == 1);
         discVO.setRemark(disc.getRemark());
+
+        JSONObject region = new JSONObject();
+        region.put("code", disc.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
+        discVO.setRegion(region);
 
         discVO.setFranchises(FranchiseUtils.getFranchiseList(disc.getFranchises()));
         discVO.setProducts(ProductUtils.getProductList(disc.getProducts()));
@@ -98,9 +106,15 @@ public interface DiscVOMapper {
         discVOAlpha.setBarcode(disc.getBarcode());
         discVOAlpha.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
         discVOAlpha.setPrice(disc.getPrice());
+        discVOAlpha.setCurrencyUnit(disc.getCurrencyUnit());
         discVOAlpha.setLimited(disc.getLimited() == 1);
         discVOAlpha.setHasBonus(disc.getHasBonus() == 1);
         discVOAlpha.setRemark(disc.getRemark());
+
+        JSONObject region = new JSONObject();
+        region.put("code", disc.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
+        discVOAlpha.setRegion(region);
 
         discVOAlpha.setFranchises(FranchiseUtils.getFranchiseList(disc.getFranchises()));
         discVOAlpha.setProducts(ProductUtils.getProductList(disc.getProducts()));

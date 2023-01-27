@@ -94,6 +94,7 @@ public class ApiInfo {
     public static final String DISC_FRANCHISES_EMPTY = "未选择碟片所属系列！";
     public static final String DISC_PRODUCTS_EMPTY = "未选择碟片所属作品！";
     public static final String DISC_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
+    public static final String DISC_REGION_EMPTY = "未选择发行地区！";
     //endregion
 
     //region book相关
