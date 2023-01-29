@@ -1,6 +1,8 @@
 package com.rakbow.website.util.convertMapper;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.merch.MerchVO;
@@ -50,7 +52,7 @@ public interface MerchVOMapper {
         merchVO.setBarcode(merch.getBarcode());
         merchVO.setReleaseDate(CommonUtils.dateToString(merch.getReleaseDate()));
         merchVO.setPrice(merch.getPrice());
-        merchVO.setPriceUnit(merch.getPriceUnit());
+        merchVO.setCurrencyUnit(merch.getCurrencyUnit());
         merchVO.setNotForSale(merch.getNotForSale() == 1);
         merchVO.setRemark(merch.getRemark());
 
@@ -62,6 +64,11 @@ public interface MerchVOMapper {
         merchVO.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
         merchVO.setSpec(JSON.parseArray(merch.getSpec()));
         merchVO.setDescription(merch.getDescription());
+
+        JSONObject region = new JSONObject();
+        region.put("code", merch.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(merch.getRegion()));
+        merchVO.setRegion(region);
 
         //将图片分割处理
         segmentImagesResult segmentImages = CommonImageUtils.segmentImages(merch.getImages(), 250);
@@ -100,7 +107,7 @@ public interface MerchVOMapper {
         merchVOAlpha.setBarcode(merch.getBarcode());
         merchVOAlpha.setReleaseDate(CommonUtils.dateToString(merch.getReleaseDate()));
         merchVOAlpha.setPrice(merch.getPrice());
-        merchVOAlpha.setPriceUnit(merch.getPriceUnit());
+        merchVOAlpha.setCurrencyUnit(merch.getCurrencyUnit());
         merchVOAlpha.setNotForSale(merch.getNotForSale() == 1);
         merchVOAlpha.setRemark(merch.getRemark());
 
@@ -110,6 +117,11 @@ public interface MerchVOMapper {
 
         //复杂字段
         merchVOAlpha.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
+
+        JSONObject region = new JSONObject();
+        region.put("code", merch.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(merch.getRegion()));
+        merchVOAlpha.setRegion(region);
 
         //图片
         merchVOAlpha.setCover(CommonImageUtils.generateCover(merch.getImages()));

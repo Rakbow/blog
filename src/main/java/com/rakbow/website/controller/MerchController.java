@@ -52,14 +52,12 @@ public class MerchController {
     @Autowired
     private UserService userService;
     @Autowired
-    private FranchiseService franchiseService;
-    @Autowired
     private VisitService visitService;
     @Autowired
     private HostHolder hostHolder;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
+
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
     //endregion
@@ -71,6 +69,7 @@ public class MerchController {
         ModelAndView view = new ModelAndView();
         model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
         view.setViewName("/merch/merch-list");
         return view;
     }
@@ -89,6 +88,7 @@ public class MerchController {
 
         model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("merch", merchVOMapper.merch2VO(merch));
         MerchVO merchVO = merchVOMapper.merch2VO(merch);
         model.addAttribute("user", hostHolder.getUser());

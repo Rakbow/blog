@@ -36,7 +36,7 @@
         update disc
         set
         catalog_no = #{disc.catalogNo}, name = #{disc.name}, name_zh = #{disc.nameZh}, name_en = #{disc.nameEn},
-        barcode = #{disc.barcode}, region = ${disc.region}, franchises = #{disc.franchises}, products = #{disc.products},
+        barcode = #{disc.barcode}, region = #{disc.region}, franchises = #{disc.franchises}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, currency_unit = #{disc.currencyUnit},
         media_format = #{disc.mediaFormat}, limited = #{disc.limited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
         edited_time = #{disc.editedTime}, _s = #{disc._s}

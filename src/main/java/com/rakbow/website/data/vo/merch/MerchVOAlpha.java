@@ -21,7 +21,7 @@ public class MerchVOAlpha {
     private String barcode;//商品条形码
     private String releaseDate;//发售日
     private int price;//价格
-    private String priceUnit;//价格单位
+    private String currencyUnit;//价格单位
     private boolean notForSale;//是否非卖品
     private String remark;//备注
 
@@ -31,6 +31,7 @@ public class MerchVOAlpha {
 
     //复杂字段
     private JSONObject category;//商品分类
+    private JSONObject region;//地区
 
     //图片
     private JSONObject cover;

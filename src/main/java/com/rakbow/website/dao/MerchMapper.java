@@ -21,30 +21,30 @@ public interface MerchMapper {
 
     //根据过滤条件搜索Merch
     List<Merch> getMerchsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
-                                  int category, String notForSale, String sortField, int sortOrder,
+                                  int category, String region, String notForSale, String sortField, int sortOrder,
                                   int first, int row);
 
     //超详细查询条数
     int getMerchsRowsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
-                              int category, String notForSale);
+                              int category, String region, String notForSale);
 
     //新增Merch
-    int addMerch (Merch merch);
+    void addMerch (Merch merch);
 
     //更新Merch基础信息
-    int updateMerch (int id, Merch merch);
+    void updateMerch (int id, Merch merch);
 
     //删除单个Merch
-    int deleteMerch(int id);
+    void deleteMerch(int id);
 
     //更新规格信息
-    int updateMerchSpec(int id, String spec, Timestamp editedTime);
+    void updateMerchSpec(int id, String spec, Timestamp editedTime);
 
     //更新图片
-    int updateMerchImages(int id, String images, Timestamp editedTime);
+    void updateMerchImages(int id, String images, Timestamp editedTime);
 
     //更新描述信息
-    int updateMerchDescription(int id, String description, Timestamp editedTime);
+    void updateMerchDescription(int id, String description, Timestamp editedTime);
 
     int updateStatusById(int id);
 

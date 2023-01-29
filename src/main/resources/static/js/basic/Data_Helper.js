@@ -258,6 +258,7 @@ const getImageTypeLabel = (type) => {
 };
 
 const regionCode2NameZh = (code, regionSet) => {
+    console.log(code)
     for (let region of regionSet) {
         if (region.code === code) {
             return region.nameZh;

@@ -698,6 +698,7 @@
                             discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                             discEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
                             discEdit.value.limited = dataTmp.limited ? 1: 0;
+                            discEdit.value.region = dataTmp.region.code;
                             discEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: discEdit.value.franchises,

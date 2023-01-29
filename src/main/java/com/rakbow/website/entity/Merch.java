@@ -22,9 +22,10 @@ public class Merch {
     private String franchises;//所属系列
     private String products;//所属产品
     private int category;//商品分类
+    private String region;//地区
     private Date releaseDate;//发售日
     private int price;//价格
-    private String priceUnit;//价格单位
+    private String currencyUnit;//价格单位
     private int notForSale;//是否非卖品
     private String spec;//规格
     private String description;//描述
@@ -45,7 +46,8 @@ public class Merch {
         this.category = 0;
         this.releaseDate = null;
         this.price = 0;
-        this.priceUnit = "";
+        this.currencyUnit = "";
+        this.region = "";
         this.notForSale = 0;
         this.spec = "[]";
         this.description = "";

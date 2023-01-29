@@ -273,6 +273,7 @@ public class MerchService {
 
         String name = filter.getJSONObject("name").getString("value");
         String barcode = filter.getJSONObject("barcode").getString("value");
+        String region = filter.getJSONObject("region").getString("value");
 
         int category = 100;
         if (filter.getJSONObject("category").getInteger("value") != null) {
@@ -290,10 +291,10 @@ public class MerchService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category,
+        List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
                 notForSale, sortField, sortOrder, first, row);
 
-        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, notForSale);
+        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale);
 
         return new SearchResult(total, merchs);
     }
@@ -311,7 +312,7 @@ public class MerchService {
         products.add(productId);
 
         List<Merch> merchs = merchMapper.getMerchsByFilter(null, null, null, products,
-                100, null, "releaseDate", -1,  0, 0);
+                100, null, null, "releaseDate", -1,  0, 0);
 
         return merchVOMapper.merch2VOBeta(merchs);
     }
@@ -335,7 +336,7 @@ public class MerchService {
 
         //该系列所有Merch
         List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtils.ids2List(merch.getFranchises()),
-                null, 100, null, "releaseDate", 1, 0, 0)
+                null, 100, null, null, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
 
         List<Merch> queryResult = allMerchs.stream().filter(tmpMerch ->

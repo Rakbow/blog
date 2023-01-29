@@ -5,12 +5,12 @@
 <mapper namespace="com.rakbow.website.dao.MerchMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, barcode, franchises, products, category, release_date, price, price_unit,
+        id, name, name_zh, name_en, barcode, franchises, products, category, region, release_date, price, currency_unit,
         not_for_sale, spec, description, images, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, barcode, franchises, products, category, release_date, price, price_unit,
+        name, name_zh, name_en, barcode, franchises, products, category, region, release_date, price, currency_unit,
         not_for_sale, spec, description, images, remark, added_time, edited_time, _s
     </sql>
 
@@ -26,8 +26,9 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into merch (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{category}, #{releaseDate},#{price},
-         #{priceUnit}, #{notForSale}, #{spec}, #{description}, #{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{category}, #{region},
+        #{releaseDate}, #{price}, #{currencyUnit}, #{notForSale}, #{spec}, #{description}, #{images}, #{remark},
+        #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateMerch" parameterType="Merch" keyProperty="id">
@@ -35,9 +36,9 @@
         set
         name = #{merch.name}, name_zh = #{merch.nameZh}, name_en = #{merch.nameEn}, barcode = #{merch.barcode},
         franchises = #{merch.franchises}, products = #{merch.products}, category = #{merch.category},
-        release_date = #{merch.releaseDate}, price = #{merch.price}, price_unit = #{merch.priceUnit},
-        not_for_sale = #{merch.notForSale}, description = #{merch.description}, remark = #{merch.remark},
-        added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}, _s = #{merch._s}
+        region = #{merch.region}, release_date = #{merch.releaseDate}, price = #{merch.price},
+        currency_unit = #{merch.currencyUnit}, not_for_sale = #{merch.notForSale}, description = #{merch.description},
+        remark = #{merch.remark}, added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}, _s = #{merch._s}
         where id = #{merch.id}
     </update>
 
@@ -101,6 +102,9 @@
             <if test="category != 100 ">
                 and category = #{category}
             </if>
+            <if test="region != null and region != '' ">
+                and region like concat('%', #{region}, '%')
+            </if>
             <if test="notForSale != null and notForSale != '' ">
                 and not_for_sale = #{notForSale}
             </if>
@@ -162,6 +166,9 @@
             </if>
             <if test="category != 100 ">
                 and category = #{category}
+            </if>
+            <if test="region != null and region != '' ">
+                and region like concat('%', #{region}, '%')
             </if>
             <if test="notForSale != null and notForSale != '' ">
                 and not_for_sale = #{notForSale}

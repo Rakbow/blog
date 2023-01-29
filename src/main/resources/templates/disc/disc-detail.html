@@ -13,9 +13,7 @@
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!--other css -->
-    <!--    <link th:href="@{/img/favicon.ico}" type="image/x-icon" rel="shortcut icon"/>-->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- PrimeVue -->
@@ -76,9 +74,8 @@
 
     <script src="https://cdn.staticfile.org/clipboard.js/2.0.11/clipboard.min.js"></script>
 
-    <!-- aPlayer -->
-    <!--    <link href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">-->
-    <!--    <script src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js"></script>-->
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -86,6 +83,8 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -109,7 +108,7 @@
                             <p-splitbutton :model="edits" class="p-button-sm bg-primary"
                                            th:if="${loginUser.type == 1}">
                                 <p-button @click="openEditDialog">
-                                    <i class="pi pi-pencil"></i>
+                                    <i class="pi pi-cog"></i>
                                 </p-button>
                             </p-splitbutton>
                         </div>
@@ -129,7 +128,7 @@
                             </div>
                         </div>
                         <div class="col detail-item-header-card">
-                            <p-card>
+                            <p-card class="mt-5">
                                 <template #content>
                                     <table class="table-borderless table-sm ml-2">
                                         <tbody class="detail-item-header-table">
@@ -165,7 +164,21 @@
                                                 <strong>发行价格</strong>
                                             </td>
                                             <td>
-                                                {{disc.price != 0 ? disc.price + "日元" :"N/A"}}
+                                                {{disc.price != 0?disc.price:" - "}} <span
+                                                    v-if="disc.currencyUnit == 'JPY'"
+                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                    v-else>{{disc.currencyUnit}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi pi-globe"></i>
+                                                <strong>地区</strong>
+                                            </td>
+                                            <td>
+                                                <span :class="'fi fi-' + disc.region.code" style="margin-left: 0.5rem"
+                                                      v-tooltip.bottom="{value: disc.region.nameZh, class: 'region-tooltip'}"></span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -174,7 +187,7 @@
                                                 <strong>特典</strong>
                                             </td>
                                             <td>
-                                                <a v-if="disc.hasBonus" href="#bonus" style="color: #ceffff" class="ml-3">有</a>{{(disc.hasBonus)?"":"无"}}
+                                                <a v-if="disc.hasBonus" href="#bonus" style="color: #ceffff" class="ml-2">有</a>{{(disc.hasBonus)?"":"无"}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -193,12 +206,27 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
+                        <!-- 规格 -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi iconfont icon-miaoshu"></i>
+                                <i class="pi pi-info-circle"></i>
                                 <b>规格</b>
                             </template>
-                            <article id="spec" class="markdown-body" style="width: 100%;"></article>
+                            <div class="grid ml-4" v-if="disc.spec.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr v-for="specItem in disc.spec">
+                                        <td width="80px"><strong>{{specItem.label}}</strong></td>
+                                        <td>
+                                            {{specItem.value.join(", ")}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无规格信息</em></span>
+                            </div>
                         </p-fieldset>
                         <p-fieldset :toggleable="true" v-if="disc.description">
                             <template #legend>
@@ -371,24 +399,43 @@
             </div>
         </div>
         <div class="formgrid grid">
-            <div class="field col-6">
+            <div class="field col-4">
                 <label>商品名(英)</label>
                 <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
             </div>
-            <div class="field col-3">
+            <div class="field col-4">
+                <label>地区<span style="color: red">*</span></label>
+                <p-dropdown v-model="discEdit.region" :options="regionSet" :filter="true"
+                            :show-clear="true" option-label="nameZh" option-value="code">
+                    <template #value="slotProps">
+                        <div class="country-item" v-if="slotProps.value">
+                            <span :class="'fi fi-' + slotProps.value"></span>
+                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                        </div>
+                        <span v-else>选择地区</span>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="country-item">
+                            <span :class="'fi fi-' + slotProps.option.code"></span>
+                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                        </div>
+                    </template>
+                </p-dropdown>
+            </div>
+            <div class="field col-2">
                 <div class="col-12">
-                    <label class="mb-3">包含特典</label>
+                    <label class="mb-3">特典</label>
                 </div>
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-3">
                     <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
                                    :false-value="0"></p-inputswitch>
                 </div>
             </div>
-            <div class="field col-3">
+            <div class="field col-2">
                 <div class="col-12">
                     <label class="mb-3">限定版</label>
                 </div>
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-3">
                     <p-inputswitch v-model="discEdit.limited" :true-value="1"
                                    :false-value="0"></p-inputswitch>
                 </div>
@@ -425,9 +472,14 @@
                             :show-icon="true"></p-calendar>
             </div>
             <div class="field col">
-                <label>发行价格(含税)</label>
-                <p-inputnumber v-model="discEdit.price" mode="currency"
-                               currency="JPY" locale="ja-JP"></p-inputnumber>
+                <label>发行价格</label>
+                <p-inputnumber v-model="discEdit.price"></p-inputnumber>
+            </div>
+            <div class="field col-3">
+                <label>货币单位</label>
+                <p-dropdown v-model="discEdit.currencyUnit" :options="priceUnitSet"
+                            option-label="label" option-value="value">
+                </p-dropdown>
             </div>
         </div>
         <div class="field">
@@ -587,13 +639,76 @@
             <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displaySpecDialog" header="编辑规格信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
-        <md-editor-v3 v-model="specMd" preview-theme="github"></md-editor-v3>
+    <p-dialog v-model:visible="displaySpecEditDialog" header="编辑规格信息"
+              :style="{width: '800px'}" :modal="true">
+        <p-panel>
+            <template #header>
+                <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                <b>新增</b>
+            </template>
+            <div class="grid">
+                <div class="col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-tag"></i>
+                        </span>
+                        <p-inputtext v-model="specItem.label" placeholder="规格名称"></p-inputtext>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-info-circle"></i>
+                        </span>
+                        <p-chips v-model="specItem.value" placeholder="规格数据" separator=","></p-chips>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <p-button label="新增" icon="pi pi-save" @click="addSpecItem"></p-button>
+                </div>
+            </div>
+        </p-panel>
+        <p-panel>
+            <template #header>
+                <i class="pi pi-file-edit mr-2" style="font-size: 2rem"></i>
+                <b>编辑</b>
+            </template>
+            <div v-if="tmpSpec.length != 0">
+                <p-datatable dataKey="id" :value="tmpSpec" responsive-layout="scroll"
+                             class="p-datatable-sm" striped-rows @row-reorder="specOnRowReorder"
+                             context-menu v-model:context-menu-selection="selectedSpecItem"
+                             @row-contextmenu="specRowMenu" edit-mode="row"
+                             v-model:editing-rows="specEditingRows" @row-edit-save="specOnRowEditSave">
+                    <p-column :row-reorder="true"></p-column>
+                    <p-column field="label" header="规格名称">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="value" header="规格数据">
+                        <template #body="slotProps">
+                            {{slotProps.data.value.join("/")}}
+                        </template>
+                        <template #editor="{ data, field }">
+                            <p-chips v-model="data[field]"></p-chips>
+                        </template>
+                    </p-column>
+                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                              bodyStyle="text-align:center"></p-column>
+                </p-datatable>
+                <p-contextmenu :model="specMenuModel" ref="specCm"></p-contextmenu>
+            </div>
+            <div v-else>
+                <span class="emptyInfo">暂无规格信息</span>
+            </div>
+        </p-panel>
         <template #footer>
-            <p-button label="取消" icon="pi pi-times" @click="closeSpecEditDialog" class="p-button-text">
-            </p-button>
-            <p-button label="保存" icon="pi pi-save" @click="submitSpec"></p-button>
+            <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                      @click="clearSpec"></p-button>
+            <p-button label="取消" icon="pi pi-times" class="mr-4"
+                      @click="cancelSpecEdit"></p-button>
+            <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                      @click="submitSpec"></p-button>
         </template>
     </p-dialog>
     <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
@@ -689,6 +804,7 @@
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const productSet = ref([[${productSet}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
+            const regionSet = ref([[${regionSet}]]);
             const blockedPanel = ref(false);
             //endregion
 
@@ -725,6 +841,7 @@
                             dataTmp.hasBonus = disc.value.hasBonus ? 1 : 0;
                             dataTmp.limited = disc.value.limited ? 1 : 0;
                             discEdit.value = dataTmp;
+                            discEdit.value.region = dataTmp.region.code;
                             discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
                             discEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
@@ -776,41 +893,74 @@
             };
             //endregion
 
-            //region ------编辑规格------
-            const specMd = ref("");
-            const displaySpecDialog = ref(false);
+            //region ------规格信息相关组件------
+            const tmpSpec = ref();
+            const specCm = ref();
+            const selectedSpecItem = ref();
+            const specItem = ref({});
+            const spec = ref([]);
+            const displaySpecEditDialog = ref(false);
+            const specMenuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteSpecItem(selectedSpecItem)}
+            ]);
+            const specOnRowReorder = (ev) => {
+                tmpSpec.value = ev.value;
+            };
+            const specRowMenu = (ev) => {
+                specCm.value.show(ev.originalEvent);
+            };
+            const deleteSpecItem = (SpecItem) => {
+                tmpSpec.value = tmpSpec.value.filter((s) => s.label !== SpecItem.value.label);
+                toast.add({severity: 'error', summary: '已删除', detail: SpecItem.value.value, life: 3000});
+                selectedSpecItem.value = null;
+            };
+            const specEditingRows = ref([]);
+            const specOnRowEditSave = (ev) => {
+                let {newData, index} = ev;
+
+                tmpSpec.value[index] = newData;
+            };
+
             const openSpecEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            specMd.value = disc.value.spec;
-                            displaySpecDialog.value = true;
+                            tmpSpec.value = JSON.parse(JSON.stringify(disc.value.spec));
+                            specItem.value = {};
+                            displaySpecEditDialog.value = true;
                         }
-                    });
+                    })
+            };
+            const clearSpec = () => {
+                tmpSpec.value = [];
+            };
+            const addSpecItem = () => {
+                tmpSpec.value.push(specItem.value);
+                specItem.value = {};
             }
-            const closeSpecEditDialog = () => {
-                displaySpecDialog.value = false;
-                specMd.value = "";
-            }
+            const cancelSpecEdit = () => {
+                specItem.value = {};
+                displaySpecEditDialog.value = false;
+            };
             const submitSpec = () => {
                 let json = {
                     id: disc.value.id,
-                    spec: specMd.value
+                    spec: tmpSpec.value
                 }
                 axiosPostRequest(UPDATE_DISC_SPEC_URL, json)
                     .then(res => {
-                        if (res.state !== 0) {
-                            disc.value.spec = specMd.value;
-                            text2marked();
-                            closeSpecEditDialog();
+                        if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                            displaySpecEditDialog.value = false;
+                            specItem.value = {};
+                            location.reload(true);
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
-                    });
-            }
+                    })
+            };
             //endregion
 
             //region ------编辑描述------
@@ -890,16 +1040,7 @@
             //region ------markdown共通------
 
             const text2marked = () => {
-                const spec = disc.value.spec;
                 const bonus = disc.value.bonus;
-
-                if (spec != null && spec !== "") {
-                    document.getElementById("spec").innerHTML = marked.parse(spec);
-                } else {
-                    //<![CDATA[
-                    document.getElementById("spec").innerHTML = "<span class='emptyInfo'><em>暂无规格信息</em></span>";
-                    //]]>
-                }
 
                 if (disc.value.description != null && disc.value.description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(disc.value.description);
@@ -1150,10 +1291,22 @@
 
                 responsiveOptions,
 
-                specMd,
-                displaySpecDialog,
-                closeSpecEditDialog,
+                displaySpecEditDialog,
+                tmpSpec,
+                specCm,
+                specItem,
+                spec,
+                specMenuModel,
+                specEditingRows,
+                selectedSpecItem,
+                addSpecItem,
+                clearSpec,
                 submitSpec,
+                deleteSpecItem,
+                cancelSpecEdit,
+                specRowMenu,
+                specOnRowEditSave,
+                specOnRowReorder,
 
                 descriptionMd,
                 displayDescriptionDialog,
@@ -1164,6 +1317,8 @@
                 displayBonusDialog,
                 closeBonusEditDialog,
                 submitBonus,
+                regionCode2NameZh,
+                regionSet, priceUnitSet,
             }
         },
         components: {
