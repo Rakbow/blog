@@ -386,8 +386,6 @@ public class AlbumController {
 
                 String discList = JSON.parseObject(json).get("discList").toString();
 
-                System.out.println(discList);
-
                 //若discList为空
                 if (Objects.equals(discList, "[]")) {
                     res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);

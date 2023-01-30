@@ -262,54 +262,6 @@ b.rbot {
     color: #788990;
 }
 
-.album_info_bit_thumb {
-    flex-basis: 0;
-    float: left;
-    margin: 0 4px 0 0;
-    padding: 8px;
-    background: transparent url("/img/common/album_border_thumb.png") 0 0 no-repeat;
-}
-
-.book_info_bit_thumb {
-    flex-basis: 0;
-    float: left;
-    margin: 0 4px 0 0;
-    padding: 8px;
-    background: transparent url("/img/common/book_border_thumb.png") 0 0 no-repeat;
-}
-
-.disc_info_bit_thumb {
-    flex-basis: 0;
-    float: left;
-    margin: 0 4px 0 0;
-    padding: 8px;
-    background: transparent url("/img/common/disc_border_thumb.png") 0 0 no-repeat;
-}
-
-.game_info_bit_thumb {
-    flex-basis: 0;
-    float: left;
-    margin: 0 4px 0 0;
-    padding: 8px;
-    background: transparent url("/img/common/disc_border_thumb.png") 0 0 no-repeat;
-}
-
-.merch_info_bit_thumb {
-    flex-basis: 0;
-    float: left;
-    margin: 0 4px 0 0;
-    padding: 8px;
-    background: transparent url("/img/common/merch_border_thumb.png") 0 0 no-repeat;
-}
-
-.product_info_bit_thumb {
-    flex-basis: 0;
-    float: left;
-    margin: 0 4px 0 0;
-    padding: 8px;
-    background: transparent url("/img/common/product_border_thumb.png") 0 0 no-repeat;
-}
-
 .markdown-body {
     color: white;
     background-color: #2F364F;

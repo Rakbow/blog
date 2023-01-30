@@ -135,7 +135,7 @@ public class CommonImageUtils {
      * @return segmentImagesResult
      * @author rakbow
      */
-    public static segmentImagesResult segmentImages (String imagesJson, int coverSize) {
+    public static segmentImagesResult segmentImages (String imagesJson, int coverSize, boolean isWidth) {
 
         segmentImagesResult result = new segmentImagesResult();
 
@@ -152,7 +152,11 @@ public class CommonImageUtils {
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
+        if (isWidth) {
+            cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
+        }else {
+            cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
+        }
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -212,6 +216,7 @@ public class CommonImageUtils {
         cover.put("url", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
         cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
         cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -220,6 +225,7 @@ public class CommonImageUtils {
                     cover.put("url", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
                     cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
                     cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(image.getString("url"), 70));
+                    cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

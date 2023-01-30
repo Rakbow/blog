@@ -18,8 +18,8 @@ import java.util.List;
 public enum ProductCategory {
     UNCLASSIFIED(0,"未分类", "unclassified"),
     GAME(1, "游戏", "Game"),
-    ANIMATION(2, "TV动画", "Animation"),
-    LIVE_ACTION_MOVIE(3, "真人电影", "Movie"),
+    ANIMATION(2, "动画", "Animation"),
+    LIVE_ACTION_MOVIE(3, "真人电影", "Live Action Movie"),
     BOOK(4, "图书", "Book"),
     MISC(5, "杂项", "Misc");
 
