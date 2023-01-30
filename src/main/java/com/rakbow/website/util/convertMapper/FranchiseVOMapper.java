@@ -42,7 +42,7 @@ public interface FranchiseVOMapper {
         franchiseVO.setRemark(franchise.getRemark());
         franchiseVO.setDescription(franchise.getDescription());
 
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(franchise.getImages(), 200);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(franchise.getImages(), 200, false);
         franchiseVO.setImages(segmentImages.images);
         franchiseVO.setCover(segmentImages.cover);
         franchiseVO.setDisplayImages(segmentImages.displayImages);

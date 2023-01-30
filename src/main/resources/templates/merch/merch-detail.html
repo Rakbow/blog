@@ -160,6 +160,16 @@
                                         </tr>
                                         <tr>
                                             <td>
+                                                <i class="pi pi-globe"></i>
+                                                <strong>地区</strong>
+                                            </td>
+                                            <td>
+                                                <span :class="'fi fi-' + merch.region.code" style="margin-left: 0.5rem"
+                                                      v-tooltip.bottom="{value: merch.region.nameZh, class: 'region-tooltip'}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
                                                 <i class="pi iconfont icon-wuliaojiage"></i>
                                                 <strong>发售价格</strong>
                                             </td>
@@ -208,7 +218,7 @@
                             </div>
                         </p-fieldset>
                         <!-- 描述 -->
-                        <p-fieldset :toggleable="true" v-if="merch.description">
+                        <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi iconfont icon-miaoshu"></i>
                                 <b>描述</b>
@@ -349,27 +359,50 @@
     </div>
     <p-dialog v-model:visible="displayEditDialog" header="编辑基础信息"
               :style="{width: '600px'}" :modal="true" class="p-fluid">
-        <div class="field">
-            <label>商品名<span style="color: red">*</span></label>
-            <p-inputtext v-model.trim="merchEdit.name"></p-inputtext>
-        </div>
-        <div class="field">
-            <label>商品名(中)</label>
-            <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
-        </div>
-        <div class="field">
-            <label>商品名(英)</label>
-            <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
+        <div class="formgrid grid">
+            <div class="field col">
+                <label>商品名<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="merchEdit.name"></p-inputtext>
+            </div>
+            <div class="field col">
+                <label>商品名(中)</label>
+                <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
+            </div>
         </div>
         <div class="formgrid grid">
+            <div class="field col">
+                <label>商品名(英)</label>
+                <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
+            </div>
             <div class="field col">
                 <label>商品条形码</label>
                 <p-inputtext v-model.trim="merchEdit.barcode"></p-inputtext>
             </div>
+        </div>
+        <div class="formgrid grid">
             <div class="field col">
                 <label>商品分类<span style="color: red">*</span></label>
                 <p-dropdown v-model="merchEdit.category" :options="merchCategorySet"
                             option-label="label" option-value="value">
+                </p-dropdown>
+            </div>
+            <div class="field col">
+                <label>地区<span style="color: red">*</span></label>
+                <p-dropdown v-model="merchEdit.region" :options="regionSet" :filter="true"
+                            :show-clear="true" option-label="nameZh" option-value="code">
+                    <template #value="slotProps">
+                        <div class="country-item" v-if="slotProps.value">
+                            <span :class="'fi fi-' + slotProps.value"></span>
+                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                        </div>
+                        <span v-else>选择地区</span>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="country-item">
+                            <span :class="'fi fi-' + slotProps.option.code"></span>
+                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                        </div>
+                    </template>
                 </p-dropdown>
             </div>
         </div>
@@ -402,7 +435,7 @@
             </div>
             <div class="field col-3">
                 <label>单位</label>
-                <p-dropdown v-model="merchEdit.priceUnit" :options="currencyUnitSet"
+                <p-dropdown v-model="merchEdit.currencyUnit" :options="currencyUnitSet"
                             option-label="label" option-value="value" placeholder="单位">
                 </p-dropdown>
             </div>
@@ -410,7 +443,7 @@
                 <div class="col-12">
                     <label class="mb-3">非卖品</label>
                 </div>
-                <div class="col-12 mt-2">
+                <div class="col-12 mt-3">
                     <p-inputswitch v-model="merchEdit.notForSale" :true-value="1"
                                    :false-value="0"></p-inputswitch>
                 </div>
@@ -724,6 +757,7 @@
             const productSet = ref([[${productSet}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
             const blockedPanel = ref(false);
+            const regionSet = ref([[${regionSet}]]);
             //endregion
 
             //region ------图片板块------
@@ -758,6 +792,7 @@
                             let dataTmp = JSON.parse(JSON.stringify(merch.value));
                             dataTmp.notForSale = merch.value.notForSale ? 1 : 0;
                             merchEdit.value = dataTmp;
+                            merchEdit.value.region = dataTmp.region.code;
                             merchEdit.value.category = dataTmp.category.id;
                             merchEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
@@ -850,10 +885,8 @@
 
             const text2marked = () => {
 
-                const description = merch.value.description;
-
-                if (description != null && description !== "") {
-                    document.getElementById("description").innerHTML = marked.parse(description);
+                if (merch.value.description != null && merch.value.description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(merch.value.description);
                 } else {
                     //<![CDATA[
                     document.getElementById("description").innerHTML = "<span class='emptyInfo'><em>暂无描述</em></span>";
@@ -1136,7 +1169,7 @@
                 getProducts,
                 merchCategorySet,
                 displaySpecEditDialog,
-                currencyUnitSet: currencyUnitSet,
+                currencyUnitSet,
                 relatedMerchs,
                 blockedPanel,
                 clearUploadedImage,
@@ -1206,6 +1239,9 @@
                 specRowMenu,
                 specOnRowEditSave,
                 specOnRowReorder,
+
+                regionSet,
+                regionCode2NameZh,
             }
         },
         components: {

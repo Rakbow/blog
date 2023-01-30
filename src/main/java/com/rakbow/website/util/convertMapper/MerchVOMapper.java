@@ -71,7 +71,7 @@ public interface MerchVOMapper {
         merchVO.setRegion(region);
 
         //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(merch.getImages(), 200);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(merch.getImages(), 200, false);
         merchVO.setImages(segmentImages.images);
         merchVO.setCover(segmentImages.cover);
         merchVO.setDisplayImages(segmentImages.displayImages);

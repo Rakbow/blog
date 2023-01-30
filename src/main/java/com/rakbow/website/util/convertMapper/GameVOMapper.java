@@ -72,7 +72,7 @@ public interface GameVOMapper {
         gameVO.setBonus(game.getBonus());
 
         //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(game.getImages(), 140);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(game.getImages(), 140, false);
         gameVO.setCover(segmentImages.cover);
         gameVO.setImages(segmentImages.images);
         gameVO.setDisplayImages(segmentImages.displayImages);

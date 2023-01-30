@@ -71,7 +71,7 @@ public interface DiscVOMapper {
         discVO.setDescription(disc.getDescription());
 
         //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(disc.getImages(), 200);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(disc.getImages(), 200, false);
         discVO.setImages(segmentImages.images);
         discVO.setCover(segmentImages.cover);
         discVO.setDisplayImages(segmentImages.displayImages);

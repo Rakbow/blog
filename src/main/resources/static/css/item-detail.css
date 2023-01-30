@@ -182,6 +182,7 @@ b.rbot {
 
 .p-fieldset .p-fieldset-content {
     padding: 5px;
+    max-width: 761.66px;
 }
 
 .detail-item-field .p-fieldset {
@@ -301,6 +302,14 @@ b.rbot {
     background: transparent url("/img/common/merch_border_thumb.png") 0 0 no-repeat;
 }
 
+.product_info_bit_thumb {
+    flex-basis: 0;
+    float: left;
+    margin: 0 4px 0 0;
+    padding: 8px;
+    background: transparent url("/img/common/product_border_thumb.png") 0 0 no-repeat;
+}
+
 .markdown-body {
     color: white;
     background-color: #2F364F;
@@ -362,6 +371,25 @@ b.rbot {
     width: 200px;
     height: 200px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* galleria */

@@ -55,7 +55,7 @@ public interface ProductVOMapper {
         productVO.setFranchise(FranchiseUtils.getFranchise(product.getFranchise()));
 
         //图片
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(product.getImages(), 250);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(product.getImages(), 200, true);
         productVO.setImages(segmentImages.images);
         productVO.setCover(segmentImages.cover);
         productVO.setDisplayImages(segmentImages.displayImages);
@@ -99,12 +99,14 @@ public interface ProductVOMapper {
         JSONObject cover = new JSONObject();
         JSONArray images = JSON.parseArray(product.getImages());
         cover.put("url", QiniuImageUtils.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
                     cover.put("url", QiniuImageUtils.getThumbUrlWidth(image.getString("url"), 50));
+                    cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

@@ -6,9 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
-    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
 
     <!-- bootstrap -->
@@ -18,7 +16,7 @@
     <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
 
     <!-- PrimeVue css-->
-    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
@@ -51,6 +49,7 @@
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
     <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
 
     <!-- Axios -->
     <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
@@ -78,740 +77,781 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="nk-container">
-    <div class="main">
-        <div id="app">
-            <!-- 头部 -->
-            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-            <div class="grid mt-2">
-                <p-toast></p-toast>
-                <div class="col-12 sm:col-12 md:col-6 lg:col-7 lg:col-offset-1">
-                    <p-panel>
-                        <template #header>
-                            <i class="pi iconfont icon-_classification mr-0" style="font-size: 2rem"></i>
-                            <div class="container mt-0 mb-0 ml-0">
-                                <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">{{product.name}}</h4>
-                                <h4 class="text-start ml-2 mt-0 mb-0" style="text-align: left">
-                                    <small>{{product.nameZh}}</small>
-                                </h4>
-                                <h4 v-if="product.nameZh != ''" class="text-start ml-2 mt-0 mb-0"
-                                    style="text-align: left"><small>{{product.nameEn}}</small></h4>
-                            </div>
-                        </template>
-                        <template #icons th:if="${loginUser != null}">
-                            <p-splitbutton :model="edits" class="p-button-rounded bg-primary mb-2"
+    <div id="main" class="grid mt-2">
+        <p-toast></p-toast>
+        <div class="detail-card col-8 lg:col-offset-1">
+            <p-card>
+                <template #title>
+                    <div class="grid detail-item-header-title">
+                        <h4 class="col-10">
+                            <b class="detail-item-title">
+                                {{product.name}}
+                            </b><span style="font-size: 13px" class="label">({{product.category.nameZh}})</span>
+                        </h4>
+                        <div class="col-2 text-end p-0 m-0" th:if="${loginUser != null}">
+                            <p-splitbutton :model="edits" class="p-button-sm bg-primary"
                                            th:if="${loginUser.type == 1}">
                                 <p-button @click="openEditDialog">
-                                    <i class="pi pi-pencil"></i>
-                                    <span class="ml-2 flex align-items-center font-bold">编辑</span>
+                                    <i class="pi pi-cog"></i>
                                 </p-button>
                             </p-splitbutton>
-                        </template>
-                        <div class="grid">
-                            <div class="ml-3" style="width: 250px; height: 250px">
-                                <img :src="product.cover.url" :alt="product.cover.name" class="product-cover"/>
+                        </div>
+                    </div>
+                </template>
+                <template #subtitle>
+                    <h5 v-if="product.nameZh != ''" class="detail-item-subtitle"><small>{{product.nameZh}}</small></h5>
+                    <h5 v-else><small></small></h5>
+                    <h5 v-if="product.nameEn != ''" class="detail-item-subtitle"><small>{{product.nameEn}}</small></h5>
+                    <h5 v-else><small></small></h5>
+                </template>
+                <template #content>
+                    <div class="grid">
+                        <div class="col-4" style="width: 230px">
+                            <div class="product-detail-cover">
+                                <img :src="product.cover.url" :alt="product.cover.name"/>
                             </div>
-                            <table class="table-borderless table-sm ml-3">
-                                <tbody>
-                                <tr>
-                                    <td><strong>所属系列</strong></td>
-                                    <td>
-                                        <a :href="'/db/franchise/' + product.franchise.value">
-                                            {{product.franchise.label}}
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>作品分类</strong></td>
-                                    <td>
-                                        {{product.category.nameZh}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>发行时间</strong></td>
-                                    <td>
-                                        {{product.releaseDate}}
-                                    </td>
-                                </tr>
-                                <div v-if="product.organizations.length != 0">
-                                    <tr v-for="organization in product.organizations">
+                        </div>
+                        <div class="col detail-item-header-card">
+                            <p-card>
+                                <template #content>
+                                    <table class="table-borderless table-sm ml-2">
+                                        <tbody class="detail-item-header-table">
+                                        <tr>
+                                            <td><strong>所属系列</strong></td>
+                                            <td>
+                                                <a :href="'/db/franchise/' + product.franchise.value">
+                                                    {{product.franchise.label}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>作品分类</strong></td>
+                                            <td>
+                                                <p-tag class="ml-1" :value="product.category.nameZh"></p-tag>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>发行时间</strong></td>
+                                            <td>
+                                                {{product.releaseDate}}
+                                            </td>
+                                        </tr>
+                                        <div v-if="product.organizations.length != 0">
+                                            <tr v-for="organization in product.organizations">
+                                                <td>
+                                                    <i class="pi iconfont icon-gongsi mr-1"
+                                                       style="font-size: 1.3rem"></i>
+                                                    <strong>{{organization.label}}</strong>
+                                                </td>
+                                                <td v-if="organization.special == 1" v-for="item in organization.value">
+                                                    {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
+                                                </td>
+                                                <td v-if="organization.special == 0" v-for="item in organization.value">
+                                                    {{item.name}}
+                                                </td>
+                                            </tr>
+                                        </div>
+                                        </tbody>
+                                    </table>
+                                </template>
+                            </p-card>
+                        </div>
+                    </div>
+                    <div class="detail-item-field">
+                        <!-- 游戏 -->
+                        <p-fieldset :toggleable="true" v-if="games">
+                            <template #legend>
+                                <i class="pi iconfont icon-youxi"></i>
+                                <b>游戏</b>
+                            </template>
+                            <div class="grid ml-4" v-if="games != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody>
+                                    <tr>
+                                        <th class="text-start"><strong>日&nbsp期</strong></th>
+                                        <th class="text-start"><strong>游&nbsp戏</strong></th>
+                                        <th class="text-start"><strong>地&nbsp区</strong></th>
+                                        <th class="text-start"><strong>平&nbsp台</strong></th>
+                                    </tr>
+                                    <tr v-for="game in games">
+                                        <td width="120px">{{game.releaseDate}}</td>
                                         <td>
-                                            <i class="pi iconfont icon-gongsi mr-1"
-                                               style="font-size: 1.3rem"></i>
-                                            <strong>{{organization.label}}</strong>
+                                            <a :href="'/db/game/' + game.id">
+                                                {{game.name}}
+                                            </a>
                                         </td>
-                                        <td v-if="organization.special == 1" v-for="item in organization.value">
-                                            {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
-                                        </td>
-                                        <td v-if="organization.special == 0" v-for="item in organization.value">
-                                            {{item.name}}
+                                        <td width="80px">{{game.region.nameZh}} <span :class="'fi fi-' + game.region.code"></span></td>
+                                        <td>
+                                            <p-tag :value="game.platform.nameEn"></p-tag>
                                         </td>
                                     </tr>
-                                </div>
-                                </tbody>
-                            </table>
-                        </div>
-                    </p-panel>
-                    <p-fieldset :toggleable="true" class="mt-2" v-if="games">
-                        <template #legend>
-                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
-                            <b>游戏</b>
-                        </template>
-                        <div class="grid ml-4" v-if="games != 0">
-                            <table class="table-borderless table-sm">
-                                <tbody>
-                                <tr>
-                                    <th class="text-start"><strong>日&nbsp期</strong></th>
-                                    <th class="text-start"><strong>游&nbsp戏</strong></th>
-                                    <th class="text-start"><strong>地&nbsp区</strong></th>
-                                    <th class="text-start"><strong>平&nbsp台</strong></th>
-                                </tr>
-                                <tr v-for="game in games">
-                                    <td width="120px">{{game.releaseDate}}</td>
-                                    <td>
-                                        <a :href="'/db/game/' + game.id">
-                                            {{game.name}}
-                                        </a>
-                                    </td>
-                                    <td>{{game.region.nameZh}} <span :class="'fi fi-' + game.region.code"></span></td>
-                                    <td>{{game.platform.nameEn}}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div v-else>
-                            <span class="emptyInfo"><em>暂无游戏</em></span>
-                        </div>
-                    </p-fieldset>
-                    <p-fieldset :toggleable="true" class="mt-2" v-if="product.staffs.length != 0">
-                        <template #legend>
-                            <i class="pi pi-users mr-2" style="font-size: 2rem"></i>
-                            <b>Staff信息</b>
-                        </template>
-                        <div class="grid ml-4" v-if="product.staffs.length != 0">
-                            <table class="table-borderless table-sm ml-10">
-                                <tbody>
-                                <tr v-for="item in product.staffs">
-                                    <td width="120px"><strong>{{item.pos}}</strong></td>
-                                    <td>
-                                        {{item.name.join("/")}}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div v-else>
-                            <span class="emptyInfo"><em>暂无Staff相关信息</em></span>
-                        </div>
-                    </p-fieldset>
-                    <p-fieldset :toggleable="true" class="mt-2">
-                        <template #legend>
-                            <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 2rem"></i>
-                            <b>描述</b>
-                        </template>
-                        <article id="description" class="markdown-body" style="width: 100%;"></article>
-                    </p-fieldset>
-                    <p-fieldset :toggleable="true" class="mt-2" v-if="albums">
-                        <template #legend>
-                            <i class="pi iconfont icon-24gl-musicAlbum2 mr-2" style="font-size: 2rem"></i>
-                            <b>专辑</b>
-                        </template>
-                        <div v-if="albums.length == 0">
-                            <span class="emptyInfo"><em>暂无专辑</em></span>
-                        </div>
-                        <div v-else>
-                            <p-timeline :value="albums">
-                                <template #opposite="slotProps">
-                                    <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
-                                </template>
-                                <template #content="slotProps">
-                                    <a :href="'/db/album/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a>&nbsp;
-                                    <small>
-                                        <b>{{slotProps.item.catalogNo}}</b>&nbsp
-                                        <span v-for="format in slotProps.item.albumFormat" style="display:inline;">
-                                            <p-tag class="ml-1" :value="format.label"></p-tag>
-                                        </span>
-                                    </small>
-                                </template>
-                            </p-timeline>
-                        </div>
-                    </p-fieldset>
-                    <p-fieldset :toggleable="true" class="mt-2" v-if="books">
-                        <template #legend>
-                            <i class="pi iconfont icon-book mr-2" style="font-size: 2rem"></i>
-                            <b>图书</b>
-                        </template>
-                        <div v-if="books.length == 0">
-                            <span class="emptyInfo"><em>暂无图书</em></span>
-                        </div>
-                        <div v-else>
-                            <p-timeline :value="books">
-                                <template #opposite="slotProps">
-                                    <small class="p-text-secondary">{{slotProps.item.publishDate}}</small>
-                                </template>
-                                <template #content="slotProps">
-                                    <a :href="'/db/book/' + slotProps.item.id"><em>{{slotProps.item.title}}</em></a>&nbsp;
-                                    <small><b>{{slotProps.item.isbn13}}</b>&nbsp;({{slotProps.item.bookType.nameZh}})</small>
-                                </template>
-                            </p-timeline>
-                        </div>
-                    </p-fieldset>
-                    <p-fieldset :toggleable="true" class="mt-2" v-if="discs">
-                        <template #legend>
-                            <i class="pi iconfont icon-Video-Disc mr-2" style="font-size: 2rem"></i>
-                            <b>DVD/BD</b>
-                        </template>
-                        <div v-if="discs.length == 0">
-                            <span class="emptyInfo"><em>暂无碟片</em></span>
-                        </div>
-                        <div v-else>
-                            <p-timeline :value="discs">
-                                <template #opposite="slotProps">
-                                    <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
-                                </template>
-                                <template #content="slotProps">
-                                    <a :href="'/db/disc/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a>&nbsp;
-                                    <small>
-                                        <b>{{slotProps.item.catalogNo}}</b>&nbsp;
-                                        <span v-for="format in slotProps.item.mediaFormat" style="display:inline;">
-                                            <p-tag class="ml-1" :value="format.label"></p-tag>
-                                        </span>
-                                    </small>
-                                </template>
-                            </p-timeline>
-                        </div>
-                    </p-fieldset>
-                </div>
-                <div class="col-12 sm:col-12 md:col-6 lg:col-3">
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-images mr-2" style="font-size: 2rem"></i>
-                            <b>图片</b>
-                        </template>
-                        <div v-if="product.images.length == 0">
-                            <span class="emptyInfo"><em>暂无图片</em></span>
-                        </div>
-                        <p-galleria v-if="product.images" :value="product.images"
-                                    v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
-                                    :num-visible="7" container-style="max-width: 800px"
-                                    :circular="true" :full-screen="true" :show-item-navigators="true"
-                                    :show-thumbnails="false" v-model:visible="displayCustom">
-                            <template #item="{item}">
-                                <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
-                                     oncontextmenu="return false"/>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无游戏</em></span>
+                            </div>
+                        </p-fieldset>
+                        <!-- staff -->
+                        <p-fieldset :toggleable="true" v-if="product.staffs.length != 0">
+                            <template #legend>
+                                <i class="pi pi-users"></i>
+                                <b>Staff信息</b>
                             </template>
-                            <template #caption="{item}">
-                                <div class="custom-galleria-footer">
-                                    <div class="col-6">
-                                            <span v-if="product.images" class="title-container">
-                                                <span>共{{product.images.length}}张</span>
-                                                <span class="title">{{item.nameZh}}</span>
-                                                <span>{{item.description}}</span>
+                            <div class="grid ml-4" v-if="product.staffs.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr v-for="item in product.staffs">
+                                        <td width="120px"><strong>{{item.pos}}</strong></td>
+                                        <td>
+                                            {{item.name.join(", ")}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无Staff相关信息</em></span>
+                            </div>
+                        </p-fieldset>
+                        <!-- 描述 -->
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi iconfont icon-miaoshu"></i>
+                                <b>描述</b>
+                            </template>
+                            <article id="description" class="markdown-body" style="width: 100%;"></article>
+                        </p-fieldset>
+                        <!-- 专辑 -->
+                        <p-fieldset :toggleable="true" v-if="albums">
+                            <template #legend>
+                                <i class="pi iconfont icon-24gl-musicAlbum2"></i>
+                                <b>专辑</b>
+                            </template>
+                            <div v-if="albums.length == 0">
+                                <span class="emptyInfo"><em>暂无专辑</em></span>
+                            </div>
+                            <div v-else>
+                                <p-timeline :value="albums">
+                                    <template #opposite="slotProps">
+                                        <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
+                                    </template>
+                                    <template #content="slotProps">
+                                        <a :href="'/db/album/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a><br>
+                                        <small>
+                                            {{slotProps.item.catalogNo?slotProps.item.catalogNo:" N/A "}}&nbsp
+                                            <span v-for="format in slotProps.item.albumFormat" style="display:inline;">
+                                                <p-tag class="ml-1" :value="format.label"></p-tag>
                                             </span>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                            <span v-if="product.images">
-                                            <span>上传于 {{item.uploadTime}}</span>
-                                        </span>
-                                    </div>
-                                </div>
+                                        </small>
+                                    </template>
+                                </p-timeline>
+                            </div>
+                        </p-fieldset>
+                        <!-- 图书 -->
+                        <p-fieldset :toggleable="true" v-if="books">
+                            <template #legend>
+                                <i class="pi iconfont icon-book"></i>
+                                <b>图书</b>
                             </template>
-                        </p-galleria>
-                        <div v-if="product.images" class="grid justify-content-evenly justify-content-start">
-                            <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                                 v-for="(image, index) of product.images" :key="index">
-                                <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
-                                     draggable="false"
-                                     oncontextmenu="return false"
-                                     v-tooltip.bottom="{value: '上传于: ' + image.uploadTime, class: 'time-tooltip'}"
-                                     @click="imageClick(index)"/>
+                            <div v-if="books.length == 0">
+                                <span class="emptyInfo"><em>暂无图书</em></span>
                             </div>
-                        </div>
-                        <br>
-                        <b class="rbot"><b></b></b>
-                    </p-panel>
-                    <br>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>
-                            <b>相关作品</b>
-                        </template>
-                        <div class="grid">
-                                <span class="small_font">
-                                    <div class="info_bit_small small_font ml-0 grid"
-                                         v-if="relatedProducts.length != 0"
-                                         v-for="relatedProduct of relatedProducts">
-                                        <div class="col-6 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/product/'+ relatedProduct.id ">
-                                                <img class="sidebar-panel-image-small-no-radius" :src="relatedProduct.cover.url"
-
-                                                     v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">
-                                            </a>
-                                        </div>
-                                        <div class="col-6">
-                                            <ul class="info_bit_small">
-                                            <li>
-                                                <a class="small_font"
-                                                   :href="'/db/product/'+ relatedProduct.id ">
-                                                    <span class="text-truncate-2 mr-4" lang="ja">
-                                                        {{relatedProduct.name}}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <span class="small_font">
-                                                    <b>{{relatedProduct.releaseDate}}</b>
-                                                </span>
-                                            </li>
-
-                                        </ul>
-                                        </div>
-                                    </div>
+                            <div v-else>
+                                <p-timeline :value="books">
+                                    <template #opposite="slotProps">
+                                        <small class="p-text-secondary">{{slotProps.item.publishDate}}</small>
+                                    </template>
+                                    <template #content="slotProps">
+                                        <a :href="'/db/book/' + slotProps.item.id"><em>{{slotProps.item.title}}</em></a>
+                                        <small>
+                                            <p-tag class="ml-1" :value="slotProps.item.bookType.nameZh"></p-tag>
+                                            &nbsp;<span class="label">ISBN-13: {{slotProps.item.isbn13}}</span>
+                                        </small>
+                                    </template>
+                                </p-timeline>
+                            </div>
+                        </p-fieldset>
+                        <!-- 碟片 -->
+                        <p-fieldset :toggleable="true" v-if="discs">
+                            <template #legend>
+                                <i class="pi iconfont icon-Video-Disc"></i>
+                                <b>DVD/BD</b>
+                            </template>
+                            <div v-if="discs.length == 0">
+                                <span class="emptyInfo"><em>暂无碟片</em></span>
+                            </div>
+                            <div v-else>
+                                <p-timeline :value="discs">
+                                    <template #opposite="slotProps">
+                                        <small class="p-text-secondary">{{slotProps.item.releaseDate}}</small>
+                                    </template>
+                                    <template #content="slotProps">
+                                        <a :href="'/db/disc/' + slotProps.item.id"><em>{{slotProps.item.name}}</em></a>&nbsp;
+                                        <small>
+                                            <b>{{slotProps.item.catalogNo}}</b>&nbsp;
+                                            <span v-for="format in slotProps.item.mediaFormat" style="display:inline;">
+                                            <p-tag class="ml-1" :value="format.label"></p-tag>
+                                        </span>
+                                        </small>
+                                    </template>
+                                </p-timeline>
+                            </div>
+                        </p-fieldset>
+                    </div>
+                </template>
+            </p-card>
+        </div>
+        <div class="col-2" style="min-width: 300px">
+            <p-panel>
+                <template #header>
+                    <span class="text-start side-panel-header">
+                        <i class="pi pi-images"></i><span><strong>图片</strong></span>
+                    </span>
+                </template>
+                <div v-if="product.displayImages.length == 0">
+                    <span class="emptyInfo"><em>暂无图片</em></span>
+                </div>
+                <p-galleria v-if="product.displayImages" :value="product.displayImages"
+                            v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
+                            :num-visible="7" container-style="max-width: 800px"
+                            :circular="true" :full-screen="true" :show-item-navigators="true"
+                            :show-thumbnails="false" v-model:visible="displayCustom">
+                    <template #item="{item}">
+                        <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
+                             oncontextmenu="return false"/>
+                    </template>
+                    <template #caption="{item}">
+                        <div class="custom-galleria-footer">
+                            <div class="col-6">
+                                <span v-if="product.displayImages" class="title-container">
+                                    <span>共{{product.displayImages.length}}张</span>
+                                    <span class="title">{{item.nameZh}}</span>
+                                    <span style="font-size: 10px">{{item.description}}</span>
                                 </span>
-                            <br>
-                            <b class="rbot"><b></b></b>
-                        </div>
-                    </p-panel>
-                    <br>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi pi-info-circle mr-2" style="font-size: 2rem"></i>
-                            <b>页面信息</b>
-                        </template>
-                        <div class="grid">
-                            <div class="col-fixed">
-                                <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>录入时间</b>
                             </div>
-                            <div class="col-10 col-offset-2">
-                                {{product.addedTime}}
-                            </div>
-                            <div class="col-fixed">
-                                <i class="pi pi-chevron-circle-right mr-2 ml-4"></i><b>编辑时间</b>
-                            </div>
-                            <div class="col-10 col-offset-2">
-                                {{product.editedTime}}
-                            </div>
-                            <div class="col-fixed">
-                                <i class="pi pi-chart-bar mr-2 ml-4"></i><b>页面流量</b>
-                            </div>
-                            <div class="col-10 col-offset-2">
-                                <i class="pi pi-eye mr-2"></i><b>访问数：</b>
-                                <span class="text-center">{{visitNum}}</span>
+                            <div class="col-6 text-end">
+                                <span v-if="product.displayImages">
+                                    <span>上传于 {{item.uploadTime}}</span>
+                                </span>
                             </div>
                         </div>
-                    </p-panel>
+                    </template>
+                </p-galleria>
+                <div v-if="product.displayImages" class="grid justify-content-evenly justify-content-start">
+                    <div class="col-4 mt-2 mb-2" id="panel-image-div"
+                         v-for="(image, index) of product.displayImages" :key="index">
+                        <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
+                             draggable="false"
+                             oncontextmenu="return false"
+                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
+                             @click="imageClick(index)"/>
+                    </div>
+                </div>
+                <br>
+                <b class="rbot"><b></b></b>
+            </p-panel>
+            <br>
+            <p-panel>
+                <template #header>
+                    <span class="text-start side-panel-header">
+                        <i class="pi iconfont icon-_classification"></i><span><strong>相关作品</strong></span>
+                    </span>
+                </template>
+                <div class="grid">
+                    <span class="small_font">
+                        <div class="info_bit_small small_font grid m-0 p-0"
+                             v-if="relatedProducts.length != 0"
+                             v-for="relatedProduct of relatedProducts">
+                            <div class="sidebar-panel-image-small-div product_info_bit_thumb mt-2">
+                                <a :href="'/db/product/'+ relatedProduct.id">
+                                    <img class="sidebar-panel-image-small" :src="relatedProduct.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">
+                                </a>
+                            </div>
+                            <div class="col p-0" style="height: 80px">
+                                <ul class="info_bit_small_other">
+                                    <li>
+                                        <a class="small_font"
+                                           :href="'/db/product/'+ relatedProduct.id ">
+                                            <span class="text-truncate-2 mr-2">
+                                                {{relatedProduct.name}}
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span class="small_font col-6 related-item-catalog">
+                                            {{relatedProduct.category.nameZh}}
+                                        </span>
+                                        <span class="small_font col-6 related-item-date">
+                                            {{relatedProduct.releaseDate}}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </p-panel>
+
+
+<!--            <p-panel>-->
+<!--                <template #header>-->
+<!--                    <i class="pi iconfont icon-album mr-2" style="font-size: 2rem"></i>-->
+<!--                    <b>相关作品</b>-->
+<!--                </template>-->
+<!--                <div class="grid">-->
+<!--                                <span class="small_font">-->
+<!--                                    <div class="info_bit_small small_font ml-0 grid"-->
+<!--                                         v-if="relatedProducts.length != 0"-->
+<!--                                         v-for="relatedProduct of relatedProducts">-->
+<!--                                        <div class="col-6 sidebar-panel-image-small-div mt-2">-->
+<!--                                            <a :href="'/db/product/'+ relatedProduct.id ">-->
+<!--                                                <img class="sidebar-panel-image-small-no-radius" :src="relatedProduct.cover.url"-->
+
+<!--                                                     v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-6">-->
+<!--                                            <ul class="info_bit_small">-->
+<!--                                            <li>-->
+<!--                                                <a class="small_font"-->
+<!--                                                   :href="'/db/product/'+ relatedProduct.id ">-->
+<!--                                                    <span class="text-truncate-2 mr-4" lang="ja">-->
+<!--                                                        {{relatedProduct.name}}-->
+<!--                                                    </span>-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                            <li>-->
+<!--                                                <span class="small_font">-->
+<!--                                                    <b>{{relatedProduct.releaseDate}}</b>-->
+<!--                                                </span>-->
+<!--                                            </li>-->
+
+<!--                                        </ul>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </span>-->
+<!--                    <br>-->
+<!--                    <b class="rbot"><b></b></b>-->
+<!--                </div>-->
+<!--            </p-panel>-->
+            <br>
+            <div th:insert="~{template/common-template :: page_info_card}"></div>
+        </div>
+    </div>
+    <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
+              class="p-fluid">
+        <p-panel header="基础信息">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>作品名称<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="productEdit.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>作品名称(中文)<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="productEdit.nameZh"></p-inputtext>
                 </div>
             </div>
-            <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
-                      class="p-fluid">
-                <p-panel header="基础信息">
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>作品名称<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="productEdit.name"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>作品名称(中文)<span style="color: red">*</span></label>
-                            <p-inputtext v-model.trim="productEdit.nameZh"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label>作品名称(英语)</label>
-                            <p-inputtext v-model.trim="productEdit.nameEn"></p-inputtext>
-                        </div>
-                        <div class="field col">
-                            <label>发行时间<span style="color: red">*</span></label>
-                            <p-calendar v-model="productEdit.releaseDate" date-format="yy/mm/dd"
-                                        :show-button-bar="true" :show-icon="true"></p-calendar>
-                        </div>
-                    </div>
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label class="mb-3">作品分类<span
-                                    style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.category" :options="productCategorySet"
-                                        placeholder="选择作品分类" option-label="label" option-value="value">
-                            </p-dropdown>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>作品名称(英语)</label>
+                    <p-inputtext v-model.trim="productEdit.nameEn"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="productEdit.releaseDate" date-format="yy/mm/dd"
+                                :show-button-bar="true" :show-icon="true"></p-calendar>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label class="mb-3">作品分类<span
+                            style="color: red">*</span></label>
+                    <p-dropdown v-model="productEdit.category" :options="productCategorySet"
+                                placeholder="选择作品分类" option-label="label" option-value="value">
+                    </p-dropdown>
 
-                        </div>
-                        <div class="field col">
-                            <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                            <p-dropdown v-model="productEdit.franchise" :options="franchiseSet" :disabled="true"
-                                        placeholder="选择所属系列" option-label="label" option-value="value">
-                            </p-dropdown>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>备注</label>
-                        <p-textarea v-model="productEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                              @click="closeEditDialog"></p-button>
-                    <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                              @click="submitEditProduct"></p-button>
-                </template>
-            </p-dialog>
-            <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
-                      :style="{width: '1200px'}" :modal="true">
-                <p-panel>
-                    <template #header>
-                        <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                        <b>新增</b>
-                    </template>
-                    <div class="grid">
-                        <div class="col-6" align="left">
-                            <p-fileupload
-                                    mode="basic"
-                                    :custom-upload="true"
-                                    accept="image/*"
-                                    :auto="true"
-                                    choose-label="上传图片"
-                                    :max-file-size="10000000" :preview-width="100"
-                                    invalid-file-size-message="{0}大小已超过{1}"
-                                    @uploader="onUpload"
-                                    @select="selectFile">
-                            </p-fileupload>
-                        </div>
-                        <div class="col-6" align="right">
-                            <p-button class="ml-2 p-button-text" icon="pi pi-trash"
-                                      label="清空所选" @click="clearUploadedImage"></p-button>
-                        </div>
-                    </div>
-                    <div class="formgrid grid mt-2">
-                        <div class="field col">
-                            <div class="p-inputgroup">
+                </div>
+                <div class="field col">
+                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                    <p-dropdown v-model="productEdit.franchise" :options="franchiseSet" :disabled="true"
+                                placeholder="选择所属系列" option-label="label" option-value="value">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="productEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="closeEditDialog"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitEditProduct"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
+              :style="{width: '1200px'}" :modal="true">
+        <p-panel>
+            <template #header>
+                <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                <b>新增</b>
+            </template>
+            <div class="grid">
+                <div class="col-6" align="left">
+                    <p-fileupload
+                            mode="basic"
+                            :custom-upload="true"
+                            accept="image/*"
+                            :auto="true"
+                            choose-label="上传图片"
+                            :max-file-size="10000000" :preview-width="100"
+                            invalid-file-size-message="{0}大小已超过{1}"
+                            @uploader="onUpload"
+                            @select="selectFile">
+                    </p-fileupload>
+                </div>
+                <div class="col-6" align="right">
+                    <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                              label="清空所选" @click="clearUploadedImage"></p-button>
+                </div>
+            </div>
+            <div class="formgrid grid mt-2">
+                <div class="field col">
+                    <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-image"></i>
                                     </span>
-                                <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
-                            </div>
-                        </div>
-                        <div class="field col">
-                            <div class="p-inputgroup">
+                        <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                    </div>
+                </div>
+                <div class="field col">
+                    <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-image"></i>
                                     </span>
-                                <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
-                            </div>
-                        </div>
-                        <div class="field col">
-                            <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                        option-value="value" placeholder="选择图片类型"
-                                        style="width: 280px"></p-dropdown>
-                        </div>
-                        <div class="field col">
-                            <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                        :auto-resize="true" placeholder="图片描述" style="width: 280px"></p-textarea>
-                        </div>
+                        <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
                     </div>
-                    <div class="formgrid grid mt-2">
-                        <div class="field col" align="left">
-                            <p-button label="新增图片" icon="pi pi-save"
-                                      @click="save2imageInfos"></p-button>
-                        </div>
-                        <div class="field col" align="right">
-                            <p-button label="提交新增" icon="pi pi-save"
-                                      @click="submitImages" class="p-button-success"></p-button>
-                        </div>
-                    </div>
-                    <p-divider></p-divider>
-                    <div class="field">
-                        <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
-                        <section>
-                            <div id="imgBox" v-html="imageHtml"></div>
-                        </section>
-                    </div>
-                </p-panel>
-                <p-panel>
+                </div>
+                <div class="field col">
+                    <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                                option-value="value" placeholder="选择图片类型"
+                                style="width: 280px"></p-dropdown>
+                </div>
+                <div class="field col">
+                    <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                                :auto-resize="true" placeholder="图片描述" style="width: 280px"></p-textarea>
+                </div>
+            </div>
+            <div class="formgrid grid mt-2">
+                <div class="field col" align="left">
+                    <p-button label="新增图片" icon="pi pi-save"
+                              @click="save2imageInfos"></p-button>
+                </div>
+                <div class="field col" align="right">
+                    <p-button label="提交新增" icon="pi pi-save"
+                              @click="submitImages" class="p-button-success"></p-button>
+                </div>
+            </div>
+            <p-divider></p-divider>
+            <div class="field">
+                <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
+                <section>
+                    <div id="imgBox" v-html="imageHtml"></div>
+                </section>
+            </div>
+        </p-panel>
+        <p-panel>
+            <template #header>
+                <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                <b>编辑</b>
+            </template>
+            <div v-if="product.images.length != 0">
+                <p-datatable :value="product.images" class="p-datatable-sm"
+                             @row-reorder="imgRowReorder" edit-mode="row" striped-rows
+                             :resizable-columns="true" column-resize-mode="expand"
+                             v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
+                             v-model:selection="selectedImage">
                     <template #header>
-                        <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                        <b>编辑</b>
+                        <p-button icon="pi pi-trash" class="p-button-danger"
+                                  @click="confirmDeleteSelectedImage"></p-button>
                     </template>
-                    <div v-if="product.images.length != 0">
-                        <p-datatable :value="product.images" class="p-datatable-sm"
-                                     @row-reorder="imgRowReorder" edit-mode="row" striped-rows
-                                     :resizable-columns="true" column-resize-mode="expand"
-                                     v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
-                                     v-model:selection="selectedImage">
-                            <template #header>
-                                <p-button icon="pi pi-trash" class="p-button-danger"
-                                          @click="confirmDeleteSelectedImage"></p-button>
-                            </template>
-                            <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
-                            <p-column :row-reorder="true" header-style="width: 3%"></p-column>
-                            <p-column header="图片" header-style="width: 8%">
-                                <template #body="slotProps">
-                                    <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn"
-                                         class="edit-image"/>
-                                </template>
-                            </p-column>
-                            <p-column field="url" header="url" header-style="width: 10%"></p-column>
-                            <p-column field="nameZh" header="名(中)" header-style="width: 10%">
-                                <template #editor="{ data, field }">
-                                    <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
-                                </template>
-                            </p-column>
-                            <p-column field="nameEn" header="名(英)" header-style="width: 10%">
-                                <template #editor="{ data, field }">
-                                    <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
-                                </template>
-                            </p-column>
-                            <p-column field="type" header="类型" header-style="width: 8%">
-                                <template #editor="{ data, field }">
-                                    <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
-                                                option-value="value" placeholder="图片类型">
+                    <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
+                    <p-column :row-reorder="true" header-style="width: 3%"></p-column>
+                    <p-column header="图片" header-style="width: 8%">
+                        <template #body="slotProps">
+                            <img :src="slotProps.data.thumbUrl" :alt="slotProps.data.nameEn"
+                                 class="edit-image"/>
+                        </template>
+                    </p-column>
+                    <p-column field="url" header="url" header-style="width: 10%"></p-column>
+                    <p-column field="nameZh" header="名(中)" header-style="width: 10%">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="nameEn" header="名(英)" header-style="width: 10%">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="type" header="类型" header-style="width: 8%">
+                        <template #editor="{ data, field }">
+                            <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
+                                        option-value="value" placeholder="图片类型">
 
-                                    </p-dropdown>
-                                </template>
-                                <template #body="slotProps">
-                                    {{getImageTypeLabel(slotProps.data.type)}}
-                                </template>
-                            </p-column>
-                            <p-column field="description" header="描述" header-style="width: 15%">
-                                <template #editor="{ data, field }">
-                                    <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
-                                </template>
-                            </p-column>
-                            <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
-                            <p-column :row-editor="true" header-style="width: 15%"></p-column>
-                        </p-datatable>
-                    </div>
-                    <div v-else>
-                        <span class="emptyInfo"><em>暂无图片</em></span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
-                              class="p-button-text"></p-button>
-                    <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
-                </template>
-            </p-dialog>
-
-            <p-dialog v-model:visible="displayOrganizationEditDialog" header="编辑关联组织信息"
-                      :style="{width: '800px'}" :modal="true">
-                <p-panel>
-                    <template #header>
-                        <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                        <b>新增</b>
-                    </template>
-                    <div class="grid">
-                        <div class="col-3">
-                            <div class="p-inputgroup">
+                            </p-dropdown>
+                        </template>
+                        <template #body="slotProps">
+                            {{getImageTypeLabel(slotProps.data.type)}}
+                        </template>
+                    </p-column>
+                    <p-column field="description" header="描述" header-style="width: 15%">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                    <p-column :row-editor="true" header-style="width: 15%"></p-column>
+                </p-datatable>
+            </div>
+            <div v-else>
+                <span class="emptyInfo"><em>暂无图片</em></span>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                      class="p-button-text"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayOrganizationEditDialog" header="编辑关联组织信息"
+              :style="{width: '800px'}" :modal="true">
+        <p-panel>
+            <template #header>
+                <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                <b>新增</b>
+            </template>
+            <div class="grid">
+                <div class="col-3">
+                    <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="p-inputgroup">
+                        <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi iconfont icon-gongsi"></i>
                                     </span>
-                                <p-inputtext v-model="organizationItem.name" placeholder="组织名称"></p-inputtext>
+                        <p-inputtext v-model="organizationItem.name" placeholder="组织名称"></p-inputtext>
+                    </div>
+                </div>
+                <div class="col-6" v-if="organization.special == 1">
+                    <div class="col-3">
+                        <p-dropdown v-model="organizationItem.region" :options="regionSet" :filter="true"
+                                    :show-clear="true" option-label="nameZh" option-value="code">
+                            <template #value="slotProps">
+                                <div class="country-item" v-if="slotProps.value">
+                                    <span :class="'fi fi-' + slotProps.value"></span>
+                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                </div>
+                                <span v-else>选择地区</span>
+                            </template>
+                            <template #option="slotProps">
+                                <div class="country-item">
+                                    <span :class="'fi fi-' + slotProps.option.code"></span>
+                                    <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                </div>
+                            </template>
+                        </p-dropdown>
+                    </div>
+                    <div class="col-3">
+                        <p-multiselect v-model="organizationItem.platforms" :options="platformSet"
+                                       placeholder="所属平台" option-label="labelEn" option-value="labelEn"
+                                       display="chip" :filter="true">
+                        </p-multiselect>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <span>是否特殊项</span><p-inputswitch v-model="organization.special" :true-value="1" :false-value="0"></p-inputswitch>
+                </div>
+                <div class="col-2">
+                    <p-button label="新增组织成员" icon="pi pi-save"
+                              @click="addOrganizationItem"></p-button>
+                </div>
+                <div class="col-2">
+                    <p-button label="新增组织" icon="pi pi-save"
+                              @click="addOrganization"></p-button>
+                </div>
+            </div>
+        </p-panel>
+        <p-panel>
+            <template #header>
+                <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                <b>编辑</b>
+            </template>
+            <div v-if="tmpOrganizations.length != 0">
+                <p-datatable dataKey="id" :value="tmpOrganizations" responsive-layout="scroll"
+                             class="p-datatable-sm" striped-rows @row-reorder="organizationOnRowReorder"
+                             context-menu v-model:context-menu-selection="selectedOrganization"
+                             @row-contextmenu="organizationRowMenu" edit-mode="row"
+                             v-model:editing-rows="organizationEditingRows" @row-edit-save="organizationOnRowEditSave">
+                    <p-column :row-reorder="true"></p-column>
+                    <p-column field="label" header="组织类型">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="value" header="组织">
+                        <template #body="slotProps">
+                            <div v-if="slotProps.data.special == 1">
+                                <ul class="px-4">
+                                    <li v-for="item in slotProps.data.value">
+                                        {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(",")}})
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
-                        <div class="col-6" v-if="organization.special == 1">
-                            <div class="col-3">
-                            <p-dropdown v-model="organizationItem.region" :options="regionSet" :filter="true"
-                                        :show-clear="true" option-label="nameZh" option-value="code">
-                                <template #value="slotProps">
-                                    <div class="country-item" v-if="slotProps.value">
-                                        <span :class="'fi fi-' + slotProps.value"></span>
-                                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
-                                    </div>
-                                    <span v-else>选择地区</span>
-                                </template>
-                                <template #option="slotProps">
-                                    <div class="country-item">
-                                        <span :class="'fi fi-' + slotProps.option.code"></span>
-                                        <div class="ml-2">{{slotProps.option.nameZh}}</div>
-                                    </div>
-                                </template>
-                            </p-dropdown>
-                        </div>
-                            <div class="col-3">
-                            <p-multiselect v-model="organizationItem.platforms" :options="platformSet"
-                                           placeholder="所属平台" option-label="labelEn" option-value="labelEn"
-                                           display="chip" :filter="true">
-                            </p-multiselect>
-                        </div>
-                        </div>
-                        <div class="col-2">
-                            <span>是否特殊项</span><p-inputswitch v-model="organization.special" :true-value="1" :false-value="0"></p-inputswitch>
-                        </div>
-                        <div class="col-2">
-                            <p-button label="新增组织成员" icon="pi pi-save"
-                                      @click="addOrganizationItem"></p-button>
-                        </div>
-                        <div class="col-2">
-                            <p-button label="新增组织" icon="pi pi-save"
-                                      @click="addOrganization"></p-button>
-                        </div>
-                    </div>
-                </p-panel>
-                <p-panel>
-                    <template #header>
-                        <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                        <b>编辑</b>
-                    </template>
-                    <div v-if="tmpOrganizations.length != 0">
-                        <p-datatable dataKey="id" :value="tmpOrganizations" responsive-layout="scroll"
-                                     class="p-datatable-sm" striped-rows @row-reorder="organizationOnRowReorder"
-                                     context-menu v-model:context-menu-selection="selectedOrganization"
-                                     @row-contextmenu="organizationRowMenu" edit-mode="row"
-                                     v-model:editing-rows="organizationEditingRows" @row-edit-save="organizationOnRowEditSave">
-                            <p-column :row-reorder="true"></p-column>
-                            <p-column field="label" header="组织类型">
-                                <template #editor="{ data, field }">
-                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                                </template>
-                            </p-column>
-                            <p-column field="value" header="组织">
-                                <template #body="slotProps">
-                                    <div v-if="slotProps.data.special == 1">
-                                        <ul class="px-4">
-                                            <li v-for="item in slotProps.data.value">
-                                                {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(",")}})
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div v-else>
-                                        <div v-for="item in slotProps.data.value" style="display:inline">
-                                            {{item.name}}
-                                        </div>
-                                    </div>
-                                </template>
-                            </p-column>
-                            <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                      bodyStyle="text-align:center"></p-column>
-                        </p-datatable>
-                        <p-contextmenu :model="organizationMenuModel" ref="organizationCm"></p-contextmenu>
-                    </div>
-                    <div v-else>
-                        <span class="emptyInfo">暂无关联组织信息</span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                              @click="clearOrganizations"></p-button>
-                    <p-button label="取消" icon="pi pi-times" class="mr-4"
-                              @click="cancelOrganizationsEdit"></p-button>
-                    <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                              @click="submitOrganizations"></p-button>
-                </template>
-            </p-dialog>
-
-            <p-dialog v-model:visible="displayStaffEditDialog" header="编辑Staff信息"
-                      :style="{width: '800px'}" :modal="true">
-                <p-panel>
-                    <template #header>
-                        <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                        <b>新增</b>
-                    </template>
-                    <div class="grid">
-                        <div class="col-3">
-                            <div class="p-inputgroup">
+                            <div v-else>
+                                <div v-for="item in slotProps.data.value" style="display:inline">
+                                    {{item.name}}
+                                </div>
+                            </div>
+                        </template>
+                    </p-column>
+                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                              bodyStyle="text-align:center"></p-column>
+                </p-datatable>
+                <p-contextmenu :model="organizationMenuModel" ref="organizationCm"></p-contextmenu>
+            </div>
+            <div v-else>
+                <span class="emptyInfo">暂无关联组织信息</span>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                      @click="clearOrganizations"></p-button>
+            <p-button label="取消" icon="pi pi-times" class="mr-4"
+                      @click="cancelOrganizationsEdit"></p-button>
+            <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                      @click="submitOrganizations"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayStaffEditDialog" header="编辑Staff信息"
+              :style="{width: '800px'}" :modal="true">
+        <p-panel>
+            <template #header>
+                <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                <b>新增</b>
+            </template>
+            <div class="grid">
+                <div class="col-3">
+                    <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
                                     </span>
-                                <p-inputtext v-model="staff.pos" placeholder="职位名称"></p-inputtext>
-                            </div>
-                        </div>
-                        <div class="col-7">
-                            <div class="p-inputgroup">
+                        <p-inputtext v-model="staff.pos" placeholder="职位名称"></p-inputtext>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-users"></i>
                                     </span>
-                                <p-chips v-model="staff.name" placeholder="人员信息" separator=","></p-chips>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <p-button label="新增" icon="pi pi-save"
-                                      @click="addStaff"></p-button>
-                        </div>
+                        <p-chips v-model="staff.name" placeholder="人员信息" separator=","></p-chips>
                     </div>
-                </p-panel>
-                <p-panel>
-                    <template #header>
-                        <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                        <b>编辑</b>
-                    </template>
-                    <div v-if="tmpStaffs.length != 0">
-                        <p-datatable dataKey="id" :value="tmpStaffs" responsive-layout="scroll"
-                                     class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
-                                     context-menu v-model:context-menu-selection="selectedStaff"
-                                     @row-contextmenu="staffRowMenu" edit-mode="row"
-                                     v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
-                            <p-column :row-reorder="true"></p-column>
-                            <p-column field="pos" header="职位">
-                                <template #editor="{ data, field }">
-                                    <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                                </template>
-                            </p-column>
-                            <p-column field="name" header="人员">
-                                <template #body="slotProps">
-                                    {{slotProps.data.name.join(" / ")}}
-                                </template>
-                                <template #editor="{ data, field }">
-                                    <p-chips v-model="data[field]"></p-chips>
-                                </template>
-                            </p-column>
-                            <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                      bodyStyle="text-align:center"></p-column>
-                        </p-datatable>
-                        <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
-                    </div>
-                    <div v-else>
-                        <span class="emptyInfo">暂无Staff相关信息</span>
-                    </div>
-                </p-panel>
-                <template #footer>
-                    <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                              @click="clearStaffs"></p-button>
-                    <p-button label="取消" icon="pi pi-times" class="mr-4"
-                              @click="cancelStaffEdit"></p-button>
-                    <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                              @click="submitStaff"></p-button>
-                </template>
-            </p-dialog>
-            <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
-                <!--                    <div id="md-editor-v3">-->
-                <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-                </md-editor-v3>
-                <!--                    </div>-->
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                              class="p-button-text">
-                    </p-button>
-                    <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
-                </template>
-            </p-dialog>
-            <p-dialog v-model:visible="deleteProductImageDialog" header="删除图片"
-                      :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
-                <div class="confirmation-content">
-                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                    <span v-if="product">确定删除所选的图片？</span>
                 </div>
-                <template #footer>
-                    <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                              @click="cancelDeleteSelectedImage"></p-button>
-                    <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                              @click="deleteImage"></p-button>
-                </template>
-            </p-dialog>
-
-            <!-- 尾部 -->
-            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
+                <div class="col-2">
+                    <p-button label="新增" icon="pi pi-save"
+                              @click="addStaff"></p-button>
+                </div>
+            </div>
+        </p-panel>
+        <p-panel>
+            <template #header>
+                <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                <b>编辑</b>
+            </template>
+            <div v-if="tmpStaffs.length != 0">
+                <p-datatable dataKey="id" :value="tmpStaffs" responsive-layout="scroll"
+                             class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                             context-menu v-model:context-menu-selection="selectedStaff"
+                             @row-contextmenu="staffRowMenu" edit-mode="row"
+                             v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                    <p-column :row-reorder="true"></p-column>
+                    <p-column field="pos" header="职位">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="name" header="人员">
+                        <template #body="slotProps">
+                            {{slotProps.data.name.join(" / ")}}
+                        </template>
+                        <template #editor="{ data, field }">
+                            <p-chips v-model="data[field]"></p-chips>
+                        </template>
+                    </p-column>
+                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                              bodyStyle="text-align:center"></p-column>
+                </p-datatable>
+                <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
+            </div>
+            <div v-else>
+                <span class="emptyInfo">暂无Staff相关信息</span>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                      @click="clearStaffs"></p-button>
+            <p-button label="取消" icon="pi pi-times" class="mr-4"
+                      @click="cancelStaffEdit"></p-button>
+            <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                      @click="submitStaff"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+        <!--                    <div id="md-editor-v3">-->
+        <md-editor-v3 v-model="descriptionMd" preview-theme="github">
+        </md-editor-v3>
+        <!--                    </div>-->
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
+                      class="p-button-text">
+            </p-button>
+            <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="deleteProductImageDialog" header="删除图片"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span v-if="product">确定删除所选的图片？</span>
         </div>
-    </div>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="cancelDeleteSelectedImage"></p-button>
+            <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                      @click="deleteImage"></p-button>
+        </template>
+    </p-dialog>
+
+    <!-- 尾部 -->
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
@@ -822,10 +862,13 @@
         setup() {
             onMounted(() => {
                 init();
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
             });
 
             const product = ref([[${product}]]);
-            const visitNum = ref([[${visitNum}]]);
+            const pageInfo = ref([[${pageInfo}]]);
             const productCategorySet = ref([[${productCategorySet}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
             const platformSet = ref([[${platformSet}]]);
@@ -1274,6 +1317,7 @@
 
             const init = () => {
                 text2marked();
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
             }
 
             //region 基础配置
@@ -1300,7 +1344,7 @@
                 submitDescription,
                 activeIndex, responsiveOptions, displayCustom, initGalleriaImageClass, imageClick,
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
-                product, visitNum, productCategorySet, edits, relatedProducts, franchiseSet, albums,
+                product, pageInfo, productCategorySet, edits, relatedProducts, franchiseSet, albums,
                 books, discs, games,
                 toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
 
@@ -1334,6 +1378,7 @@
             "p-tag": primevue.tag,
             "p-multiselect": primevue.multiselect,
             "p-inputswitch": primevue.inputswitch,
+            "p-card": primevue.card,
         }
     };
 
@@ -1354,103 +1399,36 @@
         .mount("#app");
 </script>
 <style>
-    .p-timeline.p-timeline-vertical .p-timeline-event-content {
-        padding: 0 1rem;
-        width: 800px;
+    .p-text-secondary {
+        font-size: 15px;
     }
 
-    .p-timeline-event-opposite {
+    .p-timeline {
+        width: 1200px;
+    }
 
+    .p-timeline-event {
+        min-height: 35px;
+    }
+
+    .product-detail-cover {
+        transform:translateY(7px);
+        width: 200px;
+        max-height: 150px;
+    }
+
+    a {
+        color: #ceffff;
+    }
+
+    .p-timeline.p-timeline-vertical .p-timeline-event-content {
+        padding: 0 1rem;
     }
 
     .p-timeline-left {
         position: relative;
-        left: -40%;
+        left: -65%;
     }
-
-    .product-cover {
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-
-
-
-    .p-panel .p-panel-header {
-        /* border: 1px solid #dee2e6; */
-        padding: 0.5rem;
-        background: #6d7c8b;
-        color: #d0da9a;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-
-
-
-
-
-
-
-    .p-galleria .p-galleria-item-wrapper {
-        width: 400px;
-        height: 400px;
-    }
-
-    .p-galleria .p-galleria-item-container {
-        /*width: 500px;*/
-        /*height: 500px;*/
-    }
-
-    .custom-galleria-footer {
-        display: flex;
-        align-items: center;
-        /*background-color: rgba(0, 0, 0, 0.9);*/
-        color: #ffffff;
-    }
-
-    .custom-galleria-footer > button {
-        background-color: transparent;
-        color: #ffffff;
-        border: 0 none;
-        border-radius: 0;
-        margin: .2rem 0;
-    }
-
-    .custom-galleria-footer > button.fullscreen-button {
-        margin-left: auto;
-    }
-
-    .custom-galleria-footer > button:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .title-container > span {
-        font-size: .9rem;
-        padding-left: .829rem;
-    }
-
-    .title-container > span.title {
-        font-weight: bold;
-    }
-
-    .p-galleria-content {
-        position: relative;
-    }
-
-    .p-galleria-item-wrapper {
-        height: 400px;
-        width: 400px;
-    }
-
-    .p-galleria-thumbnail-content {
-        height: 100px;
-        width: 100px;
-    }
-
-
-
 </style>
 </body>
 </html>

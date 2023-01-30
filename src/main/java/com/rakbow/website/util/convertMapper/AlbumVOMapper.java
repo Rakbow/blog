@@ -82,7 +82,7 @@ public interface AlbumVOMapper {
         albumVo.setArtists(JSONArray.parseArray(album.getArtists()));
 
         //图片相关
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(album.getImages(), 250);
+        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(album.getImages(), 250, false);
         albumVo.setImages(segmentImages.images);
         albumVo.setCover(segmentImages.cover);
         albumVo.setDisplayImages(segmentImages.displayImages);
