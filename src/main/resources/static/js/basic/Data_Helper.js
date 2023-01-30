@@ -220,7 +220,7 @@ const copy = () => {
     })
 };
 
-const priceUnitSet = [
+const currencyUnitSet = [
     {labelEn: 'JPY', label: '日元', value: 'JPY'},
     {labelEn: 'CNY', label: '人民币', value: 'CNY'},
     {labelEn: 'USD', label: '美元', value: 'USD'},
@@ -258,7 +258,6 @@ const getImageTypeLabel = (type) => {
 };
 
 const regionCode2NameZh = (code, regionSet) => {
-    console.log(code)
     for (let region of regionSet) {
         if (region.code === code) {
             return region.nameZh;

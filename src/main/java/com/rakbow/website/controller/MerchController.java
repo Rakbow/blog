@@ -92,8 +92,8 @@ public class MerchController {
         model.addAttribute("merch", merchVOMapper.merch2VO(merch));
         MerchVO merchVO = merchVOMapper.merch2VO(merch);
         model.addAttribute("user", hostHolder.getUser());
-        //获取页面访问量
-        model.addAttribute("visitNum", visitService.getVisit(EntityType.MERCH.getId(), id).getVisitNum());
+        //获取页面数据
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MERCH.getId(), id, merch.getAddedTime(), merch.getEditedTime()));
         //获取相关周边
         model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
         return "/merch/merch-detail";

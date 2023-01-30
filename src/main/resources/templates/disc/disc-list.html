@@ -349,7 +349,7 @@
                 </div>
                 <div class="field col-3">
                     <label>货币单位</label>
-                    <p-dropdown v-model="discEdit.currencyUnit" :options="priceUnitSet"
+                    <p-dropdown v-model="discEdit.currencyUnit" :options="currencyUnitSet"
                                 option-label="label" option-value="value">
                     </p-dropdown>
                 </div>
@@ -485,7 +485,7 @@
                 </div>
                 <div class="field col-3">
                     <label>货币单位</label>
-                    <p-dropdown v-model="discEdit.currencyUnit" :options="priceUnitSet"
+                    <p-dropdown v-model="discEdit.currencyUnit" :options="currencyUnitSet"
                                 option-label="label" option-value="value">
                     </p-dropdown>
                 </div>
@@ -815,7 +815,7 @@
                 submitNewDisc, confirmDeleteSelected, deleteDiscsDialog, deleteSelectedDiscs,
                 selectedDiscs, displayEditDialog, init,
                 openEditDialog, closeEditDialog, submitEditDisc, discEdit, regionCode2NameZh,
-                mediaFormatSet, productSet, franchiseSet, regionSet, priceUnitSet,
+                mediaFormatSet, productSet, franchiseSet, regionSet, currencyUnitSet: currencyUnitSet,
                 getProducts, productSelect
             }
         },

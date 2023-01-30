@@ -313,7 +313,7 @@
                 </div>
                 <div class="field col-3">
                     <label>单位</label>
-                    <p-dropdown v-model="merch.priceUnit" :options="priceUnitSet"
+                    <p-dropdown v-model="merch.currencyUnit" :options="currencyUnitSet"
                                 option-label="label" option-value="value" placeholder="单位">
                     </p-dropdown>
                 </div>
@@ -431,7 +431,7 @@
                 </div>
                 <div class="field col-3">
                     <label>单位</label>
-                    <p-dropdown v-model="merchEdit.priceUnit" :options="priceUnitSet"
+                    <p-dropdown v-model="merchEdit.currencyUnit" :options="currencyUnitSet"
                                 option-label="label" option-value="value" placeholder="单位">
                     </p-dropdown>
                 </div>
@@ -754,7 +754,7 @@
 
 
             return {
-                priceUnitSet, merchCategorySet, regionCode2NameZh, regionSet,
+                currencyUnitSet, merchCategorySet, regionCode2NameZh, regionSet,
                 onToggle, onPage, onSort, onFilter, filters, totalRecords,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
                 merch, merchs, columns, selectedColumns,
