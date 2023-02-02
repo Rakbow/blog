@@ -21,6 +21,7 @@ import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.file.QiniuBaseUtils;
+import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class AlbumService {
     @Autowired
     private QiniuBaseUtils qiniuBaseUtils;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private QiniuFileUtils qiniuFileUtils;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -280,7 +281,7 @@ public class AlbumService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
 
-        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
         albumMapper.updateAlbumImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
@@ -296,7 +297,7 @@ public class AlbumService {
         Album album = getAlbumById(id);
         JSONArray images = JSON.parseArray(album.getImages());
         //删除七牛云上的图片
-        qiniuImageUtils.commonDeleteAllImages(EntityType.ALBUM, images);
+        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion

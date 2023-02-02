@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
+import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class GameService {
     private GameMapper gameMapper;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
+    @Autowired
+    private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
 
@@ -214,7 +217,7 @@ public class GameService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getGame(id).getImages());
 
-        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
         gameMapper.updateGameImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
@@ -230,7 +233,7 @@ public class GameService {
     public void deleteAllGameImages(int id) {
         Game game = getGame(id);
         JSONArray images = JSON.parseArray(game.getImages());
-        qiniuImageUtils.commonDeleteAllImages(EntityType.GAME, images);
+        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion

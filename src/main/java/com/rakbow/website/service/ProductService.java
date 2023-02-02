@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.entity.ProductUtils;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
+import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,8 @@ public class ProductService {
     private ProductMapper productMapper;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
+    @Autowired
+    private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -234,7 +237,7 @@ public class ProductService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getProduct(id).getImages());
 
-        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
         productMapper.updateProductImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
@@ -250,7 +253,7 @@ public class ProductService {
     public String deleteAllProductImages(int id) {
         Product product = getProduct(id);
         JSONArray images = JSON.parseArray(product.getImages());
-        qiniuImageUtils.commonDeleteAllImages(EntityType.PRODUCT, images);
+        qiniuFileUtils.commonDeleteAllFiles(images);
 
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
     }

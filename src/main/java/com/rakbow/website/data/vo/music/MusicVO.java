@@ -35,4 +35,7 @@ public class MusicVO {
     private String editedTime;// 编辑时间
     private int _s;// 状态
 
+    //其他字段
+    private boolean uploadDisabled;
+
 }

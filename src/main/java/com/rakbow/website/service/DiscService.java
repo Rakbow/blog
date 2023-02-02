@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
+import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class DiscService {
     private DiscMapper discMapper;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
+    @Autowired
+    private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
 
@@ -214,7 +217,7 @@ public class DiscService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getDisc(id).getImages());
 
-        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
         discMapper.updateDiscImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
@@ -230,7 +233,7 @@ public class DiscService {
     public void deleteAllDiscImages(int id) {
         Disc disc = getDisc(id);
         JSONArray images = JSON.parseArray(disc.getImages());
-        qiniuImageUtils.commonDeleteAllImages(EntityType.DISC, images);
+        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion

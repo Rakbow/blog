@@ -727,9 +727,6 @@
                         </p-column>
                         <p-column field="url" header="URL" header-style="width: 10%">
                             <template #body="slotProps">
-                                <!--                                            <p-button @click="copy" class="copy" icon="pi pi-clone"-->
-                                <!--                                                      :data-clipboard-text="slotProps.data.url + '?imageMogr2/auto-orient/thumbnail/150x150'">-->
-                                <!--                                            </p-button>-->
                                 {{slotProps.data.url.substr(22)}}
                             </template>
                         </p-column>

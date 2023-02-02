@@ -1,8 +1,11 @@
 package com.rakbow.website.util.entity;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.music.AudioType;
+import com.rakbow.website.data.vo.music.MusicVO;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +47,33 @@ public class MusicUtil {
      * */
     public static void deleteAllMusicByAlbumId(int albumId) throws Exception {
         musicService.deleteMusicByAlbumId(albumId);
+    }
+
+    /**
+     * 获取音频信息
+     * @author rakbow
+     * @param musicVO 音乐
+     * */
+    public static JSONObject getMusicAudioInfo(MusicVO musicVO) {
+        JSONArray files = musicVO.getFiles();
+        if (files.size() == 0) {
+            return null;
+        }
+        JSONObject audioInfo = new JSONObject();
+        for (int i = 0; i < files.size(); i++) {
+            //判断是否有音频文件
+            if (files.getJSONObject(i).getString("type").contains("audio")) {
+                audioInfo.put("name", musicVO.getName());
+                audioInfo.put("artist", "artist");
+                audioInfo.put("url", files.getJSONObject(i).getString("url"));
+                audioInfo.put("cover", musicVO.getCover());
+            }
+            //判断是否有歌词文件
+            if (files.getJSONObject(i).getString("type").contains("text")) {
+                audioInfo.put("lrc", files.getJSONObject(i).getString("url"));
+            }
+        }
+        return audioInfo;
     }
 
 }

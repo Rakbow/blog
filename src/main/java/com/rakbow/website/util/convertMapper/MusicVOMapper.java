@@ -55,6 +55,7 @@ public interface MusicVOMapper {
         musicVO.setAudioType(audioTypeObj);
 
         musicVO.setFiles(JSON.parseArray(music.getFiles()));
+        musicVO.setUploadDisabled(musicVO.getFiles().size() >= 2);
 
         if (StringUtils.isBlank(music.getCoverUrl())) {
             musicVO.setCover(QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));

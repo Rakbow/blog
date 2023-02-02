@@ -12,6 +12,8 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
+import com.rakbow.website.util.file.QiniuBaseUtils;
+import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,8 @@ public class BookService {
     private BookMapper bookMapper;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
+    @Autowired
+    private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
 
@@ -225,7 +229,7 @@ public class BookService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getBook(id).getImages());
 
-        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
         bookMapper.updateBookImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
@@ -241,7 +245,7 @@ public class BookService {
     public void deleteAllBookImages(int id) {
         Book book = getBook(id);
         JSONArray images = JSON.parseArray(book.getImages());
-        qiniuImageUtils.commonDeleteAllImages(EntityType.BOOK, images);
+        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion

@@ -72,6 +72,8 @@ public class ApiInfo {
     public static final String MUSIC_AUDIO_TYPE_EMPTY = "未选择音频类型！";
     public static final String MUSIC_AUDIO_LENGTH_EMPTY = "未填写音频长度！";
 
+    public static final String MUSIC_FILE_NUMBER_EXCEPTION = "只允许上传一个音频文件和一个歌词文件！";
+
     //endregion
 
     //region product相关
@@ -151,6 +153,7 @@ public class ApiInfo {
 
     //region 七牛云
     public static final String QINIU_EXCEPTION = "七牛云异常: %s";
+    public static final String DELETE_FILES_SUCCESS = "文件删除成功！";
     //endregion
 
 }

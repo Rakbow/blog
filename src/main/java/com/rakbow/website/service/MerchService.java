@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
+import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class MerchService {
     private MerchMapper merchMapper;
     @Autowired
     private QiniuImageUtils qiniuImageUtils;
+    @Autowired
+    private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
 
@@ -147,7 +150,7 @@ public class MerchService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getMerch(id).getImages());
 
-        JSONArray finalImageJson = qiniuImageUtils.commonDeleteImages(id, images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
         merchMapper.updateMerchImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
@@ -164,7 +167,7 @@ public class MerchService {
         Merch merch = getMerch(id);
         JSONArray images = JSON.parseArray(merch.getImages());
 
-        qiniuImageUtils.commonDeleteAllImages(EntityType.MERCH, images);
+        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion

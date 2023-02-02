@@ -13,7 +13,7 @@
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet"/>
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
@@ -45,6 +45,7 @@
     <script th:src="@{/js/primevue/components/column.min.js}"></script>
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inplace.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
@@ -66,11 +67,11 @@
 
     <!-- marked -->
     <script th:src="@{/js/marked.min.js}"></script>
-    <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet" />
+    <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet"/>
 
     <!-- aPlayer -->
-    <!--    <link href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">-->
-    <!--    <script src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js"></script>-->
+    <link th:href="@{/tool/aplayer/APlayer.min.css}" rel="stylesheet">
+    <script th:src="@{/tool/aplayer/APlayer.min.js}"></script>
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -108,7 +109,8 @@
                     </div>
                 </template>
                 <template #subtitle>
-                    <h5 v-if="music.nameEn != ''" class="detail-item-subtitle"><small class="ml-4">{{music.nameEn}}</small></h5>
+                    <h5 v-if="music.nameEn != ''" class="detail-item-subtitle"><small
+                            class="ml-4">{{music.nameEn}}</small></h5>
                     <h5 v-else><small></small></h5>
                 </template>
                 <template #content>
@@ -123,30 +125,30 @@
                                 <template #content>
                                     <table class="table-borderless table-sm ml-2">
                                         <tbody class="detail-item-header-table">
-                                            <tr>
-                                                <td><strong>音频长度</strong></td>
-                                                <td>
-                                                    {{music.audioLength}}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>音频类型</strong></td>
-                                                <td>
-                                                    {{music.audioType.label}}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>碟片序号</strong></td>
-                                                <td>
-                                                    {{music.discSerial}}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>曲目序号</strong></td>
-                                                <td>
-                                                    {{music.trackSerial}}
-                                                </td>
-                                            </tr>
+                                        <tr>
+                                            <td><strong>音频长度</strong></td>
+                                            <td>
+                                                {{music.audioLength}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>音频类型</strong></td>
+                                            <td>
+                                                {{music.audioType.label}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>碟片序号</strong></td>
+                                            <td>
+                                                {{music.discSerial}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>曲目序号</strong></td>
+                                            <td>
+                                                {{music.trackSerial}}
+                                            </td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </template>
@@ -154,6 +156,16 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
+<!--                        <p-fieldset :toggleable="true" v-if="audioInfo != null">-->
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi icon-music"></i>
+                                <b>在线播放</b>
+                            </template>
+                            <div class="text-center">
+                                <div id="aplayer"></div>
+                            </div>
+                        </p-fieldset>
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-users"></i>
@@ -313,41 +325,101 @@
         </template>
     </p-dialog>
     <p-dialog v-model:visible="displayFileEditDialog" header="文件管理"
-              :style="{width: '500px'}" :modal="true">
+              :style="{width: '800px'}" :modal="true">
         <p-blockui :blocked="blockedPanel">
             <p-panel>
                 <div class="grid">
                     <div class="col-6 text-start">
                         <p-fileupload
+                                :disabled="music.uploadDisabled"
                                 mode="basic"
                                 :custom-upload="true"
-
                                 :auto="true"
                                 choose-label="上传文件"
-                                :max-file-size="10000000" :preview-width="100"
+                                :max-file-size="20000000" :preview-width="100"
                                 invalid-file-size-message="{0}大小已超过{1}"
                                 @uploader="onUpload"
                                 @select="selectFile">
                         </p-fileupload>
                     </div>
-                    <div class="col-6 text-end">
+                    <div class="col-6 text-end" v-if="!music.uploadDisabled">
                         <p-button class="ml-2 p-button-text" icon="pi pi-trash"
                                   label="清空所选" @click="clearUploadedFile"></p-button>
                     </div>
                     <p-divider></p-divider>
-                    <div class="field">
-                        <span v-if=" fileHtml == '' " class="emptyInfo">还未选择文件</span>
-                        <section>
-                            <div id="fileBox" v-html="fileHtml"></div>
-                        </section>
+                    <div class="col-12" v-if="music.uploadDisabled">
+                        <div align="center">
+                            <span class="emptyInfo">音频文件和歌词文件已上传。如需更新，请先删除文件。</span>
+                        </div>
                     </div>
+                    <div class="col-12" v-else>
+                        <div v-if=" fileHtml == '' " align="center">
+                            <span class="emptyInfo">还未选择文件</span>
+                        </div>
+                        <div>
+                            <section>
+                                <div id="fileBox" v-html="fileHtml"></div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                    <b>编辑</b>
+                </template>
+                <div v-if="music.files.length != 0">
+                    <p-datatable :value="music.files" class="p-datatable-sm" striped-rows
+                                 :resizable-columns="true" column-resize-mode="expand"
+                                 v-model:selection="selectedFiles">
+                        <template #header>
+                            <p-button icon="pi pi-trash" class="p-button-danger"
+                                      @click="confirmDeleteSelectedFile"></p-button>
+                        </template>
+                        <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
+<!--                        <p-column field="url" header="URL" header-style="width: 10%">-->
+<!--                            <template #body="slotProps">-->
+<!--                                {{slotProps.data.url.substr(22)}}-->
+<!--                            </template>-->
+<!--                        </p-column>-->
+                        <p-column field="name" header="文件名" header-style="width: 10%"></p-column>
+                        <p-column field="type" header="文件类型" header-style="width: 8%">
+                            <template #body="slotProps">
+                                {{slotProps.data.type}}
+                            </template>
+                        </p-column>
+                        <p-column field="size" header="文件大小" header-style="width: 15%">
+                            <template #body="slotProps">
+                                {{(slotProps.data.size/1024).toFixed(2)}}KB
+                            </template>
+                        </p-column>
+                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                        <p-column field="uploadUser" header="上传用户" header-style="width: 10%"></p-column>
+                    </p-datatable>
+                </div>
+                <div v-else>
+                    <span class="emptyInfo"><em>暂无文件</em></span>
                 </div>
             </p-panel>
         </p-blockui>
         <template #footer>
             <p-button icon="pi pi-times" label="取消" @click="closeFileEditDialog"
-                      class="p-button-text"></p-button>
-            <p-button icon="pi pi-save" label="提交更新" @click="uploadFile"></p-button>
+                      class="p-button-text" :disabled="blockedPanel"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="uploadFile" :disabled="blockedPanel"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="deleteFileDialog" header="删除文件"
+              :breakpoints="{'960px': '50vw', '640px': '70vw'}" :style="{width: '50vw'}" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span v-if="album">确定删除所选的文件？</span>
+        </div>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="cancelDeleteSelectedFile"></p-button>
+            <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                      @click="deleteFile"></p-button>
         </template>
     </p-dialog>
     <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
@@ -463,7 +535,73 @@
                 });
             })
 
+            const createAplayer = () => {
+
+                if (audioInfo.value !== null) {
+                    const ap = new APlayer({
+                        container: document.getElementById('aplayer'),
+                        volume: 0.2,
+                        theme: '#b7daff',
+                        lrcType: 3,
+                        audio: [audioInfo.value]
+                    });
+                }else {
+                    //<![CDATA[
+                    document.getElementById('aplayer').innerHTML = "<span class='emptyInfo'>暂无音频文件</span>";
+                    //]]>
+                }
+            }
+
+            //region ------基础------
+            const music = ref([[${music}]]);
+            const audioInfo = ref([[${audioInfo}]]);
+            const pageInfo = ref([[${pageInfo}]]);
+            const relatedAlbum = ref([[${relatedAlbum}]]);
+            const toast = useToast();
+            const audioTypeSet = ref([[${audioTypeSet}]]);
+            const relatedMusics = ref([[${relatedMusics}]]);
+            const edits = ref([
+                {
+                    label: '创作人员',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        openArtistEditDialog();
+                    }
+                },
+                {
+                    label: '描述信息',
+                    icon: 'pi iconfont icon-miaoshu',
+                    command: () => {
+                        openDescriptionEditDialog();
+                    }
+                },
+                {
+                    label: '编辑歌词',
+                    icon: 'pi iconfont icon-music',
+                    command: () => {
+                        openLyricsEditDialog();
+                    }
+                },
+                {
+                    label: '文件管理',
+                    icon: 'pi pi-file',
+                    command: () => {
+                        openFileEditDialog();
+                    }
+                },
+            ]);
+            //endregion
+
             //region ------上传文件------
+            const deleteFileDialog = ref(false);
+            const selectedFiles = ref([]);
+            const confirmDeleteSelectedFile = () => {
+                deleteFileDialog.value = true;
+            };
+            const cancelDeleteSelectedFile = () => {
+                selectedFiles.value = [];
+                deleteFileDialog.value = false;
+            };
             const fileHtml = ref("");
             const blockedPanel = ref(false);
             const fileInfo = ref({
@@ -492,7 +630,7 @@
                 for (const file of fileInfos.value) {
                     fileHtml.value += '<div class="col-12">';
                     fileHtml.value += '<p>文件名: ' + file.name + '</p>';
-                    fileHtml.value += '<p>文件大小: ' + (file.size/1024).toFixed(2) + 'KB</p>';
+                    fileHtml.value += '<p>文件大小: ' + (file.size / 1024).toFixed(2) + 'KB</p>';
                     fileHtml.value += '<p>文件类型: ' + file.type + '</p>';
                     fileHtml.value += '</div>';
                 }
@@ -506,7 +644,6 @@
             };
             const onUpload = (ev) => {
                 toast.add({severity: 'info', summary: 'Success', detail: FILE_SELECTED_INFO, life: 3000});
-                showFile();
             };
             const clearUploadedFile = () => {
                 fileInfos.value = [];
@@ -519,14 +656,14 @@
                     fileInfo.value.name = ev.files[0].name;
                     fileInfo.value.size = ev.files[0].size;
                 }
-                if (ev.files[0].name.substr(ev.files[0].name.lastIndexOf('.')+1) === 'lrc') {
+                if (ev.files[0].name.substr(ev.files[0].name.lastIndexOf('.') + 1) === 'lrc') {
                     fileInfo.value.type = 'text/lrc';
                     fileInfo.value.name = ev.files[0].name;
                     fileInfo.value.size = ev.files[0].size;
                 }
                 fileInfos.value.push(fileInfo.value);
                 fileInfo.value = {};
-                console.log(fileInfos.value);
+                showFile();
             };
             const uploadFile = () => {
                 blockedPanel.value = true;
@@ -536,7 +673,7 @@
                 }
                 formData.append("id", music.value.id);
                 formData.append("fileInfos", JSON.stringify(fileInfos.value));
-                axiosRequest(UPDATE_MUSIC_FILE_URL, formData)
+                axiosRequest(UPLOAD_MUSIC_FILE_URL, formData)
                     .then(res => {
                         if (res.state === 1) {
                             blockedPanel.value = false;
@@ -544,6 +681,26 @@
                             location.reload(true);
                         } else {
                             blockedPanel.value = false;
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            const deleteFile = () => {
+                let json = {
+                    id: music.value.id,
+                    files: selectedFiles.value
+                };
+                axiosPostRequest(DELETE_MUSIC_FILE_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
+                            deleteFileDialog.value = false;
+                            closeFileEditDialog();
+                            selectedFiles.value = [];
+                            location.reload(true);
+                        } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
@@ -559,44 +716,6 @@
             const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
             const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
             //endregion
-
-            const music = ref([[${music}]]);
-            const pageInfo = ref([[${pageInfo}]]);
-            const relatedAlbum = ref([[${relatedAlbum}]]);
-            const toast = useToast();
-            const audioTypeSet = ref([[${audioTypeSet}]]);
-            const relatedMusics = ref([[${relatedMusics}]]);
-
-            const edits = ref([
-                {
-                    label: '创作人员',
-                    icon: 'pi pi-users',
-                    command: () => {
-                        openArtistEditDialog();
-                    }
-                },
-                {
-                    label: '描述信息',
-                    icon: 'pi iconfont icon-miaoshu',
-                    command: () => {
-                        openDescriptionEditDialog();
-                    }
-                },
-                {
-                    label: '编辑歌词',
-                    icon: 'pi iconfont icon-music',
-                    command: () => {
-                        openLyricsEditDialog();
-                    }
-                },
-                {
-                    label: '上传音频文件',
-                    icon: 'pi pi-file',
-                    command: () => {
-                        openFileEditDialog();
-                    }
-                },
-            ]);
 
             //region ------编辑music信息------
             const musicEdit = ref({});
@@ -811,9 +930,13 @@
             const init = () => {
                 text2marked();
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+
+                createAplayer();
             };
 
             return {
+                audioInfo,
+
                 cm,
                 artist,
                 artists,
@@ -831,7 +954,11 @@
 
 
                 relatedAlbum,
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+                domainUrl,
+                notLoginNavbarItems,
+                loginNavbarItems,
+                entityType,
+                selectedEntity,
 
                 edits,
                 relatedMusics,
@@ -856,7 +983,17 @@
                 displayLyricsDialog,
                 closeLyricsEditDialog,
                 submitLyrics,
-                blockedPanel,displayFileEditDialog,openFileEditDialog,closeFileEditDialog,onUpload,clearUploadedFile,selectFile,uploadFile,fileHtml
+
+                blockedPanel,
+                displayFileEditDialog,
+                openFileEditDialog,
+                closeFileEditDialog,
+                onUpload,
+                clearUploadedFile,
+                selectFile,
+                uploadFile,
+                fileHtml,
+                deleteFileDialog, selectedFiles, confirmDeleteSelectedFile, cancelDeleteSelectedFile, deleteFile
             }
         },
         components: {
@@ -881,6 +1018,7 @@
             "p-fileupload": primevue.fileupload,
             "p-blockui": primevue.blockui,
             "p-progressbar": primevue.progressbar,
+            "p-inplace": primevue.inplace,
         }
     };
 
@@ -901,6 +1039,10 @@
         .mount("#app");
 </script>
 <style>
+    .aplayer .aplayer-info .aplayer-music .aplayer-title {
+        color: black;
+    }
+
     a:hover {
         /*border-bottom: 1px solid #ceffff;*/
         text-decoration: underline;
@@ -912,7 +1054,7 @@
     }
 
     .music-detail-cover {
-        transform:translateY(5px);
+        transform: translateY(5px);
         width: 80px;
         height: 80px;
     }

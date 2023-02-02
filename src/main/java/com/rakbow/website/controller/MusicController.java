@@ -64,6 +64,7 @@ public class MusicController {
 
         model.addAttribute("audioTypeSet", redisUtil.get("audioTypeSet"));
         model.addAttribute("music", musicVOMapper.music2VO(music));
+        model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(musicVOMapper.music2VO(music)));
         //获取页面信息
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), musicId, music.getAddedTime(), music.getEditedTime()));
         //获取同属一张碟片的音频
@@ -173,8 +174,8 @@ public class MusicController {
         }
     }
 
-    //更新音频，新增或删除
-    @RequestMapping(path = "/update-file", method = RequestMethod.POST)
+    //新增音频文件
+    @RequestMapping(path = "/upload-file", method = RequestMethod.POST)
     @ResponseBody
     public String updateMusicFile(int id, MultipartFile[] files, String fileInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
@@ -186,9 +187,36 @@ public class MusicController {
                     return JSON.toJSONString(res);
                 }
 
+                //检测数据是否合法
+                if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
+                    res.setErrorMessage(ApiInfo.MUSIC_FILE_NUMBER_EXCEPTION);
+                    return JSON.toJSONString(res);
+                }
+
                 JSONArray fileInfosJson = JSON.parseArray(fileInfos);
 
                 musicService.updateMusicFile(id, files, fileInfosJson, userService.getUserByRequest(request));
+
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //删除音频文件
+    @RequestMapping(path = "/delete-file", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteMusicFile(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+
+                int id = JSON.parseObject(json).getInteger("id");
+                JSONArray files = JSON.parseObject(json).getJSONArray("files");
+                res.message = musicService.deleteMusicFiles(id, files);
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
