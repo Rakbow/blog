@@ -21,9 +21,8 @@ public class Music {
     private int albumId;// 所属专辑id
     private int discSerial;// 所属碟片的顺序
     private String trackSerial;// 在碟片内的顺序
-    private String audioUrl;// 音频文件url （mp3）
     private String coverUrl;// 封面图片url
-    private String lrcUrl;// 歌词文件url
+    private String files;//文件信息
     private String lrcText;// 歌词文本 markdown格式
     private String audioLength;// 音频长度
     private String description;// 描述
@@ -41,9 +40,8 @@ public class Music {
         this.albumId = 0;
         this.discSerial = 1;
         this.trackSerial = "01";
-        this.audioUrl = "";
         this.coverUrl = "";
-        this.lrcUrl = "";
+        this.files = "[]";
         this.lrcText = "";
         this.audioLength = "00:00";
         this.description = "";

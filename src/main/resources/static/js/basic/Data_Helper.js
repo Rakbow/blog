@@ -279,3 +279,39 @@ const responsiveOptions = [
         numVisible: 1
     }
 ];
+
+const indexTabs = [
+    {
+        title: 'Albums',
+        index: 0,
+        url: '/db/albums'
+    },
+    {
+        title: 'Books',
+        index: 1,
+        url: '/db/books'
+    },
+    {
+        title: 'Discs',
+        index: 2,
+        url: '/db/discs'
+    },
+    {
+        title: 'Games',
+        index: 3,
+        url: '/db/games'
+    },
+    {
+        title: 'Merchs',
+        index: 4,
+        url: '/db/merchs'
+    },
+];
+
+const indexTabChange = (ev) => {
+    indexTabs.forEach(tab => {
+        if (ev.index === tab.index) {
+            window.location.href=tab.url;
+        }
+    })
+};

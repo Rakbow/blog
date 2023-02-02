@@ -1,4 +1,4 @@
-package com.rakbow.website.util.image;
+package com.rakbow.website.util.file;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -213,19 +213,19 @@ public class CommonImageUtils {
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
+        cover.put("url", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
         cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
         cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), 200));
+                    cover.put("url", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 200));
                     cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(image.getString("url"), 70));
-                    cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), 50));
+                    cover.put("thumbUrl70", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 70));
+                    cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -244,14 +244,14 @@ public class CommonImageUtils {
         JSONObject cover = new JSONObject();
         JSONArray images = JSONArray.parseArray(imagesJson);
         cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, size));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, size));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
                     cover.put("url", QiniuImageUtils.getThumbUrl(image.getString("url"), size));
-                    cover.put("blackUrl", QiniuImageUtils.getThumbBlackBackgroundUrl(image.getString("url"), size));
+                    cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), size));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

@@ -5,12 +5,12 @@
 <mapper namespace="com.rakbow.website.dao.MusicMapper">
 
     <sql id="selectFields">
-        id, name, name_en, artists, audio_type, album_id, disc_serial, track_serial, audio_url, cover_url, lrc_url, lrc_text,
+        id, name, name_en, artists, audio_type, album_id, disc_serial, track_serial, cover_url, files, lrc_text,
         audio_length, description, remark, added_time, edited_time, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_en, artists, audio_type, album_id, disc_serial, track_serial, audio_url, cover_url, lrc_url, lrc_text,
+        name, name_en, artists, audio_type, album_id, disc_serial, track_serial, cover_url, files, lrc_text,
         audio_length, description, remark, added_time, edited_time, _s
     </sql>
 
@@ -48,17 +48,16 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into music (<include refid="insertFields"></include>)
-        values (#{name}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial}, #{audioUrl},
-        #{coverUrl}, #{lrcUrl}, #{lrcText}, #{audioLength}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        values (#{name}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial}, #{coverUrl},
+        #{file}, #{lrcText}, #{audioLength}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateMusic" parameterType="Music" keyProperty="id">
         update music
         set
         name = #{music.name}, name_en = #{music.nameEn}, audio_type = #{music.audioType},
-        disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial}, audio_url = #{music.audioUrl},
-        lrc_url = #{music.lrcUrl}, audio_length = #{music.audioLength}, remark = #{music.remark},
-        added_time = #{music.addedTime}, edited_time = #{music.editedTime}
+        disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial}, audio_length = #{music.audioLength},
+        remark = #{music.remark}, added_time = #{music.addedTime}, edited_time = #{music.editedTime}
         where id = #{music.id}
     </update>
 
@@ -106,6 +105,13 @@
         update music
         set
         description = #{description}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateMusicFiles" keyProperty="id">
+        update music
+        set
+        files = #{files}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

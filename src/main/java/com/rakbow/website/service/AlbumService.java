@@ -10,6 +10,7 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
@@ -18,9 +19,9 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
-import com.rakbow.website.util.image.CommonImageUtils;
-import com.rakbow.website.util.image.QiniuBaseUtils;
-import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.QiniuBaseUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -220,7 +221,7 @@ public class AlbumService {
 
         for (int i = 0; i < images.length; i++) {
             //上传图片
-            ActionResult ar = qiniuBaseUtils.uploadImageToQiniu(images[i], filePath);
+            ActionResult ar = qiniuBaseUtils.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
             if (ar.state) {
                 JSONObject jo = new JSONObject();
                 jo.put("url", ar.data.toString());

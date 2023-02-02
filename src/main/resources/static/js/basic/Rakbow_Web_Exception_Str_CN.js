@@ -12,6 +12,8 @@ const IMAGE_TYPE_EMPTY_EXCEPTION = "未选择图片类型！";
 const IMAGE_SELECTED_INFO = "图片已上传！";
 //endregion
 
+const FILE_SELECTED_INFO = "文件已上传！";
+
 //region music_detail
 const MUSIC_DETAIL_NAME_JP_EMPTY = "曲名不能为空！";
 const MUSIC_DETAIL_AUDIO_TYPE_EMPTY = "未选择音频类型！";

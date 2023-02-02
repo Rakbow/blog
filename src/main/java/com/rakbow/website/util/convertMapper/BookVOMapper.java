@@ -12,7 +12,7 @@ import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.entity.ProductUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

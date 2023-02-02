@@ -1,6 +1,6 @@
 package com.rakbow.website;
 
-import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

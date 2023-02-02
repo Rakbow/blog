@@ -76,7 +76,6 @@ public class HomeController {
     @RequestMapping(path = "/db/albums", method = RequestMethod.GET)
     public String getAlbumIndexPage(Model model) {
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
-        model.addAttribute("justEditedAlbums", albumService.getJustEditedAlbums(5));
         model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
@@ -89,7 +88,6 @@ public class HomeController {
     @RequestMapping(path = "/db/books", method = RequestMethod.GET)
     public String getBookIndexPage(Model model) {
         model.addAttribute("justAddedBooks", bookService.getJustAddedBooks(5));
-        model.addAttribute("justEditedBooks", bookService.getJustEditedBooks(5));
         model.addAttribute("popularBooks", bookService.getPopularBooks(10));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
@@ -102,10 +100,10 @@ public class HomeController {
     @RequestMapping(path = "/db/discs", method = RequestMethod.GET)
     public String getDiscIndexPage(Model model) {
         model.addAttribute("justAddedDiscs", discService.getJustAddedDiscs(5));
-        model.addAttribute("justEditedDiscs", discService.getJustEditedDiscs(5));
         model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("regionSet", redisUtil.get("regionSet"));
         return "/disc/disc-index";
     }
 
@@ -113,7 +111,6 @@ public class HomeController {
     @RequestMapping(path = "/db/merchs", method = RequestMethod.GET)
     public String getMerchIndexPage(Model model) {
         model.addAttribute("justAddedMerchs", merchService.getJustAddedMerchs(5));
-        model.addAttribute("justEditedMerchs", merchService.getJustEditedMerchs(5));
         model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
@@ -124,7 +121,6 @@ public class HomeController {
     @RequestMapping(path = "/db/games", method = RequestMethod.GET)
     public String getGameIndexPage(Model model) {
         model.addAttribute("justAddedGames", gameService.getJustAddedGames(5));
-        model.addAttribute("justEditedGames", gameService.getJustEditedGames(5));
         model.addAttribute("popularGames", gameService.getPopularGames(10));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));

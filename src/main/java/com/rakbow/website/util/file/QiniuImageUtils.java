@@ -1,9 +1,10 @@
-package com.rakbow.website.util.image;
+package com.rakbow.website.util.file;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -56,7 +57,7 @@ public class QiniuImageUtils {
 
         for (int i = 0; i < images.length; i++) {
             //上传图片
-            ActionResult ar = qiniuBaseUtils.uploadImageToQiniu(images[i], filePath);
+            ActionResult ar = qiniuBaseUtils.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
             if (ar.state) {
                 JSONObject jo = new JSONObject();
                 jo.put("url", ar.data.toString());
@@ -97,7 +98,7 @@ public class QiniuImageUtils {
         List<String> deleteResult = new ArrayList<>();
         //若删除的图片只有一张，调用单张删除方法
         if (deleteImages.size() == 1) {
-            ActionResult ar = qiniuBaseUtils.deleteImageFromQiniu
+            ActionResult ar = qiniuBaseUtils.deleteFileFromQiniu
                     (deleteImages.getJSONObject(0).getString("url"));
             if (!ar.state) {
                 throw new Exception(ar.message);
@@ -108,7 +109,7 @@ public class QiniuImageUtils {
             for (int i = 0; i < deleteImages.size(); i++) {
                 fullImageUrlList[i] = deleteImages.getJSONObject(i).getString("url");
             }
-            ActionResult ar = qiniuBaseUtils.deleteImagesFromQiniu(fullImageUrlList);
+            ActionResult ar = qiniuBaseUtils.deleteFilesFromQiniu(fullImageUrlList);
             deleteResult = (List<String>) ar.data;
         }
 
@@ -147,7 +148,7 @@ public class QiniuImageUtils {
             //删除七牛服务器上对应图片文件
             deleteImageKeyList[i] = deleteImageUrl;
         }
-        qiniuBaseUtils.deleteImagesFromQiniu(deleteImageKeyList);
+        qiniuBaseUtils.deleteFilesFromQiniu(deleteImageKeyList);
     }
 
     /**
@@ -164,9 +165,9 @@ public class QiniuImageUtils {
         return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + "x" + size;
     }
 
-    public static String getThumbBlackBackgroundUrl(String imageUrl, int size) {
+    public static String getThumbBackgroundUrl(String imageUrl, int size) {
         return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size
-                + "/extent/" + size + "x" + size + "/background/YmxhY2s=";
+                + "/extent/" + size + "x" + size + "/background/IzJmMzY0Zg==";
     }
 
     /**

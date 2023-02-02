@@ -1,7 +1,9 @@
 package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
@@ -11,14 +13,17 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
+import com.rakbow.website.util.file.CommonImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -166,6 +171,32 @@ public class MusicController {
             res.setErrorMessage(e);
             return JSON.toJSONString(res);
         }
+    }
+
+    //更新音频，新增或删除
+    @RequestMapping(path = "/update-file", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateMusicFile(int id, MultipartFile[] files, String fileInfos, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (userService.checkAuthority(request).state) {
+
+                if (files == null || files.length == 0) {
+                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                    return JSON.toJSONString(res);
+                }
+
+                JSONArray fileInfosJson = JSON.parseArray(fileInfos);
+
+                musicService.updateMusicFile(id, files, fileInfosJson, userService.getUserByRequest(request));
+
+            } else {
+                res.setErrorMessage(userService.checkAuthority(request).message);
+            }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
     }
 
 }

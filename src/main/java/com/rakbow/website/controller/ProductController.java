@@ -15,7 +15,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
-import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -288,7 +288,7 @@ public class ProductController {
             if (userService.checkAuthority(request).state) {
 
                 if (images == null || images.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_IMAGE_EMPTY);
+                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
                     return JSON.toJSONString(res);
                 }
 

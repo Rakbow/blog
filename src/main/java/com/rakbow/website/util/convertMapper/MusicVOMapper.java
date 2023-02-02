@@ -8,7 +8,7 @@ import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -54,14 +54,13 @@ public interface MusicVOMapper {
         audioTypeObj.put("labelEn", AudioType.getNameEnByIndex(music.getAudioType()));
         musicVO.setAudioType(audioTypeObj);
 
-        musicVO.setAudioUrl(music.getAudioUrl());
+        musicVO.setFiles(JSON.parseArray(music.getFiles()));
 
         if (StringUtils.isBlank(music.getCoverUrl())) {
             musicVO.setCover(QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
         }else {
             musicVO.setCover(QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 80));
         }
-        musicVO.setLrcUrl(music.getLrcUrl());
         musicVO.setLrcText(music.getLrcText());
         musicVO.setAudioLength(music.getAudioLength());
         musicVO.setDescription(music.getDescription());

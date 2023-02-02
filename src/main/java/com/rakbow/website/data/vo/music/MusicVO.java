@@ -23,9 +23,8 @@ public class MusicVO {
     private int albumId;// 所属专辑id
     private int discSerial;// 所属碟片的顺序
     private String trackSerial;// 在碟片内的顺序
-    private String audioUrl;// 音频文件url （mp3）
     private String cover;// 封面图片url
-    private String lrcUrl;// 歌词文件url
+    private JSONArray files;// 歌词文件url
     private String lrcText;// 歌词文本 markdown格式
     private String audioLength;// 音频长度
     private String description;// 描述

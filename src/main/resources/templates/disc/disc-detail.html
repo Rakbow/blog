@@ -8,13 +8,11 @@
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
-    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
 
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
@@ -23,9 +21,9 @@
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
-    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/vue/vue.global.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
-    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+    <script th:src="@{/js/vue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
@@ -55,24 +53,24 @@
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
 
     <!-- Axios -->
-    <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
+    <script th:src="@{/tool/axios/axios.js}"></script>
 
     <!-- Jquery -->
-    <script src="https://cdn.staticfile.org/jquery/3.6.2/jquery.min.js"></script>
+    <script th:src="@{/js/jquery.js}"></script>
 
     <!-- high light js -->
-    <link href="https://cdn.staticfile.org/highlight.js/11.7.0/styles/default.min.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script>
+    <link th:href="@{/tool/highlight/default.min.css}" rel="stylesheet">
+    <script th:src="@{/tool/highlight/highlight.min.js}"></script>
 
     <!-- md-editor-v3 -->
-    <script th:src="@{/js/md-editor-v3/2.5.0/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/css/md-editor-v3/2.5.0/style.css}" rel="stylesheet">
+    <script th:src="@{/tool/md-editor-v3/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/tool/md-editor-v3/style.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script src="https://cdn.staticfile.org/marked/4.2.4/marked.min.js"></script>
-    <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
+    <script th:src="@{/js/marked.min.js}"></script>
+    <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet" />
 
-    <script src="https://cdn.staticfile.org/clipboard.js/2.0.11/clipboard.min.js"></script>
+    <script th:src="@{/js/clipboard.js}"></script>
 
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">

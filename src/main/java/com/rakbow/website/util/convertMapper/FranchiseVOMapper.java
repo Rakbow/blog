@@ -5,7 +5,7 @@ import com.rakbow.website.data.vo.franchise.FranchiseVO;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.image.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

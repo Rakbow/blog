@@ -1,5 +1,7 @@
 package com.rakbow.website.util.common;
 
+import com.rakbow.website.data.emun.system.FileType;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -8,12 +10,24 @@ package com.rakbow.website.util.common;
  */
 public class FileUtil {
 
-    // 图片允许的后缀扩展名
-    public static String[] IMAGE_FILE_EXTD = new String[] { "png", "bmp", "jpg", "jpeg"};
+    // 允许的后缀扩展名
+    public static String[] IMAGE_FILE_FORMATS = new String[] { "png", "bmp", "jpg", "jpeg"};
+    public static String[] AUDIO_FILE_FORMATS = new String[] { "mp3"};
+    public static String[] TEXT_FILE_FORMATS = new String[] { "lrc"};
 
-    public static boolean isFileAllowed(String fileName) {
-        for (String ext : IMAGE_FILE_EXTD) {
-            if (ext.equals(fileName)) {
+    public static boolean isFileFormatAllowed(String fileFormat, FileType fileType) {
+        String[] formats = null;
+        if (fileType == FileType.IMAGE) {
+            formats = IMAGE_FILE_FORMATS;
+        }
+        if (fileType == FileType.AUDIO) {
+            formats = AUDIO_FILE_FORMATS;
+        }
+        if (fileType == FileType.TEXT) {
+            formats = TEXT_FILE_FORMATS;
+        }
+        for (String format : formats) {
+            if (format.equals(fileFormat)) {
                 return true;
             }
         }

@@ -16,13 +16,14 @@ public class ApiInfo {
     public static final String GET_DATA_FAILED_404 = "无效的地址，或者该%s已从数据库中删除。";
 
     public static final String INPUT_TEXT_EMPTY = "输入信息为空！";
-    public static final String INPUT_IMAGE_EMPTY = "还没有选择图片！";
+    public static final String INPUT_FILE_EMPTY = "文件为空！";
     public static final String INCORRECT_FILE_FORMAT = "文件的格式不正确！";
     public static final String UPLOAD_EXCEPTION = "上传文件失败,服务器发生异常！";
 
     public static final String GET_IMAGE_FAILED = "读取图片失败: ";
     public static final String GET_FILE_FAILED = "读取文件失败: ";
-    public static final String IMAGE_FORMAT_EXCEPTION = "图片格式错误";
+    public static final String FILE_FORMAT_EXCEPTION = "%s格式错误";
+    public static final String FILE_FORMAT_UNSUPPORTED_EXCEPTION = "不支持的%s格式";
     public static final String UPDATE_IMAGES_SUCCESS = "%s图片更改成功！";
     public static final String INSERT_IMAGES_SUCCESS = "%s图片新增成功！";
     public static final String DELETE_IMAGES_SUCCESS = "%s图片删除成功！";

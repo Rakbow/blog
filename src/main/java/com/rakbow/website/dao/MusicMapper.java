@@ -25,18 +25,22 @@ public interface MusicMapper {
 
     int addMusic(Music music);
 
-    int updateMusic(int id, Music music);
+    void updateMusic(int id, Music music);
 
-    int deleteMusicById(int id);
+    void deleteMusicById(int id);
 
-    int deleteMusicByAlbumId(int albumId);
+    void deleteMusicByAlbumId(int albumId);
 
     int updateStatusById(int id);
 
-    int updateMusicCoverUrl(int id, String coverUrl);
+    void updateMusicCoverUrl(int id, String coverUrl);
 
-    int updateMusicArtists(int id, String artists, Timestamp editedTime);
-    int updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
-    int updateMusicDescription(int id, String description, Timestamp editedTime);
+    void updateMusicArtists(int id, String artists, Timestamp editedTime);
+
+    void updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
+
+    void updateMusicDescription(int id, String description, Timestamp editedTime);
+
+    void updateMusicFiles(int id, String files, Timestamp editedTime);
 
 }

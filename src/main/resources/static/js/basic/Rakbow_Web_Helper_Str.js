@@ -1,4 +1,4 @@
-const DOMAIN_URL = "http://localhost:8080";
+const DOMAIN_URL = "http://localhost:8083";
 //region page
 const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
 
@@ -40,6 +40,7 @@ const UPDATE_ALBUM_BONUS_URL = DOMAIN_URL + "/db/album/update-bonus";
 //endregion
 
 //region music
+const UPDATE_MUSIC_FILE_URL = DOMAIN_URL + "/db/music/update-file";
 const UPDATE_MUSIC_URL = DOMAIN_URL + "/db/music/update";
 const UPDATE_MUSIC_ARTISTS_URL = DOMAIN_URL + "/db/music/update-artists";
 const UPDATE_MUSIC_LYRICS_TEXT_URL = DOMAIN_URL + "/db/music/update-lyrics-text";

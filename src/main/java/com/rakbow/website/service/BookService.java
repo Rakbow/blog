@@ -12,7 +12,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
-import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

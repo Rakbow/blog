@@ -8,26 +8,23 @@
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
-    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
 
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
 
     <!-- PrimeVue -->
-<!--    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
-    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/vue/vue.global.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
-    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+    <script th:src="@{/js/vue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/panel.min.js}"></script>
@@ -49,23 +46,27 @@
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
+    <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
+    <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
+
     <!-- Axios -->
-    <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
+    <script th:src="@{/tool/axios/axios.js}"></script>
 
     <!-- Jquery -->
-    <script src="https://cdn.staticfile.org/jquery/3.6.2/jquery.min.js"></script>
+    <script th:src="@{/js/jquery.js}"></script>
 
     <!-- high light js -->
-    <link href="https://cdn.staticfile.org/highlight.js/11.7.0/styles/default.min.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script>
+    <link th:href="@{/tool/highlight/default.min.css}" rel="stylesheet">
+    <script th:src="@{/tool/highlight/highlight.min.js}"></script>
 
     <!-- md-editor-v3 -->
-    <script th:src="@{/js/md-editor-v3/2.5.0/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/css/md-editor-v3/2.5.0/style.css}" rel="stylesheet">
+    <script th:src="@{/tool/md-editor-v3/md-editor-v3.umd.js}"></script>
+    <link th:href="@{/tool/md-editor-v3/style.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script src="https://cdn.staticfile.org/marked/4.2.4/marked.min.js"></script>
-    <link href="https://cdn.staticfile.org/github-markdown-css/5.1.0/github-markdown.css" rel="stylesheet">
+    <script th:src="@{/js/marked.min.js}"></script>
+    <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet" />
 
     <!-- aPlayer -->
     <!--    <link href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">-->
@@ -243,7 +244,7 @@
                     <tbody class="detail-item-track-table">
                     <tr v-for="music in relatedMusics">
                         <th>{{music.trackSerial}}</th>
-                        <td nowrap="nowrap">
+                        <td class="text-truncate-1" style="width: 200px">
                             <a :href="'/db/music/' + music.id">
                                 {{music.name}}
                             </a>
@@ -301,14 +302,6 @@
             </div>
         </div>
         <div class="field">
-            <label>音频文件链接</label>
-            <p-inputtext v-model.trim="musicEdit.audioUrl"></p-inputtext>
-        </div>
-        <div class="field">
-            <label>歌词文件链接(lrc)</label>
-            <p-inputtext id="lrcUrl" v-model.trim="musicEdit.lrcUrl"></p-inputtext>
-        </div>
-        <div class="field">
             <label>备注</label>
             <p-textarea v-model.trim="musicEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
         </div>
@@ -317,6 +310,44 @@
                       @click="closeEditDialog"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
                       @click="submitEditMusic"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog v-model:visible="displayFileEditDialog" header="文件管理"
+              :style="{width: '500px'}" :modal="true">
+        <p-blockui :blocked="blockedPanel">
+            <p-panel>
+                <div class="grid">
+                    <div class="col-6 text-start">
+                        <p-fileupload
+                                mode="basic"
+                                :custom-upload="true"
+
+                                :auto="true"
+                                choose-label="上传文件"
+                                :max-file-size="10000000" :preview-width="100"
+                                invalid-file-size-message="{0}大小已超过{1}"
+                                @uploader="onUpload"
+                                @select="selectFile">
+                        </p-fileupload>
+                    </div>
+                    <div class="col-6 text-end">
+                        <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                  label="清空所选" @click="clearUploadedFile"></p-button>
+                    </div>
+                    <p-divider></p-divider>
+                    <div class="field">
+                        <span v-if=" fileHtml == '' " class="emptyInfo">还未选择文件</span>
+                        <section>
+                            <div id="fileBox" v-html="fileHtml"></div>
+                        </section>
+                    </div>
+                </div>
+            </p-panel>
+        </p-blockui>
+        <template #footer>
+            <p-button icon="pi pi-times" label="取消" @click="closeFileEditDialog"
+                      class="p-button-text"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="uploadFile"></p-button>
         </template>
     </p-dialog>
     <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
@@ -432,6 +463,95 @@
                 });
             })
 
+            //region ------上传文件------
+            const fileHtml = ref("");
+            const blockedPanel = ref(false);
+            const fileInfo = ref({
+                file: null,
+                name: '',
+                size: 0,
+                type: ''
+            });
+            const fileInfos = ref([]);
+            const displayFileEditDialog = ref(false);
+            const openFileEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            fileInfo.value = {};
+                            displayFileEditDialog.value = true;
+                        }
+                    })
+            };
+            const showFile = () => {
+                fileHtml.value = "";
+                //<![CDATA[
+                fileHtml.value += "<div class='grid'>";
+                for (const file of fileInfos.value) {
+                    fileHtml.value += '<div class="col-12">';
+                    fileHtml.value += '<p>文件名: ' + file.name + '</p>';
+                    fileHtml.value += '<p>文件大小: ' + (file.size/1024).toFixed(2) + 'KB</p>';
+                    fileHtml.value += '<p>文件类型: ' + file.type + '</p>';
+                    fileHtml.value += '</div>';
+                }
+                fileHtml.value += "</div>";
+                //]]>
+                document.getElementById("fileBox").innerHTML = fileHtml;
+            };
+            const closeFileEditDialog = () => {
+                fileInfo.value = {};
+                displayFileEditDialog.value = false;
+            };
+            const onUpload = (ev) => {
+                toast.add({severity: 'info', summary: 'Success', detail: FILE_SELECTED_INFO, life: 3000});
+                showFile();
+            };
+            const clearUploadedFile = () => {
+                fileInfos.value = [];
+                document.getElementById("fileBox").innerHTML = "";
+            };
+            const selectFile = (ev) => {
+                fileInfo.value.file = ev.files[0];
+                if (ev.files[0].type === 'audio/mpeg') {
+                    fileInfo.value.type = ev.files[0].type;
+                    fileInfo.value.name = ev.files[0].name;
+                    fileInfo.value.size = ev.files[0].size;
+                }
+                if (ev.files[0].name.substr(ev.files[0].name.lastIndexOf('.')+1) === 'lrc') {
+                    fileInfo.value.type = 'text/lrc';
+                    fileInfo.value.name = ev.files[0].name;
+                    fileInfo.value.size = ev.files[0].size;
+                }
+                fileInfos.value.push(fileInfo.value);
+                fileInfo.value = {};
+                console.log(fileInfos.value);
+            };
+            const uploadFile = () => {
+                blockedPanel.value = true;
+                const formData = new FormData();
+                for (const file of fileInfos.value) {
+                    formData.append("files", file.file);
+                }
+                formData.append("id", music.value.id);
+                formData.append("fileInfos", JSON.stringify(fileInfos.value));
+                axiosRequest(UPDATE_MUSIC_FILE_URL, formData)
+                    .then(res => {
+                        if (res.state === 1) {
+                            blockedPanel.value = false;
+                            closeFileEditDialog();
+                            location.reload(true);
+                        } else {
+                            blockedPanel.value = false;
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        }
+                    }).catch(err => {
+                    console.error(err);
+                });
+            };
+            //endregion
+
             //region ------页面header------
             const domainUrl = DOMAIN_URL;
             const selectedEntity = ref();
@@ -468,7 +588,14 @@
                     command: () => {
                         openLyricsEditDialog();
                     }
-                }
+                },
+                {
+                    label: '上传音频文件',
+                    icon: 'pi pi-file',
+                    command: () => {
+                        openFileEditDialog();
+                    }
+                },
             ]);
 
             //region ------编辑music信息------
@@ -729,6 +856,7 @@
                 displayLyricsDialog,
                 closeLyricsEditDialog,
                 submitLyrics,
+                blockedPanel,displayFileEditDialog,openFileEditDialog,closeFileEditDialog,onUpload,clearUploadedFile,selectFile,uploadFile,fileHtml
             }
         },
         components: {
@@ -750,6 +878,9 @@
             "p-column": primevue.column,
             "p-contextmenu": primevue.contextmenu,
             "p-card": primevue.card,
+            "p-fileupload": primevue.fileupload,
+            "p-blockui": primevue.blockui,
+            "p-progressbar": primevue.progressbar,
         }
     };
 
@@ -770,6 +901,11 @@
         .mount("#app");
 </script>
 <style>
+    a:hover {
+        /*border-bottom: 1px solid #ceffff;*/
+        text-decoration: underline;
+    }
+
     .related-album {
         margin: 0 0 0 1.25rem;
         padding: 0;

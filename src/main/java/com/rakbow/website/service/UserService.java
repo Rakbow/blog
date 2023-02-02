@@ -218,6 +218,22 @@ public class UserService{
         return res;
     }
 
+    public User getUserByRequest(HttpServletRequest request) {
+        // 从cookie中获取凭证
+        String ticket = CookieUtil.getValue(request, "ticket");
+
+        if (ticket != null) {
+            // 查询凭证
+            LoginTicket loginTicket = findLoginTicket(ticket);
+            // 检查凭证是否有效
+            if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
+                // 根据凭证查询用户
+                return findUserById(loginTicket.getUserId());
+            }
+        }
+        return null;
+    }
+
     //region ------图片操作------
     //endregion
 

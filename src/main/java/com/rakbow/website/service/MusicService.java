@@ -4,21 +4,28 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MusicMapper;
+import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.file.QiniuBaseUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +44,8 @@ public class MusicService {
     private MusicMapper musicMapper;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private QiniuBaseUtils qiniuBaseUtils;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -305,6 +314,50 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateMusicCoverUrl(int id, String coverUrl) {
         musicMapper.updateMusicCoverUrl(id, coverUrl);
+    }
+
+    /**
+     * 新增music文件
+     *
+     * @param id     id
+     * @param files 新增文件数组
+     * @param fileInfos 新增文件json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void updateMusicFile(int id, MultipartFile[] files, JSONArray fileInfos, User user) throws IOException {
+
+        //最终保存到数据库的json信息
+        JSONArray finalFiles = new JSONArray();
+
+        //创建存储链接前缀
+        String filePath = "file/" + EntityType.MUSIC.getNameEn().toLowerCase() + "/" + id + "/";
+
+        for (int i = 0; i < files.length; i++) {
+
+            ActionResult ar = new ActionResult();
+            //判断文件是否为lrc歌词
+            if (StringUtils.equals(files[i].getOriginalFilename().substring(files[i].getOriginalFilename().lastIndexOf(".")+1), "lrc")) {
+                //上传lrc歌词文件
+                ar = qiniuBaseUtils.uploadFileToQiniu(files[i], filePath, FileType.TEXT);
+            }else {
+                //上传音频文件
+                ar = qiniuBaseUtils.uploadFileToQiniu(files[i], filePath, FileType.AUDIO);
+            }
+            if (ar.state) {
+                JSONObject jo = new JSONObject();
+                jo.put("url", ar.data.toString());
+                jo.put("name", fileInfos.getJSONObject(i).getString("name"));
+                jo.put("size", fileInfos.getJSONObject(i).getIntValue("size"));
+                jo.put("type", fileInfos.getJSONObject(i).getString("type"));
+                jo.put("uploadTime", CommonUtils.getCurrentTime());
+                jo.put("uploadUser", user.getUsername());
+                finalFiles.add(jo);
+            }
+        }
+
+        musicMapper.updateMusicFiles(id, finalFiles.toJSONString(), new Timestamp(System.currentTimeMillis()));
+
     }
 
     //endregion

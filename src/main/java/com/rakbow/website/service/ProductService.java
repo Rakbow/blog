@@ -13,7 +13,7 @@ import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.entity.ProductUtils;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
-import com.rakbow.website.util.image.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,27 +7,24 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
     <!-- bootstrap -->
-    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
-    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
+
     <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
 
-    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/global.css}" rel="stylesheet"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
+    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet" />
 
     <!-- PrimeVue css -->
-    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
-    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/vue/vue.global.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
-    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+    <script th:src="@{/js/vue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/dataview.min.js}"></script>
@@ -43,9 +40,11 @@
     <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tabview.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tabpanel.min.js}"></script>
 
     <!-- Axios -->
-    <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
+    <script th:src="@{/tool/axios/axios.js}"></script>
 
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
@@ -55,156 +54,62 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="nk-container">
-    <div class="main">
-        <div id="app">
-            <!-- 头部 -->
-            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
+    <p-tabview class="index-tabview" ref="tabview" @tab-click="indexTabChange($event)" :active-index="3">
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-album"></i>
+                <h4>Albums</h4>
+            </template>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-book"></i>
+                <h4>Books</h4>
+            </template>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-Video-Disc"></i>
+                <h4>Discs</h4>
+            </template>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-youxi"></i>
+                <h4>Games</h4>
+            </template>
             <div class="grid mt-2">
                 <p-toast></p-toast>
-                <div class="col-12 sm:col-12 md:col-9 lg:col-7 lg:col-offset-1">
-                    <p-dataview :value="games" :layout="layout" :paginator="true" :rows="gamesRows"
-                                :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
-                                :lazy="true" @page="onPage($event)" :total-records="totalRecords">
-                        <template #empty>
-                            <div align="center" class="mt-2 mb-2">
-                                <span class="emptyInfo">暂无符合条件的结果</span>
-                            </div>
-                        </template>
-                        <template #header>
-                            <div class="grid grid-nogutter">
-                                <div class="col-4" style="text-align: left">
-                                    <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
-                                                placeholder="按出版时间排序"
-                                                @change="onSortChange($event)"></p-dropdown>
-                                </div>
-                                <div class="col-4" style="text-align: center">
-                                    <i class="pi iconfont icon-youxi mr-0" style="font-size: 2rem"></i>
-                                </div>
-                                <div class="col-4" style="text-align: right">
-                                    <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
-                                </div>
-                            </div>
-                        </template>
-                        <template #grid="slotProps">
-                            <div class="col-12 xl:col-3 lg:col-4 md:col-4 sm:col-6 xs:col-12">
-                                <div class="index-item-grid-card card">
-                                    <p-card>
-                                        <template #header>
-                                            <a :href="'/db/game/'+ slotProps.data.id">
-                                                <div class="block-img"
-                                                     :style="'background-image:url('+ slotProps.data.cover.url+');' ">
-                                                    <div class="absolute releaseDate">
-                                                        <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </template>
-                                        <template #title>
-                                            <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
-                                                {{slotProps.data.name}}
-                                            </span>
-                                        </template>
-                                        <template #subtitle>
-                                            <span class="text-truncate-2 ml-1 mr-1 mt-1 mb-1">
-                                                {{slotProps.data.nameZh}}
-                                            </span>
-                                        </template>
-                                        <template #content>
-                                            <div class="grid mt-0 mb-0">
-                                                <div class="field col-3 px-0 py-0">
-                                                    <span class="ml-2 text-end" style="color: white">
-                                                        {{slotProps.data.platform.nameEn}}</span>
-                                                </div>
-                                                <div class="field-3 col px-0 py-0">
-                                                    {{slotProps.data.region.nameZh}} <span
-                                                        :class="'fi fi-' + slotProps.data.region.code"></span>
-                                                </div>
-                                                <div class="field col-2 px-0 py-0" v-if="slotProps.data.hasBonus">
-                                                    <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
-                                                       v-tooltip="'包含特典'"></i>
-                                                </div>
-                                            </div>
-                                        </template>
-                                        <template #footer>
-                                            <ul class="list-inline">
-                                                <li class="list-inline-item" v-for="product of slotProps.data.products">
-                                                    <a :href="domainUrl + '/db/product/' + product.value">
-                                                        <i class="pi pi-tag" style="color: white"
-                                                           v-tooltip.bottom="product.label"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </template>
-                                    </p-card>
-                                </div>
-                            </div>
-                        </template>
-                        <template #list="slotProps">
-                            <div class="col-12">
-                                <div class="product-list-item">
-                                    <a :href="'/db/game/'+ slotProps.data.id">
-                                        <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
-                                    </a>
-                                    <div class="product-list-detail">
-                                        <a :href="'/db/game/'+ slotProps.data.id">
-                                            <div class="product-name">{{slotProps.data.name}}</div>
-                                        </a>
-                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                            {{slotProps.data.releaseDate}} <b>{{slotProps.data.platform.nameEn}}</b>
-                                        </span>
-                                        {{slotProps.data.region.nameZh}} <span
-                                            :class="'fi fi-' + slotProps.data.region.code"></span>
-                                        <br/>
-                                        <div class="formgrid grid">
-                                            <div class="field col" v-for="franchise in slotProps.data.franchises">
-                                                <a :href="'/db/franchise/' + franchise.value">
-                                                    <i class="pi pi-tags product-category-icon"></i>
-                                                    <span class="product-category">{{franchise.label}}</span>
-                                                </a>
-                                            </div>
-                                            <span class="field col-2" v-if="slotProps.data.hasBonus == 1">
-                                                <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
-                                                   v-tooltip="'包含特典'"></i>
-                                            </span>
-                                        </div>
-                                        <ul class="list-inline">
-                                            <li class="list-inline-item mr-2"
-                                                v-for="product of slotProps.data.products">
-                                                <a :href="domainUrl + '/db/product/' + product.value">
-                                                    <p-tag class="product-tag" icon="pi pi-tag"
-                                                           :value="product.label"></p-tag>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </p-dataview>
-                </div>
-                <div class="col-12 sm:col-12 md:col-3 lg:col-3">
+                <div class="col-2" style="min-width: 300px">
                     <p-panel>
                         <template #header>
-                            <i class="pi pi-search mr-2" style="font-size: 2rem"></i>
-                            <b>条件搜索</b>
+                            <span class="text-start side-panel-header">
+                                <i class="pi pi-filter"></i><span><strong>条件过滤</strong></span>
+                            </span>
                         </template>
                         <div class="grid p-fluid">
-                            <div class="col-12 md:col-6 sm:col-6">
+                            <div class="col-6 p-1">
                                 <label>游戏名</label>
                                 <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
                             </div>
-                            <div class="col-12 md:col-6 sm:col-6">
+                            <div class="col-6 p-1">
                                 <label>是否包含特典</label>
                                 <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
                                             placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
-                            <div class="col-12 md:col-6 sm:col-6">
+                            <div class="col-6 p-1">
                                 <label>所属系列</label>
                                 <p-multiselect v-model="queryParams.filters.franchises.value"
                                                @change="getProducts($event.value)"
@@ -212,21 +117,21 @@
                                                option-label="label" option-value="value" display="chip" :filter="true">
                                 </p-multiselect>
                             </div>
-                            <div class="col-12 md:col-6 sm:col-6">
+                            <div class="col-6 p-1">
                                 <label>所属作品</label>
                                 <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
                                                option-label="label" option-value="value" placeholder="请先选择所属系列"
                                                display="chip" :filter="true" :disabled="productSelect">
                                 </p-multiselect>
                             </div>
-                            <div class="col-12 md:col-6 sm:col-6">
+                            <div class="col-6 p-1">
                                 <label>平台</label>
                                 <p-dropdown v-model="queryParams.filters.platform.value" :options="gamePlatformSet"
                                             placeholder="所有" option-label="labelEn"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
-                            <div class="col-12 md:col-6 sm:col-6">
+                            <div class="col-6 p-1">
                                 <label>区域</label>
                                 <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
                                             :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
@@ -262,149 +167,207 @@
                     <br>
                     <p-panel>
                         <template #header>
-                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
-                            <b>最新收录</b>
+                            <span class="text-start side-panel-header">
+                                <i class="pi iconfont icon-youxi"></i><span><strong>最新收录</strong></span>
+                            </span>
                         </template>
                         <div class="grid">
-                            <span class="small-font">
-                                <div class="info_bit_small small-font ml-0 grid"
+                            <span class="small_font">
+                                <div class="info_bit_small small_font grid m-0 p-0"
                                      v-if="justAddedGames.length != 0"
-                                     v-for="addGame of justAddedGames">
-                                    <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                        <a :href="'/db/game/'+ addGame.id ">
-                                            <img class="sidebar-panel-image-small-no-radius"
-                                                 :src="addGame.cover.thumbUrl"
-                                                 v-tooltip.bottom="{value: '收录时间: ' + addGame.addedTime + '编辑时间: ' + addGame.editedTime, class: 'item-upload-time-tooltip'}">
+                                     v-for="game of justAddedGames">
+                                    <div class="sidebar-panel-image-small-div game_info_bit_thumb mt-2">
+                                        <a :href="'/db/game/'+ game.id">
+                                            <img class="sidebar-panel-image-small" :src="game.cover.blackUrl"
+                                                 v-tooltip.right="'收录时间: ' + game.addedTime + '编辑时间: ' + game.editedTime">
                                         </a>
                                     </div>
-                                    <div class="col-9">
-                                        <ul class="info_bit_detail">
-                                        <li>
-                                            <a class="small-font"
-                                               :href="'/db/game/'+ addGame.id ">
-                                                <span class="text-truncate-2" lang="ja">
-                                                    {{addGame.name}}
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <span class="small-font">
-                                                <b>{{addGame.releaseDate}}</b> {{addGame.platform.nameEn}} {{addGame.region.nameZh}} <span
-                                                    :class="'fi fi-' + addGame.region.code"></span>
-                                            </span>
-                                        </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </span>
-                            <br>
-                            <b class="rbot"><b></b></b>
-                        </div>
-                    </p-panel>
-                    <br>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
-                            <b>最新编辑</b>
-                        </template>
-                        <div class="grid">
-                            <span class="small-font">
-                                    <div class="info_bit_small small-font ml-0 grid"
-                                         v-if="justEditedGames.length != 0"
-                                         v-for="editGame of justEditedGames">
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/game/'+ editGame.id ">
-                                                <img class="sidebar-panel-image-small-no-radius"
-                                                     :src="editGame.cover.thumbUrl"
-                                                     v-tooltip.bottom="{value: '收录时间: ' + editGame.addedTime + '编辑时间: ' + editGame.editedTime, class: 'item-upload-time-tooltip'}">
-                                            </a>
-                                        </div>
-                                        <div class="col-9">
-                                            <ul class="info_bit_detail">
+                                    <div class="col p-0" style="height: 80px">
+                                        <ul class="info_bit_small_other">
                                             <li>
-                                            <a class="small-font"
-                                               :href="'/db/game/'+ editGame.id ">
-                                                <span class="text-truncate-2" lang="ja">
-                                                    {{editGame.name}}
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <span class="small-font">
-                                                <b>{{editGame.releaseDate}}</b> {{editGame.platform.nameEn}} {{editGame.region.nameZh}} <span
-                                                    :class="'fi fi-' + editGame.region.code"></span>
-                                            </span>
-                                        </li>
-                                        </ul>
-                                        </div>
-                                    </div>
-                                </span>
-                            <br>
-                            <b class="rbot"><b></b></b>
-                        </div>
-                    </p-panel>
-                    <br>
-                    <p-panel>
-                        <template #header>
-                            <i class="pi iconfont icon-youxi mr-2" style="font-size: 2rem"></i>
-                            <b>浏览排名</b>
-                        </template>
-                        <div class="grid">
-                            <span class="small-font">
-                                <div class="info_bit_small small-font ml-0 grid"
-                                     v-if="popularGames.length != 0"
-                                     v-for="(game, index) of popularGames">
-                                        <div class="col-2 ml-0 mr-0 mt-0 mb-0">
-                                            <div class="grid">
-                                                <div class="col-12 text-center">
-                                                    <i :class="'pi remixicon ri-number-' + index"
-                                                       style="font-size: 2rem"></i>
-                                                </div>
-                                                <div class="col-12">
-                                                    <i class="pi pi-eye" style="font-size: 0.5rem"></i>
-                                                    {{game.visitNum}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-3 sidebar-panel-image-small-div mt-2">
-                                            <a :href="'/db/game/'+ game.id ">
-                                                <img class="sidebar-panel-image-small-no-radius"
-                                                     :src="
-                                                     game.cover.thumbUrl"
-                                                >
-                                            </a>
-                                        </div>
-                                        <div class="col-7">
-                                            <ul class="info_bit_detail">
-                                            <li>
-                                                <a class="small-font"
+                                                <a class="small_font"
                                                    :href="'/db/game/'+ game.id ">
-                                                    <span class="text-truncate-2" lang="ja">
+                                                    <span class="text-truncate-2 ml-2 mr-2">
                                                         {{game.name}}
                                                     </span>
                                                 </a>
                                             </li>
                                             <li>
-                                                <span class="small-font">
-                                                    <b>{{game.releaseDate}}</b> {{game.platform.nameEn}} {{game.region.nameZh}} <span
-                                                        :class="'fi fi-' + game.region.code"></span>
+                                                <span class="small_font col-6 related-item-catalog">
+                                                    {{game.releaseDate}}
+                                                </span>
+                                                <span class="small_font col-6 related-item-date">
+                                                    <b>{{game.platform.nameEn}}</b> <span :class="'fi fi-' + game.region.code"></span>
                                                 </span>
                                             </li>
-                                            </ul>
-                                        </div>
+                                        </ul>
                                     </div>
+                                </div>
                             </span>
-                            <br>
-                            <b class="rbot"><b></b></b>
+                        </div>
+                    </p-panel>
+                </div>
+                <div class="col">
+                    <p-dataview :value="games" :layout="layout" :paginator="true" :rows="gamesRows"
+                                :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
+                                :lazy="true" @page="onPage($event)" :total-records="totalRecords"
+                                :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
+                        PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                                current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据">
+                        <template #empty>
+                            <div class="mt-2 mb-2">
+                                <span class="emptyInfo">暂无符合条件的结果</span>
+                            </div>
+                        </template>
+                        <template #header>
+                            <div class="grid grid-nogutter">
+                                <div class="col-6" style="text-align: left">
+                                    <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
+                                                placeholder="按发售时间排序"
+                                                @change="onSortChange($event)"></p-dropdown>
+                                </div>
+                                <!--                        <div class="col-4 index-dataview-title">-->
+                                <!--                            <h2><i class="pi iconfont icon-24gl-musicAlbum2"></i>&nbsp&nbsp专&nbsp&nbsp辑&nbsp&nbsp库&nbsp&nbsp</h2>-->
+                                <!--                        </div>-->
+                                <div class="col-6" style="text-align: right">
+                                    <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                                </div>
+                            </div>
+                        </template>
+                        <template #grid="slotProps">
+                            <div style="width: 197px">
+                                <div class="index-item-grid-card card">
+                                    <p-card>
+                                        <template #header>
+                                            <a :href="'/db/game/'+ slotProps.data.id">
+                                                <div class="block-img"
+                                                     :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                                    <div class="absolute releaseDate">
+                                                        <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </template>
+                                        <template #title>
+                                    <span class="text-truncate-2">
+                                        <a :href="'/db/merch/'+ slotProps.data.id">{{slotProps.data.name}}</a>
+                                    </span>
+                                        </template>
+                                        <template #content>
+                                            <div class="grid">
+                                                <div class="col text-start m-0 p-0">
+                                                    <span :class="'fi fi-' + slotProps.data.region.code" style="margin: 0 0.25rem"
+                                                          v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                                    </span>
+                                                    <span><p-tag class="ml-1" :value="slotProps.data.platform.nameEn"></p-tag></span>
+                                                </div>
+                                                <div class="col text-end m-0 p-0">
+                                                    <span class="p-1 has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                                        <p-tag style="background: #2f364f" value="特典"></p-tag>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </p-card>
+                                </div>
+                            </div>
+                        </template>
+                        <template #list="slotProps">
+                            <div class="col-12">
+                                <div class="index-list-item">
+                                    <a class="text-center" :href="'/db/game/'+ slotProps.data.id">
+                                        <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
+                                    </a>
+                                    <div class="index-list-item-detail">
+                                    <span class="index-list-item-name text-truncate-1">
+                                        <a :href="'/db/game/'+ slotProps.data.id">{{slotProps.data.name}}</a>
+                                    </span>
+                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                        <span class="label">&nbsp{{slotProps.data.releaseDate}}</span>
+                                    </span><br>
+                                        <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
+                                              v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                    </span>
+                                        <span>
+                                        <span>
+                                            <p-tag class="ml-1" :value="slotProps.data.platform.nameEn"></p-tag>
+                                        </span>
+                                        <span class="has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                            <p-tag style="background: #001122" class="ml-1" value="特典"></p-tag>
+                                        </span>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </p-dataview>
+                </div>
+                <div class="col-2" style="min-width: 300px">
+                    <p-panel>
+                        <template #header>
+                            <span class="text-start side-panel-header">
+                                <i class="pi iconfont icon-youxi"></i><span><strong>浏览排名</strong></span>
+                            </span>
+                        </template>
+                        <div class="grid">
+                            <span class="small_font">
+                                <div class="info_bit_small small_font grid m-0 p-0"
+                                     v-if="popularGames.length != 0"
+                                     v-for="(game, index) of popularGames">
+                                    <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                        <div class="col-12 p-0 m-0">
+                                            <i :class="'pi remixicon ri-number-' + index"
+                                               style="font-size: 2rem"></i>
+                                        </div>
+                                        <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                            <i class="pi pi-eye"></i><br>{{game.visitNum}}
+                                        </span>
+                                    </div>
+                                    <div class="sidebar-panel-image-small-div game_info_bit_thumb mt-2">
+                                        <a :href="'/db/game/'+ game.id">
+                                            <img class="sidebar-panel-image-small" :src="game.cover.blackUrl"
+                                                 v-tooltip.bottom="'收录时间: ' + game.addedTime + '编辑时间: ' + game.editedTime">
+                                        </a>
+                                    </div>
+                                    <div class="col p-0" style="height: 90px">
+                                        <ul class="info_bit_small_other">
+                                            <li>
+                                                <a class="small_font"
+                                                   :href="'/db/game/'+ game.id ">
+                                                    <span class="text-truncate-2 ml-2 mr-2">
+                                                        {{game.name}}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="small_font col-6 related-item-catalog">
+                                                    <b>{{game.releaseDate}}</b><br>
+                                                </span>
+                                            </li>
+                                            <li>
+                                                <span class="small_font col-6 related-item-date">
+                                                    <span :class="'fi fi-' + game.region.code"></span>&nbsp{{game.platform.nameEn}}
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </span>
                         </div>
                     </p-panel>
                 </div>
             </div>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-yinshuabaozhuang"></i>
+                <h4>Merchs</h4>
+            </template>
+        </p-tabpanel>
+    </p-tabview>
 
-            <!-- 尾部 -->
-            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
-        </div>
-    </div>
+    <!-- 尾部 -->
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, watch, ref} = Vue;
@@ -434,7 +397,6 @@
             const franchiseSet = ref([[${franchiseSet}]]);
             const gamePlatformSet = ref([[${gamePlatformSet}]]);
             const regionSet = ref([[${regionSet}]]);
-            const justEditedGames = ref([[${justEditedGames}]]);
             const justAddedGames = ref([[${justAddedGames}]]);
             const popularGames = ref([[${popularGames}]]);
             const gamesRows = ref(20);
@@ -553,8 +515,8 @@
                 regionSet, gamePlatformSet, regionCode2NameZh, clearSearch, hasBonusSet, gamesRows,
                 getProducts, franchiseSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
-                justAddedGames, justEditedGames, popularGames, games, layout,
-                sortKey, sortOptions, getGames, totalRecords, onPage
+                justAddedGames, popularGames, games, layout,
+                sortKey, sortOptions, getGames, totalRecords, onPage, indexTabs, indexTabChange,
             }
         },
         components: {
@@ -571,7 +533,9 @@
             "p-inputtext": primevue.inputtext,
             "p-badge": primevue.badge,
             "p-multiselect": primevue.multiselect,
-            "p-toast": primevue.toast
+            "p-toast": primevue.toast,
+            "p-tabview": primevue.tabview,
+            "p-tabpanel": primevue.tabpanel,
         }
     };
 

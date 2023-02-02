@@ -7,14 +7,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
     <!-- bootstrap -->
-    <script src="https://cdn.staticfile.org/bootstrap/5.2.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.js"></script>
-    <link href="https://cdn.staticfile.org/baguettebox.js/1.11.1/baguetteBox.min.css" rel="stylesheet">
+    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
+
     <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
 
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
+    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet" />
 
     <!-- PrimeVue css -->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
@@ -23,9 +22,9 @@
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
-    <script src="https://cdn.staticfile.org/vue/3.2.41/vue.global.js"></script>
+    <script th:src="@{/js/vue/vue.global.js}"></script>
     <script th:src="@{/js/primevue/primevue.min.js}"></script>
-    <script src="https://cdn.staticfile.org/vue-router/4.1.6/vue-router.global.js"></script>
+    <script th:src="@{/js/vue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/dataview.min.js}"></script>
@@ -42,9 +41,11 @@
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tabview.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tabpanel.min.js}"></script>
 
     <!-- Axios -->
-    <script src="https://cdn.staticfile.org/axios/1.2.1/axios.min.js"></script>
+    <script th:src="@{/tool/axios/axios.js}"></script>
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -61,354 +62,339 @@
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-    <div class="grid mt-2">
-        <p-toast></p-toast>
-        <div class="col-8 lg:col-offset-1">
-            <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="albumsRows"
-                        :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
-                        :lazy="true" @page="onPage($event)" :total-records="totalRecords">
-                <template #empty>
-                    <div align="center" class="mt-2 mb-2">
-                        <span class="emptyInfo">暂无符合条件的结果</span>
-                    </div>
-                </template>
-                <template #header>
-                    <div class="grid grid-nogutter">
-                        <div class="col-4" style="text-align: left">
-                            <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
-                                        placeholder="按发行时间排序"
-                                        @change="onSortChange($event)"></p-dropdown>
+    <p-tabview class="index-tabview" ref="tabview" @tab-click="indexTabChange($event)" :active-index="0">
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-album"></i>
+                <h4>Albums</h4>
+            </template>
+            <div class="grid mt-2">
+                <p-toast></p-toast>
+                <div class="col-2" style="min-width: 300px">
+                    <p-panel>
+                        <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-filter"></i><span><strong>条件过滤</strong></span>
+                        </span>
+                        </template>
+                        <div class="grid p-fluid">
+                            <div class="col-6 p-1">
+                                <label>名称</label>
+                                <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>编号</label>
+                                <p-inputtext v-model.trim="queryParams.filters.catalogNo.value"></p-inputtext>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>所属系列</label>
+                                <p-multiselect v-model="queryParams.filters.franchises.value" @change="getProducts($event.value)"
+                                               :options="franchiseSet" placeholder="所属系列"
+                                               option-label="label" option-value="value" display="chip" :filter="true">
+                                </p-multiselect>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>所属作品</label>
+                                <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
+                                               option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                               display="chip" :filter="true" :disabled="productSelect">
+                                </p-multiselect>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>是否包含特典</label>
+                                <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
+                                            placeholder="所有" option-label="label"
+                                            option-value="value">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>出版形式</label>
+                                <p-multiselect v-model="queryParams.filters.publishFormat.value"
+                                               :options="publishFormatSet"
+                                               option-label="label" option-value="value"
+                                               placeholder="所有"
+                                               display="chip" :filter="true">
+                                </p-multiselect>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>专辑分类</label>
+                                <p-multiselect v-model="queryParams.filters.albumFormat.value"
+                                               :options="albumFormatSet"
+                                               option-label="label" option-value="value"
+                                               placeholder="所有"
+                                               display="chip" :filter="true">
+                                </p-multiselect>
+                            </div>
+                            <div class="col-6 p-1">
+                                <label>媒体格式</label>
+                                <p-multiselect v-model="queryParams.filters.mediaFormat.value"
+                                               :options="mediaFormatSet"
+                                               option-label="label" option-value="value"
+                                               placeholder="所有"
+                                               display="chip" :filter="true">
+                                </p-multiselect>
+                            </div>
+                            <div class="col-4 col-offset-2" style="text-align: right">
+                                <p-button icon="pi pi-filter-slash"
+                                          class="p-button-rounded p-button-info"
+                                          v-tooltip.bottom="'清空'"
+                                          @click="clearSearch"></p-button>
+                            </div>
+                            <div class="col-4" style="text-align: left">
+                                <p-button icon="pi pi-search"
+                                          class="p-button-rounded p-button-success"
+                                          v-tooltip.bottom="'搜索'"
+                                          @click="getAlbums"></p-button>
+                            </div>
                         </div>
-                        <div class="col-4 index-dataview-title">
-                            <h2><i class="pi iconfont icon-24gl-musicAlbum2"></i>&nbsp&nbsp专&nbsp&nbsp辑&nbsp&nbsp库&nbsp&nbsp</h2>
-                        </div>
-                        <div class="col-4" style="text-align: right">
-                            <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
-                        </div>
-                    </div>
-                </template>
-                <template #grid="slotProps">
-                    <div style="width: 197px">
-                        <div class="index-item-grid-card card">
-                            <p-card>
-                                <template #header>
-                                    <a :href="'/db/album/'+ slotProps.data.id">
-                                        <div class="block-img"
-                                             :style="'background-image:url('+ slotProps.data.cover.url+');' ">
-                                            <p-tag class="catalog ml-1 mt-1">
-                                                {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
-                                            </p-tag>
-                                            <div class="absolute releaseDate">
-                                                <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
-                                            </div>
-                                        </div>
+                    </p-panel>
+                    <br>
+                    <p-panel>
+                        <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi iconfont icon-album"></i><span><strong>最新收录</strong></span>
+                        </span>
+                        </template>
+                        <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="justAddedAlbums.length != 0"
+                                 v-for="addedAlbum of justAddedAlbums">
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <a :href="'/db/album/'+ addedAlbum.id">
+                                        <img class="sidebar-panel-image-small" :src="addedAlbum.cover.blackUrl"
+                                             v-tooltip.right="'收录时间: ' + addedAlbum.addedTime + '编辑时间: ' + addedAlbum.editedTime">
                                     </a>
-                                </template>
-                                <template #title>
-                                    <span class="text-truncate-2">
-                                        {{slotProps.data.name}}
-                                    </span>
-                                </template>
-                                <template #subtitle>
-                                    <div class="grid">
-                                        <span v-if="slotProps.data.price != 0" class="col-8 p-1 price-text ml-1">
-                                            {{slotProps.data.price}} {{slotProps.data.currencyUnit}}
-                                        </span>
-                                        <span v-else class="col-8 p-1 price-text">
-                                            N/A
-                                        </span>
-                                        <span class="col-3 p-1 text-end" v-if="slotProps.data.hasBonus">
-                                            <i class="pi iconfont icon-gift" v-tooltip="'包含特典'"></i>
-                                        </span>
-                                    </div>
-                                </template>
-                                <template #content>
-                                    <div class="grid">
-                                        <div class="col-12 p-1">
-                                            <span v-for="format of slotProps.data.albumFormat" style="display:inline">
-                                                <p-tag class="ml-1" :value="format.label"></p-tag>
-                                            </span>
-                                        </div>
-                                        <div class="col-12 p-1">
-                                            <span v-for="(format, index) in slotProps.data.publishFormat" style="display:inline">
-                                                <span class="label" style="font-size: 11px">
-                                                    <span v-if="index > 0">/</span>
-                                                    {{format.label}}
+                                </div>
+                                <div class="col p-0" style="height: 80px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a class="small_font"
+                                               :href="'/db/album/'+ addedAlbum.id ">
+                                                <span class="text-truncate-2 ml-2 mr-2">
+                                                    {{addedAlbum.name}}
                                                 </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font col-6 related-item-catalog">
+                                                {{addedAlbum.catalogNo ? addedAlbum.catalogNo : 'N/A'}}
                                             </span>
+                                            <span class="small_font col-6 related-item-date">
+                                                {{addedAlbum.releaseDate}}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                        </div>
+                    </p-panel>
+                </div>
+                <div class="col">
+                    <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="albumsRows"
+                                :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
+                                :lazy="true" @page="onPage($event)" :total-records="totalRecords"
+                                :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
+                            PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                                current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据">
+                        <template #empty>
+                            <div class="mt-2 mb-2">
+                                <span class="emptyInfo">暂无符合条件的结果</span>
+                            </div>
+                        </template>
+                        <template #header>
+                            <div class="grid grid-nogutter">
+                                <div class="col-6" style="text-align: left">
+                                    <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
+                                                placeholder="按发行时间排序"
+                                                @change="onSortChange($event)"></p-dropdown>
+                                </div>
+                                <!--                        <div class="col-4 index-dataview-title">-->
+<!--                                                            <h2><i class="pi iconfont icon-24gl-musicAlbum2"></i>&nbsp&nbsp专&nbsp&nbsp辑&nbsp&nbsp库&nbsp&nbsp</h2>-->
+                                <!--                        </div>-->
+                                <div class="col-6" style="text-align: right">
+                                    <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                                </div>
+                            </div>
+                        </template>
+                        <template #grid="slotProps">
+                            <div style="width: 197px">
+                                <div class="index-item-grid-card card">
+                                    <p-card>
+                                        <template #header>
+                                            <a :href="'/db/album/'+ slotProps.data.id">
+                                                <div class="block-img"
+                                                     :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                                    <p-tag class="catalog ml-1 mt-1">
+                                                        {{slotProps.data.catalogNo?slotProps.data.catalogNo:"N/A"}}
+                                                    </p-tag>
+                                                    <div class="absolute releaseDate">
+                                                        <span class="text-center" style="color: white">{{slotProps.data.releaseDate}}</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </template>
+                                        <template #title>
+                                        <span class="text-truncate-2">
+                                            <a :href="'/db/merch/'+ slotProps.data.id">{{slotProps.data.name}}</a>
+                                        </span>
+                                        </template>
+                                        <!--                                <template #subtitle>-->
+                                        <!--                                    <div class="grid">-->
+                                        <!--                                        <span v-if="slotProps.data.price != 0" class="col-8 p-1 price-text ml-1">-->
+                                        <!--                                            {{slotProps.data.price}} {{slotProps.data.currencyUnit}}-->
+                                        <!--                                        </span>-->
+                                        <!--                                        <span v-else class="col-8 p-1 price-text">-->
+                                        <!--                                            N/A-->
+                                        <!--                                        </span>-->
+                                        <!--                                    </div>-->
+                                        <!--                                </template>-->
+                                        <template #content>
+                                            <div class="grid">
+                                                <div class="col-12 p-1">
+                                                <span v-for="format of slotProps.data.albumFormat" style="display:inline">
+                                                    <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                </span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <div class="grid">
+                                                <div class="col-8 p-1 ml-1">
+                                                <span v-for="product of slotProps.data.products" style="display:inline">
+                                                    <a class="no-text-decoration" :href="'/db/product/' + product.value">
+                                                        <i class="pi pi-tag ml-1" style="color: white"
+                                                           v-tooltip.bottom="product.label"></i>
+                                                    </a>
+                                                </span>
+                                                </div>
+                                                <div>
+                                                <span class="col-3 p-1 text-end has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                                    <p-tag style="background: #2f364f" class="ml-1" value="特典"></p-tag>
+                                                </span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </p-card>
+                                </div>
+                            </div>
+                        </template>
+                        <template #list="slotProps">
+                            <div class="col-12">
+                                <div class="index-list-item">
+                                    <a class="text-center" :href="'/db/album/'+ slotProps.data.id">
+                                        <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
+                                    </a>
+                                    <div class="index-list-item-detail">
+                                    <span class="index-list-item-name text-truncate-1">
+                                        <a :href="'/db/album/'+ slotProps.data.id">{{slotProps.data.name}}</a>
+                                    </span>
+                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                        <b class="label">{{slotProps.data.catalogNo}}</b><span class="label">&nbsp{{slotProps.data.releaseDate}}</span>
+                                    </span>
+                                        <span class="ml-2">
+                                        <span class="has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                            <p-tag style="background: #001122" class="ml-1" value="特典"></p-tag>
+                                        </span>
+                                        <div v-for="format of slotProps.data.albumFormat" style="display:inline">
+                                            <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
                                         </div>
-                                    </div>
-                                </template>
-                                <template #footer>
-                                    <span v-for="product of slotProps.data.products" style="display:inline">
-                                        <a :href="domainUrl + '/db/product/' + product.value">
-                                            <i class="pi pi-tag ml-1" style="color: white"
-                                               v-tooltip.bottom="product.label"></i>
+                                    </span>
+                                        <br/>
+                                        <span v-for="product of slotProps.data.products" style="display:inline">
+                                        <a class="no-text-decoration" :href="'/db/product/' + product.value">
+                                            <p-chip :label="product.label"></p-chip>
+                                            <!--                                        <i class="pi pi-tag ml-1" style="color: white"-->
+                                            <!--                                           v-tooltip.bottom="product.label"></i>-->
                                         </a>
                                     </span>
-                                </template>
-                            </p-card>
-                        </div>
-                    </div>
-                </template>
-                <template #list="slotProps">
-                    <div class="col-12">
-                        <div class="product-list-item">
-                            <a :href="'/db/album/'+ slotProps.data.id">
-                                <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
-                            </a>
-                            <div class="product-list-detail">
-                                <a :href="'/db/album/'+ slotProps.data.id">
-                                    <div class="product-name">{{slotProps.data.name}}</div>
-                                </a>
-                                <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                            <b>{{slotProps.data.catalogNo}}</b> {{slotProps.data.releaseDate}}
-                                        </span>
-                                <span class="ml-2">
-                                            <div v-for="format of slotProps.data.albumFormat" style="display:inline">
-                                                <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
-                                            </div>
-                                        </span>
-                                <br/>
-                                <div v-for="franchise in slotProps.data.franchises">
-                                    <a :href="'/db/franchise/' + franchise.value">
-                                        <i class="pi pi-tags product-category-icon"></i>
-                                        <span class="product-category">{{franchise.label}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </p-dataview>
+                </div>
+                <div class="col-2" style="min-width: 300px">
+                    <p-panel>
+                        <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi iconfont icon-album"></i><span><strong>浏览排名</strong></span>
+                        </span>
+                        </template>
+                        <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="popularAlbums.length != 0"
+                                 v-for="(album, index) of popularAlbums">
+                                <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                    <div class="col-12 p-0 m-0">
+                                        <i :class="'pi remixicon ri-number-' + index"
+                                           style="font-size: 2rem"></i>
+                                    </div>
+                                    <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                        <i class="pi pi-eye"></i><br>{{album.visitNum}}
+                                    </span>
+                                </div>
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <a :href="'/db/album/'+ album.id">
+                                        <img class="sidebar-panel-image-small" :src="album.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + album.addedTime + '编辑时间: ' + album.editedTime">
                                     </a>
                                 </div>
-                                <span class="col-2" v-if="slotProps.data.hasBonus">
-                                            <i class="pi iconfont icon-gift" style="font-size: 1.3rem"
-                                               v-tooltip="'包含特典'"></i>
-                                        </span>
-                                <ul class="list-inline">
-                                    <li class="list-inline-item mr-2"
-                                        v-for="product of slotProps.data.products">
-                                        <a :href="domainUrl + '/db/product/' + product.value">
-                                            <p-tag class="product-tag" icon="pi pi-tag"
-                                                   :value="product.label"></p-tag>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </p-dataview>
-        </div>
-        <div class="col-2" style="min-width: 300px">
-            <p-panel>
-                <template #header>
-                    <span class="text-start side-panel-header">
-                        <i class="pi pi-filter"></i><span><strong>条件过滤</strong></span>
-                    </span>
-                </template>
-                <div class="grid p-fluid">
-                    <div class="col-6 p-1">
-                        <label>名称</label>
-                        <p-inputtext v-model.trim="queryParams.filters.name.value"></p-inputtext>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>编号</label>
-                        <p-inputtext v-model.trim="queryParams.filters.catalogNo.value"></p-inputtext>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>所属系列</label>
-                        <p-multiselect v-model="queryParams.filters.franchises.value" @change="getProducts($event.value)"
-                                       :options="franchiseSet" placeholder="所属系列"
-                                       option-label="label" option-value="value" display="chip" :filter="true">
-                        </p-multiselect>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>所属作品</label>
-                        <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
-                                       option-label="label" option-value="value" placeholder="请先选择所属系列"
-                                       display="chip" :filter="true" :disabled="productSelect">
-                        </p-multiselect>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>是否包含特典</label>
-                        <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
-                                    placeholder="所有" option-label="label"
-                                    option-value="value">
-                        </p-dropdown>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>出版形式</label>
-                        <p-multiselect v-model="queryParams.filters.publishFormat.value"
-                                       :options="publishFormatSet"
-                                       option-label="label" option-value="value"
-                                       placeholder="所有"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>专辑分类</label>
-                        <p-multiselect v-model="queryParams.filters.albumFormat.value"
-                                       :options="albumFormatSet"
-                                       option-label="label" option-value="value"
-                                       placeholder="所有"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
-                    </div>
-                    <div class="col-6 p-1">
-                        <label>媒体格式</label>
-                        <p-multiselect v-model="queryParams.filters.mediaFormat.value"
-                                       :options="mediaFormatSet"
-                                       option-label="label" option-value="value"
-                                       placeholder="所有"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
-                    </div>
-                    <div class="col-4 col-offset-2" style="text-align: right">
-                        <p-button icon="pi pi-filter-slash"
-                                  class="p-button-rounded p-button-info"
-                                  v-tooltip.bottom="'清空'"
-                                  @click="clearSearch"></p-button>
-                    </div>
-                    <div class="col-4" style="text-align: left">
-                        <p-button icon="pi pi-search"
-                                  class="p-button-rounded p-button-success"
-                                  v-tooltip.bottom="'搜索'"
-                                  @click="getAlbums"></p-button>
-                    </div>
-                </div>
-            </p-panel>
-<!--            <br>-->
-<!--            <p-panel>-->
-<!--                <template #header>-->
-<!--                    <span class="text-start side-panel-header">-->
-<!--                        <i class="pi iconfont icon-album"></i><span><strong>最新收录</strong></span>-->
-<!--                    </span>-->
-<!--                </template>-->
-<!--                <div class="grid">-->
-<!--                    <span class="small_font">-->
-<!--                        <div class="info_bit_small small_font grid m-0 p-0"-->
-<!--                             v-if="justAddedAlbums.length != 0"-->
-<!--                             v-for="addedAlbum of justAddedAlbums">-->
-<!--                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">-->
-<!--                                <a :href="'/db/album/'+ addedAlbum.id">-->
-<!--                                    <img class="sidebar-panel-image-small" :src="addedAlbum.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + addedAlbum.addedTime + '编辑时间: ' + addedAlbum.editedTime">-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                            <div class="col p-0" style="height: 80px">-->
-<!--                                <ul class="info_bit_small_other">-->
-<!--                                    <li>-->
-<!--                                        <a class="small_font"-->
-<!--                                           :href="'/db/album/'+ addedAlbum.id ">-->
-<!--                                            <span class="text-truncate-2 mr-2">-->
-<!--                                                {{addedAlbum.name}}-->
-<!--                                            </span>-->
-<!--                                        </a>-->
-<!--                                    </li>-->
-<!--                                    <li>-->
-<!--                                        <span class="small_font col-6 related-item-catalog">-->
-<!--                                            {{addedAlbum.catalogNo ? addedAlbum.catalogNo : 'N/A'}}-->
-<!--                                        </span>-->
-<!--                                        <span class="small_font col-6 related-item-date">-->
-<!--                                            {{addedAlbum.releaseDate}}-->
-<!--                                        </span>-->
-<!--                                    </li>-->
-<!--                                </ul>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </span>-->
-<!--                </div>-->
-<!--            </p-panel>-->
-<!--            <br>-->
-<!--            <p-panel>-->
-<!--                <template #header>-->
-<!--                    <span class="text-start side-panel-header">-->
-<!--                        <i class="pi iconfont icon-album"></i><span><strong>最新编辑</strong></span>-->
-<!--                    </span>-->
-<!--                </template>-->
-<!--                <div class="grid">-->
-<!--                    <span class="small_font">-->
-<!--                        <div class="info_bit_small small_font grid m-0 p-0"-->
-<!--                             v-if="justEditedAlbums.length != 0"-->
-<!--                             v-for="editedAlbum of justEditedAlbums">-->
-<!--                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">-->
-<!--                                <a :href="'/db/album/'+ editedAlbum.id">-->
-<!--                                    <img class="sidebar-panel-image-small" :src="editedAlbum.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + editedAlbum.addedTime + '编辑时间: ' + editedAlbum.editedTime">-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                            <div class="col p-0" style="height: 80px">-->
-<!--                                <ul class="info_bit_small_other">-->
-<!--                                    <li>-->
-<!--                                        <a class="small_font"-->
-<!--                                           :href="'/db/album/'+ editedAlbum.id ">-->
-<!--                                            <span class="text-truncate-2 mr-2">-->
-<!--                                                {{editedAlbum.name}}-->
-<!--                                            </span>-->
-<!--                                        </a>-->
-<!--                                    </li>-->
-<!--                                    <li>-->
-<!--                                        <span class="small_font col-6 related-item-catalog">-->
-<!--                                            {{editedAlbum.catalogNo ? editedAlbum.catalogNo : 'N/A'}}-->
-<!--                                        </span>-->
-<!--                                        <span class="small_font col-6 related-item-date">-->
-<!--                                            {{editedAlbum.releaseDate}}-->
-<!--                                        </span>-->
-<!--                                    </li>-->
-<!--                                </ul>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </span>-->
-<!--                </div>-->
-<!--            </p-panel>-->
-            <br>
-            <p-panel>
-                <template #header>
-                    <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-album"></i><span><strong>浏览排名</strong></span>
-                    </span>
-                </template>
-                <div class="grid">
-                    <span class="small_font">
-                        <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="popularAlbums.length != 0"
-                             v-for="(album, index) of popularAlbums">
-                            <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
-                                <div class="col-12 p-0 m-0">
-                                    <i :class="'pi remixicon ri-number-' + index"
-                                       style="font-size: 2rem"></i>
-                                </div>
-                                <span class="col-12 p-0 m-0" style="font-size: 9px">
-                                    <i class="pi pi-eye"></i><br>{{album.visitNum}}
-                                </span>
-                            </div>
-                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
-                                <a :href="'/db/album/'+ album.id">
-                                    <img class="sidebar-panel-image-small" :src="album.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + album.addedTime + '编辑时间: ' + album.editedTime">
-                                </a>
-                            </div>
-                            <div class="col p-0" style="height: 90px">
-                                <ul class="info_bit_small_other">
-                                    <li>
-                                        <a class="small_font"
-                                           :href="'/db/album/'+ album.id ">
-                                            <span class="text-truncate-2 mr-2">
-                                                {{album.name}}
+                                <div class="col p-0" style="height: 90px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a class="small_font"
+                                               :href="'/db/album/'+ album.id ">
+                                                <span class="text-truncate-2 mr-2">
+                                                    {{album.name}}
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-catalog">
+                                                {{album.catalogNo ? album.catalogNo : 'N/A'}}
                                             </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <span class="small_font related-item-catalog">
-                                            {{album.catalogNo ? album.catalogNo : 'N/A'}}
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span class="small_font related-item-date">
-                                            {{album.releaseDate}}
-                                        </span>
-                                    </li>
-                                </ul>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-date">
+                                                {{album.releaseDate}}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
+                        </span>
                         </div>
-                    </span>
+                    </p-panel>
                 </div>
-            </p-panel>
-        </div>
-    </div>
+            </div>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-book"></i>
+                <h4>Books</h4>
+            </template>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-Video-Disc"></i>
+                <h4>Discs</h4>
+            </template>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-youxi"></i>
+                <h4>Games</h4>
+            </template>
+        </p-tabpanel>
+        <p-tabpanel>
+            <template #header>
+                <i class="pi iconfont icon-yinshuabaozhuang"></i>
+                <h4>Merchs</h4>
+            </template>
+        </p-tabpanel>
+    </p-tabview>
 
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
@@ -435,24 +421,21 @@
             //region ------基础------
             const albums = ref();
             const franchiseSet = ref([[${franchiseSet}]]);
-            const justEditedAlbums = ref([[${justEditedAlbums}]]);
             const justAddedAlbums = ref([[${justAddedAlbums}]]);
             const popularAlbums = ref([[${popularAlbums}]]);
             const albumsRows = ref(20);
             const layout = ref('grid');
             const sortKey = ref();
             const sortOptions = ref([
-                {label: '按发售时间正序', value: 'releaseDate'},
-                {label: '按发售时间逆序', value: '!releaseDate'},
-                {label: '按发售价格正序', value: 'price'},
-                {label: '按发售价格逆序', value: '!price'},
+                {label: '按发行时间正序', value: 'releaseDate'},
+                {label: '按发行时间逆序', value: '!releaseDate'},
             ]);
 
             watch(() => layout.value, (newValue, oldValue) => {
                 if (newValue === "grid") {
                     albumsRows.value = 20;
                 } else {
-                    albumsRows.value = 20;
+                    albumsRows.value = 10;
                 }
             }, {deep: true});
             //endregion
@@ -561,11 +544,11 @@
             };
 
             return {
-                clearSearch, hasBonusSet, albumsRows,
+                clearSearch, hasBonusSet, albumsRows, indexTabs, indexTabChange,
                 publishFormatSet, albumFormatSet, mediaFormatSet,
                 getProducts, franchiseSet, productSet, queryParams, productSelect,
                 domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
-                justAddedAlbums, justEditedAlbums, popularAlbums, albums, layout,
+                justAddedAlbums, popularAlbums, albums, layout,
                 sortKey, sortOptions, getAlbums, totalRecords, onPage
             }
         },
@@ -585,6 +568,8 @@
             "p-multiselect": primevue.multiselect,
             "p-toast": primevue.toast,
             "p-chip": primevue.chip,
+            "p-tabview": primevue.tabview,
+            "p-tabpanel": primevue.tabpanel,
         }
     };
 
