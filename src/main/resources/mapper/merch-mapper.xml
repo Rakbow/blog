@@ -21,6 +21,13 @@
         where id = #{id} and _s = 1
     </select>
 
+    <select id="getAll" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where _s = 1
+    </select>
+
     <insert id="addMerch" parameterType="Merch" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()

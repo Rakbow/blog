@@ -7,12 +7,14 @@ import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
+import com.rakbow.website.data.vo.disc.DiscVOGamma;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.util.entity.AlbumUtils;
 import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.AlbumUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.entity.ProductUtils;
+import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -195,6 +197,62 @@ public interface DiscVOMapper {
         }
 
         return discVOBetas;
+    }
+
+    /**
+     * 转VO对象，用于存储到搜索引擎
+     *
+     * @param
+     * @return DiscVOGamma
+     * @author rakbow
+     */
+    default DiscVOGamma disc2VOGamma(Disc disc) {
+        if (disc == null) {
+            return null;
+        }
+        DiscVOGamma discVOGamma = new DiscVOGamma();
+
+        discVOGamma.setId(disc.getId());
+        discVOGamma.setCatalogNo(disc.getCatalogNo());
+        discVOGamma.setName(disc.getName());
+        discVOGamma.setNameZh(disc.getNameZh());
+        discVOGamma.setNameEn(disc.getNameEn());
+        discVOGamma.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
+        discVOGamma.setLimited(disc.getLimited() == 1);
+        discVOGamma.setHasBonus(disc.getHasBonus() == 1);
+
+        JSONObject region = new JSONObject();
+        region.put("code", disc.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
+        discVOGamma.setRegion(region);
+
+        discVOGamma.setFranchises(FranchiseUtils.getFranchiseList(disc.getFranchises()));
+        discVOGamma.setProducts(ProductUtils.getProductList(disc.getProducts()));
+
+        discVOGamma.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
+
+        discVOGamma.setCover(QiniuImageUtils.getThumb70Url(disc.getImages()));
+
+        return discVOGamma;
+    }
+
+    /**
+     * 列表转换, 转VO对象，用于存储到搜索引擎
+     *
+     * @param discs 列表
+     * @return List<DiscVOGamma>
+     * @author rakbow
+     */
+    default List<DiscVOGamma> disc2VOGamma(List<Disc> discs) {
+        List<DiscVOGamma> discVOGammas = new ArrayList<>();
+
+        if (!discs.isEmpty()) {
+            discs.forEach(disc -> {
+                discVOGammas.add(disc2VOGamma(disc));
+            });
+        }
+
+        return discVOGammas;
     }
 
 }

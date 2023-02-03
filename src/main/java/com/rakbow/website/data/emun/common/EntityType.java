@@ -19,7 +19,7 @@ public enum EntityType {
     ALBUM(1,"专辑", "Album"),
     DISC(2,"碟片", "Disc"),
     BOOK(3,"书籍", "Book"),
-    MERCH(4,"周边", "Goods"),
+    MERCH(4,"周边", "Merch"),
     GAME(5,"游戏", "Game"),
     FRANCHISE(6,"系列", "Franchise"),
     PRODUCT(7,"作品", "Product"),
@@ -63,7 +63,7 @@ public enum EntityType {
     public static List<String> getItemList(){
         List<String> items = new ArrayList<>();
         for (EntityType itemType : EntityType.values()) {
-            items.add(itemType.getNameZh());
+            items.add(itemType.getNameEn());
         }
         return items;
     }

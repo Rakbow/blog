@@ -15,7 +15,9 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.common.MeiliSearchUtils;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
+import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -60,8 +62,8 @@ public class AlbumController {
     private UserService userService;
     @Autowired
     private VisitService visitService;
-    // @Autowired
-    // private ElasticsearchService elasticsearchService;
+    @Autowired
+    private MeiliSearchUtils meiliSearchUtils;
     @Value("${website.path.upload}")
     private String uploadPath;
     @Value("${website.path.img}")
@@ -108,6 +110,7 @@ public class AlbumController {
         model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("album", albumVOMapper.album2VO(album));
+        model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
@@ -167,8 +170,8 @@ public class AlbumController {
                 //保存新增专辑
                 albumService.addAlbum(album);
 
-                //将新增的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
+                //将新增的专辑保存到meilisearch服务器索引中
+                meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
 
                 //新增访问量实体
                 visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
@@ -202,8 +205,8 @@ public class AlbumController {
                     //删除专辑对应的music
                     musicService.deleteMusicByAlbumId(id);
 
-                    //从Elasticsearch服务器索引中删除专辑
-                    // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
+                    //从Meilisearch服务器索引中删除专辑
+                    meiliSearchUtils.deleteData(id, EntityType.ALBUM);
 
                     //删除访问量实体
                     visitService.deleteVisit(EntityType.ALBUM.getId(), id);
@@ -239,8 +242,8 @@ public class AlbumController {
 
                 albumService.updateAlbum(album.getId(), album);
 
-                //将更新的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
+                //将更新的专辑保存到Meilisearch服务器索引中
+                meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
 
                 res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
 
@@ -284,8 +287,8 @@ public class AlbumController {
 
                 albumService.addAlbumImages(id, images, imagesJson, imageInfosJson);
 
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
+                //将更新的专辑保存到Meilisearch服务器索引中
+                meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
 
                 res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
 
@@ -336,6 +339,9 @@ public class AlbumController {
                 for (Music music : musics) {
                     musicService.updateMusicCoverUrl(music.getId(), albumService.getAlbumCoverUrl(id));
                 }
+
+                //将更新的专辑保存到Meilisearch服务器索引中
+                meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);

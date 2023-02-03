@@ -1,8 +1,10 @@
 package com.rakbow.website.util.file;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ActionResult;
+import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.util.common.CommonUtils;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -109,6 +112,19 @@ public class QiniuImageUtils {
     public static String getImageKeyByFullUrl(String fullImageUrl) {
         String IMAGE_DOMAIN = "https://img.rakbow.com/";
         return fullImageUrl.replace(IMAGE_DOMAIN, "");
+    }
+
+    public static String getThumb70Url(String imagesJson) {
+        JSONArray images = JSON.parseArray(imagesJson);
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    return getThumbBackgroundUrl(image.getString("url"), 70);
+                }
+            }
+        }
+        return getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70);
     }
 
 }

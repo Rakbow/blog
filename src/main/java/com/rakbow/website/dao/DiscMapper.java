@@ -18,6 +18,8 @@ public interface DiscMapper {
     //通过id查询disc
     Disc getDisc(int id);
 
+    List<Disc> getAll();
+
     //根据过滤条件搜索disc
     List<Disc> getDiscsByFilter(String catalogNo, String name, String region, List<Integer> franchises, List<Integer> products,
                                 List<Integer> mediaFormat, String limited, String hasBonus, String sortField,

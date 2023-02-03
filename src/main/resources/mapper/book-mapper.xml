@@ -16,6 +16,13 @@
         edited_time, _s
     </sql>
 
+    <select id="getAll" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where _s = 1
+    </select>
+
     <select id="getBook" resultType="Book">
         select
         <include refid="selectFields"></include>

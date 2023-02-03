@@ -1,11 +1,14 @@
 package com.rakbow.website.util.convertMapper;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
+import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
@@ -15,11 +18,13 @@ import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.entity.ProductUtils;
 import com.rakbow.website.util.common.SpringUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -220,6 +225,55 @@ public interface AlbumVOMapper {
         }
 
         return albumVOBetas;
+    }
+
+    /**
+     * Album转VO对象，用于存储到搜索引擎
+     *
+     * @param album 专辑
+     * @return AlbumVOGamma
+     * @author rakbow
+     */
+    default AlbumVOGamma album2VOGamma(Album album) {
+        if (album == null) {
+            return null;
+        }
+        AlbumVOGamma albumVOGamma = new AlbumVOGamma();
+        albumVOGamma.setId(album.getId());
+        albumVOGamma.setCatalogNo(album.getCatalogNo());
+        albumVOGamma.setName(album.getName());
+        albumVOGamma.setNameEn(album.getNameEn());
+        albumVOGamma.setNameZh(album.getNameZh());
+        albumVOGamma.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
+        albumVOGamma.setHasBonus(album.getHasBonus() == 1);
+
+        //关联信息
+        albumVOGamma.setProducts(ProductUtils.getProductList(album.getProducts()));
+        albumVOGamma.setFranchises(FranchiseUtils.getFranchiseList(album.getFranchises()));
+        albumVOGamma.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
+
+        albumVOGamma.setCover(QiniuImageUtils.getThumb70Url(album.getImages()));
+
+        return albumVOGamma;
+    }
+
+    /**
+     * 列表转换, Album转VO对象，用于存储到搜索引擎
+     *
+     * @param albums 专辑列表
+     * @return List<AlbumVOGamma>
+     * @author rakbow
+     */
+    default List<AlbumVOGamma> album2VOGamma(List<Album> albums) {
+        List<AlbumVOGamma> albumVOGammas = new ArrayList<>();
+
+        if (!albums.isEmpty()) {
+            albums.forEach(album -> {
+                albumVOGammas.add(album2VOGamma(album));
+            });
+        }
+
+        return albumVOGammas;
     }
 
 }

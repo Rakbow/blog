@@ -64,7 +64,7 @@ public class MusicController {
 
         model.addAttribute("audioTypeSet", redisUtil.get("audioTypeSet"));
         model.addAttribute("music", musicVOMapper.music2VO(music));
-        model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(musicVOMapper.music2VO(music)));
+        model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music));
         //获取页面信息
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), musicId, music.getAddedTime(), music.getEditedTime()));
         //获取同属一张碟片的音频

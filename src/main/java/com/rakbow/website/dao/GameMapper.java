@@ -18,6 +18,8 @@ public interface GameMapper {
     //通过id查询Game
     Game getGame(int id);
 
+    List<Game> getAll();
+
     //根据过滤条件搜索Game
     List<Game> getGamesByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
                                 String region, String sortField, int sortOrder, int first, int row);

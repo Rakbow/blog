@@ -19,6 +19,8 @@ public interface MerchMapper {
     //通过id查询Merch
     Merch getMerch(int id);
 
+    List<Merch> getAll();
+
     //根据过滤条件搜索Merch
     List<Merch> getMerchsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
                                   int category, String region, String notForSale, String sortField, int sortOrder,

@@ -162,9 +162,11 @@
                                 <i class="pi icon-music"></i>
                                 <b>在线播放</b>
                             </template>
-                            <div class="text-center">
-                                <div id="aplayer"></div>
-                            </div>
+                            <p-button v-if="audioInfo!=null" @click="playerOption.fixed=true, createAplayer()" class="mr-2"
+                                      v-tooltip.bottom="'切换播放器至底部'">
+                                <i class="pi pi-arrow-circle-down"></i>
+                            </p-button>
+                            <div id="aplayer"></div>
                         </p-fieldset>
                         <p-fieldset :toggleable="true">
                             <template #legend>
@@ -535,14 +537,17 @@
                 });
             })
 
+            const playerOption = ref({
+                fixed: false,
+            });
             const createAplayer = () => {
 
                 if (audioInfo.value !== null) {
                     const ap = new APlayer({
                         container: document.getElementById('aplayer'),
-                        volume: 0.2,
-                        theme: '#b7daff',
+                        volume: 0.5,
                         lrcType: 3,
+                        fixed: playerOption.value.fixed,
                         audio: [audioInfo.value]
                     });
                 }else {
@@ -935,6 +940,8 @@
             };
 
             return {
+                createAplayer,
+                playerOption,
                 audioInfo,
 
                 cm,

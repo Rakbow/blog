@@ -8,11 +8,13 @@ import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.game.GameVO;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
+import com.rakbow.website.data.vo.game.GameVOGamma;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.entity.ProductUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -198,6 +200,59 @@ public interface GameVOMapper {
         }
 
         return gameVOBetas;
+    }
+
+    /**
+     * 转VO对象，用于存储到搜索引擎
+     *
+     * @param
+     * @return GameVOGamma
+     * @author rakbow
+     */
+    default GameVOGamma game2VOGamma(Game game) {
+        if (game == null) {
+            return null;
+        }
+        GameVOGamma gameVOGamma = new GameVOGamma();
+
+        //基础信息
+        gameVOGamma.setId(game.getId());
+        gameVOGamma.setName(game.getName());
+        gameVOGamma.setNameZh(game.getNameZh());
+        gameVOGamma.setNameEn(game.getNameEn());
+        gameVOGamma.setReleaseDate(CommonUtils.dateToString(game.getReleaseDate()));
+        gameVOGamma.setHasBonus(game.getHasBonus() == 1);
+
+        //关联信息
+        gameVOGamma.setProducts(ProductUtils.getProductList(game.getProducts()));
+        gameVOGamma.setFranchises(FranchiseUtils.getFranchiseList(game.getFranchises()));
+
+        //复杂字段
+        gameVOGamma.setRegion(Region.getRegionJson(game.getRegion()));
+        gameVOGamma.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
+
+        gameVOGamma.setCover(QiniuImageUtils.getThumb70Url(game.getImages()));
+
+        return gameVOGamma;
+    }
+
+    /**
+     * 列表转换, 转VO对象，用于存储到搜索引擎
+     *
+     * @param games 列表
+     * @return List<GameVOGamma>
+     * @author rakbow
+     */
+    default List<GameVOGamma> game2VOGamma(List<Game> games) {
+        List<GameVOGamma> GameVOGammas = new ArrayList<>();
+
+        if (!games.isEmpty()) {
+            games.forEach(game -> {
+                GameVOGammas.add(game2VOGamma(game));
+            });
+        }
+
+        return GameVOGammas;
     }
 
 }

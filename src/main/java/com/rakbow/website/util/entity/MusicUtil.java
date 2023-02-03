@@ -3,10 +3,13 @@ package com.rakbow.website.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.music.AudioType;
 import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
+import com.rakbow.website.util.file.QiniuImageUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ public class MusicUtil {
 
     @Autowired
     private static MusicService musicService;
+
+    private static final String[] VOCAL_LIST = new String[] {"vocal", "vocals", "演唱"};
 
     /**
      * 获取音乐分类数组
@@ -52,10 +57,10 @@ public class MusicUtil {
     /**
      * 获取音频信息
      * @author rakbow
-     * @param musicVO 音乐
+     * @param music 音乐
      * */
-    public static JSONObject getMusicAudioInfo(MusicVO musicVO) {
-        JSONArray files = musicVO.getFiles();
+    public static JSONObject getMusicAudioInfo(Music music) {
+        JSONArray files = JSON.parseArray(music.getFiles());
         if (files.size() == 0) {
             return null;
         }
@@ -63,10 +68,14 @@ public class MusicUtil {
         for (int i = 0; i < files.size(); i++) {
             //判断是否有音频文件
             if (files.getJSONObject(i).getString("type").contains("audio")) {
-                audioInfo.put("name", musicVO.getName());
-                audioInfo.put("artist", "artist");
+                audioInfo.put("name", music.getName());
+                audioInfo.put("artist", getArtistFromMusic(music));
                 audioInfo.put("url", files.getJSONObject(i).getString("url"));
-                audioInfo.put("cover", musicVO.getCover());
+                if (StringUtils.isBlank(music.getCoverUrl())) {
+                    audioInfo.put("cover", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                }else {
+                    audioInfo.put("cover", QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 80));
+                }
             }
             //判断是否有歌词文件
             if (files.getJSONObject(i).getString("type").contains("text")) {
@@ -74,6 +83,53 @@ public class MusicUtil {
             }
         }
         return audioInfo;
+    }
+
+    /**
+     * 获取音频信息
+     * @author rakbow
+     * @param musics 音乐
+     * */
+    public static JSONArray getMusicAudioInfo(List<Music> musics) {
+        if (musics.size() == 0) {
+            return null;
+        }
+        JSONArray audioInfos = new JSONArray();
+        musics.forEach(music -> {
+            JSONObject audioInfo = getMusicAudioInfo(music);
+            if (audioInfo != null) {
+                audioInfos.add(audioInfo);
+            }
+        });
+        if (audioInfos.size() == 0) {
+            return null;
+        }
+        return audioInfos;
+    }
+
+    /**
+     * 获取音频信息中的演唱者
+     * @author rakbow
+     * @param music 音乐
+     * */
+    public static String getArtistFromMusic(Music music) {
+        JSONArray artists = JSON.parseArray(music.getArtists());
+        if (artists.size() == 0) {
+            return "unknown";
+        }
+        for (int i = 0; i < artists.size(); i++) {
+            for (int j = 0; j < VOCAL_LIST.length; j++) {
+                if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), VOCAL_LIST[j])) {
+                    JSONArray vocals = artists.getJSONObject(i).getJSONArray("name");
+                    String vocal = "";
+                    for (int k = 0; k < vocals.size(); k++) {
+                        vocal += vocals.getString(k);
+                    }
+                    return vocal;
+                }
+            }
+        }
+        return "unknown";
     }
 
 }

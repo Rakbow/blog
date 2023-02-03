@@ -8,11 +8,13 @@ import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.merch.MerchVO;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
+import com.rakbow.website.data.vo.merch.MerchVOGamma;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.entity.ProductUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -206,6 +208,63 @@ public interface MerchVOMapper {
         }
 
         return merchVOBetas;
+    }
+
+    /**
+     * 转VO对象，用于存储到搜索引擎
+     *
+     * @param merch 商品
+     * @return MerchVOGamma
+     * @author rakbow
+     */
+    default MerchVOGamma merch2VOGamma(Merch merch) {
+        if (merch == null) {
+            return null;
+        }
+        MerchVOGamma merchVOGamma = new MerchVOGamma();
+
+        //基础信息
+        merchVOGamma.setId(merch.getId());
+        merchVOGamma.setName(merch.getName());
+        merchVOGamma.setNameZh(merch.getNameZh());
+        merchVOGamma.setNameEn(merch.getNameEn());
+        merchVOGamma.setReleaseDate(CommonUtils.dateToString(merch.getReleaseDate()));
+        merchVOGamma.setNotForSale(merch.getNotForSale() == 1);
+
+        //关联信息
+        merchVOGamma.setFranchises(FranchiseUtils.getFranchiseList(merch.getFranchises()));
+        merchVOGamma.setProducts(ProductUtils.getProductList(merch.getProducts()));
+
+        //复杂字段
+        merchVOGamma.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
+
+        JSONObject region = new JSONObject();
+        region.put("code", merch.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(merch.getRegion()));
+        merchVOGamma.setRegion(region);
+
+        merchVOGamma.setCover(QiniuImageUtils.getThumb70Url(merch.getImages()));
+
+        return merchVOGamma;
+    }
+
+    /**
+     * 列表转换, 转VO对象，用于存储到搜索引擎
+     *
+     * @param merchs 列表
+     * @return List<MerchVOGamma>
+     * @author rakbow
+     */
+    default List<MerchVOGamma> merch2VOGamma(List<Merch> merchs) {
+        List<MerchVOGamma> merchVOGammas = new ArrayList<>();
+
+        if (!merchs.isEmpty()) {
+            merchs.forEach(merch -> {
+                merchVOGammas.add(merch2VOGamma(merch));
+            });
+        }
+
+        return merchVOGammas;
     }
 
 }

@@ -2,6 +2,8 @@ const DOMAIN_URL = "http://localhost:8083";
 //region page
 const DATABASE_INDEX_URL = DOMAIN_URL + "/db";
 
+const INDEX_SEARCH_URL = DOMAIN_URL + "/db/simpleSearch";
+
 const APP_INDEX_URL = DOMAIN_URL + "/app";
 const BLOG_INDEX_URL = DOMAIN_URL + "/blog";
 

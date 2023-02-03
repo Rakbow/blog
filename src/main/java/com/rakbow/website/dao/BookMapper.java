@@ -18,6 +18,8 @@ public interface BookMapper {
     //通过id查询Book
     Book getBook(int id);
 
+    List<Book> getAll();
+
     //根据过滤条件搜索Book
     List<Book> getBooksByFilter(String title, String isbn10, String isbn13, String publisher, String region,
                                 String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,

@@ -9,11 +9,13 @@ import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.book.BookVO;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
+import com.rakbow.website.data.vo.book.BookVOGamma;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.entity.ProductUtils;
+import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -239,6 +241,72 @@ public interface BookVOMapper {
         }
 
         return bookVOBetas;
+    }
+
+    /**
+     * 转VO对象，用于存储到搜索引擎
+     *
+     * @param book 图书
+     * @return BookVOGamma
+     * @author rakbow
+     */
+    default BookVOGamma book2VOGamma(Book book) {
+        if (book == null) {
+            return null;
+        }
+        BookVOGamma bookVOGamma = new BookVOGamma();
+        bookVOGamma.setId(book.getId());
+        bookVOGamma.setTitle(book.getTitle());
+        bookVOGamma.setTitleZh(book.getTitleZh());
+        bookVOGamma.setTitleEn(book.getTitleEn());
+        bookVOGamma.setIsbn10(book.getIsbn10());
+        bookVOGamma.setIsbn13(book.getIsbn13());
+        bookVOGamma.setPublishDate(CommonUtils.dateToString(book.getPublishDate()));
+        bookVOGamma.setPublisher(book.getPublisher());
+        bookVOGamma.setSummary(book.getSummary());
+        bookVOGamma.setHasBonus(book.getHasBonus() == 1);
+
+        JSONObject bookType = new JSONObject();
+        bookType.put("id", book.getBookType());
+        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
+        bookVOGamma.setBookType(bookType);
+
+        JSONObject region = new JSONObject();
+        region.put("code", book.getRegion());
+        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
+        bookVOGamma.setRegion(region);
+
+        JSONObject publishLanguage = new JSONObject();
+        publishLanguage.put("code", book.getPublishLanguage());
+        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
+        bookVOGamma.setPublishLanguage(publishLanguage);
+
+        //关联信息
+        bookVOGamma.setProducts(ProductUtils.getProductList(book.getProducts()));
+        bookVOGamma.setFranchises(FranchiseUtils.getFranchiseList(book.getFranchises()));
+
+        bookVOGamma.setCover(QiniuImageUtils.getThumb70Url(book.getImages()));
+
+        return bookVOGamma;
+    }
+
+    /**
+     * 列表转换, 转VO对象，用于存储到搜索引擎
+     *
+     * @param books 列表
+     * @return List<BookVOGamma>
+     * @author rakbow
+     */
+    default List<BookVOGamma> book2VOGamma(List<Book> books) {
+        List<BookVOGamma> bookVOGammas = new ArrayList<>();
+
+        if (!books.isEmpty()) {
+            books.forEach(book -> {
+                bookVOGammas.add(book2VOGamma(book));
+            });
+        }
+
+        return bookVOGammas;
     }
 
 }

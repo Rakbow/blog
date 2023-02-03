@@ -2,24 +2,26 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Template</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-
-    <!--other css -->
-    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-    <link th:href="@{/css/global.css}" rel="stylesheet" />
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
     <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
 
-    <!-- PrimeVue css-->
-    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet" />
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
+    <!-- marked -->
+    <script th:src="@{/js/marked.min.js}"></script>
+    <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet" />
+
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
     <script th:src="@{/js/vue/vue.global.js}"></script>
@@ -28,8 +30,8 @@
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
 
@@ -44,22 +46,22 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="nk-container">
-    <div class="main">
-        <div id="app">
-            <!-- 头部 -->
-            <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
-            <p-toast></p-toast>
 
-            <!-- 尾部 -->
-            <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
-        </div>
-    </div>
+
+    <!-- 尾部 -->
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
@@ -67,10 +69,10 @@
     const App = {
         setup() {
             onMounted(() => {
-            });
 
-            //region 基础配置
-            const toast = useToast();
+            })
+
+            //region ------页面header------
             const domainUrl = DOMAIN_URL;
             const selectedEntity = ref();
             const entityType = ref(ENTITY_TYPE);
@@ -79,16 +81,36 @@
             //endregion
 
             return {
-                toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+                domainUrl, selectedEntity, entityType, notLoginNavbarItems, loginNavbarItems
             }
         },
         components: {
-            "p-dropdown": primevue.dropdown,
+            "p-panel": primevue.panel,
+            "p-fieldset": primevue.fieldset,
             "p-button": primevue.button,
+            "p-dialog": primevue.dialog,
+            "p-fileupload": primevue.fileupload,
+            "p-chips": primevue.chips,
+            "p-divider": primevue.divider,
+            "p-inputtext": primevue.inputtext,
+            "p-multiselect": primevue.multiselect,
+            "p-galleria": primevue.galleria,
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
-            "p-inputtext": primevue.inputtext,
             "p-toast": primevue.toast,
+            "p-dropdown": primevue.dropdown,
+            "p-textarea": primevue.textarea,
+            "p-calendar": primevue.calendar,
+            "p-inputnumber": primevue.inputnumber,
+            "p-inputswitch": primevue.inputswitch,
+            "p-splitbutton": primevue.splitbutton,
+            "p-datatable": primevue.datatable,
+            "p-column": primevue.column,
+            "p-contextmenu": primevue.contextmenu,
+            "p-inplace": primevue.inplace,
+            "p-blockui": primevue.blockui,
+            "p-tag": primevue.tag,
+            "p-card": primevue.card,
         }
     };
 
@@ -108,6 +130,7 @@
         .mount("#app");
 </script>
 <style>
+
 </style>
 </body>
 </html>

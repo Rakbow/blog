@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
+    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
+
+    <!-- marked -->
+    <script th:src="@{/js/marked.min.js}"></script>
+    <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet"/>
+
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet"/>
+
+    <!-- PrimeVue -->
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
+
+    <!-- Vue3 -->
+    <script th:src="@{/js/vue/vue.global.js}"></script>
+    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/vue/vue-router.global.js}"></script>
+
+    <!-- PrimeVue Components -->
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/tool/axios/axios.js}"></script>
+
+    <!-- Jquery -->
+    <script th:src="@{/js/jquery.js}"></script>
+
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Http_Request.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <!--other css -->
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
+</head>
+<body>
+<div id="app">
+    <!-- 头部 -->
+    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+
+    <div id="main" class="grid" style="background: #001122">
+
+        <div class="col-offset-3 col-6">
+            <p-card class="shadow-2 p-3 surface-card" style="border-radius: 6px;width: 800px">
+                <template #content>
+                    <div class="grid mt-0 mb-0 pt-0 pb-0 p-inputgroup">
+                        <p-dropdown v-model="searchParams.entityType" :options="entityType" option-label="label"
+                                    option-value="value" placeholder="类型"></p-dropdown>
+                        <p-inputtext v-model="searchParams.keyword" @change="search" class="search-input"></p-inputtext>
+                        <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
+                                  @click="search"></p-button>
+                    </div>
+                    <p-scrollpanel style="height: 400px">
+                        <div v-if="searchResult">
+                            <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
+
+                                <div class="col-12">
+                                    <div class="index-list-item">
+                                        <a class="text-center" :href="'/db/album/'+ result.id">
+                                            <img :src="result.cover"/>
+                                        </a>
+                                        <div class="index-list-item-detail">
+                                            <span class="index-list-item-name text-truncate-1">
+                                                <a :href="'/db/album/'+ result.id">{{result.name}}</a>
+                                            </span>
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                                <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span
+                                                    class="label">&nbsp{{result.releaseDate}}</span>
+                                            </span>
+                                            <span class="ml-2">
+                                                <span class="has-bonus-tag" v-if="result.hasBonus">
+                                                    <p-tag style="background: #1B273D" class="ml-1"
+                                                           value="特典"></p-tag>
+                                                </span>
+                                                <div v-for="format of result.albumFormat" style="display:inline">
+                                                    <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                                                </div>
+                                            </span><br/>
+                                            <span v-for="product of result.products" style="display:inline">
+                                                <a class="no-text-decoration" :href="'/db/product/' + product.value">
+                                                    <p-chip :label="product.label"></p-chip>
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 2" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="index-list-item">
+                                        <a class="text-center" :href="'/db/disc/'+ result.id">
+                                            <img :src="result.cover" />
+                                        </a>
+                                        <div class="index-list-item-detail">
+                                    <span class="index-list-item-name text-truncate-1">
+                                        <a :href="'/db/disc/'+ result.id">{{result.name}}</a>
+                                    </span>
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                        <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span class="label">&nbsp{{result.releaseDate}}</span>
+                                    </span><br>
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                    </span>
+                                            <span>
+                                        <span v-for="format of result.mediaFormat" style="display:inline">
+                                            <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                                        </span>
+                                        <span class="has-bonus-tag" v-if="result.hasBonus">
+                                            <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                        </span>
+                                        <span class="limited-tag" v-if="result.limited">
+                                            <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
+                                        </span>
+                                    </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 3" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="index-list-item">
+                                        <a class="text-center" :href="'/db/book/'+ result.id">
+                                            <img :src="result.cover"/>
+                                        </a>
+                                        <div class="index-list-item-detail">
+                                            <span class="index-list-item-name text-truncate-1">
+                                                <a :href="'/db/book/'+ result.id">{{result.title}}</a>
+                                            </span>
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                                <b class="label">{{result.isbn13}}</b><span class="label">&nbsp{{result.publishDate}}</span>
+                                            </span><br>
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
+                                            &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
+                                            <span>
+                                                <span class="p-1">
+                                                    <p-tag :value="result.bookType.nameZh"></p-tag>
+                                                </span>
+                                                <span class="has-bonus-tag" v-if="result.hasBonus">
+                                                    <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 4" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="index-list-item">
+                                        <a class="text-center" :href="'/db/merch/'+ result.id">
+                                            <img :src="result.cover" />
+                                        </a>
+                                        <div class="index-list-item-detail">
+                                            <span class="index-list-item-name text-truncate-1">
+                                                <a :href="'/db/merch/'+ result.id">{{result.name}}</a>
+                                            </span>
+                                            <span class="small-font">
+                                                <span class="label">{{result.releaseDate}}</span>
+                                            </span>
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 5" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="index-list-item">
+                                        <a class="text-center" :href="'/db/game/'+ result.id">
+                                            <img :src="result.cover" />
+                                        </a>
+                                        <div class="index-list-item-detail">
+                                            <span class="index-list-item-name text-truncate-1">
+                                                <a :href="'/db/game/'+ result.id">{{result.name}}</a>
+                                            </span>
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                                <span class="label">&nbsp{{result.releaseDate}}</span>
+                                            </span><br>
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                            </span>
+                                            <span>
+                                                <span>
+                                                    <p-tag class="ml-1" :value="result.platform.nameEn"></p-tag>
+                                                </span>
+                                                <span class="has-bonus-tag" v-if="result.hasBonus">
+                                                    <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
+                            <p-paginator
+                                    :template="{
+                                    '640px': 'PrevPageLink CurrentPageReport NextPageLink',
+                                    '960px': 'FirstPageLink PrevPageLink CurrentPageReporNextPageLink LastPageLink',
+                                    '1300px': 'FirstPageLink PrevPageLink PageLinkNextPageLink LastPageLink',
+                                    default: 'FirstPageLink PrevPageLink PageLinks NextPageLinLastPageLink JumpToPageDropdown'
+                                    }"
+                                    v-model:first="searchResult.offset" :rows="searchResult.limit"
+                                    :total-records="searchResult.total" @page="pageChange($event)">
+                            </p-paginator>
+                        </div>
+                        <div v-else>
+                            无结果
+                        </div>
+                        <p-scrolltop target="parent" :threshold="100" class="custom-scrolltop"
+                                     icon="pi pi-arrow-up"></p-scrolltop>
+                    </p-scrollpanel>
+                </template>
+            </p-card>
+        </div>
+
+    </div>
+
+    <!-- 尾部 -->
+    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
+</div>
+<script type="module" th:inline="javascript">
+
+    const {createApp, onMounted, ref} = Vue;
+    const Tooltip = primevue.tooltip;
+
+    const App = {
+        setup() {
+            onMounted(() => {
+                init();
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
+            })
+
+            const searchParams = ref({
+                keyword: "",
+                entityType: 0,
+                offset: 0,
+                limit: 10
+            });
+
+            const searchResult = ref({});
+
+            const search = () => {
+                axiosPostRequest(INDEX_SEARCH_URL, searchParams.value)
+                    .then(res => {
+                        searchResult.value = res.data;
+                        console.log(searchResult.value);
+                    });
+            };
+
+            const pageChange = (ev) => {
+                searchParams.value.offset = ev.first;
+                searchParams.value.limit = ev.rows;
+                search();
+            };
+
+            const init = () => {
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+            };
+
+            //region ------页面header------
+            const domainUrl = DOMAIN_URL;
+            const selectedEntity = ref();
+            const entityType = ref(ENTITY_TYPE);
+            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
+            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //endregion
+
+            return {
+                search, pageChange, searchParams, searchResult,
+                domainUrl, selectedEntity, entityType, notLoginNavbarItems, loginNavbarItems
+            }
+        },
+        components: {
+            "p-button": primevue.button,
+            "p-divider": primevue.divider,
+            "p-inputtext": primevue.inputtext,
+            "p-menubar": primevue.menubar,
+            "p-avatar": primevue.avatar,
+            "p-dropdown": primevue.dropdown,
+            "p-card": primevue.card,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+        }
+    };
+
+    const routes = [{path: "/", component: App}];
+
+    const router = VueRouter.createRouter({
+        // history: VueRouter.createWebHashHistory(),
+        history: VueRouter.createWebHistory(),
+        routes
+    });
+
+    createApp(App)
+        .use(router)
+        .use(primevue.config.default)
+        .directive('tooltip', Tooltip)
+        .mount("#app");
+</script>
+<style>
+    .search-input {
+        font-weight: 400;
+        font-size: 16px;
+        width: 100%;
+        outline: 0;
+        padding: 0 16px 0 56px;
+        line-height: 54px;
+        border: 1px solid #cfd6dd;
+        background: url("/img/icon/search.svg") no-repeat left 16px center/24px auto;
+        box-shadow: 0 4px 4px -2px rgb(23 35 59 / 4%), 0 0 8px rgb(23 35 59 / 4%);
+        border-radius: 6px;
+        transition: .2s;
+    }
+
+    .p-card .p-card-body {
+        padding: 10px;
+    }
+
+    .p-scrollpanel .p-scrollpanel-content {
+        background: #1B273D;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .custom-scrolltop {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 4px;
+        background-color: var(--primary-color) !important;
+    }
+
+    .custom-scrolltop:hover {
+        background-color: var(--primary-color);
+    }
+
+    .custom-scrolltop .p-scrolltop-icon {
+        font-size: 1rem;
+        color: var(--primary-color-text);
+    }
+</style>
+</body>
+</html>

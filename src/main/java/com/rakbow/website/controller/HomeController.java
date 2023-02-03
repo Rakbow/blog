@@ -1,9 +1,20 @@
 package com.rakbow.website.controller;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
+import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.common.MeiliSearchUtils;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.file.CommonImageUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +24,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -53,6 +66,8 @@ public class HomeController {
     private String audioPath;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private MeiliSearchUtils meiliSearchUtils;
 
     //endregion
 
@@ -70,6 +85,12 @@ public class HomeController {
         ModelAndView view = new ModelAndView();
         view.setViewName("/database");
         return view;
+    }
+
+    //获取专辑首页
+    @RequestMapping(path = "/dbsearch", method = RequestMethod.GET)
+    public String getSearchIndexPage(Model model) {
+        return "/site/dbsearch";
     }
 
     //获取专辑首页
@@ -233,6 +254,23 @@ public class HomeController {
         } catch (IOException e) {
             logger.error("读取图片失败: " + e.getMessage());
         }
+    }
+
+    @RequestMapping(path = "/db/simpleSearch", method = RequestMethod.POST)
+    @ResponseBody
+    public String simpleSearch(@RequestBody String json, HttpServletRequest request) throws MeilisearchException {
+        ApiResult res = new ApiResult();
+        try {
+            String keyword = JSON.parseObject(json).getString("keyword");
+            int entityType = JSON.parseObject(json).getInteger("entityType");
+            int offset = JSON.parseObject(json).getInteger("offset");
+            int limit = JSON.parseObject(json).getInteger("limit");
+
+            res.data = meiliSearchUtils.simpleSearch(keyword, entityType, offset, limit);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
     }
 
 }

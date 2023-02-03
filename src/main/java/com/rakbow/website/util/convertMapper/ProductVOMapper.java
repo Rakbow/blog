@@ -7,6 +7,7 @@ import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
+import com.rakbow.website.data.vo.product.ProductVOBeta;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
@@ -136,6 +137,55 @@ public interface ProductVOMapper {
         }
 
         return productVOAlphas;
+    }
+
+    /**
+     * 转VO对象，用于存储到搜索引擎
+     *
+     * @param product 商品
+     * @return ProductVOBeta
+     * @author rakbow
+     */
+    default ProductVOBeta product2VOBeta(Product product) {
+        if (product == null) {
+            return null;
+        }
+
+        ProductVOBeta productVOBeta = new ProductVOBeta();
+
+        //基础信息
+        productVOBeta.setId(product.getId());
+        productVOBeta.setName(product.getName());
+        productVOBeta.setNameEn(product.getNameEn());
+        productVOBeta.setNameZh(product.getNameZh());
+        productVOBeta.setReleaseDate(CommonUtils.dateToString(product.getReleaseDate()));
+        productVOBeta.setCategory(ProductCategory.getProductCategory(product.getCategory()));
+
+        //关联信息
+        productVOBeta.setFranchise(FranchiseUtils.getFranchise(product.getFranchise()));
+
+        productVOBeta.setCover(QiniuImageUtils.getThumb70Url(product.getImages()));
+
+        return productVOBeta;
+    }
+
+    /**
+     * 列表转换, 转VO对象，用于存储到搜索引擎
+     *
+     * @param products 列表
+     * @return List<ProductVOBeta>
+     * @author rakbow
+     */
+    default List<ProductVOBeta> product2VOBeta(List<Product> products) {
+        List<ProductVOBeta> productVOBetas = new ArrayList<>();
+
+        if (!products.isEmpty()) {
+            products.forEach(product -> {
+                productVOBetas.add(product2VOBeta(product));
+            });
+        }
+
+        return productVOBetas;
     }
 
 }
