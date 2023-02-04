@@ -9,6 +9,7 @@
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
 
     <!-- bootstrap -->
@@ -38,6 +39,8 @@
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 </head>
 <body>
 <div class="nk-container">
@@ -54,7 +57,7 @@
 
                     <div v-if="type == '专辑'">
                         <div v-for="result in searchResult">
-                            <a :href="domainUrl + '/db/album/' + result.id">{{result.name}}</a>
+                            <a :href="'/db/album/' + result.id">{{result.name}}</a>
                         </div>
                     </div>
                 </div>
@@ -62,6 +65,7 @@
         </div>
     </div>
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -78,15 +82,10 @@
             const type = ref([[${type]}]]);
 
             //region 页面header
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             return {
@@ -121,6 +120,7 @@
     createApp(App)
         .use(primevue.config.default)
         .use(router)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 </body>

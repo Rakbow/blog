@@ -13,6 +13,7 @@
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet"/>
 
     <!-- PrimeVue -->
@@ -78,6 +79,7 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
@@ -279,7 +281,7 @@
             <div th:insert="~{template/common-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息" :modal="true"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息"
               class="p-fluid">
         <div class="formgrid grid">
             <div class="field col">
@@ -326,8 +328,8 @@
                       @click="submitEditMusic"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayFileEditDialog" header="文件管理"
-              :style="{width: '800px'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayFileEditDialog" header="文件管理"
+              :style="{width: '800px'}">
         <p-blockui :blocked="blockedPanel">
             <p-panel>
                 <div class="grid">
@@ -411,8 +413,8 @@
             <p-button icon="pi pi-save" label="提交更新" @click="uploadFile" :disabled="blockedPanel"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="deleteFileDialog" header="删除文件"
-              :breakpoints="{'960px': '50vw', '640px': '70vw'}" :style="{width: '50vw'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="deleteFileDialog" header="删除文件"
+              :breakpoints="{'960px': '50vw', '640px': '70vw'}" :style="{width: '50vw'}">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
             <span v-if="album">确定删除所选的文件？</span>
@@ -424,8 +426,8 @@
                       @click="deleteFile"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
-              :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
+             >
         <p-panel>
             <template #header>
                 <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
@@ -497,8 +499,8 @@
                       @click="submitArtist"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
         <!--                    <div id="md-editor-v3">-->
         <md-editor-v3 v-model="descriptionMd" preview-theme="github">
         </md-editor-v3>
@@ -510,8 +512,8 @@
             <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayLyricsDialog" header="编辑歌词文本"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayLyricsDialog" header="编辑歌词文本"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
         <md-editor-v3 v-model="lyricsMd" preview-theme="github"></md-editor-v3>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" @click="closeLyricsEditDialog" class="p-button-text">
@@ -519,6 +521,7 @@
             <p-button label="保存" icon="pi pi-save" @click="submitLyrics" autofocus></p-button>
         </template>
     </p-dialog>
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -526,6 +529,7 @@
 
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -714,12 +718,11 @@
             };
             //endregion
 
-            //region ------页面header------
-            const domainUrl = DOMAIN_URL;
-            const selectedEntity = ref();
-            const entityType = ref(ENTITY_TYPE);
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //region 页面header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             //region ------编辑music信息------
@@ -1043,6 +1046,7 @@
         .use(primevue.config.default)
         .use(MdEditorV3)
         .directive('tooltip', Tooltip)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 <style>

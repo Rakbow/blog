@@ -52,6 +52,16 @@
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -80,9 +90,11 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -374,8 +386,8 @@
             <div th:insert="~{template/common-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog v-model:visible="displayEditDialog" header="编辑碟片基础信息"
-              :style="{width: '600px'}" :modal="true" class="p-fluid">
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑碟片基础信息"
+              :style="{width: '600px'}" class="p-fluid">
         <div class="formgrid grid">
             <div class="field col">
                 <label>碟片编号</label>
@@ -492,8 +504,8 @@
                       @click="submitEditDisc"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayImageEditDialog" header="图片管理"
-              :style="{width: '1200px'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayImageEditDialog" header="图片管理"
+              :style="{width: '1200px'}">
         <p-blockui :blocked="blockedPanel">
             <p-panel>
                 <template #header>
@@ -637,8 +649,8 @@
             <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displaySpecEditDialog" header="编辑规格信息"
-              :style="{width: '800px'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displaySpecEditDialog" header="编辑规格信息"
+              :style="{width: '800px'}">
         <p-panel>
             <template #header>
                 <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
@@ -709,8 +721,8 @@
                       @click="submitSpec"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayDescriptionDialog" header="编辑描述信息"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
         <!--                    <div id="md-editor-v3">-->
         <md-editor-v3 v-model="descriptionMd" preview-theme="github">
         </md-editor-v3>
@@ -722,8 +734,8 @@
             <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayBonusDialog" header="编辑特典信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="displayBonusDialog" header="编辑特典信息"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
         <md-editor-v3 v-model="bonusMd" preview-theme="github"></md-editor-v3>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" @click="closeBonusEditDialog" class="p-button-text">
@@ -731,8 +743,8 @@
             <p-button label="保存" icon="pi pi-save" @click="submitBonus"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="deleteDiscImageDialog" header="删除图片"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="deleteDiscImageDialog" header="删除图片"
+              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
             <span v-if="disc">确定删除所选的图片？</span>
@@ -745,6 +757,7 @@
         </template>
     </p-dialog>
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -752,6 +765,7 @@
 
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -1214,12 +1228,11 @@
             };
             //endregion
 
-            //region ------页面header------
-            const domainUrl = DOMAIN_URL;
-            const selectedEntity = ref();
-            const entityType = ref(ENTITY_TYPE);
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //region 页面header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             const init = () => {
@@ -1255,7 +1268,7 @@
                 displayCustom,
                 activeIndex,
 
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+                dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
                 edits,
                 seriesBool,
                 displayEditDialog,
@@ -1346,6 +1359,12 @@
             "p-blockui": primevue.blockui,
             "p-tag": primevue.tag,
             "p-card": primevue.card,
+
+            "p-chip": primevue.chip,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
@@ -1363,6 +1382,7 @@
         .use(primevue.config.default)
         .use(MdEditorV3)
         .directive('tooltip', Tooltip)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 <style>

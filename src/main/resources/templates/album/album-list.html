@@ -47,6 +47,16 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -54,9 +64,12 @@
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -126,7 +139,7 @@
             <p-column header="专辑原名" field="name" :show-filter-menu="false"
                       style="flex: 0 0 25rem">
                 <template #body="slotProps">
-                    <a :href="domainUrl + '/db/album/' + slotProps.data.id">
+                    <a :href="'/db/album/' + slotProps.data.id">
                         {{slotProps.data.name}}
                     </a>
                 </template>
@@ -239,10 +252,11 @@
             </p-column>
         </p-datatable>
     </div>
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 
-    <p-dialog v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据" :modal="true"
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据"
               class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
@@ -385,7 +399,7 @@
             <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据" :modal="true"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据"
               class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
@@ -531,7 +545,7 @@
                       @click="submitEditAlbum"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="deleteAlbumsDialog" :style="{width: '450px'}" header="删除数据" :modal="true">
+    <p-dialog :modal="true" v-model:visible="deleteAlbumsDialog" :style="{width: '450px'}" header="删除数据">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
             <span v-if="album">确定删除所选的数据？</span>
@@ -548,6 +562,7 @@
     const {createApp, onMounted, ref} = Vue;
     const {FilterMatchMode, FilterOperator} = primevue.api;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
     const App = {
         setup() {
@@ -556,15 +571,10 @@
             });
 
             //region 页面header
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             //region ------搜索------
@@ -827,7 +837,7 @@
 
             return {
                 onToggle, onPage, onSort, onFilter, filters, totalRecords, currencyUnitSet,
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+                dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
                 album, albums, formatCurrency, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
                 submitNewAlbum, confirmDeleteSelected, deleteAlbumsDialog, deleteSelectedAlbums,
@@ -858,6 +868,13 @@
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
             "p-tristatecheckbox": primevue.tristatecheckbox,
+
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
@@ -874,7 +891,8 @@
     app.directive('tooltip', Tooltip);
     app.use(primevue.toastservice);
     app.use(router);
-    app.mount("#app");
+    app.use(primevue.dialogservice)
+        .mount("#app");
 </script>
 </body>
 </html>

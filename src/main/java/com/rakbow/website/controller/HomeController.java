@@ -88,12 +88,6 @@ public class HomeController {
     }
 
     //获取专辑首页
-    @RequestMapping(path = "/dbsearch", method = RequestMethod.GET)
-    public String getSearchIndexPage(Model model) {
-        return "/site/dbsearch";
-    }
-
-    //获取专辑首页
     @RequestMapping(path = "/db/albums", method = RequestMethod.GET)
     public String getAlbumIndexPage(Model model) {
         model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));

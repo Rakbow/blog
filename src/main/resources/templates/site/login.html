@@ -9,6 +9,7 @@
     <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
     <link th:href="@{/css/global.css}" rel="stylesheet" />
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
     <!-- PrimeVue -->
@@ -31,6 +32,16 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -41,6 +52,8 @@
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 </head>
 <body>
 <div id="app">
@@ -97,6 +110,7 @@
         </div>
     </form>
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -108,6 +122,7 @@
     const { createApp, onMounted, ref } = Vue;
     const { FilterMatchMode, FilterOperator } = primevue.api;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const { useToast } = primevue.usetoast;
     const App = {
         setup() {
@@ -116,15 +131,10 @@
             });
 
             //region 页面header
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             const error = [[${ error }]];
@@ -158,7 +168,7 @@
                 $("#kaptcha").attr("src", path);
             }
 
-            return { param, refreshKaptcha, login, loginUser, error, domainUrl, selectedEntity, entityType, notLoginNavbarItems, loginNavbarItems }
+            return { param, refreshKaptcha, login, loginUser, error, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, }
         },
         components: {
             "p-button": primevue.button,
@@ -168,7 +178,16 @@
             "p-checkbox": primevue.checkbox,
             "p-avatar": primevue.avatar,
             "p-menubar": primevue.menubar,
-            "p-dropdown": primevue.dropdown
+            "p-dropdown": primevue.dropdown,
+
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
+            "p-divider": primevue.divider,
+
         }
     };
 
@@ -185,7 +204,8 @@
     app.use(primevue.config.default);
     app.directive('tooltip', Tooltip);
     app.use(primevue.toastservice);
-    app.mount("#app");
+    app.use(primevue.dialogservice)
+        .mount("#app");
 </script>
 </body>
 <style>

@@ -86,19 +86,19 @@ public class MeiliSearchTests {
     @Test
     public void saveTests() throws MeilisearchException {
        List<Album> albums = albumMapper.getAll();
-       // List<Book> books = bookMapper.getAll();
-       // List<Disc> discs = discMapper.getAll();
-       // List<Game> games = gameMapper.getAll();
-       //  List<Merch> merches = merchMapper.getAll();
+       List<Book> books = bookMapper.getAll();
+       List<Disc> discs = discMapper.getAll();
+       List<Game> games = gameMapper.getAll();
+       List<Merch> merches = merchMapper.getAll();
 //        List<Product> products = productMapper.getAll();
 
 
 
        meiliSearchUtils.saveMultiData(albums, EntityType.ALBUM);
-       // meiliSearchUtils.saveMultiData(books, EntityType.BOOK);
-       // meiliSearchUtils.saveMultiData(discs, EntityType.DISC);
-       // meiliSearchUtils.saveMultiData(games, EntityType.GAME);
-       //  meiliSearchUtils.saveMultiData(merches, EntityType.MERCH);
+       meiliSearchUtils.saveMultiData(books, EntityType.BOOK);
+       meiliSearchUtils.saveMultiData(discs, EntityType.DISC);
+       meiliSearchUtils.saveMultiData(games, EntityType.GAME);
+       meiliSearchUtils.saveMultiData(merches, EntityType.MERCH);
 //        meiliSearchUtils.saveMultiData(products, EntityType.PRODUCT);
     }
 

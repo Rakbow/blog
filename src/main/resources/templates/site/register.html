@@ -89,6 +89,7 @@
     const {createApp, onMounted, ref} = Vue;
     const {FilterMatchMode, FilterOperator} = primevue.api;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
     const App = {
         setup() {
@@ -127,7 +128,8 @@
     app.use(primevue.config.default);
     app.directive('tooltip', Tooltip);
     app.use(primevue.toastservice);
-    app.mount("#app");
+    app.use(primevue.dialogservice)
+        .mount("#app");
 </script>
 <style>
 </style>

@@ -46,9 +46,11 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
 </head>
 <body>
 <div id="app">
@@ -57,6 +59,7 @@
 
 
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -64,6 +67,7 @@
 
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -72,12 +76,11 @@
 
             })
 
-            //region ------页面header------
-            const domainUrl = DOMAIN_URL;
-            const selectedEntity = ref();
-            const entityType = ref(ENTITY_TYPE);
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //region 页面header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             return {

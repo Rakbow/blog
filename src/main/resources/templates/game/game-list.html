@@ -47,6 +47,16 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -57,10 +67,13 @@
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
 </head>
 <body>
 <div id="app">
@@ -123,7 +136,7 @@
             <p-column header="游戏名" field="name" :show-filter-menu="false"
                       style="flex: 0 0 20rem">
                 <template #body="slotProps">
-                    <a :href="domainUrl + '/db/game/' + slotProps.data.id">
+                    <a :href="'/db/game/' + slotProps.data.id">
                         {{slotProps.data.name}}
                     </a>
                 </template>
@@ -223,11 +236,12 @@
             </p-column>
         </p-datatable>
     </div>
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 
-    <p-dialog v-model:visible="displayNewDialog" header="新增数据"
-              :style="{width: '600px'}" :modal="true" class="p-fluid">
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
+              :style="{width: '600px'}" class="p-fluid">
         <p-panel header="基础信息">
             <div class="field">
                 <label>游戏名<span style="color: red">*</span></label>
@@ -344,8 +358,8 @@
             <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewGame"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayEditDialog" header="编辑数据"
-              :style="{width: '600px'}" :modal="true" class="p-fluid">
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
+              :style="{width: '600px'}" class="p-fluid">
         <p-panel header="基础信息">
             <div class="field">
                 <label>游戏名<span style="color: red">*</span></label>
@@ -464,8 +478,8 @@
                       @click="submitEditGame"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="deleteGamesDialog" header="删除数据"
-              :style="{width: '450px'}" :modal="true">
+    <p-dialog :modal="true" v-model:visible="deleteGamesDialog" header="删除数据"
+              :style="{width: '450px'}">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
             <span>确定删除所选游戏？</span>
@@ -482,6 +496,7 @@
     const {createApp, onMounted, ref} = Vue;
     const {FilterMatchMode, FilterOperator} = primevue.api;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
     const App = {
         setup() {
@@ -489,16 +504,11 @@
                 init();
             });
 
-            //region ------页面header------
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            //region 页面header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             //region ------过滤------
@@ -747,7 +757,7 @@
             return {
                 franchiseSet, regionSet, releaseTypeSet, gamePlatformSet, regionCode2NameZh,
                 onToggle, onPage, onSort, onFilter, filters, totalRecords,
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity,
+                dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
                 game, games, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
                 submitNewGame, confirmDeleteSelected, deleteGamesDialog, deleteSelectedGames,
@@ -778,6 +788,13 @@
             "p-menubar": primevue.menubar,
             "p-avatar": primevue.avatar,
             "p-tristatecheckbox": primevue.tristatecheckbox,
+
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
@@ -794,7 +811,8 @@
     app.directive('tooltip', Tooltip);
     app.use(primevue.toastservice);
     app.use(router);
-    app.mount("#app");
+    app.use(primevue.dialogservice)
+        .mount("#app");
 </script>
 </body>
 </html>

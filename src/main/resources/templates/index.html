@@ -10,9 +10,10 @@
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
     <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
 
     <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
     <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
@@ -27,10 +28,25 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
+    <!-- Axios -->
+    <script th:src="@{/tool/axios/axios.js}"></script>
+
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 </head>
 <body>
 <div id="app">
@@ -53,11 +69,14 @@
         </div>
     </div>
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, ref} = Vue;
+    const { useDialog } = primevue.usedialog;
+    const Tooltip = primevue.tooltip;
 
     const App = {
         setup() {
@@ -75,16 +94,13 @@
             const domainUrl = DOMAIN_URL;
 
             //region 页面header
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
-            return { goDb, goBlog, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity }
+            return { goDb, goBlog, domainUrl, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, }
         },
         components: {
             "p-button": primevue.button,
@@ -92,6 +108,14 @@
             "p-avatar": primevue.avatar,
             "p-inputtext": primevue.inputtext,
             "p-dropdown": primevue.dropdown,
+
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
+            "p-divider": primevue.divider,
         }
     };
 
@@ -106,6 +130,8 @@
     createApp(App)
         .use(router)
         .use(primevue.config.default)
+        .use(primevue.dialogservice)
+        .directive('tooltip', Tooltip)
         .mount("#app");
 </script>
 </body>

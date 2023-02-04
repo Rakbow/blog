@@ -61,6 +61,7 @@
             </div>
         </div>
     </div>
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -72,15 +73,10 @@
             const errorMessage = ref([[${errorMessage}]]);
 
             //region 页面header
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             //跳转首页
@@ -118,7 +114,8 @@
     const app = createApp(App)
     .use(router)
     .use(primevue.config.default)
-    .mount("#app");
+    .use(primevue.dialogservice)
+        .mount("#app");
 </script>
 <style>
     #imgbox img {

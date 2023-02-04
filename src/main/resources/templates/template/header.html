@@ -4,44 +4,24 @@
 <div id="app">
     <div th:fragment="site_header">
         <div th:if="${loginUser == null}">
-            <p-menubar :model="notLoginNavbarItems">
+            <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">
                 <template #start>
                     <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
                 </template>
                 <template #end>
-                    <div class="grid mt-0 mb-0 pt-0 pb-0">
-                        <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
-                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label"
-                                        option-value="value" placeholder="类型"></p-dropdown>
-                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search"
-                                         name="keyword" th:value="${keyword}"></p-inputtext>
-                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
-                                      type="submit"></p-button>
-                        </div>
-                    </div>
+                    <p-button icon="pi pi-search" label="搜索" @click="openSearchPanel"></p-button>
                 </template>
             </p-menubar>
         </div>
         <div th:if="${loginUser != null}">
-            <p-menubar :model="loginNavbarItems">
+            <p-menubar :model="LOGIN_NAVBAR_ITEMS">
                 <template #start>
                     <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
                 </template>
                 <template #end>
-                    <div class="grid mt-0 mb-0 pt-0 pb-0">
-                        <div class="col-2 mt-0 mb-0 pt-0 pb-0">
-                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
-                                      shape="circle"></p-avatar>
-                        </div>
-                        <div class="col-10 mt-0 mb-0 pt-0 pb-0 p-inputgroup">
-                            <p-dropdown v-model="selectedEntity" :options="entityType" option-label="label"
-                                        option-value="value" placeholder="类型" style="width: 8px"></p-dropdown>
-                            <p-inputtext class="form-control mr-sm-2" placeholder="Search" type="search"
-                                         name="keyword" th:value="${keyword}"></p-inputtext>
-                            <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
-                                      type="submit"></p-button>
-                        </div>
-                    </div>
+                    <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                              shape="circle"></p-avatar>
+                    <p-button icon="pi pi-search" label="搜索" @click="openSearchPanel"></p-button>
                 </template>
             </p-menubar>
         </div>
@@ -87,6 +67,7 @@
     createApp(App)
         .use(router)
         .use(primevue.config.default)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 </script>

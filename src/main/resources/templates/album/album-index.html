@@ -30,19 +30,25 @@
     <script th:src="@{/js/primevue/components/dataview.min.js}"></script>
     <script th:src="@{/js/primevue/components/dataviewlayoutoptions.min.js}"></script>
     <script th:src="@{/js/primevue/components/toolbar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/panel.min.js}"></script>
-    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputtext.min.js}"></script>
     <script th:src="@{/js/primevue/components/badge.min.js}"></script>
     <script th:src="@{/js/primevue/components/multiselect.min.js}"></script>
     <script th:src="@{/js/primevue/components/toast.min.js}"></script>
     <script th:src="@{/js/primevue/components/toastservice.min.js}"></script>
-    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
     <script th:src="@{/js/primevue/components/tabview.min.js}"></script>
     <script th:src="@{/js/primevue/components/tabpanel.min.js}"></script>
+
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
@@ -52,9 +58,11 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -395,13 +403,14 @@
             </template>
         </p-tabpanel>
     </p-tabview>
-
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -411,11 +420,10 @@
             });
 
             //region 页面header
-            const domainUrl = DOMAIN_URL;
-            const selectedEntity = ref();
-            const entityType = ref(ENTITY_TYPE);
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             //region ------基础------
@@ -544,10 +552,10 @@
             };
 
             return {
+                dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
                 clearSearch, hasBonusSet, albumsRows, indexTabs, indexTabChange,
                 publishFormatSet, albumFormatSet, mediaFormatSet,
-                getProducts, franchiseSet, productSet, queryParams, productSelect,
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
+                getProducts, franchiseSet, productSet, queryParams, productSelect, onSortChange,
                 justAddedAlbums, popularAlbums, albums, layout,
                 sortKey, sortOptions, getAlbums, totalRecords, onPage
             }
@@ -555,21 +563,27 @@
         components: {
             "p-dataview": primevue.dataview,
             "p-dataviewlayoutoptions": primevue.dataviewlayoutoptions,
-            "p-dropdown": primevue.dropdown,
-            "p-button": primevue.button,
             "p-toolbar": primevue.toolbar,
-            "p-tag": primevue.tag,
             "p-card": primevue.card,
             "p-panel": primevue.panel,
-            "p-menubar": primevue.menubar,
-            "p-avatar": primevue.avatar,
-            "p-inputtext": primevue.inputtext,
             "p-badge": primevue.badge,
             "p-multiselect": primevue.multiselect,
             "p-toast": primevue.toast,
-            "p-chip": primevue.chip,
             "p-tabview": primevue.tabview,
             "p-tabpanel": primevue.tabpanel,
+
+            "p-chip": primevue.chip,
+            "p-avatar": primevue.avatar,
+            "p-inputtext": primevue.inputtext,
+            "p-menubar": primevue.menubar,
+            "p-tag": primevue.tag,
+            "p-dropdown": primevue.dropdown,
+            "p-button": primevue.button,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
+            "p-divider": primevue.divider,
         }
     };
 
@@ -586,6 +600,7 @@
         .use(primevue.toastservice)
         .use(primevue.config.default)
         .directive('tooltip', Tooltip)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 <style>

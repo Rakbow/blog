@@ -44,6 +44,16 @@
     <script th:src="@{/js/primevue/components/tabview.min.js}"></script>
     <script th:src="@{/js/primevue/components/tabpanel.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -52,12 +62,14 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -388,12 +400,14 @@
         </p-tabpanel>
     </p-tabview>
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -403,15 +417,10 @@
             });
 
             //region 页面header
-            const domainUrl = DOMAIN_URL;
-
-            const selectedEntity = ref();
-
-            const entityType = ref(ENTITY_TYPE);
-
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
             //endregion
 
             //region ------基础------
@@ -540,7 +549,7 @@
             return {
                 clearSearch, hasBonusSet, discsRows, mediaFormatSet, isLimitedSet, indexTabs, indexTabChange,
                 getProducts, franchiseSet, productSet, regionSet, queryParams, productSelect,
-                domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, onSortChange,
+                dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, onSortChange,
                 justAddedDiscs, popularDiscs, discs, layout,
                 sortKey, sortOptions, getDiscs, totalRecords, onPage
             }
@@ -563,6 +572,13 @@
             "p-tristatecheckbox": primevue.tristatecheckbox,
             "p-tabview": primevue.tabview,
             "p-tabpanel": primevue.tabpanel,
+
+            "p-chip": primevue.chip,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
+            "p-divider": primevue.divider,
         }
     };
 
@@ -579,6 +595,7 @@
         .use(primevue.toastservice)
         .use(primevue.config.default)
         .directive('tooltip', Tooltip)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 <style>

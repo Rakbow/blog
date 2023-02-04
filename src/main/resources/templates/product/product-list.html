@@ -41,6 +41,16 @@
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -52,9 +62,11 @@
     <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -157,7 +169,7 @@
                   :header="col.header" :key="col.field + '_' + index">
         </p-column>
     </p-datatable>
-    <p-dialog v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据" :modal="true"
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据"
               class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
@@ -216,7 +228,7 @@
             <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewProduct"></p-button>
         </template>
     </p-dialog>
-    <p-dialog v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据" :modal="true"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据"
               class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
@@ -278,6 +290,7 @@
         </template>
     </p-dialog>
 
+    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -285,6 +298,7 @@
     const {createApp, onMounted, ref} = Vue;
     const {FilterMatchMode, FilterOperator} = primevue.api;
     const Tooltip = primevue.tooltip;
+    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -412,16 +426,18 @@
             };
             //endregion
 
+            //region 页面header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
+            //endregion
+
             //region ------基础配置------
             const loading = ref(false);
             const dt = ref();
             const selectedColumns = ref();
             const toast = useToast();
-            const domainUrl = DOMAIN_URL;
-            const selectedEntity = ref();
-            const entityType = ref(ENTITY_TYPE);
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
             const exportCSV = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
@@ -452,7 +468,7 @@
                 productEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,
                 product, displayNewDialog, openNewDialog, closeNewDialog, submitNewProduct,
                 filters, franchiseSet, productCategorySet,
-                toast, domainUrl, notLoginNavbarItems, loginNavbarItems, entityType, selectedEntity, exportCSV,
+                toast, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, exportCSV,
                 products, selectedColumns, columns, onToggle
             }
         },
@@ -472,6 +488,13 @@
             "p-panel": primevue.panel,
             "p-divider": primevue.divider,
             "p-dialog": primevue.dialog,
+
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
@@ -488,6 +511,7 @@
         .use(primevue.toastservice)
         .use(primevue.config.default)
         .directive('tooltip', Tooltip)
+        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 <style>

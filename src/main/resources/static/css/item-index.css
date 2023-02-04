@@ -83,6 +83,10 @@ a {
     background: #2f364f;
 }
 
+.p-dataview .grid-nogutter {
+    justify-content: space-around;
+}
+
 .p-dataview .p-dataview-header {
     padding: 5px;
     background-color: #1B273D;
@@ -241,7 +245,7 @@ a {
         vertical-align: middle;
     }
 
-    .index-list-item-name {
+.index-list-item-name {
         font-size: 1rem;
         font-weight: 700;
     }
