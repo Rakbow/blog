@@ -35,25 +35,9 @@ public class BookVO {
     private boolean hasBonus;//是否包含特典
     private String remark;//备注
 
-    //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品
-
     //复杂字段
     private JSONArray authors;//作者（译者，插画，原作者等，json）
     private JSONArray spec;//规格
     private String bonus;//特典信息
-    private String description;//描述
-
-    //图片相关
-    private JSONArray images;//图片（json）
-    private JSONObject cover;//图片（json）
-    private JSONArray displayImages;//图片（json）
-    private JSONArray otherImages;//图片（json）
-
-    //审计字段
-    private String addedTime;//收录时间
-    private String editedTime;//编辑时间
-    private int _s;//状态
 
 }

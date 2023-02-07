@@ -144,14 +144,14 @@ const FRANCHISE = 6;
 const PRODUCT = 7;
 
 const ENTITY_TYPE = [
-    {label: '专辑', value: '1'},
-    {label: 'BD/DVD', value: '2'},
-    {label: '书籍', value: '3'},
-    {label: '周边', value: '4'},
-    {label: '游戏', value: '5'},
-    {label: '系列', value: '6'},
-    {label: '作品', value: '7'},
-    {label: '文章', value: '8'}
+    {label: '专辑', labelEn: 'Album', value: '1', icon: 'pi iconfont icon-album'},
+    {label: 'BD/DVD', labelEn: 'Disc', value: '2', icon: 'pi iconfont icon-Video-Disc'},
+    {label: '书籍', labelEn: 'Book', value: '3', icon: 'pi iconfont icon-book'},
+    {label: '周边', labelEn: 'Merch', value: '4', icon: 'pi iconfont icon-yinshuabaozhuang'},
+    {label: '游戏', labelEn: 'Game', value: '5', icon: 'pi iconfont icon-youxi'},
+    {label: '系列', labelEn: 'Franchise', value: '6', icon: 'pi pi-bookmark'},
+    {label: '作品', labelEn: 'Product', value: '7', icon: 'pi pi-th-large'},
+    {label: '文章', labelEn: 'Article', value: '8', icon: 'pi pi-bars'}
 ];
 
 const NOT_LOGIN_NAVBAR_ITEMS = [

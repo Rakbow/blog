@@ -52,6 +52,16 @@
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
     <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
 
+    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
+    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
+    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
     <!-- Axios -->
     <script th:src="@{/tool/axios/axios.js}"></script>
 
@@ -80,6 +90,7 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
     <script th:src="@{/js/basic/Search_Params.js}"></script>
+    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
@@ -158,7 +169,7 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
-<!--                        <p-fieldset :toggleable="true" v-if="audioInfo != null">-->
+                        <!-- audio player -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi icon-music"></i>
@@ -170,6 +181,7 @@
                             </p-button>
                             <div id="aplayer"></div>
                         </p-fieldset>
+                        <!-- artists -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-users"></i>
@@ -191,13 +203,7 @@
                                 <span class="emptyInfo"><em>暂无音乐创作相关信息</em></span>
                             </div>
                         </p-fieldset>
-                        <p-fieldset :toggleable="true" v-if="music.description">
-                            <template #legend>
-                                <i class="pi iconfont icon-miaoshu"></i>
-                                <b>描述</b>
-                            </template>
-                            <article id="description" class="markdown-body" style="width: 100%;"></article>
-                        </p-fieldset>
+                        <!-- lyrics -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi iconfont icon-music"></i>
@@ -205,6 +211,8 @@
                             </template>
                             <article id="lyrics" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
+                        <!-- description -->
+                        <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
                     </div>
                 </template>
             </p-card>
@@ -278,59 +286,61 @@
                 </table>
             </p-panel>
             <br>
-            <div th:insert="~{template/common-template :: page_info_card}"></div>
+            <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
     <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '500px'}" header="编辑基础信息"
               class="p-fluid">
-        <div class="formgrid grid">
-            <div class="field col">
-                <label>曲名<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="musicEdit.name"></p-inputtext>
+        <p-blockui :blocked="editBlock">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>曲名<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="musicEdit.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>曲名(英语)</label>
+                    <p-inputtext v-model.trim="musicEdit.nameEn"></p-inputtext>
+                </div>
             </div>
-            <div class="field col">
-                <label>曲名(英语)</label>
-                <p-inputtext v-model.trim="musicEdit.nameEn"></p-inputtext>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>音频类型<span style="color: red">*</span></label>
+                    <p-dropdown v-model="musicEdit.audioType" :options="audioTypeSet"
+                                option-label="label" option-value="value">
+                    </p-dropdown>
+                </div>
+                <div class="field col">
+                    <label>音频长度<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="musicEdit.audioLength"
+                                 placeholder="00:00"></p-inputtext>
+                </div>
             </div>
-        </div>
-        <div class="formgrid grid">
-            <div class="field col">
-                <label>音频类型<span style="color: red">*</span></label>
-                <p-dropdown v-model="musicEdit.audioType" :options="audioTypeSet"
-                            option-label="label" option-value="value">
-                </p-dropdown>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>碟片序号<span style="color: red">*</span></label>
+                    <p-inputnumber v-model="musicEdit.discSerial"
+                                   :disabled="true"></p-inputnumber>
+                </div>
+                <div class="field col">
+                    <label>曲目序号<span style="color: red">*</span></label>
+                    <p-inputtext v-model="musicEdit.trackSerial" :disabled="true"></p-inputtext>
+                </div>
             </div>
-            <div class="field col">
-                <label>音频长度<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="musicEdit.audioLength"
-                             placeholder="00:00"></p-inputtext>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model.trim="musicEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
             </div>
-        </div>
-        <div class="formgrid grid">
-            <div class="field col">
-                <label>碟片序号<span style="color: red">*</span></label>
-                <p-inputnumber v-model="musicEdit.discSerial"
-                               :disabled="true"></p-inputnumber>
-            </div>
-            <div class="field col">
-                <label>曲目序号<span style="color: red">*</span></label>
-                <p-inputtext v-model="musicEdit.trackSerial" :disabled="true"></p-inputtext>
-            </div>
-        </div>
-        <div class="field">
-            <label>备注</label>
-            <p-textarea v-model.trim="musicEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-        </div>
+        </p-blockui>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="closeEditDialog"></p-button>
+                      @click="closeEditDialog" :disabled="editBlock"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditMusic"></p-button>
+                      @click="submitEditMusic" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayFileEditDialog" header="文件管理"
               :style="{width: '800px'}">
-        <p-blockui :blocked="blockedPanel">
+        <p-blockui :blocked="editBlock">
             <p-panel>
                 <div class="grid">
                     <div class="col-6 text-start">
@@ -409,8 +419,8 @@
         </p-blockui>
         <template #footer>
             <p-button icon="pi pi-times" label="取消" @click="closeFileEditDialog"
-                      class="p-button-text" :disabled="blockedPanel"></p-button>
-            <p-button icon="pi pi-save" label="提交更新" @click="uploadFile" :disabled="blockedPanel"></p-button>
+                      class="p-button-text" :disabled="editBlock"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="uploadFile" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="deleteFileDialog" header="删除文件"
@@ -421,104 +431,95 @@
         </div>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="cancelDeleteSelectedFile"></p-button>
+                      @click="cancelDeleteSelectedFile" :disabled="editBlock"></p-button>
             <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteFile"></p-button>
+                      @click="deleteFile" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作"
-             >
-        <p-panel>
-            <template #header>
-                <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                <b>新增</b>
-            </template>
-            <div class="grid">
-                <div class="col-3">
-                    <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                        <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
+    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :style="{width: '800px'}" header="编辑创作">
+        <p-blockui :blocked="editBlock">
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                    <b>新增</b>
+                </template>
+                <div class="grid">
+                    <div class="col-3">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-tag"></i>
+                                        </span>
+                            <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-users"></i>
+                                        </span>
+                            <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p-button label="新增" icon="pi pi-save"
+                                  @click="addArtist"></p-button>
                     </div>
                 </div>
-                <div class="col-7">
-                    <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
-                                    </span>
-                        <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
-                    </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                    <b>编辑</b>
+                </template>
+                <div v-if="music.artists.length != 0">
+                    <p-datatable dataKey="id" :value="music.artists" responsive-layout="scroll"
+                                 class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                 context-menu v-model:context-menu-selection="selectedArtist"
+                                 @row-contextmenu="artistRowMenu" edit-mode="row"
+                                 v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                        <p-column :row-reorder="true"></p-column>
+                        <p-column field="pos" header="职位">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="name" header="人员">
+                            <template #body="slotProps">
+                                {{slotProps.data.name.join(" / ")}}
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-chips v-model="data[field]"></p-chips>
+                            </template>
+                        </p-column>
+                        <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                  bodyStyle="text-align:center"></p-column>
+                    </p-datatable>
+                    <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                 </div>
-                <div class="col-2">
-                    <p-button label="新增" icon="pi pi-save"
-                              @click="addArtist"></p-button>
+                <div v-else>
+                    <span class="emptyInfo">暂无创作人员相关信息</span>
                 </div>
-            </div>
-        </p-panel>
-        <p-panel>
-            <template #header>
-                <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                <b>编辑</b>
-            </template>
-            <div v-if="music.artists.length != 0">
-                <p-datatable dataKey="id" :value="music.artists" responsive-layout="scroll"
-                             class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
-                             context-menu v-model:context-menu-selection="selectedArtist"
-                             @row-contextmenu="artistRowMenu" edit-mode="row"
-                             v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
-                    <p-column :row-reorder="true"></p-column>
-                    <p-column field="pos" header="职位">
-                        <template #editor="{ data, field }">
-                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                        </template>
-                    </p-column>
-                    <p-column field="name" header="人员">
-                        <template #body="slotProps">
-                            {{slotProps.data.name.join(" / ")}}
-                        </template>
-                        <template #editor="{ data, field }">
-                            <p-chips v-model="data[field]"></p-chips>
-                        </template>
-                    </p-column>
-                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                              bodyStyle="text-align:center"></p-column>
-                </p-datatable>
-                <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
-            </div>
-            <div v-else>
-                <span class="emptyInfo">暂无创作人员相关信息</span>
-            </div>
-        </p-panel>
+            </p-panel>
+        </p-blockui>
         <template #footer>
             <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                      @click="clearArtists"></p-button>
+                      @click="clearArtists" :disabled="editBlock"></p-button>
             <p-button label="取消" icon="pi pi-times" class="mr-4"
-                      @click="cancelArtistEdit"></p-button>
+                      @click="cancelArtistEdit" :disabled="editBlock"></p-button>
             <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                      @click="submitArtist"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
-        <!--                    <div id="md-editor-v3">-->
-        <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-        </md-editor-v3>
-        <!--                    </div>-->
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                      class="p-button-text">
-            </p-button>
-            <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
+                      @click="submitArtist" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayLyricsDialog" header="编辑歌词文本"
               :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
-        <md-editor-v3 v-model="lyricsMd" preview-theme="github"></md-editor-v3>
+        <p-blockui :blocked="editBlock">
+            <md-editor-v3 v-model="lyricsMd" preview-theme="github"></md-editor-v3>
+        </p-blockui>
         <template #footer>
-            <p-button label="取消" icon="pi pi-times" @click="closeLyricsEditDialog" class="p-button-text">
-            </p-button>
-            <p-button label="保存" icon="pi pi-save" @click="submitLyrics" autofocus></p-button>
+            <p-button label="取消" icon="pi pi-times" @click="closeLyricsEditDialog"
+                      class="p-button-text" :disabled="editBlock"></p-button>
+            <p-button label="保存" icon="pi pi-save" @click="submitLyrics"
+                      autofocus  :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dynamicdialog></p-dynamicdialog>
@@ -541,6 +542,15 @@
                 });
             })
 
+            //region common header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
+            //endregion
+
+            //region audio player
+
             const playerOption = ref({
                 fixed: false,
             });
@@ -559,49 +569,21 @@
                     document.getElementById('aplayer').innerHTML = "<span class='emptyInfo'>暂无音频文件</span>";
                     //]]>
                 }
-            }
-
-            //region ------基础------
-            const music = ref([[${music}]]);
-            const audioInfo = ref([[${audioInfo}]]);
-            const pageInfo = ref([[${pageInfo}]]);
-            const relatedAlbum = ref([[${relatedAlbum}]]);
-            const toast = useToast();
-            const audioTypeSet = ref([[${audioTypeSet}]]);
-            const relatedMusics = ref([[${relatedMusics}]]);
-            const edits = ref([
-                {
-                    label: '创作人员',
-                    icon: 'pi pi-users',
-                    command: () => {
-                        openArtistEditDialog();
-                    }
-                },
-                {
-                    label: '描述信息',
-                    icon: 'pi iconfont icon-miaoshu',
-                    command: () => {
-                        openDescriptionEditDialog();
-                    }
-                },
-                {
-                    label: '编辑歌词',
-                    icon: 'pi iconfont icon-music',
-                    command: () => {
-                        openLyricsEditDialog();
-                    }
-                },
-                {
-                    label: '文件管理',
-                    icon: 'pi pi-file',
-                    command: () => {
-                        openFileEditDialog();
-                    }
-                },
-            ]);
+            };
             //endregion
 
-            //region ------上传文件------
+            //region basic
+            const music = ref([[${music}]]);
+            const toast = useToast();
+            const detailInfo = ref([[${detailInfo}]]);
+            const pageInfo = ref([[${pageInfo}]]);
+            const audioInfo = ref([[${audioInfo}]]);
+            const relatedAlbum = ref([[${relatedAlbum}]]);
+            const audioTypeSet = ref([[${audioTypeSet}]]);
+            const relatedMusics = ref([[${relatedMusics}]]);
+            //endregion
+
+            //region files
             const deleteFileDialog = ref(false);
             const selectedFiles = ref([]);
             const confirmDeleteSelectedFile = () => {
@@ -612,7 +594,6 @@
                 deleteFileDialog.value = false;
             };
             const fileHtml = ref("");
-            const blockedPanel = ref(false);
             const fileInfo = ref({
                 file: null,
                 name: '',
@@ -675,7 +656,7 @@
                 showFile();
             };
             const uploadFile = () => {
-                blockedPanel.value = true;
+                editBlock.value = true;
                 const formData = new FormData();
                 for (const file of fileInfos.value) {
                     formData.append("files", file.file);
@@ -685,11 +666,11 @@
                 axiosRequest(UPLOAD_MUSIC_FILE_URL, formData)
                     .then(res => {
                         if (res.state === 1) {
-                            blockedPanel.value = false;
+                            editBlock.value = false;
                             closeFileEditDialog();
                             location.reload(true);
                         } else {
-                            blockedPanel.value = false;
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
@@ -718,17 +699,40 @@
             };
             //endregion
 
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
-            //region ------编辑music信息------
+            //region edit
             const musicEdit = ref({});
+            const editBlock = ref(false);
+            const edits = ref([
+                {
+                    label: '创作人员',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        openArtistEditDialog();
+                    }
+                },
+                {
+                    label: '描述信息',
+                    icon: 'pi iconfont icon-miaoshu',
+                    command: () => {
+                        openDescriptionEditDialog();
+                    }
+                },
+                {
+                    label: '编辑歌词',
+                    icon: 'pi iconfont icon-music',
+                    command: () => {
+                        openLyricsEditDialog();
+                    }
+                },
+                {
+                    label: '文件管理',
+                    icon: 'pi pi-file',
+                    command: () => {
+                        openFileEditDialog();
+                    }
+                },
+            ]);
             const displayEditDialog = ref(false);
-
             //打开编辑数据面板
             const openEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
@@ -743,15 +747,14 @@
                         }
                     })
             };
-
             //关闭编辑基础信息面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
                 musicEdit.value = {};
             };
-
             //保存编辑好的基础信息
             const submitEditMusic = () => {
+                editBlock.value = true;
                 axiosPostRequest(UPDATE_MUSIC_URL, musicEdit.value)
                     .then(res => {
                         if (res.state === 1) {
@@ -765,6 +768,7 @@
                             closeEditDialog();
                             location.reload(true);
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
@@ -772,9 +776,19 @@
                         console.error(error);
                     });
             };
+            const openDescriptionEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
+                        }
+                    });
+            };
             //endregion
 
-            //region ------artists相关组件------
+            //region artists
             const cm = ref();
             const selectedArtist = ref();
             const artist = ref({});
@@ -821,6 +835,7 @@
                 displayArtistEditDialog.value = false;
             };
             const submitArtist = () => {
+                editBlock.value = true;
                 let json = {
                     id: music.value.id,
                     artists: music.value.artists
@@ -833,6 +848,7 @@
                             artist.value = {};
                             location.reload(true);
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
@@ -843,44 +859,7 @@
             };
             //endregion
 
-            //region ------编辑描述------
-            const descriptionMd = ref("");
-            const displayDescriptionDialog = ref(false);
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            descriptionMd.value = music.value.description;
-                            displayDescriptionDialog.value = true;
-                        }
-                    });
-            }
-            const closeDescriptionEditDialog = () => {
-                displayDescriptionDialog.value = false;
-                descriptionMd.value = "";
-            }
-            const submitDescription = () => {
-                let json = {
-                    id: music.value.id,
-                    description: descriptionMd.value
-                }
-                axiosPostRequest(UPDATE_MUSIC_DESCRIPTION_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            music.value.description = descriptionMd.value;
-                            text2marked();
-                            closeDescriptionEditDialog();
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    });
-            }
-            //endregion
-
-            //region ------编辑歌词------
+            //region lyrics
             const lyricsMd = ref("");
             const displayLyricsDialog = ref(false);
             const openLyricsEditDialog = () => {
@@ -899,6 +878,7 @@
                 lyricsMd.value = "";
             }
             const submitLyrics = () => {
+                editBlock.value = true;
                 let json = {
                     id: music.value.id,
                     lyricsText: lyricsMd.value
@@ -911,18 +891,23 @@
                             closeLyricsEditDialog();
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     });
             };
             //endregion
 
-            //region ------markdown共通------
-
+            //region init
+            const init = () => {
+                text2marked();
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                createAplayer();
+            };
             const text2marked = () => {
 
-                if (music.value.description != null && music.value.description !== "") {
-                    document.getElementById("description").innerHTML = marked.parse(music.value.description);
+                if (detailInfo.value.description != null && detailInfo.value.description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(detailInfo.value.description);
                 }
 
                 if (music.value.lrcText != null && music.value.lrcText !== "") {
@@ -935,75 +920,30 @@
             };
             //endregion
 
-            const init = () => {
-                text2marked();
-                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
-
-                createAplayer();
-            };
-
             return {
-                createAplayer,
-                playerOption,
-                audioInfo,
+                //header
+                dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
 
-                cm,
-                artist,
-                artists,
-                menuModel,
-                editingRows,
-                selectedArtist,
-                addArtist,
-                clearArtists,
-                submitArtist,
-                deleteArtist,
-                cancelArtistEdit,
-                artistRowMenu,
-                onRowEditSave,
-                onRowReorder,
+                //basic
+                music, detailInfo, pageInfo, audioTypeSet, relatedAlbum, relatedMusics,
 
+                //edit
+                editBlock, musicEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditMusic,
 
-                relatedAlbum,
-                domainUrl,
-                notLoginNavbarItems,
-                loginNavbarItems,
-                entityType,
-                selectedEntity,
+                //audio player
+                createAplayer, playerOption, audioInfo,
 
-                edits,
-                relatedMusics,
+                //artists
+                displayArtistEditDialog, cm, artist, artists, menuModel, editingRows, selectedArtist, addArtist,
+                clearArtists, submitArtist, deleteArtist, cancelArtistEdit, artistRowMenu, onRowEditSave, onRowReorder,
 
-                displayEditDialog,
-                musicEdit,
-                openEditDialog,
-                closeEditDialog,
-                submitEditMusic,
+                //lyrics
+                lyricsMd, displayLyricsDialog, closeLyricsEditDialog, submitLyrics,
 
-                audioTypeSet,
-
-                pageInfo,
-                music,
-
-                displayArtistEditDialog,
-                descriptionMd,
-                displayDescriptionDialog,
-                closeDescriptionEditDialog,
-                submitDescription,
-                lyricsMd,
-                displayLyricsDialog,
-                closeLyricsEditDialog,
-                submitLyrics,
-
-                blockedPanel,
-                displayFileEditDialog,
-                openFileEditDialog,
-                closeFileEditDialog,
-                onUpload,
-                clearUploadedFile,
-                selectFile,
-                uploadFile,
-                fileHtml,
-                deleteFileDialog, selectedFiles, confirmDeleteSelectedFile, cancelDeleteSelectedFile, deleteFile
+                //files
+                displayFileEditDialog, openFileEditDialog, closeFileEditDialog, onUpload, clearUploadedFile, selectFile,
+                uploadFile, fileHtml, deleteFileDialog, selectedFiles, confirmDeleteSelectedFile,
+                cancelDeleteSelectedFile, deleteFile
             }
         },
         components: {
@@ -1025,10 +965,17 @@
             "p-column": primevue.column,
             "p-contextmenu": primevue.contextmenu,
             "p-card": primevue.card,
-            "p-fileupload": primevue.fileupload,
             "p-blockui": primevue.blockui,
             "p-progressbar": primevue.progressbar,
             "p-inplace": primevue.inplace,
+            "p-fileupload": primevue.fileupload,
+
+            "p-chip": primevue.chip,
+            "p-tag": primevue.tag,
+            "p-scrollpanel": primevue.scrollpanel,
+            "p-scrolltop": primevue.scrolltop,
+            "p-paginator": primevue.paginator,
+            "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 

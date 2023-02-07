@@ -14,6 +14,7 @@ import com.rakbow.website.service.UserService;
 import com.rakbow.website.service.VisitService;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
@@ -91,8 +92,12 @@ public class DiscController {
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("disc", discVOMapper.disc2VO(disc));
         model.addAttribute("user", hostHolder.getUser());
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, false));
         //获取相关碟片
         model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/disc/disc-detail";

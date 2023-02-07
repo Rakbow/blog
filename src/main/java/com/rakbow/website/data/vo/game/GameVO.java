@@ -23,28 +23,12 @@ public class GameVO {
     private boolean hasBonus;//是否包含特典
     private String remark;//备注
 
-    //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品
-
     //复杂字段
     private JSONObject releaseType;//发售类型
     private JSONObject platform;//平台
     private JSONObject region;//地区
     private JSONArray organizations;//相关组织
     private JSONArray staffs;//开发制作人员
-    private String description;//描述
     private String bonus;//特典信息
-
-    //图片相关
-    private JSONArray images;//图片（json）
-    private JSONObject cover;
-    private JSONArray displayImages;
-    private JSONArray otherImages;
-
-    //审计字段
-    private String addedTime;//收录时间
-    private String editedTime;//编辑时间
-    private int _s;//状态
 
 }

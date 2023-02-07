@@ -1,3 +1,18 @@
+.search .p-dropdown {
+    height: 40px;
+    width: 120px;
+}
+
+.search-dialog .p-dialog-header {
+    padding: 0.25rem 1rem;
+    font-style: italic;
+}
+
+.search-dialog .p-dialog-header .p-dialog-title {
+    font-weight: 400;
+    font-size: 1rem;
+}
+
 .search-input {
     font-weight: 400;
     font-size: 16px;

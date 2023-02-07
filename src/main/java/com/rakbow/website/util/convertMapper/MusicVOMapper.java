@@ -64,12 +64,7 @@ public interface MusicVOMapper {
         }
         musicVO.setLrcText(music.getLrcText());
         musicVO.setAudioLength(music.getAudioLength());
-        musicVO.setDescription(music.getDescription());
         musicVO.setRemark(music.getRemark());
-
-        musicVO.setAddedTime(CommonUtils.timestampToString(music.getAddedTime()));
-        musicVO.setEditedTime(CommonUtils.timestampToString(music.getEditedTime()));
-        musicVO.set_s(music.get_s());
 
         return musicVO;
     }

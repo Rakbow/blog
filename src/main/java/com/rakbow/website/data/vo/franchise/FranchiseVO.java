@@ -21,18 +21,6 @@ public class FranchiseVO {
     private String nameZh;//系列名（中文）
     private String nameEn;//系列名（英语）
     private String originDate;//发行日期
-    private String description;//描述
     private String remark;//备注
-
-    //图片
-    private JSONArray images;//图片
-    private JSONObject cover;//封面/logo
-    private JSONArray displayImages;//展示图片
-    private JSONArray otherImages;//其他图片
-
-    //审计字段
-    private String addedTime;//创建时间
-    private String editedTime;//更新时间
-    private int _s;//状态
 
 }

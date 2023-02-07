@@ -58,31 +58,14 @@ public interface MerchVOMapper {
         merchVO.setNotForSale(merch.getNotForSale() == 1);
         merchVO.setRemark(merch.getRemark());
 
-        //关联信息
-        merchVO.setFranchises(FranchiseUtils.getFranchiseList(merch.getFranchises()));
-        merchVO.setProducts(ProductUtils.getProductList(merch.getProducts()));
-
         //复杂字段
         merchVO.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
         merchVO.setSpec(JSON.parseArray(merch.getSpec()));
-        merchVO.setDescription(merch.getDescription());
 
         JSONObject region = new JSONObject();
         region.put("code", merch.getRegion());
         region.put("nameZh", Region.regionCode2NameZh(merch.getRegion()));
         merchVO.setRegion(region);
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(merch.getImages(), 200, false);
-        merchVO.setImages(segmentImages.images);
-        merchVO.setCover(segmentImages.cover);
-        merchVO.setDisplayImages(segmentImages.displayImages);
-        merchVO.setOtherImages(segmentImages.otherImages);
-
-        //审计字段
-        merchVO.setAddedTime(CommonUtils.timestampToString(merch.getAddedTime()));
-        merchVO.setEditedTime(CommonUtils.timestampToString(merch.getEditedTime()));
-        merchVO.set_s(merch.get_s());
 
         return merchVO;
     }

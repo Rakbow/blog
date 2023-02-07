@@ -90,6 +90,8 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
     <script th:src="@{/js/basic/Search_Params.js}"></script>
+    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
+    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -133,7 +135,7 @@
                     <div class="grid">
                         <div class="col-4" style="width: 150px">
                             <div class="game-detail-cover">
-                                <img :src="game.cover.url" :alt="game.cover.name"/>
+                                <img :src="itemImageInfo.cover.url" :alt="itemImageInfo.cover.name"/>
                             </div>
                         </div>
                         <div class="col detail-item-header-card">
@@ -214,7 +216,7 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
-                        <!-- 开发制作人员信息 -->
+                        <!-- staffs -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-users"></i>
@@ -236,157 +238,20 @@
                                 <span class="emptyInfo"><em>暂无开发制作人员信息</em></span>
                             </div>
                         </p-fieldset>
-                        <!-- 描述 -->
-                        <p-fieldset :toggleable="true" v-if="game.description">
-                            <template #legend>
-                                <i class="pi iconfont icon-miaoshu"></i>
-                                <b>描述</b>
-                            </template>
-                            <article id="description" class="markdown-body" style="width: 100%;"></article>
-                        </p-fieldset>
-                        <!-- 特典 -->
+                        <!-- description -->
+                        <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
+                        <!-- bonus -->
                         <div v-if="game.hasBonus">
-                            <p-fieldset :toggleable="true">
-                                <template #legend>
-                                    <i class="pi iconfont icon-gift"></i>
-                                    <b>特典</b>
-                                </template>
-                                <article id="bonus" class="markdown-body" style="width: 100%;"></article>
-                            </p-fieldset>
+                            <div th:insert="~{template/item-detail-template :: bonus_field_set}"></div>
                         </div>
-                        <!-- 图片 -->
-<!--                        <p-fieldset :toggleable="true">-->
-<!--                            <template #legend>-->
-<!--                                <i class="pi pi-images"></i>-->
-<!--                                <b>图片</b>-->
-<!--                            </template>-->
-<!--                            <div v-if="game.displayImages.length == 0">-->
-<!--                                <span class="emptyInfo"><em>暂无图片</em></span>-->
-<!--                            </div>-->
-<!--                            <div v-else align="center">-->
-<!--                                <p-inplace>-->
-<!--                                    <template #display>-->
-<!--                                        <span class="pi pi-eye" style="vertical-align: middle"></span>-->
-<!--                                        <span style="margin-left:.5rem; vertical-align: middle">加载图片</span>-->
-<!--                                    </template>-->
-<!--                                    <template #content>-->
-<!--                                        <p-galleria :value="game.displayImages" :responsive-options="responsiveOptions"-->
-<!--                                                    :num-visible="5" container-style="width: 600px" :circular="true">-->
-<!--                                            <template #item="{item}">-->
-<!--                                                <div id="galleria-div">-->
-<!--                                                    <img :class="galleriaItemClass" :src="item.url" :alt="item.name"-->
-<!--                                                         :onload="initImageClass(item.url)"/>-->
-<!--                                                </div>-->
-<!--                                            </template>-->
-<!--                                            <template #caption="{item}">-->
-<!--                                                <div class="custom-galleria-footer">-->
-<!--                                            <span v-if="game.displayImages" class="title-container">-->
-<!--                                                <span>共{{game.displayImages.length}}张</span>-->
-<!--                                                <span class="title">{{item.nameZh}}</span>-->
-<!--                                                <span style="font-size: 10px">{{item.description}}</span>-->
-<!--                                            </span>-->
-<!--                                                </div>-->
-<!--                                            </template>-->
-<!--                                            <template #thumbnail="{item}">-->
-<!--                                                <div class="grid grid-nogutter justify-content-center">-->
-<!--                                                    <img id="galleria-item" :src="item.thumbUrl" :alt="item.name"-->
-<!--                                                         class="galleria-thumb-image"/>-->
-<!--                                                </div>-->
-<!--                                            </template>-->
-<!--                                        </p-galleria>-->
-<!--                                    </template>-->
-<!--                                </p-inplace>-->
-<!--                            </div>-->
-<!--                        </p-fieldset>-->
                     </div>
                 </template>
             </p-card>
         </div>
         <div class="col-2" style="min-width: 300px">
-            <p-panel>
-                <template #header>
-                    <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-product_b"></i><span><strong>分类</strong></span>
-                    </span>
-                </template>
-                <div class="grid">
-                    <div class="col-fixed pt-0 pb-0">
-                        <i class="pi pi-bookmark mr-2"></i><b>所属系列</b>
-                    </div>
-                    <div class="col-10 col-offset-2 pt-0 pb-0">
-                        <p class="mb-0" v-for="franchise of game.franchises">
-                            <a :href="'/db/franchise/'+ franchise.value">
-                                <span lang="en" style="display:inline">
-                                    {{franchise.label}}
-                                </span>
-                            </a>
-                        </p>
-                    </div>
-                    <div class="col-fixed pt-0 pb-0">
-                        <i class="pi pi-tags mr-2"></i><b>所属作品</b>
-                    </div>
-                    <div class="col-10 col-offset-2 pt-0 pb-0">
-                        <p class="mb-0" v-for="product of game.products">
-                            <a :href="'/db/product/'+ product.value ">
-                                <span lang="en" style="display:inline">
-                                    {{product.label}}
-                                </span>
-                            </a>
-                        </p>
-                    </div>
-                </div>
-            </p-panel>
-            <br>
-            <p-panel>
-                <template #header>
-                    <span class="text-start side-panel-header">
-                        <i class="pi pi-images"></i><span><strong>图片</strong></span>
-                    </span>
-                </template>
-                <div v-if="game.displayImages.length == 0">
-                    <span class="emptyInfo"><em>暂无图片</em></span>
-                </div>
-                <p-galleria v-if="game.displayImages" :value="game.displayImages"
-                            v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
-                            :num-visible="7" container-style="max-width: 800px"
-                            :circular="true" :full-screen="true" :show-item-navigators="true"
-                            :show-thumbnails="false" v-model:visible="displayCustom">
-                    <template #item="{item}">
-                        <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
-                             oncontextmenu="return false"/>
-                    </template>
-                    <template #caption="{item}">
-                        <div class="custom-galleria-footer">
-                            <div class="col-6">
-                                            <span v-if="game.displayImages" class="title-container">
-                                                <span>共{{game.displayImages.length}}张</span>
-                                                <span class="title">{{item.nameZh}}</span>
-                                                <span style="font-size: 10px">{{item.description}}</span>
-                                            </span>
-                            </div>
-                            <div class="col-6 text-end">
-                                            <span v-if="game.displayImages">
-                                            <span>上传于 {{item.uploadTime}}</span>
-                                        </span>
-                            </div>
-                        </div>
-                    </template>
-                </p-galleria>
-                <div v-if="game.displayImages" class="grid justify-content-evenly justify-content-start">
-                    <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                         v-for="(image, index) of game.displayImages" :key="index">
-                        <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
-                             draggable="false"
-                             oncontextmenu="return false"
-                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
-                             @click="imageClick(index)"/>
-                    </div>
-                </div>
-                <br>
-                <b class="rbot"><b></b></b>
-            </p-panel>
-            <br>
-            <p-panel>
+            <div th:insert="~{template/item-detail-template :: belong_to_panel}"></div>
+            <div class="mt-2" th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
+            <p-panel class="mt-2">
                 <template #header>
                     <span class="text-start side-panel-header">
                         <i class="pi iconfont icon-youxi"></i><span><strong>相关游戏</strong></span>
@@ -426,430 +291,255 @@
                     </span>
                 </div>
             </p-panel>
-            <br>
-            <div th:insert="~{template/common-template :: page_info_card}"></div>
+            <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
     <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑基础信息"
               :style="{width: '600px'}" class="p-fluid">
-        <div class="field">
-            <label>游戏名<span style="color: red">*</span></label>
-            <p-inputtext v-model.trim="gameEdit.name"></p-inputtext>
-        </div>
-        <div class="field">
-            <label>游戏名(中)</label>
-            <p-inputtext v-model.trim="gameEdit.nameZh"></p-inputtext>
-        </div>
-        <div class="field">
-            <label>游戏名(英)</label>
-            <p-inputtext v-model.trim="gameEdit.nameEn"></p-inputtext>
-        </div>
-        <div class="formgrid grid">
-            <div class="field col">
-                <label>商品条形码</label>
-                <p-inputtext v-model.trim="gameEdit.barcode"></p-inputtext>
+        <p-blockui :blocked="editBlock">
+            <div class="field">
+                <label>游戏名<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="gameEdit.name"></p-inputtext>
             </div>
-            <div class="field col">
-                <label>发行时间<span style="color: red">*</span></label>
-                <p-calendar v-model="gameEdit.releaseDate" date-format="yy/mm/dd"
-                            :show-button-bar="true"
-                            :show-icon="true"></p-calendar>
+            <div class="field">
+                <label>游戏名(中)</label>
+                <p-inputtext v-model.trim="gameEdit.nameZh"></p-inputtext>
             </div>
-            <div class="field col-2">
-                <div class="col-12">
-                    <label class="mb-3">特典</label>
+            <div class="field">
+                <label>游戏名(英)</label>
+                <p-inputtext v-model.trim="gameEdit.nameEn"></p-inputtext>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>商品条形码</label>
+                    <p-inputtext v-model.trim="gameEdit.barcode"></p-inputtext>
                 </div>
-                <div class="col-12 mt-3">
-                    <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
-                                   :false-value="0"></p-inputswitch>
+                <div class="field col">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="gameEdit.releaseDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
                 </div>
-            </div>
-        </div>
-        <div class="formgrid grid">
-            <div class="field col">
-                <label class="mb-3">发售类型<span style="color: red">*</span></label>
-                <p-dropdown v-model="gameEdit.releaseType" :options="releaseTypeSet"
-                            option-label="labelZh" option-value="value">
-                </p-dropdown>
-            </div>
-            <div class="field col">
-                <label class="mb-3">发售平台<span style="color: red">*</span></label>
-                <p-dropdown v-model="gameEdit.platform" :options="gamePlatformSet"
-                            option-label="labelEn" option-value="value">
-                </p-dropdown>
-            </div>
-            <div class="field col">
-                <label class="mb-3">地区<span style="color: red">*</span></label>
-                <p-dropdown v-model="gameEdit.region" :options="regionSet" :filter="true"
-                            :show-clear="true" option-label="nameZh" option-value="code">
-                    <template #value="slotProps">
-                        <div class="country-item" v-if="slotProps.value">
-                            <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
-                        </div>
-                        <span v-else>选择地区</span>
-                    </template>
-                    <template #option="slotProps">
-                        <div class="country-item">
-                            <span :class="'fi fi-' + slotProps.option.code"></span>
-                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
-                        </div>
-                    </template>
-                </p-dropdown>
-            </div>
-        </div>
-        <div class="formgrid grid">
-            <div class="field col-4">
-                <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                <p-multiselect v-model="gameEdit.franchises" @change="getProducts($event.value)"
-                               :options="franchiseSet" placeholder="所属系列"
-                               option-label="label" option-value="value" display="chip" :filter="true">
-                </p-multiselect>
-            </div>
-            <div class="field col-8">
-                <label class="mb-3">所属产品<span style="color: red">*</span></label>
-                <p-multiselect v-model="gameEdit.products" :options="productSet"
-                               option-label="label" option-value="value" placeholder="选择所属作品"
-                               display="chip" :filter="true" :disabled="productSelect">
-                </p-multiselect>
-            </div>
-        </div>
-        <div class="field">
-            <label>备注</label>
-            <p-textarea v-model="gameEdit.remark" rows="3" cols="20"
-                        :auto-resize="true"></p-textarea>
-        </div>
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="closeEditDialog"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditGame"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayImageEditDialog" header="图片管理"
-              :style="{width: '1200px'}">
-        <p-blockui :blocked="blockedPanel">
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                    <b>新增</b>
-                </template>
-                <div class="grid">
-                    <div class="col-6" align="left">
-                        <p-fileupload
-                                mode="basic"
-                                :custom-upload="true"
-                                accept="image/*"
-                                :auto="true"
-                                choose-label="上传图片"
-                                :max-file-size="2000000" :preview-width="100"
-                                invalid-file-size-message="{0}大小已超过{1}"
-                                @uploader="onUpload"
-                                @select="selectFile">
-                        </p-fileupload>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">特典</label>
                     </div>
-                    <div class="col-6" align="right">
-                        <p-button class="ml-2 p-button-text" icon="pi pi-trash"
-                                  label="清空所选" @click="clearUploadedImage"></p-button>
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
                     </div>
                 </div>
-                <div class="formgrid grid mt-2">
-                    <div class="field col">
-                        <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-image"></i>
-                                        </span>
-                            <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field col">
-                        <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-image"></i>
-                                        </span>
-                            <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field col">
-                        <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                    option-value="value" placeholder="选择图片类型"
-                                    style="width: 280px"></p-dropdown>
-                    </div>
-                    <div class="field col">
-                        <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                    :auto-resize="true" placeholder="图片描述"
-                                    style="width: 280px"></p-textarea>
-                    </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label class="mb-3">发售类型<span style="color: red">*</span></label>
+                    <p-dropdown v-model="gameEdit.releaseType" :options="releaseTypeSet"
+                                option-label="labelZh" option-value="value">
+                    </p-dropdown>
                 </div>
-                <div class="formgrid grid mt-2">
-                    <div class="field col" align="left">
-                        <p-button label="新增图片" icon="pi pi-save"
-                                  @click="save2imageInfos"></p-button>
-                    </div>
-                    <div class="field col" align="right">
-                        <p-button label="提交新增" icon="pi pi-save"
-                                  @click="submitImages" class="p-button-success"></p-button>
-                    </div>
+                <div class="field col">
+                    <label class="mb-3">发售平台<span style="color: red">*</span></label>
+                    <p-dropdown v-model="gameEdit.platform" :options="gamePlatformSet"
+                                option-label="labelEn" option-value="value">
+                    </p-dropdown>
                 </div>
-                <p-divider></p-divider>
-                <div class="field">
-                    <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
-                    <section>
-                        <div id="imgBox" v-html="imageHtml"></div>
-                    </section>
-                </div>
-            </p-panel>
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                    <b>编辑</b>
-                </template>
-                <div v-if="game.images.length != 0">
-                    <p-datatable :value="game.images" class="p-datatable-sm"
-                                 @row-reorder="imgRowReorder" edit-mode="row" striped-rows
-                                 :resizable-columns="true" column-resize-mode="expand"
-                                 v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
-                                 v-model:selection="selectedImage">
-                        <template #header>
-                            <p-button icon="pi pi-trash" class="p-button-danger"
-                                      @click="confirmDeleteSelectedImage"></p-button>
+                <div class="field col">
+                    <label class="mb-3">地区<span style="color: red">*</span></label>
+                    <p-dropdown v-model="gameEdit.region" :options="regionSet" :filter="true"
+                                :show-clear="true" option-label="nameZh" option-value="code">
+                        <template #value="slotProps">
+                            <div class="country-item" v-if="slotProps.value">
+                                <span :class="'fi fi-' + slotProps.value"></span>
+                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            </div>
+                            <span v-else>选择地区</span>
                         </template>
-                        <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
-                        <p-column :row-reorder="true" header-style="width: 3%"></p-column>
-                        <p-column header="图片" header-style="width: 8%">
-                            <template #body="slotProps">
-                                <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
-                                     class="edit-image"/>
-                            </template>
-                        </p-column>
-                        <p-column field="url" header="URL" header-style="width: 10%">
-                            <template #body="slotProps">
-                                {{slotProps.data.url.substr(22)}}
-                            </template>
-                        </p-column>
-                        <p-column field="nameZh" header="名(中)" header-style="width: 10%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus
-                                             style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="nameEn" header="名(英)" header-style="width: 10%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus
-                                             style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="type" header="类型" header-style="width: 8%">
-                            <template #editor="{ data, field }">
-                                <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
-                                            option-value="value" placeholder="图片类型">
-
-                                </p-dropdown>
-                            </template>
-                            <template #body="slotProps">
-                                {{getImageTypeLabel(slotProps.data.type)}}
-                            </template>
-                        </p-column>
-                        <p-column field="description" header="描述" header-style="width: 15%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus
-                                             style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
-                        <p-column :row-editor="true" header-style="width: 15%"></p-column>
-                    </p-datatable>
+                        <template #option="slotProps">
+                            <div class="country-item">
+                                <span :class="'fi fi-' + slotProps.option.code"></span>
+                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            </div>
+                        </template>
+                    </p-dropdown>
                 </div>
-                <div v-else>
-                    <span class="emptyInfo"><em>暂无图片</em></span>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-4">
+                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                    <p-multiselect v-model="gameEdit.franchises" @change="getProducts($event)"
+                                   :options="franchiseSet" placeholder="所属系列"
+                                   option-label="label" option-value="value" display="chip" :filter="true">
+                    </p-multiselect>
                 </div>
-            </p-panel>
+                <div class="field col-8">
+                    <label class="mb-3">所属产品<span style="color: red">*</span></label>
+                    <p-multiselect v-model="gameEdit.products" :options="productSet"
+                                   option-label="label" option-value="value" placeholder="选择所属作品"
+                                   display="chip" :filter="true" :disabled="productSelect">
+                    </p-multiselect>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="gameEdit.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
         </p-blockui>
         <template #footer>
-            <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
-                      class="p-button-text"></p-button>
-            <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="closeEditDialog" :disabled="editBlock"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitEditGame" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayOrganizationEditDialog" header="编辑关联组织信息"
               :style="{width: '800px'}">
-        <p-panel>
-            <template #header>
-                <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                <b>新增</b>
-            </template>
-            <div class="grid">
-                <div class="col-3">
-                    <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                        <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
+        <p-blockui :blocked="editBlock">
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                    <b>新增</b>
+                </template>
+                <div class="grid">
+                    <div class="col-3">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-tag"></i>
+                                        </span>
+                            <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi iconfont icon-gongsi"></i>
+                                        </span>
+                            <p-chips v-model="organization.value" placeholder="组织名称" separator=","></p-chips>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p-button label="新增" icon="pi pi-save"
+                                  @click="addOrganization"></p-button>
                     </div>
                 </div>
-                <div class="col-7">
-                    <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi iconfont icon-gongsi"></i>
-                                    </span>
-                        <p-chips v-model="organization.value" placeholder="组织名称" separator=","></p-chips>
-                    </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                    <b>编辑</b>
+                </template>
+                <div v-if="tmpOrganizations.length != 0">
+                    <p-datatable dataKey="id" :value="tmpOrganizations" responsive-layout="scroll"
+                                 class="p-datatable-sm" striped-rows @row-reorder="organizationOnRowReorder"
+                                 context-menu v-model:context-menu-selection="selectedOrganization"
+                                 @row-contextmenu="organizationRowMenu" edit-mode="row"
+                                 v-model:editing-rows="organizationEditingRows" @row-edit-save="organizationOnRowEditSave">
+                        <p-column :row-reorder="true"></p-column>
+                        <p-column field="label" header="组织类型">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="value" header="组织名称">
+                            <template #body="slotProps">
+                                {{slotProps.data.value.join("/")}}
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-chips v-model="data[field]"></p-chips>
+                            </template>
+                        </p-column>
+                        <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                  bodyStyle="text-align:center"></p-column>
+                    </p-datatable>
+                    <p-contextmenu :model="organizationMenuModel" ref="organizationCm"></p-contextmenu>
                 </div>
-                <div class="col-2">
-                    <p-button label="新增" icon="pi pi-save"
-                              @click="addOrganization"></p-button>
+                <div v-else>
+                    <span class="emptyInfo">暂无关联组织信息</span>
                 </div>
-            </div>
-        </p-panel>
-        <p-panel>
-            <template #header>
-                <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                <b>编辑</b>
-            </template>
-            <div v-if="tmpOrganizations.length != 0">
-                <p-datatable dataKey="id" :value="tmpOrganizations" responsive-layout="scroll"
-                             class="p-datatable-sm" striped-rows @row-reorder="organizationOnRowReorder"
-                             context-menu v-model:context-menu-selection="selectedOrganization"
-                             @row-contextmenu="organizationRowMenu" edit-mode="row"
-                             v-model:editing-rows="organizationEditingRows" @row-edit-save="organizationOnRowEditSave">
-                    <p-column :row-reorder="true"></p-column>
-                    <p-column field="label" header="组织类型">
-                        <template #editor="{ data, field }">
-                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                        </template>
-                    </p-column>
-                    <p-column field="value" header="组织名称">
-                        <template #body="slotProps">
-                            {{slotProps.data.value.join("/")}}
-                        </template>
-                        <template #editor="{ data, field }">
-                            <p-chips v-model="data[field]"></p-chips>
-                        </template>
-                    </p-column>
-                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                              bodyStyle="text-align:center"></p-column>
-                </p-datatable>
-                <p-contextmenu :model="organizationMenuModel" ref="organizationCm"></p-contextmenu>
-            </div>
-            <div v-else>
-                <span class="emptyInfo">暂无关联组织信息</span>
-            </div>
-        </p-panel>
+            </p-panel>
+        </p-blockui>
         <template #footer>
             <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                      @click="clearOrganizations"></p-button>
+                      @click="clearOrganizations" :disabled="editBlock"></p-button>
             <p-button label="取消" icon="pi pi-times" class="mr-4"
-                      @click="cancelOrganizationsEdit"></p-button>
+                      @click="cancelOrganizationsEdit" :disabled="editBlock"></p-button>
             <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                      @click="submitOrganizations"></p-button>
+                      @click="submitOrganizations" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayStaffEditDialog" header="编辑开发制作人员信息"
               :style="{width: '800px'}">
-        <p-panel>
-            <template #header>
-                <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                <b>新增</b>
-            </template>
-            <div class="grid">
-                <div class="col-3">
-                    <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
-                        <p-inputtext v-model="staff.pos" placeholder="职位名称"></p-inputtext>
+        <p-blockui :blocked="editBlock">
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                    <b>新增</b>
+                </template>
+                <div class="grid">
+                    <div class="col-3">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-tag"></i>
+                                        </span>
+                            <p-inputtext v-model="staff.pos" placeholder="职位名称"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-users"></i>
+                                        </span>
+                            <p-chips v-model="staff.name" placeholder="人员信息" separator=","></p-chips>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p-button label="新增" icon="pi pi-save"
+                                  @click="addStaff"></p-button>
                     </div>
                 </div>
-                <div class="col-7">
-                    <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
-                                    </span>
-                        <p-chips v-model="staff.name" placeholder="人员信息" separator=","></p-chips>
-                    </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                    <b>编辑</b>
+                </template>
+                <div v-if="tmpStaffs.length != 0">
+                    <p-datatable dataKey="id" :value="tmpStaffs" responsive-layout="scroll"
+                                 class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                 context-menu v-model:context-menu-selection="selectedStaff"
+                                 @row-contextmenu="staffRowMenu" edit-mode="row"
+                                 v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                        <p-column :row-reorder="true"></p-column>
+                        <p-column field="pos" header="职位">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="name" header="人员">
+                            <template #body="slotProps">
+                                {{slotProps.data.name.join("/")}}
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-chips v-model="data[field]"></p-chips>
+                            </template>
+                        </p-column>
+                        <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                  bodyStyle="text-align:center"></p-column>
+                    </p-datatable>
+                    <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                 </div>
-                <div class="col-2">
-                    <p-button label="新增" icon="pi pi-save"
-                              @click="addStaff"></p-button>
+                <div v-else>
+                    <span class="emptyInfo">暂无开发制作人员信息</span>
                 </div>
-            </div>
-        </p-panel>
-        <p-panel>
-            <template #header>
-                <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                <b>编辑</b>
-            </template>
-            <div v-if="tmpStaffs.length != 0">
-                <p-datatable dataKey="id" :value="tmpStaffs" responsive-layout="scroll"
-                             class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
-                             context-menu v-model:context-menu-selection="selectedStaff"
-                             @row-contextmenu="staffRowMenu" edit-mode="row"
-                             v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
-                    <p-column :row-reorder="true"></p-column>
-                    <p-column field="pos" header="职位">
-                        <template #editor="{ data, field }">
-                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                        </template>
-                    </p-column>
-                    <p-column field="name" header="人员">
-                        <template #body="slotProps">
-                            {{slotProps.data.name.join("/")}}
-                        </template>
-                        <template #editor="{ data, field }">
-                            <p-chips v-model="data[field]"></p-chips>
-                        </template>
-                    </p-column>
-                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                              bodyStyle="text-align:center"></p-column>
-                </p-datatable>
-                <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
-            </div>
-            <div v-else>
-                <span class="emptyInfo">暂无开发制作人员信息</span>
-            </div>
-        </p-panel>
+            </p-panel>
+        </p-blockui>
         <template #footer>
             <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
-                      @click="clearStaffs"></p-button>
+                      @click="clearStaffs" :disabled="editBlock"></p-button>
             <p-button label="取消" icon="pi pi-times" class="mr-4"
-                      @click="cancelStaffEdit"></p-button>
+                      @click="cancelStaffEdit" :disabled="editBlock"></p-button>
             <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
-                      @click="submitStaff"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
-        <!--                    <div id="md-editor-v3">-->
-        <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-        </md-editor-v3>
-        <!--                    </div>-->
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                      class="p-button-text">
-            </p-button>
-            <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayBonusDialog" header="编辑特典信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
-        <md-editor-v3 v-model="bonusMd" preview-theme="github"></md-editor-v3>
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" @click="closeBonusEditDialog" class="p-button-text">
-            </p-button>
-            <p-button label="保存" icon="pi pi-save" @click="submitBonus"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="deleteGameImageDialog" header="删除图片"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-            <span v-if="game">确定删除所选的图片？</span>
-        </div>
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="cancelDeleteSelectedImage"></p-button>
-            <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteImage"></p-button>
+                      @click="submitStaff" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
 
@@ -873,11 +563,38 @@
                 });
             })
 
-            //region ------基础------
+            //region common header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
+            //endregion
+
+            //region image
+            const activeIndex = ref(0)
+            const displayCustom = ref(false)
+            const imageClick = (index) => {
+                activeIndex.value = index;
+                displayCustom.value = true;
+            };
+            //endregion
+
+            //region basic
             const game = ref([[${game}]]);
-            const pageInfo = ref([[${pageInfo}]]);
-            const relatedGames = ref([[${relatedGames}]]);
             const toast = useToast();
+            const detailInfo = ref([[${detailInfo}]]);
+            const pageInfo = ref([[${pageInfo}]]);
+            const itemImageInfo = ref([[${itemImageInfo}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
+            const productSet = ref([]);
+            const relatedGames = ref([[${relatedGames}]]);
+            const releaseTypeSet = ref([[${releaseTypeSet}]]);
+            const regionSet = ref([[${regionSet}]]);
+            const gamePlatformSet = ref([[${gamePlatformSet}]]);
+
+            //endregion
+
+            //region edit basic info
             const productSelect = ref(true);
             const edits = ref([
                 {
@@ -916,35 +633,9 @@
                     }
                 }
             ]);
-            const releaseTypeSet = ref([[${releaseTypeSet}]]);
-            const regionSet = ref([[${regionSet}]]);
-            const gamePlatformSet = ref([[${gamePlatformSet}]]);
-            const productSet = ref([]);
-            const franchiseSet = ref([[${franchiseSet}]]);
-            const blockedPanel = ref(false);
-            //endregion
-
-            //region ------图片板块------
-            const imgRowReorder = (ev) => {
-                game.value.images = ev.value;
-            };
-            const editingImages = ref([]);
-            const imgRowEditSave = (ev) => {
-                let {newData, index} = ev;
-                game.value.images[index] = newData;
-            };
-            const activeIndex = ref(0);
-            const displayCustom = ref(false);
-            const imageClick = (index) => {
-                activeIndex.value = index;
-                displayCustom.value = true;
-            };
-            //endregion
-
-            //region ------编辑游戏信息------
+            const editBlock = ref(false);
             const gameEdit = ref({});
             const displayEditDialog = ref(false);
-
             //打开编辑数据面板
             const openEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
@@ -958,7 +649,7 @@
                             gameEdit.value.releaseType = dataTmp.releaseType.id;
                             gameEdit.value.region = dataTmp.region.code;
                             gameEdit.value.platform = dataTmp.platform.id;
-                            gameEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            gameEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
                             let json = {
                                 franchises: gameEdit.value.franchises,
                                 entityType: GAME
@@ -971,21 +662,20 @@
                                     }else {
                                         productSelect.value = true;
                                     }
-                                    gameEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    gameEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
                                     displayEditDialog.value = true;
                                 });
                         }
                     })
             };
-
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
                 gameEdit.value = {};
             };
-
             //保存编辑数据
             const submitEditGame = () => {
+                editBlock.value = true;
                 axiosPostRequest(UPDATE_GAME_URL, gameEdit.value)
                     .then(res => {
                         if (res.state === 1) {
@@ -999,6 +689,7 @@
                             closeEditDialog();
                             location.reload(true);
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
@@ -1006,89 +697,65 @@
                         console.error(error);
                     });
             };
-            //endregion
-
-            //region ------编辑描述------
-            const descriptionMd = ref("");
-            const displayDescriptionDialog = ref(false);
+            //根据系列id获取该系列所有作品
+            const getProducts = (ev) => {
+                let json = {
+                    franchises: ev.value,
+                    entityType: GAME
+                };
+                axiosPostRequest(GET_PRODUCT_SET_URL, json)
+                    .then(res => {
+                        if (res.length !== 0) {
+                            productSet.value = res;
+                            productSelect.value = false;
+                        }else {
+                            productSelect.value = true;
+                            gameEdit.value.products = [];
+                        }
+                    });
+            };
+            const openImageEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
+                        }
+                    })
+            };
             const openDescriptionEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            descriptionMd.value = game.value.description;
-                            displayDescriptionDialog.value = true;
+                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
                         }
                     });
-            }
-            const closeDescriptionEditDialog = () => {
-                displayDescriptionDialog.value = false;
-                descriptionMd.value = "";
-            }
-            const submitDescription = () => {
-                let json = {
-                    id: game.value.id,
-                    description: descriptionMd.value
-                }
-                axiosPostRequest(UPDATE_GAME_DESCRIPTION_URL, json)
-                    .then(res => {
-                        if (res.state != 0) {
-                            game.value.description = descriptionMd.value;
-                            text2marked();
-                            closeDescriptionEditDialog();
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    });
-            }
-            //endregion
-
-            //region ------编辑特典------
-            const bonusMd = ref("");
-            const displayBonusDialog = ref(false);
+            };
             const openBonusEditDialog = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
                     .then(res => {
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            bonusMd.value = game.value.bonus;
-                            displayBonusDialog.value = true;
-                        }
-                    });
-            }
-            const closeBonusEditDialog = () => {
-                displayBonusDialog.value = false;
-                bonusMd.value = "";
-            }
-            const submitBonus = () => {
-                let json = {
-                    id: game.value.id,
-                    bonus: bonusMd.value
-                }
-                axiosPostRequest(UPDATE_GAME_BONUS_URL, json)
-                    .then(res => {
-                        if (res.state !== 0) {
-                            game.value.bonus = bonusMd.value;
-                            text2marked();
-                            closeBonusEditDialog();
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                            showBonusEditDialog(toast, dialog, detailInfo.value, game.value.bonus);
                         }
                     });
             };
             //endregion
 
-            //region ------markdown共通------
-
+            //region init
+            const init = () => {
+                text2marked();
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+            };
             const text2marked = () => {
                 const bonus = game.value.bonus;
 
-                if (game.value.description != null && game.value.description !== "") {
-                    document.getElementById("description").innerHTML = marked.parse(game.value.description);
+                if (detailInfo.value.description != null && detailInfo.value.description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(detailInfo.value.description);
                 }
 
                 if (game.value.hasBonus && bonus != null && bonus !== "") {
@@ -1102,173 +769,7 @@
             };
             //endregion
 
-            //region ------图片相关组件------
-            const updateImage = () => {
-                let json = {
-                    id: game.value.id,
-                    images: game.value.images,
-                    action: "1"
-                };
-                axiosPostRequest(UPDATE_GAME_IMAGES_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
-                            closeImageEditDialog();
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    }).catch(err => {
-                    console.error(err);
-                });
-            };
-            const galleriaItemClass = ref("");
-            const selectedImage = ref([]);
-            const confirmDeleteSelectedImage = () => {
-                deleteGameImageDialog.value = true;
-            };
-            const cancelDeleteSelectedImage = () => {
-                selectedImage.value = [];
-                deleteGameImageDialog.value = false;
-            };
-            const deleteGameImageDialog = ref(false);
-            const deleteImage = () => {
-                let json = {
-                    id: game.value.id,
-                    images: selectedImage.value,
-                    action: "2"
-                };
-                axiosPostRequest(UPDATE_GAME_IMAGES_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
-                            deleteGameImageDialog.value = false;
-                            closeImageEditDialog();
-                            selectedImage.value = [];
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    }).catch(err => {
-                    console.error(err);
-                });
-            };
-            const imageInfo = ref({
-                image: null,
-                nameZh: "",
-                nameEn: "",
-                description: "",
-                type: 0
-            });
-            const imageInfos = ref([]);
-
-            const displayImageEditDialog = ref(false);
-            const imageHtml = ref("");
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            imageInfo.value = {};
-                            imageInfos.value = [];
-                            displayImageEditDialog.value = true;
-                        }
-                    })
-            };
-            const closeImageEditDialog = () => {
-                imageInfo.value = {};
-                imageInfos.value = [];
-                displayImageEditDialog.value = false;
-                document.getElementById("imgBox").innerHTML = "";
-            };
-            const showImage = () => {
-                imageHtml.value = "";
-                //<![CDATA[
-                imageHtml.value += "<div class='grid'>";
-                for (const img of imageInfos.value) {
-                    imageHtml.value += '<div class="col-4">';
-                    imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
-                    imageHtml.value += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
-                    imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
-                    imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
-                    imageHtml.value += '<p>描述: ' + img.description + '</p>';
-                    imageHtml.value += '</div>';
-                }
-                imageHtml.value += "</div>";
-                //]]>
-                document.getElementById("imgBox").innerHTML = imageHtml;
-            };
-            const selectFile = (ev) => {
-                imageInfo.value.image = ev.files[0];
-            };
-            const onUpload = (ev) => {
-                toast.add({severity: 'info', summary: 'Success', detail: IMAGE_SELECTED_INFO, life: 3000});
-            };
-            const checkImageInfo = () => {
-                if (typeof imageInfo.value.description == "undefined") {
-                    imageInfo.value.description = "";
-                }
-                if (imageInfo.value.image === null) {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_EMPTY_EXCEPTION, life: 3000});
-                }
-                if (typeof imageInfo.value.nameZh == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_ZH_EMPTY_EXCEPTION, life: 3000});
-                    return false;
-                }
-                if (typeof imageInfo.value.nameEn == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_EN_EMPTY_EXCEPTION, life: 3000});
-                    return false;
-                }
-                if (typeof imageInfo.value.type == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_TYPE_EMPTY_EXCEPTION, life: 3000});
-                    return false;
-                }
-                return true;
-            }
-            const save2imageInfos = () => {
-                if (checkImageInfo()) {
-                    imageInfos.value.push(imageInfo.value);
-                    showImage();
-                    imageInfo.value = {};
-                }
-            };
-            const clearUploadedImage = () => {
-                imageInfos.value = [];
-                document.getElementById("imgBox").innerHTML = "";
-            };
-            const submitImages = () => {
-                blockedPanel.value = true;
-                const formData = new FormData();
-                for (const img of imageInfos.value) {
-                    formData.append("images", img.image);
-                }
-                formData.append("id", game.value.id);
-                formData.append("imageInfos", JSON.stringify(imageInfos.value));
-                axiosRequest(INSERT_GAME_IMAGES_URL, formData)
-                    .then(res => {
-                        if (res.state === 1) {
-                            blockedPanel.value = false;
-                            closeImageEditDialog();
-                            location.reload(true);
-                        } else {
-                            blockedPanel.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    }).catch(err => {
-                    console.error(err);
-                });
-            };
-            //endregion
-
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
-            //region ------作者信息相关组件------
+            //region staffs
             const tmpStaffs = ref();
             const cm = ref();
             const selectedStaff = ref();
@@ -1320,6 +821,7 @@
                 displayStaffEditDialog.value = false;
             };
             const submitStaff = () => {
+                editBlock.value = true;
                 let json = {
                     id: game.value.id,
                     Staffs: tmpStaffs.value
@@ -1332,13 +834,14 @@
                             staff.value = {};
                             location.reload(true);
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
             //endregion
 
-            //region ------相关组织组件------
+            //region organization
             const tmpOrganizations = ref();
             const organizationCm = ref();
             const selectedOrganization = ref();
@@ -1390,6 +893,7 @@
                 displayOrganizationEditDialog.value = false;
             };
             const submitOrganizations = () => {
+                editBlock.value = true;
                 let json = {
                     id: game.value.id,
                     organizations: tmpOrganizations.value
@@ -1402,142 +906,38 @@
                             organization.value = {};
                             location.reload(true);
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
             //endregion
 
-            //根据系列id获取该系列所有作品
-            const getProducts = (data) => {
-                let json = {
-                    franchises: data,
-                    entityType: GAME
-                };
-                axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                    .then(res => {
-                        if (res.length !== 0) {
-                            productSet.value = res;
-                            productSelect.value = false;
-                        }else {
-                            productSelect.value = true;
-                            gameEdit.value.products = [];
-                        }
-                    });
-            };
-
-            const init = () => {
-                text2marked();
-                initImageClass($("#galleria-item").attr("src"));
-                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
-            };
-
-            const initImageClass = (url) => {
-                const image = new Image();
-                image.src = url;
-                image.onload = function () {
-                    galleriaItemClass.value = (this.naturalWidth > this.naturalHeight) ? "galleria-div-width" : "galleria-div-height";
-                }
-            }
-
             return {
-                productSelect,
-                getProducts,
-                displayStaffEditDialog,
-                displayOrganizationEditDialog,
-                regionCode2NameZh,
-                regionSet,
-                gamePlatformSet,
-                relatedGames,
-                blockedPanel,
-                clearUploadedImage,
-                closeImageEditDialog,
-                selectedImage,
-                getImageTypeLabel,
-                editingImages,
-                imgRowEditSave,
-                imgRowReorder,
-                releaseTypeSet,
-                game,
-
-                initGalleriaImageClass,
-                imageClick,
-                displayCustom,
-                activeIndex,
-
+                //header
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
-                edits,
-                displayEditDialog,
-                gameEdit,
-                openEditDialog,
-                closeEditDialog,
 
-                submitEditGame,
-                productSet,
+                //image
+                activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
-                franchiseSet,
-                pageInfo,
-                updateImage,
-                cancelDeleteSelectedImage,
-                deleteImage,
-                confirmDeleteSelectedImage,
-                deleteGameImageDialog,
-                initImageClass,
+                //basic
+                game, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                gamePlatformSet, regionSet, releaseTypeSet, productSet, relatedGames, responsiveOptions,
+                regionCode2NameZh,
 
-                galleriaItemClass,
-                onUpload,
-                save2imageInfos,
-                imageInfo,
-                imageInfos,
-                imageTypes,
-                submitImages,
-                selectFile,
-                imageHtml,
-                displayImageEditDialog,
+                //edit
+                editBlock, gameEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditGame,
 
-                responsiveOptions,
-
-                descriptionMd,
-                displayDescriptionDialog,
-                closeDescriptionEditDialog,
-                submitDescription,
-
-                bonusMd,
-                displayBonusDialog,
-                closeBonusEditDialog,
-                submitBonus,
-
-                tmpStaffs,
-                cm,
-                staff,
-                staffs,
-                menuModel,
-                editingRows,
-                selectedStaff,
-                addStaff,
-                clearStaffs,
-                submitStaff,
-                deleteStaff,
-                cancelStaffEdit,
-                staffRowMenu,
-                onRowEditSave,
+                //staffs
+                displayStaffEditDialog, tmpStaffs, cm, staff, staffs, menuModel, editingRows, selectedStaff,
+                addStaff, clearStaffs, submitStaff, deleteStaff, cancelStaffEdit, staffRowMenu, onRowEditSave,
                 onRowReorder,
 
-                tmpOrganizations,
-                organizationCm,
-                organization,
-                organizations,
-                organizationMenuModel,
-                organizationEditingRows,
-                selectedOrganization,
-                addOrganization,
-                clearOrganizations,
-                submitOrganizations,
-                deleteOrganization,
-                cancelOrganizationsEdit,
-                organizationRowMenu,
-                organizationOnRowEditSave,
-                organizationOnRowReorder,
+                //organization
+                displayOrganizationEditDialog, tmpOrganizations, organizationCm, organization, organizations,
+                organizationMenuModel, organizationEditingRows, selectedOrganization, addOrganization,
+                clearOrganizations, submitOrganizations, deleteOrganization, cancelOrganizationsEdit,
+                organizationRowMenu, organizationOnRowEditSave, organizationOnRowReorder,
             }
         },
         components: {
@@ -1545,7 +945,6 @@
             "p-fieldset": primevue.fieldset,
             "p-button": primevue.button,
             "p-dialog": primevue.dialog,
-            "p-fileupload": primevue.fileupload,
             "p-chips": primevue.chips,
             "p-divider": primevue.divider,
             "p-inputtext": primevue.inputtext,

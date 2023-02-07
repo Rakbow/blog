@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
@@ -90,7 +91,7 @@ public class ProductController {
         Product product = productService.getProduct(productId);
         model.addAttribute("product", productVOMapper.product2VO(product));
         model.addAttribute("user", hostHolder.getUser());
-        model.addAttribute("productClassSet", redisUtil.get("ProductCategorySet"));
+        model.addAttribute("productCategorySet", redisUtil.get("ProductCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("platformSet", redisUtil.get("platformSet"));
@@ -112,6 +113,10 @@ public class ProductController {
         //获取页面数据
         model.addAttribute("pageInfo",
                 visitService.getPageInfo(EntityType.PRODUCT.getId(), productId, product.getAddedTime(), product.getEditedTime()));
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(product.getImages(), 200, true));
 
         return "/product/product-detail";
     }

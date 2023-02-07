@@ -76,27 +76,10 @@ public interface BookVOMapper {
         publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
         bookVO.setPublishLanguage(publishLanguage);
 
-        //关联信息
-        bookVO.setProducts(ProductUtils.getProductList(book.getProducts()));
-        bookVO.setFranchises(FranchiseUtils.getFranchiseList(book.getFranchises()));
-
         //大文本信息
         bookVO.setAuthors(JSON.parseArray(book.getAuthors()));
         bookVO.setSpec(JSON.parseArray(book.getSpec()));
         bookVO.setBonus(book.getBonus());
-        bookVO.setDescription(book.getDescription());
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(book.getImages(), 180, false);
-        bookVO.setImages(segmentImages.images);
-        bookVO.setCover(segmentImages.cover);
-        bookVO.setDisplayImages(segmentImages.displayImages);
-        bookVO.setOtherImages(segmentImages.otherImages);
-
-        //审计字段
-        bookVO.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));
-        bookVO.setEditedTime(CommonUtils.timestampToString(book.getEditedTime()));
-        bookVO.set_s(book.get_s());
 
         return bookVO;
     }

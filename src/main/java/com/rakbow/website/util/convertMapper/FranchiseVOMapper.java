@@ -40,17 +40,6 @@ public interface FranchiseVOMapper {
         franchiseVO.setNameEn(franchise.getNameEn());
         franchiseVO.setOriginDate(CommonUtils.dateToString(franchise.getOriginDate()));
         franchiseVO.setRemark(franchise.getRemark());
-        franchiseVO.setDescription(franchise.getDescription());
-
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(franchise.getImages(), 200, false);
-        franchiseVO.setImages(segmentImages.images);
-        franchiseVO.setCover(segmentImages.cover);
-        franchiseVO.setDisplayImages(segmentImages.displayImages);
-        franchiseVO.setOtherImages(segmentImages.otherImages);
-
-        franchiseVO.setAddedTime(CommonUtils.timestampToString(franchise.getAddedTime()));
-        franchiseVO.setEditedTime(CommonUtils.timestampToString(franchise.getEditedTime()));
-        franchiseVO.set_s(franchise.get_s());
 
         return franchiseVO;
     }

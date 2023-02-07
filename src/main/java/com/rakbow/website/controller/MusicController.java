@@ -7,6 +7,7 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.data.ApiInfo;
@@ -67,6 +68,8 @@ public class MusicController {
         model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music));
         //获取页面信息
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), musicId, music.getAddedTime(), music.getEditedTime()));
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(musicId));
         //获取所属专辑的信息

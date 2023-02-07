@@ -13,13 +13,10 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.common.HostHolder;
-import com.rakbow.website.util.common.MeiliSearchUtils;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,8 +109,12 @@ public class AlbumController {
         model.addAttribute("album", albumVOMapper.album2VO(album));
         model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
         model.addAttribute("user", hostHolder.getUser());
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(album.getImages(), 250, false));
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(id));
         return "/album/album-detail";

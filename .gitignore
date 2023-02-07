@@ -49,3 +49,5 @@ gen
 /src/main/resources/static/css/
 /src/main/resources/static/img/
 /src/main/resources/static/tool/
+!/src/main/resources/application-develop.properties
+!/src/main/resources/application-produce.properties

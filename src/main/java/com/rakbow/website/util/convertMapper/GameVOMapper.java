@@ -60,30 +60,13 @@ public interface GameVOMapper {
         gameVO.setHasBonus(game.getHasBonus() == 1);
         gameVO.setRemark(game.getRemark());
 
-        //关联信息
-        gameVO.setProducts(ProductUtils.getProductList(game.getProducts()));
-        gameVO.setFranchises(FranchiseUtils.getFranchiseList(game.getFranchises()));
-
         //复杂字段
         gameVO.setRegion(Region.getRegionJson(game.getRegion()));
         gameVO.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
         gameVO.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
         gameVO.setOrganizations(JSON.parseArray(game.getOrganizations()));
         gameVO.setStaffs(JSON.parseArray(game.getStaffs()));
-        gameVO.setDescription(game.getDescription());
         gameVO.setBonus(game.getBonus());
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(game.getImages(), 140, false);
-        gameVO.setCover(segmentImages.cover);
-        gameVO.setImages(segmentImages.images);
-        gameVO.setDisplayImages(segmentImages.displayImages);
-        gameVO.setOtherImages(segmentImages.otherImages);
-
-        //审计字段
-        gameVO.setAddedTime(CommonUtils.timestampToString(game.getAddedTime()));
-        gameVO.setEditedTime(CommonUtils.timestampToString(game.getEditedTime()));
-        gameVO.set_s(game.get_s());
 
         return gameVO;
     }

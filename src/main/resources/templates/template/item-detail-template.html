@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>item-detail-template</title>
+</head>
+<body>
+<div th:fragment="page_info_card">
+    <div class="page-info mt-2">
+        <p-card>
+            <template #content>
+                <div class="formgrid grid">
+                    <div class="col-fixed">
+                        <i class="pi pi-chevron-circle-right mr-2 ml-2"></i><strong
+                            class="label">录入时间</strong>
+                    </div>
+                    <div class="col-11 col-offset-1 mb-2">
+                        {{pageInfo.addedTime}}
+                    </div>
+                    <div class="col-fixed">
+                        <i class="pi pi-chevron-circle-right mr-2 ml-2"></i><strong
+                            class="label">编辑时间</strong>
+                    </div>
+                    <div class="col-11 col-offset-1 mb-2">
+                        {{pageInfo.editedTime}}
+                    </div>
+                    <div class="col-fixed">
+                        <i class="pi pi-chart-bar mr-2 ml-2"></i><strong class="label">页面流量</strong>
+                    </div>
+                    <div class="col-11 col-offset-1 mb-2">
+                        <i class="pi pi-eye mr-2"></i><strong>访问数：</strong>
+                        <span class="text-center">{{pageInfo.visitNum}}</span>
+                    </div>
+                </div>
+            </template>
+        </p-card>
+    </div>
+</div>
+
+<div th:fragment="belong_to_panel">
+    <p-panel>
+        <template #header>
+            <span class="text-start side-panel-header">
+                <i class="pi iconfont icon-product_b"></i><span><strong>分类</strong></span>
+            </span>
+        </template>
+        <div class="grid">
+            <div class="col-fixed pt-0 pb-0">
+                <i class="pi pi-bookmark mr-2"></i><b>所属系列</b>
+            </div>
+            <div class="col-10 col-offset-2 pt-0 pb-0">
+                <p class="mb-0 a_with_underline" v-for="franchise of detailInfo.franchises">
+                    <a :href="'/db/franchise/'+ franchise.value">
+                        <span lang="en" style="display:inline">
+                            {{franchise.label}}
+                        </span>
+                    </a>
+                </p>
+            </div>
+            <div class="col-fixed pt-0 pb-0">
+                <i class="pi pi-tags mr-2"></i><b>所属作品</b>
+            </div>
+            <div class="col-10 col-offset-2 pt-0 pb-0">
+                <p class="mb-0 a_with_underline" v-for="product of detailInfo.products">
+                    <a :href="'/db/product/'+ product.value">
+                        <span lang="en" style="display:inline">
+                            {{product.label}}
+                        </span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </p-panel>
+</div>
+
+<div th:fragment="description_field_set">
+    <!-- description -->
+    <p-fieldset :toggleable="true" v-if="detailInfo.description">
+        <template #legend>
+            <i class="pi iconfont icon-miaoshu"></i>
+            <b>描述</b>
+        </template>
+        <article id="description" class="markdown-body" style="width: 100%;"></article>
+    </p-fieldset>
+</div>
+
+<div th:fragment="bonus_field_set">
+    <p-fieldset :toggleable="true">
+        <template #legend>
+            <i class="pi iconfont icon-gift"></i>
+            <b>特典</b>
+        </template>
+        <article id="bonus" class="markdown-body" style="width: 100%;"></article>
+    </p-fieldset>
+</div>
+
+<div th:fragment="sider_image_panel">
+    <p-panel>
+        <template #header>
+            <span class="text-start side-panel-header">
+                <i class="pi pi-images"></i><span><strong>图片</strong></span>
+            </span>
+        </template>
+        <i v-if="itemImageInfo.displayImages.length == 0" class="rkw-side-empty-info">暂无图片</i>
+        <p-galleria v-if="itemImageInfo.displayImages" :value="itemImageInfo.displayImages"
+                    v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
+                    :num-visible="7" container-style="max-width: 800px"
+                    :circular="true" :full-screen="true" :show-item-navigators="true"
+                    :show-thumbnails="false" v-model:visible="displayCustom">
+            <template #item="{item}">
+                <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
+                     oncontextmenu="return false"/>
+            </template>
+            <template #caption="{item}">
+                <div class="custom-galleria-footer">
+                    <div class="col-6">
+                                <span v-if="itemImageInfo.displayImages" class="title-container">
+                                    <span>共{{itemImageInfo.displayImages.length}}张</span>
+                                    <span class="title">{{item.nameZh}}</span>
+                                    <span style="font-size: 10px">{{item.description}}</span>
+                                </span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <span v-if="itemImageInfo.displayImages">
+                            <span>上传于 {{item.uploadTime}}</span>
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </p-galleria>
+        <div v-if="itemImageInfo.displayImages" class="grid justify-content-evenly justify-content-start">
+            <div class="col-4 mt-2 mb-2" id="panel-image-div"
+                 v-for="(image, index) of itemImageInfo.displayImages" :key="index">
+                <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
+                     draggable="false"
+                     oncontextmenu="return false"
+                     v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
+                     @click="imageClick(index)"/>
+            </div>
+        </div>
+        <br>
+        <b class="rbot"><b></b></b>
+    </p-panel>
+</div>
+
+<div th:fragment="item_detail_image_edit">
+    <p-dialog :modal="true" v-model:visible="displayImageEditDialog" header="图片管理"
+              :style="{width: '1200px'}">
+        <p-blockui :blocked="editBlock">
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                    <b>新增</b>
+                </template>
+                <div class="grid">
+                    <div class="col-6 text-start">
+                        <p-fileupload
+                                mode="basic"
+                                :custom-upload="true"
+                                accept="image/*"
+                                :auto="true"
+                                choose-label="上传图片"
+                                :max-file-size="2000000" :preview-width="100"
+                                invalid-file-size-message="{0}大小已超过{1}"
+                                @uploader="onUpload"
+                                @select="selectFile">
+                        </p-fileupload>
+                    </div>
+                    <div class="col-6 text-end">
+                        <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                  label="清空所选" @click="clearUploadedImage"></p-button>
+                    </div>
+                </div>
+                <div class="formgrid grid mt-2">
+                    <div class="field col">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-image"></i>
+                                        </span>
+                            <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="field col">
+                        <div class="p-inputgroup">
+                                        <span class="p-inputgroup-addon">
+                                            <i class="pi pi-image"></i>
+                                        </span>
+                            <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                        </div>
+                    </div>
+                    <div class="field col">
+                        <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                                    option-value="value" placeholder="选择图片类型"
+                                    style="width: 280px"></p-dropdown>
+                    </div>
+                    <div class="field col">
+                        <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                                    :auto-resize="true" placeholder="图片描述"
+                                    style="width: 280px"></p-textarea>
+                    </div>
+                </div>
+                <div class="formgrid grid mt-2">
+                    <div class="field col" align="left">
+                        <p-button label="新增图片" icon="pi pi-save"
+                                  @click="save2imageInfos"></p-button>
+                    </div>
+                    <div class="field col" align="right">
+                        <p-button label="提交新增" icon="pi pi-save"
+                                  @click="submitImages" class="p-button-success"></p-button>
+                    </div>
+                </div>
+                <p-divider></p-divider>
+                <div class="field">
+                    <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
+                    <section>
+                        <div id="imgBox" v-html="imageHtml"></div>
+                    </section>
+                </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
+                    <b>编辑</b>
+                </template>
+                <div v-if="itemImageInfo.images.length != 0">
+                    <p-datatable :value="itemImageInfo.images" class="p-datatable-sm"
+                                 @row-reorder="imgRowReorder" edit-mode="row" striped-rows
+                                 :resizable-columns="true" column-resize-mode="expand"
+                                 v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
+                                 v-model:selection="selectedImage">
+                        <template #header>
+                            <p-button icon="pi pi-trash" class="p-button-danger"
+                                      @click="confirmDeleteSelectedImage"></p-button>
+                        </template>
+                        <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
+                        <p-column :row-reorder="true" header-style="width: 3%"></p-column>
+                        <p-column header="图片" header-style="width: 8%">
+                            <template #body="slotProps">
+                                <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
+                                     class="edit-image"/>
+                            </template>
+                        </p-column>
+                        <p-column field="url" header="URL" header-style="width: 10%">
+                            <template #body="slotProps">
+                                {{slotProps.data.url.substr(22)}}
+                            </template>
+                        </p-column>
+                        <p-column field="nameZh" header="名(中)" header-style="width: 10%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="nameEn" header="名(英)" header-style="width: 10%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="type" header="类型" header-style="width: 8%">
+                            <template #editor="{ data, field }">
+                                <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
+                                            option-value="value" placeholder="图片类型">
+
+                                </p-dropdown>
+                            </template>
+                            <template #body="slotProps">
+                                {{getImageTypeLabel(slotProps.data.type)}}
+                            </template>
+                        </p-column>
+                        <p-column field="description" header="描述" header-style="width: 15%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                            </template>
+                        </p-column>
+                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                        <p-column :row-editor="true" header-style="width: 15%"></p-column>
+                    </p-datatable>
+                </div>
+                <div v-else>
+                    <span class="emptyInfo"><em>暂无图片</em></span>
+                </div>
+            </p-panel>
+        </p-blockui>
+        <template #footer>
+            <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                      class="p-button-text"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
+        </template>
+    </p-dialog>
+</div>
+
+</body>
+</html>

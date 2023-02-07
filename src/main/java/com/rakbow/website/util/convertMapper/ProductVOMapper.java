@@ -55,20 +55,8 @@ public interface ProductVOMapper {
         //关联信息
         productVO.setFranchise(FranchiseUtils.getFranchise(product.getFranchise()));
 
-        //图片
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(product.getImages(), 200, true);
-        productVO.setImages(segmentImages.images);
-        productVO.setCover(segmentImages.cover);
-        productVO.setDisplayImages(segmentImages.displayImages);
-        productVO.setOtherImages(segmentImages.otherImages);
-
         productVO.setOrganizations(JSON.parseArray(product.getOrganizations()));
         productVO.setStaffs(JSON.parseArray(product.getStaffs()));
-        productVO.setDescription(product.getDescription());
-
-        productVO.setAddedTime(CommonUtils.timestampToString(product.getAddedTime()));
-        productVO.setEditedTime(CommonUtils.timestampToString(product.getEditedTime()));
-        productVO.set_s(product.get_s());
 
         return productVO;
     }

@@ -72,31 +72,14 @@ public interface AlbumVOMapper {
         albumVo.setDistributor(album.getDistributor());
         albumVo.setCopyright(album.getCopyright());
 
-        //关联信息
-        albumVo.setProducts(ProductUtils.getProductList(album.getProducts()));
-        albumVo.setFranchises(FranchiseUtils.getFranchiseList(album.getFranchises()));
-
         //规格信息
         albumVo.setPublishFormat(AlbumUtils.getPublishFormat(album.getPublishFormat()));
         albumVo.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
         albumVo.setMediaFormat(AlbumUtils.getMediaFormat(album.getMediaFormat()));
 
         //大文本字段
-        albumVo.setDescription(album.getDescription());
         albumVo.setBonus(album.getBonus());
         albumVo.setArtists(JSONArray.parseArray(album.getArtists()));
-
-        //图片相关
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(album.getImages(), 250, false);
-        albumVo.setImages(segmentImages.images);
-        albumVo.setCover(segmentImages.cover);
-        albumVo.setDisplayImages(segmentImages.displayImages);
-        albumVo.setOtherImages(segmentImages.otherImages);
-
-        //审计字段
-        albumVo.setAddedTime(CommonUtils.timestampToString(album.getAddedTime()));
-        albumVo.setEditedTime(CommonUtils.timestampToString(album.getEditedTime()));
-        albumVo.set_s(album.get_s());
 
         //可供编辑的editDiscList
         JSONArray editDiscList = AlbumUtils.getEditDiscList(album.getTrackInfo(), musics);

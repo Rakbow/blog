@@ -64,24 +64,9 @@ public interface DiscVOMapper {
         region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
         discVO.setRegion(region);
 
-        discVO.setFranchises(FranchiseUtils.getFranchiseList(disc.getFranchises()));
-        discVO.setProducts(ProductUtils.getProductList(disc.getProducts()));
-
         discVO.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
         discVO.setSpec(JSON.parseArray(disc.getSpec()));
         discVO.setBonus(disc.getBonus());
-        discVO.setDescription(disc.getDescription());
-
-        //将图片分割处理
-        segmentImagesResult segmentImages = CommonImageUtils.segmentImages(disc.getImages(), 200, false);
-        discVO.setImages(segmentImages.images);
-        discVO.setCover(segmentImages.cover);
-        discVO.setDisplayImages(segmentImages.displayImages);
-        discVO.setOtherImages(segmentImages.otherImages);
-
-        discVO.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
-        discVO.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));
-        discVO.set_s(disc.get_s());
 
         return discVO;
     }

@@ -12,6 +12,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
@@ -92,8 +93,12 @@ public class BookController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("book", bookVOMapper.book2VO(book));
         model.addAttribute("user", hostHolder.getUser());
-        //获取页信息
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
+        //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(book.getImages(), 180, false));
         //获取相关图书
         model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/book/book-detail";

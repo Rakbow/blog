@@ -61,7 +61,6 @@
             </div>
         </div>
     </div>
-    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -72,17 +71,10 @@
 
             const errorMessage = ref([[${errorMessage}]]);
 
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
             //跳转首页
             const goIndex = () => {
                 //跳转页面覆盖当前页面
-                window.location.href = domainUrl;
+                window.location.href = DOMAIN_URL;
             };
 
             //返回上一页
@@ -90,7 +82,7 @@
                 window.history.back();
             };
 
-            return {errorMessage, goIndex, goBack, domainUrl, selectedEntity, entityType, notLoginNavbarItems, loginNavbarItems}
+            return {errorMessage, goIndex, goBack}
         },
 
         components: {

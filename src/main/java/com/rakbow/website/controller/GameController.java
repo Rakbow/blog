@@ -12,6 +12,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
@@ -92,8 +93,12 @@ public class GameController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("game", gameVOMapper.game2VO(game));
         model.addAttribute("user", hostHolder.getUser());
-        //获取页面访问量
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
+        //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, false));
         //获取相关游戏
         model.addAttribute("relatedGames", gameService.getRelatedGames(id));
         return "/game/game-detail";

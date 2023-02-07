@@ -471,3 +471,7 @@ a {
     padding: 8px;
     background: transparent url("/img/common/product_border_thumb.png") 0 0 no-repeat;
 }
+
+.a_with_underline a:hover {
+    border-bottom: 1px solid #ceffff;
+}

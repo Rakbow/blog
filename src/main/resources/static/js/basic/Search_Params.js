@@ -1,33 +1,56 @@
 const showSearchPanel = (dialog) => {
     const dialogRef = dialog.open(SearchPanel, {
         props: {
-            header: '搜索面板',
+            header: '全站搜索',
             style: {
-                width: '50vw',
+                width: '43vw',
             },
-            breakpoints:{
-                '960px': '75vw',
-                '640px': '90vw'
-            },
+            class: 'search-dialog',
+            // breakpoints:{
+            //     '960px': '75vw',
+            //     '640px': '90vw'
+            // },
             modal: true
         },
         templates: {
-
+            // header: () => {
+            //     return [
+            //         Vue.h('span', {class: 'search-dialog'}, '搜索面板')
+            //     ]
+            // }
         },
     });
 };
 
 const SearchPanel = {
     template: `
-                    <div class="grid mt-0 mb-0 pt-0 pb-0 p-inputgroup">
-                        <p-dropdown v-model="searchParams.entityType" :options="entityType" option-label="label"
-                                    option-value="value" placeholder="类型"></p-dropdown>
-                        <p-inputtext v-model="searchParams.keyword" @change="search" class="search-input"></p-inputtext>
-                        <p-button icon="pi pi-search" class="p-button-warning btn btn-outline-light"
-                                  @click="search"></p-button>
+                    <div class="formgrid grid search">
+                        <div class="col">
+                            <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search" class="search-input"></p-inputtext>
+                        </div>
+                        <div class="col-2" style="margin: auto;">
+                            <p-dropdown v-model="searchParams.entityType" :options="entityType" option-label="label"
+                            option-value="value" placeholder="类型">
+                                <template #value="slotProps">
+                                    <div class="country-item country-item-value" v-if="slotProps.value">
+                                        <i :class="entityTypeValue2Icon(slotProps.value)"></i>
+                                        <span class="ml-1">{{entityTypeValue2Label(slotProps.value)}}</span>
+                                    </div>
+                                </template>
+                                <template #option="slotProps">
+                                    <div class="country-item">
+                                        <i :class="slotProps.option.icon"></i>
+                                        <span class="ml-1">{{slotProps.option.label}}</span>
+                                    </div>
+                                </template>
+                            </p-dropdown>
+                        </div>                       
                     </div>
                     <div v-if="searchResult != null">
                         <div v-if="searchResult.total != 0">
+                            <div class="text-start mt-3">
+                                <span>共{{searchResult.total}}条结果</span>
+                            </div>
                             <p-scrollpanel style="max-height: 500px">
                                 <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
 
@@ -184,7 +207,7 @@ const SearchPanel = {
                                 :total-records="searchResult.total" @page="pageChange($event)">
                             </p-paginator>
                         </div>
-                        <div v-else class="text-center">
+                        <div v-else class="text-center mt-2">
                             <img src="/img/common/no-results.svg" /><br><span>暂无搜索结果</span>
                         </div>
                     </div>
@@ -202,6 +225,9 @@ const SearchPanel = {
             entityType: ENTITY_TYPE,
         }
     },
+    watch: {
+
+    },
     methods: {
         search() {
             axiosPostRequest(INDEX_SEARCH_URL, this.searchParams)
@@ -214,6 +240,8 @@ const SearchPanel = {
             this.searchParams.limit = ev.rows;
             this.search();
         },
+        entityTypeValue2Icon,
+        entityTypeValue2Label
     },
     components: {
         "p-button": primevue.button,

@@ -88,6 +88,8 @@
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
     <script th:src="@{/js/basic/Search_Params.js}"></script>
+    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
+    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -130,14 +132,14 @@
                         style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
                 </template>
                 <template #content>
-                    <!-- 作品 -->
+                    <!-- products -->
                     <p-fieldset :toggleable="true" class="mt-2">
                         <template #legend>
                             <i class="pi iconfont icon-_classification"></i>
                             <b>作品</b>
                         </template>
                         <div class="grid ml-4" v-if="products != 0">
-                            <table class="table product-table table-sm table-borderless">
+                            <table class="table product-table table-sm table-borderless a_with_underline">
                                 <thead>
                                 <tr>
                                     <th scope="col" class="text-start detail-item-table-title">日&nbsp期</th>
@@ -149,9 +151,9 @@
                                     <td width="80px" class="label">{{product.releaseDate}}</td>
                                     <td>
                                         <a :href="'/db/product/' + product.id">
-                                                            <span :class="'rakbow-product-category-' + product.category.id">
-                                                                {{product.name}}
-                                                            </span>
+                                            <span :class="'rakbow-product-category-' + product.category.id">
+                                                {{product.name}}
+                                            </span>
                                         </a> <span class="label">({{product.category.nameZh}})</span>
                                     </td>
                                 </tr>
@@ -162,276 +164,52 @@
                             <span class="emptyInfo"><em>暂无作品</em></span>
                         </div>
                     </p-fieldset>
-                    <!-- 描述 -->
-                    <p-fieldset :toggleable="true" class="mt-4" v-if="franchise.description">
-                        <template #legend>
-                            <div class="label">
-                                <i class="pi iconfont icon-miaoshu mr-2" style="font-size: 1rem"></i>
-                                <b>描述</b>
-                            </div>
-                        </template>
-                        <article id="description" class="markdown-body" style="width: 100%;"></article>
-                    </p-fieldset>
+                    <!-- description -->
+                    <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
                 </template>
             </p-card>
         </div>
         <div class="col-12 sm:col-12 md:col-3 lg:col-3">
-            <p-panel>
-                <template #header>
-                    <span class="text-start side-panel-header">
-                        <i class="pi pi-images"></i><span><strong>图片</strong></span>
-                    </span>
-                </template>
-                    <i v-if="franchise.displayImages.length == 0" class="rkw-side-empty-info">暂无图片</i>
-<!--                    <span class="emptyInfo text-start" style="color: white"><em>暂无图片</em></span>-->
-                <p-galleria v-if="franchise.displayImages" :value="franchise.displayImages"
-                            v-model:active-index="activeIndex" :responsive-options="responsiveOptions"
-                            :num-visible="7" container-style="max-width: 800px"
-                            :circular="true" :full-screen="true" :show-item-navigators="true"
-                            :show-thumbnails="false" v-model:visible="displayCustom">
-                    <template #item="{item}">
-                        <img :class="initGalleriaImageClass(item.url)" :src="item.url" :alt="item.name"
-                             oncontextmenu="return false"/>
-                    </template>
-                    <template #caption="{item}">
-                        <div class="custom-galleria-footer">
-                            <div class="col-6">
-                                <span v-if="franchise.displayImages" class="title-container">
-                                    <span>共{{franchise.displayImages.length}}张</span>
-                                    <span class="title">{{item.nameZh}}</span>
-                                    <span style="font-size: 10px">{{item.description}}</span>
-                                </span>
-                            </div>
-                            <div class="col-6 text-end">
-                                <span v-if="franchise.displayImages">
-                                    <span>上传于 {{item.uploadTime}}</span>
-                                </span>
-                            </div>
-                        </div>
-                    </template>
-                </p-galleria>
-                <div v-if="franchise.displayImages" class="grid justify-content-evenly justify-content-start">
-                    <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                         v-for="(image, index) of franchise.displayImages" :key="index">
-                        <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
-                             draggable="false"
-                             oncontextmenu="return false"
-                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
-                             @click="imageClick(index)"/>
-                    </div>
-                </div>
-                <br>
-                <b class="rbot"><b></b></b>
-            </p-panel>
-            <br>
-            <div th:insert="~{template/common-template :: page_info_card}"></div>
+            <div th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
+            <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
     <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑基础信息"
               :style="{width: '600px'}" class="p-fluid">
-        <div class="formgrid grid">
-            <div class="field col">
-                <label>名称<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
+        <p-blockui :blocked="editBlock">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>名称(中)<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
+                </div>
             </div>
-            <div class="field col">
-                <label>名称(中)<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称(英)</label>
+                    <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发售时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
             </div>
-        </div>
-        <div class="formgrid grid">
-            <div class="field col">
-                <label>名称(英)</label>
-                <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
             </div>
-            <div class="field col">
-                <label>发售时间<span style="color: red">*</span></label>
-                <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
-                            :show-button-bar="true"
-                            :show-icon="true"></p-calendar>
-            </div>
-        </div>
-        <div class="field">
-            <label>备注</label>
-            <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
-                        :auto-resize="true"></p-textarea>
-        </div>
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="closeEditDialog"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditFranchise"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayImageEditDialog" header="图片管理"
-              :style="{width: '1200px'}">
-        <p-blockui :blocked="blockedPanel">
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                    <b>新增</b>
-                </template>
-                <div class="grid">
-                    <div class="col-6" align="left">
-                        <p-fileupload
-                                mode="basic"
-                                :custom-upload="true"
-                                accept="image/*"
-                                :auto="true"
-                                choose-label="上传图片"
-                                :max-file-size="2000000" :preview-width="100"
-                                invalid-file-size-message="{0}大小已超过{1}"
-                                @uploader="onUpload"
-                                @select="selectFile">
-                        </p-fileupload>
-                    </div>
-                    <div class="col-6" align="right">
-                        <p-button class="ml-2 p-button-text" icon="pi pi-trash"
-                                  label="清空所选" @click="clearUploadedImage"></p-button>
-                    </div>
-                </div>
-                <div class="formgrid grid mt-2">
-                    <div class="field col">
-                        <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-image"></i>
-                                        </span>
-                            <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field col">
-                        <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-image"></i>
-                                        </span>
-                            <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="field col">
-                        <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                    option-value="value" placeholder="选择图片类型"
-                                    style="width: 280px"></p-dropdown>
-                    </div>
-                    <div class="field col">
-                        <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                    :auto-resize="true" placeholder="图片描述"
-                                    style="width: 280px"></p-textarea>
-                    </div>
-                </div>
-                <div class="formgrid grid mt-2">
-                    <div class="field col" align="left">
-                        <p-button label="新增图片" icon="pi pi-save"
-                                  @click="save2imageInfos"></p-button>
-                    </div>
-                    <div class="field col" align="right">
-                        <p-button label="提交新增" icon="pi pi-save"
-                                  @click="submitImages" class="p-button-success"></p-button>
-                    </div>
-                </div>
-                <p-divider></p-divider>
-                <div class="field">
-                    <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
-                    <section>
-                        <div id="imgBox" v-html="imageHtml"></div>
-                    </section>
-                </div>
-            </p-panel>
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                    <b>编辑</b>
-                </template>
-                <div v-if="franchise.images.length != 0">
-                    <p-datatable :value="franchise.images" class="p-datatable-sm"
-                                 @row-reorder="imgRowReorder" edit-mode="row" striped-rows
-                                 :resizable-columns="true" column-resize-mode="expand"
-                                 v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
-                                 v-model:selection="selectedImage">
-                        <template #header>
-                            <p-button icon="pi pi-trash" class="p-button-danger"
-                                      @click="confirmDeleteSelectedImage"></p-button>
-                        </template>
-                        <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
-                        <p-column :row-reorder="true" header-style="width: 3%"></p-column>
-                        <p-column header="图片" header-style="width: 8%">
-                            <template #body="slotProps">
-                                <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
-                                     class="edit-image"/>
-                            </template>
-                        </p-column>
-                        <p-column field="url" header="URL" header-style="width: 10%">
-                            <template #body="slotProps">
-                                {{slotProps.data.url.substr(22)}}
-                            </template>
-                        </p-column>
-                        <p-column field="nameZh" header="名(中)" header-style="width: 10%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus
-                                             style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="nameEn" header="名(英)" header-style="width: 10%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus
-                                             style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="type" header="类型" header-style="width: 8%">
-                            <template #editor="{ data, field }">
-                                <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
-                                            option-value="value" placeholder="图片类型">
-
-                                </p-dropdown>
-                            </template>
-                            <template #body="slotProps">
-                                {{getImageTypeLabel(slotProps.data.type)}}
-                            </template>
-                        </p-column>
-                        <p-column field="description" header="描述" header-style="width: 15%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus
-                                             style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
-                        <p-column :row-editor="true" header-style="width: 15%"></p-column>
-                    </p-datatable>
-                </div>
-                <div v-else>
-                    <span class="emptyInfo"><em>暂无图片</em></span>
-                </div>
-            </p-panel>
         </p-blockui>
         <template #footer>
-            <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
-                      class="p-button-text"></p-button>
-            <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayDescriptionDialog" header="编辑描述信息"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '80vw'}">
-        <!--                    <div id="md-editor-v3">-->
-        <md-editor-v3 v-model="descriptionMd" preview-theme="github">
-        </md-editor-v3>
-        <!--                    </div>-->
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" @click="closeDescriptionEditDialog"
-                      class="p-button-text">
-            </p-button>
-            <p-button label="保存" icon="pi pi-save" @click="submitDescription" autofocus></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="deleteFranchiseImageDialog" header="删除图片"
-              :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-            <span v-if="franchise">确定删除所选的图片？</span>
-        </div>
-        <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="cancelDeleteSelectedImage"></p-button>
-            <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteImage"></p-button>
+                      @click="closeEditDialog" :disabled="editBlock"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitEditFranchise" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
 
@@ -455,11 +233,32 @@
                 });
             })
 
-            //region ------基础------
+            //region common header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
+            //endregion
+
+            //region image
+            const activeIndex = ref(0)
+            const displayCustom = ref(false)
+            const imageClick = (index) => {
+                activeIndex.value = index;
+                displayCustom.value = true;
+            };
+            //endregion
+
+            //region basic
             const franchise = ref([[${franchise}]]);
+            const toast = useToast();
+            const detailInfo = ref([[${detailInfo}]]);
+            const itemImageInfo = ref([[${itemImageInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
             const products = ref([[${products}]]);
-            const toast = useToast();
+            //endregion
+
+            //region edit basic info
             const edits = ref([
                 {
                     label: '图片管理',
@@ -476,27 +275,7 @@
                     }
                 }
             ]);
-            const blockedPanel = ref(false);
-            //endregion
-
-            //region ------图片板块------
-            const imgRowReorder = (ev) => {
-                franchise.value.images = ev.value;
-            };
-            const editingImages = ref([]);
-            const imgRowEditSave = (ev) => {
-                let {newData, index} = ev;
-                franchise.value.images[index] = newData;
-            };
-            const activeIndex = ref(0);
-            const displayCustom = ref(false);
-            const imageClick = (index) => {
-                activeIndex.value = index;
-                displayCustom.value = true;
-            };
-            //endregion
-
-            //region ------编辑系列信息------
+            const editBlock = ref(false);
             const franchiseEdit = ref({});
             const displayEditDialog = ref(false);
 
@@ -512,6 +291,26 @@
                         }
                     })
             };
+            const openDescriptionEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
+                        }
+                    });
+            };
+            const openImageEditDialog = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
+                        }
+                    })
+            };
 
             //关闭编辑数据面板
             const closeEditDialog = () => {
@@ -521,6 +320,7 @@
 
             //保存编辑数据
             const submitEditFranchise = () => {
+                editBlock.value = true;
                 axiosPostRequest(UPDATE_FRANCHISE_URL, franchiseEdit.value)
                     .then(res => {
                         if (res.state === 1) {
@@ -534,6 +334,7 @@
                             closeEditDialog();
                             location.reload(true);
                         } else {
+                            editBlock.value = false;
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
@@ -543,270 +344,31 @@
             };
             //endregion
 
-            //region ------编辑描述------
-            const descriptionMd = ref("");
-            const displayDescriptionDialog = ref(false);
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            descriptionMd.value = franchise.value.description;
-                            displayDescriptionDialog.value = true;
-                        }
-                    });
-            }
-            const closeDescriptionEditDialog = () => {
-                displayDescriptionDialog.value = false;
-                descriptionMd.value = "";
-            }
-            const submitDescription = () => {
-                let json = {
-                    id: franchise.value.id,
-                    description: descriptionMd.value
-                }
-                axiosPostRequest(UPDATE_FRANCHISE_DESCRIPTION_URL, json)
-                    .then(res => {
-                        if (res.state !== 0) {
-                            franchise.value.description = descriptionMd.value;
-                            text2marked();
-                            closeDescriptionEditDialog();
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    });
-            }
-            const text2marked = () => {
-                if (franchise.value.description != null && franchise.value.description !== "") {
-                    document.getElementById("description").innerHTML = marked.parse(franchise.value.description);
-                }
-            };
-            //endregion
-
-            //region ------图片相关组件------
-            const updateImage = () => {
-                let json = {
-                    id: franchise.value.id,
-                    images: franchise.value.images,
-                    action: "1"
-                };
-                axiosPostRequest(UPDATE_FRANCHISE_IMAGES_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
-                            closeImageEditDialog();
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    }).catch(err => {
-                    console.error(err);
-                });
-            };
-            const galleriaItemClass = ref("");
-            const selectedImage = ref([]);
-            const confirmDeleteSelectedImage = () => {
-                deleteFranchiseImageDialog.value = true;
-            };
-            const cancelDeleteSelectedImage = () => {
-                selectedImage.value = [];
-                deleteFranchiseImageDialog.value = false;
-            };
-            const deleteFranchiseImageDialog = ref(false);
-            const deleteImage = () => {
-                let json = {
-                    id: franchise.value.id,
-                    images: selectedImage.value,
-                    action: "2"
-                };
-                axiosPostRequest(UPDATE_FRANCHISE_IMAGES_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
-                            deleteFranchiseImageDialog.value = false;
-                            closeImageEditDialog();
-                            selectedImage.value = [];
-                            location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    }).catch(err => {
-                    console.error(err);
-                });
-            };
-            const imageInfo = ref({
-                image: null,
-                nameZh: "",
-                nameEn: "",
-                description: "",
-                type: 0
-            });
-            const imageInfos = ref([]);
-
-            const displayImageEditDialog = ref(false);
-            const imageHtml = ref("");
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            imageInfo.value = {};
-                            imageInfos.value = [];
-                            displayImageEditDialog.value = true;
-                        }
-                    })
-            };
-            const closeImageEditDialog = () => {
-                imageInfo.value = {};
-                imageInfos.value = [];
-                displayImageEditDialog.value = false;
-                document.getElementById("imgBox").innerHTML = "";
-            };
-            const showImage = () => {
-                imageHtml.value = "";
-                //<![CDATA[
-                imageHtml.value += "<div class='grid'>";
-                for (const img of imageInfos.value) {
-                    imageHtml.value += '<div class="col-4">';
-                    imageHtml.value += '<img src="' + img.image.objectURL + '"/>';
-                    imageHtml.value += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
-                    imageHtml.value += '<p>图片名(中): ' + img.nameZh + '</p>';
-                    imageHtml.value += '<p>图片名(英): ' + img.nameEn + '</p>';
-                    imageHtml.value += '<p>描述: ' + img.description + '</p>';
-                    imageHtml.value += '</div>';
-                }
-                imageHtml.value += "</div>";
-                //]]>
-                document.getElementById("imgBox").innerHTML = imageHtml;
-            };
-            const selectFile = (ev) => {
-                imageInfo.value.image = ev.files[0];
-            };
-            const onUpload = (ev) => {
-                toast.add({severity: 'info', summary: 'Success', detail: IMAGE_SELECTED_INFO, life: 3000});
-            };
-            const checkImageInfo = () => {
-                if (typeof imageInfo.value.description == "undefined") {
-                    imageInfo.value.description = "";
-                }
-                if (imageInfo.value.image === null) {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_EMPTY_EXCEPTION, life: 3000});
-                }
-                if (typeof imageInfo.value.nameZh == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_ZH_EMPTY_EXCEPTION, life: 3000});
-                    return false;
-                }
-                if (typeof imageInfo.value.nameEn == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_NAME_EN_EMPTY_EXCEPTION, life: 3000});
-                    return false;
-                }
-                if (typeof imageInfo.value.type == "undefined") {
-                    toast.add({severity: 'error', summary: 'Error', detail: IMAGE_TYPE_EMPTY_EXCEPTION, life: 3000});
-                    return false;
-                }
-                return true;
-            }
-            const save2imageInfos = () => {
-                if (checkImageInfo()) {
-                    imageInfos.value.push(imageInfo.value);
-                    showImage();
-                    imageInfo.value = {};
-                }
-            };
-            const clearUploadedImage = () => {
-                imageInfos.value = [];
-                document.getElementById("imgBox").innerHTML = "";
-            };
-            const submitImages = () => {
-                blockedPanel.value = true;
-                const formData = new FormData();
-                for (const img of imageInfos.value) {
-                    formData.append("images", img.image);
-                }
-                formData.append("id", franchise.value.id);
-                formData.append("imageInfos", JSON.stringify(imageInfos.value));
-                axiosRequest(INSERT_FRANCHISE_IMAGES_URL, formData)
-                    .then(res => {
-                        if (res.state === 1) {
-                            blockedPanel.value = false;
-                            closeImageEditDialog();
-                            location.reload(true);
-                        } else {
-                            blockedPanel.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    }).catch(err => {
-                    console.error(err);
-                });
-            };
-            //endregion
-
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
+            //region init
             const init = () => {
 
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
-
                 text2marked();
             };
+            const text2marked = () => {
+                if (detailInfo.value.description != null && detailInfo.value.description !== "") {
+                    document.getElementById("description").innerHTML = marked.parse(detailInfo.value.description);
+                }
+            };
+            //endregion
 
             return {
-                products,
-                blockedPanel,
-                clearUploadedImage,
-                closeImageEditDialog,
-                selectedImage,
-                getImageTypeLabel,
-                editingImages,
-                imgRowEditSave,
-                imgRowReorder,
-                franchise,
-
-                initGalleriaImageClass,
-                imageClick,
-                displayCustom,
-                activeIndex,
-
+                //header
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
-                edits,
-                displayEditDialog,
-                franchiseEdit,
-                openEditDialog,
-                closeEditDialog,
 
-                submitEditFranchise,
-                pageInfo,
-                updateImage,
-                cancelDeleteSelectedImage,
-                deleteImage,
-                confirmDeleteSelectedImage,
-                deleteFranchiseImageDialog,
+                //image
+                activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
-                galleriaItemClass,
-                onUpload,
-                save2imageInfos,
-                imageInfo,
-                imageInfos,
-                imageTypes,
-                submitImages,
-                selectFile,
-                imageHtml,
-                displayImageEditDialog,
+                //basic
+                franchise, detailInfo, itemImageInfo, pageInfo, responsiveOptions, products,
 
-                responsiveOptions,
-
-                descriptionMd,
-                displayDescriptionDialog,
-                closeDescriptionEditDialog,
-                submitDescription,
+                //edit
+                editBlock, franchiseEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditFranchise,
             }
         },
         components: {

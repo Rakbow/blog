@@ -315,3 +315,28 @@ const indexTabChange = (ev) => {
         }
     })
 };
+
+const entityTypeValue2Label = (value) => {
+    for (let entity of ENTITY_TYPE) {
+        if (entity.value === value) {
+            return entity.label;
+        }
+    }
+}
+
+const entityTypeValue2Icon = (value) => {
+    for (let entity of ENTITY_TYPE) {
+        if (entity.value === value) {
+            return entity.icon;
+        }
+    }
+}
+
+const entityTypeValue2LabelEn = (value) => {
+    for (let entity of ENTITY_TYPE) {
+        if (entity.value === value.toString()) {
+            console.log(entity.labelEn.toLowerCase());
+            return entity.labelEn.toLowerCase();
+        }
+    }
+}

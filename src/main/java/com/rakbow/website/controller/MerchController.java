@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
@@ -92,8 +93,12 @@ public class MerchController {
         model.addAttribute("merch", merchVOMapper.merch2VO(merch));
         MerchVO merchVO = merchVOMapper.merch2VO(merch);
         model.addAttribute("user", hostHolder.getUser());
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(merch, EntityType.MERCH.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MERCH.getId(), id, merch.getAddedTime(), merch.getEditedTime()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(merch.getImages(), 200, false));
         //获取相关周边
         model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
         return "/merch/merch-detail";

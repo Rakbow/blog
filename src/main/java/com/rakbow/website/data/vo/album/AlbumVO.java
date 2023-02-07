@@ -32,33 +32,17 @@ public class AlbumVO {
     private String distributor;//经销商
     private String copyright;//版权方
 
-    //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品id 在mysql中以数组字符串形式存储
-
     //规格信息
     private JSONArray publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private JSONArray albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     private JSONArray mediaFormat;//媒体类型
 
     //大文本字段
-    private String description;//描述
     private JSONArray artists;//staff
     private String bonus;//特典信息
-
-    //图片相关
-    private JSONObject cover;
-    private JSONArray images;//图片列表（JSON字符串）
-    private JSONArray displayImages;
-    private JSONArray otherImages;
 
     //音轨相关
     private JSONArray editDiscList;
     private JSONObject trackInfo;
-
-    //审计字段
-    private String addedTime;//数据新增时间
-    private String editedTime;//数据更新时间
-    private int _s;//激活状态
 
 }

@@ -27,13 +27,7 @@ public class MusicVO {
     private JSONArray files;// 歌词文件url
     private String lrcText;// 歌词文本 markdown格式
     private String audioLength;// 音频长度
-    private String description;// 描述
     private String remark;// 备注
-
-    //审计字段
-    private String addedTime;// 收录时间
-    private String editedTime;// 编辑时间
-    private int _s;// 状态
 
     //其他字段
     private boolean uploadDisabled;

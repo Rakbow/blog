@@ -15,6 +15,7 @@ import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.service.VisitService;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.FranchiseVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
@@ -83,6 +84,10 @@ public class FranchiseController {
         model.addAttribute("user", hostHolder.getUser());
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime()));
+        //实体类通用信息
+        model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
+        //图片相关
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(franchise.getImages(), 200, false));
         return "/franchise/franchise-detail";
     }
 

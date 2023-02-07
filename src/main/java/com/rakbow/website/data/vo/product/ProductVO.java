@@ -26,20 +26,8 @@ public class ProductVO {
     //关联信息
     private JSONObject franchise;//所属系列id
 
-    //图片
-    private JSONArray images;
-    private JSONObject cover;
-    private JSONArray displayImages;
-    private JSONArray otherImages;
-
     //其他
     private JSONArray organizations;//相关组织
     private JSONArray staffs;//staff
-    private String description;//描述
-
-    //审计字段
-    private String addedTime;//收录时间
-    private String editedTime;//编辑时间
-    private int _s;//状态
 
 }
