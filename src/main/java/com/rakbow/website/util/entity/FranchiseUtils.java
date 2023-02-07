@@ -1,7 +1,9 @@
 package com.rakbow.website.util.entity;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.SpringUtils;
@@ -58,4 +60,46 @@ public class FranchiseUtils {
         return DataFinder.findJsonByIdInSet(franchiseId, allFranchises);
     }
 
+    /**
+     * 判断该franchise是否为meta-franchise
+     *
+     * @param franchise franchise
+     * @return boolean
+     * @author rakbow
+     */
+    public static boolean isMetaFranchise(Franchise franchise) {
+        JSONObject metaInfo = JSON.parseObject(franchise.getMetaInfo());
+        if(metaInfo.getIntValue("isMeta") == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取该meta-franchise的子系列
+     *
+     * @param originFranchise franchise
+     * @return JSONArray
+     * @author rakbow
+     */
+    public static JSONArray getChildFranchises(Franchise originFranchise) {
+        JSONObject metaInfo = JSON.parseObject(originFranchise.getMetaInfo());
+
+        List<Integer> childFranchiseIds = metaInfo.getList("childFranchises", Integer.class);
+
+        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
+
+        JSONArray childFranchises = new JSONArray();
+
+        childFranchiseIds.forEach(id -> {
+                    JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
+                    if (franchise != null) {
+                        childFranchises.add(franchise);
+                    }
+                });
+
+        return childFranchises;
+    }
 }

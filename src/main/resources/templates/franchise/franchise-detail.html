@@ -133,7 +133,7 @@
                 </template>
                 <template #content>
                     <!-- products -->
-                    <p-fieldset :toggleable="true" class="mt-2">
+                    <p-fieldset :toggleable="true" class="mt-2" v-if="!franchise.metaLabel">
                         <template #legend>
                             <i class="pi iconfont icon-_classification"></i>
                             <b>作品</b>
@@ -162,6 +162,29 @@
                         </div>
                         <div v-else>
                             <span class="emptyInfo"><em>暂无作品</em></span>
+                        </div>
+                    </p-fieldset>
+                    <!-- child franchises -->
+                    <p-fieldset :toggleable="true" class="mt-2" v-else="">
+                        <template #legend>
+                            <i class="pi iconfont icon-_classification"></i>
+                            <b>子系列</b>
+                        </template>
+                        <div class="grid ml-4" v-if="products != 0">
+                            <table class="table product-table table-sm table-borderless a_with_underline">
+                                <tbody>
+                                <tr v-for="childFranchise in franchise.childFranchises">
+                                    <td>
+                                        <a :href="'/db/franchise/' + childFranchise.id">
+                                            <span>{{childFranchise.name}}</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div v-else>
+                            <span class="emptyInfo"><em>暂无子系列</em></span>
                         </div>
                     </p-fieldset>
                     <!-- description -->

@@ -108,9 +108,11 @@ b.rbot {
 
 .detail-item-title {
     color: #beb993;
+    /*font-family: "MS Gothic", "Comic Sans MS", "serif";*/
 }
 
 .detail-item-subtitle {
+    /*font-family: "Comic Sans MS", "serif";*/
     text-align: left !important;
     margin-left: .5rem;
     margin-top: 0;
@@ -120,6 +122,7 @@ b.rbot {
 
 
 /* rakbow detail通用table */
+
 .detail-item-header-title h4 {
     text-align: left;
     margin: 0;
@@ -324,7 +327,9 @@ b.rbot {
     height: 200px;
 }
 
-
+.p-fieldset.p-fieldset-toggleable .p-fieldset-legend a {
+    padding: 0.25rem 0.5rem;
+}
 
 
 
@@ -400,3 +405,4 @@ b.rbot {
     height: 100px;
     width: 100px;
 }
+

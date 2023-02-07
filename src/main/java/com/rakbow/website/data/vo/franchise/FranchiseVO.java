@@ -23,4 +23,7 @@ public class FranchiseVO {
     private String originDate;//发行日期
     private String remark;//备注
 
+    private boolean metaLabel;//是否为meta-franchise
+    private JSONArray childFranchises;//子系列
+
 }

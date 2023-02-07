@@ -5,6 +5,7 @@ import com.rakbow.website.data.vo.franchise.FranchiseVO;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.file.CommonImageUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -40,6 +41,13 @@ public interface FranchiseVOMapper {
         franchiseVO.setNameEn(franchise.getNameEn());
         franchiseVO.setOriginDate(CommonUtils.dateToString(franchise.getOriginDate()));
         franchiseVO.setRemark(franchise.getRemark());
+
+        if(FranchiseUtils.isMetaFranchise(franchise)) {
+            franchiseVO.setMetaLabel(true);
+            franchiseVO.setChildFranchises(FranchiseUtils.getChildFranchises(franchise));
+        }else {
+            franchiseVO.setMetaLabel(false);
+        }
 
         return franchiseVO;
     }

@@ -24,6 +24,7 @@ public class Franchise {
     private String description;//描述
     private String remark;//备注
     private String images;//图片
+    private String metaInfo;//meta相关信息
     private int _s;//状态
 
     public Franchise() {
@@ -37,6 +38,7 @@ public class Franchise {
         this.description = "";
         this.remark = "";
         this.images = "[]";
+        this.metaInfo = "{\"isMeta\": 0, \"ids\": []}";
         this._s = 1;
     }
 

@@ -5,11 +5,11 @@
 <mapper namespace="com.rakbow.website.dao.FranchiseMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, _s
+        id, name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, meta_info, _s
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, _s
+        name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, meta_info, _s
     </sql>
 
     <select id="getFranchise" resultType="Franchise">
@@ -27,7 +27,7 @@
 
     <insert id="addFranchise" parameterType="Franchise" keyProperty="id">
         insert into franchise (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{originDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images}, #{_s})
+        values (#{name}, #{nameZh}, #{nameEn}, #{originDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images}, #{metaInfo}, #{_s})
     </insert>
 
     <update id="updateFranchise" parameterType="Franchise" keyProperty="id">
