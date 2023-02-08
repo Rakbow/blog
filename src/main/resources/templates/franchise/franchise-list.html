@@ -39,6 +39,7 @@
     <script th:src="@{/js/primevue/components/textarea.min.js}"></script>
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
+    <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -176,7 +177,7 @@
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="其他信息">
+        <p-panel header="进阶信息">
             <p-divider align="center" type="dashed"><b>图片</b></p-divider>
             <div class="field">
                 <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
@@ -184,6 +185,24 @@
             <p-divider align="center" type="dashed"><b>描述</b></p-divider>
             <div class="field">
                 <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <p-panel header="子系列">
+            <div class="formgrid grid">
+                <div class="field col-3">
+                    <div class="col-12">
+                        <label class="mb-3">是否为元系列<span style="color: red">*</span></label>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <p-inputswitch v-model="franchise.metaInfo.isMeta" :true-value="1" :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+                <div class="field col-9" v-if="franchise.metaInfo.isMeta == 1">
+                    <label class="mb-3">子系列</label>
+                    <p-multiselect v-model="franchise.metaInfo.childFranchises" :options="franchiseSet" placeholder="子系列"
+                                   option-label="label" option-value="value" display="chip" :filter="true">
+                    </p-multiselect>
+                </div>
             </div>
         </p-panel>
         <template #footer>
@@ -222,7 +241,7 @@
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="其他信息">
+        <p-panel header="进阶信息">
             <p-divider align="center" type="dashed"><b>图片</b></p-divider>
             <div class="field">
                 <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
@@ -230,6 +249,14 @@
             <p-divider align="center" type="dashed"><b>描述</b></p-divider>
             <div class="field">
                 <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <p-panel header="子系列" v-if="franchiseEdit.metaLabel">
+            <div class="field col">
+                <label class="mb-3">子系列</label>
+                <p-multiselect v-model="franchiseEdit.childFranchises" :options="franchiseSet" placeholder="子系列"
+                               option-label="label" option-value="value" display="chip" :filter="true">
+                </p-multiselect>
             </div>
         </p-panel>
         <template #footer>
@@ -253,8 +280,16 @@
                 init();
             });
 
+            //region 页面header
+            const dialog = useDialog();
+            const openSearchPanel = () => {
+                showSearchPanel(dialog);
+            }
+            //endregion
+
             //region ------基础------
             const franchises = ref([]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             //endregion
 
             //region ------搜索------
@@ -301,7 +336,12 @@
 
             //打开新增数据面板
             const openNewDialog = () => {
-                franchise.value = {};
+                franchise.value = {
+                    metaInfo: {
+                        isMeta: 0,
+                        childFranchises: []
+                    }
+                };
                 displayNewDialog.value = true;
             };
             //关闭新增数据面板
@@ -398,6 +438,7 @@
             };
 
             return {
+                franchiseSet,
                 dt, onToggle, onPage, onSort, onFilter, filters, totalRecords, loading,
                 franchiseEdit, displayEditDialog, openEditDialog, closeEditDialog, submitEditFranchise,
                 franchise, displayNewDialog, openNewDialog, closeNewDialog, submitNewFranchise,
@@ -421,6 +462,7 @@
             "p-panel": primevue.panel,
             "p-divider": primevue.divider,
             "p-dialog": primevue.dialog,
+            "p-inputswitch": primevue.inputswitch,
 
             "p-chip": primevue.chip,
             "p-tag": primevue.tag,

@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -28,5 +30,10 @@ public class FranchiseVOAlpha {
     private String addedTime;//创建时间
     private String editedTime;//更新时间
     private int _s;//状态
+
+    //meta相关数据
+    private boolean metaLabel;//是否为meta-franchise
+    private List<Integer> childFranchises;//子系列
+
 
 }

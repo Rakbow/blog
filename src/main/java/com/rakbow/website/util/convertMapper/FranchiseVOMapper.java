@@ -1,6 +1,5 @@
 package com.rakbow.website.util.convertMapper;
 
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.franchise.FranchiseVO;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
@@ -44,7 +43,7 @@ public interface FranchiseVOMapper {
 
         if(FranchiseUtils.isMetaFranchise(franchise)) {
             franchiseVO.setMetaLabel(true);
-            franchiseVO.setChildFranchises(FranchiseUtils.getChildFranchises(franchise));
+            franchiseVO.setChildFranchiseIds(FranchiseUtils.getChildFranchises(franchise));
         }else {
             franchiseVO.setMetaLabel(false);
         }
@@ -74,6 +73,14 @@ public interface FranchiseVOMapper {
 
         franchiseVOAlpha.setAddedTime(CommonUtils.timestampToString(franchise.getAddedTime()));
         franchiseVOAlpha.setEditedTime(CommonUtils.timestampToString(franchise.getEditedTime()));
+
+        if(FranchiseUtils.isMetaFranchise(franchise)) {
+            franchiseVOAlpha.setMetaLabel(true);
+            franchiseVOAlpha.setChildFranchises(FranchiseUtils.getChildFranchises(franchise));
+        }else {
+            franchiseVOAlpha.setMetaLabel(false);
+        }
+
         franchiseVOAlpha.set_s(franchise.get_s());
 
         return franchiseVOAlpha;

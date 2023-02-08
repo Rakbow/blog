@@ -24,6 +24,6 @@ public class FranchiseVO {
     private String remark;//备注
 
     private boolean metaLabel;//是否为meta-franchise
-    private JSONArray childFranchises;//子系列
+    private JSONArray childFranchiseIds;//子系列
 
 }

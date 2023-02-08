@@ -17,6 +17,7 @@ import com.rakbow.website.service.UserService;
 import com.rakbow.website.service.VisitService;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.convertMapper.FranchiseVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +54,8 @@ public class FranchiseController {
     private ProductService productService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
 
@@ -63,6 +66,7 @@ public class FranchiseController {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public ModelAndView getFranchiseListPage(Model model) {
         ModelAndView view = new ModelAndView();
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         view.setViewName("/franchise/franchise-list");
         return view;
     }

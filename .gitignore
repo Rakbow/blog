@@ -5,6 +5,20 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+/src/main/resources/static/css/bootstrap/bootstrap.min.css
+/src/main/resources/static/css/flag-icons
+/src/main/resources/static/css/github-markdown
+/src/main/resources/static/css/primeflex
+/src/main/resources/static/css/primeicons
+/src/main/resources/static/css/primevue
+/src/main/resources/static/css/remixicon
+
+/src/main/resources/static/js/vue
+/src/main/resources/static/js/clipboard.js
+/src/main/resources/static/js/color-thief.min.js
+/src/main/resources/static/js/jquery.js
+/src/main/resources/static/js/marked.min.js
+
 ### STS ###
 .apt_generated
 .classpath

@@ -3,6 +3,7 @@ package com.rakbow.website.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
@@ -68,11 +69,8 @@ public class FranchiseUtils {
      * @author rakbow
      */
     public static boolean isMetaFranchise(Franchise franchise) {
-        JSONObject metaInfo = JSON.parseObject(franchise.getMetaInfo());
-        if(metaInfo.getIntValue("isMeta") == 1) {
-            return true;
-        }
-        return false;
+        MetaInfo metaInfo = JSON.to(MetaInfo.class, franchise.getMetaInfo());
+        return metaInfo.isMeta == 1;
     }
 
     /**
@@ -83,9 +81,7 @@ public class FranchiseUtils {
      * @author rakbow
      */
     public static JSONArray getChildFranchises(Franchise originFranchise) {
-        JSONObject metaInfo = JSON.parseObject(originFranchise.getMetaInfo());
-
-        List<Integer> childFranchiseIds = metaInfo.getList("childFranchises", Integer.class);
+        MetaInfo metaInfo = JSON.to(MetaInfo.class, originFranchise.getMetaInfo());
 
         RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
 
@@ -93,7 +89,7 @@ public class FranchiseUtils {
 
         JSONArray childFranchises = new JSONArray();
 
-        childFranchiseIds.forEach(id -> {
+        metaInfo.childFranchises.forEach(id -> {
                     JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
                     if (franchise != null) {
                         childFranchises.add(franchise);
@@ -101,5 +97,22 @@ public class FranchiseUtils {
                 });
 
         return childFranchises;
+    }
+
+    /**
+     * 获取该meta-franchise的子系列Ids
+     *
+     * @param originFranchise franchise
+     * @return int[]
+     * @author rakbow
+     */
+    public static List<Integer> getChildFranchiseIds(Franchise originFranchise) {
+        MetaInfo metaInfo = JSON.to(MetaInfo.class, originFranchise.getMetaInfo());
+
+        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
+
+        return metaInfo.childFranchises;
     }
 }
