@@ -40,6 +40,7 @@
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialog.min.js}"></script>
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
+    <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -135,6 +136,15 @@
             </p-column>
             <p-column header="名称(英)" field="nameEn" style="flex: 0 0 15rem"></p-column>
             <p-column header="起始时间" field="originDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+            <p-column header="元系列" field="metaLabel" data-type="boolean" body-class="text-center"
+                      style="flex: 0 0 4rem">
+                <template #body="{data}">
+                    <i class="pi" :class="{'true-icon pi-check-circle': data.metaLabel, 'false-icon pi-times-circle': !data.metaLabel}"></i>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
+                </template>
+            </p-column>
             <p-column header="收录时间" field="addedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
             <p-column header="编辑时间" field="editedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
             <p-column v-for="(col, index) of selectedColumns" :field="col.field"
@@ -194,12 +204,12 @@
                         <label class="mb-3">是否为元系列<span style="color: red">*</span></label>
                     </div>
                     <div class="col-12 mt-4">
-                        <p-inputswitch v-model="franchise.metaInfo.isMeta" :true-value="1" :false-value="0"></p-inputswitch>
+                        <p-inputswitch v-model="franchise.metaLabel"></p-inputswitch>
                     </div>
                 </div>
-                <div class="field col-9" v-if="franchise.metaInfo.isMeta == 1">
+                <div class="field col-9" v-if="franchise.metaLabel">
                     <label class="mb-3">子系列</label>
-                    <p-multiselect v-model="franchise.metaInfo.childFranchises" :options="franchiseSet" placeholder="子系列"
+                    <p-multiselect v-model="franchise.childFranchises" :options="franchiseSet" placeholder="子系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
@@ -304,6 +314,7 @@
             const filters = ref({
                 'name': {value: '', matchMode: 'contains'},
                 'nameZh': {value: '', matchMode: 'contains'},
+                'metaLabel': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
                 queryParams.value = event;
@@ -337,10 +348,8 @@
             //打开新增数据面板
             const openNewDialog = () => {
                 franchise.value = {
-                    metaInfo: {
-                        isMeta: 0,
-                        childFranchises: []
-                    }
+                    metaLabel: false,
+                    childFranchises: []
                 };
                 displayNewDialog.value = true;
             };
@@ -470,6 +479,7 @@
             "p-scrolltop": primevue.scrolltop,
             "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
+            "p-tristatecheckbox": primevue.tristatecheckbox,
         }
     };
 

@@ -7,6 +7,7 @@ import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.file.QiniuFileUtils;
@@ -84,6 +85,43 @@ public class FranchiseService {
         franchiseMapper.updateFranchiseDescription(id, description, new Timestamp(System.currentTimeMillis()));
     }
 
+    /**
+     * 更新父级系列
+     *
+     * @param parentFranchiseId,childFranchiseIds 父系列id，子系列ids
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void updateParentFranchise(int parentFranchiseId, List<Integer> childFranchiseIds) {
+
+        List<Franchise> originChildFranchises = franchiseMapper.getFranchisesByParentId(Integer.toString(parentFranchiseId));
+
+        if(childFranchiseIds.isEmpty()) {
+            //若子系列ids为空，则将原先父id为parentFranchiseId的所有系列父id归0
+            originChildFranchises.forEach(franchise -> {
+                MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
+                metaInfo.metaId = "0";
+                franchiseMapper.updateMetaInfo(franchise.getId(), JSON.toJSONString(metaInfo));
+            });
+        }else {
+            //若子系列ids不为空，将父id不为该parentFranchiseId的系列父id归0
+            originChildFranchises.forEach(franchise -> {
+                if(!childFranchiseIds.contains(franchise.getId())) {
+                    MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
+                    metaInfo.metaId = "0";
+                    franchiseMapper.updateMetaInfo(franchise.getId(), JSON.toJSONString(metaInfo));
+                }
+            });
+
+            childFranchiseIds.forEach(id -> {
+                Franchise franchise = getFranchise(id);
+                MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
+                metaInfo.metaId = Integer.toString(parentFranchiseId);
+                franchiseMapper.updateMetaInfo(id, JSON.toJSONString(metaInfo));
+            });
+        }
+    }
+
     //endregion
 
     //region ------数据处理------
@@ -127,6 +165,20 @@ public class FranchiseService {
     public JSONObject handleFranchiseJson(JSONObject franchiseJson) {
 
         franchiseJson.put("originDate", franchiseJson.getDate("originDate"));
+
+        JSONObject metaInfo = new JSONObject();
+        if (franchiseJson.getBoolean("metaLabel")) {
+            metaInfo.put("isMeta", "1");
+        }else {
+            metaInfo.put("isMeta", "0");
+        }
+
+        List<Integer> childFranchiseIds = franchiseJson.getList("childFranchises", Integer.class);
+
+        metaInfo.put("childFranchises", childFranchiseIds);
+        metaInfo.put("metaId", "0");
+        franchiseJson.put("metaInfo", metaInfo);
+        updateParentFranchise(franchiseJson.getIntValue("id"), childFranchiseIds);
 
         return franchiseJson;
     }
@@ -228,12 +280,24 @@ public class FranchiseService {
 
         String name = filter.getJSONObject("name").getString("value");
         String nameZh = filter.getJSONObject("nameZh").getString("value");
+        String isMeta;
+        if (filter.getJSONObject("metaLabel").getBoolean("value") == null) {
+            isMeta = null;
+        }else {
+            isMeta = filter.getJSONObject("metaLabel").getBoolean("value")
+                    ?Integer.toString(1):Integer.toString(0);
+        }
 
-        List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, sortField, sortOrder, first, row);
+        List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta, sortField, sortOrder, first, row);
 
-        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh);
+        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta);
 
         return new SearchResult(total, franchises);
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public List<Franchise> getFranchisesByParentId(int parentId) {
+        return franchiseMapper.getFranchisesByParentId(Integer.toString(parentId));
     }
 
     //endregion

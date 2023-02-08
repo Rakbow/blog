@@ -132,6 +132,16 @@
                         style="text-align: left"><small>{{franchise.nameZh}}</small></h5>
                 </template>
                 <template #content>
+                    <p-card v-if="franchise.parentFranchise">
+                        <template #title>
+                            父系列
+                        </template>
+                        <template #content>
+                            <a :href="'/db/franchise/' + franchise.parentFranchise.id">
+                                <span>{{franchise.parentFranchise.name}}</span>
+                            </a>
+                        </template>
+                    </p-card>
                     <!-- products -->
                     <p-fieldset :toggleable="true" class="mt-2" v-if="!franchise.metaLabel">
                         <template #legend>
@@ -165,21 +175,21 @@
                         </div>
                     </p-fieldset>
                     <!-- child franchises -->
-                    <p-fieldset :toggleable="true" class="mt-2" v-else="">
+                    <p-fieldset :toggleable="true" class="mt-2" v-else>
                         <template #legend>
                             <i class="pi iconfont icon-_classification"></i>
                             <b>子系列</b>
                         </template>
-                        <div class="grid ml-4" v-if="products != 0">
+                        <div class="grid ml-4 mt-2" v-if="franchise.childFranchiseInfos.length != 0">
                             <table class="table product-table table-sm table-borderless a_with_underline">
                                 <tbody>
-                                <tr v-for="childFranchise in franchise.childFranchises">
-                                    <td>
-                                        <a :href="'/db/franchise/' + childFranchise.id">
-                                            <span>{{childFranchise.name}}</span>
-                                        </a>
-                                    </td>
-                                </tr>
+                                    <tr v-for="childFranchise in franchise.childFranchiseInfos">
+                                        <td>
+                                            <a :href="'/db/franchise/' + childFranchise.id">
+                                                <span>{{childFranchise.name}}</span>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -226,6 +236,12 @@
                 <label>备注</label>
                 <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
+            </div>
+            <div class="field" v-if="franchiseEdit.metaLabel">
+                <label class="mb-3">子系列</label>
+                <p-multiselect v-model="franchiseEdit.childFranchises" :options="franchiseSet" placeholder="子系列"
+                               option-label="label" option-value="value" display="chip" :filter="true">
+                </p-multiselect>
             </div>
         </p-blockui>
         <template #footer>
@@ -274,6 +290,7 @@
 
             //region basic
             const franchise = ref([[${franchise}]]);
+            const franchiseSet = ref([[${franchiseSet}]]);
             const toast = useToast();
             const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
@@ -369,7 +386,7 @@
 
             //region init
             const init = () => {
-
+                console.log(franchise.value)
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 text2marked();
             };
@@ -388,7 +405,7 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                franchise, detailInfo, itemImageInfo, pageInfo, responsiveOptions, products,
+                franchise, detailInfo, itemImageInfo, pageInfo, responsiveOptions, products, franchiseSet,
 
                 //edit
                 editBlock, franchiseEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditFranchise,

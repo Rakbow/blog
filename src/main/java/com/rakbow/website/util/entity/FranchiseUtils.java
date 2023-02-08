@@ -4,12 +4,16 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
+import com.rakbow.website.data.vo.franchise.ParentFranchiseVO;
 import com.rakbow.website.entity.Franchise;
+import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.SpringUtils;
 import com.rakbow.website.util.common.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -70,7 +74,7 @@ public class FranchiseUtils {
      */
     public static boolean isMetaFranchise(Franchise franchise) {
         MetaInfo metaInfo = JSON.to(MetaInfo.class, franchise.getMetaInfo());
-        return metaInfo.isMeta == 1;
+        return StringUtils.equals(metaInfo.isMeta, "1");
     }
 
     /**
@@ -81,22 +85,10 @@ public class FranchiseUtils {
      * @author rakbow
      */
     public static JSONArray getChildFranchises(Franchise originFranchise) {
-        MetaInfo metaInfo = JSON.to(MetaInfo.class, originFranchise.getMetaInfo());
+        FranchiseService franchiseService = SpringUtils.getBean("franchiseService");
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
-
-        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
-
-        JSONArray childFranchises = new JSONArray();
-
-        metaInfo.childFranchises.forEach(id -> {
-                    JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
-                    if (franchise != null) {
-                        childFranchises.add(franchise);
-                    }
-                });
-
-        return childFranchises;
+        return JSON.parseArray(JSON.toJSONString(
+                franchiseService.getFranchisesByParentId(Integer.parseInt(Integer.toString(originFranchise.getId())))));
     }
 
     /**
@@ -109,10 +101,22 @@ public class FranchiseUtils {
     public static List<Integer> getChildFranchiseIds(Franchise originFranchise) {
         MetaInfo metaInfo = JSON.to(MetaInfo.class, originFranchise.getMetaInfo());
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
-
-        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
-
         return metaInfo.childFranchises;
     }
+
+    /**
+     * 获取该franchise的父级系列
+     *
+     * @param franchise franchise
+     * @return int[]
+     * @author rakbow
+     */
+    public static Franchise getParentFranchise(Franchise franchise) {
+        int parentFranchiseId = Integer.parseInt(new MetaInfo(franchise.getMetaInfo()).metaId);
+        FranchiseService franchiseService = SpringUtils.getBean("franchiseService");
+
+        return franchiseService.getFranchise(parentFranchiseId);
+
+    }
+
 }

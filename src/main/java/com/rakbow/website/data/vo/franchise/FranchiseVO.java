@@ -1,10 +1,9 @@
 package com.rakbow.website.data.vo.franchise;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -24,6 +23,8 @@ public class FranchiseVO {
     private String remark;//备注
 
     private boolean metaLabel;//是否为meta-franchise
-    private JSONArray childFranchiseIds;//子系列
+    private JSONArray childFranchiseInfos;//子系列
+    private List<Integer> childFranchises;//子系列ids
+    private ParentFranchiseVO parentFranchise;//上级元系列
 
 }

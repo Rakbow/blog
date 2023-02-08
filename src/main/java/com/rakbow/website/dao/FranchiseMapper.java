@@ -22,10 +22,10 @@ public interface FranchiseMapper {
     Franchise getFranchise(int id);
 
     //根据过滤条件搜索Book
-    List<Franchise> getFranchisesByFilter(String name, String nameZh, String sortField, int sortOrder, int first, int row);
+    List<Franchise> getFranchisesByFilter(String name, String nameZh, String isMeta, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getFranchisesRowsByFilter(String name, String nameZh);
+    int getFranchisesRowsByFilter(String name, String nameZh, String isMeta);
 
     //修改系列信息
     void updateFranchise(int id, Franchise franchise);
@@ -41,5 +41,10 @@ public interface FranchiseMapper {
 
     //更新图片
     void updateFranchiseImages(int id, String images, Timestamp editedTime);
+
+    void updateMetaInfo(int id, String metaInfo);
+
+    //根据父系列id获取子系列
+    List<Franchise> getFranchisesByParentId(String parentId);
 
 }

@@ -84,6 +84,7 @@ public class FranchiseController {
         Franchise franchise = franchiseService.getFranchise(id);
 
         model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
+        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
         model.addAttribute("user", hostHolder.getUser());
         //获取页面数据
@@ -110,7 +111,6 @@ public class FranchiseController {
         SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams);
 
         List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
-        ;
 
         JSONObject result = new JSONObject();
         result.put("data", franchises);
@@ -155,40 +155,6 @@ public class FranchiseController {
         }
         return JSON.toJSONString(res);
     }
-
-//    //删除专辑(单个/多个)
-//    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-//    @ResponseBody
-//    public String deleteAlbum(@RequestBody String json, HttpServletRequest request) {
-//        ApiResult res = new ApiResult();
-//        JSONArray albums = JSON.parseArray(json);
-//        try {
-//            if (userService.checkAuthority(request).state) {
-//                for (int i = 0; i < albums.size(); i++) {
-//
-//                    int id = albums.getJSONObject(i).getInteger("id");
-//
-//                    //从数据库中删除专辑
-//                    albumService.deleteAlbumById(id);
-//
-//                    //删除专辑对应的music
-//                    musicService.deleteMusicByAlbumId(id);
-//
-//                    //从Elasticsearch服务器索引中删除专辑
-//                    // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
-//
-//                    //删除访问量实体
-//                    visitService.deleteVisit(EntityType.ALBUM.getId(), id);
-//                }
-//                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
-//            } else {
-//                res.setErrorMessage(userService.checkAuthority(request).message);
-//            }
-//        } catch (Exception ex) {
-//            res.setErrorMessage(ex.getMessage());
-//        }
-//        return JSON.toJSONString(res);
-//    }
 
     //更新基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)

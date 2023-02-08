@@ -34,6 +34,7 @@ public class FranchiseVOAlpha {
     //meta相关数据
     private boolean metaLabel;//是否为meta-franchise
     private List<Integer> childFranchises;//子系列
+    private int metaId;//上级元系列id
 
 
 }

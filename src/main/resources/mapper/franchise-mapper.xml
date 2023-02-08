@@ -36,7 +36,7 @@
         name = #{franchise.name}, name_zh = #{franchise.nameZh}, name_en = #{franchise.nameEn},
          origin_date = #{franchise.originDate}, added_time = #{franchise.addedTime},
          edited_time = #{franchise.editedTime}, description = #{franchise.description}, remark = #{franchise.remark},
-          images = #{franchise.images}, _s = #{franchise._s}
+          images = #{franchise.images}, meta_info = #{franchise.metaInfo}, _s = #{franchise._s}
         where id = #{id}
     </update>
 
@@ -70,6 +70,9 @@
             </if>
             <if test="nameZh != null and nameZh != '' ">
                 and name_zh like concat('%', #{nameZh}, '%')
+            </if>
+            <if test="isMeta != null and isMeta != '' ">
+                and JSON_EXTRACT(meta_info, '$.isMeta') = #{isMeta}
             </if>
             and _s = 1
         </where>
@@ -107,8 +110,25 @@
             <if test="nameZh != null and nameZh != '' ">
                 and name_zh like concat('%', #{nameZh}, '%')
             </if>
+            <if test="isMeta != null and isMeta != '' ">
+                and JSON_EXTRACT(meta_info, '$.isMeta') = #{isMeta}
+            </if>
             and _s = 1
         </where>
+    </select>
+
+    <update id="updateMetaInfo" keyProperty="id">
+        update franchise
+        set
+        meta_info = #{metaInfo}
+        where id = #{id}
+    </update>
+
+    <select id="getFranchisesByParentId" resultType="Franchise">
+        select
+        <include refid="selectFields"></include>
+        from franchise
+        where JSON_EXTRACT(meta_info, '$.metaId') = #{parentId}
     </select>
 
 </mapper>
