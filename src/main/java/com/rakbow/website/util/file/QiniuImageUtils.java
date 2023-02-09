@@ -5,8 +5,10 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.CommonConstant;
+import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -43,12 +45,13 @@ public class QiniuImageUtils {
      * @param images             新增图片文件数组
      * @param originalImagesJson 数据库中现存的图片json数据
      * @param imageInfos         新增图片json数据
+     * @param user         上传用户
      * @return finalImageJson 最终保存到数据库的json信息
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public JSONArray commonAddImages(int entityId, EntityType entityType, MultipartFile[] images,
-                                     JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
+                                     JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
         //最终保存到数据库的json信息
         JSONArray finalImageJson = new JSONArray();
 
@@ -62,18 +65,16 @@ public class QiniuImageUtils {
             //上传图片
             ActionResult ar = qiniuBaseUtils.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
             if (ar.state) {
-                JSONObject jo = new JSONObject();
-                jo.put("url", ar.data.toString());
-                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
-                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
-                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", CommonUtils.getCurrentTime());
-                if (imageInfos.getJSONObject(i).getString("description") == null) {
-                    jo.put("description", "");
-                } else {
-                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
+                ImageInfo imageInfo = new ImageInfo();
+                imageInfo.setUrl(ar.data.toString());
+                imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
+                imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
+                imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
+                if(imageInfos.getJSONObject(i).getString("description").isEmpty()) {
+                    imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
                 }
-                addImageJson.add(jo);
+                imageInfo.setUploadUser(user.getUsername());
+                addImageJson.add(JSON.toJSON(imageInfo));
             }
         }
 

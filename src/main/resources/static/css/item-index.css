@@ -112,6 +112,8 @@ a {
 .p-dataview .p-dataview-content {
     /*background-color: #2a323d;*/
     background-color: #001122;
+    max-height: 900px;
+    overflow-y: auto;
 }
 
 
@@ -170,45 +172,49 @@ a {
     margin: 0;
 }
 
-.index-tabview .p-tabview-panels {
-    background-color: #001122;
-}
+/*.index-tabmenu .p-tabview-panels {*/
+/*    background-color: #001122;*/
+/*}*/
 
-.index-tabview .p-tabview-selected {
-    background-color: #2f364f;
-}
+/*.index-tabmenu .p-tabview-selected {*/
+/*    background-color: #2f364f;*/
+/*}*/
 
-.index-tabview .p-tabview-nav i {
-    border-width: 2px;
-    vertical-align: middle;
-    font-size: 2rem;
-    color: #788990;
-}
+/*.index-tabmenu .p-tabmenu-nav i {*/
+/*    border-width: 2px;*/
+/*    vertical-align: middle;*/
+/*    font-size: 2rem;*/
+/*    color: #788990;*/
+/*}*/
 
-.p-tabview .p-tabview-selected i {
+.p-tabmenu .p-menuitem-icon {
     border-width: 2px;
     vertical-align: middle;
     font-size: 2rem;
     color: #beb993;
 }
 
-.index-tabview .p-tabview-nav h4 {
+.p-tabmenu .p-tabmenu-nav {
     padding: 0;
     margin: 0 0.5rem;
     color: #788990;
     font-style: italic;
 }
 
-.p-tabview .p-tabview-selected h4 {
-    padding: 0;
-    margin: 0 0.5rem;
-    color: #788990;
-    font-style: italic;
+.p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+    padding: 0.25rem 0.75rem;
 }
 
-.p-tabview .p-tabview-nav li .p-tabview-nav-link {
-    padding: 0.25rem 1rem;
-}
+/*.p-tabview .p-tabview-selected h4 {*/
+/*    padding: 0;*/
+/*    margin: 0 0.5rem;*/
+/*    color: #788990;*/
+/*    font-style: italic;*/
+/*}*/
+
+/*.p-tabview .p-tabview-nav li .p-tabview-nav-link {*/
+/*    padding: 0.25rem 1rem;*/
+/*}*/
 
 
 
@@ -345,3 +351,13 @@ a {
         margin-bottom: 0px;
         display: inline-block
     }
+
+
+.index-skeleton {
+    border: 1px solid var(--surface-border);
+    border-radius: 4px;
+}
+
+.index-skeleton ul {
+    list-style: none;
+}

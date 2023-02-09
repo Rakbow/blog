@@ -266,7 +266,7 @@ public class GameController {
                     return JSON.toJSONString(res);
                 }
 
-                gameService.addGameImages(id, images, imagesJson, imageInfosJson);
+                gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //更新elasticsearch中的游戏
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));

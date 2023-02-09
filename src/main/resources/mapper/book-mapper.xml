@@ -175,7 +175,7 @@
         </if>
     </select>
 
-    <select id="getBooksRowsByFilter" resultType="int">
+    <select id="getitemRowsByFilter" resultType="int">
         select count(id)
         from book
         <where>

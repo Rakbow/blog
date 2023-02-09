@@ -282,30 +282,50 @@ const responsiveOptions = [
 
 const indexTabs = [
     {
-        title: 'Albums',
-        index: 0,
-        url: '/db/albums'
+        label: 'Albums',
+        icon: 'pi iconfont icon-album',
+        to: '/db/albums'
     },
     {
-        title: 'Books',
-        index: 1,
-        url: '/db/books'
+        label: 'Books',
+        icon: 'pi iconfont icon-book',
+        to: '/db/books'
     },
     {
-        title: 'Discs',
-        index: 2,
-        url: '/db/discs'
+        label: 'Discs',
+        icon: 'pi iconfont icon-Video-Disc',
+        to: '/db/discs'
     },
     {
-        title: 'Games',
-        index: 3,
-        url: '/db/games'
+        label: 'Games',
+        icon: 'pi iconfont icon-youxi',
+        to: '/db/games'
     },
     {
-        title: 'Merchs',
-        index: 4,
-        url: '/db/merchs'
+        label: 'Merchs',
+        icon: 'pi iconfont icon-yinshuabaozhuang',
+        to: '/db/merchs'
     },
+];
+
+const tmpList10 = [
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+];
+const tmpList5 = [
+    {},
+    {},
+    {},
+    {},
+    {},
 ];
 
 const indexTabChange = (ev) => {

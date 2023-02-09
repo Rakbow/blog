@@ -149,7 +149,7 @@
         </if>
     </select>
 
-    <select id="getMerchsRowsByFilter" resultType="int">
+    <select id="getitemRowsByFilter" resultType="int">
         select count(id)
         from merch
         <where>

@@ -1,19 +1,15 @@
 package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.meilisearch.sdk.exceptions.MeilisearchException;
 import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.MeiliSearchUtils;
 import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.file.CommonImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * @Project_name: website
@@ -83,64 +78,72 @@ public class HomeController {
     @RequestMapping(path = "/db", method = RequestMethod.GET)
     public ModelAndView getDatabasePage() {
         ModelAndView view = new ModelAndView();
-        view.setViewName("/database");
+        view.setViewName("database");
         return view;
     }
 
-    //获取专辑首页
     @RequestMapping(path = "/db/albums", method = RequestMethod.GET)
-    public String getAlbumIndexPage(Model model) {
-        model.addAttribute("justAddedAlbums", albumService.getJustAddedAlbums(5));
-        model.addAttribute("popularAlbums", albumService.getPopularAlbums(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-        model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
-        model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
-        return "/album/album-index";
+    public String getAlbumTestPage(Model model) {
+        return "database";
     }
-
-    //获取图书首页
     @RequestMapping(path = "/db/books", method = RequestMethod.GET)
-    public String getBookIndexPage(Model model) {
-        model.addAttribute("justAddedBooks", bookService.getJustAddedBooks(5));
-        model.addAttribute("popularBooks", bookService.getPopularBooks(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("languageSet", redisUtil.get("languageSet"));
-        return "/book/book-index";
+    public String getBookTestPage(Model model) {
+        return "database";
     }
-
-    //获取碟片首页
     @RequestMapping(path = "/db/discs", method = RequestMethod.GET)
-    public String getDiscIndexPage(Model model) {
-        model.addAttribute("justAddedDiscs", discService.getJustAddedDiscs(5));
-        model.addAttribute("popularDiscs", discService.getPopularDiscs(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        return "/disc/disc-index";
+    public String getDiscTestPage(Model model) {
+        return "database";
     }
-
-    //获取周边首页
-    @RequestMapping(path = "/db/merchs", method = RequestMethod.GET)
-    public String getMerchIndexPage(Model model) {
-        model.addAttribute("justAddedMerchs", merchService.getJustAddedMerchs(5));
-        model.addAttribute("popularMerchs", merchService.getPopularMerchs(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
-        return "/merch/merch-index";
-    }
-
-    //获取周边首页
     @RequestMapping(path = "/db/games", method = RequestMethod.GET)
-    public String getGameIndexPage(Model model) {
-        model.addAttribute("justAddedGames", gameService.getJustAddedGames(5));
-        model.addAttribute("popularGames", gameService.getPopularGames(10));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        return "/game/game-index";
+    public String getGameTestPage(Model model) {
+        return "database";
+    }
+    @RequestMapping(path = "/db/merchs", method = RequestMethod.GET)
+    public String getMerchTestPage(Model model) {
+        return "database";
+    }
+
+    //获取
+    @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
+    @ResponseBody
+    public String getIndexInitData(@RequestBody String json) {
+        String label = JSON.parseObject(json).getString("label");
+
+        JSONObject initData = new JSONObject();
+        if(StringUtils.equals(label, EntityType.ALBUM.getNameEn().toLowerCase())) {
+            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+            initData.put("albumFormatSet", redisUtil.get("albumFormatSet"));
+            initData.put("publishFormatSet", redisUtil.get("publishFormatSet"));
+            initData.put("justAddedAlbums", albumService.getJustAddedAlbums(5));
+            initData.put("popularAlbums", albumService.getPopularAlbums(10));
+        }
+        if(StringUtils.equals(label, EntityType.BOOK.getNameEn().toLowerCase())) {
+            initData.put("justAddedBooks", bookService.getJustAddedBooks(5));
+            initData.put("popularBooks", bookService.getPopularBooks(10));
+            initData.put("bookTypeSet", redisUtil.get("bookTypeSet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+            initData.put("languageSet", redisUtil.get("languageSet"));
+        }
+        if(StringUtils.equals(label, EntityType.DISC.getNameEn().toLowerCase())) {
+            initData.put("justAddedDiscs", discService.getJustAddedDiscs(5));
+            initData.put("popularDiscs", discService.getPopularDiscs(10));
+            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+        }
+        if(StringUtils.equals(label, EntityType.GAME.getNameEn().toLowerCase())) {
+            initData.put("justAddedGames", gameService.getJustAddedGames(5));
+            initData.put("popularGames", gameService.getPopularGames(10));
+            initData.put("gamePlatformSet", redisUtil.get("platformSet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+        }
+        if(StringUtils.equals(label, EntityType.MERCH.getNameEn().toLowerCase())) {
+            initData.put("justAddedMerchs", merchService.getJustAddedMerchs(5));
+            initData.put("popularMerchs", merchService.getPopularMerchs(10));
+            initData.put("merchCategorySet", redisUtil.get("merchCategorySet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+        }
+        initData.put("franchiseSet", redisUtil.get("franchiseSet"));
+        return initData.toJSONString();
     }
 
     //endregion

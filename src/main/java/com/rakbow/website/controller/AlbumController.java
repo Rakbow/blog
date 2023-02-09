@@ -286,7 +286,7 @@ public class AlbumController {
                     return JSON.toJSONString(res);
                 }
 
-                albumService.addAlbumImages(id, images, imagesJson, imageInfosJson);
+                albumService.addAlbumImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //将更新的专辑保存到Meilisearch服务器索引中
                 meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
@@ -315,6 +315,7 @@ public class AlbumController {
                 JSONArray images = JSON.parseObject(json).getJSONArray("images");
                 for (int i = 0; i < images.size(); i++) {
                     images.getJSONObject(i).remove("thumbUrl");
+                    images.getJSONObject(i).remove("thumbUrl50");
                 }
 
                 //更新图片信息

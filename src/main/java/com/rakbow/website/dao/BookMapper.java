@@ -26,7 +26,7 @@ public interface BookMapper {
                                 String hasBonus, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getBooksRowsByFilter(String title, String isbn10, String isbn13, String publisher, String region,
+    int getitemRowsByFilter(String title, String isbn10, String isbn13, String publisher, String region,
                              String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
                              String hasBonus);
 

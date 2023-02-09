@@ -67,6 +67,7 @@
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet" />
+    <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -105,12 +106,13 @@
                 </div>
             </template>
             <template #empty>
-                        <span class="emptyInfo">
-                            未检索到符合条件的数据
-                        </span>
+                <span class="emptyInfo">
+                    未检索到符合条件的数据
+                </span>
             </template>
             <template #loading>
-                加载中，别急~
+                <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
             </template>
             <p-column style="flex: 0 0 4rem">
                 <template #body="slotProps">
@@ -121,6 +123,7 @@
             <p-column header="序号" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 4rem"></p-column>
             <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
                 <template #body="slotProps">
+<!--                    <router-link :to="'/db/franchise/' + slotProps.data.id">{{slotProps.data.name}}</router-link>-->
                     <a :href="'/db/franchise/' + slotProps.data.id">
                         {{slotProps.data.name}}
                     </a>
@@ -145,8 +148,6 @@
                     <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
                 </template>
             </p-column>
-            <p-column header="收录时间" field="addedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
-            <p-column header="编辑时间" field="editedTime" :sortable="true" style="flex: 0 0 10rem"></p-column>
             <p-column v-for="(col, index) of selectedColumns" :field="col.field"
                       :header="col.header" :key="col.field + '_' + index">
             </p-column>
@@ -297,9 +298,23 @@
             }
             //endregion
 
-            //region ------基础------
-            const franchises = ref([]);
+            //region ------基础配置------
+            const franchises = ref();
             const franchiseSet = ref([[${franchiseSet}]]);
+            const loading = ref(false);
+            const dt = ref();
+            const selectedColumns = ref();
+            const toast = useToast();
+            const exportCSV = () => {
+                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                    .then(res => {
+                        if (res.state === 0) {
+                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
+                        } else {
+                            dt.value.exportCSV();
+                        }
+                    })
+            };
             //endregion
 
             //region ------搜索------
@@ -310,6 +325,8 @@
             };
             const columns = ref([
                 {field: 'remark', header: '备注'},
+                {field: 'addedTime', header: '收录时间'},
+                {field: 'editedTime', header: '编辑时间'},
             ]);
             const filters = ref({
                 'name': {value: '', matchMode: 'contains'},
@@ -330,11 +347,13 @@
                 getFranchises();
             };
             const getFranchises = () => {
+                loading.value = true;
                 axiosPostRequest(GET_FRANCHISES_URL, {queryParams: queryParams.value})
                     .then(res => {
                         franchises.value = res.data;
                         totalRecords.value = res.total;
-                    })
+                        loading.value = false;
+                    });
             };
             //endregion
 
@@ -411,30 +430,7 @@
             };
             //endregion
 
-            //region ------基础配置------
-            const loading = ref(false);
-            const dt = ref();
-            const selectedColumns = ref();
-            const toast = useToast();
-            const domainUrl = DOMAIN_URL;
-            const selectedEntity = ref();
-            const entityType = ref(ENTITY_TYPE);
-            const notLoginNavbarItems = ref(NOT_LOGIN_NAVBAR_ITEMS);
-            const loginNavbarItems = ref(LOGIN_NAVBAR_ITEMS);
-            const exportCSV = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            dt.value.exportCSV();
-                        }
-                    })
-            };
-            //endregion
-
             const init = () => {
-                loading.value = true;
                 queryParams.value = {
                     first: 0,
                     rows: dt.value.rows,
@@ -443,7 +439,6 @@
                     filters: filters.value
                 };
                 getFranchises();
-                loading.value = false;
             };
 
             return {

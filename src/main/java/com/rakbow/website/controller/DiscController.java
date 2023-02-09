@@ -266,7 +266,7 @@ public class DiscController {
                     return JSON.toJSONString(res);
                 }
 
-                discService.addDiscImages(id, images, imagesJson, imageInfosJson);
+                discService.addDiscImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));

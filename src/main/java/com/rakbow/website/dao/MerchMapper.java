@@ -27,7 +27,7 @@ public interface MerchMapper {
                                   int first, int row);
 
     //超详细查询条数
-    int getMerchsRowsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
+    int getitemRowsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
                               int category, String region, String notForSale);
 
     //新增Merch

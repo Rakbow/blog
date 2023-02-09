@@ -9,7 +9,9 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +53,9 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addFranchise(Franchise franchise){
         franchiseMapper.addFranchise(franchise);
-        refreshRedisFranchises();
+        if(!FranchiseUtils.isMetaFranchise(franchise)) {
+            refreshRedisFranchises();
+        }
     }
 
     //通过id查找系列
@@ -64,7 +68,9 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateFranchise(int id, Franchise franchise){
         franchiseMapper.updateFranchise(id, franchise);
-        refreshRedisFranchises();
+        if(!FranchiseUtils.isMetaFranchise(franchise)) {
+            refreshRedisFranchises();
+        }
     }
 
     //删除系列
@@ -198,10 +204,10 @@ public class FranchiseService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addFranchiseImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos) throws IOException {
+                              JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
-                (id, EntityType.FRANCHISE, images, originalImagesJson, imageInfos);
+                (id, EntityType.FRANCHISE, images, originalImagesJson, imageInfos, user);
 
         franchiseMapper.updateFranchiseImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
@@ -252,10 +258,12 @@ public class FranchiseService {
         JSONArray franchiseSet = new JSONArray();
         List<Franchise> franchises = franchiseMapper.getAll();
         for (Franchise franchise : franchises) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("value", franchise.getId());
-            jsonObject.put("label", franchise.getNameZh());
-            franchiseSet.add(jsonObject);
+            if(!FranchiseUtils.isMetaFranchise(franchise)) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("value", franchise.getId());
+                jsonObject.put("label", franchise.getNameZh());
+                franchiseSet.add(jsonObject);
+            }
         }
 
         redisUtil.set("franchiseSet", franchiseSet);

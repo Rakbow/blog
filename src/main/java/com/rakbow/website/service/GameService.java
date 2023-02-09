@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
@@ -184,10 +185,10 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addGameImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos) throws IOException {
+                              JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
-                (id, EntityType.GAME, images, originalImagesJson, imageInfos);
+                (id, EntityType.GAME, images, originalImagesJson, imageInfos, user);
 
         gameMapper.updateGameImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
@@ -327,7 +328,7 @@ public class GameService {
         List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
                 sortField, sortOrder, first, row);
 
-        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region);
+        int total = gameMapper.getitemRowsByFilter(name, hasBonus, franchises, products, platform, region);
 
         return new SearchResult(total, games);
     }

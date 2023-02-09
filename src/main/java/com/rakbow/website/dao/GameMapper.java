@@ -25,7 +25,7 @@ public interface GameMapper {
                                 String region, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getGamesRowsByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
+    int getitemRowsByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
                              String region);
 
     //新增Game

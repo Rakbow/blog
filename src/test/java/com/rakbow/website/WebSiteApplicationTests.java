@@ -1,14 +1,15 @@
 package com.rakbow.website;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.dao.AlbumMapper;
-import com.rakbow.website.dao.MusicMapper;
+import com.rakbow.website.dao.*;
+import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.vo.album.AlbumVO;
+import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 //import com.rakbow.website.util.convertMapper.GameVoMapper;
-import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.entity.BookUtils;
 import com.rakbow.website.util.common.DataFinder;
@@ -33,8 +34,29 @@ class WebSiteApplicationTests {
     private MusicService musicService;
     @Autowired
     private MusicMapper musicMapper;
+
     @Autowired
     private AlbumMapper albumMapper;
+    @Autowired
+    private BookMapper bookMapper;
+    @Autowired
+    private DiscMapper discMapper;
+    @Autowired
+    private GameMapper gameMapper;
+    @Autowired
+    private MerchMapper merchMapper;
+    @Autowired
+    private ProductMapper productMapper;
+
+
+
+
+
+
+
+
+
+
     @Autowired
     private VisitService visitService;
     @Autowired
@@ -150,11 +172,11 @@ class WebSiteApplicationTests {
     @Test
     public void redisTest() {
 
-       productService.refreshRedisProducts();
+      productService.refreshRedisProducts();
 
        franchiseService.refreshRedisFranchises();
 
-       commonService.refreshRedisEmunData();
+      commonService.refreshRedisEmunData();
 
     }
 
@@ -185,6 +207,23 @@ class WebSiteApplicationTests {
         Timestamp t4 = new Timestamp(System.currentTimeMillis());
 
         System.out.println(t4.getTime() - t3.getTime());
+    }
+
+    @Test
+    public void imageTests() {
+        List<Product> products = productMapper.getAll();
+        products.forEach(product -> {
+            JSONArray images = JSON.parseArray(product.getImages());
+            if(!images.isEmpty()) {
+                JSONArray newImages = new JSONArray();
+                for (int i = 0; i < images.size(); i++) {
+                    ImageInfo imageInfo = JSON.to(ImageInfo.class, images.getJSONObject(i));
+                    imageInfo.setUploadUser("rakbow");
+                    newImages.add(imageInfo);
+                }
+                productMapper.updateProductImages(product.getId(), newImages.toJSONString(), product.getEditedTime());
+            }
+        });
     }
 
 }

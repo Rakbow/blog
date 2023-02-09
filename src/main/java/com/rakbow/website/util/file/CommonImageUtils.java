@@ -4,10 +4,13 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.emun.image.ImageProperty;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.CommonConstant;
+import com.rakbow.website.data.vo.ImageVO;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -139,14 +142,13 @@ public class CommonImageUtils {
 
         segmentImagesResult result = new segmentImagesResult();
 
-        JSONArray images = JSON.parseArray(imagesJson);
+        List<ImageVO> ImageVOs = JSON.parseArray(imagesJson, ImageVO.class);
 
         //添加缩略图
-        if (!images.isEmpty()) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                image.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 70));
-                image.put("thumbUrl50", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
+        if (!ImageVOs.isEmpty()) {
+            for (ImageVO imageVO : ImageVOs) {
+                imageVO.setThumbUrl(QiniuImageUtils.getThumbUrl(imageVO.getUrl(), 70));
+                imageVO.setThumbUrl50(QiniuImageUtils.getThumbUrl(imageVO.getUrl(), 50));
             }
         }
 
@@ -158,40 +160,37 @@ public class CommonImageUtils {
             cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
         }
         cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtils.getThumbUrl(image.getString("url"), coverSize));
-                    cover.put("name", image.getString("nameEn"));
+        if (!ImageVOs.isEmpty()) {
+            for (ImageVO imageVO : ImageVOs) {
+                if (Integer.parseInt(imageVO.getType()) == ImageType.COVER.getIndex()) {
+                    cover.put("url", QiniuImageUtils.getThumbUrl(imageVO.getUrl(), coverSize));
+                    cover.put("name", imageVO.getNameEn());
                 }
             }
         }
 
         //对展示图片进行封装
         JSONArray displayImages = new JSONArray();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (image.getIntValue("type") == ImageType.DISPLAY.getIndex()
-                        || image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    displayImages.add(image);
+        if (!ImageVOs.isEmpty()) {
+            for (ImageVO imageVO : ImageVOs) {
+                if (Integer.parseInt(imageVO.getType()) == ImageType.DISPLAY.getIndex()
+                        || Integer.parseInt(imageVO.getType()) == ImageType.COVER.getIndex()) {
+                    displayImages.add(imageVO);
                 }
             }
         }
 
         //对其他图片进行封装
         JSONArray otherImages = new JSONArray();
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "2")) {
-                    otherImages.add(image);
+        if (!ImageVOs.isEmpty()) {
+            for (ImageVO imageVO : ImageVOs) {
+                if (Integer.parseInt(imageVO.getType()) == ImageType.OTHER.getIndex()) {
+                    otherImages.add(imageVO);
                 }
             }
         }
 
-        result.images = images;
+        result.images = JSON.parseArray(JSON.toJSONString(ImageVOs));
         result.cover = cover;
         result.displayImages = displayImages;
         result.otherImages = otherImages;

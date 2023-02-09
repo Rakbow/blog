@@ -122,7 +122,7 @@
                     </div>
                     <div class="col-6 text-end">
                         <span v-if="itemImageInfo.displayImages">
-                            <span>上传于 {{item.uploadTime}}</span>
+                            <span>上传于 {{item.uploadTime}},提交者 {{item.uploadUser}}</span>
                         </span>
                     </div>
                 </div>
@@ -134,7 +134,7 @@
                 <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                      draggable="false"
                      oncontextmenu="return false"
-                     v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'time-tooltip'}"
+                     v-tooltip.bottom="{value: '上传于 ' + image.uploadTime + ' 提交者 ' + image.uploadUser, class: 'time-tooltip'}"
                      @click="imageClick(index)"/>
             </div>
         </div>

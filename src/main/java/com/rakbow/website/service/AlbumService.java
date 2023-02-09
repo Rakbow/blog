@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
@@ -15,6 +16,7 @@ import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
@@ -209,7 +211,7 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addAlbumImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
+    public void addAlbumImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
 
         //最终保存到数据库的json信息
         JSONArray finalImageJson = new JSONArray();
@@ -224,18 +226,16 @@ public class AlbumService {
             //上传图片
             ActionResult ar = qiniuBaseUtils.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
             if (ar.state) {
-                JSONObject jo = new JSONObject();
-                jo.put("url", ar.data.toString());
-                jo.put("nameEn", imageInfos.getJSONObject(i).getString("nameEn"));
-                jo.put("nameZh", imageInfos.getJSONObject(i).getString("nameZh"));
-                jo.put("type", imageInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", CommonUtils.getCurrentTime());
-                if (imageInfos.getJSONObject(i).getString("description") == null) {
-                    jo.put("description", "");
-                }else {
-                    jo.put("description", imageInfos.getJSONObject(i).getString("description"));
+                ImageInfo imageInfo = new ImageInfo();
+                imageInfo.setUrl(ar.data.toString());
+                imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
+                imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
+                imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
+                if(imageInfos.getJSONObject(i).getString("description").isEmpty()) {
+                    imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
                 }
-                addImageJson.add(jo);
+                imageInfo.setUploadUser(user.getUsername());
+                addImageJson.add(JSON.toJSON(imageInfo));
             }
         }
 

@@ -62,16 +62,23 @@
 
     <p-toast></p-toast>
     <form class="mt-5" method="post" th:action="@{/login}">
-        <div class="flex justify-content-center">
+        <div id="main" class="flex justify-content-center">
             <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
                 <div class="text-center mb-5">
                     <img src="https://img.rakbow.com/common/logo.png" alt="Image" height="50" class="mb-3">
-                    <div class="text-900 text-3xl font-medium mb-3">魔女的茶会入口</div>
-                    <span v-if="error != null && error != ''" class="font-medium line-height-3"
-                          style="color: red">{{error}}</span>
+<!--                    <div class="text-900 text-3xl font-medium mb-3">魔女的茶会入口</div>-->
+                    <div th:if="${loginUser == null}">
+                        <div class="text-900 text-3xl font-medium mb-3">&nbsp;登&nbsp;录&nbsp;后&nbsp;台&nbsp;</div>
+                        <span v-if="error != null && error != ''" class="font-medium line-height-3"
+                              style="color: red">{{error}}</span>
+                    </div>
+                    <div th:if="${loginUser != null}">
+                        <p-avatar class="mr-3" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                                  shape="circle"></p-avatar>
+                        <span>已登录</span>
+                    </div>
                 </div>
-
-                <div>
+                <div th:if="${loginUser == null}">
                     <label htmlFor="username" class="block text-900 font-medium mb-2">账号</label>
                     <p-inputtext id="username" name="username" v-model="param.username" type="text"
                                  class="w-full mb-3"></p-inputtext>
@@ -110,7 +117,6 @@
         </div>
     </form>
 
-    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -127,7 +133,11 @@
     const App = {
         setup() {
             onMounted(() => {
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
 
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
             });
 
             //region 页面header
@@ -156,15 +166,15 @@
                         if (res.state === 0) {
                             toast.add({ severity: 'error', summary: 'Error', detail: res.message, life: 3000 });
                         } else {
-                            window.location.href = domainUrl;
+                            window.location.href = DOMAIN_URL;
                         }
                     }).catch(err => {
                 });
-            }
+            };
 
             //刷新验证码
             const refreshKaptcha = () => {
-                const path = DOMAIN_URL + "/kaptcha?p=" + Math.random();
+                const path = "/kaptcha?p=" + Math.random();
                 $("#kaptcha").attr("src", path);
             }
 

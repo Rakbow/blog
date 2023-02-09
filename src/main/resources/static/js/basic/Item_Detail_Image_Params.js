@@ -19,75 +19,83 @@ const imageEditPanel = {
     template: `
         <p-blockui :blocked="editBlock">
             <p-panel>
-                    <template #header>
-                        <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                        <b>新增</b>
-                    </template>
-                    <div class="grid">
-                        <div class="col-6 text-start">
-                            <p-fileupload
-                                    mode="basic"
-                                    :custom-upload="true"
-                                    accept="image/*"
-                                    :auto="true"
-                                    choose-label="上传图片"
-                                    :max-file-size="2000000" :preview-width="100"
-                                    invalid-file-size-message="{0}大小已超过{1}"
-                                    @uploader="onUpload"
-                                    @select="selectFile">
-                            </p-fileupload>
-                        </div>
-                        <div class="col-6 text-end">
-                            <p-button class="ml-2 p-button-text" icon="pi pi-trash"
-                                      label="清空所选" @click="clearUploadedImage"></p-button>
-                        </div>
-                    </div>
-                    <div class="formgrid grid mt-2">
-                        <div class="field col">
-                            <div class="p-inputgroup">
-                                            <span class="p-inputgroup-addon">
-                                                <i class="pi pi-image"></i>
-                                            </span>
-                                <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                <template #header>
+                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
+                    <b>新增</b>
+                </template>
+                <div class="grid">
+                    <div class="col-5">
+                        <div class="grid">
+                            <div class="col-6 text-start">
+                                <p-fileupload
+                                        mode="basic"
+                                        :custom-upload="true"
+                                        accept="image/*"
+                                        :auto="true"
+                                        choose-label="上传图片"
+                                        :max-file-size="2000000" :preview-width="100"
+                                        invalid-file-size-message="{0}大小已超过{1}"
+                                        @uploader="onUpload"
+                                        @select="selectFile">
+                                </p-fileupload>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p-button class="ml-2 p-button-text" icon="pi pi-trash"
+                                          label="清空所选" @click="clearUploadedImage"></p-button>
                             </div>
                         </div>
-                        <div class="field col">
-                            <div class="p-inputgroup">
-                                            <span class="p-inputgroup-addon">
-                                                <i class="pi pi-image"></i>
-                                            </span>
-                                <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                        <div class="formgrid grid mt-2">
+                            <div class="field col-6">
+                                <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon">
+                                                    <i class="pi pi-image"></i>
+                                                </span>
+                                    <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                                </div>
+                            </div>
+                            <div class="field col-6">
+                                <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon">
+                                                    <i class="pi pi-image"></i>
+                                                </span>
+                                    <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                                </div>
+                            </div>
+                            <div class="field col-6">
+                                <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                                            option-value="value" placeholder="选择图片类型"
+                                            style="width: 224px"></p-dropdown>
+                            </div>
+                            <div class="field col-6">
+                                <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                                            :auto-resize="true" placeholder="图片描述"
+                                            style="width: 224px"></p-textarea>
                             </div>
                         </div>
-                        <div class="field col">
-                            <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
-                                        option-value="value" placeholder="选择图片类型"
-                                        style="width: 280px"></p-dropdown>
-                        </div>
-                        <div class="field col">
-                            <p-textarea v-model="imageInfo.description" rows="1" cols="20"
-                                        :auto-resize="true" placeholder="图片描述"
-                                        style="width: 280px"></p-textarea>
-                        </div>
-                    </div>
-                    <div class="formgrid grid mt-2">
-                        <div class="field col" align="left">
-                            <p-button label="新增图片" icon="pi pi-save"
-                                      @click="save2imageInfos"></p-button>
-                        </div>
-                        <div class="field col" align="right">
-                            <p-button label="提交新增" icon="pi pi-save"
-                                      @click="submitImages" class="p-button-success"></p-button>
+                        <div class="formgrid grid mt-2">
+                            <div class="field col" align="left">
+                                <p-button label="新增图片" icon="pi pi-save"
+                                          @click="save2imageInfos"></p-button>
+                            </div>
+                            <div class="field col" align="right">
+                                <p-button label="提交新增" icon="pi pi-save"
+                                          @click="submitImages" class="p-button-success"></p-button>
+                            </div>
                         </div>
                     </div>
-                    <p-divider></p-divider>
-                    <div class="field">
-                        <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
-                        <section>
-                            <div id="imgBox" v-html="imageHtml"></div>
-                        </section>
+                    <div class="col-2">
+                        <p-divider layout="vertical"></p-divider>
                     </div>
-                </p-panel>
+                    <div class="col-5">
+                        <div class="field">
+                            <span v-if=" imageHtml == '' " class="emptyInfo">还未选择图片</span>
+                            <section>
+                                <div id="imgBox" v-html="imageHtml"></div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </p-panel>
             <p-panel>
                 <template #header>
                     <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
@@ -143,6 +151,7 @@ const imageEditPanel = {
                             </template>
                         </p-column>
                         <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
+                        <p-column field="uploadUser" header="上传用户"></p-column>
                         <p-column :row-editor="true" header-style="width: 15%"></p-column>
                     </p-datatable>
                 </div>
@@ -150,12 +159,12 @@ const imageEditPanel = {
                     <span class="emptyInfo"><em>暂无图片</em></span>
                 </div>
             </p-panel>
-            <div class="text-end mt-3">
-                <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
-                      class="p-button-text"></p-button>
-                <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
-            </div>
         </p-blockui>
+        <div class="text-end mt-3">
+            <p-button icon="pi pi-times" label="取消" @click="closeImageEditDialog"
+                  class="p-button-text" :disabled="editBlock"></p-button>
+            <p-button icon="pi pi-save" label="提交更新" @click="updateImage" :disabled="editBlock"></p-button>
+        </div>
         <p-dialog :modal="true" v-model:visible="deleteImageDialog" header="删除图片"
               :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}">
             <div class="confirmation-content">
@@ -286,14 +295,16 @@ const imageEditPanel = {
         showImage() {
             this.imageHtml = "";
             //<![CDATA[
-            this.imageHtml += "<div class='grid'>";
+            this.imageHtml += "<div class='grid' style='max-height: 200px;overflow-y: auto' >";
             for (const img of this.imageInfos) {
-                this.imageHtml += '<div class="col-4">';
-                this.imageHtml += '<img src="' + img.image.objectURL + '"/>';
-                this.imageHtml += '<p>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</p>';
-                this.imageHtml += '<p>图片名(中): ' + img.nameZh + '</p>';
-                this.imageHtml += '<p>图片名(英): ' + img.nameEn + '</p>';
-                this.imageHtml += '<p>描述: ' + img.description + '</p>';
+                this.imageHtml += '<div class="col-6" style="max-height: 100px">';
+                this.imageHtml += '<img src="' + img.image.objectURL + '" style="max-height: 90px" />';
+                this.imageHtml += '</div>';
+                this.imageHtml += '<div class="col-6" style="max-height: 100px">';
+                this.imageHtml += '<span>图片类型: ' + (img.type === "1" ? "封面" : (img.type === "0" ? "展示" : "其他")) + '</span><br>';
+                this.imageHtml += '<span>图片名(中): ' + img.nameZh + '</span><br>';
+                this.imageHtml += '<span>图片名(英): ' + img.nameEn + '</span><br>';
+                this.imageHtml += '<span>描述: ' + img.description + '</span><br>';
                 this.imageHtml += '</div>';
             }
             this.imageHtml += "</div>";

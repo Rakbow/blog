@@ -4,9 +4,6 @@ package com.rakbow.website.entity;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
@@ -18,39 +15,27 @@ import java.util.Date;
  * @Create: 2022-07-19 0:55
  * @Description: 专辑实体类
  */
-@Document(indexName = "album")
 @Data
 public class Album {
 
     @Id
     private int id;//表主键
-    @Field(type = FieldType.Text)
     private String catalogNo;//专辑编号
-    @Field(type = FieldType.Text)
     private String name;//专辑名称（日语）
-    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String nameZh;//专辑名称（中文）
-    @Field(type = FieldType.Text)
     private String nameEn;//专辑名称（英语）
-    @Field(type = FieldType.Text)
     private String barcode;//商品条形码
     @DateTimeFormat(pattern="yyyy/MM/dd")//存到数据库
     @JSONField(format = "yyyy/MM/dd") //从数据库读出
-    @Field(type = FieldType.Date)
     private Date releaseDate;//发行日期
     private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     private String mediaFormat;//媒体类型
-    @Field(type = FieldType.Integer)
     private int price;//发行价格（含税）
     private String currencyUnit;
-    @Field(type = FieldType.Text)
     private String label;//唱片公司
-    @Field(type = FieldType.Text)
     private String publisher;//发行商
-    @Field(type = FieldType.Text)
     private String distributor;//经销商
-    @Field(type = FieldType.Text)
     private String copyright;//版权方
     private int hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息

@@ -243,7 +243,7 @@ public class FranchiseController {
                     return JSON.toJSONString(res);
                 }
 
-                franchiseService.addFranchiseImages(id, images, imagesJson, imageInfosJson);
+                franchiseService.addFranchiseImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //更新elasticsearch中的游戏
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));

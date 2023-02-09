@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
@@ -184,10 +185,10 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
+    public void addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
-                (id, EntityType.DISC, images, originalImagesJson, imageInfos);
+                (id, EntityType.DISC, images, originalImagesJson, imageInfos, user);
 
         discMapper.updateDiscImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
@@ -317,7 +318,7 @@ public class DiscService {
         List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
                 mediaFormat, limited, hasBonus, sortField, sortOrder,  first, row);
 
-        int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
+        int total = discMapper.getitemRowsByFilter(catalogNo, name, region, franchises, products,
                 mediaFormat, limited, hasBonus);
 
         return new SearchResult(total, discs);

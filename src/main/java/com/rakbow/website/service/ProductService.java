@@ -10,6 +10,7 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.util.entity.ProductUtils;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
@@ -204,10 +205,10 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos) throws IOException {
+    public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
-                (id, EntityType.PRODUCT, images, originalImagesJson, imageInfos);
+                (id, EntityType.PRODUCT, images, originalImagesJson, imageInfos, user);
 
         productMapper.updateProductImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }

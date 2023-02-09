@@ -8,6 +8,7 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.data.ApiInfo;
@@ -196,10 +197,10 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos) throws IOException {
+                              JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
-                (id, EntityType.BOOK, images, originalImagesJson, imageInfos);
+                (id, EntityType.BOOK, images, originalImagesJson, imageInfos, user);
 
         bookMapper.updateBookImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
@@ -340,7 +341,7 @@ public class BookService {
         List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
                 bookType, franchises, products, hasBonus, sortField, sortOrder, first, row);
 
-        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
+        int total = bookMapper.getitemRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
                 bookType, franchises, products, hasBonus);
 
         return new SearchResult(total, books);

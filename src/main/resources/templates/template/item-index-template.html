@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>item-index-template</title>
+</head>
+<body>
+    <div th:fragment="index_loading_side_panel">
+        <p-panel>
+            <template #header>
+                <span class="text-start side-panel-header">
+                    <i class="pi iconfont icon-album"></i><span><strong>浏览排名</strong></span>
+                </span>
+            </template>
+            <div class="grid">
+                    <span class="small_font">
+                        <div class="info_bit_small small_font grid m-0 p-0"
+                             v-if="tmpList10.length != 0"
+                             v-for="(index) of tmpList10">
+                            <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                <div class="col-12 p-0 m-0">
+                                    <p-skeleton width="3rem" class="mt-2"></p-skeleton>
+                                </div>
+                                <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                    <i class="pi pi-eye mt-1 mb-1"></i><br><p-skeleton width="3rem" class="mb-1"></p-skeleton>
+                                </span>
+                            </div>
+                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                <p-skeleton size="4rem"></p-skeleton>
+                            </div>
+                            <div class="col p-0" style="height: 90px">
+                                <ul class="info_bit_small_other">
+                                    <li>
+                                        <a>
+                                            <span class="text-truncate-2 mr-2">
+                                                <p-skeleton width="8rem" class="mb-1 mt-1"></p-skeleton>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span class="small_font related-item-catalog">
+                                            <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span class="small_font related-item-date">
+                                            <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </span>
+            </div>
+        </p-panel>
+    </div>
+    <div th:fragment="index_loading_added_item_panel">
+        <p-panel>
+            <template #header>
+                    <span class="text-start side-panel-header">
+                        <i class="pi iconfont icon-album"></i><span><strong>最新收录</strong></span>
+                    </span>
+            </template>
+            <div class="grid">
+                    <span class="small_font">
+                        <div class="info_bit_small small_font grid m-0 p-0"
+                             v-if="tmpList5.length != 0"
+                             v-for="(index) of tmpList5">
+                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                <a>
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </a>
+                            </div>
+                            <div class="col p-0" style="height: 80px">
+                                <ul class="info_bit_small_other">
+                                    <li>
+                                        <a>
+                                            <span class="text-truncate-2 ml-2 mr-2">
+                                                <p-skeleton width="8rem"></p-skeleton>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span class="small_font col-6 related-item-catalog">
+                                            <p-skeleton width="3rem"></p-skeleton>
+                                        </span>
+                                        <span class="small_font col-6 related-item-date">
+                                            <p-skeleton width="3rem"></p-skeleton>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </span>
+            </div>
+        </p-panel>
+    </div>
+</body>
+</html>

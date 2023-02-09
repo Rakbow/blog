@@ -309,7 +309,7 @@ public class ProductController {
                     return JSON.toJSONString(res);
                 }
 
-                productService.addProductImages(id, images, imagesJson, imageInfosJson);
+                productService.addProductImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //刷新redis缓存
                 productService.refreshRedisProducts();

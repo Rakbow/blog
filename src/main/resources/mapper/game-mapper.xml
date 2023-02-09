@@ -152,7 +152,7 @@
         </if>
     </select>
 
-    <select id="getGamesRowsByFilter" resultType="int">
+    <select id="getitemRowsByFilter" resultType="int">
         select count(id)
         from game
         <where>

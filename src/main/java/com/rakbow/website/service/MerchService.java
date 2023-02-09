@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
@@ -117,10 +118,10 @@ public class MerchService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                               JSONArray imageInfos) throws IOException {
+                               JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
-                (id, EntityType.MERCH, images, originalImagesJson, imageInfos);
+                (id, EntityType.MERCH, images, originalImagesJson, imageInfos, user);
 
         merchMapper.updateMerchImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
@@ -297,7 +298,7 @@ public class MerchService {
         List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
                 notForSale, sortField, sortOrder, first, row);
 
-        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale);
+        int total = merchMapper.getitemRowsByFilter(name, barcode, franchises, products, category, region, notForSale);
 
         return new SearchResult(total, merchs);
     }

@@ -9,7 +9,8 @@
                     <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
                 </template>
                 <template #end>
-                    <p-button icon="pi pi-search" label="搜索" @click="openSearchPanel"></p-button>
+                    <p-button icon="pi pi-search" @click="openSearchPanel"
+                              class="p-button-rounded p-button-warning"></p-button>
                 </template>
             </p-menubar>
         </div>
@@ -21,7 +22,8 @@
                 <template #end>
                     <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
                               shape="circle"></p-avatar>
-                    <p-button icon="pi pi-search" label="搜索" @click="openSearchPanel"></p-button>
+                    <p-button icon="pi pi-search" @click="openSearchPanel"
+                              class="p-button-rounded p-button-warning"></p-button>
                 </template>
             </p-menubar>
         </div>

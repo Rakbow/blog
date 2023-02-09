@@ -266,7 +266,7 @@ public class BookController {
                     return JSON.toJSONString(res);
                 }
 
-                bookService.addBookImages(id, images, imagesJson, imageInfosJson);
+                bookService.addBookImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //更新elasticsearch中的图书
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));

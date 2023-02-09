@@ -163,7 +163,7 @@
         </if>
     </select>
 
-    <select id="getDiscsRowsByFilter" resultType="int">
+    <select id="getitemRowsByFilter" resultType="int">
         select count(id)
         from disc
         <where>

@@ -266,7 +266,7 @@ public class MerchController {
                     return JSON.toJSONString(res);
                 }
 
-                merchService.addMerchImages(id, images, imagesJson, imageInfosJson);
+                merchService.addMerchImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
                 //更新elasticsearch中的周边
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
