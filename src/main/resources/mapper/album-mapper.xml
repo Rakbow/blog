@@ -161,7 +161,9 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            and _s = 1
+            <if test="!status">
+                and _s = 1
+            </if>
         </where>
         <if test="sortField == 'id'">
             <if test="sortOrder == 1">
@@ -238,7 +240,9 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            and _s = 1
+            <if test="!status">
+                and _s = 1
+            </if>
         </where>
     </select>
 

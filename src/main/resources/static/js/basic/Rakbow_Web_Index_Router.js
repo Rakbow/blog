@@ -244,7 +244,7 @@ const albumIndex = {
                     </template>
                 </p-dataview>
             </div>
-            <div class="col-2" style="min-width: 300px" v-else>
+            <div class="col-2" style="min-width: 300px">
                 <p-panel>
                     <template #header>
                     <span class="text-start side-panel-header">
@@ -2077,7 +2077,7 @@ const merchIndex = {
         }
     },
     watch: {
-        layout:function(newValue, oldValue) {
+        layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
             } else {

@@ -465,10 +465,10 @@ public class AlbumService {
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, sortField, sortOrder,  first, row);
+                albumFormat, mediaFormat, hasBonus, true, sortField, sortOrder,  first, row);
 
         int total = albumMapper.getAlbumRowsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus);
+                albumFormat, mediaFormat, hasBonus, true);
 
         return new SearchResult(total, albums);
     }
@@ -492,7 +492,7 @@ public class AlbumService {
 
         //该系列所有专辑
         List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtils.ids2List(album.getFranchises()),
-                null, null, null, null, null, "releaseDate",
+                null, null, null, null, null, false, "releaseDate",
                 1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).collect(Collectors.toList());
 
         List<Album> queryResult = allAlbums.stream().filter(tmpAlbum ->
@@ -594,7 +594,7 @@ public class AlbumService {
         products.add(productId);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(null, null, null, products,
-                null, null, null, null, "releaseDate",
+                null, null, null, null, false, "releaseDate",
                 -1,  0, 0);
 
         return albumVOMapper.album2VOBeta(albums);

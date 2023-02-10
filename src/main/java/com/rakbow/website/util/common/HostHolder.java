@@ -1,6 +1,8 @@
 package com.rakbow.website.util.common;
 
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.entity.User;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
 /**

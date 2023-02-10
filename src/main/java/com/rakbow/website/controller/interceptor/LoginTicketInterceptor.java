@@ -3,6 +3,7 @@ package com.rakbow.website.controller.interceptor;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
+import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+
         // 从cookie中获取凭证
         String ticket = CookieUtil.getValue(request, "ticket");
 
@@ -52,6 +54,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         user, user.getPassword(), userService.getAuthorities(user.getId()));
                 SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
+
             } else if (loginTicket != null) {
                 if(loginTicket.getStatus() == 1 || loginTicket.getExpired().before(new Date())){
                     //凭证失效
@@ -59,7 +62,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 }
             }
         }
-
         return true;
     }
 
@@ -74,7 +76,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         hostHolder.clear();
-        SecurityContextHolder.clearContext();
     }
 
 }

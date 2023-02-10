@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -124,6 +125,7 @@ public class UserController {
     @RequestMapping(path = "/check-authority", method = RequestMethod.GET)
     @ResponseBody
     public ApiResult checkAuthority(HttpServletRequest request) {
+
         ApiResult res = new ApiResult();
         // 从cookie中获取凭证
         String ticket = CookieUtil.getValue(request, "ticket");
@@ -135,7 +137,7 @@ public class UserController {
             if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                 // 根据凭证查询用户
                 User user = userService.findUserById(loginTicket.getUserId());
-                if (user.getType() == 0) {
+                if (user.getType() == 1) {
                     res.setErrorMessage(ApiInfo.NOT_AUTHORITY);
                 }
             }else {

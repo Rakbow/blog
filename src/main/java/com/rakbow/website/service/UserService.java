@@ -2,6 +2,7 @@ package com.rakbow.website.service;
 
 import com.rakbow.website.dao.LoginTicketMapper;
 import com.rakbow.website.dao.UserMapper;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.CookieUtil;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
@@ -91,8 +93,8 @@ public class UserService{
         // 注册用户
         user.setSalt(CommonUtils.generateUUID().substring(0, 5));
         user.setPassword(CommonUtils.md5(user.getPassword() + user.getSalt()));
-        user.setType(0);//设置用户类型 0-普通用户 1-管理员
-        user.setStatus(0);
+        user.setType(1);//设置用户类型 1-普通用户
+        user.setStatus(1);
         user.setActivationCode(CommonUtils.generateUUID());
         //设置用户默认头像
         //user.setHeaderUrl(String.format("", new Random().nextInt(1000)));
@@ -179,18 +181,40 @@ public class UserService{
         return userMapper.updateHeader(userId, headerUrl);
     }
 
+    //配置用户权限!!!
     public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
         User user = this.findUserById(userId);
 
         List<GrantedAuthority> list = new ArrayList<>();
-        list.add((GrantedAuthority) () -> {
-            switch (user.getType()) {
-                case 1:
-                    return CommonConstant.AUTHORITY_ADMIN;
-                default:
-                    return CommonConstant.AUTHORITY_USER;
-            }
-        });
+
+        switch (user.getType()) {
+            case 0:
+                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.ADMIN.getNameEn()));
+                break;
+            case 1:
+                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.USER.getNameEn()));
+                break;
+            case 2:
+                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()));
+                break;
+            case 3:
+                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()));
+                break;
+        }
+
+        // list.add((GrantedAuthority) () -> {
+        //     switch (user.getType()) {
+        //         case 0:
+        //             return UserAuthority.ADMIN.getNameEn();
+        //         case 1:
+        //             return UserAuthority.USER.getNameEn();
+        //         case 2:
+        //             return UserAuthority.JUNIOR_EDITOR.getNameEn();
+        //         case 3:
+        //             return UserAuthority.SENIOR_EDITOR.getNameEn();
+        //     }
+        //     return null;
+        // });
         return list;
     }
 
@@ -206,7 +230,7 @@ public class UserService{
             if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                 // 根据凭证查询用户
                 User user = findUserById(loginTicket.getUserId());
-                if (user.getType() == 0) {
+                if (user.getType() == 1) {
                     res.setErrorMessage(ApiInfo.NOT_AUTHORITY);
                 }
             }else {

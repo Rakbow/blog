@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -416,6 +418,40 @@ public class CommonUtils {
 
         CommonUtils.imageCompress(oldFilePath, 200, 200, outFilePath, true);
         return "/db/" + entity + "/" + entityId + "/compress/" + fileName;
+    }
+
+    //打印请求消息
+    public static void printRequestHeaders(HttpServletRequest req) {
+        Enumeration<String> names = req.getHeaderNames();
+        if(names == null) {
+            return;
+        }
+        while(names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            Enumeration<String> values = req.getHeaders(name);
+            if(values != null) {
+                while(values.hasMoreElements()) {
+                    String value = (String) values.nextElement();
+                    System.out.println(name + " : " + value );
+                }
+            }
+        }
+    }
+
+    //打印响应消息
+    public static void printResponseHeaders(HttpServletResponse res) {
+        Collection<String> names = res.getHeaderNames();
+        if(names == null) {
+            return;
+        }
+        for (String name : names) {
+            Collection<String> values = res.getHeaders(name);
+            if (values != null) {
+                for (String value : values) {
+                    System.out.println(name + " : " + value);
+                }
+            }
+        }
     }
 
     //endregion

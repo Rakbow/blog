@@ -47,6 +47,8 @@ class WebSiteApplicationTests {
     private MerchMapper merchMapper;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private UserService userService;
 
 
 

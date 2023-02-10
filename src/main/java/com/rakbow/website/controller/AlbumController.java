@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -127,7 +128,7 @@ public class AlbumController {
     //根据搜索条件获取专辑
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilterList(@RequestBody String json) {
+    public String getAlbumsByFilterList(@RequestBody String json, HttpServletRequest request) {
 
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");
@@ -229,28 +230,46 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                //检测数据
-                if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
-                    res.setErrorMessage(albumService.checkAlbumJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Album album = albumService.json2Album(albumService.handleAlbumJson(param));
-
-                //修改编辑时间
-                album.setEditedTime(new Timestamp(System.currentTimeMillis()));
-
-                albumService.updateAlbum(album.getId(), album);
-
-                //将更新的专辑保存到Meilisearch服务器索引中
-                meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
-
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
+                res.setErrorMessage(albumService.checkAlbumJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Album album = albumService.json2Album(albumService.handleAlbumJson(param));
+
+            //修改编辑时间
+            album.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+            albumService.updateAlbum(album.getId(), album);
+
+            //将更新的专辑保存到Meilisearch服务器索引中
+            meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
+
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
+
+            // if (userService.checkAuthority(request).state) {
+            //     //检测数据
+            //     if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
+            //         res.setErrorMessage(albumService.checkAlbumJson(param));
+            //         return JSON.toJSONString(res);
+            //     }
+            //
+            //     Album album = albumService.json2Album(albumService.handleAlbumJson(param));
+            //
+            //     //修改编辑时间
+            //     album.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            //
+            //     albumService.updateAlbum(album.getId(), album);
+            //
+            //     //将更新的专辑保存到Meilisearch服务器索引中
+            //     meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
+            //
+            //     res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
+            //
+            // } else {
+            //     res.setErrorMessage(userService.checkAuthority(request).message);
+            // }
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

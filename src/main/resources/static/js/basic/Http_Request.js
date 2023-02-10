@@ -1,18 +1,18 @@
 //axios封装post请求
 function axiosPostRequest(url, data) {
-    const result = axios({
+    return axios({
         method: 'post',
         url: url,
         data: data,
-        header: {
-            'Content-Type': 'application/json'
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
     }).then(res => {
         return res.data;
     }).catch(error => {
         return "exception = " + error;
     });
-    return result;
 }
 
 //axios封装get请求
@@ -21,8 +21,9 @@ function axiosGetRequest(url, data) {
         method: 'get',
         url: url,
         data: data,
-        header: {
-            'Content-Type': 'application/json'
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
     }).then(res => {
         return res.data;
@@ -38,8 +39,9 @@ function axiosDeleteRequest(url, data) {
         method: 'delete',
         url: url,
         data: data,
-        header: {
-            'Content-Type': 'application/json'
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
     }).then(res => {
         return res.data;
@@ -55,8 +57,9 @@ function axiosRequest(url, data) {
         method: 'post',
         url: url,
         data: data,
-        header: {
-            'Content-Type': 'multipart/form-data'
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-Requested-With': 'XMLHttpRequest'
         },
     }).then(res => {
         return res.data;

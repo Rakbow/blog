@@ -115,14 +115,7 @@
                                 {{game.name}}
                             </b>
                         </h4>
-                        <div class="col-2 text-end p-0 m-0" th:if="${loginUser != null}">
-                            <p-splitbutton :model="edits" class="p-button-sm bg-primary"
-                                           th:if="${loginUser.type == 1}">
-                                <p-button @click="openEditDialog">
-                                    <i class="pi pi-cog"></i>
-                                </p-button>
-                            </p-splitbutton>
-                        </div>
+                        <div th:insert="~{template/item-detail-template :: item_common_edit_button}"></div>
                     </div>
                 </template>
                 <template #subtitle>
