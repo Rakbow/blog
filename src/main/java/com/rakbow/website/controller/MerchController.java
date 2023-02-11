@@ -65,16 +65,6 @@ public class MerchController {
 
     //region ------获取页面------
 
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getMerchListPage(Model model) {
-        ModelAndView view = new ModelAndView();
-        model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        view.setViewName("/itemList/merch-list");
-        return view;
-    }
-
     //获取单个周边商品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getMerchDetail(@PathVariable int id, Model model) {

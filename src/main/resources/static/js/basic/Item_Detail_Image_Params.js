@@ -243,7 +243,7 @@ const imageEditPanel = {
                 action: "1"
             };
             let updateImageUrl = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-images";
-            commonVueSubmit(this.toast, this.editBlock, updateImageUrl, json)
+            commonVueSubmit(this.toast, updateImageUrl, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.closeImageEditDialog();
@@ -271,7 +271,7 @@ const imageEditPanel = {
             };
             let updateImageUrl = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-images";
 
-            commonVueSubmit(this.toast, this.editBlock, updateImageUrl, json)
+            commonVueSubmit(this.toast, updateImageUrl, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteImageDialog = false;

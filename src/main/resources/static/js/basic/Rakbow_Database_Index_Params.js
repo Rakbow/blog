@@ -1,3 +1,5 @@
+import {postRequest} from '/js/basic/Http_Request.js';
+
 const albumIndex = {
     template: `
         <div class="grid mt-2">
@@ -361,7 +363,7 @@ const albumIndex = {
                 label: "album"
             };
             this.totalLoading = true;
-            axiosPostRequest(GET_INDEX_INIT_DATA_URL, json)
+            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedAlbums = res.justAddedAlbums;
                     this.popularAlbums = res.popularAlbums;
@@ -397,7 +399,7 @@ const albumIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            axiosPostRequest(GET_ALBUMS_URL, json)
+            postRequest(null, GET_ALBUMS_URL, json)
                 .then(res => {
                     this.albums = res.data;
                     this.totalRecords = res.total;
@@ -408,7 +410,7 @@ const albumIndex = {
                 franchises: data,
                 entityType: ALBUM
             };
-            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+            postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -815,7 +817,7 @@ const bookIndex = {
             let json = {
                 label: "book"
             };
-            axiosPostRequest(GET_INDEX_INIT_DATA_URL, json)
+            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedBooks = res.justAddedBooks;
                     this.popularBooks = res.popularBooks;
@@ -852,7 +854,7 @@ const bookIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            axiosPostRequest(GET_BOOKS_URL, json)
+            postRequest(null, GET_BOOKS_URL, json)
                 .then(res => {
                     this.books = res.data;
                     this.totalRecords = res.total;
@@ -863,7 +865,7 @@ const bookIndex = {
                 franchises: data,
                 entityType: BOOK
             };
-            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+            postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -1269,7 +1271,7 @@ const discIndex = {
             let json = {
                 label: "disc"
             };
-            axiosPostRequest(GET_INDEX_INIT_DATA_URL, json)
+            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedDiscs = res.justAddedDiscs;
                     this.popularDiscs = res.popularDiscs;
@@ -1303,7 +1305,7 @@ const discIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            axiosPostRequest(GET_DISCS_URL, json)
+            postRequest(null, GET_DISCS_URL, json)
                 .then(res => {
                     this.discs = res.data;
                     this.totalRecords = res.total;
@@ -1314,7 +1316,7 @@ const discIndex = {
                 franchises: data,
                 entityType: DISC
             };
-            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+            postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -1696,7 +1698,7 @@ const gameIndex = {
             let json = {
                 label: "game"
             };
-            axiosPostRequest(GET_INDEX_INIT_DATA_URL, json)
+            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedGames = res.justAddedGames;
                     this.popularGames = res.popularGames;
@@ -1727,7 +1729,7 @@ const gameIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            axiosPostRequest(GET_GAMES_URL, json)
+            postRequest(null, GET_GAMES_URL, json)
                 .then(res => {
                     this.games = res.data;
                     this.totalRecords = res.total;
@@ -1738,7 +1740,7 @@ const gameIndex = {
                 franchises: data,
                 entityType: GAME
             };
-            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+            postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -2090,7 +2092,7 @@ const merchIndex = {
             let json = {
                 label: "merch"
             };
-            axiosPostRequest(GET_INDEX_INIT_DATA_URL, json)
+            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedMerchs = res.justAddedMerchs;
                     this.popularMerchs = res.popularMerchs;
@@ -2122,7 +2124,7 @@ const merchIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            axiosPostRequest(GET_MERCHS_URL, json)
+            postRequest(null, GET_MERCHS_URL, json)
                 .then(res => {
                     this.merchs = res.data;
                     this.totalRecords = res.total;
@@ -2133,7 +2135,7 @@ const merchIndex = {
                 franchises: data,
                 entityType: MERCH
             };
-            axiosPostRequest(GET_PRODUCT_SET_URL, json)
+            postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -2187,7 +2189,7 @@ const merchIndex = {
     }
 };
 
-const INDEX_ROUTER = [
+export const DATABASE_INDEX_ROUTER = [
     {
         path: '/db/albums',
         component: albumIndex

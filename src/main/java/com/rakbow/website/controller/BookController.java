@@ -64,17 +64,6 @@ public class BookController {
 
     //region ------获取页面------
 
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getBookListPage(Model model) {
-        ModelAndView view = new ModelAndView();
-        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("languageSet", redisUtil.get("languageSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/itemList/book-list");
-        return view;
-    }
-
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getBookDetail(@PathVariable("id") Integer id, Model model) {

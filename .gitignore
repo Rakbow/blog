@@ -18,6 +18,7 @@ target/
 /src/main/resources/static/js/color-thief.min.js
 /src/main/resources/static/js/jquery.js
 /src/main/resources/static/js/marked.min.js
+/src/main/resources/static/js/node_modules
 
 ### STS ###
 .apt_generated
@@ -65,3 +66,4 @@ gen
 /src/main/resources/static/tool/
 !/src/main/resources/application-develop.properties
 !/src/main/resources/application-produce.properties
+/src/main/resources/static/js/node_modules/

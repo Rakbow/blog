@@ -60,7 +60,7 @@ const bonusEditPanel = {
                 bonus: this.bonusMd
             };
             let url = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-bonus";
-            commonVueSubmit(this.toast, this.editBlock, url, json)
+            commonVueSubmit(this.toast, url, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();
@@ -137,7 +137,7 @@ const descriptionEditPanel = {
                 description: this.descriptionMd
             }
             let url = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-description";
-            commonVueSubmit(this.toast, this.editBlock, url, json)
+            commonVueSubmit(this.toast, url, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();

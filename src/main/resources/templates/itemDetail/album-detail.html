@@ -795,7 +795,7 @@
     import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
     import {showSearchPanel} from '/js/basic/Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
-    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useDialog} = primevue.usedialog;
@@ -969,7 +969,7 @@
                 };
                 postRequest(toast, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if(res !== undefined) {
+                        if(res.state === 1) {
                             if (res.data.length !== 0) {
                                 productSet.value = res.data;
                                 productSelect.value = false;
@@ -1010,7 +1010,7 @@
                     };
                     postRequest(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
-                            if(res !== undefined) {
+                            if(res.state === 1) {
                                 if (res.data.length !== 0) {
                                     productSet.value = res.data;
                                     productSelect.value = false;

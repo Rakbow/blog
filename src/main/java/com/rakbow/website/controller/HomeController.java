@@ -63,6 +63,8 @@ public class HomeController {
     private RedisUtil redisUtil;
     @Autowired
     private MeiliSearchUtils meiliSearchUtils;
+    @Autowired
+    private UserService userService;
 
     //endregion
 
@@ -83,27 +85,48 @@ public class HomeController {
     }
 
     @RequestMapping(path = "/db/albums", method = RequestMethod.GET)
-    public String getAlbumTestPage(Model model) {
+    public String getAlbumIndexPage(Model model) {
         return "database";
     }
     @RequestMapping(path = "/db/books", method = RequestMethod.GET)
-    public String getBookTestPage(Model model) {
+    public String getBookIndexPage(Model model) {
         return "database";
     }
     @RequestMapping(path = "/db/discs", method = RequestMethod.GET)
-    public String getDiscTestPage(Model model) {
+    public String getDiscIndexPage(Model model) {
         return "database";
     }
     @RequestMapping(path = "/db/games", method = RequestMethod.GET)
-    public String getGameTestPage(Model model) {
+    public String getGameIndexPage(Model model) {
         return "database";
     }
     @RequestMapping(path = "/db/merchs", method = RequestMethod.GET)
-    public String getMerchTestPage(Model model) {
+    public String getMerchIndexPage(Model model) {
         return "database";
     }
 
-    //获取
+    @RequestMapping(path = "/db/list/album", method = RequestMethod.GET)
+    public String getAlbumListPage(Model model) {
+        return "database-list";
+    }
+    @RequestMapping(path = "/db/list/book", method = RequestMethod.GET)
+    public String getBookListPage(Model model) {
+        return "database-list";
+    }
+    @RequestMapping(path = "/db/list/disc", method = RequestMethod.GET)
+    public String getDiscListPage(Model model) {
+        return "database-list";
+    }
+    @RequestMapping(path = "/db/list/game", method = RequestMethod.GET)
+    public String getGameListPage(Model model) {
+        return "database-list";
+    }
+    @RequestMapping(path = "/db/list/merch", method = RequestMethod.GET)
+    public String getMerchListPage(Model model) {
+        return "database-list";
+    }
+
+    //获取index初始数据
     @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
     @ResponseBody
     public String getIndexInitData(@RequestBody String json) {
@@ -142,6 +165,41 @@ public class HomeController {
             initData.put("merchCategorySet", redisUtil.get("merchCategorySet"));
             initData.put("regionSet", redisUtil.get("regionSet"));
         }
+        initData.put("franchiseSet", redisUtil.get("franchiseSet"));
+        return initData.toJSONString();
+    }
+
+    //获取list初始数据
+    @RequestMapping(value = "/get-list-init-data", method = RequestMethod.POST)
+    @ResponseBody
+    public String getListInitData(@RequestBody String json) {
+        String label = JSON.parseObject(json).getString("label");
+
+        JSONObject initData = new JSONObject();
+        if(StringUtils.equals(label, EntityType.ALBUM.getNameEn().toLowerCase())) {
+            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+            initData.put("albumFormatSet", redisUtil.get("albumFormatSet"));
+            initData.put("publishFormatSet", redisUtil.get("publishFormatSet"));
+        }
+        if(StringUtils.equals(label, EntityType.BOOK.getNameEn().toLowerCase())) {
+            initData.put("bookTypeSet", redisUtil.get("bookTypeSet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+            initData.put("languageSet", redisUtil.get("languageSet"));
+        }
+        if(StringUtils.equals(label, EntityType.DISC.getNameEn().toLowerCase())) {
+            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+        }
+        if(StringUtils.equals(label, EntityType.GAME.getNameEn().toLowerCase())) {
+            initData.put("releaseTypeSet", redisUtil.get("releaseTypeSet"));
+            initData.put("gamePlatformSet", redisUtil.get("platformSet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+        }
+        if(StringUtils.equals(label, EntityType.MERCH.getNameEn().toLowerCase())) {
+            initData.put("merchCategorySet", redisUtil.get("merchCategorySet"));
+            initData.put("regionSet", redisUtil.get("regionSet"));
+        }
+        initData.put("editAuth", userService.getUserEditAuthority(hostHolder.getUser()));
         initData.put("franchiseSet", redisUtil.get("franchiseSet"));
         return initData.toJSONString();
     }

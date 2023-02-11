@@ -65,16 +65,6 @@ public class DiscController {
 
     //region ------获取页面------
 
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getDiscListPage(Model model) {
-        ModelAndView view = new ModelAndView();
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        view.setViewName("/itemList/disc-list");
-        return view;
-    }
-
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int id, Model model) {

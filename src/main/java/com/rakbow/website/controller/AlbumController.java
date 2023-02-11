@@ -79,17 +79,6 @@ public class AlbumController {
 
     //region ------获取页面------
 
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getAlbumListPage(Model model) {
-        ModelAndView view = new ModelAndView();
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-        model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
-        model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/itemList/album-list");
-        return view;
-    }
-
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int id, Model model) {

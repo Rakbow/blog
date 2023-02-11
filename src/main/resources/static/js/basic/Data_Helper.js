@@ -282,7 +282,7 @@ const responsiveOptions = [
     }
 ];
 
-const indexTabs = [
+const dbIndexTabs = [
     {
         label: 'Albums',
         icon: 'pi iconfont icon-album',
@@ -310,6 +310,44 @@ const indexTabs = [
     },
 ];
 
+const dbListTabs = [
+    {
+        label: 'Albums',
+        icon: 'pi iconfont icon-album',
+        to: '/db/list/album'
+    },
+    {
+        label: 'Books',
+        icon: 'pi iconfont icon-book',
+        to: '/db/list/book'
+    },
+    {
+        label: 'Discs',
+        icon: 'pi iconfont icon-Video-Disc',
+        to: '/db/list/disc'
+    },
+    {
+        label: 'Games',
+        icon: 'pi iconfont icon-youxi',
+        to: '/db/list/game'
+    },
+    {
+        label: 'Merchs',
+        icon: 'pi iconfont icon-yinshuabaozhuang',
+        to: '/db/list/merch'
+    },
+    // {
+    //     label: 'Products',
+    //     icon: 'pi pi-large',
+    //     to: '/db/list/product'
+    // },
+    // {
+    //     label: 'Franchises',
+    //     icon: 'pi pi-large',
+    //     to: '/db/list/franchise'
+    // },
+];
+
 const tmpList10 = [
     {},
     {},
@@ -331,7 +369,7 @@ const tmpList5 = [
 ];
 
 const indexTabChange = (ev) => {
-    indexTabs.forEach(tab => {
+    dbIndexTabs.forEach(tab => {
         if (ev.index === tab.index) {
             window.location.href=tab.url;
         }

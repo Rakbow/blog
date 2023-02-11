@@ -64,17 +64,6 @@ public class GameController {
 
     //region ------获取页面------
 
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getGameListPage(Model model) {
-        ModelAndView view = new ModelAndView();
-        model.addAttribute("releaseTypeSet", redisUtil.get("releaseTypeSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/itemList/game-list");
-        return view;
-    }
-
     //获取单个游戏详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getGameDetail(@PathVariable("id") Integer id, Model model) {

@@ -83,7 +83,7 @@ export function  commonSubmit(toast, editBlock, url, data) {
 }
 
 //通用提交更新请求
-export function  commonVueSubmit(toast, editBlock, url, data) {
+export function  commonVueSubmit(toast, url, data) {
     return axios({
         method: 'post',
         url: url,
@@ -109,7 +109,7 @@ export function  commonVueSubmit(toast, editBlock, url, data) {
 }
 
 //axios封装delete请求
-export function  deleteRequest(url, data) {
+export function  deleteRequest(toast, url, data) {
     return axios({
         method: 'delete',
         url: url,
@@ -119,6 +119,17 @@ export function  deleteRequest(url, data) {
             'X-Requested-With': 'XMLHttpRequest'
         },
     }).then(res => {
+        if(toast !== null) {
+            if(res.data.state === 0) {
+                if(res.data.message !== '') {
+                    toast.add({severity: 'error', summary: 'Error', detail: res.data.message, life: 3000});
+                }
+            }else {
+                if(res.data.message !== '') {
+                    toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                }
+            }
+        }
         return res.data;
     }).catch(error => {
         return "exception = " + error;
