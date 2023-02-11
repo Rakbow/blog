@@ -71,7 +71,7 @@ public class BookController {
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("languageSet", redisUtil.get("languageSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/book/book-list");
+        view.setViewName("/itemList/book-list");
         return view;
     }
 
@@ -92,7 +92,6 @@ public class BookController {
         model.addAttribute("languageSet", redisUtil.get("languageSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("book", bookVOMapper.book2VO(book));
-        model.addAttribute("user", hostHolder.getUser());
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
@@ -101,7 +100,7 @@ public class BookController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(book.getImages(), 180, false));
         //获取相关图书
         model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
-        return "/book/book-detail";
+        return "/itemDetail/book-detail";
     }
 
     //endregion

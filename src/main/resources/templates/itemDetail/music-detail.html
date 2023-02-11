@@ -62,9 +62,6 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
-
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -86,11 +83,8 @@
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 </head>
@@ -105,7 +99,7 @@
             <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h4 class="col-10">
+                        <h4 class="col-11">
                             <b class="detail-item-title">
                                 <i class="pi iconfont icon-music" style="font-size: 1.5rem"></i>
                                 {{music.name}}
@@ -521,6 +515,9 @@
 </div>
 <script type="module" th:inline="javascript">
 
+    import {postRequest, commonSubmit, formRequest} from '/js/basic/Http_Request.js';
+    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -596,15 +593,8 @@
             const fileInfos = ref([]);
             const displayFileEditDialog = ref(false);
             const openFileEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            fileInfo.value = {};
-                            displayFileEditDialog.value = true;
-                        }
-                    })
+                fileInfo.value = {};
+                displayFileEditDialog.value = true;
             };
             const showFile = () => {
                 fileHtml.value = "";
@@ -656,15 +646,12 @@
                 }
                 formData.append("id", music.value.id);
                 formData.append("fileInfos", JSON.stringify(fileInfos.value));
-                axiosRequest(UPLOAD_MUSIC_FILE_URL, formData)
+                formRequest(toast, editBlock, UPLOAD_MUSIC_FILE_URL, formData)
                     .then(res => {
                         if (res.state === 1) {
                             editBlock.value = false;
                             closeFileEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
                     console.error(err);
@@ -675,16 +662,13 @@
                     id: music.value.id,
                     files: selectedFiles.value
                 };
-                axiosPostRequest(DELETE_MUSIC_FILE_URL, json)
+                postRequest(null, DELETE_MUSIC_FILE_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Success', detail: res.message, life: 3000});
                             deleteFileDialog.value = false;
                             closeFileEditDialog();
                             selectedFiles.value = [];
                             location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(err => {
                     console.error(err);
@@ -707,7 +691,7 @@
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openDescriptionEditDialog();
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
                     }
                 },
                 {
@@ -728,17 +712,10 @@
             const displayEditDialog = ref(false);
             //打开编辑数据面板
             const openEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            let dataTmp = JSON.parse(JSON.stringify(music.value));
-                            musicEdit.value = dataTmp;
-                            musicEdit.value.audioType = dataTmp.audioType.value;
-                            displayEditDialog.value = true;
-                        }
-                    })
+                let dataTmp = JSON.parse(JSON.stringify(music.value));
+                musicEdit.value = dataTmp;
+                musicEdit.value.audioType = dataTmp.audioType.value;
+                displayEditDialog.value = true;
             };
             //关闭编辑基础信息面板
             const closeEditDialog = () => {
@@ -748,35 +725,16 @@
             //保存编辑好的基础信息
             const submitEditMusic = () => {
                 editBlock.value = true;
-                axiosPostRequest(UPDATE_MUSIC_URL, musicEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_MUSIC_URL, musicEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             musicEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
                     .catch(error => {
                         console.error(error);
-                    });
-            };
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
-                        }
                     });
             };
             //endregion
@@ -806,15 +764,8 @@
             };
 
             const openArtistEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            artist.value = {};
-                            displayArtistEditDialog.value = true;
-                        }
-                    })
+                artist.value = {};
+                displayArtistEditDialog.value = true;
             };
             const clearArtists = () => {
                 music.value.artists = [];
@@ -833,16 +784,12 @@
                     id: music.value.id,
                     artists: music.value.artists
                 }
-                axiosPostRequest(UPDATE_MUSIC_ARTISTS_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_MUSIC_ARTISTS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayArtistEditDialog.value = false;
                             artist.value = {};
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -856,15 +803,8 @@
             const lyricsMd = ref("");
             const displayLyricsDialog = ref(false);
             const openLyricsEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            lyricsMd.value = music.value.lrcText;
-                            displayLyricsDialog.value = true;
-                        }
-                    });
+                lyricsMd.value = music.value.lrcText;
+                displayLyricsDialog.value = true;
             }
             const closeLyricsEditDialog = () => {
                 displayLyricsDialog.value = false;
@@ -876,16 +816,12 @@
                     id: music.value.id,
                     lyricsText: lyricsMd.value
                 }
-                axiosPostRequest(UPDATE_MUSIC_LYRICS_TEXT_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_MUSIC_LYRICS_TEXT_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             music.value.lrcText = lyricsMd.value;
                             text2marked();
                             closeLyricsEditDialog();
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     });
             };
@@ -963,19 +899,14 @@
             "p-inplace": primevue.inplace,
             "p-fileupload": primevue.fileupload,
 
-            "p-chip": primevue.chip,
             "p-tag": primevue.tag,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{path: MUSIC_DETAIL_URL + [[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });

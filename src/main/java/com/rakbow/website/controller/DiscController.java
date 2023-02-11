@@ -71,7 +71,7 @@ public class DiscController {
         model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        view.setViewName("/disc/disc-list");
+        view.setViewName("/itemList/disc-list");
         return view;
     }
 
@@ -91,7 +91,6 @@ public class DiscController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("disc", discVOMapper.disc2VO(disc));
-        model.addAttribute("user", hostHolder.getUser());
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
         //获取页面数据
@@ -100,7 +99,7 @@ public class DiscController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, false));
         //获取相关碟片
         model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
-        return "/disc/disc-detail";
+        return "/itemDetail/disc-detail";
     }
 
     //endregion

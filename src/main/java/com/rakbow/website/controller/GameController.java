@@ -71,7 +71,7 @@ public class GameController {
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/game/game-list");
+        view.setViewName("/itemList/game-list");
         return view;
     }
 
@@ -92,7 +92,6 @@ public class GameController {
         model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("game", gameVOMapper.game2VO(game));
-        model.addAttribute("user", hostHolder.getUser());
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
         //获取页面数据
@@ -101,7 +100,7 @@ public class GameController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, false));
         //获取相关游戏
         model.addAttribute("relatedGames", gameService.getRelatedGames(id));
-        return "/game/game-detail";
+        return "/itemDetail/game-detail";
     }
 
     //endregion

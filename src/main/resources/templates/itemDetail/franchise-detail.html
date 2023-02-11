@@ -14,8 +14,6 @@
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
 
     <!-- PrimeVue -->
-    <!--    <link th:href="@{/css/primevue/themes/lara-light-blue/theme.css}" rel="stylesheet"/>-->
-    <!--        <link th:href="@{/css/primevue/themes/bootstrap4-light-blue/theme.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
@@ -62,9 +60,6 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
-
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -84,12 +79,8 @@
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -108,7 +99,7 @@
             <p-card style="min-height: 100%">
                 <template #title>
                     <div class="grid">
-                        <div class="col-9 text-start">
+                        <div class="col-11 text-start">
                             <h3 class="ml-2 mt-0 mb-0" style="text-align: left">
                                 <b class="detail-item-title">{{franchise.name}}</b>
                                 <span v-if="franchise.metaLabel" style="font-size: 13px" class="label">(元系列)</span>
@@ -252,6 +243,10 @@
 </div>
 <script type="module" th:inline="javascript">
 
+    import {commonSubmit} from '/js/basic/Http_Request.js';
+    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
+    import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -298,14 +293,14 @@
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
-                        openImageEditDialog();
+                        showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openDescriptionEditDialog();
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
                     }
                 }
             ]);
@@ -315,35 +310,8 @@
 
             //打开编辑数据面板
             const openEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            franchiseEdit.value = JSON.parse(JSON.stringify(franchise.value));
-                            displayEditDialog.value = true;
-                        }
-                    })
-            };
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
-                        }
-                    });
-            };
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
-                        }
-                    })
+                franchiseEdit.value = JSON.parse(JSON.stringify(franchise.value));
+                displayEditDialog.value = true;
             };
 
             //关闭编辑数据面板
@@ -355,21 +323,12 @@
             //保存编辑数据
             const submitEditFranchise = () => {
                 editBlock.value = true;
-                axiosPostRequest(UPDATE_FRANCHISE_URL, franchiseEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_FRANCHISE_URL, franchiseEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             franchiseEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
                     .catch(error => {
@@ -380,7 +339,6 @@
 
             //region init
             const init = () => {
-                console.log(franchise.value)
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 text2marked();
             };
@@ -432,19 +390,14 @@
             "p-blockui": primevue.blockui,
             "p-card": primevue.card,
 
-            "p-chip": primevue.chip,
             "p-tag": primevue.tag,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{path: FRANCHISE_DETAIL_URL + [[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });

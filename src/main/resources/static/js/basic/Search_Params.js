@@ -1,4 +1,6 @@
-const showSearchPanel = (dialog) => {
+import {postRequest} from '/js/basic/Http_Request.js';
+
+export const showSearchPanel = (dialog) => {
     const dialogRef = dialog.open(SearchPanel, {
         props: {
             header: '全站搜索',
@@ -230,9 +232,11 @@ const SearchPanel = {
     },
     methods: {
         search() {
-            axiosPostRequest(INDEX_SEARCH_URL, this.searchParams)
+            postRequest(null, INDEX_SEARCH_URL, this.searchParams)
                 .then(res => {
-                    this.searchResult = res.data;
+                    if(res.state === 1) {
+                        this.searchResult = res.data;
+                    }
                 });
         },
         pageChange(ev) {

@@ -71,7 +71,7 @@ public class MerchController {
         model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        view.setViewName("/merch/merch-list");
+        view.setViewName("/itemList/merch-list");
         return view;
     }
 
@@ -92,7 +92,6 @@ public class MerchController {
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("merch", merchVOMapper.merch2VO(merch));
         MerchVO merchVO = merchVOMapper.merch2VO(merch);
-        model.addAttribute("user", hostHolder.getUser());
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(merch, EntityType.MERCH.getId()));
         //获取页面数据
@@ -101,7 +100,7 @@ public class MerchController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(merch.getImages(), 200, false));
         //获取相关周边
         model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
-        return "/merch/merch-detail";
+        return "/itemDetail/merch-detail";
     }
 
     //endregion

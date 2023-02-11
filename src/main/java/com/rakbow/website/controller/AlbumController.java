@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -87,7 +86,7 @@ public class AlbumController {
         model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
         model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/album/album-list");
+        view.setViewName("/itemList/album-list");
         return view;
     }
 
@@ -109,7 +108,6 @@ public class AlbumController {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("album", albumVOMapper.album2VO(album));
         model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
-        model.addAttribute("user", hostHolder.getUser());
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
@@ -118,7 +116,7 @@ public class AlbumController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(album.getImages(), 250, false));
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(id));
-        return "/album/album-detail";
+        return "/itemDetail/album-detail";
     }
 
     //endregion
@@ -332,6 +330,9 @@ public class AlbumController {
                 //获取专辑id
                 int id = JSON.parseObject(json).getInteger("id");
                 JSONArray images = JSON.parseObject(json).getJSONArray("images");
+
+                System.out.println(images);
+
                 for (int i = 0; i < images.size(); i++) {
                     images.getJSONObject(i).remove("thumbUrl");
                     images.getJSONObject(i).remove("thumbUrl50");

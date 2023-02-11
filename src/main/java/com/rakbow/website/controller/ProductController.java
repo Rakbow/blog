@@ -75,7 +75,7 @@ public class ProductController {
     public String getProductListPage(Model model) {
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("productCategorySet", redisUtil.get("ProductCategorySet"));
-        return "/product/product-list";
+        return "/itemList/product-list";
     }
 
     //获取单个产品详细信息页面
@@ -90,7 +90,6 @@ public class ProductController {
 
         Product product = productService.getProduct(productId);
         model.addAttribute("product", productVOMapper.product2VO(product));
-        model.addAttribute("user", hostHolder.getUser());
         model.addAttribute("productCategorySet", redisUtil.get("ProductCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
@@ -118,7 +117,7 @@ public class ProductController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(product.getImages(), 200, true));
 
-        return "/product/product-detail";
+        return "/itemDetail/product-detail";
     }
     //endregion
 
@@ -382,9 +381,15 @@ public class ProductController {
      * */
     @RequestMapping(path = "/get-product-set", method = RequestMethod.POST)
     @ResponseBody
-    public List<JSONObject> getAllProductByFranchiseId(@RequestBody String json){
-        JSONObject param = JSON.parseObject(json);
-        return productService.getProductSet(param.getList("franchises", Integer.class), param.getInteger("entityType"));
+    public String getAllProductByFranchiseId(@RequestBody String json){
+        ApiResult res = new ApiResult();
+        try {
+            JSONObject param = JSON.parseObject(json);
+            res.data = productService.getProductSet(param.getList("franchises", Integer.class), param.getInteger("entityType"));
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
     }
 
     @RequestMapping(path = "/get-products", method = RequestMethod.POST)

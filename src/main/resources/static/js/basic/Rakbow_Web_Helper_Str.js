@@ -30,6 +30,7 @@ const GAME_LIST_URL = "/db/game/list";
 //endregion
 
 //region album
+const ALBUM_DETAIL_URL = "/db/album/";
 const DELETE_ALBUM_URL = "/db/album/delete";
 const UPDATE_ALBUM_URL = "/db/album/update";
 const INSERT_ALBUM_URL = "/db/album/add";
@@ -44,6 +45,7 @@ const UPDATE_ALBUM_BONUS_URL = "/db/album/update-bonus";
 //endregion
 
 //region music
+const MUSIC_DETAIL_URL = "/db/music/";
 const UPLOAD_MUSIC_FILE_URL = "/db/music/upload-file";
 const DELETE_MUSIC_FILE_URL = "/db/music/delete-file";
 const UPDATE_MUSIC_URL = "/db/music/update";
@@ -59,6 +61,7 @@ const LOGOUT_URL = "/logout";
 //endregion
 
 //region product
+const PRODUCT_DETAIL_URL = "/db/product/";
 const GET_PRODUCTS_URL = "/db/product/get-products";
 const GET_PRODUCT_SET_URL = "/db/product/get-product-set";
 const ADD_PRODUCT_URL = "/db/product/add";
@@ -71,6 +74,7 @@ const UPDATE_PRODUCT_IMAGES_URL = "/db/product/update-images";
 //endregion
 
 //region disc
+const DISC_DETAIL_URL = "/db/disc/";
 const DELETE_DISC_URL = "/db/disc/delete";
 const UPDATE_DISC_URL = "/db/disc/update";
 const INSERT_DISC_URL = "/db/disc/add";
@@ -84,6 +88,7 @@ const UPDATE_DISC_BONUS_URL = "/db/disc/update-bonus";
 //endregion
 
 //region book
+const BOOK_DETAIL_URL = "/db/book/";
 const DELETE_BOOK_URL = "/db/book/delete";
 const UPDATE_BOOK_URL = "/db/book/update";
 const INSERT_BOOK_URL = "/db/book/add";
@@ -98,6 +103,7 @@ const UPDATE_BOOK_BONUS_URL = "/db/book/update-bonus";
 //endregion
 
 //region merch
+const MERCH_DETAIL_URL = "/db/merch/";
 const DELETE_MERCH_URL = "/db/merch/delete";
 const UPDATE_MERCH_URL = "/db/merch/update";
 const INSERT_MERCH_URL = "/db/merch/add";
@@ -110,6 +116,7 @@ const UPDATE_MERCH_DESCRIPTION_URL = "/db/merch/update-description";
 //endregion
 
 //region game
+const GAME_DETAIL_URL = "/db/game/";
 const DELETE_GAME_URL = "/db/game/delete";
 const UPDATE_GAME_URL = "/db/game/update";
 const INSERT_GAME_URL = "/db/game/add";
@@ -124,6 +131,7 @@ const UPDATE_GAME_BONUS_URL = "/db/game/update-bonus";
 //endregion
 
 //region franchise
+const FRANCHISE_DETAIL_URL = "/db/franchise/";
 const DELETE_FRANCHISE_URL = "/db/franchise/delete";
 const UPDATE_FRANCHISE_URL = "/db/franchise/update";
 const ADD_FRANCHISE_URL = "/db/franchise/add";
@@ -137,13 +145,15 @@ const UPDATE_FRANCHISE_DESCRIPTION_URL = "/db/franchise/update-description";
 
 //region header
 
-const ALBUM = 1;
-const DISC = 2;
-const BOOK = 3;
-const MERCH = 4;
-const GAME = 5;
-const FRANCHISE = 6;
-const PRODUCT = 7;
+const ENTITY = {
+    ALBUM: 1,
+    DISC: 2,
+    BOOK: 3,
+    MERCH: 4,
+    GAME: 5,
+    FRANCHISE: 6,
+    PRODUCT: 7,
+};
 
 const ENTITY_TYPE = [
     {label: '专辑', labelEn: 'Album', value: '1', icon: 'pi iconfont icon-album'},

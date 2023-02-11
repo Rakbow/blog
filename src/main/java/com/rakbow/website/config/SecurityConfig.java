@@ -79,7 +79,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/db/merch/add",
                         "/db/merch/update",
                         "/db/merch/update-spec",
-                        "/db/merch/update-description"
+                        "/db/merch/update-description",
+
+                        "/db/music/update",
+                        "/db/music/update-artists",
+                        "/db/music/update-lyrics-text",
+                        "/db/music/update-description"
                         //endregion
                 )
                 .hasAnyAuthority(
@@ -122,7 +127,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/db/franchise/update",
                         "/db/franchise/update-description",
                         "/db/franchise/add-images",
-                        "/db/franchise/update-images"
+                        "/db/franchise/update-images",
+
+                        "/db/music/upload-file",
+                        "/db/music/delete-file-file"
                         //endregion
                 )
                 .hasAnyAuthority(

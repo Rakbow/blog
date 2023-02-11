@@ -61,9 +61,6 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
-
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -78,7 +75,6 @@
     <!-- marked -->
     <script th:src="@{/js/marked.min.js}"></script>
     <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet" />
-
     <script th:src="@{/js/clipboard.js}"></script>
 
     <!-- flag-icons -->
@@ -86,12 +82,8 @@
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -109,7 +101,7 @@
             <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h4 class="col-10">
+                        <h4 class="col-11">
                             <b class="detail-item-title">
                                 <i class="pi iconfont icon-youxi" style="font-size: 1.5rem"></i>
                                 {{game.name}}
@@ -542,6 +534,10 @@
 </div>
 <script type="module" th:inline="javascript">
 
+    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -594,7 +590,7 @@
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
-                        openImageEditDialog();
+                        showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
@@ -615,14 +611,14 @@
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openDescriptionEditDialog();
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
                     }
                 },
                 {
                     label: '特典信息',
                     icon: 'pi iconfont icon-gift',
                     command: () => {
-                        openBonusEditDialog();
+                        showBonusEditDialog(toast, dialog, detailInfo.value, game.value.bonus);
                     }
                 }
             ]);
@@ -631,35 +627,30 @@
             const displayEditDialog = ref(false);
             //打开编辑数据面板
             const openEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                let dataTmp = JSON.parse(JSON.stringify(game.value));
+                dataTmp.hasBonus = game.value.hasBonus ? 1 : 0;
+                gameEdit.value = dataTmp;
+                gameEdit.value.releaseType = dataTmp.releaseType.id;
+                gameEdit.value.region = dataTmp.region.code;
+                gameEdit.value.platform = dataTmp.platform.id;
+                gameEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                let json = {
+                    franchises: gameEdit.value.franchises,
+                    entityType: ENTITY.GAME
+                };
+                postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            let dataTmp = JSON.parse(JSON.stringify(game.value));
-                            dataTmp.hasBonus = game.value.hasBonus ? 1 : 0;
-                            gameEdit.value = dataTmp;
-                            gameEdit.value.releaseType = dataTmp.releaseType.id;
-                            gameEdit.value.region = dataTmp.region.code;
-                            gameEdit.value.platform = dataTmp.platform.id;
-                            gameEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
-                            let json = {
-                                franchises: gameEdit.value.franchises,
-                                entityType: GAME
-                            };
-                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                                .then(res => {
-                                    if (res.length !== 0) {
-                                        productSet.value = res;
-                                        productSelect.value = false;
-                                    }else {
-                                        productSelect.value = true;
-                                    }
-                                    gameEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
-                                    displayEditDialog.value = true;
-                                });
+                        if(res.state === 1) {
+                            if (res.data.length !== 0) {
+                                productSet.value = res.data;
+                                productSelect.value = false;
+                            } else {
+                                productSelect.value = true;
+                            }
+                            gameEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            displayEditDialog.value = true;
                         }
-                    })
+                    });
             };
             //关闭编辑数据面板
             const closeEditDialog = () => {
@@ -669,21 +660,12 @@
             //保存编辑数据
             const submitEditGame = () => {
                 editBlock.value = true;
-                axiosPostRequest(UPDATE_GAME_URL, gameEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_GAME_URL, gameEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             gameEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
                     .catch(error => {
@@ -692,50 +674,27 @@
             };
             //根据系列id获取该系列所有作品
             const getProducts = (ev) => {
-                let json = {
-                    franchises: ev.value,
-                    entityType: GAME
-                };
-                axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                    .then(res => {
-                        if (res.length !== 0) {
-                            productSet.value = res;
-                            productSelect.value = false;
-                        }else {
-                            productSelect.value = true;
-                            gameEdit.value.products = [];
-                        }
-                    });
-            };
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
-                        }
-                    })
-            };
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
-                        }
-                    });
-            };
-            const openBonusEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showBonusEditDialog(toast, dialog, detailInfo.value, game.value.bonus);
-                        }
-                    });
+                if(ev.value.length !== 0) {
+                    let json = {
+                        franchises: ev.value,
+                        entityType: ENTITY.GAME
+                    };
+                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                        .then(res => {
+                            if(res.state === 1) {
+                                if (res.length !== 0) {
+                                    productSet.value = res.data;
+                                    productSelect.value = false;
+                                } else {
+                                    productSelect.value = true;
+                                    gameEdit.value.products = [];
+                                }
+                            }
+                        });
+                }else {
+                    productSelect.value = true;
+                    gameEdit.value.products = [];
+                }
             };
             //endregion
 
@@ -791,16 +750,9 @@
             };
 
             const openStaffEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpStaffs.value = JSON.parse(JSON.stringify(game.value.staffs));
-                            staff.value = {};
-                            displayStaffEditDialog.value = true;
-                        }
-                    })
+                tmpStaffs.value = JSON.parse(JSON.stringify(game.value.staffs));
+                staff.value = {};
+                displayStaffEditDialog.value = true;
             };
             const clearStaffs = () => {
                 tmpStaffs.value = [];
@@ -819,16 +771,12 @@
                     id: game.value.id,
                     Staffs: tmpStaffs.value
                 }
-                axiosPostRequest(UPDATE_GAME_STAFFS_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_GAME_STAFFS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayStaffEditDialog.value = false;
                             staff.value = {};
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -863,16 +811,9 @@
             };
 
             const openOrganizationEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpOrganizations.value = JSON.parse(JSON.stringify(game.value.organizations));
-                            organization.value = {};
-                            displayOrganizationEditDialog.value = true;
-                        }
-                    })
+                tmpOrganizations.value = JSON.parse(JSON.stringify(game.value.organizations));
+                organization.value = {};
+                displayOrganizationEditDialog.value = true;
             };
             const clearOrganizations = () => {
                 tmpOrganizations.value = [];
@@ -891,16 +832,12 @@
                     id: game.value.id,
                     organizations: tmpOrganizations.value
                 }
-                axiosPostRequest(UPDATE_GAME_ORGANIZATIONS_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_GAME_ORGANIZATIONS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayOrganizationEditDialog.value = false;
                             organization.value = {};
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -960,18 +897,13 @@
             "p-card": primevue.card,
             "p-tag": primevue.tag,
 
-            "p-chip": primevue.chip,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{path: GAME_DETAIL_URL + [[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });

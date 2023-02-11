@@ -75,15 +75,17 @@ const commonLabel2value = (xFormat, xFormatSet) => {
 };
 
 const label2value = (xFormat, xFormatSet) => {
-    let tmp = [];
-    for (let item1 of xFormat) {
-        for (let item2 of xFormatSet) {
-            if (item2.value === item1.value) {
-                tmp.push(item2.value);
+    if(xFormat.length !==0 && xFormatSet.length !== 0) {
+        let tmp = [];
+        for (let item1 of xFormat) {
+            for (let item2 of xFormatSet) {
+                if (item2.value === item1.value) {
+                    tmp.push(item2.value);
+                }
             }
         }
+        return tmp;
     }
-    return tmp;
 };
 
 //根据图片url获取图片字节大小和长宽
@@ -355,7 +357,6 @@ const entityTypeValue2Icon = (value) => {
 const entityTypeValue2LabelEn = (value) => {
     for (let entity of ENTITY_TYPE) {
         if (entity.value === value.toString()) {
-            console.log(entity.labelEn.toLowerCase());
             return entity.labelEn.toLowerCase();
         }
     }

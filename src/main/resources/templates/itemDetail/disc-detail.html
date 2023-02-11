@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Merch Detail</title>
+    <title>Disc Detail</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -10,6 +10,7 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
     <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
 
+    <!--other css -->
     <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
 
@@ -48,8 +49,8 @@
     <script th:src="@{/js/primevue/components/contextmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/inplace.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
-    <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/card.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -60,9 +61,6 @@
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
-
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
 
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
@@ -81,17 +79,14 @@
 
     <script th:src="@{/js/clipboard.js}"></script>
 
-    <!-- basic js -->
-    <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
-    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
-    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
-
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+
+    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -109,19 +104,19 @@
             <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h4 class="col-10">
+                        <h4 class="col-11">
                             <b class="detail-item-title">
-                                <i class="pi iconfont icon-yinshuabaozhuang" style="font-size: 1.5rem"></i>
-                                {{merch.name}}
+                                <i class="pi iconfont icon-Video-Disc" style="font-size: 1.5rem"></i>
+                                {{disc.name}}
                             </b>
                         </h4>
                         <div th:insert="~{template/item-detail-template :: item_common_edit_button}"></div>
                     </div>
                 </template>
                 <template #subtitle>
-                    <h5 v-if="merch.nameZh != ''" class="detail-item-subtitle"><small class="ml-4">{{merch.nameZh}}</small></h5>
+                    <h5 v-if="disc.nameZh != ''" class="detail-item-subtitle"><small class="ml-4">{{disc.nameZh}}</small></h5>
                     <h5 v-else><small></small></h5>
-                    <h5 v-if="merch.nameEn != ''" class="detail-item-subtitle"><small class="ml-4">{{merch.nameEn}}</small></h5>
+                    <h5 v-if="disc.nameEn != ''" class="detail-item-subtitle"><small class="ml-4">{{disc.nameEn}}</small></h5>
                     <h5 v-else><small></small></h5>
                 </template>
                 <template #content>
@@ -132,35 +127,47 @@
                             </div>
                         </div>
                         <div class="col detail-item-header-card">
-                            <p-card class="mt-6">
+                            <p-card class="mt-5">
                                 <template #content>
                                     <table class="table-borderless table-sm ml-2">
                                         <tbody class="detail-item-header-table">
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>商品条形码</strong>
+                                                <i class="pi iconfont icon-dingdanbianhao"></i>
+                                                <strong>碟片编号</strong>
                                             </td>
                                             <td>
-                                                {{merch.barcode?merch.barcode:' N/A '}}
+                                                {{disc.catalogNo?disc.catalogNo:"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi pi-th-large"></i>
-                                                <strong>分类</strong>
+                                                <i class="pi iconfont icon-bar-code"></i>
+                                                <strong>商品条形码</strong>
                                             </td>
-                                            <td>
-                                                <p-tag class="ml-1" :value="merch.category.nameZh"></p-tag>
+                                            <td>{{disc.barcode?disc.barcode:"N/A"}}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <i class="pi pi-calendar"></i>
-                                                <strong>发售日期</strong>
+                                                <strong>发行时间</strong>
                                             </td>
                                             <td>
-                                                {{merch.releaseDate}}
+                                                {{disc.releaseDate?disc.releaseDate:"N/A"}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-wuliaojiage"></i>
+                                                <strong>发行价格</strong>
+                                            </td>
+                                            <td>
+                                                {{disc.price != 0?disc.price:" - "}} <span
+                                                    v-if="disc.currencyUnit == 'JPY'"
+                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                    v-else>{{disc.currencyUnit}}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -169,29 +176,27 @@
                                                 <strong>地区</strong>
                                             </td>
                                             <td>
-                                                <span :class="'fi fi-' + merch.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: merch.region.nameZh, class: 'region-tooltip'}"></span>
+                                                <span :class="'fi fi-' + disc.region.code" style="margin-left: 0.5rem"
+                                                      v-tooltip.bottom="{value: disc.region.nameZh, class: 'region-tooltip'}"></span>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="pi iconfont icon-wuliaojiage"></i>
-                                                <strong>发售价格</strong>
+                                                <i class="pi iconfont icon-gift"></i>
+                                                <strong>特典</strong>
                                             </td>
                                             <td>
-                                                {{merch.price != 0?merch.price:" - "}} <span
-                                                    v-if="merch.currencyUnit == 'JPY'"
-                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
-                                                    v-else>{{merch.currencyUnit}}</span>
+                                                <a v-if="disc.hasBonus" href="#bonus" style="color: #ceffff" class="ml-2">有</a>{{(disc.hasBonus)?"":"无"}}
                                             </td>
                                         </tr>
-                                        <tr v-if="merch.notForSale">
+                                        <tr>
                                             <td>
-                                                <i class="pi pi-ban"></i>
-                                                <strong></strong>
+                                                <i class="pi iconfont icon-zhuanjiguangpan"></i>
+                                                <strong>媒体类型</strong>
                                             </td>
-                                            <td>非卖品</td>
+                                            <td v-for="format of disc.mediaFormat" style="display:inline">
+                                                <p-tag class="ml-1" :value="format.label"></p-tag>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -206,10 +211,10 @@
                                 <i class="pi pi-info-circle"></i>
                                 <b>规格</b>
                             </template>
-                            <div class="grid ml-4" v-if="merch.spec.length != 0">
+                            <div class="grid ml-4" v-if="disc.spec.length != 0">
                                 <table class="table-borderless table-sm">
                                     <tbody class="detail-item-artists-table">
-                                    <tr v-for="specItem in merch.spec">
+                                    <tr v-for="specItem in disc.spec">
                                         <td width="80px"><strong>{{specItem.label}}</strong></td>
                                         <td>
                                             {{specItem.value.join(", ")}}
@@ -224,6 +229,10 @@
                         </p-fieldset>
                         <!-- description -->
                         <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
+                        <!-- bonus -->
+                        <div v-if="disc.hasBonus">
+                            <div th:insert="~{template/item-detail-template :: bonus_field_set}"></div>
+                        </div>
                     </div>
                 </template>
             </p-card>
@@ -234,35 +243,35 @@
             <p-panel class="mt-2">
                 <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-yinshuabaozhuang"></i><span><strong>相关商品</strong></span>
+                        <i class="pi iconfont icon-Video-Disc"></i><span><strong>相关碟片</strong></span>
                     </span>
                 </template>
                 <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="relatedMerchs.length != 0"
-                             v-for="relatedMerch of relatedMerchs">
-                            <div class="sidebar-panel-image-small-div merch_info_bit_thumb mt-2">
-                                <a :href="'/db/merch/'+ relatedMerch.id">
-                                    <img class="sidebar-panel-image-small" :src="relatedMerch.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedMerch.addedTime + '编辑时间: ' + relatedMerch.editedTime">
+                             v-if="relatedDiscs.length != 0"
+                             v-for="relatedDisc of relatedDiscs">
+                            <div class="sidebar-panel-image-small-div disc_info_bit_thumb mt-2">
+                                <a :href="'/db/disc/'+ relatedDisc.id">
+                                    <img class="sidebar-panel-image-small" :src="relatedDisc.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedDisc.addedTime + '编辑时间: ' + relatedDisc.editedTime">
                                 </a>
                             </div>
                             <div class="col p-0" style="height: 80px">
                                 <ul class="info_bit_small_other">
                                     <li>
                                         <a class="small_font"
-                                           :href="'/db/merch/'+ relatedMerch.id ">
+                                           :href="'/db/disc/'+ relatedDisc.id ">
                                             <span class="text-truncate-2 mr-2">
-                                                {{relatedMerch.name}}
+                                                {{relatedDisc.name}}
                                             </span>
                                         </a>
                                     </li>
                                     <li>
                                         <span class="small_font col-6 related-item-catalog">
-                                            {{relatedMerch.barcode}}
+                                            {{relatedDisc.catalogNo}}
                                         </span>
                                         <span class="small_font col-6 related-item-date">
-                                            {{relatedMerch.releaseDate}}
+                                            {{relatedDisc.releaseDate}}
                                         </span>
                                     </li>
                                 </ul>
@@ -274,39 +283,37 @@
             <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑基础信息"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑碟片基础信息"
               :style="{width: '600px'}" class="p-fluid">
         <p-blockui :blocked="editBlock">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>商品名<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="merchEdit.name"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>商品名(中)</label>
-                    <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>商品名(英)</label>
-                    <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
+                    <label>碟片编号</label>
+                    <p-inputtext v-model.trim="discEdit.catalogNo"></p-inputtext>
                 </div>
                 <div class="field col">
                     <label>商品条形码</label>
-                    <p-inputtext v-model.trim="merchEdit.barcode"></p-inputtext>
+                    <p-inputtext v-model.trim="discEdit.barcode"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>商品分类<span style="color: red">*</span></label>
-                    <p-dropdown v-model="merchEdit.category" :options="merchCategorySet"
-                                option-label="label" option-value="value">
-                    </p-dropdown>
+                    <label>商品名<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="discEdit.name"></p-inputtext>
                 </div>
                 <div class="field col">
+                    <label>商品名(中)</label>
+                    <p-inputtext v-model.trim="discEdit.nameZh"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-4">
+                    <label>商品名(英)</label>
+                    <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
+                </div>
+                <div class="field col-4">
                     <label>地区<span style="color: red">*</span></label>
-                    <p-dropdown v-model="merchEdit.region" :options="regionSet" :filter="true"
+                    <p-dropdown v-model="discEdit.region" :options="regionSet" :filter="true"
                                 :show-clear="true" option-label="nameZh" option-value="code">
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
@@ -323,53 +330,69 @@
                         </template>
                     </p-dropdown>
                 </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">特典</label>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">限定版</label>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="discEdit.limited" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
                     <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="merchEdit.franchises" @change="getProducts($event)"
+                    <p-multiselect v-model="discEdit.franchises" @change="getProducts($event)"
                                    :options="franchiseSet" placeholder="所属系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
-                <div class="field col-8">
+                <div class="field col-4">
                     <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="merchEdit.products" :options="productSet"
+                    <p-multiselect v-model="discEdit.products" :options="productSet"
                                    option-label="label" option-value="value" placeholder="选择所属作品"
                                    display="chip" :filter="true" :disabled="productSelect">
+                    </p-multiselect>
+                </div>
+                <div class="field col-4">
+                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
+                    <p-multiselect v-model="discEdit.mediaFormat" :options="mediaFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择媒体类型"
+                                   display="chip">
                     </p-multiselect>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>发售时间<span style="color: red">*</span></label>
-                    <p-calendar v-model="merchEdit.releaseDate" date-format="yy/mm/dd"
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="discEdit.releaseDate" date-format="yy/mm/dd"
                                 :show-button-bar="true"
                                 :show-icon="true"></p-calendar>
                 </div>
-                <div class="field col-3">
-                    <label>发售价格</label>
-                    <p-inputnumber v-model="merchEdit.price"></p-inputnumber>
+                <div class="field col">
+                    <label>发行价格</label>
+                    <p-inputnumber v-model="discEdit.price"></p-inputnumber>
                 </div>
                 <div class="field col-3">
-                    <label>单位</label>
-                    <p-dropdown v-model="merchEdit.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" placeholder="单位">
+                    <label>货币单位</label>
+                    <p-dropdown v-model="discEdit.currencyUnit" :options="currencyUnitSet"
+                                option-label="label" option-value="value">
                     </p-dropdown>
-                </div>
-                <div class="field col-2">
-                    <div class="col-12">
-                        <label class="mb-3">非卖品</label>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <p-inputswitch v-model="merchEdit.notForSale" :true-value="1"
-                                       :false-value="0"></p-inputswitch>
-                    </div>
                 </div>
             </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea v-model="merchEdit.remark" rows="3" cols="20"
+                <p-textarea v-model="discEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-blockui>
@@ -377,7 +400,7 @@
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog" :disabled="editBlock"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditMerch" :disabled="editBlock"></p-button>
+                      @click="submitEditDisc" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displaySpecEditDialog" header="编辑规格信息"
@@ -385,35 +408,34 @@
         <p-blockui :blocked="editBlock">
             <p-panel>
                 <template #header>
-                    <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
                     <b>新增</b>
                 </template>
                 <div class="grid">
                     <div class="col-3">
                         <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-tag"></i>
-                                        </span>
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-tag"></i>
+                            </span>
                             <p-inputtext v-model="specItem.label" placeholder="规格名称"></p-inputtext>
                         </div>
                     </div>
                     <div class="col-7">
                         <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-users"></i>
-                                        </span>
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-info-circle"></i>
+                            </span>
                             <p-chips v-model="specItem.value" placeholder="规格数据" separator=","></p-chips>
                         </div>
                     </div>
                     <div class="col-2">
-                        <p-button label="新增" icon="pi pi-save"
-                                  @click="addSpecItem"></p-button>
+                        <p-button label="新增" icon="pi pi-save" @click="addSpecItem"></p-button>
                     </div>
                 </div>
             </p-panel>
             <p-panel>
                 <template #header>
-                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                    <i class="pi pi-file-edit mr-2" style="font-size: 2rem"></i>
                     <b>编辑</b>
                 </template>
                 <div v-if="tmpSpec.length != 0">
@@ -462,6 +484,10 @@
 </div>
 <script type="module" th:inline="javascript">
 
+    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -493,27 +519,25 @@
             //endregion
 
             //region basic
-            const merch = ref([[${merch}]]);
+            const disc = ref([[${disc}]]);
             const toast = useToast();
             const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
             const productSet = ref([]);
-            const relatedMerchs = ref([[${relatedMerchs}]]);
-            const merchCategorySet = ref([[${merchCategorySet}]]);
+            const relatedDiscs = ref([[${relatedDiscs}]]);
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
             const regionSet = ref([[${regionSet}]]);
             //endregion
 
-            //region edit basic info
-            const merchEdit = ref({});
-            const productSelect = ref(true);
+            //region edit
             const edits = ref([
                 {
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
-                        openImageEditDialog();
+                        showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
@@ -527,108 +551,90 @@
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openDescriptionEditDialog();
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
+                    }
+                },
+                {
+                    label: '特典信息',
+                    icon: 'pi iconfont icon-gift',
+                    command: () => {
+                        showBonusEditDialog(toast, dialog, detailInfo.value, disc.value.bonus);
                     }
                 }
             ]);
+            const productSelect = ref(true);
+            const discEdit = ref({});
             const editBlock = ref(false);
             const displayEditDialog = ref(false);
             //打开编辑数据面板
             const openEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                let dataTmp = JSON.parse(JSON.stringify(disc.value));
+                dataTmp.hasBonus = disc.value.hasBonus ? 1 : 0;
+                dataTmp.limited = disc.value.limited ? 1 : 0;
+                discEdit.value = dataTmp;
+                discEdit.value.region = dataTmp.region.code;
+                discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                discEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                let json = {
+                    franchises: discEdit.value.franchises,
+                    entityType: ENTITY.DISC
+                };
+                postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            let dataTmp = JSON.parse(JSON.stringify(merch.value));
-                            dataTmp.notForSale = merch.value.notForSale ? 1 : 0;
-                            merchEdit.value = dataTmp;
-                            merchEdit.value.region = dataTmp.region.code;
-                            merchEdit.value.category = dataTmp.category.id;
-                            merchEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
-                            let json = {
-                                franchises: merchEdit.value.franchises,
-                                entityType: MERCH
-                            };
-                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                                .then(res => {
-                                    if (res.length !== 0) {
-                                        productSet.value = res;
-                                        productSelect.value = false;
-                                    }else {
-                                        productSelect.value = true;
-                                    }
-                                    merchEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
-                                    displayEditDialog.value = true;
-                                });
-                        }
-                    })
-            };
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
-                        }
-                    })
-            };
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
+                        if(res.state === 1) {
+                            if (res.data.length !== 0) {
+                                productSet.value = res.data;
+                                productSelect.value = false;
+                            } else {
+                                productSelect.value = true;
+                            }
+                            discEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            displayEditDialog.value = true;
                         }
                     });
             };
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                merchEdit.value = {};
+                discEdit.value = {};
             };
             //保存编辑数据
-            const submitEditMerch = () => {
+            const submitEditDisc = () => {
                 editBlock.value = true;
-                axiosPostRequest(UPDATE_MERCH_URL, merchEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_DISC_URL, discEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            merchEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
+                            discEdit.value = {};
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
                     .catch(error => {
                         console.error(error);
                     });
             };
-            //根据系列id获取该系列所有作品
             const getProducts = (ev) => {
-                let json = {
-                    franchises: ev.value,
-                    entityType: MERCH
-                };
-                axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                    .then(res => {
-                        if (res.length !== 0) {
-                            productSet.value = res;
-                            productSelect.value = false;
-                        }else {
-                            productSelect.value = true;
-                            merchEdit.value.products = [];
-                        }
-                    });
+                if(ev.value.length !== 0) {
+                    let json = {
+                        franchises: ev.value,
+                        entityType: ENTITY.DISC
+                    };
+                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                        .then(res => {
+                            if(res.state === 1) {
+                                if (res.length !== 0) {
+                                    productSet.value = res.data;
+                                    productSelect.value = false;
+                                } else {
+                                    productSelect.value = true;
+                                    discEdit.value.products = [];
+                                }
+                            }
+                        });
+                }else {
+                    productSelect.value = true;
+                    discEdit.value.products = [];
+                }
             };
             //endregion
 
@@ -661,16 +667,9 @@
             };
 
             const openSpecEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpSpec.value = JSON.parse(JSON.stringify(merch.value.spec));
-                            specItem.value = {};
-                            displaySpecEditDialog.value = true;
-                        }
-                    })
+                tmpSpec.value = JSON.parse(JSON.stringify(disc.value.spec));
+                specItem.value = {};
+                displaySpecEditDialog.value = true;
             };
             const clearSpec = () => {
                 tmpSpec.value = [];
@@ -684,19 +683,17 @@
                 displaySpecEditDialog.value = false;
             };
             const submitSpec = () => {
+                editBlock.value = true;
                 let json = {
-                    id: merch.value.id,
+                    id: disc.value.id,
                     spec: tmpSpec.value
                 }
-                axiosPostRequest(UPDATE_MERCH_SPEC_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_DISC_SPEC_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displaySpecEditDialog.value = false;
                             specItem.value = {};
                             location.reload(true);
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -708,9 +705,19 @@
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
             };
             const text2marked = () => {
+                const bonus = disc.value.bonus;
 
                 if (detailInfo.value.description != null && detailInfo.value.description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(detailInfo.value.description);
+                }
+
+                if (disc.value.hasBonus && bonus != null && bonus !== "") {
+                    document.getElementById("bonus").innerHTML = marked.parse(bonus);
+                }
+                if ((bonus == null || bonus === "") && disc.value.hasBonus) {
+                    //<![CDATA[
+                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
+                    //]]>
                 }
             };
             //endregion
@@ -723,11 +730,11 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                merch, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                merchCategorySet, regionSet, productSet, relatedMerchs, responsiveOptions, regionCode2NameZh,
+                disc, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                mediaFormatSet, regionSet, productSet, relatedDiscs, responsiveOptions, regionCode2NameZh,
 
                 //edit
-                editBlock, merchEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditMerch,
+                editBlock, discEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditDisc,
 
                 //spec
                 displaySpecEditDialog, tmpSpec, specCm, specItem, spec, specMenuModel, specEditingRows,
@@ -759,21 +766,17 @@
             "p-contextmenu": primevue.contextmenu,
             "p-inplace": primevue.inplace,
             "p-blockui": primevue.blockui,
-            "p-card": primevue.card,
             "p-tag": primevue.tag,
+            "p-card": primevue.card,
 
             "p-chip": primevue.chip,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{path: DISC_DETAIL_URL + [[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });
@@ -788,6 +791,29 @@
         .mount("#app");
 </script>
 <style>
+
+    .disc-detail-cover img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        pointer-events: none;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 </body>
 </html>

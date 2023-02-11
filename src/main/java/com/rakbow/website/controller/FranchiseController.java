@@ -67,7 +67,7 @@ public class FranchiseController {
     public ModelAndView getFranchiseListPage(Model model) {
         ModelAndView view = new ModelAndView();
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/franchise/franchise-list");
+        view.setViewName("/itemList/franchise-list");
         return view;
     }
 
@@ -93,7 +93,7 @@ public class FranchiseController {
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(franchise.getImages(), 200, false));
-        return "/franchise/franchise-detail";
+        return "/itemDetail/franchise-detail";
     }
 
     //endregion

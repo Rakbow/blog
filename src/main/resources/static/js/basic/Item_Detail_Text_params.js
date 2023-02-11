@@ -1,4 +1,6 @@
-const showBonusEditDialog = (toast, dialog, detailInfo, bonus) => {
+import {commonVueSubmit} from '/js/basic/Http_Request.js';
+
+export const showBonusEditDialog = (toast, dialog, detailInfo, bonus) => {
     const dialogRef = dialog.open(bonusEditPanel, {
         props: {
             header: '特典信息',
@@ -58,15 +60,13 @@ const bonusEditPanel = {
                 bonus: this.bonusMd
             };
             let url = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-bonus";
-            axiosPostRequest(url, json)
+            commonVueSubmit(this.toast, this.editBlock, url, json)
                 .then(res => {
-                    if (res.state !== 0) {
-                        this.toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                    if (res.state === 1) {
                         this.dialogRef.close();
                         location.reload(true);
-                    } else {
+                    }else {
                         this.editBlock = false;
-                        this.toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                     }
                 });
         }
@@ -77,7 +77,7 @@ const bonusEditPanel = {
     }
 };
 
-const showDescriptionEditDialog = (toast, dialog, detailInfo) => {
+export const showDescriptionEditDialog = (toast, dialog, detailInfo) => {
     const dialogRef = dialog.open(descriptionEditPanel, {
         props: {
             header: '描述信息',
@@ -137,15 +137,13 @@ const descriptionEditPanel = {
                 description: this.descriptionMd
             }
             let url = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-description";
-            axiosPostRequest(url, json)
+            commonVueSubmit(this.toast, this.editBlock, url, json)
                 .then(res => {
-                    if (res.state !== 0) {
-                        this.toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                    if (res.state === 1) {
                         this.dialogRef.close();
                         location.reload(true);
-                    } else {
+                    }else {
                         this.editBlock = false;
-                        this.toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                     }
                 });
         }

@@ -103,9 +103,9 @@ public class ProductService {
     }
 
     //通过系列Id获取所有作品的数组，供前端选项用
-    public List<JSONObject> getProductSet(List<Integer> franchises, int entityType) {
+    public JSONArray getProductSet(List<Integer> franchises, int entityType) {
 
-        List<JSONObject> productSet = new ArrayList<>();
+        JSONArray productSet = new JSONArray();
 
         if (franchises.size() != 0) {
             List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);

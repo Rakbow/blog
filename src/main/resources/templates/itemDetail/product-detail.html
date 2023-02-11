@@ -60,9 +60,6 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
-
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -83,12 +80,8 @@
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -106,7 +99,7 @@
             <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h4 class="col-10">
+                        <h4 class="col-11">
                             <b class="detail-item-title">
                                 {{product.name}}
                             </b><span style="font-size: 13px" class="label">({{product.category.nameZh}})</span>
@@ -606,6 +599,11 @@
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+
+    import {commonSubmit} from '/js/basic/Http_Request.js';
+    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
+    import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -643,7 +641,6 @@
             const pageInfo = ref([[${pageInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
-            const productSet = ref([]);
             const relatedProducts = ref([[${relatedProducts}]]);
             const productCategorySet = ref([[${productCategorySet}]]);
             const platformSet = ref([[${platformSet}]]);
@@ -688,16 +685,9 @@
             };
 
             const openOrganizationEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpOrganizations.value = JSON.parse(JSON.stringify(product.value.organizations));
-                            organization.value = {};
-                            displayOrganizationEditDialog.value = true;
-                        }
-                    })
+                tmpOrganizations.value = JSON.parse(JSON.stringify(product.value.organizations));
+                organization.value = {};
+                displayOrganizationEditDialog.value = true;
             };
             const clearOrganizations = () => {
                 tmpOrganizations.value = [];
@@ -727,16 +717,12 @@
                     id: product.value.id,
                     organizations: tmpOrganizations.value
                 }
-                axiosPostRequest(UPDATE_PRODUCT_ORGANIZATIONS_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_PRODUCT_ORGANIZATIONS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayOrganizationEditDialog.value = false;
                             organization.value = {};
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -771,16 +757,9 @@
             };
 
             const openStaffEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpStaffs.value = JSON.parse(JSON.stringify(product.value.staffs));
-                            staff.value = {};
-                            displayStaffEditDialog.value = true;
-                        }
-                    })
+                tmpStaffs.value = JSON.parse(JSON.stringify(product.value.staffs));
+                staff.value = {};
+                displayStaffEditDialog.value = true;
             };
             const clearStaffs = () => {
                 tmpStaffs.value = [];
@@ -799,16 +778,12 @@
                     id: product.value.id,
                     staffs: tmpStaffs.value
                 }
-                axiosPostRequest(UPDATE_PRODUCT_STAFF_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_PRODUCT_STAFF_URL, json)
                     .then(res => {
                         if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
                             displayStaffEditDialog.value = false;
                             staff.value = {};
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -821,7 +796,7 @@
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
-                        openImageEditDialog();
+                        showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
@@ -842,7 +817,7 @@
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openDescriptionEditDialog();
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
                     }
                 }
             ]);
@@ -863,44 +838,15 @@
             //保存编辑数据
             const submitEditProduct = async () => {
                 editBlock.value = true;
-                await axiosPostRequest(UPDATE_PRODUCT_URL, productEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_PRODUCT_URL, productEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             productEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     }).catch(e => {
                         console.error(e);
-                    });
-            };
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
-                        }
-                    })
-            };
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
-                        }
                     });
             };
             //endregion
@@ -974,18 +920,13 @@
             "p-card": primevue.card,
             "p-blockui": primevue.blockui,
 
-            "p-chip": primevue.chip,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{path: PRODUCT_DETAIL_URL + [[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });

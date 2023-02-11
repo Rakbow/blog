@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Game List</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Book List</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
-    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
 
     <!-- bootstrap -->
     <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
@@ -15,9 +15,9 @@
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
     <script th:src="@{/js/vue/vue.global.js}"></script>
@@ -57,23 +57,21 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
+
 
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
+
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
-    <link th:href="@{/css/global.css}" rel="stylesheet" />
-    <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
+    <link th:href="@{/css/global.css}" rel="stylesheet"/>
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
+    <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
 <div id="app">
@@ -87,7 +85,7 @@
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
                           @click="openNewDialog"></p-button>
                 <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                          :disabled="!selectedGames || !selectedGames.length"></p-button>&nbsp;
+                          :disabled="!selectedBooks || !selectedBooks.length"></p-button>&nbsp;
             </template>
 
             <template #end>
@@ -95,14 +93,14 @@
                           @click="exportCSV($event)"></p-button>
             </template>
         </p-toolbar>
-        <p-datatable ref="dt" :value="games" class=" p-datatable-sm"
+        <p-datatable ref="dt" :value="books" class=" p-datatable-sm"
                      :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                      @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                      filter-display="row"
-                     :globalFilterFields="['name']"
+                     :globalFilterFields="['title','isbn10','isbn13']"
                      :paginator="true" :rows="10" striped-rows
                      :resizable-columns="true" column-resize-mode="expand"
-                     v-model:selection="selectedGames" dataKey="id"
+                     v-model:selection="selectedBooks" dataKey="id"
                      :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                      paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                                  LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -118,33 +116,81 @@
                 </div>
             </template>
             <template #empty>
-                <span class="emptyInfo">
-                    未检索到符合条件的数据
-                </span>
+                        <span class="emptyInfo">
+                            未检索到符合条件的数据
+                        </span>
             </template>
             <template #loading>
                 加载中，别急~
             </template>
-            <p-column selection-mode="multiple" style="flex: 0 0 4rem" :exportable="false"></p-column>
-            <p-column header="序号" field="id" exportHeader="Game Id" :sortable="true" style="flex: 0 0 5rem">
+            <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false"></p-column>
+            <p-column header="序号" field="id" exportHeader="Book Id" :sortable="true" style="flex: 0 0 5rem">
                 <template #body="slotProps">
                     <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                         {{slotProps.data.id}}
                     </p-button>
                 </template>
             </p-column>
-            <p-column header="游戏名" field="name" :show-filter-menu="false"
+            <p-column header="ISBN-10" field="isbn10" :show-filter-menu="false"
+                      style="flex: 0 0 8rem">
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
+                                 ></p-inputtext>
+                </template>
+            </p-column>
+            <p-column header="ISBN-13" field="isbn13" :show-filter-menu="false"
+                      style="flex: 0 0 10rem">
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
+                                 ></p-inputtext>
+                </template>
+            </p-column>
+            <p-column header="书名" field="title" :show-filter-menu="false"
                       style="flex: 0 0 20rem">
                 <template #body="slotProps">
-                    <a :href="'/db/game/' + slotProps.data.id">
-                        {{slotProps.data.name}}
+                    <a :href="'/db/book/' + slotProps.data.id">
+                        {{slotProps.data.title}}
                     </a>
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
+                                 ></p-inputtext>
                 </template>
             </p-column>
-            <p-column header="发售时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+            <p-column header="分类" field="bookType" :show-filter-menu="false" style="flex: 0 0 6rem">
+                <template #body="slotProps">
+                    {{slotProps.data.bookType.nameZh}}
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                :options="bookTypeSet" option-label="label" option-value="value"
+                                style="width: 5rem" >
+                    </p-dropdown>
+                </template>
+            </p-column>
+            <p-column header="出版社" field="publisher" :show-filter-menu="false"
+                      style="flex: 0 0 12rem">
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
+                                 ></p-inputtext>
+                </template>
+            </p-column>
+            <p-column header="出版时间" field="publishDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+            <p-column header="出版价格" field="price" :sortable="true" style="flex: 0 0 7rem">
+                <template #body="slotProps">
+                    {{slotProps.data.price}} {{slotProps.data.currencyUnit}}
+                </template>
+            </p-column>
+            <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
+                      style="flex: 0 0 5rem">
+                <template #body="{data}">
+                    <i class="pi"
+                       :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
+                </template>
+            </p-column>
             <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 10rem">
                 <template #body="slotProps">
                     <ul class="px-4">
@@ -162,14 +208,15 @@
                                    style="width: 9rem">
                     </p-multiselect>
                 </template>
+
             </p-column>
             <p-column header="所属作品" filter-field="products" :show-filter-menu="false"
                       style="flex: 0 0 16rem">
                 <template #body="slotProps">
                     <ul class="px-4">
-                        <li v-for="product in slotProps.data.products">
-                            <a :href="'/db/product/' + product.value ">
-                                {{product.label}}
+                        <li v-for="data in slotProps.data.products">
+                            <a :href="'/db/product/' + data.value">
+                                {{data.label}}
                             </a>
                         </li>
                     </ul>
@@ -178,29 +225,14 @@
                     <p-multiselect v-model="filterModel.value" @change="filterCallback()"
                                    :options="productSet" placeholder="选择作品"
                                    option-label="label" option-value="value" display="chip" :filter="true"
-                                   :disabled="productSelect" style="width: 15rem" >
+                                   :disabled="productSelect" style="width: 15rem">
                     </p-multiselect>
                 </template>
-            </p-column>
-            <p-column header="发售类型" field="releaseType" :show-filter-menu="false" style="flex: 0 0 9rem">
-                <template #body="slotProps">
-                    {{slotProps.data.releaseType.nameZh}}
-                </template>
-            </p-column>
-            <p-column header="发售平台" field="platform" :show-filter-menu="false" style="flex: 0 0 9rem">
-                <template #body="slotProps">
-                    {{slotProps.data.platform.nameEn}}
-                </template>
-                <template #filter="{filterModel,filterCallback}">
-                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                :options="gamePlatformSet" option-label="labelEn" option-value="value"
-                                style="width: 8rem">
-                    </p-dropdown>
-                </template>
+
             </p-column>
             <p-column header="地区" field="region" :show-filter-menu="false" style="flex: 0 0 9rem">
                 <template #body="slotProps">
-                    {{slotProps.data.region.nameZh}} <span :class="'fi fi-' + slotProps.data.region.code"></span>
+                    <span :class="'fi fi-' + slotProps.data.region.code"></span> ({{slotProps.data.region.nameZh}})
                 </template>
                 <template #filter="{filterModel,filterCallback}">
                     <p-dropdown v-model="filterModel.value" @change="filterCallback()"
@@ -222,13 +254,15 @@
                     </p-dropdown>
                 </template>
             </p-column>
-            <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
-                      style="flex: 0 0 5rem">
-                <template #body="{data}">
-                    <i class="pi" :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
+            <p-column header="语言" field="publishLanguage" :show-filter-menu="false" style="flex: 0 0 7rem">
+                <template #body="slotProps">
+                    {{slotProps.data.publishLanguage.nameZh}}
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
+                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                :options="languageSet" option-label="nameZh" option-value="code"
+                                style="width: 6rem" >
+                    </p-dropdown>
                 </template>
             </p-column>
             <p-column v-for="(col, index) of selectedColumns" :field="col.field"
@@ -243,55 +277,38 @@
     <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
               :style="{width: '600px'}" class="p-fluid">
         <p-panel header="基础信息">
-            <div class="field">
-                <label>游戏名<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="game.name"></p-inputtext>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>ISBN-10<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="book.isbn10"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>ISBN-13<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="book.isbn13"></p-inputtext>
+                </div>
             </div>
             <div class="field">
-                <label>游戏名(中)</label>
-                <p-inputtext v-model.trim="game.nameZh"></p-inputtext>
+                <label>书名<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="book.title"></p-inputtext>
             </div>
             <div class="field">
-                <label>游戏名(英)</label>
-                <p-inputtext v-model.trim="game.nameEn"></p-inputtext>
+                <label>书名(中)</label>
+                <p-inputtext v-model.trim="book.titleZh"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>书名(英)</label>
+                <p-inputtext v-model.trim="book.titleEn"></p-inputtext>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>商品条形码</label>
-                    <p-inputtext v-model.trim="game.barcode"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar v-model="game.releaseDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
-                </div>
-                <div class="field col-2">
-                    <div class="col-12">
-                        <label class="mb-3">特典</label>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <p-inputswitch v-model="game.hasBonus" :true-value="1"
-                                       :false-value="0"></p-inputswitch>
-                    </div>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label class="mb-3">发售类型<span style="color: red">*</span></label>
-                    <p-dropdown v-model="game.releaseType" :options="releaseTypeSet"
-                                option-label="labelZh" option-value="value">
-                    </p-dropdown>
-                </div>
-                <div class="field col">
-                    <label class="mb-3">发售平台<span style="color: red">*</span></label>
-                    <p-dropdown v-model="game.platform" :options="gamePlatformSet"
-                                option-label="labelEn" option-value="value">
+                    <label class="mb-3">图书分类<span style="color: red">*</span></label>
+                    <p-dropdown v-model="book.bookType" :options="bookTypeSet"
+                                option-label="label" option-value="value">
                     </p-dropdown>
                 </div>
                 <div class="field col">
                     <label class="mb-3">地区<span style="color: red">*</span></label>
-                    <p-dropdown v-model="game.region" :options="regionSet" :filter="true"
+                    <p-dropdown v-model="book.region" :options="regionSet" :filter="true"
                                 :show-clear="true" option-label="nameZh" option-value="code">
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
@@ -308,108 +325,127 @@
                         </template>
                     </p-dropdown>
                 </div>
+                <div class="field col">
+                    <label class="mb-3">语言<span style="color: red">*</span></label>
+                    <p-dropdown v-model="book.publishLanguage" :options="languageSet"
+                                option-label="nameZh" option-value="code">
+                    </p-dropdown>
+                </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
                     <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="game.franchises" @change="getProducts($event.value)"
+                    <p-multiselect v-model="book.franchises" @change="getProducts($event.value)"
                                    :options="franchiseSet" placeholder="所属系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
-                <div class="field col-8">
-                    <label class="mb-3">所属产品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="game.products" :options="productSet"
+                <div class="field col-6">
+                    <label class="mb-3">所属作品<span style="color: red">*</span></label>
+                    <p-multiselect v-model="book.products" :options="productSet"
                                    option-label="label" option-value="value" placeholder="请先选择所属系列"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">特典</label>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <p-inputswitch v-model="book.hasBonus" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="book.publishDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+                <div class="field col">
+                    <label>发行价格</label>
+                    <p-inputnumber v-model="book.price"></p-inputnumber>
+                </div>
+                <div class="field col">
+                    <label>出版社</label>
+                    <p-inputtext v-model.trim="book.publisher"></p-inputtext>
+                </div>
+            </div>
+            <div class="field">
+                <label>简介</label>
+                <p-textarea v-model="book.summary" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
             </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea v-model="game.remark" rows="3" cols="20"
+                <p-textarea v-model="book.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
         <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>关联组织信息</b></p-divider>
+            <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑关联组织信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
             </div>
-            <p-divider align="center" type="dashed"><b>开发制作人员信息</b></p-divider>
+            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑开发制作人员信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>描述</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑描述信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>特典</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑特典信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>图片</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
             </div>
         </p-panel>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewGame"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewBook"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
               :style="{width: '600px'}" class="p-fluid">
         <p-panel header="基础信息">
-            <div class="field">
-                <label>游戏名<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="gameEdit.name"></p-inputtext>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>ISBN-10<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>ISBN-13<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
+                </div>
             </div>
             <div class="field">
-                <label>游戏名(中)</label>
-                <p-inputtext v-model.trim="gameEdit.nameZh"></p-inputtext>
+                <label>书名<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
             </div>
             <div class="field">
-                <label>游戏名(英)</label>
-                <p-inputtext v-model.trim="gameEdit.nameEn"></p-inputtext>
+                <label>书名(中)</label>
+                <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>书名(英)</label>
+                <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>商品条形码</label>
-                    <p-inputtext v-model.trim="gameEdit.barcode"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar v-model="gameEdit.releaseDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
-                </div>
-                <div class="field col-2">
-                    <div class="col-12">
-                        <label class="mb-3">特典</label>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <p-inputswitch v-model="gameEdit.hasBonus" :true-value="1"
-                                       :false-value="0"></p-inputswitch>
-                    </div>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label class="mb-3">发售类型<span style="color: red">*</span></label>
-                    <p-dropdown v-model="gameEdit.releaseType" :options="releaseTypeSet"
-                                option-label="labelZh" option-value="value">
-                    </p-dropdown>
-                </div>
-                <div class="field col">
-                    <label class="mb-3">发售平台<span style="color: red">*</span></label>
-                    <p-dropdown v-model="gameEdit.platform" :options="gamePlatformSet"
-                                option-label="labelEn" option-value="value">
+                    <label class="mb-3">图书分类<span style="color: red">*</span></label>
+                    <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
+                                option-label="label" option-value="value">
                     </p-dropdown>
                 </div>
                 <div class="field col">
                     <label class="mb-3">地区<span style="color: red">*</span></label>
-                    <p-dropdown v-model="gameEdit.region" :options="regionSet" :filter="true"
+                    <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
                                 :show-clear="true" option-label="nameZh" option-value="code">
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
@@ -426,69 +462,105 @@
                         </template>
                     </p-dropdown>
                 </div>
+                <div class="field col">
+                    <label class="mb-3">语言<span style="color: red">*</span></label>
+                    <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
+                                option-label="nameZh" option-value="code">
+                    </p-dropdown>
+                </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
                     <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="gameEdit.franchises" @change="getProducts($event.value)"
+                    <p-multiselect v-model="bookEdit.franchises" @change="getProducts($event.value)"
                                    :options="franchiseSet" placeholder="所属系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
-                <div class="field col-8">
+                <div class="field col-6">
                     <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="gameEdit.products" :options="productSet"
+                    <p-multiselect v-model="bookEdit.products" :options="productSet"
                                    option-label="label" option-value="value" placeholder="选择所属作品"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">特典</label>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+                <div class="field col">
+                    <label>发行价格</label>
+                    <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
+                </div>
+                <div class="field col">
+                    <label>出版社</label>
+                    <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
+                </div>
+            </div>
+            <div class="field">
+                <label>简介</label>
+                <p-textarea v-model="bookEdit.summary" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
             </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea v-model="gameEdit.remark" rows="3" cols="20"
+                <p-textarea v-model="bookEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
         <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>关联组织信息</b></p-divider>
+            <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑关联组织信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
             </div>
-            <p-divider align="center" type="dashed"><b>开发制作人员信息</b></p-divider>
+            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑开发制作人员信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>描述</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑描述信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>特典</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑特典信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>图片</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
             </div>
         </p-panel>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditGame"></p-button>
+                      @click="submitEditBook"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="deleteGamesDialog" header="删除数据"
+    <p-dialog :modal="true" v-model:visible="deleteBooksDialog" header="删除数据"
               :style="{width: '450px'}">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-            <span>确定删除所选游戏？</span>
+            <span>确定删除所选图书？</span>
         </div>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="deleteGamesDialog = false"></p-button>
+                      @click="deleteBooksDialog = false"></p-button>
             <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteSelectedGames"></p-button>
+                      @click="deleteSelectedBooks"></p-button>
         </template>
     </p-dialog>
 </div>
@@ -518,62 +590,66 @@
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const filters = ref({
-                'name': {value: '', matchMode: 'contains'},
-                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'title': {value: '', matchMode: 'contains'},
+                'isbn10': {value: '', matchMode: 'contains'},
+                'isbn13': {value: '', matchMode: 'contains'},
+                'publisher': {value: '', matchMode: 'contains'},
                 'region': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'platform': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'publishLanguage': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'bookType': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'franchises': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
+                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
                 queryParams.value = event;
-                getGames();
+                getBooks();
             };
             const onSort = (event) => {
                 queryParams.value = event;
-                getGames();
+                getBooks();
             };
             const onFilter = () => {
-                queryParams.value.filters = filters.value ;
+                queryParams.value.filters = filters.value;
                 queryParams.value.first = 0;
-                getGames();
+                getBooks();
             };
-            const getGames = () => {
+            const getBooks = () => {
                 let json = {
                     pageLabel: "list",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_GAMES_URL, json)
+                axiosPostRequest(GET_BOOKS_URL, json)
                     .then(res => {
-                        games.value = res.data;
+                        books.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
             //endregion
 
             const displayEditDialog = ref(false);
-            const deleteGamesDialog = ref(false);
+            const deleteBooksDialog = ref(false);
             const displayNewDialog = ref(false);
 
-            const selectedGames = ref();
+            const selectedBooks = ref();
 
-            const game = ref({});
-            const games = ref();
+            const book = ref({});
+            const books = ref();
 
-            const releaseTypeSet = ref([[${releaseTypeSet}]]);
+            const bookTypeSet = ref([[${bookTypeSet}]]);
             const regionSet = ref([[${regionSet}]]);
-            const gamePlatformSet = ref([[${gamePlatformSet}]]);
+            const languageSet = ref([[${languageSet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
             const franchiseSet = ref([[${franchiseSet}]]);
 
-            const gameEdit = ref({});
+            const bookEdit = ref({});
             const toast = useToast();
             const dt = ref();
             const loading = ref(true);
             const columns = ref([
-                {field: 'nameZh', header: '游戏名(中)'},
-                {field: 'nameEn', header: '游戏名(英)'},
+                {field: 'titleZh', header: '书名(中)'},
+                {field: 'titleEn', header: '书名(英)'},
                 {field: 'remark', header: '备注'},
                 {field: 'addedTime', header: '收录时间'},
                 {field: 'editedTime', header: '编辑时间'},
@@ -601,7 +677,7 @@
                     sortOrder: null,
                     filters: filters.value
                 };
-                getGames();
+                getBooks();
                 loading.value = false;
             };
 
@@ -613,19 +689,19 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            deleteGamesDialog.value = true;
+                            deleteBooksDialog.value = true;
                         }
                     })
             };
 
             //删除数据
-            const deleteSelectedGames = () => {
-                axiosDeleteRequest(DELETE_GAME_URL, selectedGames.value)
+            const deleteSelectedBooks = () => {
+                axiosDeleteRequest(DELETE_BOOK_URL, selectedBooks.value)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            deleteGamesDialog.value = false;
-                            selectedGames.value = null;
+                            deleteBooksDialog.value = false;
+                            selectedBooks.value = null;
                             init();
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -641,15 +717,15 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            gameEdit.value = dataTmp;
-                            gameEdit.value.releaseType = dataTmp.releaseType.id;
-                            gameEdit.value.region = dataTmp.region.code;
-                            gameEdit.value.platform = dataTmp.platform.id;
-                            gameEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
-                            gameEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            bookEdit.value = dataTmp;
+                            bookEdit.value.bookType = dataTmp.bookType.id;
+                            bookEdit.value.region = dataTmp.region.code;
+                            bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
+                            bookEdit.value.hasBonus = dataTmp.hasBonus ? 1 : 0;
+                            bookEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
-                                franchises: gameEdit.value.franchises,
-                                entityType: GAME
+                                franchises: bookEdit.value.franchises,
+                                entityType: BOOK
                             };
                             axiosPostRequest(GET_PRODUCT_SET_URL, json)
                                 .then(res => {
@@ -659,7 +735,7 @@
                                     }else {
                                         productSelect.value = true;
                                     }
-                                    gameEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -668,15 +744,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                gameEdit.value = {};
+                bookEdit.value = {};
                 init();
             };
             //保存编辑数据
-            const submitEditGame = async () => {
-                await axiosPostRequest(UPDATE_GAME_URL, gameEdit.value)
+            const submitEditBook = async () => {
+                await axiosPostRequest(UPDATE_BOOK_URL, bookEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            gameEdit.value = {};
+                            bookEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -700,7 +776,7 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            game.value = {};
+                            book.value = {};
                             productSelect.value = true;
                             displayNewDialog.value = true;
                         }
@@ -708,16 +784,16 @@
             };
             //关闭新增数据面板
             const closeNewDialog = () => {
-                game.value = {};
+                book.value = {};
                 displayNewDialog.value = false;
             };
 
             //提交新增数据
-            const submitNewGame = () => {
-                axiosPostRequest(INSERT_GAME_URL, game.value)
+            const submitNewBook = () => {
+                axiosPostRequest(INSERT_BOOK_URL, book.value)
                     .then(res => {
                         if (res.state === 1) {
-                            game.value = {};
+                            book.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -736,7 +812,7 @@
             const getProducts = (data) => {
                 let json = {
                     franchises: data,
-                    entityType: GAME
+                    entityType: BOOK
                 };
                 axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -744,8 +820,8 @@
                             productSet.value = res;
                             productSelect.value = false;
                         }else {
-                            game.value.products = [];
-                            gameEdit.value.products = [];
+                            book.value.products = [];
+                            bookEdit.value.products = [];
                             productSelect.value = true;
                         }
                     })
@@ -755,15 +831,15 @@
 
 
             return {
-                franchiseSet, regionSet, releaseTypeSet, gamePlatformSet, regionCode2NameZh,
+                regionSet, languageSet, bookTypeSet, regionCode2NameZh,
                 onToggle, onPage, onSort, onFilter, filters, totalRecords,
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
-                game, games, columns, selectedColumns,
+                book, books, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
-                submitNewGame, confirmDeleteSelected, deleteGamesDialog, deleteSelectedGames,
-                selectedGames, displayEditDialog, init,
-                openEditDialog, closeEditDialog, submitEditGame, gameEdit,
-                productSet, franchiseSet: franchiseSet,
+                submitNewBook, confirmDeleteSelected, deleteBooksDialog, deleteSelectedBooks,
+                selectedBooks, displayEditDialog, init,
+                openEditDialog, closeEditDialog, submitEditBook, bookEdit,
+                productSet, franchiseSet,
                 getProducts, productSelect
             }
         },

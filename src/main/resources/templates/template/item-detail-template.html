@@ -6,7 +6,7 @@
 </head>
 <body>
 <div th:fragment="item_common_edit_button">
-    <div class="col-2 text-end p-0 m-0" th:if="${loginUser != null}">
+    <div class="col-1 text-end p-0 m-0" th:if="${loginUser != null}">
         <p-splitbutton :model="edits" class="p-button-sm bg-primary"
                        th:if="${loginUser.type > 1 || loginUser.type == 0}">
             <p-button @click="openEditDialog">

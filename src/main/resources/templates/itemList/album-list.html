@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Book List</title>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Album List</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
-    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
+    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
     <!-- bootstrap -->
     <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
@@ -15,9 +15,9 @@
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
-    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
 
     <!-- Vue3 -->
     <script th:src="@{/js/vue/vue.global.js}"></script>
@@ -51,24 +51,16 @@
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
     <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
-    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
-    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
 
-    <!-- flag-icons -->
-    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
+
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -87,7 +79,7 @@
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
                           @click="openNewDialog"></p-button>
                 <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                          :disabled="!selectedBooks || !selectedBooks.length"></p-button>&nbsp;
+                          :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;
             </template>
 
             <template #end>
@@ -95,14 +87,14 @@
                           @click="exportCSV($event)"></p-button>
             </template>
         </p-toolbar>
-        <p-datatable ref="dt" :value="books" class=" p-datatable-sm"
+        <p-datatable ref="dt" :value="albums" class="p-datatable-sm"
                      :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                      @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                      filter-display="row"
-                     :globalFilterFields="['title','isbn10','isbn13']"
+                     :global-filter-fields="['name','catalogNo']"
                      :paginator="true" :rows="10" striped-rows
                      :resizable-columns="true" column-resize-mode="expand"
-                     v-model:selection="selectedBooks" dataKey="id"
+                     v-model:selection="selectedAlbums" dataKey="id"
                      :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                      paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                                  LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -126,76 +118,39 @@
                 加载中，别急~
             </template>
             <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false"></p-column>
-            <p-column header="序号" field="id" exportHeader="Book Id" :sortable="true" style="flex: 0 0 5rem">
+            <p-column header="序号" field="id" exportHeader="Album Id" :sortable="true" style="flex: 0 0 5rem">
                 <template #body="slotProps">
                     <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                         {{slotProps.data.id}}
                     </p-button>
                 </template>
             </p-column>
-            <p-column header="ISBN-10" field="isbn10" :show-filter-menu="false"
-                      style="flex: 0 0 8rem">
-                <template #filter="{filterModel,filterCallback}">
-                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                 ></p-inputtext>
-                </template>
-            </p-column>
-            <p-column header="ISBN-13" field="isbn13" :show-filter-menu="false"
+            <p-column header="专辑编号" field="catalogNo" :show-filter-menu="false"
                       style="flex: 0 0 10rem">
                 <template #filter="{filterModel,filterCallback}">
-                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                 ></p-inputtext>
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
                 </template>
             </p-column>
-            <p-column header="书名" field="title" :show-filter-menu="false"
-                      style="flex: 0 0 20rem">
+            <p-column header="专辑原名" field="name" :show-filter-menu="false"
+                      style="flex: 0 0 25rem">
                 <template #body="slotProps">
-                    <a :href="'/db/book/' + slotProps.data.id">
-                        {{slotProps.data.title}}
+                    <a :href="'/db/album/' + slotProps.data.id">
+                        {{slotProps.data.name}}
                     </a>
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                 ></p-inputtext>
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
                 </template>
             </p-column>
-            <p-column header="分类" field="bookType" :show-filter-menu="false" style="flex: 0 0 6rem">
-                <template #body="slotProps">
-                    {{slotProps.data.bookType.nameZh}}
-                </template>
-                <template #filter="{filterModel,filterCallback}">
-                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                :options="bookTypeSet" option-label="label" option-value="value"
-                                style="width: 5rem" >
-                    </p-dropdown>
-                </template>
-            </p-column>
-            <p-column header="出版社" field="publisher" :show-filter-menu="false"
-                      style="flex: 0 0 12rem">
-                <template #filter="{filterModel,filterCallback}">
-                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"
-                                 ></p-inputtext>
-                </template>
-            </p-column>
-            <p-column header="出版时间" field="publishDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
-            <p-column header="出版价格" field="price" :sortable="true" style="flex: 0 0 7rem">
+            <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+            <p-column header="发售价格" field="price" :sortable="true" style="flex: 0 0 7rem">
                 <template #body="slotProps">
                     {{slotProps.data.price}} {{slotProps.data.currencyUnit}}
                 </template>
             </p-column>
-            <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
-                      style="flex: 0 0 5rem">
-                <template #body="{data}">
-                    <i class="pi"
-                       :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
-                </template>
-                <template #filter="{filterModel,filterCallback}">
-                    <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
-                </template>
-            </p-column>
             <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 10rem">
                 <template #body="slotProps">
-                    <ul class="px-4">
+                    <ul>
                         <li v-for="franchise in slotProps.data.franchises">
                             <a :href="'/db/franchise/' + franchise.value ">
                                 {{franchise.label}}
@@ -210,15 +165,14 @@
                                    style="width: 9rem">
                     </p-multiselect>
                 </template>
-
             </p-column>
             <p-column header="所属作品" filter-field="products" :show-filter-menu="false"
                       style="flex: 0 0 16rem">
                 <template #body="slotProps">
-                    <ul class="px-4">
-                        <li v-for="data in slotProps.data.products">
-                            <a :href="'/db/product/' + data.value">
-                                {{data.label}}
+                    <ul>
+                        <li v-for="product in slotProps.data.products">
+                            <a :href="'/db/product/' + product.value ">
+                                {{product.label}}
                             </a>
                         </li>
                     </ul>
@@ -230,41 +184,62 @@
                                    :disabled="productSelect" style="width: 15rem">
                     </p-multiselect>
                 </template>
-
             </p-column>
-            <p-column header="地区" field="region" :show-filter-menu="false" style="flex: 0 0 9rem">
+            <p-column header="出版形式" filter-field="publishFormat" :show-filter-menu="false"
+                      style="flex: 0 0 9rem">
                 <template #body="slotProps">
-                    <span :class="'fi fi-' + slotProps.data.region.code"></span> ({{slotProps.data.region.nameZh}})
+                    <ul>
+                        <li v-for="data in slotProps.data.publishFormat">
+                            {{data.label}}
+                        </li>
+                    </ul>
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                :options="regionSet" option-label="nameZh" option-value="code"
-                                style="width: 8rem" >
-                        <template #value="slotProps">
-                            <div class="country-item" v-if="slotProps.value">
-                                <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
-                            </div>
-                            <span v-else>选择地区</span>
-                        </template>
-                        <template #option="slotProps">
-                            <div class="country-item">
-                                <span :class="'fi fi-' + slotProps.option.code"></span>
-                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
-                            </div>
-                        </template>
-                    </p-dropdown>
+                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 8rem"
+                                   :options="publishFormatSet" option-label="label" option-value="value"
+                                   display="chip" :filter="true">
+                    </p-multiselect>
                 </template>
             </p-column>
-            <p-column header="语言" field="publishLanguage" :show-filter-menu="false" style="flex: 0 0 7rem">
+            <p-column header="专辑分类" filter-field="albumFormat" :show-filter-menu="false"
+                      style="flex: 0 0 8rem">
                 <template #body="slotProps">
-                    {{slotProps.data.publishLanguage.nameZh}}
+                    <ul>
+                        <li v-for="data in slotProps.data.albumFormat">
+                            {{data.label}}
+                        </li>
+                    </ul>
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                                :options="languageSet" option-label="nameZh" option-value="code"
-                                style="width: 6rem" >
-                    </p-dropdown>
+                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 7rem"
+                                   :options="albumFormatSet" option-label="label" option-value="value"
+                                   display="chip" :filter="true">
+                    </p-multiselect>
+                </template>
+            </p-column>
+            <p-column header="媒体类型" filter-field="mediaFormat" :show-filter-menu="false"
+                      style="flex: 0 0 8rem">
+                <template #body="slotProps">
+                    <ul>
+                        <li v-for="data in slotProps.data.mediaFormat">
+                            {{data.label}}
+                        </li>
+                    </ul>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 7rem"
+                                   :options="mediaFormatSet" option-label="label" option-value="value"
+                                   display="chip" :filter="true">
+                    </p-multiselect>
+                </template>
+            </p-column>
+            <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
+                      style="flex: 0 0 3rem">
+                <template #body="{data}">
+                    <i class="pi" :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
                 </template>
             </p-column>
             <p-column v-for="(col, index) of selectedColumns" :field="col.field"
@@ -276,293 +251,305 @@
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 
-    <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
-              :style="{width: '600px'}" class="p-fluid">
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据"
+              class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>ISBN-10<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="book.isbn10"></p-inputtext>
+                    <label>专辑名称<span style="color: red">*</span></label>
+                    <p-inputtext id="name" v-model.trim="album.name"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>ISBN-13<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="book.isbn13"></p-inputtext>
+                    <label>专辑名称(英语)</label>
+                    <p-inputtext id="nameEn" v-model.trim="album.nameEn"></p-inputtext>
                 </div>
-            </div>
-            <div class="field">
-                <label>书名<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="book.title"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>书名(中)</label>
-                <p-inputtext v-model.trim="book.titleZh"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>书名(英)</label>
-                <p-inputtext v-model.trim="book.titleEn"></p-inputtext>
+                <div class="field col">
+                    <label>专辑名称(中文)</label>
+                    <p-inputtext id="nameZh" v-model.trim="album.nameZh"></p-inputtext>
+                </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label class="mb-3">图书分类<span style="color: red">*</span></label>
-                    <p-dropdown v-model="book.bookType" :options="bookTypeSet"
-                                option-label="label" option-value="value">
-                    </p-dropdown>
+                    <label>专辑编号</label>
+                    <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label class="mb-3">地区<span style="color: red">*</span></label>
-                    <p-dropdown v-model="book.region" :options="regionSet" :filter="true"
-                                :show-clear="true" option-label="nameZh" option-value="code">
-                        <template #value="slotProps">
-                            <div class="country-item" v-if="slotProps.value">
-                                <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
-                            </div>
-                            <span v-else>选择地区</span>
-                        </template>
-                        <template #option="slotProps">
-                            <div class="country-item">
-                                <span :class="'fi fi-' + slotProps.option.code"></span>
-                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
-                            </div>
-                        </template>
-                    </p-dropdown>
+                    <label>商品条形码</label>
+                    <p-inputtext id="barcode" v-model.trim="album.barcode"></p-inputtext>
                 </div>
-                <div class="field col">
-                    <label class="mb-3">语言<span style="color: red">*</span></label>
-                    <p-dropdown v-model="book.publishLanguage" :options="languageSet"
-                                option-label="nameZh" option-value="code">
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+                <div class="field col-3">
+                    <label>发行价格</label>
+                    <p-inputnumber id="price" v-model="album.price"></p-inputnumber>
+                </div>
+                <div class="field col-3">
+                    <label>货币单位</label>
+                    <p-dropdown v-model="album.currencyUnit" :options="currencyUnitSet"
+                                option-label="label" option-value="value" placeholder="单位">
                     </p-dropdown>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
                     <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="book.franchises" @change="getProducts($event.value)"
+                    <p-multiselect v-model="album.franchises" @change="getProducts($event.value)"
                                    :options="franchiseSet" placeholder="所属系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
                 <div class="field col-6">
                     <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="book.products" :options="productSet"
+                    <p-multiselect v-model="album.products" :options="productSet"
                                    option-label="label" option-value="value" placeholder="请先选择所属系列"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
-                <div class="field col-2">
+                <div class="field col">
                     <div class="col-12">
                         <label class="mb-3">特典</label>
                     </div>
                     <div class="col-12 mt-4">
-                        <p-inputswitch v-model="book.hasBonus" :true-value="1"
-                                       :false-value="0"></p-inputswitch>
+                        <p-inputswitch v-model="album.hasBonus" :true-value="1" :false-value="0"></p-inputswitch>
                     </div>
                 </div>
             </div>
             <div class="formgrid grid">
-                <div class="field col">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar v-model="book.publishDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
+                <div class="field col-4">
+                    <label class="mb-3">出版形式<span style="color: red">*</span></label>
+                    <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择出版形式"
+                                   display="chip" :filter="true">
+                        </template>
+                    </p-multiselect>
                 </div>
-                <div class="field col">
-                    <label>发行价格</label>
-                    <p-inputnumber v-model="book.price"></p-inputnumber>
+                <div class="field col-4">
+                    <label class="mb-3">专辑分类<span style="color: red">*</span></label>
+                    <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择专辑分类"
+                                   display="chip" :filter="true">
+                    </p-multiselect>
                 </div>
-                <div class="field col">
-                    <label>出版社</label>
-                    <p-inputtext v-model.trim="book.publisher"></p-inputtext>
+                <div class="field col-4">
+                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
+                    <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择媒体类型"
+                                   display="chip" :filter="true">
+                    </p-multiselect>
                 </div>
             </div>
-            <div class="field">
-                <label>简介</label>
-                <p-textarea v-model="book.summary" rows="3" cols="20"
-                            :auto-resize="true"></p-textarea>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>唱片公司</label>
+                    <p-inputtext id="label" v-model.trim="album.label"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发行商</label>
+                    <p-inputtext id="publisher" v-model.trim="album.publisher"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>经销商</label>
+                    <p-inputtext id="distributor" v-model.trim="album.distributor"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>版权方</label>
+                    <p-inputtext id="copyright" v-model.trim="album.copyright"></p-inputtext>
+                </div>
             </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea v-model="book.remark" rows="3" cols="20"
-                            :auto-resize="true"></p-textarea>
+                <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
+        <p-panel header="其他信息">
+            <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
+                <span style="text-align: center"><em>如需添加曲目，请到专辑详情页面进行</em></span>
             </div>
-            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
+            <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
+                <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>图片</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
+                <span style="text-align: center"><em>如需添加图片，请到专辑详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需图片描述信息，请到专辑详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需图片特典信息，请到专辑详情页面进行</em></span>
             </div>
         </p-panel>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewBook"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
-              :style="{width: '600px'}" class="p-fluid">
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据"
+              class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>ISBN-10<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
+                    <label>专辑名称<span style="color: red">*</span></label>
+                    <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>ISBN-13<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
+                    <label>专辑名称(英语)</label>
+                    <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
                 </div>
-            </div>
-            <div class="field">
-                <label>书名<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>书名(中)</label>
-                <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>书名(英)</label>
-                <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
+                <div class="field col">
+                    <label>专辑名称(中文)</label>
+                    <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
+                </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label class="mb-3">图书分类<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
-                                option-label="label" option-value="value">
-                    </p-dropdown>
+                    <label>专辑编号</label>
+                    <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label class="mb-3">地区<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
-                                :show-clear="true" option-label="nameZh" option-value="code">
-                        <template #value="slotProps">
-                            <div class="country-item" v-if="slotProps.value">
-                                <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
-                            </div>
-                            <span v-else>选择地区</span>
-                        </template>
-                        <template #option="slotProps">
-                            <div class="country-item">
-                                <span :class="'fi fi-' + slotProps.option.code"></span>
-                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
-                            </div>
-                        </template>
-                    </p-dropdown>
+                    <label>商品条形码</label>
+                    <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
                 </div>
-                <div class="field col">
-                    <label class="mb-3">语言<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
-                                option-label="nameZh" option-value="code">
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+                <div class="field col-3">
+                    <label>发行价格</label>
+                    <p-inputnumber id="price" v-model="albumEdit.price"></p-inputnumber>
+                </div>
+                <div class="field col-3">
+                    <label>货币单位</label>
+                    <p-dropdown v-model="albumEdit.currencyUnit" :options="currencyUnitSet"
+                                option-label="label" option-value="value" placeholder="单位">
                     </p-dropdown>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
                     <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="bookEdit.franchises" @change="getProducts($event.value)"
+                    <p-multiselect v-model="albumEdit.franchises" @change="getProducts($event.value)"
                                    :options="franchiseSet" placeholder="所属系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
                 <div class="field col-6">
                     <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="bookEdit.products" :options="productSet"
+                    <p-multiselect v-model="albumEdit.products" :options="productSet"
                                    option-label="label" option-value="value" placeholder="选择所属作品"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
-                <div class="field col-2">
+                <div class="field col">
                     <div class="col-12">
                         <label class="mb-3">特典</label>
                     </div>
                     <div class="col-12 mt-4">
-                        <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
+                        <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
                                        :false-value="0"></p-inputswitch>
                     </div>
                 </div>
             </div>
             <div class="formgrid grid">
-                <div class="field col">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
+                <div class="field col-4">
+                    <label class="mb-3">出版形式<span style="color: red">*</span></label>
+                    <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择出版形式"
+                                   display="chip">
+                    </p-multiselect>
                 </div>
-                <div class="field col">
-                    <label>发行价格</label>
-                    <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
+                <div class="field col-4">
+                    <label class="mb-3">专辑分类<span style="color: red">*</span></label>
+                    <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择专辑分类"
+                                   display="chip">
+                    </p-multiselect>
                 </div>
-                <div class="field col">
-                    <label>出版社</label>
-                    <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
+                <div class="field col-4">
+                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
+                    <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择媒体类型"
+                                   display="chip">
+                    </p-multiselect>
                 </div>
             </div>
-            <div class="field">
-                <label>简介</label>
-                <p-textarea v-model="bookEdit.summary" rows="3" cols="20"
-                            :auto-resize="true"></p-textarea>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>唱片公司</label>
+                    <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发行商</label>
+                    <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>经销商</label>
+                    <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>版权方</label>
+                    <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
+                </div>
             </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea v-model="bookEdit.remark" rows="3" cols="20"
+                <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
+        <p-panel header="其他信息">
+            <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑曲目等操作，请到专辑详情页面进行</em></span>
             </div>
-            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
+            <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
+                <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>图片</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑图片等操作，请到专辑详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需编辑描述信息，请到专辑详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需编辑特典信息，请到专辑详情页面进行</em></span>
             </div>
         </p-panel>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditBook"></p-button>
+                      @click="submitEditAlbum"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="deleteBooksDialog" header="删除数据"
-              :style="{width: '450px'}">
+    <p-dialog :modal="true" v-model:visible="deleteAlbumsDialog" :style="{width: '450px'}" header="删除数据">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-            <span>确定删除所选图书？</span>
+            <span v-if="album">确定删除所选的数据？</span>
         </div>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="deleteBooksDialog = false"></p-button>
+                      @click="deleteAlbumsDialog = false"></p-button>
             <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteSelectedBooks"></p-button>
+                      @click="deleteSelectedAlbums"></p-button>
         </template>
     </p-dialog>
 </div>
@@ -585,78 +572,88 @@
             }
             //endregion
 
-            //region ------过滤------
+            //region ------搜索------
             const totalRecords = ref(0);
             const queryParams = ref({});
             const onToggle = (val) => {
                 selectedColumns.value = columns.value.filter(col => val.includes(col));
             };
             const filters = ref({
-                'title': {value: '', matchMode: 'contains'},
-                'isbn10': {value: '', matchMode: 'contains'},
-                'isbn13': {value: '', matchMode: 'contains'},
-                'publisher': {value: '', matchMode: 'contains'},
-                'region': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'publishLanguage': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'bookType': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'franchises': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'products': {value: null, matchMode: FilterMatchMode.IN},
+                'catalogNo': {value: '', matchMode: 'contains'},
+                'name': {value: '', matchMode: 'contains'},
                 'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'publishFormat': {value: null, matchMode: FilterMatchMode.IN},
+                'albumFormat': {value: null, matchMode: FilterMatchMode.IN},
+                'mediaFormat': {value: null, matchMode: FilterMatchMode.IN},
+                'franchises': {value: null, matchMode: FilterMatchMode.IN},
+                'products': {value: null, matchMode: FilterMatchMode.IN},
             });
             const onPage = (event) => {
                 queryParams.value = event;
-                getBooks();
+                getAlbums();
             };
             const onSort = (event) => {
                 queryParams.value = event;
-                getBooks();
+                getAlbums();
             };
             const onFilter = () => {
-                queryParams.value.filters = filters.value;
+                queryParams.value.filters = filters.value ;
                 queryParams.value.first = 0;
-                getBooks();
+                getAlbums();
             };
-            const getBooks = () => {
+            const getAlbums = () => {
                 let json = {
                     pageLabel: "list",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_BOOKS_URL, json)
+                axiosPostRequest(GET_ALBUMS_URL, json)
                     .then(res => {
-                        books.value = res.data;
+                        albums.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
             //endregion
 
             const displayEditDialog = ref(false);
-            const deleteBooksDialog = ref(false);
+            const deleteAlbumsDialog = ref(false);
             const displayNewDialog = ref(false);
 
-            const selectedBooks = ref();
+            const selectedAlbums = ref();
 
-            const book = ref({});
-            const books = ref();
+            const album = ref({});
+            const albums = ref();
 
-            const bookTypeSet = ref([[${bookTypeSet}]]);
-            const regionSet = ref([[${regionSet}]]);
-            const languageSet = ref([[${languageSet}]]);
+            const mediaFormatSet = ref([[${mediaFormatSet}]]);
+            const albumFormatSet = ref([[${albumFormatSet}]]);
+            const publishFormatSet = ref([[${publishFormatSet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
             const franchiseSet = ref([[${franchiseSet}]]);
 
-            const bookEdit = ref({});
+            const albumEdit = ref({});
+            const submitted = ref(false);
             const toast = useToast();
             const dt = ref();
             const loading = ref(true);
             const columns = ref([
-                {field: 'titleZh', header: '书名(中)'},
-                {field: 'titleEn', header: '书名(英)'},
+                {field: 'barcode', header: '商品条形码'},
+                {field: 'nameZh', header: '专辑名称(中文)'},
+                {field: 'nameEn', header: '专辑名称(英文)'},
                 {field: 'remark', header: '备注'},
-                {field: 'addedTime', header: '收录时间'},
-                {field: 'editedTime', header: '编辑时间'},
+                {field: 'label', header: '唱片公司'},
+                {field: 'publisher', header: '发行商'},
+                {field: 'distributor', header: '经销商'},
+                {field: 'copyright', header: '版权方'},
             ]);
             const selectedColumns = ref();
+
+            const imgData = ref([]);
+            const imgArr = ref([]);
+            const detailId = ref();
+
+            const formatCurrency = (value) => {
+                return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
+            };
 
             const exportCSV = () => {
                 axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
@@ -679,7 +676,7 @@
                     sortOrder: null,
                     filters: filters.value
                 };
-                getBooks();
+                getAlbums();
                 loading.value = false;
             };
 
@@ -691,19 +688,19 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            deleteBooksDialog.value = true;
+                            deleteAlbumsDialog.value = true;
                         }
                     })
             };
 
             //删除数据
-            const deleteSelectedBooks = () => {
-                axiosDeleteRequest(DELETE_BOOK_URL, selectedBooks.value)
+            const deleteSelectedAlbums = () => {
+                axiosDeleteRequest(DELETE_ALBUM_URL, selectedAlbums.value)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            deleteBooksDialog.value = false;
-                            selectedBooks.value = null;
+                            deleteAlbumsDialog.value = false;
+                            selectedAlbums.value = null;
                             init();
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -719,15 +716,14 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            bookEdit.value = dataTmp;
-                            bookEdit.value.bookType = dataTmp.bookType.id;
-                            bookEdit.value.region = dataTmp.region.code;
-                            bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
-                            bookEdit.value.hasBonus = dataTmp.hasBonus ? 1 : 0;
-                            bookEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            albumEdit.value = dataTmp;
+                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                            albumEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
-                                franchises: bookEdit.value.franchises,
-                                entityType: BOOK
+                                franchises: albumEdit.value.franchises,
+                                entityType: ALBUM
                             };
                             axiosPostRequest(GET_PRODUCT_SET_URL, json)
                                 .then(res => {
@@ -737,7 +733,7 @@
                                     }else {
                                         productSelect.value = true;
                                     }
-                                    bookEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    albumEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -746,15 +742,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                bookEdit.value = {};
+                albumEdit.value = {};
                 init();
             };
             //保存编辑数据
-            const submitEditBook = async () => {
-                await axiosPostRequest(UPDATE_BOOK_URL, bookEdit.value)
+            const submitEditAlbum = async () => {
+                await axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            bookEdit.value = {};
+                            albumEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -778,7 +774,8 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            book.value = {};
+                            album.value = {};
+                            submitted.value = false;
                             productSelect.value = true;
                             displayNewDialog.value = true;
                         }
@@ -786,16 +783,17 @@
             };
             //关闭新增数据面板
             const closeNewDialog = () => {
-                book.value = {};
+                album.value = {};
                 displayNewDialog.value = false;
+                submitted.value = false;
             };
 
             //提交新增数据
-            const submitNewBook = () => {
-                axiosPostRequest(INSERT_BOOK_URL, book.value)
+            const submitNewAlbum = () => {
+                axiosPostRequest(INSERT_ALBUM_URL, album.value)
                     .then(res => {
                         if (res.state === 1) {
-                            book.value = {};
+                            album.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -814,7 +812,7 @@
             const getProducts = (data) => {
                 let json = {
                     franchises: data,
-                    entityType: BOOK
+                    entityType: ALBUM
                 };
                 axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -822,8 +820,8 @@
                             productSet.value = res;
                             productSelect.value = false;
                         }else {
-                            book.value.products = [];
-                            bookEdit.value.products = [];
+                            album.value.products = [];
+                            albumEdit.value.products = [];
                             productSelect.value = true;
                         }
                     })
@@ -833,16 +831,15 @@
 
 
             return {
-                regionSet, languageSet, bookTypeSet, regionCode2NameZh,
-                onToggle, onPage, onSort, onFilter, filters, totalRecords,
+                onToggle, onPage, onSort, onFilter, filters, totalRecords, currencyUnitSet,
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
-                book, books, columns, selectedColumns,
+                album, albums, formatCurrency, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
-                submitNewBook, confirmDeleteSelected, deleteBooksDialog, deleteSelectedBooks,
-                selectedBooks, displayEditDialog, init,
-                openEditDialog, closeEditDialog, submitEditBook, bookEdit,
-                productSet, franchiseSet,
-                getProducts, productSelect
+                submitNewAlbum, confirmDeleteSelected, deleteAlbumsDialog, deleteSelectedAlbums,
+                selectedAlbums, displayEditDialog, init,
+                openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
+                mediaFormatSet, publishFormatSet, albumFormatSet, productSet, franchiseSet,
+                getProducts, productSelect, imgData, imgArr, detailId
             }
         },
         components: {

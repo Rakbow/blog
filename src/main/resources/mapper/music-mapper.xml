@@ -49,7 +49,7 @@
         </selectKey>
         insert into music (<include refid="insertFields"></include>)
         values (#{name}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial}, #{coverUrl},
-        #{file}, #{lrcText}, #{audioLength}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{files}, #{lrcText}, #{audioLength}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
     </insert>
 
     <update id="updateMusic" parameterType="Music" keyProperty="id">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Album List</title>
+    <title>Disc List</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -51,18 +51,22 @@
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
     <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
+    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
+
+
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
+
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -81,7 +85,7 @@
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success mr-4"
                           @click="openNewDialog"></p-button>
                 <p-button label="删除" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                          :disabled="!selectedAlbums || !selectedAlbums.length"></p-button>&nbsp;
+                          :disabled="!selectedDiscs || !selectedDiscs.length"></p-button>&nbsp;
             </template>
 
             <template #end>
@@ -89,14 +93,14 @@
                           @click="exportCSV($event)"></p-button>
             </template>
         </p-toolbar>
-        <p-datatable ref="dt" :value="albums" class="p-datatable-sm"
+        <p-datatable ref="dt" :value="discs" class=" p-datatable-sm"
                      :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                      @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                      filter-display="row"
-                     :global-filter-fields="['name','catalogNo']"
+                     :globalFilterFields="['name','catalogNo']"
                      :paginator="true" :rows="10" striped-rows
                      :resizable-columns="true" column-resize-mode="expand"
-                     v-model:selection="selectedAlbums" dataKey="id"
+                     v-model:selection="selectedDiscs" dataKey="id"
                      :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
                      paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
                                  LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -120,23 +124,23 @@
                 加载中，别急~
             </template>
             <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false"></p-column>
-            <p-column header="序号" field="id" exportHeader="Album Id" :sortable="true" style="flex: 0 0 5rem">
+            <p-column header="序号" field="id" exportHeader="Disc Id" :sortable="true" style="flex: 0 0 5rem">
                 <template #body="slotProps">
                     <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                         {{slotProps.data.id}}
                     </p-button>
                 </template>
             </p-column>
-            <p-column header="专辑编号" field="catalogNo" :show-filter-menu="false"
+            <p-column header="碟片编号" field="catalogNo" :show-filter-menu="false"
                       style="flex: 0 0 10rem">
                 <template #filter="{filterModel,filterCallback}">
                     <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
                 </template>
             </p-column>
-            <p-column header="专辑原名" field="name" :show-filter-menu="false"
+            <p-column header="商品名" field="name" :show-filter-menu="false"
                       style="flex: 0 0 25rem">
                 <template #body="slotProps">
-                    <a :href="'/db/album/' + slotProps.data.id">
+                    <a :href="'/db/disc/' + slotProps.data.id">
                         {{slotProps.data.name}}
                     </a>
                 </template>
@@ -152,7 +156,7 @@
             </p-column>
             <p-column header="所属系列" field="franchises" :show-filter-menu="false" style="flex: 0 0 10rem">
                 <template #body="slotProps">
-                    <ul>
+                    <ul class="px-4">
                         <li v-for="franchise in slotProps.data.franchises">
                             <a :href="'/db/franchise/' + franchise.value ">
                                 {{franchise.label}}
@@ -171,10 +175,10 @@
             <p-column header="所属作品" filter-field="products" :show-filter-menu="false"
                       style="flex: 0 0 16rem">
                 <template #body="slotProps">
-                    <ul>
-                        <li v-for="product in slotProps.data.products">
-                            <a :href="'/db/product/' + product.value ">
-                                {{product.label}}
+                    <ul class="px-4">
+                        <li v-for="data in slotProps.data.products">
+                            <a :href="'/db/product/' + data.value">
+                                {{data.label}}
                             </a>
                         </li>
                     </ul>
@@ -183,60 +187,61 @@
                     <p-multiselect v-model="filterModel.value" @change="filterCallback()"
                                    :options="productSet" placeholder="选择作品"
                                    option-label="label" option-value="value" display="chip" :filter="true"
-                                   :disabled="productSelect" style="width: 15rem">
+                                   :disabled="productSelect" style="width: 15rem" >
                     </p-multiselect>
                 </template>
             </p-column>
-            <p-column header="出版形式" filter-field="publishFormat" :show-filter-menu="false"
-                      style="flex: 0 0 9rem">
+            <p-column header="地区" field="region" :show-filter-menu="false" style="flex: 0 0 9rem">
                 <template #body="slotProps">
-                    <ul>
-                        <li v-for="data in slotProps.data.publishFormat">
-                            {{data.label}}
-                        </li>
-                    </ul>
+                    <span :class="'fi fi-' + slotProps.data.region.code"></span>  ({{slotProps.data.region.nameZh}})
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 8rem"
-                                   :options="publishFormatSet" option-label="label" option-value="value"
-                                   display="chip" :filter="true">
-                    </p-multiselect>
-                </template>
-            </p-column>
-            <p-column header="专辑分类" filter-field="albumFormat" :show-filter-menu="false"
-                      style="flex: 0 0 8rem">
-                <template #body="slotProps">
-                    <ul>
-                        <li v-for="data in slotProps.data.albumFormat">
-                            {{data.label}}
-                        </li>
-                    </ul>
-                </template>
-                <template #filter="{filterModel,filterCallback}">
-                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 7rem"
-                                   :options="albumFormatSet" option-label="label" option-value="value"
-                                   display="chip" :filter="true">
-                    </p-multiselect>
+                    <p-dropdown v-model="filterModel.value" @change="filterCallback()"
+                                :options="regionSet" option-label="nameZh" option-value="code"
+                                style="width: 8rem" >
+                        <template #value="slotProps">
+                            <div class="country-item" v-if="slotProps.value">
+                                <span :class="'fi fi-' + slotProps.value"></span>
+                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            </div>
+                            <span v-else>选择地区</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="country-item">
+                                <span :class="'fi fi-' + slotProps.option.code"></span>
+                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            </div>
+                        </template>
+                    </p-dropdown>
                 </template>
             </p-column>
             <p-column header="媒体类型" filter-field="mediaFormat" :show-filter-menu="false"
-                      style="flex: 0 0 8rem">
+                      style="flex: 0 0 9rem">
                 <template #body="slotProps">
-                    <ul>
+                    <ul class="px-4">
                         <li v-for="data in slotProps.data.mediaFormat">
                             {{data.label}}
                         </li>
                     </ul>
                 </template>
                 <template #filter="{filterModel,filterCallback}">
-                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 7rem"
+                    <p-multiselect v-model="filterModel.value" @change="filterCallback()" style="width: 8rem"
                                    :options="mediaFormatSet" option-label="label" option-value="value"
                                    display="chip" :filter="true">
                     </p-multiselect>
                 </template>
             </p-column>
+            <p-column header="限定版" field="limited" data-type="boolean" body-class="text-center"
+                      style="flex: 0 0 5rem">
+                <template #body="{data}">
+                    <i class="pi" :class="{'true-icon pi-check-circle': data.limited, 'false-icon pi-times-circle': !data.limited}"></i>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
+                </template>
+            </p-column>
             <p-column header="特典" field="hasBonus" data-type="boolean" body-class="text-center"
-                      style="flex: 0 0 3rem">
+                      style="flex: 0 0 5rem">
                 <template #body="{data}">
                     <i class="pi" :class="{'true-icon pi-check-circle': data.hasBonus, 'false-icon pi-times-circle': !data.hasBonus}"></i>
                 </template>
@@ -253,237 +258,90 @@
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 
-    <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据"
-              class="p-fluid">
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
+              :style="{width: '600px'}" class="p-fluid">
         <p-panel header="基础信息">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>专辑名称<span style="color: red">*</span></label>
-                    <p-inputtext id="name" v-model.trim="album.name"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>专辑名称(英语)</label>
-                    <p-inputtext id="nameEn" v-model.trim="album.nameEn"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>专辑名称(中文)</label>
-                    <p-inputtext id="nameZh" v-model.trim="album.nameZh"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>专辑编号</label>
-                    <p-inputtext id="catalogNo" v-model.trim="album.catalogNo"></p-inputtext>
+                    <label>碟片编号</label>
+                    <p-inputtext v-model.trim="disc.catalogNo"></p-inputtext>
                 </div>
                 <div class="field col">
                     <label>商品条形码</label>
-                    <p-inputtext id="barcode" v-model.trim="album.barcode"></p-inputtext>
+                    <p-inputtext v-model.trim="disc.barcode"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
-                <div class="field col-6">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar id="releaseDate" v-model="album.releaseDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
-                </div>
-                <div class="field col-3">
-                    <label>发行价格</label>
-                    <p-inputnumber id="price" v-model="album.price"></p-inputnumber>
-                </div>
-                <div class="field col-3">
-                    <label>货币单位</label>
-                    <p-dropdown v-model="album.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" placeholder="单位">
-                    </p-dropdown>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-4">
-                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="album.franchises" @change="getProducts($event.value)"
-                                   :options="franchiseSet" placeholder="所属系列"
-                                   option-label="label" option-value="value" display="chip" :filter="true">
-                    </p-multiselect>
-                </div>
-                <div class="field col-6">
-                    <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="album.products" :options="productSet"
-                                   option-label="label" option-value="value" placeholder="请先选择所属系列"
-                                   display="chip" :filter="true" :disabled="productSelect">
-                    </p-multiselect>
+                <div class="field col">
+                    <label>商品名<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="disc.name"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <div class="col-12">
-                        <label class="mb-3">特典</label>
-                    </div>
-                    <div class="col-12 mt-4">
-                        <p-inputswitch v-model="album.hasBonus" :true-value="1" :false-value="0"></p-inputswitch>
-                    </div>
+                    <label>商品名(中)</label>
+                    <p-inputtext v-model.trim="disc.nameZh"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
-                    <label class="mb-3">出版形式<span style="color: red">*</span></label>
-                    <p-multiselect id="publishFormat" v-model="album.publishFormat" :options="publishFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择出版形式"
-                                   display="chip" :filter="true">
+                    <label>商品名(英)</label>
+                    <p-inputtext v-model.trim="disc.nameEn"></p-inputtext>
+                </div>
+                <div class="field col-4">
+                    <label>地区<span style="color: red">*</span></label>
+                    <p-dropdown v-model="disc.region" :options="regionSet" :filter="true"
+                                :show-clear="true" option-label="nameZh" option-value="code">
+                        <template #value="slotProps">
+                            <div class="country-item" v-if="slotProps.value">
+                                <span :class="'fi fi-' + slotProps.value"></span>
+                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            </div>
+                            <span v-else>选择地区</span>
                         </template>
-                    </p-multiselect>
-                </div>
-                <div class="field col-4">
-                    <label class="mb-3">专辑分类<span style="color: red">*</span></label>
-                    <p-multiselect id="albumFormat" v-model="album.albumFormat" :options="albumFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择专辑分类"
-                                   display="chip" :filter="true">
-                    </p-multiselect>
-                </div>
-                <div class="field col-4">
-                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
-                    <p-multiselect id="mediaFormat" v-model="album.mediaFormat" :options="mediaFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择媒体类型"
-                                   display="chip" :filter="true">
-                    </p-multiselect>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>唱片公司</label>
-                    <p-inputtext id="label" v-model.trim="album.label"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>发行商</label>
-                    <p-inputtext id="publisher" v-model.trim="album.publisher"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>经销商</label>
-                    <p-inputtext id="distributor" v-model.trim="album.distributor"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>版权方</label>
-                    <p-inputtext id="copyright" v-model.trim="album.copyright"></p-inputtext>
-                </div>
-            </div>
-            <div class="field">
-                <label>备注</label>
-                <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
-        <p-panel header="其他信息">
-            <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加曲目，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加图片，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需图片描述信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需图片特典信息，请到专辑详情页面进行</em></span>
-            </div>
-        </p-panel>
-        <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewAlbum"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '800px'}" header="编辑数据"
-              class="p-fluid">
-        <p-panel header="基础信息">
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>专辑名称<span style="color: red">*</span></label>
-                    <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>专辑名称(英语)</label>
-                    <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>专辑名称(中文)</label>
-                    <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>专辑编号</label>
-                    <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>商品条形码</label>
-                    <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-6">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
-                </div>
-                <div class="field col-3">
-                    <label>发行价格</label>
-                    <p-inputnumber id="price" v-model="albumEdit.price"></p-inputnumber>
-                </div>
-                <div class="field col-3">
-                    <label>货币单位</label>
-                    <p-dropdown v-model="albumEdit.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" placeholder="单位">
+                        <template #option="slotProps">
+                            <div class="country-item">
+                                <span :class="'fi fi-' + slotProps.option.code"></span>
+                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            </div>
+                        </template>
                     </p-dropdown>
                 </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-4">
-                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="albumEdit.franchises" @change="getProducts($event.value)"
-                                   :options="franchiseSet" placeholder="所属系列"
-                                   option-label="label" option-value="value" display="chip" :filter="true">
-                    </p-multiselect>
-                </div>
-                <div class="field col-6">
-                    <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="albumEdit.products" :options="productSet"
-                                   option-label="label" option-value="value" placeholder="选择所属作品"
-                                   display="chip" :filter="true" :disabled="productSelect">
-                    </p-multiselect>
-                </div>
-                <div class="field col">
+                <div class="field col-2">
                     <div class="col-12">
                         <label class="mb-3">特典</label>
                     </div>
-                    <div class="col-12 mt-4">
-                        <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="disc.hasBonus" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">限定版</label>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="disc.limited" :true-value="1"
                                        :false-value="0"></p-inputswitch>
                     </div>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
-                    <label class="mb-3">出版形式<span style="color: red">*</span></label>
-                    <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat" :options="publishFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择出版形式"
-                                   display="chip">
+                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                    <p-multiselect v-model="disc.franchises" @change="getProducts($event.value)"
+                                   :options="franchiseSet" placeholder="所属系列"
+                                   option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
-                    <label class="mb-3">专辑分类<span style="color: red">*</span></label>
-                    <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择专辑分类"
-                                   display="chip">
+                    <label class="mb-3">所属作品<span style="color: red">*</span></label>
+                    <p-multiselect v-model="disc.products" :options="productSet"
+                                   option-label="label" option-value="value" placeholder="选择所属作品"
+                                   display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
                     <label class="mb-3">媒体类型<span style="color: red">*</span></label>
-                    <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
+                    <p-multiselect v-model="disc.mediaFormat" :options="mediaFormatSet"
                                    option-label="label" option-value="value" placeholder="选择媒体类型"
                                    display="chip">
                     </p-multiselect>
@@ -491,67 +349,200 @@
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>唱片公司</label>
-                    <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="disc.releaseDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
                 </div>
                 <div class="field col">
-                    <label>发行商</label>
-                    <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
+                    <label>发行价格</label>
+                    <p-inputnumber v-model="disc.price"></p-inputnumber>
                 </div>
-                <div class="field col">
-                    <label>经销商</label>
-                    <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>版权方</label>
-                    <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
+                <div class="field col-3">
+                    <label>货币单位</label>
+                    <p-dropdown v-model="discEdit.currencyUnit" :options="currencyUnitSet"
+                                option-label="label" option-value="value">
+                    </p-dropdown>
                 </div>
             </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
+                <p-textarea v-model="disc.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="其他信息">
-            <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
+        <p-panel header="进阶信息">
+            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>添加和编辑曲目等操作，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片等操作，请到专辑详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑规格信息，请到碟片详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>描述</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>如需编辑描述信息，请到专辑详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑描述信息，请到碟片详情页面进行</em></span>
             </div>
             <p-divider align="center" type="dashed"><b>特典</b></p-divider>
             <div class="field">
-                <span style="text-align: center"><em>如需编辑特典信息，请到专辑详情页面进行</em></span>
+                <span style="text-align: center"><em>添加和编辑特典信息，请到碟片详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewDisc"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
+              :style="{width: '600px'}" class="p-fluid">
+        <p-panel header="基础信息">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>碟片编号</label>
+                    <p-inputtext v-model.trim="discEdit.catalogNo"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>商品条形码</label>
+                    <p-inputtext v-model.trim="discEdit.barcode"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>商品名<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="discEdit.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>商品名(中)</label>
+                    <p-inputtext v-model.trim="discEdit.nameZh"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-4">
+                    <label>商品名(英)</label>
+                    <p-inputtext v-model.trim="discEdit.nameEn"></p-inputtext>
+                </div>
+                <div class="field col-4">
+                    <label>地区<span style="color: red">*</span></label>
+                    <p-dropdown v-model="discEdit.region" :options="regionSet" :filter="true"
+                                :show-clear="true" option-label="nameZh" option-value="code">
+                        <template #value="slotProps">
+                            <div class="country-item" v-if="slotProps.value">
+                                <span :class="'fi fi-' + slotProps.value"></span>
+                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            </div>
+                            <span v-else>选择地区</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="country-item">
+                                <span :class="'fi fi-' + slotProps.option.code"></span>
+                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            </div>
+                        </template>
+                    </p-dropdown>
+                </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">特典</label>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="discEdit.hasBonus" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+                <div class="field col-2">
+                    <div class="col-12">
+                        <label class="mb-3">限定版</label>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <p-inputswitch v-model="discEdit.limited" :true-value="1"
+                                       :false-value="0"></p-inputswitch>
+                    </div>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-4">
+                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                    <p-multiselect v-model="discEdit.franchises" @change="getProducts($event.value)"
+                                   :options="franchiseSet" placeholder="所属系列"
+                                   option-label="label" option-value="value" display="chip" :filter="true">
+                    </p-multiselect>
+                </div>
+                <div class="field col-4">
+                    <label class="mb-3">所属作品<span style="color: red">*</span></label>
+                    <p-multiselect v-model="discEdit.products" :options="productSet"
+                                   option-label="label" option-value="value" placeholder="选择所属作品"
+                                   display="chip" :filter="true" :disabled="productSelect">
+                    </p-multiselect>
+                </div>
+                <div class="field col-4">
+                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
+                    <p-multiselect v-model="discEdit.mediaFormat" :options="mediaFormatSet"
+                                   option-label="label" option-value="value" placeholder="选择媒体类型"
+                                   display="chip">
+                    </p-multiselect>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="discEdit.releaseDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+                <div class="field col">
+                    <label>发行价格</label>
+                    <p-inputnumber v-model="discEdit.price"></p-inputnumber>
+                </div>
+                <div class="field col-3">
+                    <label>货币单位</label>
+                    <p-dropdown v-model="discEdit.currencyUnit" :options="currencyUnitSet"
+                                option-label="label" option-value="value">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="discEdit.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+        <p-panel header="进阶信息">
+            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>添加和编辑规格信息，请到碟片详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>添加和编辑描述信息，请到碟片详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>添加和编辑特典信息，请到碟片详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
             </div>
         </p-panel>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditAlbum"></p-button>
+                      @click="submitEditDisc"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="deleteAlbumsDialog" :style="{width: '450px'}" header="删除数据">
+    <p-dialog :modal="true" v-model:visible="deleteDiscsDialog" header="删除数据"
+              :style="{width: '450px'}">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-            <span v-if="album">确定删除所选的数据？</span>
+            <span>确定删除所选商品？</span>
         </div>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="deleteAlbumsDialog = false"></p-button>
+                      @click="deleteDiscsDialog = false"></p-button>
             <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteSelectedAlbums"></p-button>
+                      @click="deleteSelectedDiscs"></p-button>
         </template>
     </p-dialog>
 </div>
@@ -574,7 +565,7 @@
             }
             //endregion
 
-            //region ------搜索------
+            //region ------过滤------
             const totalRecords = ref(0);
             const queryParams = ref({});
             const onToggle = (val) => {
@@ -583,75 +574,67 @@
             const filters = ref({
                 'catalogNo': {value: '', matchMode: 'contains'},
                 'name': {value: '', matchMode: 'contains'},
-                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
-                'publishFormat': {value: null, matchMode: FilterMatchMode.IN},
-                'albumFormat': {value: null, matchMode: FilterMatchMode.IN},
-                'mediaFormat': {value: null, matchMode: FilterMatchMode.IN},
-                'franchises': {value: null, matchMode: FilterMatchMode.IN},
+                'region': {value: '', matchMode: 'contains'},
+                'franchises': {value: null, matchMode: FilterMatchMode.EQUALS},
                 'products': {value: null, matchMode: FilterMatchMode.IN},
+                'mediaFormat': {value: null, matchMode: FilterMatchMode.IN},
+                'limited': {value: null, matchMode: FilterMatchMode.EQUALS},
+                'hasBonus': {value: null, matchMode: FilterMatchMode.EQUALS},
             });
             const onPage = (event) => {
                 queryParams.value = event;
-                getAlbums();
+                getDiscs();
             };
             const onSort = (event) => {
                 queryParams.value = event;
-                getAlbums();
+                getDiscs();
             };
             const onFilter = () => {
                 queryParams.value.filters = filters.value ;
                 queryParams.value.first = 0;
-                getAlbums();
+                getDiscs();
             };
-            const getAlbums = () => {
+            const getDiscs = () => {
                 let json = {
                     pageLabel: "list",
                     queryParams: queryParams.value
                 }
-                axiosPostRequest(GET_ALBUMS_URL, json)
+                axiosPostRequest(GET_DISCS_URL, json)
                     .then(res => {
-                        albums.value = res.data;
+                        discs.value = res.data;
                         totalRecords.value = res.total;
                     })
             };
             //endregion
 
             const displayEditDialog = ref(false);
-            const deleteAlbumsDialog = ref(false);
+            const deleteDiscsDialog = ref(false);
             const displayNewDialog = ref(false);
 
-            const selectedAlbums = ref();
+            const selectedDiscs = ref();
 
-            const album = ref({});
-            const albums = ref();
+            const disc = ref({});
+            const discs = ref();
 
             const mediaFormatSet = ref([[${mediaFormatSet}]]);
-            const albumFormatSet = ref([[${albumFormatSet}]]);
-            const publishFormatSet = ref([[${publishFormatSet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
             const franchiseSet = ref([[${franchiseSet}]]);
+            const regionSet = ref([[${regionSet}]]);
 
-            const albumEdit = ref({});
-            const submitted = ref(false);
+            const discEdit = ref({});
             const toast = useToast();
             const dt = ref();
             const loading = ref(true);
             const columns = ref([
+                {field: 'nameEn', header: '商品名(英)'},
+                {field: 'nameZh', header: '商品名(中)'},
                 {field: 'barcode', header: '商品条形码'},
-                {field: 'nameZh', header: '专辑名称(中文)'},
-                {field: 'nameEn', header: '专辑名称(英文)'},
                 {field: 'remark', header: '备注'},
-                {field: 'label', header: '唱片公司'},
-                {field: 'publisher', header: '发行商'},
-                {field: 'distributor', header: '经销商'},
-                {field: 'copyright', header: '版权方'},
+                {field: 'addedTime', header: '收录时间'},
+                {field: 'editedTime', header: '编辑时间'},
             ]);
             const selectedColumns = ref();
-
-            const imgData = ref([]);
-            const imgArr = ref([]);
-            const detailId = ref();
 
             const formatCurrency = (value) => {
                 return value.toLocaleString('ja-JP', {style: 'currency', currency: 'JPY'});
@@ -678,7 +661,7 @@
                     sortOrder: null,
                     filters: filters.value
                 };
-                getAlbums();
+                getDiscs();
                 loading.value = false;
             };
 
@@ -690,19 +673,19 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            deleteAlbumsDialog.value = true;
+                            deleteDiscsDialog.value = true;
                         }
                     })
             };
 
             //删除数据
-            const deleteSelectedAlbums = () => {
-                axiosDeleteRequest(DELETE_ALBUM_URL, selectedAlbums.value)
+            const deleteSelectedDiscs = () => {
+                axiosDeleteRequest(DELETE_DISC_URL, selectedDiscs.value)
                     .then(res => {
                         if (res.state === 1) {
                             toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
-                            deleteAlbumsDialog.value = false;
-                            selectedAlbums.value = null;
+                            deleteDiscsDialog.value = false;
+                            selectedDiscs.value = null;
                             init();
                         } else {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
@@ -718,14 +701,15 @@
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
                             let dataTmp = JSON.parse(JSON.stringify(data));
-                            albumEdit.value = dataTmp;
-                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                            albumEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
+                            discEdit.value = dataTmp;
+                            discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                            discEdit.value.hasBonus = dataTmp.hasBonus ? 1: 0;
+                            discEdit.value.limited = dataTmp.limited ? 1: 0;
+                            discEdit.value.region = dataTmp.region.code;
+                            discEdit.value.franchises = label2value(dataTmp.franchises, franchiseSet.value).concat();
                             let json = {
-                                franchises: albumEdit.value.franchises,
-                                entityType: ALBUM
+                                franchises: discEdit.value.franchises,
+                                entityType: DISC
                             };
                             axiosPostRequest(GET_PRODUCT_SET_URL, json)
                                 .then(res => {
@@ -735,7 +719,7 @@
                                     }else {
                                         productSelect.value = true;
                                     }
-                                    albumEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
+                                    discEdit.value.products = label2value(dataTmp.products, productSet.value).concat();
                                     displayEditDialog.value = true;
                                 });
                         }
@@ -744,15 +728,15 @@
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                albumEdit.value = {};
+                discEdit.value = {};
                 init();
             };
             //保存编辑数据
-            const submitEditAlbum = async () => {
-                await axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
+            const submitEditDisc = async () => {
+                await axiosPostRequest(UPDATE_DISC_URL, discEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            albumEdit.value = {};
+                            discEdit.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -776,8 +760,7 @@
                         if (res.state === 0) {
                             toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         } else {
-                            album.value = {};
-                            submitted.value = false;
+                            disc.value = {};
                             productSelect.value = true;
                             displayNewDialog.value = true;
                         }
@@ -785,17 +768,16 @@
             };
             //关闭新增数据面板
             const closeNewDialog = () => {
-                album.value = {};
+                disc.value = {};
                 displayNewDialog.value = false;
-                submitted.value = false;
             };
 
             //提交新增数据
-            const submitNewAlbum = () => {
-                axiosPostRequest(INSERT_ALBUM_URL, album.value)
+            const submitNewDisc = () => {
+                axiosPostRequest(INSERT_DISC_URL, disc.value)
                     .then(res => {
                         if (res.state === 1) {
-                            album.value = {};
+                            disc.value = {};
                             toast.add({
                                 severity: 'success',
                                 summary: 'Successful',
@@ -814,7 +796,7 @@
             const getProducts = (data) => {
                 let json = {
                     franchises: data,
-                    entityType: ALBUM
+                    entityType: DISC
                 };
                 axiosPostRequest(GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -822,8 +804,8 @@
                             productSet.value = res;
                             productSelect.value = false;
                         }else {
-                            album.value.products = [];
-                            albumEdit.value.products = [];
+                            disc.value.products = [];
+                            discEdit.value.products = [];
                             productSelect.value = true;
                         }
                     })
@@ -833,15 +815,15 @@
 
 
             return {
-                onToggle, onPage, onSort, onFilter, filters, totalRecords, currencyUnitSet,
+                onToggle, onPage, onSort, onFilter, filters, totalRecords,
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
-                album, albums, formatCurrency, columns, selectedColumns,
+                disc, discs, formatCurrency, columns, selectedColumns,
                 loading, exportCSV, dt, displayNewDialog, openNewDialog, closeNewDialog,
-                submitNewAlbum, confirmDeleteSelected, deleteAlbumsDialog, deleteSelectedAlbums,
-                selectedAlbums, displayEditDialog, init,
-                openEditDialog, closeEditDialog, submitEditAlbum, albumEdit,
-                mediaFormatSet, publishFormatSet, albumFormatSet, productSet, franchiseSet,
-                getProducts, productSelect, imgData, imgArr, detailId
+                submitNewDisc, confirmDeleteSelected, deleteDiscsDialog, deleteSelectedDiscs,
+                selectedDiscs, displayEditDialog, init,
+                openEditDialog, closeEditDialog, submitEditDisc, discEdit, regionCode2NameZh,
+                mediaFormatSet, productSet, franchiseSet, regionSet, currencyUnitSet,
+                getProducts, productSelect
             }
         },
         components: {

@@ -61,9 +61,6 @@
     <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
 
-    <!-- Axios -->
-    <script th:src="@{/tool/axios/axios.js}"></script>
-
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -86,12 +83,8 @@
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Http_Request.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-    <script th:src="@{/js/basic/Search_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Image_Params.js}"></script>
-    <script th:src="@{/js/basic/Item_Detail_Text_Params.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -109,11 +102,11 @@
             <p-card>
                 <template #title>
                     <div class="grid detail-item-header-title">
-                        <h5 class="col-10">
+                        <h4 class="col-11">
                             <b class="detail-item-title">
                                 {{album.name}}
                             </b>
-                        </h5>
+                        </h4>
                         <div th:insert="~{template/item-detail-template :: item_common_edit_button}"></div>
                     </div>
                 </template>
@@ -799,6 +792,10 @@
 </div>
 <script type="module" th:inline="javascript">
 
+    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useDialog} = primevue.usedialog;
@@ -837,7 +834,6 @@
             //region init
             const init = () => {
                 text2marked();
-                // initImageClass($("#galleria-item").attr("src"));
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 createAplayer();
             };
@@ -915,46 +911,16 @@
             //endregion
 
             //region edit
-            const openImageEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
-                        }
-                    })
-            };
-            const openDescriptionEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showDescriptionEditDialog(toast, dialog, detailInfo.value);
-                        }
-                    });
-            };
-            const openBonusEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            showBonusEditDialog(toast, dialog, detailInfo.value, album.value.bonus);
-                        }
-                    });
-            };
             const edits = ref([
                 {
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
-                        openImageEditDialog();
+                        showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
-                    label: '音乐制作',
+                    label: '音乐创作',
                     icon: 'pi pi-users',
                     command: () => {
                         openArtistEditDialog();
@@ -971,14 +937,14 @@
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openDescriptionEditDialog();
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
                     }
                 },
                 {
                     label: '特典信息',
                     icon: 'pi iconfont icon-gift',
                     command: () => {
-                        openBonusEditDialog();
+                        showBonusEditDialog(toast, dialog, detailInfo.value, album.value.bonus);
                     }
                 }
             ]);
@@ -990,35 +956,30 @@
             const displayEditDialog = ref(false);
             //打开编辑数据面板
             const openEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
+                let dataTmp = JSON.parse(JSON.stringify(album.value));
+                dataTmp.hasBonus = album.value.hasBonus ? 1 : 0;
+                albumEdit.value = dataTmp;
+                albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
+                albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
+                albumEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                let json = {
+                    franchises: albumEdit.value.franchises,
+                    entityType: ALBUM
+                };
+                postRequest(toast, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            let dataTmp = JSON.parse(JSON.stringify(album.value));
-                            dataTmp.hasBonus = album.value.hasBonus ? 1 : 0;
-                            albumEdit.value = dataTmp;
-                            albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                            albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                            albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                            albumEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
-                            let json = {
-                                franchises: albumEdit.value.franchises,
-                                entityType: ALBUM
-                            };
-                            axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                                .then(res => {
-                                    if (res.length !== 0) {
-                                        productSet.value = res;
-                                        productSelect.value = false;
-                                    } else {
-                                        productSelect.value = true;
-                                    }
-                                    albumEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
-                                    displayEditDialog.value = true;
-                                });
+                        if(res !== undefined) {
+                            if (res.data.length !== 0) {
+                                productSet.value = res.data;
+                                productSelect.value = false;
+                            } else {
+                                productSelect.value = true;
+                            }
+                            albumEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            displayEditDialog.value = true;
                         }
-                    })
+                    });
             };
             //关闭编辑数据面板
             const closeEditDialog = () => {
@@ -1028,21 +989,12 @@
             //保存编辑数据
             const submitEditAlbum = () => {
                 editBlock.value = true;
-                axiosPostRequest(UPDATE_ALBUM_URL, albumEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_ALBUM_URL, albumEdit.value)
                     .then(res => {
-                        if (res.state === 1) {
+                        if (res !== undefined) {
                             albumEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
                     .catch(error => {
@@ -1051,20 +1003,27 @@
             };
             //根据系列id获取该系列所有作品
             const getProducts = (ev) => {
-                let json = {
-                    franchises: ev.value,
-                    entityType: ALBUM
-                };
-                axiosPostRequest(GET_PRODUCT_SET_URL, json)
-                    .then(res => {
-                        if (res.length !== 0) {
-                            productSet.value = res;
-                            productSelect.value = false;
-                        } else {
-                            productSelect.value = true;
-                            albumEdit.value.products = [];
-                        }
-                    });
+                if(ev.value.length !== 0) {
+                    let json = {
+                        franchises: ev.value,
+                        entityType: ENTITY.ALBUM
+                    };
+                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                        .then(res => {
+                            if(res !== undefined) {
+                                if (res.data.length !== 0) {
+                                    productSet.value = res.data;
+                                    productSelect.value = false;
+                                } else {
+                                    productSelect.value = true;
+                                    albumEdit.value.products = [];
+                                }
+                            }
+                        });
+                }else {
+                    productSelect.value = true;
+                    albumEdit.value.products = [];
+                }
             };
             //endregion
 
@@ -1146,20 +1105,10 @@
             const displayTrackEditDialog = ref(false);
 
             const openTrackEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 1) {
-
-                            tmpEditDiscList.value = JSON.parse(JSON.stringify(album.value.editDiscList));
-
-                            tracks.value = {};
-                            disc.value = {};
-
-                            displayTrackEditDialog.value = true;
-                        } else {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        }
-                    });
+                tmpEditDiscList.value = JSON.parse(JSON.stringify(album.value.editDiscList));
+                tracks.value = {};
+                disc.value = {};
+                displayTrackEditDialog.value = true;
             };
             const checkDisc = () => {
                 if (tracks.value.audioNames === undefined || tracks.value.audioNames.length === 0) {
@@ -1244,15 +1193,11 @@
                     id: album.value.id,
                     discList: tmpEditDiscList.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_TRACK_INFO_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_ALBUM_TRACK_INFO_URL, json)
                     .then(res => {
-                        if (res.state !== 0) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                        if (res !== undefined) {
                             displayTrackEditDialog.value = false;
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -1287,16 +1232,9 @@
             };
 
             const openArtistEditDialog = () => {
-                axiosGetRequest(CHECK_USER_AUTHORITY_URL, null)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
-                        } else {
-                            tmpArtists.value = JSON.parse(JSON.stringify(album.value.artists));
-                            artist.value = {};
-                            displayArtistEditDialog.value = true;
-                        }
-                    })
+                tmpArtists.value = JSON.parse(JSON.stringify(album.value.artists));
+                artist.value = {};
+                displayArtistEditDialog.value = true;
             };
             const clearArtists = () => {
                 tmpArtists.value = [];
@@ -1315,16 +1253,12 @@
                     id: album.value.id,
                     artists: tmpArtists.value
                 }
-                axiosPostRequest(UPDATE_ALBUM_ARTISTS_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_ALBUM_ARTISTS_URL, json)
                     .then(res => {
-                        if (res.state === 1) {
-                            toast.add({severity: 'success', summary: 'Successful', detail: res.message, life: 3000});
+                        if (res !== undefined) {
                             displayArtistEditDialog.value = false;
                             artist.value = {};
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
             };
@@ -1393,18 +1327,13 @@
             "p-card": primevue.card,
             "p-blockui": primevue.blockui,
 
-            "p-chip": primevue.chip,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
             "p-dynamicdialog": primevue.dynamicdialog,
         }
     };
 
-    const routes = [{path: "/", component: App}];
+    const routes = [{path: ALBUM_DETAIL_URL +　[[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });
