@@ -207,14 +207,15 @@ public class BookController {
     //根据搜索条件获取图书--列表界面
      @RequestMapping(value = "/get-books", method = RequestMethod.POST)
      @ResponseBody
-     public String getBooksByFilterList(@RequestBody String json) {
+     public String getBooksByFilterList(@RequestBody String json, HttpServletRequest request) {
          JSONObject param = JSON.parseObject(json);
          JSONObject queryParams = param.getJSONObject("queryParams");
          String pageLabel = param.getString("pageLabel");
 
          List<BookVOAlpha> books = new ArrayList<>();
 
-         SearchResult searchResult = bookService.getBooksByFilter(queryParams);
+         SearchResult searchResult = bookService.getBooksByFilter(queryParams, 
+                 userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
          if (StringUtils.equals(pageLabel, "list")) {
              books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);

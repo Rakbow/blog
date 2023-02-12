@@ -156,4 +156,10 @@ public class ApiInfo {
     public static final String DELETE_FILES_SUCCESS = "文件删除成功！";
     //endregion
 
+    //region system
+
+    public static final String UPDATE_ITEM_STATUS = "%s状态更改成功!";
+
+    //endregion
+
 }

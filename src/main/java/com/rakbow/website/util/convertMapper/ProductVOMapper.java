@@ -4,14 +4,12 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.data.vo.product.ProductVOBeta;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import com.rakbow.website.data.CommonConstant;
 import org.mapstruct.Mapper;
@@ -104,7 +102,7 @@ public interface ProductVOMapper {
 
         productVOAlpha.setAddedTime(CommonUtils.timestampToString(product.getAddedTime()));
         productVOAlpha.setEditedTime(CommonUtils.timestampToString(product.getEditedTime()));
-        productVOAlpha.set_s(product.get_s());
+        productVOAlpha.setStatus(product.getStatus() == 1);
 
         return productVOAlpha;
     }

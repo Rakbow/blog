@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.game.GameVO;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
@@ -110,7 +109,7 @@ public interface GameVOMapper {
         //审计字段
         gameVOAlpha.setAddedTime(CommonUtils.timestampToString(game.getAddedTime()));
         gameVOAlpha.setEditedTime(CommonUtils.timestampToString(game.getEditedTime()));
-        gameVOAlpha.set_s(game.get_s());
+        gameVOAlpha.setStatus(game.getStatus() == 1);
 
         return gameVOAlpha;
     }

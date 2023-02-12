@@ -116,7 +116,8 @@ public class AlbumController {
 
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
-        SearchResult searchResult = albumService.getAlbumsByFilter(queryParams);
+        SearchResult searchResult = albumService.getAlbumsByFilter(queryParams,
+                userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             albums = albumVOMapper.album2VOAlpha((List<Album>) searchResult.data);

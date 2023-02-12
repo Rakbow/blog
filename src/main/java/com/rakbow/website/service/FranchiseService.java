@@ -277,7 +277,7 @@ public class FranchiseService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getFranchisesByFilter(JSONObject queryParams) {
+    public SearchResult getFranchisesByFilter(JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -296,9 +296,10 @@ public class FranchiseService {
                     ?Integer.toString(1):Integer.toString(0);
         }
 
-        List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta, sortField, sortOrder, first, row);
+        List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
+                userAuthority > 2, sortField, sortOrder, first, row);
 
-        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta);
+        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, userAuthority > 2);
 
         return new SearchResult(total, franchises);
     }

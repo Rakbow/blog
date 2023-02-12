@@ -38,7 +38,7 @@ public class GameVOAlpha {
     //审计字段
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
-    private int _s;//状态
+    private boolean status;//状态
 
     //其他字段
     private long visitNum;//浏览数

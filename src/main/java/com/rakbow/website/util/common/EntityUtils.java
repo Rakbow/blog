@@ -3,8 +3,6 @@ package com.rakbow.website.util.common;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ItemDetailInfo;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.entity.ProductUtils;
 
@@ -29,7 +27,7 @@ public class EntityUtils {
         detailInfo.setFranchises(FranchiseUtils.getFranchiseList(json.getString("franchises")));
 
         detailInfo.setEntityType(entityType);
-        detailInfo.set_s(json.getInteger("_s"));
+        detailInfo.setStatus(json.getIntValue("status") == 1);
 
         return detailInfo;
     }
@@ -45,7 +43,7 @@ public class EntityUtils {
         detailInfo.setDescription(json.getString("description"));
 
         detailInfo.setEntityType(entityType);
-        detailInfo.set_s(json.getInteger("_s"));
+        detailInfo.setStatus(json.getIntValue("status") == 1);
 
         return detailInfo;
     }

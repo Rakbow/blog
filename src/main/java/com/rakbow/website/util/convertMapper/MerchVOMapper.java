@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.merch.MerchCategory;
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.merch.MerchVO;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
@@ -114,7 +113,7 @@ public interface MerchVOMapper {
         //审计字段
         merchVOAlpha.setAddedTime(CommonUtils.timestampToString(merch.getAddedTime()));
         merchVOAlpha.setEditedTime(CommonUtils.timestampToString(merch.getEditedTime()));
-        merchVOAlpha.set_s(merch.get_s());
+        merchVOAlpha.setStatus(merch.getStatus() == 1);
 
         return merchVOAlpha;
     }

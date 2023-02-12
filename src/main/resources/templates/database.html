@@ -40,10 +40,6 @@
     <script th:src="@{/js/primevue/components/tabmenu.min.js}"></script>
     <script th:src="@{/js/primevue/components/skeleton.min.js}"></script>
 
-    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
-    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
     <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
@@ -68,12 +64,11 @@
 <body>
 <div id="app">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: database_header}"></header>
 
     <p-tabmenu :model="dbIndexTabs"></p-tabmenu>
     <router-view></router-view>
 
-    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -83,7 +78,6 @@
     import {DATABASE_INDEX_ROUTER} from "/js/basic/Rakbow_Database_Index_Params.js";
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
-    const { useDialog } = primevue.usedialog;
     const {useToast} = primevue.usetoast;
 
     const App = {
@@ -91,15 +85,8 @@
             onMounted(() => {
             });
 
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
             return {
-                dbIndexTabs, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
+                dbIndexTabs, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
             }
         },
         components: {
@@ -108,7 +95,6 @@
             "p-menubar": primevue.menubar,
             "p-dropdown": primevue.dropdown,
             "p-button": primevue.button,
-            "p-dynamicdialog": primevue.dynamicdialog,
 
             "p-tabmenu": primevue.tabmenu,
         }
@@ -126,7 +112,6 @@
         .use(primevue.toastservice)
         .use(primevue.config.default)
         .directive('tooltip', Tooltip)
-        .use(primevue.dialogservice)
         .mount("#app");
 </script>
 <style>

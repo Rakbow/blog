@@ -52,7 +52,7 @@ public class Album {
     @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
     @JSONField(format="yyyy/MM/dd HH:mm:ss")
     private Timestamp editedTime;//数据更新时间
-    private int _s;//激活状态
+    private int status;//激活状态
 
     public Album() {
 
@@ -83,7 +83,7 @@ public class Album {
         this.trackInfo = "{}";
         this.addedTime = new Timestamp(System.currentTimeMillis());
         this.editedTime = new Timestamp(System.currentTimeMillis());
-        this._s = 1;
+        this.status = 1;
 
     }
 

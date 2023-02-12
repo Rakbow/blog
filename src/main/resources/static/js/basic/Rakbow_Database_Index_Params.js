@@ -408,7 +408,7 @@ const albumIndex = {
         getProducts(data) {
             let json = {
                 franchises: data,
-                entityType: ALBUM
+                entityType: ENTITY.ALBUM
             };
             postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
@@ -863,7 +863,7 @@ const bookIndex = {
         getProducts(data) {
             let json = {
                 franchises: data,
-                entityType: BOOK
+                entityType: ENTITY.BOOK
             };
             postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
@@ -1314,7 +1314,7 @@ const discIndex = {
         getProducts(data) {
             let json = {
                 franchises: data,
-                entityType: DISC
+                entityType: ENTITY.DISC
             };
             postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
@@ -1738,7 +1738,7 @@ const gameIndex = {
         getProducts(data) {
             let json = {
                 franchises: data,
-                entityType: GAME
+                entityType: ENTITY.GAME
             };
             postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
@@ -2133,7 +2133,7 @@ const merchIndex = {
         getProducts(data) {
             let json = {
                 franchises: data,
-                entityType: MERCH
+                entityType: ENTITY.MERCH
             };
             postRequest(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {

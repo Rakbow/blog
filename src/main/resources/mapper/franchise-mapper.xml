@@ -5,18 +5,18 @@
 <mapper namespace="com.rakbow.website.dao.FranchiseMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, meta_info, _s
+        id, name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, meta_info, status
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, meta_info, _s
+        name, name_zh, name_en, origin_date, added_time, edited_time, description, remark, images, meta_info, status
     </sql>
 
     <select id="getFranchise" resultType="Franchise">
         select
         <include refid="selectFields"></include>
         from franchise
-        where id = #{id} and _s = 1
+        where id = #{id} and status = 1
     </select>
 
     <select id="getAll" resultType="Franchise">
@@ -27,7 +27,7 @@
 
     <insert id="addFranchise" parameterType="Franchise" keyProperty="id">
         insert into franchise (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{originDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images}, #{metaInfo}, #{_s})
+        values (#{name}, #{nameZh}, #{nameEn}, #{originDate}, #{addedTime}, #{editedTime}, #{description}, #{remark}, #{images}, #{metaInfo}, #{status})
     </insert>
 
     <update id="updateFranchise" parameterType="Franchise" keyProperty="id">
@@ -36,15 +36,9 @@
         name = #{franchise.name}, name_zh = #{franchise.nameZh}, name_en = #{franchise.nameEn},
          origin_date = #{franchise.originDate}, added_time = #{franchise.addedTime},
          edited_time = #{franchise.editedTime}, description = #{franchise.description}, remark = #{franchise.remark},
-          images = #{franchise.images}, meta_info = #{franchise.metaInfo}, _s = #{franchise._s}
+          images = #{franchise.images}, meta_info = #{franchise.metaInfo}
         where id = #{id}
     </update>
-
-<!--    <delete id="deleteFranchise">-->
-<!--        delete-->
-<!--        from franchise-->
-<!--        where id = #{id}-->
-<!--    </delete>-->
 
     <update id="updateFranchiseDescription" keyProperty="id">
         update franchise
@@ -74,7 +68,9 @@
             <if test="isMeta != null and isMeta != '' ">
                 and JSON_EXTRACT(meta_info, '$.isMeta') = #{isMeta}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
         <if test="sortField == 'id'">
             <if test="sortOrder == 1">
@@ -90,6 +86,14 @@
             </if>
             <if test="sortOrder == -1">
                 order by origin_date desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
             </if>
         </if>
         <if test="sortField == null">
@@ -113,7 +117,9 @@
             <if test="isMeta != null and isMeta != '' ">
                 and JSON_EXTRACT(meta_info, '$.isMeta') = #{isMeta}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
     </select>
 

@@ -23,12 +23,12 @@ public interface MerchMapper {
 
     //根据过滤条件搜索Merch
     List<Merch> getMerchsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
-                                  int category, String region, String notForSale, String sortField, int sortOrder,
-                                  int first, int row);
+                                  int category, String region, String notForSale, boolean status,
+                                  String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getitemRowsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
-                              int category, String region, String notForSale);
+    int getMerchsRowsByFilter(String name, String barcode, List<Integer> franchises, List<Integer> products,
+                              int category, String region, String notForSale, boolean status);
 
     //新增Merch
     void addMerch (Merch merch);

@@ -7,27 +7,27 @@
     <sql id="selectFields">
         id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, authors,
         publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
-        edited_time, _s
+        edited_time, status
     </sql>
 
     <sql id="insertFields">
         title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, authors,
         publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
-        edited_time, _s
+        edited_time, status
     </sql>
 
     <select id="getAll" resultType="Book">
         select
         <include refid="selectFields"></include>
         from book
-        where _s = 1
+        where status = 1
     </select>
 
     <select id="getBook" resultType="Book">
         select
         <include refid="selectFields"></include>
         from book
-        where id = #{id} and _s = 1
+        where id = #{id} and status = 1
     </select>
 
     <insert id="addBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id">
@@ -37,7 +37,7 @@
         insert into book (<include refid="insertFields"></include>)
         values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{franchises}, #{products}, #{region},
         #{publishLanguage},#{authors}, #{publisher}, #{publishDate}, #{price}, #{summary}, #{spec}, #{hasBonus},
-        #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
     <update id="updateBook" parameterType="Book" keyProperty="id">
@@ -48,7 +48,7 @@
         region = #{book.region}, publish_language = #{book.publishLanguage}, publisher = #{book.publisher},
         publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
         has_bonus = #{book.hasBonus}, remark = #{book.remark}, added_time = #{book.addedTime},
-        edited_time = #{book.editedTime}, _s = #{book._s}
+        edited_time = #{book.editedTime}
         where id = #{book.id}
     </update>
 
@@ -96,7 +96,7 @@
     <update id="updateStatusById" keyProperty="id">
         update book
         set
-        _s = 0
+        status = 0
         where id = #{id}
     </update>
 
@@ -141,7 +141,9 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
         <if test="sortField == 'id'">
             <if test="sortOrder == 1">
@@ -167,6 +169,14 @@
                 order by price desc
             </if>
         </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
         <if test="sortField == null">
             order by id desc
         </if>
@@ -175,7 +185,7 @@
         </if>
     </select>
 
-    <select id="getitemRowsByFilter" resultType="int">
+    <select id="getBooksRowsByFilter" resultType="int">
         select count(id)
         from book
         <where>
@@ -215,7 +225,9 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
     </select>
 
@@ -223,7 +235,7 @@
         select
         <include refid="selectFields"></include>
         from book
-        where _s = 1
+        where status = 1
         order by added_time desc
         limit #{limit}
     </select>
@@ -232,7 +244,7 @@
         select
         <include refid="selectFields"></include>
         from book
-        where _s = 1
+        where status = 1
         order by edited_time desc
         limit #{limit}
     </select>

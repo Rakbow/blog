@@ -22,11 +22,11 @@ public interface GameMapper {
 
     //根据过滤条件搜索Game
     List<Game> getGamesByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
-                                String region, String sortField, int sortOrder, int first, int row);
+                                String region, boolean status, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getitemRowsByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
-                             String region);
+    int getGamesRowsByFilter(String name, String hasBonus, List<Integer> franchises, List<Integer> products, int platform,
+                             String region, boolean status);
 
     //新增Game
     int addGame (Game game);

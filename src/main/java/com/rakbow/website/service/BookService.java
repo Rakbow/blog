@@ -13,7 +13,6 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
-import com.rakbow.website.util.file.QiniuBaseUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -306,7 +305,7 @@ public class BookService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getBooksByFilter(JSONObject queryParams) {
+    public SearchResult getBooksByFilter(JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -339,10 +338,10 @@ public class BookService {
         }
 
         List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, franchises, products, hasBonus, sortField, sortOrder, first, row);
+                bookType, franchises, products, hasBonus, userAuthority > 2, sortField, sortOrder, first, row);
 
-        int total = bookMapper.getitemRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, franchises, products, hasBonus);
+        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
+                bookType, franchises, products, hasBonus, userAuthority > 2);
 
         return new SearchResult(total, books);
     }
@@ -360,7 +359,7 @@ public class BookService {
         products.add(productId);
 
         List<Book> books = bookMapper.getBooksByFilter(null, null, null, null,
-                null, null, 100, null, products, null, "publishDate",
+                null, null, 100, null, products, null, false, "publishDate",
                 -1,  0, 0);
 
         return bookVOMapper.book2VOBeta(books);
@@ -386,7 +385,7 @@ public class BookService {
         //该系列所有Book
         List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, null,
                 null, null, 100, CommonUtils.ids2List(book.getFranchises()),
-                        null, null, "publishDate", 1, 0, 0)
+                        null, null, false, "publishDate", 1, 0, 0)
                 .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
 
         List<Book> queryResult = allBooks.stream().filter(tmpBook ->

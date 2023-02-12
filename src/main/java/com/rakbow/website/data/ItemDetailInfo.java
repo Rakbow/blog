@@ -22,6 +22,6 @@ public class ItemDetailInfo {
     private String description;//描述信息
 
     //审计字段
-    private int _s;//激活状态
+    private boolean status;//激活状态
 
 }

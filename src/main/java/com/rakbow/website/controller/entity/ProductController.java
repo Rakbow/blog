@@ -389,12 +389,13 @@ public class ProductController {
 
     @RequestMapping(path = "/get-products", method = RequestMethod.POST)
     @ResponseBody
-    public String getProductsByFilter(@RequestBody String json){
+    public String getProductsByFilter(@RequestBody String json, HttpServletRequest request){
 
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");
 
-        SearchResult searchResult = productService.getProductsByFilter(queryParams);
+        SearchResult searchResult = productService.getProductsByFilter(queryParams,
+                userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
         List<ProductVOAlpha> products = productVOMapper.product2VOAlpha((List<Product>) searchResult.data);
 

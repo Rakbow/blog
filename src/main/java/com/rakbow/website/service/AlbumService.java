@@ -437,7 +437,7 @@ public class AlbumService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getAlbumsByFilter(JSONObject queryParams) {
+    public SearchResult getAlbumsByFilter(JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -445,7 +445,6 @@ public class AlbumService {
         int sortOrder = queryParams.getIntValue("sortOrder");
         int first = queryParams.getIntValue("first");
         int row = queryParams.getIntValue("rows");
-
 
         String catalogNo = filter.getJSONObject("catalogNo").getString("value");
         String name = filter.getJSONObject("name").getString("value");
@@ -465,10 +464,10 @@ public class AlbumService {
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, true, sortField, sortOrder,  first, row);
+                albumFormat, mediaFormat, hasBonus, userAuthority > 2, sortField, sortOrder,  first, row);
 
         int total = albumMapper.getAlbumRowsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, true);
+                albumFormat, mediaFormat, hasBonus, userAuthority > 2);
 
         return new SearchResult(total, albums);
     }

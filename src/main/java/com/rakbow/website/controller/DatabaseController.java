@@ -2,6 +2,9 @@ package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.dao.SystemMapper;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.HostHolder;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Project_name: website
@@ -52,12 +57,10 @@ public class DatabaseController {
     private MeiliSearchUtils meiliSearchUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CommonService commonService;
 
     //endregion
-
-    //region ------获取页面------
-
-    //获取首页
 
     //获取在线数据库首页
     @RequestMapping(path = "", method = RequestMethod.GET)
@@ -67,7 +70,7 @@ public class DatabaseController {
         return view;
     }
 
-    //获取数据库搜索主页
+    //region 获取数据库搜索主页
     @RequestMapping(path = "/albums", method = RequestMethod.GET)
     public String getAlbumIndexPage() {
         return "database";
@@ -88,8 +91,9 @@ public class DatabaseController {
     public String getMerchIndexPage() {
         return "database";
     }
+    //endregion
 
-    //获取数据库管理列表
+    //region 获取数据库管理列表
     @RequestMapping(path = "/list/album", method = RequestMethod.GET)
     public String getAlbumListPage() {
         return "database-list";
@@ -118,8 +122,9 @@ public class DatabaseController {
     public String getFranchiseListPage() {
         return "database-list";
     }
+    //endregion
 
-    //获取index初始数据
+    //region 获取index初始数据
     @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
     @ResponseBody
     public String getIndexInitData(@RequestBody String json) {
@@ -165,7 +170,7 @@ public class DatabaseController {
     //获取list初始数据
     @RequestMapping(value = "/get-list-init-data", method = RequestMethod.POST)
     @ResponseBody
-    public String getListInitData(@RequestBody String json) {
+    public String getListInitData(@RequestBody String json, HttpServletRequest request) {
         String label = JSON.parseObject(json).getString("label");
 
         JSONObject initData = new JSONObject();
@@ -195,11 +200,29 @@ public class DatabaseController {
         if(StringUtils.equals(label, EntityType.PRODUCT.getNameEn().toLowerCase())) {
             initData.put("productCategorySet", redisUtil.get("productCategorySet"));
         }
-        initData.put("editAuth", userService.getUserEditAuthority(hostHolder.getUser()));
+        initData.put("editAuth", userService.getUserEditAuthority(userService.getUserByRequest(request)));
         initData.put("franchiseSet", redisUtil.get("franchiseSet"));
         return initData.toJSONString();
     }
-
     //endregion
+
+    @RequestMapping(value = "/update-item-status", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemStatus(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            int entityId = JSON.parseObject(json).getIntValue("entityId");
+            boolean status = JSON.parseObject(json).getBoolean("status");
+
+            commonService.updateItemStatus(entityName, entityId, status?1:0);
+
+            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityId));
+        }catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
 
 }

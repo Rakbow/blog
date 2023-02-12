@@ -282,7 +282,7 @@ public class DiscService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getDiscsByFilterList (JSONObject queryParams) {
+    public SearchResult getDiscsByFilterList (JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -316,10 +316,10 @@ public class DiscService {
         }
 
         List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, sortField, sortOrder,  first, row);
+                mediaFormat, limited, hasBonus, userAuthority > 2, sortField, sortOrder,  first, row);
 
-        int total = discMapper.getitemRowsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus);
+        int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
+                mediaFormat, limited, hasBonus, userAuthority > 2);
 
         return new SearchResult(total, discs);
     }
@@ -344,7 +344,7 @@ public class DiscService {
         //该系列所有Disc
         List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, null,
                         CommonUtils.ids2List(disc.getFranchises()), null, null, null,
-                        null, "releaseDate", 1, 0, 0)
+                        null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
 
         List<Disc> queryResult = allDiscs.stream().filter(tmpDisc ->
@@ -401,7 +401,7 @@ public class DiscService {
         products.add(productId);
 
         List<Disc> discs = discMapper.getDiscsByFilter(null, null, null, null, products,
-                null, null, null, "releaseDate", -1,  0, 0);
+                null, null, null, false, "releaseDate", -1,  0, 0);
 
         return discVOMapper.disc2VOBeta(discs);
     }

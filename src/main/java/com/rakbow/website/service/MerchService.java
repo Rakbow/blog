@@ -266,7 +266,7 @@ public class MerchService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getMerchsByFilterList(JSONObject queryParams) {
+    public SearchResult getMerchsByFilterList(JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -296,9 +296,9 @@ public class MerchService {
         }
 
         List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
-                notForSale, sortField, sortOrder, first, row);
+                notForSale, userAuthority > 2, sortField, sortOrder, first, row);
 
-        int total = merchMapper.getitemRowsByFilter(name, barcode, franchises, products, category, region, notForSale);
+        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, userAuthority > 2);
 
         return new SearchResult(total, merchs);
     }
@@ -316,7 +316,7 @@ public class MerchService {
         products.add(productId);
 
         List<Merch> merchs = merchMapper.getMerchsByFilter(null, null, null, products,
-                100, null, null, "releaseDate", -1,  0, 0);
+                100, null, null, false, "releaseDate", -1,  0, 0);
 
         return merchVOMapper.merch2VOBeta(merchs);
     }
@@ -340,7 +340,7 @@ public class MerchService {
 
         //该系列所有Merch
         List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtils.ids2List(merch.getFranchises()),
-                null, 100, null, null, "releaseDate", 1, 0, 0)
+                null, 100, null, null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
 
         List<Merch> queryResult = allMerchs.stream().filter(tmpMerch ->

@@ -95,12 +95,13 @@ public class FranchiseController {
     //根据搜索条件获取专辑
     @RequestMapping(value = "/get-franchises", method = RequestMethod.POST)
     @ResponseBody
-    public String getFranchisesByFilterList(@RequestBody String json) {
+    public String getFranchisesByFilterList(@RequestBody String json, HttpServletRequest request) {
 
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");
 
-        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams);
+        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams,
+                 userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
         List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
 

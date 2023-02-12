@@ -45,8 +45,8 @@ public interface ProductMapper {
     //条件搜索
     List<Product> getProductsByFilter(String name, String nameZh, List<Integer> franchises, List<Integer> categories,
 
-                                          String sortField, int sortOrder, int first, int row);
+                                          boolean status, String sortField, int sortOrder, int first, int row);
     //条件搜索数量
-    int getProductsRowsByFilter(String name, String nameZh, List<Integer> franchises, List<Integer> categories);
+    int getProductsRowsByFilter(String name, String nameZh, List<Integer> franchises, List<Integer> categories, boolean status);
 
 }

@@ -1,6 +1,5 @@
 package com.rakbow.website.data.vo.franchise;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
@@ -29,7 +28,7 @@ public class FranchiseVOAlpha {
     //审计字段
     private String addedTime;//创建时间
     private String editedTime;//更新时间
-    private int _s;//状态
+    private boolean status;//状态
 
     //meta相关数据
     private boolean metaLabel;//是否为meta-franchise

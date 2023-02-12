@@ -6,26 +6,26 @@
 
     <sql id="selectFields">
         id, name, name_zh, name_en, barcode, franchises, products, category, region, release_date, price, currency_unit,
-        not_for_sale, spec, description, images, remark, added_time, edited_time, _s
+        not_for_sale, spec, description, images, remark, added_time, edited_time, status
     </sql>
 
     <sql id="insertFields">
         name, name_zh, name_en, barcode, franchises, products, category, region, release_date, price, currency_unit,
-        not_for_sale, spec, description, images, remark, added_time, edited_time, _s
+        not_for_sale, spec, description, images, remark, added_time, edited_time, status
     </sql>
 
     <select id="getMerch" resultType="Merch">
         select
         <include refid="selectFields"></include>
         from merch
-        where id = #{id} and _s = 1
+        where id = #{id} and status = 1
     </select>
 
     <select id="getAll" resultType="Merch">
         select
         <include refid="selectFields"></include>
         from merch
-        where _s = 1
+        where status = 1
     </select>
 
     <insert id="addMerch" parameterType="Merch" useGeneratedKeys="true" keyProperty="id">
@@ -35,7 +35,7 @@
         insert into merch (<include refid="insertFields"></include>)
         values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{category}, #{region},
         #{releaseDate}, #{price}, #{currencyUnit}, #{notForSale}, #{spec}, #{description}, #{images}, #{remark},
-        #{addedTime}, #{editedTime}, #{_s})
+        #{addedTime}, #{editedTime}, #{status})
     </insert>
 
     <update id="updateMerch" parameterType="Merch" keyProperty="id">
@@ -45,7 +45,7 @@
         franchises = #{merch.franchises}, products = #{merch.products}, category = #{merch.category},
         region = #{merch.region}, release_date = #{merch.releaseDate}, price = #{merch.price},
         currency_unit = #{merch.currencyUnit}, not_for_sale = #{merch.notForSale}, description = #{merch.description},
-        remark = #{merch.remark}, added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}, _s = #{merch._s}
+        remark = #{merch.remark}, added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}
         where id = #{merch.id}
     </update>
 
@@ -79,7 +79,7 @@
     <update id="updateStatusById" keyProperty="id">
         update merch
         set
-        _s = 0
+        status = 0
         where id = #{id}
     </update>
 
@@ -115,7 +115,9 @@
             <if test="notForSale != null and notForSale != '' ">
                 and not_for_sale = #{notForSale}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
         <if test="sortField == 'id'">
             <if test="sortOrder == 1">
@@ -141,6 +143,14 @@
                 order by price desc
             </if>
         </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
         <if test="sortField == null">
             order by id desc
         </if>
@@ -149,7 +159,7 @@
         </if>
     </select>
 
-    <select id="getitemRowsByFilter" resultType="int">
+    <select id="getMerchsRowsByFilter" resultType="int">
         select count(id)
         from merch
         <where>
@@ -180,7 +190,9 @@
             <if test="notForSale != null and notForSale != '' ">
                 and not_for_sale = #{notForSale}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
     </select>
 
@@ -188,7 +200,7 @@
         select
         <include refid="selectFields"></include>
         from merch
-        where _s = 1
+        where status = 1
         order by added_time desc
         limit #{limit}
     </select>
@@ -197,7 +209,7 @@
         select
         <include refid="selectFields"></include>
         from merch
-        where _s = 1
+        where status = 1
         order by edited_time desc
         limit #{limit}
     </select>

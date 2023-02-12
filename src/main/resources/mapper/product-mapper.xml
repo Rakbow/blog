@@ -6,32 +6,32 @@
 
     <sql id="selectFields">
         id, name, name_zh, name_en, release_date, franchise, category,
-        images, organizations, staffs, description, remark, added_time, edited_time, _s
+        images, organizations, staffs, description, remark, added_time, edited_time, status
     </sql>
 
     <sql id="insertFields">
         name, name_zh, name_en, release_date, franchise, category,
-        images, organizations, staffs, description, remark, added_time, edited_time, _s
+        images, organizations, staffs, description, remark, added_time, edited_time, status
     </sql>
 
     <select id="getProduct" resultType="Product">
         select
         <include refid="selectFields"></include>
         from product
-        where id = #{id} and _s = 1
+        where id = #{id} and status = 1
     </select>
 
     <select id="getAll" resultType="Product">
         select
         <include refid="selectFields"></include>
         from product
-        where _s = 1
+        where status = 1
     </select>
 
     <insert id="addProduct" parameterType="Product" keyProperty="id">
         insert into product (<include refid="insertFields"></include>)
         values (#{name}, #{nameZh}, #{nameEn}, #{releaseDate}, #{franchise}, #{category},
-        #{images}, #{organizations}, #{staffs}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{images}, #{organizations}, #{staffs}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
     <update id="updateProduct" parameterType="Product" keyProperty="id">
@@ -39,8 +39,7 @@
         set
         name = #{product.name}, name_zh = #{product.nameZh}, name_en = #{product.nameEn},
         release_date = #{product.releaseDate}, franchise = #{product.franchise}, category = #{product.category},
-        remark = #{product.remark}, added_time = #{product.addedTime}, edited_time = #{product.editedTime},
-        _s = #{product._s}
+        remark = #{product.remark}, added_time = #{product.addedTime}, edited_time = #{product.editedTime}
         where id = #{id}
     </update>
 
@@ -94,7 +93,9 @@
                     #{item}
                 </foreach>
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
         <if test="sortField == 'id'">
             <if test="sortOrder == 1">
@@ -118,6 +119,14 @@
             </if>
             <if test="sortOrder == -1">
                 order by category desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
             </if>
         </if>
         <if test="sortField == null">
@@ -150,7 +159,9 @@
                     #{item}
                 </foreach>
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
     </select>
 

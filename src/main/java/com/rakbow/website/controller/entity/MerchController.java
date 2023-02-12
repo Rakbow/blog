@@ -207,14 +207,15 @@ public class MerchController {
     //根据搜索条件获取周边--列表界面
     @RequestMapping(value = "/get-merchs", method = RequestMethod.POST)
     @ResponseBody
-    public String getMerchsByFilterList(@RequestBody String json) {
+    public String getMerchsByFilterList(@RequestBody String json, HttpServletRequest request) {
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");
         String pageLabel = param.getString("pageLabel");
 
         List<MerchVOAlpha> merchs = new ArrayList<>();
 
-        SearchResult searchResult = merchService.getMerchsByFilterList(queryParams);
+        SearchResult searchResult = merchService.getMerchsByFilterList(queryParams,
+                userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);

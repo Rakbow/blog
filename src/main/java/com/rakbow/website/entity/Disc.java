@@ -36,7 +36,7 @@ public class Disc {
     private String remark;//备注
     private Timestamp addedTime;//收录时间
     private Timestamp editedTime;//编辑时间
-    private int _s;//状态
+    private int status;//状态
 
     public Disc () {
         id = 0;
@@ -61,7 +61,7 @@ public class Disc {
         remark = "";
         addedTime = new Timestamp(System.currentTimeMillis());
         editedTime = new Timestamp(System.currentTimeMillis());
-        _s = 1;
+        status = 1;
     }
 
 

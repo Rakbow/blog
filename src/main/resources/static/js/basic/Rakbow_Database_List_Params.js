@@ -5,7 +5,7 @@ const {useToast} = primevue.usetoast;
 const albumDbList = {
     template: `
         <p-toast></p-toast>
-        <p-datatable ref="dt" :value="albums" class="p-datatable-sm"
+        <p-datatable ref="dt" :value="albums" class="p-datatable-sm" :always-show-paginator="albums != 0"
                      :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                      @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                      filter-display="row"
@@ -21,7 +21,6 @@ const albumDbList = {
             <template #header>
                 <div class="grid p-fluid">
                     <div class="col-9" v-if="editAuth > 1">
-                        <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                         <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                                   @click="openNewDialog" style="width: 6em"></p-button>
                         <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
@@ -49,6 +48,13 @@ const albumDbList = {
                 <template #body="slotProps" v-if="editAuth > 1">
                     <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                         {{slotProps.data.id}}
+                    </p-button>
+                </template>
+            </p-column>
+            <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
             </p-column>
@@ -174,7 +180,7 @@ const albumDbList = {
             </p-column>
         </p-datatable>
         
-        <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据"
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '800px'}" header="新增数据"
               class="p-fluid">
         <p-blockui :blocked="editBlock">
             <p-panel header="基础信息">
@@ -322,120 +328,120 @@ const albumDbList = {
               class="p-fluid">
         <p-blockui :blocked="editBlock">
             <p-panel header="基础信息">
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>专辑名称<span style="color: red">*</span></label>
-                    <p-inputtext id="name" v-model.trim="itemEdit.name"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>专辑名称(英语)</label>
-                    <p-inputtext id="nameEn" v-model.trim="itemEdit.nameEn"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>专辑名称(中文)</label>
-                    <p-inputtext id="nameZh" v-model.trim="itemEdit.nameZh"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>专辑编号</label>
-                    <p-inputtext id="catalogNo" v-model.trim="itemEdit.catalogNo"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>商品条形码</label>
-                    <p-inputtext id="barcode" v-model.trim="itemEdit.barcode"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-6">
-                    <label>发行时间<span style="color: red">*</span></label>
-                    <p-calendar id="releaseDate" v-model="itemEdit.releaseDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
-                </div>
-                <div class="field col-3">
-                    <label>发行价格</label>
-                    <p-inputnumber id="price" v-model="itemEdit.price"></p-inputnumber>
-                </div>
-                <div class="field col-3">
-                    <label>货币单位</label>
-                    <p-dropdown v-model="itemEdit.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" placeholder="单位">
-                    </p-dropdown>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-4">
-                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="itemEdit.franchises" @change="getProducts($event)"
-                                   :options="franchiseSet" placeholder="所属系列"
-                                   option-label="label" option-value="value" display="chip" :filter="true">
-                    </p-multiselect>
-                </div>
-                <div class="field col-6">
-                    <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="itemEdit.products" :options="productSet"
-                                   option-label="label" option-value="value" placeholder="选择所属作品"
-                                   display="chip" :filter="true" :disabled="productSelect">
-                    </p-multiselect>
-                </div>
-                <div class="field col">
-                    <div class="col-12">
-                        <label class="mb-3">特典</label>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>专辑名称<span style="color: red">*</span></label>
+                        <p-inputtext id="name" v-model.trim="itemEdit.name"></p-inputtext>
                     </div>
-                    <div class="col-12 mt-4">
-                        <p-inputswitch v-model="itemEdit.hasBonus" :true-value="1"
-                                       :false-value="0"></p-inputswitch>
+                    <div class="field col">
+                        <label>专辑名称(英语)</label>
+                        <p-inputtext id="nameEn" v-model.trim="itemEdit.nameEn"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>专辑名称(中文)</label>
+                        <p-inputtext id="nameZh" v-model.trim="itemEdit.nameZh"></p-inputtext>
                     </div>
                 </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-4">
-                    <label class="mb-3">出版形式<span style="color: red">*</span></label>
-                    <p-multiselect id="publishFormat" v-model="itemEdit.publishFormat" :options="publishFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择出版形式"
-                                   display="chip">
-                    </p-multiselect>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>专辑编号</label>
+                        <p-inputtext id="catalogNo" v-model.trim="itemEdit.catalogNo"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>商品条形码</label>
+                        <p-inputtext id="barcode" v-model.trim="itemEdit.barcode"></p-inputtext>
+                    </div>
                 </div>
-                <div class="field col-4">
-                    <label class="mb-3">专辑分类<span style="color: red">*</span></label>
-                    <p-multiselect id="albumFormat" v-model="itemEdit.albumFormat" :options="albumFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择专辑分类"
-                                   display="chip">
-                    </p-multiselect>
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <label>发行时间<span style="color: red">*</span></label>
+                        <p-calendar id="releaseDate" v-model="itemEdit.releaseDate" date-format="yy/mm/dd"
+                                    :show-button-bar="true"
+                                    :show-icon="true"></p-calendar>
+                    </div>
+                    <div class="field col-3">
+                        <label>发行价格</label>
+                        <p-inputnumber id="price" v-model="itemEdit.price"></p-inputnumber>
+                    </div>
+                    <div class="field col-3">
+                        <label>货币单位</label>
+                        <p-dropdown v-model="itemEdit.currencyUnit" :options="currencyUnitSet"
+                                    option-label="label" option-value="value" placeholder="单位">
+                        </p-dropdown>
+                    </div>
                 </div>
-                <div class="field col-4">
-                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
-                    <p-multiselect id="mediaFormat" v-model="itemEdit.mediaFormat" :options="mediaFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择媒体类型"
-                                   display="chip">
-                    </p-multiselect>
+                <div class="formgrid grid">
+                    <div class="field col-4">
+                        <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                        <p-multiselect v-model="itemEdit.franchises" @change="getProducts($event)"
+                                    :options="franchiseSet" placeholder="所属系列"
+                                    option-label="label" option-value="value" display="chip" :filter="true">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col-6">
+                        <label class="mb-3">所属作品<span style="color: red">*</span></label>
+                        <p-multiselect v-model="itemEdit.products" :options="productSet"
+                                    option-label="label" option-value="value" placeholder="选择所属作品"
+                                    display="chip" :filter="true" :disabled="productSelect">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col">
+                        <div class="col-12">
+                            <label class="mb-3">特典</label>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <p-inputswitch v-model="itemEdit.hasBonus" :true-value="1"
+                                        :false-value="0"></p-inputswitch>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>唱片公司</label>
-                    <p-inputtext id="label" v-model.trim="itemEdit.label"></p-inputtext>
+                <div class="formgrid grid">
+                    <div class="field col-4">
+                        <label class="mb-3">出版形式<span style="color: red">*</span></label>
+                        <p-multiselect id="publishFormat" v-model="itemEdit.publishFormat" :options="publishFormatSet"
+                                    option-label="label" option-value="value" placeholder="选择出版形式"
+                                    display="chip">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col-4">
+                        <label class="mb-3">专辑分类<span style="color: red">*</span></label>
+                        <p-multiselect id="albumFormat" v-model="itemEdit.albumFormat" :options="albumFormatSet"
+                                    option-label="label" option-value="value" placeholder="选择专辑分类"
+                                    display="chip">
+                        </p-multiselect>
+                    </div>
+                    <div class="field col-4">
+                        <label class="mb-3">媒体类型<span style="color: red">*</span></label>
+                        <p-multiselect id="mediaFormat" v-model="itemEdit.mediaFormat" :options="mediaFormatSet"
+                                    option-label="label" option-value="value" placeholder="选择媒体类型"
+                                    display="chip">
+                        </p-multiselect>
+                    </div>
                 </div>
-                <div class="field col">
-                    <label>发行商</label>
-                    <p-inputtext id="publisher" v-model.trim="itemEdit.publisher"></p-inputtext>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>唱片公司</label>
+                        <p-inputtext id="label" v-model.trim="itemEdit.label"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>发行商</label>
+                        <p-inputtext id="publisher" v-model.trim="itemEdit.publisher"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>经销商</label>
+                        <p-inputtext id="distributor" v-model.trim="itemEdit.distributor"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>版权方</label>
+                        <p-inputtext id="copyright" v-model.trim="itemEdit.copyright"></p-inputtext>
+                    </div>
                 </div>
-                <div class="field col">
-                    <label>经销商</label>
-                    <p-inputtext id="distributor" v-model.trim="itemEdit.distributor"></p-inputtext>
+                <div class="field">
+                    <label>备注</label>
+                    <p-textarea id="remark" v-model="itemEdit.remark" rows="3" cols="20"
+                                :auto-resize="true"></p-textarea>
                 </div>
-                <div class="field col">
-                    <label>版权方</label>
-                    <p-inputtext id="copyright" v-model.trim="itemEdit.copyright"></p-inputtext>
-                </div>
-            </div>
-            <div class="field">
-                <label>备注</label>
-                <p-textarea id="remark" v-model="itemEdit.remark" rows="3" cols="20"
-                            :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
+            </p-panel>
             <p-panel header="其他信息">
             <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
             <div class="field">
@@ -617,6 +623,19 @@ const albumDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.ALBUM,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         //打开删除确认面板
         confirmDeleteSelected() {
             this.deleteDialog = true;
@@ -757,7 +776,7 @@ const albumDbList = {
 const bookDbList = {
     template: `
         <p-toast></p-toast>
-<p-datatable ref="dt" :value="books" class=" p-datatable-sm"
+<p-datatable ref="dt" :value="books" class=" p-datatable-sm" :always-show-paginator="books != 0"
                 :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                 @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                 filter-display="row"
@@ -773,7 +792,6 @@ const bookDbList = {
     <template #header>
         <div class="grid p-fluid">
             <div class="col-9" v-if="editAuth > 1">
-                <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                             @click="openNewDialog" style="width: 6em"></p-button>
                 <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
@@ -804,6 +822,13 @@ const bookDbList = {
             </p-button>
         </template>
     </p-column>
+    <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
+                    </p-button>
+                </template>
+            </p-column>
     <p-column header="ISBN-10" field="isbn10" :show-filter-menu="false"
                 style="flex: 0 0 8rem">
         <template #filter="{filterModel,filterCallback}">
@@ -1371,6 +1396,19 @@ const bookDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.BOOK,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         regionCode2NameZh,
         //打开删除确认面板
         confirmDeleteSelected() {
@@ -1511,7 +1549,7 @@ const bookDbList = {
 const discDbList = {
     template: `
     <p-toast></p-toast>
-    <p-datatable ref="dt" :value="discs" class=" p-datatable-sm"
+    <p-datatable ref="dt" :value="discs" class=" p-datatable-sm" :always-show-paginator="discs != 0"
                  :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                  @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                  filter-display="row"
@@ -1527,7 +1565,6 @@ const discDbList = {
             <template #header>
             <div class="grid p-fluid">
                 <div class="col-9" v-if="editAuth > 1">
-                    <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                                 @click="openNewDialog" style="width: 6em"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
@@ -1557,7 +1594,14 @@ const discDbList = {
                     {{slotProps.data.id}}
                 </p-button>
             </template>
-        </p-column>         
+        </p-column> 
+        <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
+                    </p-button>
+                </template>
+            </p-column>       
         <p-column header="碟片编号" field="catalogNo" :show-filter-menu="false"
                   style="flex: 0 0 10rem">
             <template #filter="{filterModel,filterCallback}">
@@ -2105,6 +2149,19 @@ const discDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.DISC,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         regionCode2NameZh,
         //打开删除确认面板
         confirmDeleteSelected() {
@@ -2245,7 +2302,7 @@ const discDbList = {
 const gameDbList = {
     template: `
         <p-toast></p-toast>
-    <p-datatable ref="dt" :value="games" class=" p-datatable-sm"
+    <p-datatable ref="dt" :value="games" class=" p-datatable-sm" :always-show-paginator="games != 0"
                  :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                  @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                  filter-display="row"
@@ -2261,7 +2318,6 @@ const gameDbList = {
         <template #header>
             <div class="grid p-fluid">
                 <div class="col-9" v-if="editAuth > 1">
-                    <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                                 @click="openNewDialog" style="width: 6em"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
@@ -2292,6 +2348,13 @@ const gameDbList = {
                 </p-button>
             </template>
         </p-column>
+        <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
+                    </p-button>
+                </template>
+            </p-column>
         <p-column header="游戏名" field="name" :show-filter-menu="false"
                   style="flex: 0 0 20rem">
             <template #body="slotProps">
@@ -2783,6 +2846,19 @@ const gameDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.GAME,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         regionCode2NameZh,
         //打开删除确认面板
         confirmDeleteSelected() {
@@ -2923,7 +2999,7 @@ const gameDbList = {
 const merchDbList = {
     template: `
         <p-toast></p-toast>
-    <p-datatable ref="dt" :value="merchs" class=" p-datatable-sm"
+    <p-datatable ref="dt" :value="merchs" class=" p-datatable-sm" :always-show-paginator="merchs != 0"
                  :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                  @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                  filter-display="row"
@@ -2939,7 +3015,6 @@ const merchDbList = {
         <template #header>
             <div class="grid p-fluid">
                 <div class="col-9" v-if="editAuth > 1">
-                    <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                               @click="openNewDialog" style="width: 6em"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
@@ -2970,6 +3045,13 @@ const merchDbList = {
                 </p-button>
             </template>
         </p-column>
+        <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
+                    </p-button>
+                </template>
+            </p-column>
         <p-column header="商品名" field="name" :show-filter-menu="false"
                   style="flex: 0 0 10rem">
             <template #body="slotProps">
@@ -3470,6 +3552,19 @@ const merchDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.MERCH,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         regionCode2NameZh,
         //打开删除确认面板
         confirmDeleteSelected() {
@@ -3609,7 +3704,7 @@ const merchDbList = {
 const productDbList = {
     template: `
         <p-toast></p-toast>
-    <p-datatable ref="dt" :value="products" class=" p-datatable-sm"
+    <p-datatable ref="dt" :value="products" class=" p-datatable-sm" :always-show-paginator="products != 0"
                  :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                  @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                  filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
@@ -3622,7 +3717,6 @@ const productDbList = {
         <template #header>
             <div class="grid p-fluid">
                 <div class="col-9" v-if="editAuth > 1">
-                    <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                               @click="openNewDialog" style="width: 6em"></p-button>
                     <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
@@ -3643,13 +3737,20 @@ const productDbList = {
         <template #loading>
             加载中，别急~
         </template>
-        <p-column header="序号" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem">
+        <p-column header="序号" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 5rem">
             <template #body="slotProps" v-if="editAuth > 2">
                 <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                     {{slotProps.data.id}}
                 </p-button>
             </template>
         </p-column>
+        <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
+                    </p-button>
+                </template>
+            </p-column>
         <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 20rem">
             <template #body="slotProps">
                 <a :href="'/db/product/' + slotProps.data.id">
@@ -3937,6 +4038,19 @@ const productDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.PRODUCT,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         //打开编辑数据面板
         openEditDialog(data) {
             let dataTmp = JSON.parse(JSON.stringify(data));
@@ -4014,7 +4128,7 @@ const productDbList = {
 const franchiseDbList = {
     template: `
         <p-toast></p-toast>
-<p-datatable ref="dt" :value="franchises" class=" p-datatable-sm"
+<p-datatable ref="dt" :value="franchises" class=" p-datatable-sm" :always-show-paginator="franchises != 0"
                 :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                 @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                 filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
@@ -4027,7 +4141,6 @@ const franchiseDbList = {
     <template #header>
         <div class="grid p-fluid">
             <div class="col-9" v-if="editAuth > 1">
-                <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                             @click="openNewDialog" style="width: 6em"></p-button>
                 <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
@@ -4049,13 +4162,20 @@ const franchiseDbList = {
         <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
         <span>加载中，别急~</span>
     </template>
-    <p-column header="Id" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 4rem">
+    <p-column header="序号" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 5rem">
         <template #body="slotProps" v-if="editAuth > 2">
             <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
                 {{slotProps.data.id}}
             </p-button>
         </template>
     </p-column>
+    <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
+                <template #body="{data}">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                        <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
+                    </p-button>
+                </template>
+            </p-column>
     <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
         <template #body="slotProps">
             <a :href="'/db/franchise/' + slotProps.data.id">
@@ -4324,6 +4444,19 @@ const franchiseDbList = {
         //endregion
 
         //region edit
+        updateStatus(id, status) {
+            let json = {
+                entityType: ENTITY.FRANCHISE,
+                entityId: id,
+                status: !status
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                })
+        },
         //打开编辑数据面板
         openEditDialog(data) {
             this.itemEdit = JSON.parse(JSON.stringify(data));

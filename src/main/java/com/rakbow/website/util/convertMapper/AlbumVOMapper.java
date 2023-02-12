@@ -1,10 +1,7 @@
 package com.rakbow.website.util.convertMapper;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
@@ -24,7 +21,6 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -139,7 +135,7 @@ public interface AlbumVOMapper {
         //审计字段
         albumVOAlpha.setAddedTime(CommonUtils.timestampToString(album.getAddedTime()));
         albumVOAlpha.setEditedTime(CommonUtils.timestampToString(album.getEditedTime()));
-        albumVOAlpha.set_s(album.get_s());
+        albumVOAlpha.setStatus(album.getStatus() == 1);
 
         return albumVOAlpha;
     }

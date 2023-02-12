@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>item-index-template</title>
-</head>
-<body>
-    <div th:fragment="index_loading_side_panel">
-        <p-panel>
-            <template #header>
+<div th:fragment="index_loading_side_panel">
+    <p-panel>
+        <template #header>
                 <span class="text-start side-panel-header">
                     <i class="pi iconfont icon-album"></i><span><strong>浏览排名</strong></span>
                 </span>
-            </template>
-            <div class="grid">
+        </template>
+        <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
                              v-if="tmpList10.length != 0"
@@ -51,17 +44,17 @@
                             </div>
                         </div>
                     </span>
-            </div>
-        </p-panel>
-    </div>
-    <div th:fragment="index_loading_added_item_panel">
-        <p-panel>
-            <template #header>
+        </div>
+    </p-panel>
+</div>
+<div th:fragment="index_loading_added_item_panel">
+    <p-panel>
+        <template #header>
                     <span class="text-start side-panel-header">
                         <i class="pi iconfont icon-album"></i><span><strong>最新收录</strong></span>
                     </span>
-            </template>
-            <div class="grid">
+        </template>
+        <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
                              v-if="tmpList5.length != 0"
@@ -92,8 +85,6 @@
                             </div>
                         </div>
                     </span>
-            </div>
-        </p-panel>
-    </div>
-</body>
-</html>
+        </div>
+    </p-panel>
+</div>

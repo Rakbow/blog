@@ -23,12 +23,12 @@ public interface BookMapper {
     //根据过滤条件搜索Book
     List<Book> getBooksByFilter(String title, String isbn10, String isbn13, String publisher, String region,
                                 String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
-                                String hasBonus, String sortField, int sortOrder, int first, int row);
+                                String hasBonus, boolean status, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getitemRowsByFilter(String title, String isbn10, String isbn13, String publisher, String region,
+    int getBooksRowsByFilter(String title, String isbn10, String isbn13, String publisher, String region,
                              String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
-                             String hasBonus);
+                             String hasBonus, boolean status);
 
     //新增Book
     int addBook (Book book);

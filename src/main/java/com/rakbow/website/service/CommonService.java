@@ -1,5 +1,6 @@
 package com.rakbow.website.service;
 
+import com.rakbow.website.dao.SystemMapper;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -26,6 +27,8 @@ public class CommonService {
 
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private SystemMapper systemMapper;
 
     /**
      * 刷新Redis缓存中的枚举类数据
@@ -48,4 +51,12 @@ public class CommonService {
 
     }
 
+    /**
+     * 更新数据库实体激活状态
+     * @param entityName,entityId,status 实体表名,实体id,状态
+     * @author rakbow
+     */
+    public void updateItemStatus(String entityName, int entityId, int status) {
+        systemMapper.updateItemStatus(entityName, entityId, status);
+    }
 }

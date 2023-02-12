@@ -207,14 +207,15 @@ public class GameController {
     //根据搜索条件获取游戏--列表界面
     @RequestMapping(value = "/get-games", method = RequestMethod.POST)
     @ResponseBody
-    public String getGamesByFilterList(@RequestBody String json) {
+    public String getGamesByFilterList(@RequestBody String json, HttpServletRequest request) {
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");
         String pageLabel = param.getString("pageLabel");
 
         List<GameVOAlpha> games = new ArrayList<>();
 
-        SearchResult serchResult = gameService.getGamesByFilter(queryParams);
+        SearchResult serchResult = gameService.getGamesByFilter(queryParams,
+                userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);

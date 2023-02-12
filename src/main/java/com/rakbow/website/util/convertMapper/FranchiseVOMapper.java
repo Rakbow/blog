@@ -94,7 +94,7 @@ public interface FranchiseVOMapper {
             franchiseVOAlpha.setMetaId(Integer.parseInt(metaInfo.metaId));
         }
 
-        franchiseVOAlpha.set_s(franchise.get_s());
+        franchiseVOAlpha.setStatus(franchise.getStatus() == 1);
 
         return franchiseVOAlpha;
     }

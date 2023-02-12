@@ -294,7 +294,7 @@ public class GameService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getGamesByFilter(JSONObject queryParams) {
+    public SearchResult getGamesByFilter(JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -326,9 +326,9 @@ public class GameService {
 
 
         List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
-                sortField, sortOrder, first, row);
+                userAuthority > 2, sortField, sortOrder, first, row);
 
-        int total = gameMapper.getitemRowsByFilter(name, hasBonus, franchises, products, platform, region);
+        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, userAuthority > 2);
 
         return new SearchResult(total, games);
     }
@@ -346,7 +346,7 @@ public class GameService {
         products.add(productId);
 
         List<Game> games = gameMapper.getGamesByFilter(null, null, null, products,
-                100, null, "releaseDate", 1,  0, 0);
+                100, null, false, "releaseDate", 1,  0, 0);
 
         return gameVOMapper.game2VOBeta(games);
     }
@@ -370,7 +370,7 @@ public class GameService {
 
         //该系列所有Game
         List<Game> allGames = gameMapper.getGamesByFilter(null, null, CommonUtils.ids2List(game.getFranchises()),
-                        null, 100, null, "releaseDate", 1, 0, 0)
+                        null, 100, null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).collect(Collectors.toList());
 
         List<Game> queryResult = allGames.stream().filter(tmpGame ->

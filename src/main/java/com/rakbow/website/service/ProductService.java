@@ -92,7 +92,7 @@ public class ProductService {
         List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);
 
         List<JSONObject> productSet = new ArrayList<>();
-        productMapper.getProductsByFilter(null, null, franchises, categories,
+        productMapper.getProductsByFilter(null, null, franchises, categories, false,
                 null, -1, 0, 0).forEach(product -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("label", product.getNameZh() + "(" + ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
@@ -109,7 +109,7 @@ public class ProductService {
 
         if (franchises.size() != 0) {
             List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);
-            productMapper.getProductsByFilter(null, null, franchises, categories,
+            productMapper.getProductsByFilter(null, null, franchises, categories, false,
                     null, -1, 0, 0).forEach(product -> {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("value", product.getId());
@@ -279,7 +279,7 @@ public class ProductService {
         categories.add(product.getCategory());
 
         List<Product> sameFranchiseProducts = productMapper.getProductsByFilter
-                (null, null, franchises, categories, null, -1, 0, 0);
+                (null, null, franchises, categories, false, null, -1, 0, 0);
         List<Product> products = DataFinder.findProductsByClassification(product.getCategory(), sameFranchiseProducts);
 
         products.removeIf(it -> it.getId() == productId);
@@ -298,7 +298,7 @@ public class ProductService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getProductsByFilter(JSONObject queryParams) {
+    public SearchResult getProductsByFilter(JSONObject queryParams, int userAuthority) {
 
         JSONObject filter = queryParams.getJSONObject("filters");
 
@@ -312,9 +312,9 @@ public class ProductService {
         List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
         List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
 
-        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories,
+        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, userAuthority > 2,
                 sortField, sortOrder, first, row);
-        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories);
+        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, userAuthority > 2);
 
         return new SearchResult(total, products);
     }
@@ -349,7 +349,7 @@ public class ProductService {
         franchise.add(franchiseId);
 
         List<Product> products = productMapper.getProductsByFilter(null, null, franchise,
-                null, "releaseDate", 1, 0, 0);
+                null, false, "releaseDate", 1, 0, 0);
 
         return productVOMapper.product2VOAlpha(products);
     }

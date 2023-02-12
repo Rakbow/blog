@@ -8,33 +8,33 @@
         id, catalog_no, name, name_zh, name_en, barcode, release_date, publish_format,
         price, currency_unit, album_format, media_format, label, publisher, distributor, copyright,
         has_bonus, bonus, description, remark, franchises, products, artists, images, track_info,
-        added_time, edited_time, _s
+        added_time, edited_time, status
     </sql>
 
     <sql id="insertFields">
         catalog_no, name, name_zh, name_en, barcode, release_date, publish_format, price, currency_unit,
         album_format, media_format, label, publisher, distributor, copyright, has_bonus, bonus, description,
-        remark, franchises, products, artists, images, track_info, added_time, edited_time, _s
+        remark, franchises, products, artists, images, track_info, added_time, edited_time, status
     </sql>
 
     <select id="getAlbumById" resultType="Album">
         select
         <include refid="selectFields"></include>
         from album
-        where id = #{id} and _s = 1
+        where id = #{id} and status = 1
     </select>
 
     <select id="getAll" resultType="Album">
         select
         <include refid="selectFields"></include>
         from album
-        where _s = 1
+        where status = 1
     </select>
 
     <select id="getAlbumRows" resultType="int">
         select count(id)
         from album
-        where _s = 1
+        where status = 1
     </select>
 
     <insert id="addAlbum" parameterType="Album" keyProperty="id">
@@ -42,7 +42,7 @@
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{price}, #{currencyUnit}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},
         #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{artists}, #{images},
-        #{trackInfo}, #{addedTime}, #{editedTime}, #{_s})
+        #{trackInfo}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
     <update id="updateAlbum" parameterType="Album" keyProperty="id">
@@ -103,7 +103,7 @@
         select
         <include refid="selectFields"></include>
         from album
-        where _s = 1
+        where status = 1
         order by added_time desc
         limit #{limit}
     </select>
@@ -112,7 +112,7 @@
         select
         <include refid="selectFields"></include>
         from album
-        where _s = 1
+        where status = 1
         order by edited_time desc
         limit #{limit}
     </select>
@@ -162,7 +162,7 @@
                 and has_bonus = #{hasBonus}
             </if>
             <if test="!status">
-                and _s = 1
+                and status = 1
             </if>
         </where>
         <if test="sortField == 'id'">
@@ -187,6 +187,14 @@
             </if>
             <if test="sortOrder == -1">
                 order by price desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
             </if>
         </if>
         <if test="sortField == null">
@@ -241,7 +249,7 @@
                 and has_bonus = #{hasBonus}
             </if>
             <if test="!status">
-                and _s = 1
+                and status = 1
             </if>
         </where>
     </select>

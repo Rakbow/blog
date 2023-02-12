@@ -22,10 +22,11 @@ public interface FranchiseMapper {
     Franchise getFranchise(int id);
 
     //根据过滤条件搜索Book
-    List<Franchise> getFranchisesByFilter(String name, String nameZh, String isMeta, String sortField, int sortOrder, int first, int row);
+    List<Franchise> getFranchisesByFilter(String name, String nameZh, String isMeta, boolean status,
+                                          String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getFranchisesRowsByFilter(String name, String nameZh, String isMeta);
+    int getFranchisesRowsByFilter(String name, String nameZh, String isMeta, boolean status);
 
     //修改系列信息
     void updateFranchise(int id, Franchise franchise);

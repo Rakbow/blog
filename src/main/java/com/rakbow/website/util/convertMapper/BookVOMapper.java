@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.book.BookType;
 import com.rakbow.website.data.emun.common.Language;
 import com.rakbow.website.data.emun.common.Region;
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.book.BookVO;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
@@ -137,7 +136,7 @@ public interface BookVOMapper {
         //审计字段
         bookVOAlpha.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));
         bookVOAlpha.setEditedTime(CommonUtils.timestampToString(book.getEditedTime()));
-        bookVOAlpha.set_s(book.get_s());
+        bookVOAlpha.setStatus(book.getStatus() == 1);
 
         return bookVOAlpha;
     }

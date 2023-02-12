@@ -7,26 +7,26 @@
     <sql id="selectFields">
         id, catalog_no, name, name_zh, name_en, barcode, region, franchises, products, release_date, price,
         currency_unit, media_format, limited, spec, has_bonus, bonus, images, description,
-        remark, added_time, edited_time, _s
+        remark, added_time, edited_time, status
     </sql>
 
     <sql id="insertFields">
         catalog_no, name, name_zh, name_en, barcode, region, franchises, products, release_date, price, currency_unit,
-        media_format, limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, _s
+        media_format, limited, spec, has_bonus, bonus, images, description, remark, added_time, edited_time, status
     </sql>
 
     <select id="getDisc" resultType="Disc">
         select
         <include refid="selectFields"></include>
         from disc
-        where id = #{id} and _s = 1
+        where id = #{id} and status = 1
     </select>
 
     <select id="getAll" resultType="Disc">
         select
         <include refid="selectFields"></include>
         from disc
-        where _s = 1
+        where status = 1
     </select>
 
     <insert id="addDisc" parameterType="Disc" useGeneratedKeys="true" keyProperty="id">
@@ -36,7 +36,7 @@
         insert into disc (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{region}, #{franchises}, #{products},
         #{releaseDate}, #{price}, #{currencyUnit}, #{mediaFormat}, #{limited}, #{spec}, #{hasBonus}, #{bonus}, #{images},
-        #{description}, #{remark}, #{addedTime}, #{editedTime}, #{_s})
+        #{description}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
     <update id="updateDisc" parameterType="Disc" keyProperty="id">
@@ -46,7 +46,7 @@
         barcode = #{disc.barcode}, region = #{disc.region}, franchises = #{disc.franchises}, products = #{disc.products},
         release_date = #{disc.releaseDate}, price = #{disc.price}, currency_unit = #{disc.currencyUnit},
         media_format = #{disc.mediaFormat}, limited = #{disc.limited}, spec = #{disc.spec}, has_bonus = #{disc.hasBonus},
-        edited_time = #{disc.editedTime}, _s = #{disc._s}
+        edited_time = #{disc.editedTime}
         where id = #{disc.id}
     </update>
 
@@ -87,7 +87,7 @@
     <update id="updateStatusById" keyProperty="id">
         update disc
         set
-        _s = 0
+        status = 0
         where id = #{id}
     </update>
 
@@ -129,7 +129,9 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
         <if test="sortField == 'id'">
             <if test="sortOrder == 1">
@@ -155,6 +157,14 @@
                 order by price desc
             </if>
         </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
         <if test="sortField == null">
             order by id desc
         </if>
@@ -163,7 +173,7 @@
         </if>
     </select>
 
-    <select id="getitemRowsByFilter" resultType="int">
+    <select id="getDiscsRowsByFilter" resultType="int">
         select count(id)
         from disc
         <where>
@@ -200,7 +210,9 @@
             <if test="hasBonus != null and hasBonus != '' ">
                 and has_bonus = #{hasBonus}
             </if>
-            and _s = 1
+            <if test="!status">
+                and status = 1
+            </if>
         </where>
     </select>
 
@@ -208,7 +220,7 @@
         select
         <include refid="selectFields"></include>
         from disc
-        where _s = 1
+        where status = 1
         order by added_time desc
         limit #{limit}
     </select>
@@ -217,7 +229,7 @@
         select
         <include refid="selectFields"></include>
         from disc
-        where _s = 1
+        where status = 1
         order by edited_time desc
         limit #{limit}
     </select>

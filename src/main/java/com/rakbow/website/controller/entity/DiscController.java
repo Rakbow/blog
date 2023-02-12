@@ -100,7 +100,7 @@ public class DiscController {
     //根据搜索条件获取碟片--列表界面
     @RequestMapping(value = "/get-discs", method = RequestMethod.POST)
     @ResponseBody
-    public String getDiscsByFilterList(@RequestBody String json) {
+    public String getDiscsByFilterList(@RequestBody String json, HttpServletRequest request) {
 
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");
@@ -108,7 +108,8 @@ public class DiscController {
 
         List<DiscVOAlpha> discs = new ArrayList<>();
 
-        SearchResult searchResult = discService.getDiscsByFilterList(queryParams);
+        SearchResult searchResult = discService.getDiscsByFilterList(queryParams,
+                userService.getUserEditAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);

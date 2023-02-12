@@ -1,4 +1,11 @@
 const DOMAIN_URL = "http://localhost:8083";
+
+//region system
+
+const UPDATE_ITEM_STATUS = "/db/update-item-status";
+
+//endregion
+
 //region page
 const DATABASE_INDEX_URL = "/db";
 

@@ -47,12 +47,11 @@
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
     <script th:src="@{/js/primevue/components/tabmenu.min.js}"></script>
 
-    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
-    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+
+    <!-- Jquery -->
+    <script th:src="@{/js/jquery.js}"></script>
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
@@ -71,12 +70,12 @@
 <body>
 <div id="app">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: database_header}"></header>
+    <div id="main">
+        <p-tabmenu :model="dbListTabs"></p-tabmenu>
+        <router-view></router-view>
+    </div>
 
-    <p-tabmenu :model="dbListTabs"></p-tabmenu>
-    <router-view></router-view>
-
-    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
@@ -84,24 +83,20 @@
 
     import {DATABASE_LIST_ROUTER} from '/js/basic/Rakbow_Database_List_Params.js';
     import {showSearchPanel} from '/js/basic/Search_Params.js';
-    const {createApp, onMounted, ref} = Vue;
+    const {createApp, onMounted, ref, watch} = Vue;
     const Tooltip = primevue.tooltip;
-    const {useDialog} = primevue.usedialog;
     const {useToast} = primevue.usetoast;
     const App = {
         setup() {
             onMounted(() => {
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
             });
 
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
             return {
-                dbListTabs, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
+                dbListTabs, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
             }
         },
         components: {
@@ -110,7 +105,6 @@
             "p-menubar": primevue.menubar,
             "p-dropdown": primevue.dropdown,
             "p-button": primevue.button,
-            "p-dynamicdialog": primevue.dynamicdialog,
 
             "p-tabmenu": primevue.tabmenu,
         }
@@ -127,8 +121,7 @@
     app.use(primevue.config.default);
     app.directive('tooltip', Tooltip);
     app.use(primevue.toastservice);
-    app.use(router);
-    app.use(primevue.dialogservice)
+    app.use(router)
         .mount("#app");
 </script>
 </body>

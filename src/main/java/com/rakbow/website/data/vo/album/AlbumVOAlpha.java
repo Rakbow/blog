@@ -47,7 +47,7 @@ public class AlbumVOAlpha {
     //审计字段
     private String addedTime;//数据新增时间
     private String editedTime;//数据更新时间
-    private int _s;//激活状态
+    private boolean status;//激活状态
 
     //其他字段
     private long visitNum;

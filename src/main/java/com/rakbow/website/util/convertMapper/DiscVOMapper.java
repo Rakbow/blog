@@ -3,7 +3,6 @@ package com.rakbow.website.util.convertMapper;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.Region;
-import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
@@ -113,7 +112,7 @@ public interface DiscVOMapper {
 
         discVOAlpha.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
         discVOAlpha.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));
-        discVOAlpha.set_s(disc.get_s());
+        discVOAlpha.setStatus(disc.getStatus() == 1);
 
         return discVOAlpha;
     }
