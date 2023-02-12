@@ -7,8 +7,8 @@ const INDEX_SEARCH_URL = "/db/simpleSearch";
 const APP_INDEX_URL = "/app";
 const BLOG_INDEX_URL = "/blog";
 
-const GET_INDEX_INIT_DATA_URL = "/get-index-init-data";
-const GET_LIST_INIT_DATA_URL = "/get-list-init-data";
+const GET_INDEX_INIT_DATA_URL = "/db/get-index-init-data";
+const GET_LIST_INIT_DATA_URL = "/db/get-list-init-data";
 
 const FRANCHISE_LIST_URL = "/db/franchise/list";
 const PRODUCT_LIST_URL = "/db/product/list";

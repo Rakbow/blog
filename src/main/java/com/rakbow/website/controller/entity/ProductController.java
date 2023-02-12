@@ -1,8 +1,9 @@
-package com.rakbow.website.controller;
+package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
@@ -71,12 +72,6 @@ public class ProductController {
     //endregion
 
     //region ------获取页面------
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public String getProductListPage(Model model) {
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("productCategorySet", redisUtil.get("ProductCategorySet"));
-        return "/itemList/product-list";
-    }
 
     //获取单个产品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
@@ -394,7 +389,7 @@ public class ProductController {
 
     @RequestMapping(path = "/get-products", method = RequestMethod.POST)
     @ResponseBody
-    public String getAllProductsByFilter(@RequestBody String json){
+    public String getProductsByFilter(@RequestBody String json){
 
         JSONObject param = JSON.parseObject(json);
         JSONObject queryParams = param.getJSONObject("queryParams");

@@ -43,7 +43,7 @@ public class CommonService {
         redisUtil.set("merchCategorySet", MerchCategory.getMerchCategorySet());
         redisUtil.set("platformSet", GamePlatform.getGamePlatformSet());
         redisUtil.set("releaseTypeSet", ReleaseType.getReleaseTypeSet());
-        redisUtil.set("ProductCategorySet", ProductCategory.getProductCategorySet());
+        redisUtil.set("productCategorySet", ProductCategory.getProductCategorySet());
         redisUtil.set("audioTypeSet", MusicUtil.getAudioTypeSet());
 
     }

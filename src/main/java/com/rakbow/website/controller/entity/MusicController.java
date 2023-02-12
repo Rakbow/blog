@@ -1,4 +1,4 @@
-package com.rakbow.website.controller;
+package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;

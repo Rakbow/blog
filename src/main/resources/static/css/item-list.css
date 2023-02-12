@@ -53,3 +53,7 @@ a:link {
 .p-toolbar {
     margin-bottom: 0.5rem;
 }
+
+.p-button.p-button-link {
+    padding: 0 7px;
+}

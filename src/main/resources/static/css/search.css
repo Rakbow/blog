@@ -3,6 +3,10 @@
     width: 120px;
 }
 
+.search-dialog.p-dialog {
+    min-width: 825px;
+}
+
 .search-dialog .p-dialog-header {
     padding: 0.25rem 1rem;
     font-style: italic;

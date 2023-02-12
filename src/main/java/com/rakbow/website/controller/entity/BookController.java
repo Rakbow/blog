@@ -1,20 +1,21 @@
-package com.rakbow.website.controller;
+package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.UserController;
+import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.vo.game.GameVOAlpha;
-import com.rakbow.website.entity.Game;
+import com.rakbow.website.data.vo.book.BookVOAlpha;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
-import com.rakbow.website.util.convertMapper.GameVOMapper;
+import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -35,20 +36,20 @@ import java.util.List;
 /**
  * @Project_name: website
  * @Author: Rakbow
- * @Create: 2023-01-06 15:50
+ * @Create: 2022-12-30 10:18
  * @Description:
  */
 
 @Controller
-@RequestMapping("/db/game")
-public class GameController {
+@RequestMapping("/db/book")
+public class BookController {
 
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private GameService gameService;
+    private BookService bookService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -58,71 +59,71 @@ public class GameController {
     @Autowired
     private RedisUtil redisUtil;
 
-    private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
+    private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
     //endregion
 
     //region ------获取页面------
 
-    //获取单个游戏详细信息页面
+    //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getGameDetail(@PathVariable("id") Integer id, Model model) {
-        if (gameService.getGame(id) == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.GAME.getNameZh()));
+    public String getBookDetail(@PathVariable("id") Integer id, Model model) {
+        if (bookService.getBook(id) == null) {
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
         }
         //访问数+1
-        visitService.increaseVisit(EntityType.GAME.getId(), id);
+        visitService.increaseVisit(EntityType.BOOK.getId(), id);
 
-        Game game = gameService.getGame(id);
+        Book book = bookService.getBook(id);
 
-        model.addAttribute("releaseTypeSet", redisUtil.get("releaseTypeSet"));
+        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
+        model.addAttribute("languageSet", redisUtil.get("languageSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("game", gameVOMapper.game2VO(game));
+        model.addAttribute("book", bookVOMapper.book2VO(book));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, false));
-        //获取相关游戏
-        model.addAttribute("relatedGames", gameService.getRelatedGames(id));
-        return "/itemDetail/game-detail";
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(book.getImages(), 180, false));
+        //获取相关图书
+        model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
+        return "/itemDetail/book-detail";
     }
 
     //endregion
 
     //region ------增删改查------
 
-    //新增游戏
+    //新增图书
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addGame(@RequestBody String json, HttpServletRequest request) {
+    public String addBook(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
             if (userService.checkAuthority(request).state) {
 
                 //检测数据
-                if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
-                    res.setErrorMessage(gameService.checkGameJson(param));
+                if(!StringUtils.isBlank(bookService.checkBookJson(param))) {
+                    res.setErrorMessage(bookService.checkBookJson(param));
                     return JSON.toJSONString(res);
                 }
 
-                Game game = gameService.json2Game(gameService.handleGameJson(param));
+                Book book = bookService.json2Book(bookService.handleBookJson(param));
 
-                //保存新增游戏
-                gameService.addGame(game);
+                //保存新增图书
+                bookService.addBook(book);
 
-                //将新增的游戏保存到Elasticsearch服务器索引中
+                //将新增的图书保存到Elasticsearch服务器索引中
                 // elasticsearchService.saveAlbum(album);
 
                 //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.GAME.getId(), game.getId()));
+                visitService.insertVisit(new Visit(EntityType.BOOK.getId(), book.getId()));
 
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
+                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -133,28 +134,28 @@ public class GameController {
         return JSON.toJSONString(res);
     }
 
-    //删除游戏(单个/多个)
+    //删除图书(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteGame(@RequestBody String json, HttpServletRequest request) {
+    public String deleteBook(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONArray games = JSON.parseArray(json);
+        JSONArray books = JSON.parseArray(json);
         try {
             if (userService.checkAuthority(request).state) {
-                for (int i = 0; i < games.size(); i++) {
+                for (int i = 0; i < books.size(); i++) {
 
-                    int id = games.getJSONObject(i).getInteger("id");
+                    int id = books.getJSONObject(i).getInteger("id");
 
-                    //从数据库中删除游戏
-                    gameService.deleteGame(id);
+                    //从数据库中删除图书
+                    bookService.deleteBook(id);
 
-                    //从Elasticsearch服务器索引中删除游戏
+                    //从Elasticsearch服务器索引中删除图书
                     // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
 
                     //删除访问量实体
-                    visitService.deleteVisit(EntityType.GAME.getId(), id);
+                    visitService.deleteVisit(EntityType.BOOK.getId(), id);
                 }
-                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.GAME.getNameZh());
+                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }
@@ -164,31 +165,31 @@ public class GameController {
         return JSON.toJSONString(res);
     }
 
-    //更新游戏基础信息
+    //更新图书基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGame(@RequestBody String json, HttpServletRequest request) {
+    public String updateBook(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
             if (userService.checkAuthority(request).state) {
                 //检测数据
-                if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
-                    res.setErrorMessage(gameService.checkGameJson(param));
+                if(!StringUtils.isBlank(bookService.checkBookJson(param))) {
+                    res.setErrorMessage(bookService.checkBookJson(param));
                     return JSON.toJSONString(res);
                 }
 
-                Game game = gameService.json2Game(gameService.handleGameJson(param));
+                Book book = bookService.json2Book(bookService.handleBookJson(param));
 
                 //修改编辑时间
-                game.setEditedTime(new Timestamp(System.currentTimeMillis()));
+                book.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-                gameService.updateGame(game.getId(), game);
+                bookService.updateBook(book.getId(), book);
 
-                //将更新的游戏保存到Elasticsearch服务器索引中
+                //将更新的图书保存到Elasticsearch服务器索引中
                 // elasticsearchService.saveAlbum(album);
 
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.GAME.getNameZh());
+                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -203,36 +204,36 @@ public class GameController {
 
     //region ------进阶信息增删改查------
 
-    //根据搜索条件获取游戏--列表界面
-    @RequestMapping(value = "/get-games", method = RequestMethod.POST)
-    @ResponseBody
-    public String getGamesByFilterList(@RequestBody String json) {
-        JSONObject param = JSON.parseObject(json);
-        JSONObject queryParams = param.getJSONObject("queryParams");
-        String pageLabel = param.getString("pageLabel");
+    //根据搜索条件获取图书--列表界面
+     @RequestMapping(value = "/get-books", method = RequestMethod.POST)
+     @ResponseBody
+     public String getBooksByFilterList(@RequestBody String json) {
+         JSONObject param = JSON.parseObject(json);
+         JSONObject queryParams = param.getJSONObject("queryParams");
+         String pageLabel = param.getString("pageLabel");
 
-        List<GameVOAlpha> games = new ArrayList<>();
+         List<BookVOAlpha> books = new ArrayList<>();
 
-        SearchResult serchResult = gameService.getGamesByFilter(queryParams);
+         SearchResult searchResult = bookService.getBooksByFilter(queryParams);
 
-        if (StringUtils.equals(pageLabel, "list")) {
-            games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
-        }
-        if (StringUtils.equals(pageLabel, "index")) {
-            games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
-        }
+         if (StringUtils.equals(pageLabel, "list")) {
+             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
+         }
+         if (StringUtils.equals(pageLabel, "index")) {
+             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
+         }
 
-        JSONObject result = new JSONObject();
-        result.put("data", games);
-        result.put("total", serchResult.total);
+         JSONObject result = new JSONObject();
+         result.put("data", books);
+         result.put("total", searchResult.total);
 
-        return JSON.toJSONString(result);
-    }
+         return JSON.toJSONString(result);
+     }
 
     //新增图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
-    public String addGameImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
+    public String addBookImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
@@ -243,7 +244,7 @@ public class GameController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(gameService.getGame(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(bookService.getBook(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
@@ -254,12 +255,12 @@ public class GameController {
                     return JSON.toJSONString(res);
                 }
 
-                gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+                bookService.addBookImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
-                //更新elasticsearch中的游戏
+                //更新elasticsearch中的图书
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
 
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
+                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -273,12 +274,12 @@ public class GameController {
     //更新图片，删除或更改信息
     @RequestMapping(path = "/update-images", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameImages(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
 
-                //获取游戏id
+                //获取图书id
                 int id = JSON.parseObject(json).getInteger("id");
                 JSONArray images = JSON.parseObject(json).getJSONArray("images");
                 for (int i = 0; i < images.size(); i++) {
@@ -295,10 +296,10 @@ public class GameController {
                         return JSON.toJSONString(res);
                     }
 
-                    res.message = gameService.updateGameImages(id, images.toJSONString());
+                    res.message = bookService.updateBookImages(id, images.toJSONString());
                 }//删除图片
                 else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = gameService.deleteGameImages(id, images);
+                    res.message = bookService.deleteBookImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
@@ -312,17 +313,17 @@ public class GameController {
         return JSON.toJSONString(res);
     }
 
-    //更新游戏作者信息
-    @RequestMapping(path = "/update-organizations", method = RequestMethod.POST)
+    //更新图书作者信息
+    @RequestMapping(path = "/update-authors", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameOrganizations(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookAuthors(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
-                String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
-                gameService.updateGameOrganizations(id, organizations);
-                res.message = ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
+                String authors = JSON.parseObject(json).getJSONArray("authors").toString();
+                bookService.updateBookAuthors(id, authors);
+                res.message = ApiInfo.UPDATE_BOOK_AUTHOR_SUCCESS;
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
             } else {
@@ -335,17 +336,17 @@ public class GameController {
         }
     }
 
-    //更新游戏规格信息
-    @RequestMapping(path = "/update-staffs", method = RequestMethod.POST)
+    //更新图书规格信息
+    @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameStaffs(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookSpec(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
-                String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
-                gameService.updateGameStaffs(id, staffs);
-                res.message = ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
+                String spec = JSON.parseObject(json).getJSONArray("spec").toString();
+                bookService.updateBookSpec(id, spec);
+                res.message = ApiInfo.UPDATE_BOOK_SPEC_SUCCESS;
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
             } else {
@@ -358,18 +359,18 @@ public class GameController {
         }
     }
 
-    //更新游戏描述信息
+    //更新图书描述信息
     @RequestMapping(path = "/update-description", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameDescription(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
                 String description = JSON.parseObject(json).get("description").toString();
-                gameService.updateGameDescription(id, description);
-                res.message = ApiInfo.UPDATE_GAME_DESCRIPTION_SUCCESS;
-                //更新elasticsearch中的游戏
+                bookService.updateBookDescription(id, description);
+                res.message = ApiInfo.UPDATE_BOOK_DESCRIPTION_SUCCESS;
+                //更新elasticsearch中的图书
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -381,18 +382,18 @@ public class GameController {
         }
     }
 
-    //更新游戏特典信息
+    //更新图书特典信息
     @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameBonus(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookBonus(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
                 String bonus = JSON.parseObject(json).get("bonus").toString();
-                gameService.updateGameBonus(id, bonus);
-                res.message = ApiInfo.UPDATE_GAME_BONUS_SUCCESS;
-                //更新elasticsearch中的游戏
+                bookService.updateBookBonus(id, bonus);
+                res.message = ApiInfo.UPDATE_BOOK_BONUS_SUCCESS;
+                //更新elasticsearch中的图书
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);

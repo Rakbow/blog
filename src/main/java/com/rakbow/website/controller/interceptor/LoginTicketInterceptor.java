@@ -54,7 +54,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         user, user.getPassword(), userService.getAuthorities(user.getId()));
                 SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
-                System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
 
             } else if (loginTicket != null) {
                 if(loginTicket.getStatus() == 1 || loginTicket.getExpired().before(new Date())){

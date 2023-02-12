@@ -174,9 +174,9 @@ class WebSiteApplicationTests {
     @Test
     public void redisTest() {
 
-      productService.refreshRedisProducts();
+      // productService.refreshRedisProducts();
 
-       franchiseService.refreshRedisFranchises();
+       // franchiseService.refreshRedisFranchises();
 
       commonService.refreshRedisEmunData();
 

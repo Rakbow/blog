@@ -1,5 +1,5 @@
 import {deleteRequest, getRequest, postRequest, commonVueSubmit} from '/js/basic/Http_Request.js';
-const {createApp, onMounted, ref} = Vue;
+
 const {useToast} = primevue.usetoast;
 
 const albumDbList = {
@@ -637,7 +637,7 @@ const albumDbList = {
         openEditDialog(data) {
             let dataTmp = JSON.parse(JSON.stringify(data));
             this.itemEdit = dataTmp;
-            this.itemEdit.hasBonus = dataTmp.hasBonus?1:0;
+            this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
             this.itemEdit.mediaFormat = label2value(dataTmp.mediaFormat, this.mediaFormatSet).concat();
             this.itemEdit.albumFormat = label2value(dataTmp.albumFormat, this.albumFormatSet).concat();
             this.itemEdit.publishFormat = label2value(dataTmp.publishFormat, this.publishFormatSet).concat();
@@ -648,7 +648,7 @@ const albumDbList = {
             };
             postRequest(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
-                    if(res.state === 1) {
+                    if (res.state === 1) {
                         if (res.data.length !== 0) {
                             this.productSet = res.data;
                             this.productSelect = false;
@@ -678,8 +678,8 @@ const albumDbList = {
                     }
                     this.editBlock = false;
                 }).catch(e => {
-                    console.error(e);
-                });
+                console.error(e);
+            });
         },
         //打开新增数据面板
         openNewDialog() {
@@ -706,14 +706,14 @@ const albumDbList = {
         },
         //根据系列id获取该系列所有作品
         getProducts(ev) {
-            if(ev.value.length !== 0) {
+            if (ev.value.length !== 0) {
                 let json = {
                     franchises: ev.value,
                     entityType: ENTITY.ALBUM
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             if (res.data.length !== 0) {
                                 this.productSet = res.data;
                                 this.productSelect = false;
@@ -724,7 +724,7 @@ const albumDbList = {
                             }
                         }
                     });
-            }else {
+            } else {
                 this.productSelect = true;
                 this.itemEdit.products = [];
                 this.album.products = [];
@@ -945,6 +945,7 @@ const bookDbList = {
 
 <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
           :style="{width: '600px'}" class="p-fluid">
+          <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="formgrid grid">
             <div class="field col">
@@ -1075,13 +1076,15 @@ const bookDbList = {
             <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
         </div>
     </p-panel>
+    </p-blockui>
     <template #footer>
-        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem"></p-button>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
 <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
           :style="{width: '600px'}" class="p-fluid">
+          <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="formgrid grid">
             <div class="field col">
@@ -1212,11 +1215,12 @@ const bookDbList = {
             <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
         </div>
     </p-panel>
+    </p-blockui>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                  @click="closeEditDialog"></p-button>
+                  @click="closeEditDialog" :disabled="editBlock"></p-button>
         <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                  @click="submitEditItem"></p-button>
+                  @click="submitEditItem" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
 <p-dialog :modal="true" v-model:visible="deleteDialog" header="删除数据"
@@ -1227,9 +1231,9 @@ const bookDbList = {
     </div>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                  @click="deleteDialog = false"></p-button>
+                  @click="deleteDialog = false" :disabled="editBlock"></p-button>
         <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                  @click="deleteSelectedItems"></p-button>
+                  @click="deleteSelectedItems" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
     `,
@@ -1399,7 +1403,7 @@ const bookDbList = {
             };
             postRequest(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
-                    if(res.state === 1) {
+                    if (res.state === 1) {
                         if (res.data.length !== 0) {
                             this.productSet = res.data;
                             this.productSelect = false;
@@ -1415,7 +1419,6 @@ const bookDbList = {
         closeEditDialog() {
             this.displayEditDialog = false;
             this.itemEdit = {};
-            this.init();
         },
         //保存编辑数据
         submitEditItem() {
@@ -1457,14 +1460,14 @@ const bookDbList = {
         },
         //根据系列id获取该系列所有作品
         getProducts(ev) {
-            if(ev.value.length !== 0) {
+            if (ev.value.length !== 0) {
                 let json = {
                     franchises: ev.value,
                     entityType: ENTITY.BOOK
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             if (res.data.length !== 0) {
                                 this.productSet = res.data;
                                 this.productSelect = false;
@@ -1475,7 +1478,7 @@ const bookDbList = {
                             }
                         }
                     });
-            }else {
+            } else {
                 this.productSelect = true;
                 this.itemEdit.products = [];
                 this.book.products = [];
@@ -1680,6 +1683,7 @@ const discDbList = {
 
 <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
           :style="{width: '600px'}" class="p-fluid">
+          <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="formgrid grid">
             <div class="field col">
@@ -1809,13 +1813,15 @@ const discDbList = {
             <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
         </div>
     </p-panel>
+    </p-blockui>
     <template #footer>
-        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem"></p-button>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
 <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
           :style="{width: '600px'}" class="p-fluid">
+          <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="formgrid grid">
             <div class="field col">
@@ -1945,11 +1951,12 @@ const discDbList = {
             <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
         </div>
     </p-panel>
+    </p-blockui>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                  @click="closeEditDialog"></p-button>
+                  @click="closeEditDialog" :disabled="editBlock"></p-button>
         <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                  @click="submitEditItem"></p-button>
+                  @click="submitEditItem" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
 <p-dialog :modal="true" v-model:visible="deleteDialog" header="删除数据"
@@ -1960,9 +1967,9 @@ const discDbList = {
     </div>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                  @click="deleteDialog = false"></p-button>
+                  @click="deleteDialog = false" :disabled="editBlock"></p-button>
         <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                  @click="deleteSelectedItems"></p-button>
+                  @click="deleteSelectedItems" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
     `,
@@ -2120,8 +2127,8 @@ const discDbList = {
             let dataTmp = JSON.parse(JSON.stringify(data));
             this.itemEdit = dataTmp;
             this.itemEdit.mediaFormat = label2value(dataTmp.mediaFormat, this.mediaFormatSet).concat();
-            this.itemEdit.hasBonus = dataTmp.hasBonus ? 1: 0;
-            this.itemEdit.limited = dataTmp.limited ? 1: 0;
+            this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
+            this.itemEdit.limited = dataTmp.limited ? 1 : 0;
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
@@ -2130,7 +2137,7 @@ const discDbList = {
             };
             postRequest(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
-                    if(res.state === 1) {
+                    if (res.state === 1) {
                         if (res.data.length !== 0) {
                             this.productSet = res.data;
                             this.productSelect = false;
@@ -2146,7 +2153,6 @@ const discDbList = {
         closeEditDialog() {
             this.displayEditDialog = false;
             this.itemEdit = {};
-            this.init();
         },
         //保存编辑数据
         submitEditItem() {
@@ -2188,14 +2194,14 @@ const discDbList = {
         },
         //根据系列id获取该系列所有作品
         getProducts(ev) {
-            if(ev.value.length !== 0) {
+            if (ev.value.length !== 0) {
                 let json = {
                     franchises: ev.value,
                     entityType: ENTITY.DISC
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             if (res.data.length !== 0) {
                                 this.productSet = res.data;
                                 this.productSelect = false;
@@ -2206,7 +2212,7 @@ const discDbList = {
                             }
                         }
                     });
-            }else {
+            } else {
                 this.productSelect = true;
                 this.itemEdit.products = [];
                 this.disc.products = [];
@@ -2391,6 +2397,7 @@ const gameDbList = {
 
 <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
           :style="{width: '600px'}" class="p-fluid">
+          <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="field">
             <label>游戏名<span style="color: red">*</span></label>
@@ -2502,13 +2509,17 @@ const gameDbList = {
             <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
         </div>
     </p-panel>
+    </p-blockui>
     <template #footer>
-        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem"></p-button>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+         @click="closeNewDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text"
+         @click="submitNewItem" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
 <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
           :style="{width: '600px'}" class="p-fluid">
+          <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="field">
             <label>游戏名<span style="color: red">*</span></label>
@@ -2620,11 +2631,12 @@ const gameDbList = {
             <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
         </div>
     </p-panel>
+    </p-blockui>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                  @click="closeEditDialog"></p-button>
+                  @click="closeEditDialog" :disabled="editBlock"></p-button>
         <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                  @click="submitEditItem"></p-button>
+                  @click="submitEditItem" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
 <p-dialog :modal="true" v-model:visible="deleteDialog" header="删除数据"
@@ -2635,9 +2647,9 @@ const gameDbList = {
     </div>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                  @click="deleteDialog = false"></p-button>
+                  @click="deleteDialog = false" :disabled="editBlock"></p-button>
         <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                  @click="deleteSelectedItems"></p-button>
+                  @click="deleteSelectedItems" :disabled="editBlock"></p-button>
     </template>
 </p-dialog>
     `,
@@ -2795,7 +2807,7 @@ const gameDbList = {
             this.itemEdit.releaseType = dataTmp.releaseType.id;
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.platform = dataTmp.platform.id;
-            this.itemEdit.hasBonus = dataTmp.hasBonus ? 1: 0;
+            this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
             this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
@@ -2803,7 +2815,7 @@ const gameDbList = {
             };
             postRequest(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
-                    if(res.state === 1) {
+                    if (res.state === 1) {
                         if (res.data.length !== 0) {
                             this.productSet = res.data;
                             this.productSelect = false;
@@ -2819,7 +2831,6 @@ const gameDbList = {
         closeEditDialog() {
             this.displayEditDialog = false;
             this.itemEdit = {};
-            this.init();
         },
         //保存编辑数据
         submitEditItem() {
@@ -2861,14 +2872,14 @@ const gameDbList = {
         },
         //根据系列id获取该系列所有作品
         getProducts(ev) {
-            if(ev.value.length !== 0) {
+            if (ev.value.length !== 0) {
                 let json = {
                     franchises: ev.value,
                     entityType: ENTITY.GAME
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             if (res.data.length !== 0) {
                                 this.productSet = res.data;
                                 this.productSelect = false;
@@ -2879,7 +2890,7 @@ const gameDbList = {
                             }
                         }
                     });
-            }else {
+            } else {
                 this.productSelect = true;
                 this.itemEdit.products = [];
                 this.game.products = [];
@@ -3073,6 +3084,7 @@ const merchDbList = {
     </p-datatable>
     <p-dialog :modal="true" v-model:visible="displayNewDialog" header="新增数据"
               :style="{width: '600px'}" class="p-fluid">
+              <p-blockui :blocked="editBlock">
         <p-panel header="基础信息">
             <div class="formgrid grid">
                 <div class="field col">
@@ -3184,13 +3196,17 @@ const merchDbList = {
                 <span style="text-align: center"><em>添加和编辑图片信息，请到周边商品详情页面进行</em></span>
             </div>
         </p-panel>
+        </p-blockui>
         <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem"></p-button>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+             @click="closeNewDialog" :disabled="editBlock"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+             @click="submitNewItem" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑数据"
               :style="{width: '600px'}" class="p-fluid">
+              <p-blockui :blocked="editBlock">
         <p-panel header="基础信息">
             <div class="formgrid grid">
                 <div class="field col">
@@ -3302,11 +3318,12 @@ const merchDbList = {
                 <span style="text-align: center"><em>添加和编辑图片信息，请到周边商品详情页面进行</em></span>
             </div>
         </p-panel>
+        </p-blockui>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="closeEditDialog"></p-button>
+                      @click="closeEditDialog" :disabled="editBlock"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditItem"></p-button>
+                      @click="submitEditItem" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="deleteDialog" header="删除数据"
@@ -3317,9 +3334,9 @@ const merchDbList = {
         </div>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                      @click="deleteDialog = false"></p-button>
+                      @click="deleteDialog = false" :disabled="editBlock"></p-button>
             <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                      @click="deleteselectedItems"></p-button>
+                      @click="deleteSelectedItems" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     `,
@@ -3476,7 +3493,7 @@ const merchDbList = {
             this.itemEdit = dataTmp;
             this.itemEdit.category = dataTmp.category.id;
             this.itemEdit.region = dataTmp.region.code;
-            this.itemEdit.notForSale = dataTmp.notForSale ? 1: 0;
+            this.itemEdit.notForSale = dataTmp.notForSale ? 1 : 0;
             this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
@@ -3484,7 +3501,7 @@ const merchDbList = {
             };
             postRequest(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
-                    if(res.state === 1) {
+                    if (res.state === 1) {
                         if (res.data.length !== 0) {
                             this.productSet = res.data;
                             this.productSelect = false;
@@ -3500,7 +3517,6 @@ const merchDbList = {
         closeEditDialog() {
             this.displayEditDialog = false;
             this.itemEdit = {};
-            this.init();
         },
         //保存编辑数据
         submitEditItem() {
@@ -3542,14 +3558,14 @@ const merchDbList = {
         },
         //根据系列id获取该系列所有作品
         getProducts(ev) {
-            if(ev.value.length !== 0) {
+            if (ev.value.length !== 0) {
                 let json = {
                     franchises: ev.value,
                     entityType: ENTITY.MERCH
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             if (res.data.length !== 0) {
                                 this.productSet = res.data;
                                 this.productSelect = false;
@@ -3560,7 +3576,7 @@ const merchDbList = {
                             }
                         }
                     });
-            }else {
+            } else {
                 this.productSelect = true;
                 this.itemEdit.products = [];
                 this.merch.products = [];
@@ -3590,11 +3606,797 @@ const merchDbList = {
     }
 }
 
+const productDbList = {
+    template: `
+        <p-toast></p-toast>
+    <p-datatable ref="dt" :value="products" class=" p-datatable-sm"
+                 :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
+                 @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                 filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
+                 :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
+                 :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
+                 paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
+                             LastPageLink CurrentPageReport RowsPerPageDropdown"
+                 current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
+                 responsive-layout="scroll">
+        <template #header>
+            <div class="grid p-fluid">
+                <div class="col-9" v-if="editAuth > 1">
+                    <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
+                    <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+                              @click="openNewDialog" style="width: 6em"></p-button>
+                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                              @click="exportCSV($event)" style="width: 8em"></p-button>
+                </div>
+                <div class="col-3">
+                    <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
+                                   @update:model-value="onToggle" class=" text-end"
+                                   placeholder="可选显示列" style="width: 20em"></p-multiselect>
+                </div>
+            </div>
+        </template>
+        <template #empty>
+                    <span class="emptyInfo">
+                        未检索到符合条件的数据
+                    </span>
+        </template>
+        <template #loading>
+            加载中，别急~
+        </template>
+        <p-column header="序号" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 4rem">
+            <template #body="slotProps" v-if="editAuth > 2">
+                <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
+                    {{slotProps.data.id}}
+                </p-button>
+            </template>
+        </p-column>
+        <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 20rem">
+            <template #body="slotProps">
+                <a :href="'/db/product/' + slotProps.data.id">
+                    {{slotProps.data.name}}
+                </a>
+            </template>
+            <template #filter="{filterModel,filterCallback}">
+                <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+            </template>
+        </p-column>
+        <p-column header="作品名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 15rem">
+            <template #filter="{filterModel,filterCallback}">
+                <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+            </template>
+        </p-column>
+        <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+        <p-column header="作品分类" field="category" :show-filter-menu="false" style="flex: 0 0 9rem">
+            <template #body="slotProps">
+                {{slotProps.data.category.nameZh}}
+            </template>
+            <template #filter="{filterModel,filterCallback}">
+                <p-multiselect v-model="filterModel.value" @change="filterCallback()"
+                               :options="productCategorySet" option-label="label" option-value="value"
+                               display="chip" :filter="true">
+                </p-multiselect>
+            </template>
+        </p-column>
+        <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 10rem">
+            <template #body="slotProps">
+                <a :href="'/db/franchise/' + slotProps.data.franchise.value">
+                    {{slotProps.data.franchise.label}}
+                </a>
+            </template>
+            <template #filter="{filterModel,filterCallback}">
+                <p-multiselect v-model="filterModel.value" @change="filterCallback()"
+                               :options="franchiseSet" placeholder="所属系列"
+                               option-label="label" option-value="value" display="chip" :filter="true"
+                               style="width: 9rem">
+                </p-multiselect>
+            </template>
+        </p-column>
+        <p-column v-for="(col, index) of selectedColumns" :field="col.field"
+                  :header="col.header" :key="col.field + '_' + index">
+        </p-column>
+    </p-datatable>
+    <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据"
+              class="p-fluid">
+        <p-blockui :blocked="editBlock">
+            <p-panel header="基础信息">
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>作品名称<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="product.name"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>作品名称(中文)<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="product.nameZh"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>作品名称(英语)</label>
+                        <p-inputtext v-model.trim="product.nameEn"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>发行时间<span style="color: red">*</span></label>
+                        <p-calendar v-model="product.releaseDate" date-format="yy/mm/dd"
+                                    :show-button-bar="true" :show-icon="true"></p-calendar>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label class="mb-3">作品分类<span style="color: red">*</span></label>
+                        <p-dropdown v-model="product.category" :options="productCategorySet"
+                                    placeholder="选择作品分类" option-label="label" option-value="value">
+                        </p-dropdown>
 
+                    </div>
+                    <div class="field col">
+                        <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                        <p-dropdown v-model="product.franchise" :options="franchiseSet"
+                                    placeholder="选择所属系列" option-label="label" option-value="value">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>备注</label>
+                    <p-textarea v-model="product.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                </div>
+            </p-panel>
+            <p-panel header="其他信息">
+                <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                <div class="field">
+                    <span style="text-align: center"><em>如需添加图片，请到作品详情页面进行</em></span>
+                </div>
+                <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                <div class="field">
+                    <span style="text-align: center"><em>如需图片描述信息，请到作品详情页面进行</em></span>
+                </div>
+            </p-panel>
+        </p-blockui>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="closeNewDialog" :disabled="editBlock"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitNewItem" :disabled="editBlock"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据"
+              class="p-fluid">
+        <p-blockui :blocked="editBlock">
+            <p-panel header="基础信息">
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>作品名称<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="itemEdit.name"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>作品名称(中文)<span style="color: red">*</span></label>
+                        <p-inputtext v-model.trim="itemEdit.nameZh"></p-inputtext>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label>作品名称(英语)</label>
+                        <p-inputtext v-model.trim="itemEdit.nameEn"></p-inputtext>
+                    </div>
+                    <div class="field col">
+                        <label>发行时间<span style="color: red">*</span></label>
+                        <p-calendar v-model="itemEdit.releaseDate" date-format="yy/mm/dd"
+                                    :show-button-bar="true" :show-icon="true"></p-calendar>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label class="mb-3">作品分类<span style="color: red">*</span></label>
+                        <p-dropdown v-model="itemEdit.category" :options="productCategorySet"
+                                    placeholder="选择作品分类" option-label="label" option-value="value">
+                        </p-dropdown>
+    
+                    </div>
+                    <div class="field col">
+                        <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                        <p-dropdown v-model="itemEdit.franchise" :options="franchiseSet"
+                                    placeholder="选择所属系列" option-label="label" option-value="value">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>备注</label>
+                    <p-textarea v-model="itemEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                </div>
+            </p-panel>
+            <p-panel header="其他信息">
+                <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+                <div class="field">
+                    <span style="text-align: center"><em>如需添加图片，请到作品详情页面进行</em></span>
+                </div>
+                <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+                <div class="field">
+                    <span style="text-align: center"><em>如需图片描述信息，请到作品详情页面进行</em></span>
+                </div>
+            </p-panel>
+        </p-blockui>
+        <template #footer>
+            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                      @click="closeEditDialog" :disabled="editBlock"></p-button>
+            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                      @click="submitEditItem" :disabled="editBlock"></p-button>
+        </template>
+    </p-dialog>
+    `,
+    mounted() {
+        this.initData();
+        this.init();
+    },
+    data() {
+        return {
+            //region common
+            toast: useToast(),
+            loading: false,
+            dt: null,
+            totalLoading: false,
+            editAuth: null,
+            //endregion
 
+            //region search param
+            totalRecords: 0,
+            queryParams: {},
+            filters: {
+                'name': {value: ''},
+                'nameZh': {value: ''},
+                'franchise': {value: null},
+                'category': {value: null},
+            },
+            //endregion
 
+            //region basic
+            product: {},
+            products: [],
+            franchiseSet: [],
 
+            productCategorySet: [],
+            columns: [
+                {field: 'nameEn', header: '作品名称(英文)'},
+                {field: 'remark', header: '备注'},
+                {field: 'addedTime', header: '收录时间'},
+                {field: 'editedTime', header: '编辑时间'},
+            ],
+            //endregion
 
+            //region edit
+            itemEdit: {},
+            editBlock: false,
+            selectedColumns: null,
+
+            displayNewDialog: false,
+            displayEditDialog: false,
+            //endregion
+
+        }
+    },
+    methods: {
+        //region common
+        exportCSV() {
+            getRequest(null, CHECK_USER_AUTHORITY_URL)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.$refs.dt.exportCSV();
+                    }
+                })
+        },
+        //初始化
+        initData() {
+            let json = {
+                label: "product"
+            };
+            this.totalLoading = true;
+            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+                .then(res => {
+                    this.editAuth = res.editAuth;
+                    this.productCategorySet = res.productCategorySet;
+                    this.franchiseSet = res.franchiseSet;
+                    this.totalLoading = false;
+                })
+        },
+        init() {
+            this.loading = true;
+            this.queryParams = {
+                first: 0,
+                rows: this.$refs.dt.rows,
+                sortField: null,
+                sortOrder: null,
+                filters: this.filters
+            };
+            this.getProducts();
+            this.loading = false;
+        },
+        //endregion
+
+        //region search
+        onToggle(val) {
+            this.selectedColumns = this.columns.filter(col => val.includes(col));
+        },
+        onPage(ev) {
+            this.queryParams = ev;
+            this.getProducts();
+        },
+        onSort(ev) {
+            this.queryParams = ev;
+            this.getProducts();
+        },
+        onFilter() {
+            this.queryParams.filters = this.filters;
+            this.queryParams.first = 0;
+            this.getProducts();
+        },
+        getProducts() {
+            postRequest(null, GET_PRODUCTS_URL, {queryParams: this.queryParams})
+                .then(res => {
+                    this.products = res.data;
+                    this.totalRecords = res.total;
+                })
+        },
+        //endregion
+
+        //region edit
+        //打开编辑数据面板
+        openEditDialog(data) {
+            let dataTmp = JSON.parse(JSON.stringify(data));
+            this.itemEdit = dataTmp;
+            this.itemEdit.franchise = dataTmp.franchise.value;
+            this.itemEdit.category = dataTmp.category.id;
+            this.displayEditDialog = true;
+        },
+        //关闭编辑数据面板
+        closeEditDialog() {
+            this.displayEditDialog = false;
+            this.itemEdit = {};
+        },
+        //保存编辑数据
+        submitEditItem() {
+            this.editBlock = true;
+            commonVueSubmit(this.toast, UPDATE_PRODUCT_URL, this.itemEdit)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.itemEdit = {};
+                        this.closeEditDialog();
+                        this.init();
+                    }
+                    this.editBlock = false;
+                }).catch(e => {
+                console.error(e);
+            });
+        },
+        //打开新增数据面板
+        openNewDialog() {
+            this.product = {};
+            this.displayNewDialog = true;
+        },
+        //关闭新增数据面板
+        closeNewDialog() {
+            this.product = {};
+            this.displayNewDialog = false;
+        },
+        //提交新增数据
+        submitNewItem() {
+            commonVueSubmit(this.toast, ADD_PRODUCT_URL, this.product)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.product = {};
+                        this.closeNewDialog();
+                        this.init();
+                    }
+                    this.editBlock = false;
+                });
+        },
+        //endregion
+
+    },
+    components: {
+        "p-datatable": primevue.datatable,
+        "p-column": primevue.column,
+        "p-calendar": primevue.calendar,
+        "p-inputnumber": primevue.inputnumber,
+        "p-dialog": primevue.dialog,
+        "p-textarea": primevue.textarea,
+        "p-toolbar": primevue.toolbar,
+        "p-toast": primevue.toast,
+        "p-panel": primevue.panel,
+        "p-divider": primevue.divider,
+        "p-inputswitch": primevue.inputswitch,
+        "p-multiselect": primevue.multiselect,
+        "p-inputtext": primevue.inputtext,
+        "p-button": primevue.button,
+        "p-dropdown": primevue.dropdown,
+        "p-tristatecheckbox": primevue.tristatecheckbox,
+        "p-blockui": primevue.blockui,
+    }
+}
+
+const franchiseDbList = {
+    template: `
+        <p-toast></p-toast>
+<p-datatable ref="dt" :value="franchises" class=" p-datatable-sm"
+                :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
+                @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
+                :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
+                :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
+                paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
+                                LastPageLink CurrentPageReport RowsPerPageDropdown"
+                current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
+                responsive-layout="scroll">
+    <template #header>
+        <div class="grid p-fluid">
+            <div class="col-9" v-if="editAuth > 1">
+                <p-button icon="pi pi-refresh" class="p-button-rounded p-button-sm mr-2" @click="init"></p-button>
+                <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+                            @click="openNewDialog" style="width: 6em"></p-button>
+                <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                            @click="exportCSV($event)" style="width: 8em"></p-button>
+            </div>
+            <div class="col-3">
+                <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
+                                @update:model-value="onToggle" class=" text-end"
+                                placeholder="可选显示列" style="width: 20em"></p-multiselect>
+            </div>
+        </div>
+    </template>
+    <template #empty>
+            <span class="emptyInfo">
+                未检索到符合条件的数据
+            </span>
+    </template>
+    <template #loading>
+        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
+    </template>
+    <p-column header="Id" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 4rem">
+        <template #body="slotProps" v-if="editAuth > 2">
+            <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
+                {{slotProps.data.id}}
+            </p-button>
+        </template>
+    </p-column>
+    <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
+        <template #body="slotProps">
+            <a :href="'/db/franchise/' + slotProps.data.id">
+                {{slotProps.data.name}}
+            </a>
+        </template>
+        <template #filter="{filterModel,filterCallback}">
+            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+        </template>
+    </p-column>
+    <p-column header="名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 15rem">
+        <template #filter="{filterModel,filterCallback}">
+            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+        </template>
+    </p-column>
+    <p-column header="名称(英)" field="nameEn" style="flex: 0 0 15rem"></p-column>
+    <p-column header="起始时间" field="originDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
+    <p-column header="元系列" field="metaLabel" data-type="boolean" body-class="text-center"
+                style="flex: 0 0 4rem">
+        <template #body="{data}">
+            <i class="pi" :class="{'true-icon pi-check-circle': data.metaLabel, 'false-icon pi-times-circle': !data.metaLabel}"></i>
+        </template>
+        <template #filter="{filterModel,filterCallback}">
+            <p-tristatecheckbox v-model="filterModel.value" @change="filterCallback()"></p-tristatecheckbox>
+        </template>
+    </p-column>
+    <p-column v-for="(col, index) of selectedColumns" :field="col.field"
+                :header="col.header" :key="col.field + '_' + index">
+    </p-column>
+</p-datatable>
+<p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据"
+            class="p-fluid">
+    <p-blockui :blocked="editBlock">
+        <p-panel header="基础信息">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchise.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>名称(中)<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="franchise.nameZh"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称(英)</label>
+                    <p-inputtext v-model.trim="franchise.nameEn"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发售时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="franchise.originDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="franchise.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+        <p-panel header="进阶信息">
+            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <p-panel header="子系列">
+            <div class="formgrid grid">
+                <div class="field col-3">
+                    <div class="col-12">
+                        <label class="mb-3">是否为元系列<span style="color: red">*</span></label>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <p-inputswitch v-model="franchise.metaLabel"></p-inputswitch>
+                    </div>
+                </div>
+                <div class="field col-9" v-if="franchise.metaLabel">
+                    <label class="mb-3">子系列</label>
+                    <p-multiselect v-model="franchise.childFranchises" :options="franchiseSet" placeholder="子系列"
+                                    option-label="label" option-value="value" display="chip" :filter="true">
+                    </p-multiselect>
+                </div>
+            </div>
+        </p-panel>
+    </p-blockui>
+    <template #footer>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                    @click="closeNewDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                    @click="submitNewItem" :disabled="editBlock"></p-button>
+    </template>
+</p-dialog>
+<p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据"
+            class="p-fluid">
+    <p-blockui :blocked="editBlock">
+        <p-panel header="基础信息">
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="itemEdit.name"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>名称(中)<span style="color: red">*</span></label>
+                    <p-inputtext v-model.trim="itemEdit.nameZh"></p-inputtext>
+                </div>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>名称(英)</label>
+                    <p-inputtext v-model.trim="itemEdit.nameEn"></p-inputtext>
+                </div>
+                <div class="field col">
+                    <label>发售时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="itemEdit.originDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea v-model="itemEdit.remark" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+        <p-panel header="进阶信息">
+            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
+            </div>
+            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
+            <div class="field">
+                <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
+            </div>
+        </p-panel>
+        <p-panel header="子系列" v-if="itemEdit.metaLabel">
+            <div class="field col">
+                <label class="mb-3">子系列</label>
+                <p-multiselect v-model="itemEdit.childFranchises" :options="franchiseSet" placeholder="子系列"
+                                option-label="label" option-value="value" display="chip" :filter="true">
+                </p-multiselect>
+            </div>
+        </p-panel>
+    </p-blockui>
+    <template #footer>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                    @click="closeEditDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                    @click="submitEditItem" :disabled="editBlock"></p-button>
+    </template>
+</p-dialog>
+    `,
+    mounted() {
+        this.initData();
+        this.init();
+    },
+    data() {
+        return {
+            //region common
+            toast: useToast(),
+            loading: false,
+            dt: null,
+            totalLoading: false,
+            editAuth: null,
+            //endregion
+
+            //region search param
+            totalRecords: 0,
+            queryParams: {},
+            filters: {
+                'name': {value: ''},
+                'nameZh': {value: ''},
+                'metaLabel': {value: null},
+            },
+            //endregion
+
+            //region basic
+            franchise: {},
+            franchises: [],
+            franchiseSet: [],
+
+            columns: [
+                {field: 'remark', header: '备注'},
+                {field: 'addedTime', header: '收录时间'},
+                {field: 'editedTime', header: '编辑时间'},
+            ],
+            //endregion
+
+            //region edit
+            itemEdit: {},
+            editBlock: false,
+            selectedColumns: null,
+
+            displayNewDialog: false,
+            displayEditDialog: false,
+            //endregion
+
+        }
+    },
+    methods: {
+        //region common
+        exportCSV() {
+            getRequest(null, CHECK_USER_AUTHORITY_URL)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.$refs.dt.exportCSV();
+                    }
+                })
+        },
+        //初始化
+        initData() {
+            let json = {
+                label: "franchise"
+            };
+            this.totalLoading = true;
+            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+                .then(res => {
+                    this.editAuth = res.editAuth;
+                    this.franchiseSet = res.franchiseSet;
+                    this.totalLoading = false;
+                })
+        },
+        init() {
+            this.loading = true;
+            this.queryParams = {
+                first: 0,
+                rows: this.$refs.dt.rows,
+                sortField: null,
+                sortOrder: null,
+                filters: this.filters
+            };
+            this.getFranchises();
+            this.loading = false;
+        },
+        //endregion
+
+        //region search
+        onToggle(val) {
+            this.selectedColumns = this.columns.filter(col => val.includes(col));
+        },
+        onPage(ev) {
+            this.queryParams = ev;
+            this.getFranchises();
+        },
+        onSort(ev) {
+            this.queryParams = ev;
+            this.getFranchises();
+        },
+        onFilter() {
+            this.queryParams.filters = this.filters;
+            this.queryParams.first = 0;
+            this.getFranchises();
+        },
+        getFranchises() {
+            postRequest(null, GET_FRANCHISES_URL, {queryParams: this.queryParams})
+                .then(res => {
+                    this.franchises = res.data;
+                    this.totalRecords = res.total;
+                })
+        },
+        //endregion
+
+        //region edit
+        //打开编辑数据面板
+        openEditDialog(data) {
+            this.itemEdit = JSON.parse(JSON.stringify(data));
+            this.displayEditDialog = true;
+        },
+        //关闭编辑数据面板
+        closeEditDialog() {
+            this.displayEditDialog = false;
+            this.itemEdit = {};
+        },
+        //保存编辑数据
+        submitEditItem() {
+            this.editBlock = true;
+            commonVueSubmit(this.toast, UPDATE_FRANCHISE_URL, this.itemEdit)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.itemEdit = {};
+                        this.closeEditDialog();
+                        this.init();
+                    }
+                    this.editBlock = false;
+                }).catch(e => {
+                console.error(e);
+            });
+        },
+        //打开新增数据面板
+        openNewDialog() {
+            this.franchise = {
+                metaLabel: false,
+                childFranchises: []
+            };
+            this.displayNewDialog = true;
+        },
+        //关闭新增数据面板
+        closeNewDialog() {
+            this.franchise = {};
+            this.displayNewDialog = false;
+        },
+        //提交新增数据
+        submitNewItem() {
+            commonVueSubmit(this.toast, ADD_FRANCHISE_URL, this.product)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.franchise = {};
+                        this.closeNewDialog();
+                        this.init();
+                    }
+                    this.editBlock = false;
+                });
+        },
+        //endregion
+
+    },
+    components: {
+        "p-datatable": primevue.datatable,
+        "p-column": primevue.column,
+        "p-calendar": primevue.calendar,
+        "p-inputnumber": primevue.inputnumber,
+        "p-dialog": primevue.dialog,
+        "p-textarea": primevue.textarea,
+        "p-toolbar": primevue.toolbar,
+        "p-toast": primevue.toast,
+        "p-panel": primevue.panel,
+        "p-divider": primevue.divider,
+        "p-inputswitch": primevue.inputswitch,
+        "p-multiselect": primevue.multiselect,
+        "p-inputtext": primevue.inputtext,
+        "p-button": primevue.button,
+        "p-dropdown": primevue.dropdown,
+        "p-tristatecheckbox": primevue.tristatecheckbox,
+        "p-blockui": primevue.blockui,
+    }
+}
 
 export const DATABASE_LIST_ROUTER = [
     {
@@ -3617,12 +4419,12 @@ export const DATABASE_LIST_ROUTER = [
         path: '/db/list/merch',
         component: merchDbList
     },
-    // {
-    //     path: '/db/list/product',
-    //     component: productDbList
-    // },
-    // {
-    //     path: '/db/list/franchise',
-    //     component: franchiseDbList
-    // }
+    {
+        path: '/db/list/product',
+        component: productDbList
+    },
+    {
+        path: '/db/list/franchise',
+        component: franchiseDbList
+    }
 ];

@@ -1,4 +1,4 @@
-package com.rakbow.website.controller;
+package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -62,14 +62,6 @@ public class FranchiseController {
     //endregion
 
     //region ------获取页面------
-
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public ModelAndView getFranchiseListPage(Model model) {
-        ModelAndView view = new ModelAndView();
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        view.setViewName("/itemList/franchise-list");
-        return view;
-    }
 
     //获取单个系列详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)

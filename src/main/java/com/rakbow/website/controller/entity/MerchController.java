@@ -1,22 +1,22 @@
-package com.rakbow.website.controller;
+package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.vo.disc.DiscVOAlpha;
-import com.rakbow.website.entity.Disc;
+import com.rakbow.website.data.vo.merch.MerchVO;
+import com.rakbow.website.data.vo.merch.MerchVOAlpha;
+import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
-import com.rakbow.website.service.DiscService;
-import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.VisitService;
+import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.HostHolder;
-import com.rakbow.website.util.convertMapper.DiscVOMapper;
+import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -37,19 +37,20 @@ import java.util.List;
 /**
  * @Project_name: website
  * @Author: Rakbow
- * @Create: 2022-12-15 20:57
+ * @Create: 2023-01-04 16:57
  * @Description:
  */
+
 @Controller
-@RequestMapping("/db/disc")
-public class DiscController {
+@RequestMapping("/db/merch")
+public class MerchController {
 
     //region ------引入实例------
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private DiscService discService;
+    private MerchService merchService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -59,97 +60,70 @@ public class DiscController {
     @Autowired
     private RedisUtil redisUtil;
 
-    private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
+    private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
     //endregion
 
     //region ------获取页面------
 
-    //获取单个专辑详细信息页面
+    //获取单个周边商品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
-        if (discService.getDisc(id) == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.DISC.getNameZh()));
+    public String getMerchDetail(@PathVariable int id, Model model) {
+        if (merchService.getMerch(id) == null) {
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MERCH.getNameZh()));
             return "/error/404";
         }
         //访问数+1
-        visitService.increaseVisit(EntityType.DISC.getId(), id);
+        visitService.increaseVisit(EntityType.MERCH.getId(), id);
 
-        Disc disc = discService.getDisc(id);
+        Merch merch = merchService.getMerch(id);
 
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
+        model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("disc", discVOMapper.disc2VO(disc));
+        model.addAttribute("merch", merchVOMapper.merch2VO(merch));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
+        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(merch, EntityType.MERCH.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MERCH.getId(), id, merch.getAddedTime(), merch.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, false));
-        //获取相关碟片
-        model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
-        return "/itemDetail/disc-detail";
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(merch.getImages(), 200, false));
+        //获取相关周边
+        model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
+        return "/itemDetail/merch-detail";
     }
 
     //endregion
 
     //region ------增删改查------
 
-    //根据搜索条件获取碟片--列表界面
-    @RequestMapping(value = "/get-discs", method = RequestMethod.POST)
-    @ResponseBody
-    public String getDiscsByFilterList(@RequestBody String json) {
-
-        JSONObject param = JSON.parseObject(json);
-        JSONObject queryParams = param.getJSONObject("queryParams");
-        String pageLabel = param.getString("pageLabel");
-
-        List<DiscVOAlpha> discs = new ArrayList<>();
-
-        SearchResult searchResult = discService.getDiscsByFilterList(queryParams);
-
-        if (StringUtils.equals(pageLabel, "list")) {
-            discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
-        }
-        if (StringUtils.equals(pageLabel, "index")) {
-            discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
-        }
-
-        JSONObject result = new JSONObject();
-        result.put("data", discs);
-        result.put("total", searchResult.total);
-
-        return JSON.toJSONString(result);
-    }
-
-    //新增碟片
+    //新增周边
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addDisc(@RequestBody String json, HttpServletRequest request) {
+    public String addMerch(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
             if (userService.checkAuthority(request).state) {
 
                 //检测数据
-                if(!StringUtils.isBlank(discService.checkDiscJson(param))) {
-                    res.setErrorMessage(discService.checkDiscJson(param));
+                if(!StringUtils.isBlank(merchService.checkMerchJson(param))) {
+                    res.setErrorMessage(merchService.checkMerchJson(param));
                     return JSON.toJSONString(res);
                 }
 
-                Disc disc = discService.json2Disc(discService.handleDiscJson(param));
+                Merch merch = merchService.json2Merch(merchService.handleMerchJson(param));
 
-                //保存新增专辑
-                discService.addDisc(disc);
+                //保存新增周边
+                merchService.addMerch(merch);
 
-                //将新增的专辑保存到Elasticsearch服务器索引中
+                //将新增的周边保存到Elasticsearch服务器索引中
                 // elasticsearchService.saveAlbum(album);
 
                 //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.DISC.getId(), disc.getId()));
+                visitService.insertVisit(new Visit(EntityType.MERCH.getId(), merch.getId()));
 
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
+                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -160,28 +134,28 @@ public class DiscController {
         return JSON.toJSONString(res);
     }
 
-    //删除碟片(单个/多个)
+    //删除周边(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteDisc(@RequestBody String json, HttpServletRequest request) {
+    public String deleteMerch(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONArray discs = JSON.parseArray(json);
+        JSONArray merchs = JSON.parseArray(json);
         try {
             if (userService.checkAuthority(request).state) {
-                for (int i = 0; i < discs.size(); i++) {
+                for (int i = 0; i < merchs.size(); i++) {
 
-                    int id = discs.getJSONObject(i).getInteger("id");
+                    int id = merchs.getJSONObject(i).getInteger("id");
 
-                    //从数据库中删除专辑
-                    discService.deleteDisc(id);
+                    //从数据库中删除周边
+                    merchService.deleteMerch(id);
 
-                    //从Elasticsearch服务器索引中删除专辑
+                    //从Elasticsearch服务器索引中删除周边
                     // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
 
                     //删除访问量实体
-                    visitService.deleteVisit(EntityType.DISC.getId(), id);
+                    visitService.deleteVisit(EntityType.MERCH.getId(), id);
                 }
-                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.DISC.getNameZh());
+                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
             }
@@ -191,31 +165,31 @@ public class DiscController {
         return JSON.toJSONString(res);
     }
 
-    //更新碟片基础信息
+    //更新周边基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateDisc(@RequestBody String json, HttpServletRequest request) {
+    public String updateMerch(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
             if (userService.checkAuthority(request).state) {
                 //检测数据
-                if(!StringUtils.isBlank(discService.checkDiscJson(param))) {
-                    res.setErrorMessage(discService.checkDiscJson(param));
+                if(!StringUtils.isBlank(merchService.checkMerchJson(param))) {
+                    res.setErrorMessage(merchService.checkMerchJson(param));
                     return JSON.toJSONString(res);
                 }
 
-                Disc disc = discService.json2Disc(discService.handleDiscJson(param));
+                Merch merch = merchService.json2Merch(merchService.handleMerchJson(param));
 
                 //修改编辑时间
-                disc.setEditedTime(new Timestamp(System.currentTimeMillis()));
+                merch.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-                discService.updateDisc(disc.getId(), disc);
+                merchService.updateMerch(merch.getId(), merch);
 
-                //将更新的专辑保存到Elasticsearch服务器索引中
+                //将更新的周边保存到Elasticsearch服务器索引中
                 // elasticsearchService.saveAlbum(album);
 
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.DISC.getNameZh());
+                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -230,10 +204,36 @@ public class DiscController {
 
     //region ------进阶信息增删改查------
 
+    //根据搜索条件获取周边--列表界面
+    @RequestMapping(value = "/get-merchs", method = RequestMethod.POST)
+    @ResponseBody
+    public String getMerchsByFilterList(@RequestBody String json) {
+        JSONObject param = JSON.parseObject(json);
+        JSONObject queryParams = param.getJSONObject("queryParams");
+        String pageLabel = param.getString("pageLabel");
+
+        List<MerchVOAlpha> merchs = new ArrayList<>();
+
+        SearchResult searchResult = merchService.getMerchsByFilterList(queryParams);
+
+        if (StringUtils.equals(pageLabel, "list")) {
+            merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);
+        }
+        if (StringUtils.equals(pageLabel, "index")) {
+            merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);
+        }
+
+        JSONObject result = new JSONObject();
+        result.put("data", merchs);
+        result.put("total", searchResult.total);
+
+        return JSON.toJSONString(result);
+    }
+
     //新增图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
-    public String addDiscImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
+    public String addMerchImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
@@ -244,7 +244,7 @@ public class DiscController {
                 }
 
                 //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(discService.getDisc(id).getImages());
+                JSONArray imagesJson = JSON.parseArray(merchService.getMerch(id).getImages());
                 //新增图片的信息
                 JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
@@ -255,12 +255,12 @@ public class DiscController {
                     return JSON.toJSONString(res);
                 }
 
-                discService.addDiscImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+                merchService.addMerchImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
 
-                //更新elasticsearch中的专辑
+                //更新elasticsearch中的周边
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
 
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
+                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
 
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);
@@ -274,12 +274,12 @@ public class DiscController {
     //更新图片，删除或更改信息
     @RequestMapping(path = "/update-images", method = RequestMethod.POST)
     @ResponseBody
-    public String updateDiscImages(@RequestBody String json, HttpServletRequest request) {
+    public String updateMerchImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
 
-                //获取专辑id
+                //获取周边id
                 int id = JSON.parseObject(json).getInteger("id");
                 JSONArray images = JSON.parseObject(json).getJSONArray("images");
                 for (int i = 0; i < images.size(); i++) {
@@ -296,10 +296,10 @@ public class DiscController {
                         return JSON.toJSONString(res);
                     }
 
-                    res.message = discService.updateDiscImages(id, images.toJSONString());
+                    res.message = merchService.updateMerchImages(id, images.toJSONString());
                 }//删除图片
                 else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = discService.deleteDiscImages(id, images);
+                    res.message = merchService.deleteMerchImages(id, images);
                 }else {
                     res.setErrorMessage(ApiInfo.NOT_ACTION);
                 }
@@ -313,17 +313,17 @@ public class DiscController {
         return JSON.toJSONString(res);
     }
 
-    //更新专辑规格信息
+    //更新周边规格信息
     @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
     @ResponseBody
-    public String updateDiscSpec(@RequestBody String json, HttpServletRequest request) {
+    public String updateMerchSpec(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
-                String spec = JSON.parseObject(json).get("spec").toString();
-                discService.updateDiscSpec(id, spec);
-                res.message = ApiInfo.UPDATE_DISC_SPEC_SUCCESS;
+                String spec = JSON.parseObject(json).getJSONArray("spec").toString();
+                merchService.updateMerchSpec(id, spec);
+                res.message = ApiInfo.UPDATE_MERCH_SPEC_SUCCESS;
                 //更新elasticsearch中的专辑
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
             } else {
@@ -336,41 +336,18 @@ public class DiscController {
         }
     }
 
-    //更新专辑描述信息
+    //更新周边描述信息
     @RequestMapping(path = "/update-description", method = RequestMethod.POST)
     @ResponseBody
-    public String updateDiscDescription(@RequestBody String json, HttpServletRequest request) {
+    public String updateMerchDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (userService.checkAuthority(request).state) {
                 int id = JSON.parseObject(json).getInteger("id");
                 String description = JSON.parseObject(json).get("description").toString();
-                discService.updateDiscDescription(id, description);
-                res.message = ApiInfo.UPDATE_DISC_DESCRIPTION_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-            return JSON.toJSONString(res);
-        }
-    }
-
-    //更新专辑特典信息
-    @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateDiscBonus(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String bonus = JSON.parseObject(json).get("bonus").toString();
-                discService.updateDiscBonus(id, bonus);
-                res.message = ApiInfo.UPDATE_DISC_BONUS_SUCCESS;
-                //更新elasticsearch中的专辑
+                merchService.updateMerchDescription(id, description);
+                res.message = ApiInfo.UPDATE_MERCH_DESCRIPTION_SUCCESS;
+                //更新elasticsearch中的周边
                 // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
             } else {
                 res.setErrorMessage(userService.checkAuthority(request).message);

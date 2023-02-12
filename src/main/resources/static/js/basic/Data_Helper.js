@@ -336,16 +336,16 @@ const dbListTabs = [
         icon: 'pi iconfont icon-yinshuabaozhuang',
         to: '/db/list/merch'
     },
-    // {
-    //     label: 'Products',
-    //     icon: 'pi pi-large',
-    //     to: '/db/list/product'
-    // },
-    // {
-    //     label: 'Franchises',
-    //     icon: 'pi pi-large',
-    //     to: '/db/list/franchise'
-    // },
+    {
+        label: 'Products',
+        icon: 'pi pi-th-large',
+        to: '/db/list/product'
+    },
+    {
+        label: 'Franchises',
+        icon: 'pi pi-th-large',
+        to: '/db/list/franchise'
+    },
 ];
 
 const tmpList10 = [
