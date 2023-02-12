@@ -223,6 +223,10 @@ img.flag {
     width: 15rem;
 }
 
+.common-tooltip .p-tooltip-text {
+    width: 8rem;
+}
+
 .region-tooltip .p-tooltip-text {
     text-align: center;
     width: 5rem;

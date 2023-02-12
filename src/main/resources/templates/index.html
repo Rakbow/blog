@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Rakbow's Web</title>
+    <title>傲幽的个人空间</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -43,7 +43,7 @@
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
 
-    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 </head>
 <body>
@@ -59,7 +59,7 @@
                 <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
 
                 <p-button label="数据库" type="button" @click.native="goDb" class="mr-3 p-button-raised"></p-button>
-                <p-button label="博客" type="button" @click.native="goBlog" class="p-button-outlined"></p-button>
+<!--                <p-button label="博客" type="button" @click.native="goBlog" class="p-button-outlined"></p-button>-->
             </section>
         </div>
         <div class="col-12 md:col-6 overflow-hidden">

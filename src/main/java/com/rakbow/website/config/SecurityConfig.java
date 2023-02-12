@@ -62,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/db/book/update-description",
                         "/db/book/update-spec",
                         "/db/book/update-bonus",
+                        "/db/book/isbn-interconvert",
 
                         "/db/disc/add",
                         "/db/disc/update",

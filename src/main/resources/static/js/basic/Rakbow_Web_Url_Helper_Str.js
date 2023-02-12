@@ -102,6 +102,8 @@ const UPDATE_BOOK_URL = "/db/book/update";
 const INSERT_BOOK_URL = "/db/book/add";
 const GET_BOOKS_URL = "/db/book/get-books";
 
+const BOOK_ISBN_INTERCONVERT = "/db/book/isbn-interconvert";
+
 const INSERT_BOOK_IMAGES_URL = "/db/book/add-images";
 const UPDATE_BOOK_IMAGES_URL = "/db/book/update-images";
 const UPDATE_BOOK_AUTHORS_URL = "/db/book/update-authors";
