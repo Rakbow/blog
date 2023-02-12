@@ -90,7 +90,7 @@ public class BookController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(book.getImages(), 180, false));
         //获取相关图书
         model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
-        return "/itemDetail/book-detail";
+        return "/database/itemDetail/book-detail";
     }
 
     //endregion

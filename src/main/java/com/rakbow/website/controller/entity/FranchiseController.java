@@ -85,7 +85,7 @@ public class FranchiseController {
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(franchise.getImages(), 200, false));
-        return "/itemDetail/franchise-detail";
+        return "/database/itemDetail/franchise-detail";
     }
 
     //endregion

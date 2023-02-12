@@ -72,7 +72,7 @@ public class MusicController {
         //获取所属专辑的信息
         model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(albumService.getAlbumById(music.getAlbumId())));
 
-        return "/itemDetail/music-detail";
+        return "/database/itemDetail/music-detail";
 
     }
 

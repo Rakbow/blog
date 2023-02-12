@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Disc Detail</title>
+    <title th:text="${disc.name}"></title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -85,7 +85,7 @@
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
 
-    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
     <!--other css -->

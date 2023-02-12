@@ -414,7 +414,7 @@ const albumIndex = {
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
-                        this.productSet = res;
+                        this.productSet = res.data;
                         this.productSelect = false;
                     }else {
                         this.productSelect = true;
@@ -869,7 +869,7 @@ const bookIndex = {
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
-                        this.productSet = res;
+                        this.productSet = res.data;
                         this.productSelect = false;
                     }else {
                         this.productSelect = true;
@@ -1320,7 +1320,7 @@ const discIndex = {
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
-                        this.productSet = res;
+                        this.productSet = res.data;
                         this.productSelect = false;
                     }else {
                         this.productSelect = true;
@@ -1744,7 +1744,7 @@ const gameIndex = {
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
-                        this.productSet = res;
+                        this.productSet = res.data;
                         this.productSelect = false;
                     }else {
                         this.productSelect = true;
@@ -2139,7 +2139,7 @@ const merchIndex = {
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
-                        this.productSet = res;
+                        this.productSet = res.data;
                         this.productSelect = false;
                     }else {
                         this.productSelect = true;

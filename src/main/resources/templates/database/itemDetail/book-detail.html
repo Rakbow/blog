@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Merch Detail</title>
+    <title th:text="${book.title}"></title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -55,11 +55,7 @@
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
     <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
-    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
-    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
@@ -78,13 +74,13 @@
 
     <script th:src="@{/js/clipboard.js}"></script>
 
-    <!-- basic js -->
-    <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
-    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
-
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
+
+    <!-- basic js -->
+    <script th:src="@{/js/basic/Data_Helper.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
@@ -104,38 +100,48 @@
                     <div class="grid detail-item-header-title">
                         <h4 class="col-11">
                             <b class="detail-item-title">
-                                <i class="pi iconfont icon-yinshuabaozhuang" style="font-size: 1.5rem"></i>
-                                {{merch.name}}
+                                <i class="pi iconfont icon-book" style="font-size: 1.5rem"></i>
+                                {{book.title}}
                             </b>
                         </h4>
                         <div th:insert="~{template/item-detail-template :: item_common_edit_button}"></div>
                     </div>
                 </template>
                 <template #subtitle>
-                    <h5 v-if="merch.nameZh != ''" class="detail-item-subtitle"><small class="ml-4">{{merch.nameZh}}</small></h5>
+                    <h5 v-if="book.titleZh != ''" class="detail-item-subtitle"><small
+                            class="ml-4">{{book.titleZh}}</small></h5>
                     <h5 v-else><small></small></h5>
-                    <h5 v-if="merch.nameEn != ''" class="detail-item-subtitle"><small class="ml-4">{{merch.nameEn}}</small></h5>
+                    <h5 v-if="book.titleEn != ''" class="detail-item-subtitle"><small
+                            class="ml-4">{{book.titleEn}}</small></h5>
                     <h5 v-else><small></small></h5>
                 </template>
                 <template #content>
                     <div class="grid">
-                        <div class="col-4" style="width: 200px">
-                            <div class="item-detail-cover">
+                        <div class="col-4" style="width: 180px">
+                            <div class="book-detail-cover">
                                 <img :src="itemImageInfo.cover.url" :alt="itemImageInfo.cover.name"/>
                             </div>
                         </div>
                         <div class="col detail-item-header-card">
-                            <p-card class="mt-6">
+                            <p-card>
                                 <template #content>
                                     <table class="table-borderless table-sm ml-2">
                                         <tbody class="detail-item-header-table">
                                         <tr>
                                             <td>
                                                 <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>商品条形码</strong>
+                                                <strong>ISBN-10</strong>
                                             </td>
                                             <td>
-                                                {{merch.barcode?merch.barcode:' N/A '}}
+                                                {{book.isbn10}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-bar-code"></i>
+                                                <strong>ISBN-13</strong>
+                                            </td>
+                                            <td>{{book.isbn13}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -144,16 +150,7 @@
                                                 <strong>分类</strong>
                                             </td>
                                             <td>
-                                                <p-tag class="ml-1" :value="merch.category.nameZh"></p-tag>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar"></i>
-                                                <strong>发售日期</strong>
-                                            </td>
-                                            <td>
-                                                {{merch.releaseDate}}
+                                                <p-tag class="ml-1" :value="book.bookType.nameZh"></p-tag>
                                             </td>
                                         </tr>
                                         <tr>
@@ -162,29 +159,59 @@
                                                 <strong>地区</strong>
                                             </td>
                                             <td>
-                                                <span :class="'fi fi-' + merch.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: merch.region.nameZh, class: 'region-tooltip'}"></span>
+                                                <span :class="'fi fi-' + book.region.code" style="margin-left: 0.5rem"
+                                                      v-tooltip.bottom="{value: book.region.nameZh, class: 'region-tooltip'}"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi pi-language"></i>
+                                                <strong>语言</strong>
+                                            </td>
+                                            <td>
+                                                {{book.publishLanguage.nameZh}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi pi-calendar"></i>
+                                                <strong>出版日期</strong>
+                                            </td>
+                                            <td>
+                                                {{book.publishDate}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="pi iconfont icon-gongsi"></i>
+                                                <strong>出版社</strong>
+                                            </td>
+                                            <td>
+                                                {{book.publisher}}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <i class="pi iconfont icon-wuliaojiage"></i>
-                                                <strong>发售价格</strong>
+                                                <strong>出版价格</strong>
                                             </td>
                                             <td>
-                                                {{merch.price != 0?merch.price:" - "}} <span
-                                                    v-if="merch.currencyUnit == 'JPY'"
+                                                {{book.price != 0?book.price:" - "}} <span
+                                                    v-if="book.currencyUnit == 'JPY'"
                                                     style="text-decoration-line: underline;text-decoration-style: dashed;"
                                                     v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
-                                                    v-else>{{merch.currencyUnit}}</span>
+                                                    v-else>{{book.currencyUnit}}</span>
                                             </td>
                                         </tr>
-                                        <tr v-if="merch.notForSale">
+                                        <tr>
                                             <td>
-                                                <i class="pi pi-ban"></i>
-                                                <strong></strong>
+                                                <i class="pi iconfont icon-gift"></i>
+                                                <strong>特典</strong>
                                             </td>
-                                            <td>非卖品</td>
+                                            <td>
+                                                <a v-if="book.hasBonus" href="#bonus" style="color: #ceffff"
+                                                   class="ml-3">有</a>{{(book.hasBonus)?"":"无"}}
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -193,30 +220,66 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
-                        <!-- spec -->
+                        <!-- authors/spec -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
-                                <i class="pi pi-info-circle"></i>
-                                <b>规格</b>
+                                <i class="pi pi-users"></i>
+                                <b>作者/规格</b>
                             </template>
-                            <div class="grid ml-4" v-if="merch.spec.length != 0">
-                                <table class="table-borderless table-sm">
-                                    <tbody class="detail-item-artists-table">
-                                    <tr v-for="specItem in merch.spec">
-                                        <td width="80px"><strong>{{specItem.label}}</strong></td>
-                                        <td>
-                                            {{specItem.value.join(", ")}}
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                            <div class="grid">
+                                <div class="col-5 flex align-items-start justify-content-start">
+                                    <div class="grid ml-4" v-if="book.authors.length != 0">
+                                        <table class="table-borderless table-sm">
+                                            <tbody class="detail-item-artists-table">
+                                            <tr v-for="author in book.authors">
+                                                <td width="80px"><strong>{{author.pos}}</strong></td>
+                                                <td>
+                                                    {{author.name.join(", ")}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>暂无作者信息</em></span>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <p-divider layout="vertical"></p-divider>
+                                </div>
+                                <div class="col-5 flex align-items-start justify-content-start">
+                                    <div class="grid ml-4" v-if="book.spec.length != 0">
+                                        <table class="table-borderless table-sm">
+                                            <tbody class="detail-item-artists-table">
+                                            <tr v-for="specItem in book.spec">
+                                                <td width="80px"><strong>{{specItem.label}}</strong></td>
+                                                <td>
+                                                    {{specItem.value.join(", ")}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>暂无规格信息</em></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>暂无规格信息</em></span>
-                            </div>
+                        </p-fieldset>
+                        <!-- summary -->
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi iconfont icon-miaoshu"></i>
+                                <b>简介</b>
+                            </template>
+                            <article id="summary" class="markdown-body" style="width: 100%;"></article>
                         </p-fieldset>
                         <!-- description -->
                         <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
+                        <!-- bonus -->
+                        <div v-if="book.hasBonus">
+                            <div th:insert="~{template/item-detail-template :: bonus_field_set}"></div>
+                        </div>
                     </div>
                 </template>
             </p-card>
@@ -227,35 +290,36 @@
             <p-panel class="mt-2">
                 <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-yinshuabaozhuang"></i><span><strong>相关商品</strong></span>
+                        <i class="pi iconfont icon-book"></i><span><strong>相关图书</strong></span>
                     </span>
                 </template>
                 <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="relatedMerchs.length != 0"
-                             v-for="relatedMerch of relatedMerchs">
-                            <div class="sidebar-panel-image-small-div merch_info_bit_thumb mt-2">
-                                <a :href="'/db/merch/'+ relatedMerch.id">
-                                    <img class="sidebar-panel-image-small" :src="relatedMerch.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedMerch.addedTime + '编辑时间: ' + relatedMerch.editedTime">
+                             v-if="relatedBooks.length != 0"
+                             v-for="relatedBook of relatedBooks">
+                            <div class="sidebar-panel-image-small-div book_info_bit_thumb mt-2">
+                                <a :href="'/db/book/'+ relatedBook.id">
+                                    <img class="sidebar-panel-image-small" :src="relatedBook.cover.blackUrl"
+                                         v-tooltip.bottom="'收录时间: ' + relatedBook.addedTime + '编辑时间: ' + relatedBook.editedTime">
                                 </a>
                             </div>
                             <div class="col p-0" style="height: 80px">
                                 <ul class="info_bit_small_other">
                                     <li>
                                         <a class="small_font"
-                                           :href="'/db/merch/'+ relatedMerch.id ">
+                                           :href="'/db/book/'+ relatedBook.id ">
                                             <span class="text-truncate-2 mr-2">
-                                                {{relatedMerch.name}}
+                                                {{relatedBook.title}}
                                             </span>
                                         </a>
                                     </li>
                                     <li>
                                         <span class="small_font col-6 related-item-catalog">
-                                            {{relatedMerch.barcode}}
+                                            {{relatedBook.isbn13}}
                                         </span>
                                         <span class="small_font col-6 related-item-date">
-                                            {{relatedMerch.releaseDate}}
+                                            {{relatedBook.publishDate}}
                                         </span>
                                     </li>
                                 </ul>
@@ -272,34 +336,46 @@
         <p-blockui :blocked="editBlock">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>商品名<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="merchEdit.name"></p-inputtext>
+                    <label>ISBN-10<span style="color: red">*</span></label>
+                    <div class="p-inputgroup">
+                        <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
+                        <p-button icon="pi pi-sync" class="p-button-warning"
+                                  @click="ISBNInterconvert('isbn10', bookEdit.isbn13)"
+                                  v-tooltip.bottom="{value:'生成ISBN-10', class: 'common-tooltip'}"></p-button>
+                    </div>
                 </div>
                 <div class="field col">
-                    <label>商品名(中)</label>
-                    <p-inputtext v-model.trim="merchEdit.nameZh"></p-inputtext>
+                    <label>ISBN-13<span style="color: red">*</span></label>
+                    <div class="p-inputgroup">
+                        <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
+                        <p-button icon="pi pi-sync" class="p-button-warning"
+                                  @click="ISBNInterconvert('isbn13', bookEdit.isbn10)"
+                                  v-tooltip.bottom="{value:'生成ISBN-13', class: 'common-tooltip'}"></p-button>
+                    </div>
                 </div>
+            </div>
+            <div class="field">
+                <label>书名<span style="color: red">*</span></label>
+                <p-inputtext v-model.trim="bookEdit.title"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>书名(中)</label>
+                <p-inputtext v-model.trim="bookEdit.titleZh"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>书名(英)</label>
+                <p-inputtext v-model.trim="bookEdit.titleEn"></p-inputtext>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>商品名(英)</label>
-                    <p-inputtext v-model.trim="merchEdit.nameEn"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>商品条形码</label>
-                    <p-inputtext v-model.trim="merchEdit.barcode"></p-inputtext>
-                </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>商品分类<span style="color: red">*</span></label>
-                    <p-dropdown v-model="merchEdit.category" :options="merchCategorySet"
+                    <label class="mb-3">图书分类<span style="color: red">*</span></label>
+                    <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
                                 option-label="label" option-value="value">
                     </p-dropdown>
                 </div>
                 <div class="field col">
-                    <label>地区<span style="color: red">*</span></label>
-                    <p-dropdown v-model="merchEdit.region" :options="regionSet" :filter="true"
+                    <label class="mb-3">地区<span style="color: red">*</span></label>
+                    <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
                                 :show-clear="true" option-label="nameZh" option-value="code">
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
@@ -316,53 +392,62 @@
                         </template>
                     </p-dropdown>
                 </div>
+                <div class="field col">
+                    <label class="mb-3">语言<span style="color: red">*</span></label>
+                    <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
+                                option-label="nameZh" option-value="code">
+                    </p-dropdown>
+                </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
                     <label class="mb-3">所属系列<span style="color: red">*</span></label>
-                    <p-multiselect v-model="merchEdit.franchises" @change="getProducts($event)"
+                    <p-multiselect v-model="bookEdit.franchises" @change="getProducts($event)"
                                    :options="franchiseSet" placeholder="所属系列"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
-                <div class="field col-8">
+                <div class="field col-6">
                     <label class="mb-3">所属作品<span style="color: red">*</span></label>
-                    <p-multiselect v-model="merchEdit.products" :options="productSet"
+                    <p-multiselect v-model="bookEdit.products" :options="productSet"
                                    option-label="label" option-value="value" placeholder="选择所属作品"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>发售时间<span style="color: red">*</span></label>
-                    <p-calendar v-model="merchEdit.releaseDate" date-format="yy/mm/dd"
-                                :show-button-bar="true"
-                                :show-icon="true"></p-calendar>
-                </div>
-                <div class="field col-3">
-                    <label>发售价格</label>
-                    <p-inputnumber v-model="merchEdit.price"></p-inputnumber>
-                </div>
-                <div class="field col-3">
-                    <label>单位</label>
-                    <p-dropdown v-model="merchEdit.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" placeholder="单位">
-                    </p-dropdown>
-                </div>
                 <div class="field col-2">
                     <div class="col-12">
-                        <label class="mb-3">非卖品</label>
+                        <label class="mb-3">特典</label>
                     </div>
-                    <div class="col-12 mt-3">
-                        <p-inputswitch v-model="merchEdit.notForSale" :true-value="1"
+                    <div class="col-12 mt-4">
+                        <p-inputswitch v-model="bookEdit.hasBonus" :true-value="1"
                                        :false-value="0"></p-inputswitch>
                     </div>
                 </div>
             </div>
+            <div class="formgrid grid">
+                <div class="field col">
+                    <label>发行时间<span style="color: red">*</span></label>
+                    <p-calendar v-model="bookEdit.publishDate" date-format="yy/mm/dd"
+                                :show-button-bar="true"
+                                :show-icon="true"></p-calendar>
+                </div>
+                <div class="field col">
+                    <label>发行价格</label>
+                    <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
+                </div>
+                <div class="field col">
+                    <label>出版社</label>
+                    <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
+                </div>
+            </div>
+            <div class="field">
+                <label>简介</label>
+                <p-textarea v-model="bookEdit.summary" rows="3" cols="20"
+                            :auto-resize="true"></p-textarea>
+            </div>
             <div class="field">
                 <label>备注</label>
-                <p-textarea v-model="merchEdit.remark" rows="3" cols="20"
+                <p-textarea v-model="bookEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-blockui>
@@ -370,7 +455,82 @@
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog" :disabled="editBlock"></p-button>
             <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                      @click="submitEditMerch" :disabled="editBlock"></p-button>
+                      @click="submitEditBook" :disabled="editBlock"></p-button>
+        </template>
+    </p-dialog>
+    <p-dialog :modal="true" v-model:visible="displayAuthorEditDialog" header="编辑作者信息"
+              :style="{width: '800px'}">
+        <p-blockui :blocked="editBlock">
+            <p-panel>
+            <template #header>
+                <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                <b>新增</b>
+            </template>
+            <div class="grid">
+                <div class="col-3">
+                    <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-tag"></i>
+                                    </span>
+                        <p-inputtext v-model="author.pos" placeholder="职位名称"></p-inputtext>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-users"></i>
+                                    </span>
+                        <p-chips v-model="author.name" placeholder="人员信息" separator=","></p-chips>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <p-button label="新增" icon="pi pi-save"
+                              @click="addAuthor"></p-button>
+                </div>
+            </div>
+        </p-panel>
+            <p-panel>
+            <template #header>
+                <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                <b>编辑</b>
+            </template>
+            <div v-if="tmpAuthors.length != 0">
+                <p-datatable dataKey="id" :value="tmpAuthors" responsive-layout="scroll"
+                             class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                             context-menu v-model:context-menu-selection="selectedAuthor"
+                             @row-contextmenu="authorRowMenu" edit-mode="row"
+                             v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                    <p-column :row-reorder="true"></p-column>
+                    <p-column field="pos" header="职位">
+                        <template #editor="{ data, field }">
+                            <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                        </template>
+                    </p-column>
+                    <p-column field="name" header="人员">
+                        <template #body="slotProps">
+                            {{slotProps.data.name.join("/")}}
+                        </template>
+                        <template #editor="{ data, field }">
+                            <p-chips v-model="data[field]"></p-chips>
+                        </template>
+                    </p-column>
+                    <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                              bodyStyle="text-align:center"></p-column>
+                </p-datatable>
+                <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
+            </div>
+            <div v-else>
+                <span class="emptyInfo">暂无作者信息</span>
+            </div>
+        </p-panel>
+        </p-blockui>
+        <template #footer>
+            <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+                      @click="clearAuthors" :disabled="editBlock"></p-button>
+            <p-button label="取消" icon="pi pi-times" class="mr-4"
+                      @click="cancelAuthorEdit" :disabled="editBlock"></p-button>
+            <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+                      @click="submitAuthor" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displaySpecEditDialog" header="编辑规格信息"
@@ -490,27 +650,33 @@
             //endregion
 
             //region basic
-            const merch = ref([[${merch}]]);
+            const book = ref([[${book}]]);
             const toast = useToast();
             const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${franchiseSet}]]);
             const productSet = ref([]);
-            const relatedMerchs = ref([[${relatedMerchs}]]);
-            const merchCategorySet = ref([[${merchCategorySet}]]);
+            const relatedBooks = ref([[${relatedBooks}]]);
+            const bookTypeSet = ref([[${bookTypeSet}]]);
             const regionSet = ref([[${regionSet}]]);
+            const languageSet = ref([[${languageSet}]]);
             //endregion
 
             //region edit basic info
-            const merchEdit = ref({});
-            const productSelect = ref(true);
             const edits = ref([
                 {
                     label: '图片管理',
                     icon: 'pi pi-images',
                     command: () => {
                         showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
+                    }
+                },
+                {
+                    label: '作者信息',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        openAuthorEditDialog();
                     }
                 },
                 {
@@ -526,21 +692,31 @@
                     command: () => {
                         showDescriptionEditDialog(toast, dialog, detailInfo.value);
                     }
+                },
+                {
+                    label: '特典信息',
+                    icon: 'pi iconfont icon-gift',
+                    command: () => {
+                        showBonusEditDialog(toast, dialog, detailInfo.value, book.value.bonus);
+                    }
                 }
             ]);
+            const productSelect = ref(true);
             const editBlock = ref(false);
+            const bookEdit = ref({});
             const displayEditDialog = ref(false);
             //打开编辑数据面板
             const openEditDialog = () => {
-                let dataTmp = JSON.parse(JSON.stringify(merch.value));
-                dataTmp.notForSale = merch.value.notForSale ? 1 : 0;
-                merchEdit.value = dataTmp;
-                merchEdit.value.region = dataTmp.region.code;
-                merchEdit.value.category = dataTmp.category.id;
-                merchEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                let dataTmp = JSON.parse(JSON.stringify(book.value));
+                dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
+                bookEdit.value = dataTmp;
+                bookEdit.value.bookType = dataTmp.bookType.id;
+                bookEdit.value.region = dataTmp.region.code;
+                bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
+                bookEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
-                    franchises: merchEdit.value.franchises,
-                    entityType: ENTITY.MERCH
+                    franchises: bookEdit.value.franchises,
+                    entityType: ENTITY.BOOK
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -551,34 +727,27 @@
                             } else {
                                 productSelect.value = true;
                             }
-                            merchEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            bookEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
                             displayEditDialog.value = true;
                         }
                     });
             };
+
             //关闭编辑数据面板
             const closeEditDialog = () => {
                 displayEditDialog.value = false;
-                merchEdit.value = {};
+                bookEdit.value = {};
             };
+
             //保存编辑数据
-            const submitEditMerch = () => {
+            const submitEditBook = () => {
                 editBlock.value = true;
-                commonSubmit(toast, editBlock, UPDATE_MERCH_URL, merchEdit.value)
+                commonSubmit(toast, editBlock, UPDATE_BOOK_URL, bookEdit.value)
                     .then(res => {
                         if (res.state === 1) {
-                            merchEdit.value = {};
-                            toast.add({
-                                severity: 'success',
-                                summary: 'Successful',
-                                detail: res.message,
-                                life: 3000
-                            });
+                            bookEdit.value = {};
                             closeEditDialog();
                             location.reload(true);
-                        } else {
-                            editBlock.value = false;
-                            toast.add({severity: 'error', summary: 'Error', detail: res.message, life: 3000});
                         }
                     })
                     .catch(error => {
@@ -590,7 +759,7 @@
                 if(ev.value.length !== 0) {
                     let json = {
                         franchises: ev.value,
-                        entityType: ENTITY.MERCH
+                        entityType: ENTITY.BOOK
                     };
                     postRequest(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
@@ -600,18 +769,101 @@
                                     productSelect.value = false;
                                 } else {
                                     productSelect.value = true;
-                                    productEdit.value.products = [];
+                                    bookEdit.value.products = [];
                                 }
                             }
                         });
                 }else {
                     productSelect.value = true;
-                    productEdit.value.products = [];
+                    bookEdit.value.products = [];
                 }
+
+            };
+
+            const ISBNInterconvert = (label, isbn) => {
+                editBlock.value = true;
+                let json = {
+                    label: label,
+                    isbn: isbn
+                };
+                commonSubmit(toast, editBlock, BOOK_ISBN_INTERCONVERT, json)
+                    .then(res => {
+                        if(res.state === 1) {
+                            console.log(res.data)
+                            if(label === 'isbn13') {
+                                bookEdit.value.isbn13 = res.data;
+                            }
+                            if(label === 'isbn10') {
+                                bookEdit.value.isbn10 = res.data;
+                            }
+                        }
+                        editBlock.value = false;
+                    })
             };
             //endregion
 
-            //region spec
+            //region authors
+            const tmpAuthors = ref();
+            const cm = ref();
+            const selectedAuthor = ref();
+            const author = ref({});
+            const authors = ref([]);
+            const displayAuthorEditDialog = ref(false);
+            const menuModel = ref([
+                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteAuthor(selectedAuthor)}
+            ]);
+            const onRowReorder = (ev) => {
+                tmpAuthors.value = ev.value;
+            };
+            const authorRowMenu = (ev) => {
+                cm.value.show(ev.originalEvent);
+            };
+            const deleteAuthor = (author) => {
+                tmpAuthors.value = tmpAuthors.value.filter((a) => a.pos !== author.value.pos);
+                toast.add({severity: 'error', summary: '已删除', detail: author.value.pos, life: 3000});
+                selectedAuthor.value = null;
+            };
+            const editingRows = ref([]);
+            const onRowEditSave = (ev) => {
+                let {newData, index} = ev;
+
+                tmpAuthors.value[index] = newData;
+            };
+
+            const openAuthorEditDialog = () => {
+                tmpAuthors.value = JSON.parse(JSON.stringify(book.value.authors));
+                author.value = {};
+                displayAuthorEditDialog.value = true;
+            };
+            const clearAuthors = () => {
+                tmpAuthors.value = [];
+            };
+            const addAuthor = () => {
+                tmpAuthors.value.push(author.value);
+                author.value = {};
+            }
+            const cancelAuthorEdit = () => {
+                author.value = {};
+                displayAuthorEditDialog.value = false;
+            };
+            const submitAuthor = () => {
+                editBlock.value = true;
+                let json = {
+                    id: book.value.id,
+                    authors: tmpAuthors.value
+                }
+                commonSubmit(toast, editBlock, UPDATE_BOOK_AUTHORS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            displayAuthorEditDialog.value = false;
+                            author.value = {};
+                            location.reload(true);
+                        }
+                    })
+            };
+            //endregion
+
+            //region spec info
             const tmpSpec = ref();
             const specCm = ref();
             const selectedSpecItem = ref();
@@ -640,7 +892,7 @@
             };
 
             const openSpecEditDialog = () => {
-                tmpSpec.value = JSON.parse(JSON.stringify(merch.value.spec));
+                tmpSpec.value = JSON.parse(JSON.stringify(book.value.spec));
                 specItem.value = {};
                 displaySpecEditDialog.value = true;
             };
@@ -656,11 +908,12 @@
                 displaySpecEditDialog.value = false;
             };
             const submitSpec = () => {
+                editBlock.value = true;
                 let json = {
-                    id: merch.value.id,
+                    id: book.value.id,
                     spec: tmpSpec.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_MERCH_SPEC_URL, json)
+                commonSubmit(toast, editBlock, UPDATE_BOOK_SPEC_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             displaySpecEditDialog.value = false;
@@ -678,8 +931,28 @@
             };
             const text2marked = () => {
 
+                const bonus = book.value.bonus;
+                const summary = book.value.summary;
+
                 if (detailInfo.value.description != null && detailInfo.value.description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(detailInfo.value.description);
+                }
+
+                if (summary != null && summary !== "") {
+                    document.getElementById("summary").innerHTML = marked.parse(summary);
+                } else {
+                    //<![CDATA[
+                    document.getElementById("summary").innerHTML = "<span class='emptyInfo'><em>暂无简介</em></span>";
+                    //]]>
+                }
+
+                if (book.value.hasBonus && bonus != null && bonus !== "") {
+                    document.getElementById("bonus").innerHTML = marked.parse(bonus);
+                }
+                if ((bonus == null || bonus === "") && book.value.hasBonus) {
+                    //<![CDATA[
+                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
+                    //]]>
                 }
             };
             //endregion
@@ -692,11 +965,17 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                merch, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                merchCategorySet, regionSet, productSet, relatedMerchs, responsiveOptions, regionCode2NameZh,
+                book, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                bookTypeSet, regionSet, languageSet, productSet, relatedBooks, responsiveOptions, regionCode2NameZh,
 
                 //edit
-                editBlock, merchEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditMerch,
+                editBlock, bookEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditBook,
+                ISBNInterconvert,
+
+                //authors
+                displayAuthorEditDialog, tmpAuthors, cm, author, authors, menuModel, editingRows, selectedAuthor,
+                addAuthor, clearAuthors, submitAuthor, deleteAuthor, cancelAuthorEdit, authorRowMenu, onRowEditSave,
+                onRowReorder,
 
                 //spec
                 displaySpecEditDialog, tmpSpec, specCm, specItem, spec, specMenuModel, specEditingRows,
@@ -735,7 +1014,7 @@
         }
     };
 
-    const routes = [{path: MERCH_DETAIL_URL + [[${detailInfo.id}]], component: App}];
+    const routes = [{path: BOOK_DETAIL_URL + [[${detailInfo.id}]], component: App}];
 
     const router = VueRouter.createRouter({
         history: VueRouter.createWebHistory(),
@@ -746,12 +1025,29 @@
         .use(router)
         .use(primevue.toastservice)
         .use(primevue.config.default)
-        .use(MdEditorV3)
         .directive('tooltip', Tooltip)
         .use(primevue.dialogservice)
+        .use(MdEditorV3)
         .mount("#app");
 </script>
 <style>
+    .book-detail-cover {
+        transform: translateY(7px);
+        width: 180px;
+        height: 180px;
+    }
+
+    .book-detail-cover img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        pointer-events: none;
+    }
+
+
 </style>
 </body>
 </html>

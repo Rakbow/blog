@@ -52,7 +52,7 @@
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
 
-    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Database_Index_Params.js}" type="module"></script>
 
@@ -74,7 +74,6 @@
 </div>
 <script type="module" th:inline="javascript">
 
-    import {showSearchPanel} from '/js/basic/Search_Params.js';
     import {DATABASE_INDEX_ROUTER} from "/js/basic/Rakbow_Database_Index_Params.js";
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;

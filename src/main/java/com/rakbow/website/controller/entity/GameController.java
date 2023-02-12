@@ -90,7 +90,7 @@ public class GameController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, false));
         //获取相关游戏
         model.addAttribute("relatedGames", gameService.getRelatedGames(id));
-        return "/itemDetail/game-detail";
+        return "/database/itemDetail/game-detail";
     }
 
     //endregion

@@ -112,7 +112,7 @@ public class ProductController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(product.getImages(), 200, true));
 
-        return "/itemDetail/product-detail";
+        return "/database/itemDetail/product-detail";
     }
     //endregion
 

@@ -90,7 +90,7 @@ public class MerchController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(merch.getImages(), 200, false));
         //获取相关周边
         model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
-        return "/itemDetail/merch-detail";
+        return "/database/itemDetail/merch-detail";
     }
 
     //endregion

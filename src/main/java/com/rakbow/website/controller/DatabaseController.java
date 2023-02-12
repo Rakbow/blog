@@ -2,7 +2,6 @@ package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.dao.SystemMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -12,9 +11,7 @@ import com.rakbow.website.util.common.MeiliSearchUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,30 +63,30 @@ public class DatabaseController {
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ModelAndView getDatabasePage() {
         ModelAndView view = new ModelAndView();
-        view.setViewName("database");
+        view.setViewName("/database/database-search");
         return view;
     }
 
     //region 获取数据库搜索主页
     @RequestMapping(path = "/albums", method = RequestMethod.GET)
     public String getAlbumIndexPage() {
-        return "database";
+        return "/database/database-index";
     }
     @RequestMapping(path = "/books", method = RequestMethod.GET)
     public String getBookIndexPage() {
-        return "database";
+        return "/database/database-index";
     }
     @RequestMapping(path = "/discs", method = RequestMethod.GET)
     public String getDiscIndexPage() {
-        return "database";
+        return "/database/database-index";
     }
     @RequestMapping(path = "/games", method = RequestMethod.GET)
     public String getGameIndexPage() {
-        return "database";
+        return "/database/database-index";
     }
     @RequestMapping(path = "/merchs", method = RequestMethod.GET)
     public String getMerchIndexPage() {
-        return "database";
+        return "/database/database-index";
     }
     //endregion
 

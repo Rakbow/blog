@@ -90,7 +90,7 @@ public class DiscController {
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, false));
         //获取相关碟片
         model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
-        return "/itemDetail/disc-detail";
+        return "/database/itemDetail/disc-detail";
     }
 
     //endregion
