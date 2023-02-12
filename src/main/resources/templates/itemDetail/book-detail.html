@@ -79,7 +79,7 @@
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-    <script th:src="@{/js/basic/Rakbow_Web_Helper_Str.js}"></script>
+    <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 
     <!--other css -->
@@ -337,11 +337,21 @@
             <div class="formgrid grid">
                 <div class="field col">
                     <label>ISBN-10<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
+                    <div class="p-inputgroup">
+                        <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
+                        <p-button icon="pi pi-sync" class="p-button-warning"
+                                  @click="ISBNInterconvert('isbn10', bookEdit.isbn13)"
+                                  v-tooltip.bottom="{value:'生成ISBN-10', class: 'common-tooltip'}"></p-button>
+                    </div>
                 </div>
                 <div class="field col">
                     <label>ISBN-13<span style="color: red">*</span></label>
-                    <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
+                    <div class="p-inputgroup">
+                        <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
+                        <p-button icon="pi pi-sync" class="p-button-warning"
+                                  @click="ISBNInterconvert('isbn13', bookEdit.isbn10)"
+                                  v-tooltip.bottom="{value:'生成ISBN-13', class: 'common-tooltip'}"></p-button>
+                    </div>
                 </div>
             </div>
             <div class="field">
@@ -706,7 +716,7 @@
                 bookEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
                     franchises: bookEdit.value.franchises,
-                    entityType: BOOK
+                    entityType: ENTITY.BOOK
                 };
                 postRequest(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -768,6 +778,27 @@
                     bookEdit.value.products = [];
                 }
 
+            };
+
+            const ISBNInterconvert = (label, isbn) => {
+                editBlock.value = true;
+                let json = {
+                    label: label,
+                    isbn: isbn
+                };
+                commonSubmit(toast, editBlock, BOOK_ISBN_INTERCONVERT, json)
+                    .then(res => {
+                        if(res.state === 1) {
+                            console.log(res.data)
+                            if(label === 'isbn13') {
+                                bookEdit.value.isbn13 = res.data;
+                            }
+                            if(label === 'isbn10') {
+                                bookEdit.value.isbn10 = res.data;
+                            }
+                        }
+                        editBlock.value = false;
+                    })
             };
             //endregion
 
@@ -939,6 +970,7 @@
 
                 //edit
                 editBlock, bookEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditBook,
+                ISBNInterconvert,
 
                 //authors
                 displayAuthorEditDialog, tmpAuthors, cm, author, authors, menuModel, editingRows, selectedAuthor,

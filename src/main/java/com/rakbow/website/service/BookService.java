@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
+import com.rakbow.website.util.entity.BookUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -472,6 +473,34 @@ public class BookService {
             popularBooks.add(book);
         });
         return popularBooks;
+    }
+
+    //endregion
+
+    //region other
+
+    /**
+     * isbn互相转换
+     *
+     * @param label,isbn 转换方式,isbn
+     * @return isbn
+     * @author rakbow
+     */
+    public String ISBNInterconvert(String label, String isbn) throws Exception {
+
+        if(StringUtils.equals(label, "isbn13")) {
+            if(isbn.length() != 10) {
+                throw new Exception(ApiInfo.BOOK_ISBN10_LENGTH_EXCEPTION);
+            }
+            return BookUtils.getISBN13(isbn);
+        }
+        if(StringUtils.equals(label, "isbn10")) {
+            if(isbn.length() != 13) {
+                throw new Exception(ApiInfo.BOOK_ISBN13_LENGTH_EXCEPTION);
+            }
+            return BookUtils.getISBN10(isbn);
+        }
+        return null;
     }
 
     //endregion

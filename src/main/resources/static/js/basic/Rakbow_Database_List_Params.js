@@ -1,6 +1,7 @@
 import {deleteRequest, getRequest, postRequest, commonVueSubmit} from '/js/basic/Http_Request.js';
 
 const {useToast} = primevue.usetoast;
+const Tooltip = primevue.tooltip;
 
 const albumDbList = {
     template: `
@@ -973,14 +974,24 @@ const bookDbList = {
           <p-blockui :blocked="editBlock">
     <p-panel header="基础信息">
         <div class="formgrid grid">
-            <div class="field col">
-                <label>ISBN-10<span style="color: red">*</span></label>
+        <div class="field col">
+            <label>ISBN-10<span style="color: red">*</span></label>
+            <div class="p-inputgroup">
                 <p-inputtext v-model.trim="book.isbn10"></p-inputtext>
+                <p-button icon="pi pi-sync" class="p-button-warning"
+                            @click="ISBNInterconvert('add', 'isbn10', book.isbn13)"
+                            v-tooltip.bottom="{value:'生成ISBN-10', class: 'common-tooltip'}"></p-button>
             </div>
-            <div class="field col">
-                <label>ISBN-13<span style="color: red">*</span></label>
+        </div>
+        <div class="field col">
+            <label>ISBN-13<span style="color: red">*</span></label>
+            <div class="p-inputgroup">
                 <p-inputtext v-model.trim="book.isbn13"></p-inputtext>
+                <p-button icon="pi pi-sync" class="p-button-warning"
+                            @click="ISBNInterconvert('add', 'isbn13', book.isbn10)"
+                            v-tooltip.bottom="{value:'生成ISBN-13', class: 'common-tooltip'}"></p-button>
             </div>
+        </div>
         </div>
         <div class="field">
             <label>书名<span style="color: red">*</span></label>
@@ -1114,11 +1125,21 @@ const bookDbList = {
         <div class="formgrid grid">
             <div class="field col">
                 <label>ISBN-10<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="itemEdit.isbn10"></p-inputtext>
+                <div class="p-inputgroup">
+                    <p-inputtext v-model.trim="itemEdit.isbn10"></p-inputtext>
+                    <p-button icon="pi pi-sync" class="p-button-warning"
+                                @click="ISBNInterconvert('edit', 'isbn10', itemEdit.isbn13)"
+                                v-tooltip.bottom="{value:'生成ISBN-10', class: 'common-tooltip'}"></p-button>
+                </div>
             </div>
             <div class="field col">
                 <label>ISBN-13<span style="color: red">*</span></label>
-                <p-inputtext v-model.trim="itemEdit.isbn13"></p-inputtext>
+                <div class="p-inputgroup">
+                    <p-inputtext v-model.trim="itemEdit.isbn13"></p-inputtext>
+                    <p-button icon="pi pi-sync" class="p-button-warning"
+                                @click="ISBNInterconvert('edit', 'isbn13', itemEdit.isbn10)"
+                                v-tooltip.bottom="{value:'生成ISBN-13', class: 'common-tooltip'}"></p-button>
+                </div>
             </div>
         </div>
         <div class="field">
@@ -1522,6 +1543,35 @@ const bookDbList = {
                 this.book.products = [];
             }
         },
+        ISBNInterconvert(method, label, isbn) {
+            this.editBlock = true;
+            let json = {
+                label: label,
+                isbn: isbn
+            };
+            commonVueSubmit(this.toast, BOOK_ISBN_INTERCONVERT, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        if(method === 'add') {
+                            if(label === 'isbn13') {
+                                this.book.isbn13 = res.data;
+                            }
+                            if(label === 'isbn10') {
+                                this.book.isbn10 = res.data;
+                            }
+                        }
+                        if(method === 'edit') {
+                            if(label === 'isbn13') {
+                                this.itemEdit.isbn13 = res.data;
+                            }
+                            if(label === 'isbn10') {
+                                this.itemEdit.isbn10 = res.data;
+                            }
+                        }
+                    }
+                    this.editBlock = false;
+                })
+        }
         //endregion
 
     },

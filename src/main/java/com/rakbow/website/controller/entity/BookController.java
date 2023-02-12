@@ -408,4 +408,27 @@ public class BookController {
 
     //endregion
 
+    //region other
+
+    //isbn互相转换
+    @RequestMapping(value = "/isbn-interconvert", method = RequestMethod.POST)
+    @ResponseBody
+    public String ISBNInterconvert(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            String label = param.getString("label");
+            String isbn = param.getString("isbn");
+
+            res.data = bookService.ISBNInterconvert(label, isbn);
+
+        }catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //endregion
+
 }
