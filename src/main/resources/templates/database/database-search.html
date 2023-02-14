@@ -11,19 +11,19 @@
 
     <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
 
-    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
+    <link href="https://img.rakbow.com/common/logo/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet"/>
     <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet"/>
 
     <!-- PrimeVue css -->
-    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/bootstrap4-dark-blue.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet"/>
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet"/>
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primeflex.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/primeicon/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
     <script th:src="@{/js/vue/vue.global.js}"></script>
-    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/core.min.js}"></script>
     <script th:src="@{/js/vue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
@@ -250,7 +250,7 @@
                 </p-paginator>
             </div>
             <div v-else class="text-center mt-2">
-                <img src="/img/common/no-results.svg"/><br><span>暂无搜索结果</span>
+                <img src="https://img.rakbow.com/common/icon/no-results.svg"/><br><span>暂无搜索结果</span>
             </div>
         </div>
     </div>
@@ -260,7 +260,8 @@
 </div>
 <script type="module" th:inline="javascript">
 
-    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {postRequest} from '/js/basic/Http_Request.js';
+
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
 
@@ -271,9 +272,9 @@
 
             const searchParams = ref({
                 keyword: "",
-                    entityType: 0,
-                    offset: 0,
-                    limit: 10
+                entityType: 0,
+                offset: 0,
+                limit: 10
             });
             const searchResult = ref();
             const entityType = ENTITY_TYPE;
@@ -281,7 +282,7 @@
             const search = () => {
                 postRequest(null, INDEX_SEARCH_URL, searchParams.value)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             searchResult.value = res.data;
                         }
                     });

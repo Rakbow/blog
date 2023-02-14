@@ -91,33 +91,37 @@ public class DatabaseController {
     //endregion
 
     //region 获取数据库管理列表
+    @RequestMapping(path = "/list", method = RequestMethod.GET)
+    public String getDatabaseListPage() {
+        return "/database/database-list";
+    }
     @RequestMapping(path = "/list/album", method = RequestMethod.GET)
     public String getAlbumListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     @RequestMapping(path = "/list/book", method = RequestMethod.GET)
     public String getBookListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     @RequestMapping(path = "/list/disc", method = RequestMethod.GET)
     public String getDiscListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     @RequestMapping(path = "/list/game", method = RequestMethod.GET)
     public String getGameListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     @RequestMapping(path = "/list/merch", method = RequestMethod.GET)
     public String getMerchListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     @RequestMapping(path = "/list/product", method = RequestMethod.GET)
     public String getProductListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     @RequestMapping(path = "/list/franchise", method = RequestMethod.GET)
     public String getFranchiseListPage() {
-        return "database-list";
+        return "/database/database-list";
     }
     //endregion
 
@@ -215,7 +219,7 @@ public class DatabaseController {
 
             commonService.updateItemStatus(entityName, entityId, status?1:0);
 
-            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityId));
+            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityType));
         }catch (Exception e) {
             res.setErrorMessage(e);
         }

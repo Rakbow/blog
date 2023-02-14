@@ -8,12 +8,16 @@ a:link {
     font-size: 13px;
 }
 
+.p-datatable a:hover {
+    border-bottom: 1px solid #ceffff;
+}
+
 .p-datatable .p-datatable-tbody {
     padding: 0;
 }
 
 .p-datatable.p-datatable-gridlines.p-datatable-scrollable .p-datatable-tbody > tr > td + td {
-    text-align: center;
+    /*text-align: center;*/
     border-left-width: 0;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }

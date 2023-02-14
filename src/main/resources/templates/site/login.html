@@ -7,20 +7,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
     <!--other css -->
-    <link href="https://img.rakbow.com/common/favicon.ico" type="image/x-icon" rel="shortcut icon" />
+    <link href="https://img.rakbow.com/common/logo/favicon.ico" type="image/x-icon" rel="shortcut icon" />
     <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
 
     <!-- PrimeVue -->
-    <link th:href="@{/css/primevue/themes/bootstrap4-dark-blue/theme.css}" rel="stylesheet"/>
+    <link th:href="@{/css/primevue/bootstrap4-dark-blue.css}" rel="stylesheet"/>
     <link th:href="@{/css/primevue/primevue.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/primeflex/primeflex.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/primeicons/primeicons.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primeflex.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/primevue/primeicon/primeicons.css}" rel="stylesheet" />
 
     <!-- Vue3 -->
     <script th:src="@{/js/vue/vue.global.js}"></script>
-    <script th:src="@{/js/primevue/primevue.min.js}"></script>
+    <script th:src="@{/js/primevue/core.min.js}"></script>
     <script th:src="@{/js/vue/vue-router.global.js}"></script>
 
     <!-- PrimeVue Components -->
@@ -63,7 +63,7 @@
         <div id="main" class="flex justify-content-center">
             <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
                 <div class="text-center mb-5">
-                    <img src="https://img.rakbow.com/common/logo.png" alt="Image" height="50" class="mb-3">
+                    <img src="https://img.rakbow.com/common/logo/logo.png" alt="Image" height="50" class="mb-3">
 <!--                    <div class="text-900 text-3xl font-medium mb-3">魔女的茶会入口</div>-->
                     <div th:if="${loginUser == null}">
                         <div class="text-900 text-3xl font-medium mb-3">&nbsp;登&nbsp;录&nbsp;后&nbsp;台&nbsp;</div>

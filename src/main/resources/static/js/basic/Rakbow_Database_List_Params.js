@@ -9,7 +9,7 @@ const albumDbList = {
         <p-datatable ref="dt" :value="albums" class="p-datatable-sm" :always-show-paginator="albums != 0"
                      :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                      @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
-                     filter-display="row"
+                     filter-display="row" 
                      :global-filter-fields="['name','catalogNo']"
                      :paginator="true" :rows="10" striped-rows
                      :resizable-columns="true" column-resize-mode="expand"
@@ -42,7 +42,8 @@ const albumDbList = {
                         </span>
             </template>
             <template #loading>
-                加载中，别急~
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
             </template>
             <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
             <p-column header="序号" field="id" exportHeader="Album Id" :sortable="true" style="flex: 0 0 5rem">
@@ -565,6 +566,7 @@ const albumDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "album"
             };
@@ -577,12 +579,13 @@ const albumDbList = {
                     this.publishFormatSet = res.publishFormatSet;
                     this.franchiseSet = res.franchiseSet;
                     this.totalLoading = false;
+                    this.loading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,
@@ -813,7 +816,10 @@ const bookDbList = {
         </span>
     </template>
     <template #loading>
-        加载中，别急~
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
+        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
     </template>
     <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
     <p-column header="序号" field="id" exportHeader="Album Id" :sortable="true" style="flex: 0 0 5rem">
@@ -1358,6 +1364,7 @@ const bookDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "book"
             };
@@ -1369,13 +1376,14 @@ const bookDbList = {
                     this.regionSet = res.regionSet;
                     this.languageSet = res.languageSet;
                     this.franchiseSet = res.franchiseSet;
+                    this.loading = false;
                     this.totalLoading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,
@@ -1635,8 +1643,11 @@ const discDbList = {
             </span>
         </template>
         <template #loading>
-            加载中，别急~
-        </template>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
+        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
+    </template>
         <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
         <p-column header="序号" field="id" exportHeader="Disc Id" :sortable="true" style="flex: 0 0 5rem">
             <template #body="slotProps" v-if="editAuth > 1">
@@ -2141,6 +2152,7 @@ const discDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "disc"
             };
@@ -2151,13 +2163,14 @@ const discDbList = {
                     this.mediaFormatSet = res.mediaFormatSet;
                     this.regionSet = res.regionSet;
                     this.franchiseSet = res.franchiseSet;
+                    this.loading = false;
                     this.totalLoading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,
@@ -2388,8 +2401,11 @@ const gameDbList = {
             </span>
         </template>
         <template #loading>
-            加载中，别急~
-        </template>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
+        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
+    </template>
         <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
         <p-column header="序号" field="id" exportHeader="Game Id" :sortable="true" style="flex: 0 0 5rem">
             <template #body="slotProps" v-if="editAuth > 1">
@@ -2837,6 +2853,7 @@ const gameDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "game"
             };
@@ -2848,13 +2865,14 @@ const gameDbList = {
                     this.releaseTypeSet = res.releaseTypeSet;
                     this.regionSet = res.regionSet;
                     this.franchiseSet = res.franchiseSet;
+                    this.loading = false;
                     this.totalLoading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,
@@ -3085,8 +3103,11 @@ const merchDbList = {
                 </span>
         </template>
         <template #loading>
-            加载中，别急~
-        </template>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
+        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
+    </template>
         <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
         <p-column header="序号" field="id" exportHeader="Album Id" :sortable="true" style="flex: 0 0 5rem">
             <template #body="slotProps" v-if="editAuth > 1">
@@ -3544,6 +3565,7 @@ const merchDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "merch"
             };
@@ -3554,13 +3576,14 @@ const merchDbList = {
                     this.merchCategorySet = res.merchCategorySet;
                     this.regionSet = res.regionSet;
                     this.franchiseSet = res.franchiseSet;
+                    this.loading = false;
                     this.totalLoading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,
@@ -3785,8 +3808,11 @@ const productDbList = {
                     </span>
         </template>
         <template #loading>
-            加载中，别急~
-        </template>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
+        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
+    </template>
         <p-column header="序号" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 5rem">
             <template #body="slotProps" v-if="editAuth > 2">
                 <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
@@ -4035,6 +4061,7 @@ const productDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "product"
             };
@@ -4044,13 +4071,14 @@ const productDbList = {
                     this.editAuth = res.editAuth;
                     this.productCategorySet = res.productCategorySet;
                     this.franchiseSet = res.franchiseSet;
+                    this.loading = false;
                     this.totalLoading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,
@@ -4209,6 +4237,8 @@ const franchiseDbList = {
             </span>
     </template>
     <template #loading>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
         <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
         <span>加载中，别急~</span>
     </template>
@@ -4442,6 +4472,7 @@ const franchiseDbList = {
         },
         //初始化
         initData() {
+            this.loading = true;
             let json = {
                 label: "franchise"
             };
@@ -4450,13 +4481,14 @@ const franchiseDbList = {
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.franchiseSet = res.franchiseSet;
+                    this.loading = false;
                     this.totalLoading = false;
                 })
         },
         init() {
             this.loading = true;
             this.queryParams = {
-                first: 0,
+                first: (this.queryParams !== {}?this.queryParams.first:0),
                 rows: this.$refs.dt.rows,
                 sortField: null,
                 sortOrder: null,

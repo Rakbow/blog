@@ -2,7 +2,7 @@
     <div th:if="${loginUser == null}">
         <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">
             <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
+                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
             </template>
             <template #end>
                 <p-button icon="pi pi-search" @click="openSearchPanel"
@@ -13,7 +13,7 @@
     <div th:if="${loginUser != null}">
         <p-menubar :model="LOGIN_NAVBAR_ITEMS">
             <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
+                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
             </template>
             <template #end>
                 <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
@@ -29,14 +29,14 @@
     <div th:if="${loginUser == null}">
         <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">
             <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
+                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
             </template>
         </p-menubar>
     </div>
     <div th:if="${loginUser != null}">
         <p-menubar :model="LOGIN_NAVBAR_ITEMS">
             <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo.png" height="30" class="mr-2">
+                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
             </template>
             <template #end>
                 <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"

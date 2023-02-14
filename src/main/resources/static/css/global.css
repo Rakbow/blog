@@ -259,7 +259,7 @@ img.flag {
     left: 50%;
     display: block;
     transform: translate(-50%, -50%);
-    cursor: url("/img/common/zoomin.cur"), pointer;
+    cursor: url("https://img.rakbow.com/common/icon/zoomin.cur"), pointer;
     /*pointer-events: none;*/
 }
 
@@ -433,7 +433,7 @@ a {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/common/album_border_thumb.png") 0 0 no-repeat;
+    background: transparent url("https://img.rakbow.com/common/entity-border/album_border_thumb.png") 0 0 no-repeat;
 }
 
 .book_info_bit_thumb {
@@ -441,7 +441,7 @@ a {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/common/book_border_thumb.png") 0 0 no-repeat;
+    background: transparent url("https://img.rakbow.com/common/entity-border/book_border_thumb.png") 0 0 no-repeat;
 }
 
 .disc_info_bit_thumb {
@@ -449,7 +449,7 @@ a {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/common/disc_border_thumb.png") 0 0 no-repeat;
+    background: transparent url("https://img.rakbow.com/common/entity-border/disc_border_thumb.png") 0 0 no-repeat;
 }
 
 .game_info_bit_thumb {
@@ -457,7 +457,7 @@ a {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/common/disc_border_thumb.png") 0 0 no-repeat;
+    background: transparent url("https://img.rakbow.com/common/entity-border/game_border_thumb.png") 0 0 no-repeat;
 }
 
 .merch_info_bit_thumb {
@@ -465,7 +465,7 @@ a {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/common/merch_border_thumb.png") 0 0 no-repeat;
+    background: transparent url("https://img.rakbow.com/common/entity-border/merch_border_thumb.png") 0 0 no-repeat;
 }
 
 .product_info_bit_thumb {
@@ -473,7 +473,7 @@ a {
     float: left;
     margin: 0 4px 0 0;
     padding: 8px;
-    background: transparent url("/img/common/product_border_thumb.png") 0 0 no-repeat;
+    background: transparent url("https://img.rakbow.com/common/entity-border/product_border_thumb.png") 0 0 no-repeat;
 }
 
 .a_with_underline a:hover {

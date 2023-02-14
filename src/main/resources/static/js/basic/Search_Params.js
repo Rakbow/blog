@@ -210,7 +210,7 @@ const SearchPanel = {
                             </p-paginator>
                         </div>
                         <div v-else class="text-center mt-2">
-                            <img src="/img/common/no-results.svg" /><br><span>暂无搜索结果</span>
+                            <img src="https://img.rakbow.com/common/icon/no-results.svg" /><br><span>暂无搜索结果</span>
                         </div>
                     </div>
                 `,
