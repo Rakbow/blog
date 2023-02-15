@@ -14,7 +14,6 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -65,15 +63,14 @@ public class BookController {
 
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getBookDetail(@PathVariable("id") Integer id, Model model) {
-        if (bookService.getBook(id) == null) {
+    public String getBookDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
+        Book book = bookService.getBook(id);
+        if (book == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.BOOK.getId(), id);
-
-        Book book = bookService.getBook(id);
 
         model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
@@ -189,7 +186,7 @@ public class BookController {
          List<BookVOAlpha> books = new ArrayList<>();
 
          SearchResult searchResult = bookService.getBooksByFilter(queryParams, 
-                 userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                 userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
          if (StringUtils.equals(pageLabel, "list")) {
              books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);

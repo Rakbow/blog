@@ -6,8 +6,6 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.common.HostHolder;
-import com.rakbow.website.util.common.MeiliSearchUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,7 +191,7 @@ public class DatabaseController {
         if(StringUtils.equals(label, EntityType.PRODUCT.getNameEn().toLowerCase())) {
             initData.put("productCategorySet", redisUtil.get("productCategorySet"));
         }
-        initData.put("editAuth", userService.getUserEditAuthority(userService.getUserByRequest(request)));
+        initData.put("editAuth", userService.getUserOperationAuthority(userService.getUserByRequest(request)));
         initData.put("franchiseSet", redisUtil.get("franchiseSet"));
         return initData.toJSONString();
     }

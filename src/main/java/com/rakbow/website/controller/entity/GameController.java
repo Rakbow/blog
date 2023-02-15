@@ -14,7 +14,6 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -189,7 +187,7 @@ public class GameController {
         List<GameVOAlpha> games = new ArrayList<>();
 
         SearchResult serchResult = gameService.getGamesByFilter(queryParams,
-                userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);

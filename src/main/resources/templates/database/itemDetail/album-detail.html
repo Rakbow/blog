@@ -385,6 +385,7 @@
         </div>
         <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: belong_to_panel}"></div>
+            <div class="mt-2" th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
             <p-panel class="mt-2">
                 <template #header>
                     <span class="text-start side-panel-header">
@@ -426,7 +427,6 @@
                     </span>
                 </div>
             </p-panel>
-            <div class="mt-2" th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
             <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>

@@ -259,7 +259,7 @@ public class UserService{
     }
 
     //获取用户编辑权限
-    public int getUserEditAuthority(User user) {
+    public int getUserOperationAuthority(User user) {
         if(user != null) {
             switch (user.getType()) {
                 case 0:

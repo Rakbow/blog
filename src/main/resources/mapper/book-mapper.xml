@@ -27,7 +27,10 @@
         select
         <include refid="selectFields"></include>
         from book
-        where id = #{id} and status = 1
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
     </select>
 
     <insert id="addBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id">

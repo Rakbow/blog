@@ -7,7 +7,6 @@ import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.vo.merch.MerchVO;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
@@ -15,7 +14,6 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
@@ -27,7 +25,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -189,7 +186,7 @@ public class MerchController {
         List<MerchVOAlpha> merchs = new ArrayList<>();
 
         SearchResult searchResult = merchService.getMerchsByFilterList(queryParams,
-                userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);

@@ -26,7 +26,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -101,7 +100,7 @@ public class FranchiseController {
         JSONObject queryParams = param.getJSONObject("queryParams");
 
         SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams,
-                 userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                 userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
 

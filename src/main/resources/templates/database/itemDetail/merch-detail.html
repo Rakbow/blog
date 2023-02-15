@@ -119,8 +119,8 @@
                 </template>
                 <template #content>
                     <div class="grid">
-                        <div class="col-4" style="width: 200px">
-                            <div class="item-detail-cover">
+                        <div class="col-4" style="width: 210px">
+                            <div class="merch-detail-cover">
                                 <img :src="itemImageInfo.cover.url" :alt="itemImageInfo.cover.name"/>
                             </div>
                         </div>
@@ -752,6 +752,21 @@
         .mount("#app");
 </script>
 <style>
+    .merch-detail-cover {
+        transform:translateY(7px);
+        width: 200px;
+        height: 200px;
+    }
+
+    .merch-detail-cover img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        pointer-events: none;
+    }
 </style>
 </body>
 </html>

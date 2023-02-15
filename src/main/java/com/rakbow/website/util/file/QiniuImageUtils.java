@@ -70,7 +70,7 @@ public class QiniuImageUtils {
                 imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
                 imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
                 imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
-                if(imageInfos.getJSONObject(i).getString("description").isEmpty()) {
+                if(!imageInfos.getJSONObject(i).getString("description").isEmpty()) {
                     imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
                 }
                 imageInfo.setUploadUser(user.getUsername());

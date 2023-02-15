@@ -16,7 +16,7 @@ import java.util.List;
 public interface BookMapper {
 
     //通过id查询Book
-    Book getBook(int id);
+    Book getBook(int id, boolean status);
 
     List<Book> getAll();
 

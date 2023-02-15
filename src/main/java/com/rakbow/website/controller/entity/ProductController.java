@@ -15,7 +15,6 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
@@ -23,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -332,7 +330,7 @@ public class ProductController {
         JSONObject queryParams = param.getJSONObject("queryParams");
 
         SearchResult searchResult = productService.getProductsByFilter(queryParams,
-                userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         List<ProductVOAlpha> products = productVOMapper.product2VOAlpha((List<Product>) searchResult.data);
 

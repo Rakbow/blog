@@ -67,7 +67,7 @@ public class BookService {
     }
 
     /**
-     * 根据Id获取图书
+     * 根据Id获取图书,泛用
      *
      * @param id 图书id
      * @return book
@@ -75,8 +75,23 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Book getBook(int id) {
-        return bookMapper.getBook(id);
+        return bookMapper.getBook(id, false);
     }
+
+    // /**
+    //  * 根据Id获取图书,需要判断权限
+    //  *
+    //  * @param id 图书id
+    //  * @return book
+    //  * @author rakbow
+    //  */
+    // @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    // public Book getBookWithAuth(int id, int userAuthority) {
+    //     if(userAuthority > 2) {
+    //         return bookMapper.getBook(id, true);
+    //     }
+    //     return bookMapper.getBook(id, false);
+    // }
 
     /**
      * 根据Id删除图书

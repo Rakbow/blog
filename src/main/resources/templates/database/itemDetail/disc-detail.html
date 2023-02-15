@@ -121,8 +121,8 @@
                 </template>
                 <template #content>
                     <div class="grid">
-                        <div class="col-4" style="width: 200px">
-                            <div class="item-detail-cover">
+                        <div class="col-4" style="width: 210px">
+                            <div class="disc-detail-cover">
                                 <img :src="itemImageInfo.cover.url" :alt="itemImageInfo.cover.name"/>
                             </div>
                         </div>
@@ -791,6 +791,12 @@
         .mount("#app");
 </script>
 <style>
+
+    .disc-detail-cover {
+        transform: translateY(7px);
+        width: 200px;
+        height: 200px;
+    }
 
     .disc-detail-cover img {
         position: absolute;

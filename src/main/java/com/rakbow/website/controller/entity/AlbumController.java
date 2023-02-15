@@ -22,19 +22,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -72,7 +65,7 @@ public class AlbumController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         if (albumService.getAlbumById(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
@@ -87,7 +80,9 @@ public class AlbumController {
         model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("album", albumVOMapper.album2VO(album));
-        model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
+        if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
+            model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
+        }
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
@@ -115,7 +110,7 @@ public class AlbumController {
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
         SearchResult searchResult = albumService.getAlbumsByFilter(queryParams,
-                userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             albums = albumVOMapper.album2VOAlpha((List<Album>) searchResult.data);

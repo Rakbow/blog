@@ -16,7 +16,6 @@ import com.rakbow.website.service.VisitService;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.common.RedisUtil;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -107,7 +105,7 @@ public class DiscController {
         List<DiscVOAlpha> discs = new ArrayList<>();
 
         SearchResult searchResult = discService.getDiscsByFilterList(queryParams,
-                userService.getUserEditAuthority(userService.getUserByRequest(request)));
+                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
             discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);

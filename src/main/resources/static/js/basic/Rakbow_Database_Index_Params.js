@@ -1221,7 +1221,8 @@ const discIndex = {
         return {
             discs: null,
             sortOptions: [
-
+                {label: '按发行时间正序', value: 'releaseDate'},
+                {label: '按发行时间逆序', value: '!releaseDate'},
             ],
             queryParams: {
                 first: 0,
