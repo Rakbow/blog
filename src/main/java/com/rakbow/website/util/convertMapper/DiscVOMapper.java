@@ -2,6 +2,7 @@ package com.rakbow.website.util.convertMapper;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -108,7 +109,7 @@ public interface DiscVOMapper {
         discVOAlpha.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
 
         //将图片分割处理
-        discVOAlpha.setCover(CommonImageUtils.generateCover(disc.getImages()));
+        discVOAlpha.setCover(CommonImageUtils.generateCover(disc.getImages(), EntityType.DISC));
 
         discVOAlpha.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
         discVOAlpha.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));
@@ -158,7 +159,7 @@ public interface DiscVOMapper {
 
         discVOBeta.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
 
-        discVOBeta.setCover(CommonImageUtils.generateThumbCover(disc.getImages(), 50));
+        discVOBeta.setCover(CommonImageUtils.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
 
         discVOBeta.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
         discVOBeta.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));

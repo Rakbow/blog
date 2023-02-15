@@ -54,8 +54,8 @@ public class ProductService {
 
     //新增作品
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public int addProduct(Product product) {
-        return productMapper.addProduct(product);
+    public void addProduct(Product product) {
+        productMapper.addProduct(product);
     }
 
     //通过id查找作品
@@ -72,8 +72,8 @@ public class ProductService {
 
     //更新作品信息
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public int updateProduct(int id, Product product) {
-        return productMapper.updateProduct(id, product);
+    public void updateProduct(int id, Product product) {
+        productMapper.updateProduct(id, product);
     }
 
     //删除作品
@@ -127,7 +127,7 @@ public class ProductService {
     /**
      * json对象转Product，以便保存到数据库
      *
-     * @param productJson
+     * @param productJson json
      * @return Album
      * @author rakbow
      */
@@ -138,7 +138,7 @@ public class ProductService {
     /**
      * 检测数据合法性
      *
-     * @param productJson
+     * @param productJson json
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
@@ -251,12 +251,11 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAllProductImages(int id) {
+    public void deleteAllProductImages(int id) {
         Product product = getProduct(id);
         JSONArray images = JSON.parseArray(product.getImages());
         qiniuFileUtils.commonDeleteAllFiles(images);
 
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
     /**

@@ -3,6 +3,7 @@ package com.rakbow.website.util.convertMapper;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.book.BookType;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Language;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.vo.book.BookVO;
@@ -131,7 +132,7 @@ public interface BookVOMapper {
         bookVOAlpha.setFranchises(FranchiseUtils.getFranchiseList(book.getFranchises()));
 
         //将图片分割处理
-        bookVOAlpha.setCover(CommonImageUtils.generateCover(book.getImages()));
+        bookVOAlpha.setCover(CommonImageUtils.generateCover(book.getImages(), EntityType.BOOK));
 
         //审计字段
         bookVOAlpha.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));
@@ -196,7 +197,7 @@ public interface BookVOMapper {
         bookVOBeta.setPublishLanguage(publishLanguage);
 
         //将图片分割处理
-        bookVOBeta.setCover(CommonImageUtils.generateThumbCover(book.getImages(), 50));
+        bookVOBeta.setCover(CommonImageUtils.generateThumbCover(book.getImages(), EntityType.BOOK, 50));
 
         //审计字段
         bookVOBeta.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));

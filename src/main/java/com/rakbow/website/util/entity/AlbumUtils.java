@@ -29,28 +29,6 @@ import java.util.Objects;
 public class AlbumUtils {
 
     /**
-     * 获取专辑封面图片
-     *
-     * @param album 专辑
-     * @return coverUrl 专辑封面图片url
-     * @author rakbow
-     */
-    public static String getAlbumCoverUrl(Album album) {
-        //先赋值为404图片
-        String coverUrl = CommonConstant.EMPTY_IMAGE_URL;
-
-        JSONArray images = JSON.parseArray(album.getImages());
-
-        for (int i = 0; i < images.size(); i++) {
-            JSONObject image = images.getJSONObject(i);
-            if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                coverUrl = image.getString("url");
-            }
-        }
-        return coverUrl;
-    }
-
-    /**
      * 获取可供编辑的editDiscList
      *
      * @param trackInfoJson 专辑的音轨信息json

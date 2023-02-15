@@ -2,6 +2,7 @@ package com.rakbow.website.util.convertMapper;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
@@ -115,7 +116,7 @@ public interface AlbumVOMapper {
         albumVOAlpha.setHasBonus(album.getHasBonus() == 1);
 
         //图片相关
-        albumVOAlpha.setCover(CommonImageUtils.generateCover(album.getImages()));
+        albumVOAlpha.setCover(CommonImageUtils.generateCover(album.getImages(), EntityType.ALBUM));
 
         //关联信息
         albumVOAlpha.setProducts(ProductUtils.getProductList(album.getProducts()));
@@ -179,7 +180,7 @@ public interface AlbumVOMapper {
         albumVOBeta.setNameEn(album.getNameEn());
         albumVOBeta.setNameZh(album.getNameZh());
         albumVOBeta.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
-        albumVOBeta.setCover(CommonImageUtils.generateThumbCover(album.getImages(), 50));
+        albumVOBeta.setCover(CommonImageUtils.generateThumbCover(album.getImages(), EntityType.ALBUM, 50));
         albumVOBeta.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
         albumVOBeta.setAddedTime(CommonUtils.timestampToString(album.getAddedTime()));
         albumVOBeta.setEditedTime(CommonUtils.timestampToString(album.getEditedTime()));

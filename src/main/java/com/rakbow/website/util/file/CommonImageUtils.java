@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ImageInfo;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.image.ImageProperty;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.segmentImagesResult;
@@ -138,7 +139,7 @@ public class CommonImageUtils {
      * @return segmentImagesResult
      * @author rakbow
      */
-    public static segmentImagesResult segmentImages (String imagesJson, int coverSize, boolean isWidth) {
+    public static segmentImagesResult segmentImages (String imagesJson, int coverSize, EntityType entityType, boolean isWidth) {
 
         segmentImagesResult result = new segmentImagesResult();
 
@@ -157,7 +158,7 @@ public class CommonImageUtils {
         if (isWidth) {
             cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
         }else {
-            cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, coverSize));
+            cover.put("url", QiniuImageUtils.getThumbUrl(getDefaultImageUrl(entityType), coverSize));
         }
         cover.put("name", "404");
         if (!ImageVOs.isEmpty()) {
@@ -206,16 +207,18 @@ public class CommonImageUtils {
      * @return JSONObject
      * @author rakbow
      */
-    public static JSONObject generateCover(String imagesJson) {
+    public static JSONObject generateCover(String imagesJson, EntityType entityType) {
 
         JSONArray images = JSONArray.parseArray(imagesJson);
 
+        String defaultImageUrl = getDefaultImageUrl(entityType);
+
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 200));
-        cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        cover.put("url", QiniuImageUtils.getThumbBackgroundUrl(defaultImageUrl, 200));
+        cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(defaultImageUrl, 50));
+        cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(defaultImageUrl, 70));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(defaultImageUrl, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -239,11 +242,12 @@ public class CommonImageUtils {
      * @return JSONObject
      * @author rakbow
      */
-    public static JSONObject generateThumbCover(String imagesJson, int size) {
+    public static JSONObject generateThumbCover(String imagesJson, EntityType entityType, int size) {
         JSONObject cover = new JSONObject();
         JSONArray images = JSONArray.parseArray(imagesJson);
-        cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, size));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_URL, size));
+        String defaultImageUrl = getDefaultImageUrl(entityType);
+        cover.put("url", QiniuImageUtils.getThumbUrl(defaultImageUrl, size));
+        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(defaultImageUrl, size));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
@@ -256,6 +260,35 @@ public class CommonImageUtils {
             }
         }
         return cover;
+    }
+
+    public static String getDefaultImageUrl(EntityType entityType) {
+        switch (entityType) {
+            case ALBUM -> {
+                return CommonConstant.DEFAULT_ALBUM_IMAGE_URL;
+            }
+            case BOOK -> {
+                return CommonConstant.DEFAULT_BOOK_IMAGE_URL;
+            }
+            case DISC -> {
+                return CommonConstant.DEFAULT_DISC_IMAGE_URL;
+            }
+            case GAME -> {
+                return CommonConstant.DEFAULT_GAME_IMAGE_URL;
+            }
+            case MERCH -> {
+                return CommonConstant.DEFAULT_MERCH_IMAGE_URL;
+            }
+            case FRANCHISE -> {
+                return CommonConstant.DEFAULT_FRANCHISE_IMAGE_URL;
+            }
+            case PRODUCT -> {
+                return CommonConstant.DEFAULT_PRODUCT_IMAGE_URL;
+            }
+            default -> {
+                return CommonConstant.EMPTY_IMAGE_URL;
+            }
+        }
     }
 
 }

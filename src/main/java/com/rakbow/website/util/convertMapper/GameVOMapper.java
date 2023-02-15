@@ -1,6 +1,7 @@
 package com.rakbow.website.util.convertMapper;
 
 import com.alibaba.fastjson2.JSON;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
@@ -104,7 +105,7 @@ public interface GameVOMapper {
         gameVOAlpha.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
 
         //将图片分割处理
-        gameVOAlpha.setCover(CommonImageUtils.generateCover(game.getImages()));
+        gameVOAlpha.setCover(CommonImageUtils.generateCover(game.getImages(), EntityType.GAME));
 
         //审计字段
         gameVOAlpha.setAddedTime(CommonUtils.timestampToString(game.getAddedTime()));
@@ -158,7 +159,7 @@ public interface GameVOMapper {
         gameVOBeta.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
 
         //图片
-        gameVOBeta.setCover(CommonImageUtils.generateThumbCover(game.getImages(), 50));
+        gameVOBeta.setCover(CommonImageUtils.generateThumbCover(game.getImages(), EntityType.GAME, 50));
 
         //审计字段
         gameVOBeta.setAddedTime(CommonUtils.timestampToString(game.getAddedTime()));

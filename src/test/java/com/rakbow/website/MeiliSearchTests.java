@@ -45,35 +45,7 @@ public class MeiliSearchTests {
     @Autowired
     private MeiliSearchUtils meiliSearchUtils;
 
-    @Test
-    public void test1() throws MeilisearchException {
 
-        JSONArray items = new JSONArray();
-
-        List<Album> albums = albumMapper.getAll();
-
-        albums.forEach(album -> {
-            JSONObject albumJson = new JSONObject();
-            albumJson.put("id", album.getId());
-            albumJson.put("catalogNo", album.getCatalogNo());
-            albumJson.put("name", album.getName());
-            albumJson.put("releaseDate", album.getReleaseDate());
-            albumJson.put("price", album.getPrice());
-            segmentImagesResult segmentImages = CommonImageUtils.segmentImages(album.getImages(), 250, false);
-            albumJson.put("cover", segmentImages.cover.getString("url"));
-            items.add(albumJson);
-        });
-
-        JSONArray array = new JSONArray();
-        array.add(items);
-        String documents = array.getJSONArray(0).toString();
-        Client client = new Client(new Config("http://localhost:7700", "masterKey"));
-
-        Index index = client.index("albums");
-
-        index.addDocuments(items.toJSONString());
-
-    }
 
     @Test
     public void searchTest() throws MeilisearchException {

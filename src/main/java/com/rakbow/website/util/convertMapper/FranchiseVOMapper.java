@@ -1,5 +1,6 @@
 package com.rakbow.website.util.convertMapper;
 
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.data.vo.franchise.FranchiseVO;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
@@ -77,7 +78,7 @@ public interface FranchiseVOMapper {
         franchiseVOAlpha.setOriginDate(CommonUtils.dateToString(franchise.getOriginDate()));
         franchiseVOAlpha.setRemark(franchise.getRemark());
 
-        franchiseVOAlpha.setCover(CommonImageUtils.generateCover(franchise.getImages()));
+        franchiseVOAlpha.setCover(CommonImageUtils.generateCover(franchise.getImages(), EntityType.FRANCHISE));
 
         franchiseVOAlpha.setAddedTime(CommonUtils.timestampToString(franchise.getAddedTime()));
         franchiseVOAlpha.setEditedTime(CommonUtils.timestampToString(franchise.getEditedTime()));

@@ -14,6 +14,15 @@ public class CommonConstant {
     public static final String EMPTY_IMAGE_URL = "https://img.rakbow.com/common/error/404.jpg";
     public static final String EMPTY_IMAGE_WIDTH_URL = "https://img.rakbow.com/common/error/404_width.jpg";
 
+    //实体默认图片
+    public static final String DEFAULT_ALBUM_IMAGE_URL = "https://img.rakbow.com/common/entity-default/default_album.png";
+    public static final String DEFAULT_BOOK_IMAGE_URL = "https://img.rakbow.com/common/error/404_width.jpg";
+    public static final String DEFAULT_DISC_IMAGE_URL = "https://img.rakbow.com/common/error/404_width.jpg";
+    public static final String DEFAULT_GAME_IMAGE_URL = "https://img.rakbow.com/common/error/404_width.jpg";
+    public static final String DEFAULT_MERCH_IMAGE_URL = "https://img.rakbow.com/common/error/404_width.jpg";
+    public static final String DEFAULT_PRODUCT_IMAGE_URL = "https://img.rakbow.com/common/error/404_width.jpg";
+    public static final String DEFAULT_FRANCHISE_IMAGE_URL = "https://img.rakbow.com/common/error/404_width.jpg";
+
     /**
      * 激活成功
      */

@@ -2,6 +2,7 @@ package com.rakbow.website.util.convertMapper;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.vo.merch.MerchVO;
@@ -108,7 +109,7 @@ public interface MerchVOMapper {
         merchVOAlpha.setRegion(region);
 
         //图片
-        merchVOAlpha.setCover(CommonImageUtils.generateCover(merch.getImages()));
+        merchVOAlpha.setCover(CommonImageUtils.generateCover(merch.getImages(), EntityType.MERCH));
 
         //审计字段
         merchVOAlpha.setAddedTime(CommonUtils.timestampToString(merch.getAddedTime()));
@@ -166,7 +167,7 @@ public interface MerchVOMapper {
         merchVOBeta.setCategory(MerchCategory.getMerchCategoryJson(merch.getCategory()));
 
         //图片
-        merchVOBeta.setCover(CommonImageUtils.generateThumbCover(merch.getImages(), 50));
+        merchVOBeta.setCover(CommonImageUtils.generateThumbCover(merch.getImages(), EntityType.MERCH, 50));
 
         //审计字段
         merchVOBeta.setAddedTime(CommonUtils.timestampToString(merch.getAddedTime()));
