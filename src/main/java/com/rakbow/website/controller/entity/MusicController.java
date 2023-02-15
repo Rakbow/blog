@@ -83,28 +83,20 @@ public class MusicController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try{
-            if (userService.checkAuthority(request).state) {
+            Music music = musicService.json2Music(param);
 
-                Music music = musicService.json2Music(param);
-
-                //检测数据
-                if(!StringUtils.isBlank(musicService.checkMusicJson(param))) {
-                    res.setErrorMessage(musicService.checkMusicJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                //修改编辑时间
-                music.setEditedTime(new Timestamp(System.currentTimeMillis()));
-
-                musicService.updateMusic(music.getId(), music);
-
-                //将更新的专辑保存到Elasticsearch服务器索引中
-
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
-
-            }else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(musicService.checkMusicJson(param))) {
+                res.setErrorMessage(musicService.checkMusicJson(param));
+                return JSON.toJSONString(res);
             }
+
+            //修改编辑时间
+            music.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+            musicService.updateMusic(music.getId(), music);
+
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -117,19 +109,14 @@ public class MusicController {
     public String updateMusicArtists(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String artists = JSON.parseObject(json).get("artists").toString();
-                musicService.updateMusicArtists(id, artists);
-                res.message = ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String artists = JSON.parseObject(json).get("artists").toString();
+            musicService.updateMusicArtists(id, artists);
+            res.message = ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新歌词文本
@@ -138,19 +125,14 @@ public class MusicController {
     public String updateMusicLyricsText(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String lyricsText = JSON.parseObject(json).get("lyricsText").toString();
-                musicService.updateMusicLyricsText(id, lyricsText);
-                res.message = ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String lyricsText = JSON.parseObject(json).get("lyricsText").toString();
+            musicService.updateMusicLyricsText(id, lyricsText);
+            res.message = ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新描述信息
@@ -159,19 +141,14 @@ public class MusicController {
     public String updateMusicDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String description = JSON.parseObject(json).get("description").toString();
-                musicService.updateMusicDescription(id, description);
-                res.message = ApiInfo.UPDATE_MUSIC_DESCRIPTION_SUCCESS;
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String description = JSON.parseObject(json).get("description").toString();
+            musicService.updateMusicDescription(id, description);
+            res.message = ApiInfo.UPDATE_MUSIC_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //新增音频文件
@@ -180,26 +157,20 @@ public class MusicController {
     public String updateMusicFile(int id, MultipartFile[] files, String fileInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                if (files == null || files.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                //检测数据是否合法
-                if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
-                    res.setErrorMessage(ApiInfo.MUSIC_FILE_NUMBER_EXCEPTION);
-                    return JSON.toJSONString(res);
-                }
-
-                JSONArray fileInfosJson = JSON.parseArray(fileInfos);
-
-                musicService.updateMusicFile(id, files, fileInfosJson, userService.getUserByRequest(request));
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            if (files == null || files.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
             }
+
+            //检测数据是否合法
+            if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
+                res.setErrorMessage(ApiInfo.MUSIC_FILE_NUMBER_EXCEPTION);
+                return JSON.toJSONString(res);
+            }
+
+            JSONArray fileInfosJson = JSON.parseArray(fileInfos);
+
+            musicService.updateMusicFile(id, files, fileInfosJson, userService.getUserByRequest(request));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -212,15 +183,9 @@ public class MusicController {
     public String deleteMusicFile(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                int id = JSON.parseObject(json).getInteger("id");
-                JSONArray files = JSON.parseObject(json).getJSONArray("files");
-                res.message = musicService.deleteMusicFiles(id, files);
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
+            int id = JSON.parseObject(json).getInteger("id");
+            JSONArray files = JSON.parseObject(json).getJSONArray("files");
+            res.message = musicService.deleteMusicFiles(id, files);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

@@ -56,8 +56,6 @@ public class DiscController {
     @Autowired
     private VisitService visitService;
     @Autowired
-    private HostHolder hostHolder;
-    @Autowired
     private RedisUtil redisUtil;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
@@ -87,7 +85,7 @@ public class DiscController {
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, false));
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片
         model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/database/itemDetail/disc-detail";
@@ -132,30 +130,21 @@ public class DiscController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-
-                //检测数据
-                if(!StringUtils.isBlank(discService.checkDiscJson(param))) {
-                    res.setErrorMessage(discService.checkDiscJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Disc disc = discService.json2Disc(discService.handleDiscJson(param));
-
-                //保存新增专辑
-                discService.addDisc(disc);
-
-                //将新增的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.DISC.getId(), disc.getId()));
-
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(discService.checkDiscJson(param))) {
+                res.setErrorMessage(discService.checkDiscJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Disc disc = discService.json2Disc(discService.handleDiscJson(param));
+
+            //保存新增专辑
+            discService.addDisc(disc);
+
+            //新增访问量实体
+            visitService.insertVisit(new Visit(EntityType.DISC.getId(), disc.getId()));
+
+            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -169,24 +158,17 @@ public class DiscController {
         ApiResult res = new ApiResult();
         JSONArray discs = JSON.parseArray(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                for (int i = 0; i < discs.size(); i++) {
+            for (int i = 0; i < discs.size(); i++) {
 
-                    int id = discs.getJSONObject(i).getInteger("id");
+                int id = discs.getJSONObject(i).getInteger("id");
 
-                    //从数据库中删除专辑
-                    discService.deleteDisc(id);
+                //从数据库中删除专辑
+                discService.deleteDisc(id);
 
-                    //从Elasticsearch服务器索引中删除专辑
-                    // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
-
-                    //删除访问量实体
-                    visitService.deleteVisit(EntityType.DISC.getId(), id);
-                }
-                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.DISC.getNameZh());
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                //删除访问量实体
+                visitService.deleteVisit(EntityType.DISC.getId(), id);
             }
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.DISC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -200,28 +182,20 @@ public class DiscController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                //检测数据
-                if(!StringUtils.isBlank(discService.checkDiscJson(param))) {
-                    res.setErrorMessage(discService.checkDiscJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Disc disc = discService.json2Disc(discService.handleDiscJson(param));
-
-                //修改编辑时间
-                disc.setEditedTime(new Timestamp(System.currentTimeMillis()));
-
-                discService.updateDisc(disc.getId(), disc);
-
-                //将更新的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.DISC.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(discService.checkDiscJson(param))) {
+                res.setErrorMessage(discService.checkDiscJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Disc disc = discService.json2Disc(discService.handleDiscJson(param));
+
+            //修改编辑时间
+            disc.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+            discService.updateDisc(disc.getId(), disc);
+
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.DISC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -238,35 +212,26 @@ public class DiscController {
     public String addDiscImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                if (images == null || images.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(discService.getDisc(id).getImages());
-                //新增图片的信息
-                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-                //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                discService.addDiscImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            if (images == null || images.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
             }
+
+            //原始图片信息json数组
+            JSONArray imagesJson = JSON.parseArray(discService.getDisc(id).getImages());
+            //新增图片的信息
+            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+
+            //检测数据合法性
+            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.equals("", errorMessage)) {
+                res.setErrorMessage(errorMessage);
+                return JSON.toJSONString(res);
+            }
+
+            discService.addDiscImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+
+            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -279,35 +244,29 @@ public class DiscController {
     public String updateDiscImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
+            //获取专辑id
+            int id = JSON.parseObject(json).getInteger("id");
+            JSONArray images = JSON.parseObject(json).getJSONArray("images");
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+            }
 
-                //获取专辑id
-                int id = JSON.parseObject(json).getInteger("id");
-                JSONArray images = JSON.parseObject(json).getJSONArray("images");
-                for (int i = 0; i < images.size(); i++) {
-                    images.getJSONObject(i).remove("thumbUrl");
+            //更新图片信息
+            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
                 }
 
-                //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
-
-                    //检测是否存在多张封面
-                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                    if (!StringUtils.equals("", errorMessage)) {
-                        res.setErrorMessage(errorMessage);
-                        return JSON.toJSONString(res);
-                    }
-
-                    res.message = discService.updateDiscImages(id, images.toJSONString());
-                }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = discService.deleteDiscImages(id, images);
-                }else {
-                    res.setErrorMessage(ApiInfo.NOT_ACTION);
-                }
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                res.message = discService.updateDiscImages(id, images.toJSONString());
+            }//删除图片
+            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
+                res.message = discService.deleteDiscImages(id, images);
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
         } catch (Exception e) {
             res.setErrorMessage(e);
@@ -321,21 +280,14 @@ public class DiscController {
     public String updateDiscSpec(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String spec = JSON.parseObject(json).get("spec").toString();
-                discService.updateDiscSpec(id, spec);
-                res.message = ApiInfo.UPDATE_DISC_SPEC_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String spec = JSON.parseObject(json).get("spec").toString();
+            discService.updateDiscSpec(id, spec);
+            res.message = ApiInfo.UPDATE_DISC_SPEC_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新专辑描述信息
@@ -344,21 +296,14 @@ public class DiscController {
     public String updateDiscDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String description = JSON.parseObject(json).get("description").toString();
-                discService.updateDiscDescription(id, description);
-                res.message = ApiInfo.UPDATE_DISC_DESCRIPTION_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String description = JSON.parseObject(json).get("description").toString();
+            discService.updateDiscDescription(id, description);
+            res.message = ApiInfo.UPDATE_DISC_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新专辑特典信息
@@ -367,21 +312,14 @@ public class DiscController {
     public String updateDiscBonus(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String bonus = JSON.parseObject(json).get("bonus").toString();
-                discService.updateDiscBonus(id, bonus);
-                res.message = ApiInfo.UPDATE_DISC_BONUS_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String bonus = JSON.parseObject(json).get("bonus").toString();
+            discService.updateDiscBonus(id, bonus);
+            res.message = ApiInfo.UPDATE_DISC_BONUS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //endregion

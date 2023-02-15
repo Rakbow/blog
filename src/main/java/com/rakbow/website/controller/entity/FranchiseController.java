@@ -84,7 +84,7 @@ public class FranchiseController {
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(franchise.getImages(), 200, false));
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(franchise.getImages(), 200, EntityType.FRANCHISE, false));
         return "/database/itemDetail/franchise-detail";
     }
 
@@ -119,30 +119,21 @@ public class FranchiseController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-
-                //检测数据
-                if (!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
-                    res.setErrorMessage(franchiseService.checkFranchiseJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Franchise franchise = franchiseService.json2Franchise(franchiseService.handleFranchiseJson(param));
-
-                //保存新增
-                franchiseService.addFranchise(franchise);
-
-                //将新增的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.FRANCHISE.getId(), franchise.getId()));
-
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if (!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
+                res.setErrorMessage(franchiseService.checkFranchiseJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Franchise franchise = franchiseService.json2Franchise(franchiseService.handleFranchiseJson(param));
+
+            //保存新增
+            franchiseService.addFranchise(franchise);
+
+            //新增访问量实体
+            visitService.insertVisit(new Visit(EntityType.FRANCHISE.getId(), franchise.getId()));
+
+            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -156,28 +147,20 @@ public class FranchiseController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                //检测数据
-                if (!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
-                    res.setErrorMessage(franchiseService.checkFranchiseJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Franchise franchise = franchiseService.json2Franchise(franchiseService.handleFranchiseJson(param));
-
-                //修改编辑时间
-                franchise.setEditedTime(new Timestamp(System.currentTimeMillis()));
-
-                franchiseService.updateFranchise(franchise.getId(), franchise);
-
-                //将更新的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if (!StringUtils.isBlank(franchiseService.checkFranchiseJson(param))) {
+                res.setErrorMessage(franchiseService.checkFranchiseJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Franchise franchise = franchiseService.json2Franchise(franchiseService.handleFranchiseJson(param));
+
+            //修改编辑时间
+            franchise.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+            franchiseService.updateFranchise(franchise.getId(), franchise);
+
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -190,21 +173,14 @@ public class FranchiseController {
     public String updateFranchiseDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String description = JSON.parseObject(json).get("description").toString();
-                franchiseService.updateFranchiseDescription(id, description);
-                res.message = ApiInfo.UPDATE_GAME_DESCRIPTION_SUCCESS;
-                //更新elasticsearch中的游戏
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String description = JSON.parseObject(json).get("description").toString();
+            franchiseService.updateFranchiseDescription(id, description);
+            res.message = ApiInfo.UPDATE_GAME_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //endregion
@@ -217,35 +193,26 @@ public class FranchiseController {
     public String addFranchiseImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                if (images == null || images.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(franchiseService.getFranchise(id).getImages());
-                //新增图片的信息
-                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-                //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                franchiseService.addFranchiseImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-                //更新elasticsearch中的游戏
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            if (images == null || images.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
             }
+
+            //原始图片信息json数组
+            JSONArray imagesJson = JSON.parseArray(franchiseService.getFranchise(id).getImages());
+            //新增图片的信息
+            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+
+            //检测数据合法性
+            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.equals("", errorMessage)) {
+                res.setErrorMessage(errorMessage);
+                return JSON.toJSONString(res);
+            }
+
+            franchiseService.addFranchiseImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+
+            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -258,35 +225,29 @@ public class FranchiseController {
     public String updateFranchiseImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
+            //获取id
+            int id = JSON.parseObject(json).getInteger("id");
+            JSONArray images = JSON.parseObject(json).getJSONArray("images");
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+            }
 
-                //获取id
-                int id = JSON.parseObject(json).getInteger("id");
-                JSONArray images = JSON.parseObject(json).getJSONArray("images");
-                for (int i = 0; i < images.size(); i++) {
-                    images.getJSONObject(i).remove("thumbUrl");
+            //更新图片信息
+            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
                 }
 
-                //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
-
-                    //检测是否存在多张封面
-                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                    if (!StringUtils.equals("", errorMessage)) {
-                        res.setErrorMessage(errorMessage);
-                        return JSON.toJSONString(res);
-                    }
-
-                    res.message = franchiseService.updateFranchiseImages(id, images.toJSONString());
-                }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = franchiseService.deleteFranchiseImages(id, images);
-                } else {
-                    res.setErrorMessage(ApiInfo.NOT_ACTION);
-                }
-
+                res.message = franchiseService.updateFranchiseImages(id, images.toJSONString());
+            }//删除图片
+            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
+                res.message = franchiseService.deleteFranchiseImages(id, images);
             } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
         } catch (Exception e) {
             res.setErrorMessage(e);

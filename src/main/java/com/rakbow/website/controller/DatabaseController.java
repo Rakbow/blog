@@ -33,10 +33,6 @@ public class DatabaseController {
     //region ------引入实例------
 
     @Autowired
-    private ProductService productService;
-    @Autowired
-    private FranchiseService franchiseService;
-    @Autowired
     private AlbumService albumService;
     @Autowired
     private DiscService discService;
@@ -47,11 +43,7 @@ public class DatabaseController {
     @Autowired
     private GameService gameService;
     @Autowired
-    private HostHolder hostHolder;
-    @Autowired
     private RedisUtil redisUtil;
-    @Autowired
-    private MeiliSearchUtils meiliSearchUtils;
     @Autowired
     private UserService userService;
     @Autowired

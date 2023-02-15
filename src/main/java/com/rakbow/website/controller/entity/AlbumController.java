@@ -63,8 +63,6 @@ public class AlbumController {
     @Autowired
     private MeiliSearchUtils meiliSearchUtils;
     @Autowired
-    private HostHolder hostHolder;
-    @Autowired
     private RedisUtil redisUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
@@ -95,7 +93,7 @@ public class AlbumController {
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(album.getImages(), 250, false));
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(id));
         return "/database/itemDetail/album-detail";
@@ -140,30 +138,24 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-
-                //检测数据
-                if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
-                    res.setErrorMessage(albumService.checkAlbumJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Album album = albumService.json2Album(albumService.handleAlbumJson(param));
-
-                //保存新增专辑
-                albumService.addAlbum(album);
-
-                //将新增的专辑保存到meilisearch服务器索引中
-                meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
-
-                //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
-
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(albumService.checkAlbumJson(param))) {
+                res.setErrorMessage(albumService.checkAlbumJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Album album = albumService.json2Album(albumService.handleAlbumJson(param));
+
+            //保存新增专辑
+            albumService.addAlbum(album);
+
+            //将新增的专辑保存到meilisearch服务器索引中
+            meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
+
+            //新增访问量实体
+            visitService.insertVisit(new Visit(EntityType.ALBUM.getId(), album.getId()));
+
+            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -177,27 +169,23 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         JSONArray albums = JSON.parseArray(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                for (int i = 0; i < albums.size(); i++) {
+            for (int i = 0; i < albums.size(); i++) {
 
-                    int id = albums.getJSONObject(i).getInteger("id");
+                int id = albums.getJSONObject(i).getInteger("id");
 
-                    //从数据库中删除专辑
-                    albumService.deleteAlbumById(id);
+                //从数据库中删除专辑
+                albumService.deleteAlbumById(id);
 
-                    //删除专辑对应的music
-                    musicService.deleteMusicByAlbumId(id);
+                //删除专辑对应的music
+                musicService.deleteMusicByAlbumId(id);
 
-                    //从Meilisearch服务器索引中删除专辑
-                    meiliSearchUtils.deleteData(id, EntityType.ALBUM);
+                //从Meilisearch服务器索引中删除专辑
+                meiliSearchUtils.deleteData(id, EntityType.ALBUM);
 
-                    //删除访问量实体
-                    visitService.deleteVisit(EntityType.ALBUM.getId(), id);
-                }
-                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                //删除访问量实体
+                visitService.deleteVisit(EntityType.ALBUM.getId(), id);
             }
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -245,35 +233,29 @@ public class AlbumController {
     public String addAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                if (images == null || images.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
-                //新增图片的信息
-                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-                //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                albumService.addAlbumImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-                //将更新的专辑保存到Meilisearch服务器索引中
-                meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
-
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            if (images == null || images.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
             }
+
+            //原始图片信息json数组
+            JSONArray imagesJson = JSON.parseArray(albumService.getAlbumById(id).getImages());
+            //新增图片的信息
+            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+
+            //检测数据合法性
+            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.equals("", errorMessage)) {
+                res.setErrorMessage(errorMessage);
+                return JSON.toJSONString(res);
+            }
+
+            albumService.addAlbumImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+
+            //将更新的专辑保存到Meilisearch服务器索引中
+            meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
+
+            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -286,49 +268,43 @@ public class AlbumController {
     public String updateAlbumImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
+            //获取专辑id
+            int id = JSON.parseObject(json).getInteger("id");
+            JSONArray images = JSON.parseObject(json).getJSONArray("images");
 
-                //获取专辑id
-                int id = JSON.parseObject(json).getInteger("id");
-                JSONArray images = JSON.parseObject(json).getJSONArray("images");
+            System.out.println(images);
 
-                System.out.println(images);
-
-                for (int i = 0; i < images.size(); i++) {
-                    images.getJSONObject(i).remove("thumbUrl");
-                    images.getJSONObject(i).remove("thumbUrl50");
-                }
-
-                //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
-
-                    //检测是否存在多张封面
-                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                    if (!StringUtils.equals("", errorMessage)) {
-                        res.setErrorMessage(errorMessage);
-                        return JSON.toJSONString(res);
-                    }
-
-                    res.message = albumService.updateAlbumImages(id, images.toJSONString());
-                }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = albumService.deleteAlbumImages(id, images);
-                }else {
-                    res.setErrorMessage(ApiInfo.NOT_ACTION);
-                }
-
-                //更新对应music的封面图片
-                List<Music> musics = musicService.getMusicsByAlbumId(id);
-                for (Music music : musics) {
-                    musicService.updateMusicCoverUrl(music.getId(), albumService.getAlbumCoverUrl(id));
-                }
-
-                //将更新的专辑保存到Meilisearch服务器索引中
-                meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+                images.getJSONObject(i).remove("thumbUrl50");
             }
+
+            //更新图片信息
+            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
+                }
+
+                res.message = albumService.updateAlbumImages(id, images.toJSONString());
+            }//删除图片
+            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
+                res.message = albumService.deleteAlbumImages(id, images);
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_ACTION);
+            }
+
+            //更新对应music的封面图片
+            List<Music> musics = musicService.getMusicsByAlbumId(id);
+            for (Music music : musics) {
+                musicService.updateMusicCoverUrl(music.getId(), albumService.getAlbumCoverUrl(id));
+            }
+
+            //将更新的专辑保存到Meilisearch服务器索引中
+            meiliSearchUtils.saveSingleData(albumService.getAlbumById(id), EntityType.ALBUM);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -341,21 +317,15 @@ public class AlbumController {
     public String updateAlbumArtists(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String artists = JSON.parseObject(json).getJSONArray("artists").toString();
-                if (StringUtils.isBlank(artists)) {
-                    res.state = 0;
-                    res.message = "输入信息为空";
-                    return JSON.toJSONString(res);
-                }
-                albumService.updateAlbumArtists(id, artists);
-                res.message = ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            int id = JSON.parseObject(json).getInteger("id");
+            String artists = JSON.parseObject(json).getJSONArray("artists").toString();
+            if (StringUtils.isBlank(artists)) {
+                res.state = 0;
+                res.message = "输入信息为空";
+                return JSON.toJSONString(res);
             }
+            albumService.updateAlbumArtists(id, artists);
+            res.message = ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
             return JSON.toJSONString(res);
         } catch (Exception e) {
             res.setErrorMessage(e);
@@ -369,38 +339,29 @@ public class AlbumController {
     public String updateAlbumTrackInfo(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
+            int id = JSON.parseObject(json).getInteger("id");
 
-                int id = JSON.parseObject(json).getInteger("id");
+            String discList = JSON.parseObject(json).get("discList").toString();
 
-                String discList = JSON.parseObject(json).get("discList").toString();
-
-                //若discList为空
-                if (Objects.equals(discList, "[]")) {
-                    res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                albumService.updateAlbumTrackInfo(id, discList);
-
-                //更新对应music的封面图片
-                List<Music> musics = musicService.getMusicsByAlbumId(id);
-                for (Music music : musics) {
-                    musicService.updateMusicCoverUrl(music.getId(), albumService.getAlbumCoverUrl(id));
-                }
-
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-
-                res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //若discList为空
+            if (Objects.equals(discList, "[]")) {
+                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+                return JSON.toJSONString(res);
             }
-            return JSON.toJSONString(res);
+
+            albumService.updateAlbumTrackInfo(id, discList);
+
+            //更新对应music的封面图片
+            List<Music> musics = musicService.getMusicsByAlbumId(id);
+            for (Music music : musics) {
+                musicService.updateMusicCoverUrl(music.getId(), albumService.getAlbumCoverUrl(id));
+            }
+
+            res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新专辑描述信息
@@ -409,21 +370,14 @@ public class AlbumController {
     public String updateAlbumDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String description = JSON.parseObject(json).get("description").toString();
-                albumService.updateAlbumDescription(id, description);
-                res.message = ApiInfo.UPDATE_ALBUM_DESCRIPTION_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String description = JSON.parseObject(json).get("description").toString();
+            albumService.updateAlbumDescription(id, description);
+            res.message = ApiInfo.UPDATE_ALBUM_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新专辑特典信息
@@ -432,21 +386,14 @@ public class AlbumController {
     public String updateAlbumBonus(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String bonus = JSON.parseObject(json).get("bonus").toString();
-                albumService.updateAlbumBonus(id, bonus);
-                res.message = ApiInfo.UPDATE_ALBUM_BONUS_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String bonus = JSON.parseObject(json).get("bonus").toString();
+            albumService.updateAlbumBonus(id, bonus);
+            res.message = ApiInfo.UPDATE_ALBUM_BONUS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //endregion

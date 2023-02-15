@@ -55,8 +55,6 @@ public class GameController {
     @Autowired
     private VisitService visitService;
     @Autowired
-    private HostHolder hostHolder;
-    @Autowired
     private RedisUtil redisUtil;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
@@ -87,7 +85,7 @@ public class GameController {
         //获取页面数据
         model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, false));
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, EntityType.GAME, false));
         //获取相关游戏
         model.addAttribute("relatedGames", gameService.getRelatedGames(id));
         return "/database/itemDetail/game-detail";
@@ -104,30 +102,21 @@ public class GameController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-
-                //检测数据
-                if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
-                    res.setErrorMessage(gameService.checkGameJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Game game = gameService.json2Game(gameService.handleGameJson(param));
-
-                //保存新增游戏
-                gameService.addGame(game);
-
-                //将新增的游戏保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.GAME.getId(), game.getId()));
-
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
+                res.setErrorMessage(gameService.checkGameJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Game game = gameService.json2Game(gameService.handleGameJson(param));
+
+            //保存新增游戏
+            gameService.addGame(game);
+
+            //新增访问量实体
+            visitService.insertVisit(new Visit(EntityType.GAME.getId(), game.getId()));
+
+            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -141,24 +130,17 @@ public class GameController {
         ApiResult res = new ApiResult();
         JSONArray games = JSON.parseArray(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                for (int i = 0; i < games.size(); i++) {
+            for (int i = 0; i < games.size(); i++) {
 
-                    int id = games.getJSONObject(i).getInteger("id");
+                int id = games.getJSONObject(i).getInteger("id");
 
-                    //从数据库中删除游戏
-                    gameService.deleteGame(id);
+                //从数据库中删除游戏
+                gameService.deleteGame(id);
 
-                    //从Elasticsearch服务器索引中删除游戏
-                    // elasticsearchService.deleteAlbum(albums.getJSONObject(i).getInteger("id"));
-
-                    //删除访问量实体
-                    visitService.deleteVisit(EntityType.GAME.getId(), id);
-                }
-                res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.GAME.getNameZh());
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                //删除访问量实体
+                visitService.deleteVisit(EntityType.GAME.getId(), id);
             }
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.GAME.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -172,28 +154,20 @@ public class GameController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                //检测数据
-                if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
-                    res.setErrorMessage(gameService.checkGameJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Game game = gameService.json2Game(gameService.handleGameJson(param));
-
-                //修改编辑时间
-                game.setEditedTime(new Timestamp(System.currentTimeMillis()));
-
-                gameService.updateGame(game.getId(), game);
-
-                //将更新的游戏保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.GAME.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
+                res.setErrorMessage(gameService.checkGameJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Game game = gameService.json2Game(gameService.handleGameJson(param));
+
+            //修改编辑时间
+            game.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+            gameService.updateGame(game.getId(), game);
+
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.GAME.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -237,35 +211,26 @@ public class GameController {
     public String addGameImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                if (images == null || images.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(gameService.getGame(id).getImages());
-                //新增图片的信息
-                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-                //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-                //更新elasticsearch中的游戏
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            if (images == null || images.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
             }
+
+            //原始图片信息json数组
+            JSONArray imagesJson = JSON.parseArray(gameService.getGame(id).getImages());
+            //新增图片的信息
+            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+
+            //检测数据合法性
+            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.equals("", errorMessage)) {
+                res.setErrorMessage(errorMessage);
+                return JSON.toJSONString(res);
+            }
+
+            gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+
+            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -278,35 +243,29 @@ public class GameController {
     public String updateGameImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
+            //获取游戏id
+            int id = JSON.parseObject(json).getInteger("id");
+            JSONArray images = JSON.parseObject(json).getJSONArray("images");
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+            }
 
-                //获取游戏id
-                int id = JSON.parseObject(json).getInteger("id");
-                JSONArray images = JSON.parseObject(json).getJSONArray("images");
-                for (int i = 0; i < images.size(); i++) {
-                    images.getJSONObject(i).remove("thumbUrl");
+            //更新图片信息
+            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
                 }
 
-                //更新图片信息
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
-
-                    //检测是否存在多张封面
-                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                    if (!StringUtils.equals("", errorMessage)) {
-                        res.setErrorMessage(errorMessage);
-                        return JSON.toJSONString(res);
-                    }
-
-                    res.message = gameService.updateGameImages(id, images.toJSONString());
-                }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = gameService.deleteGameImages(id, images);
-                }else {
-                    res.setErrorMessage(ApiInfo.NOT_ACTION);
-                }
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                res.message = gameService.updateGameImages(id, images.toJSONString());
+            }//删除图片
+            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
+                res.message = gameService.deleteGameImages(id, images);
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
         } catch (Exception e) {
             res.setErrorMessage(e);
@@ -320,21 +279,14 @@ public class GameController {
     public String updateGameOrganizations(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
-                gameService.updateGameOrganizations(id, organizations);
-                res.message = ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
+            gameService.updateGameOrganizations(id, organizations);
+            res.message = ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新游戏规格信息
@@ -343,21 +295,14 @@ public class GameController {
     public String updateGameStaffs(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
-                gameService.updateGameStaffs(id, staffs);
-                res.message = ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
+            gameService.updateGameStaffs(id, staffs);
+            res.message = ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新游戏描述信息
@@ -366,21 +311,14 @@ public class GameController {
     public String updateGameDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String description = JSON.parseObject(json).get("description").toString();
-                gameService.updateGameDescription(id, description);
-                res.message = ApiInfo.UPDATE_GAME_DESCRIPTION_SUCCESS;
-                //更新elasticsearch中的游戏
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String description = JSON.parseObject(json).get("description").toString();
+            gameService.updateGameDescription(id, description);
+            res.message = ApiInfo.UPDATE_GAME_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新游戏特典信息
@@ -389,21 +327,14 @@ public class GameController {
     public String updateGameBonus(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String bonus = JSON.parseObject(json).get("bonus").toString();
-                gameService.updateGameBonus(id, bonus);
-                res.message = ApiInfo.UPDATE_GAME_BONUS_SUCCESS;
-                //更新elasticsearch中的游戏
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String bonus = JSON.parseObject(json).get("bonus").toString();
+            gameService.updateGameBonus(id, bonus);
+            res.message = ApiInfo.UPDATE_GAME_BONUS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //endregion

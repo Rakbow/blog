@@ -62,10 +62,6 @@ public class ProductController {
     @Autowired
     private GameService gameService;
     @Autowired
-    private HostHolder hostHolder;
-    @Value("${website.path.img}")
-    private String imgPath;
-    @Autowired
     private RedisUtil redisUtil;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
@@ -110,7 +106,7 @@ public class ProductController {
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(product.getImages(), 200, true));
+        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(product.getImages(), 200, EntityType.PRODUCT, true));
 
         return "/database/itemDetail/product-detail";
     }
@@ -125,33 +121,24 @@ public class ProductController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-
-                //检测数据
-                if(!StringUtils.isBlank(productService.checkProductJson(param))) {
-                    res.setErrorMessage(productService.checkProductJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Product product = productService.json2Product(param);
-
-                //保存新增专辑
-                productService.addProduct(product);
-
-                //刷新redis缓存
-                productService.refreshRedisProducts();
-
-                // //将新增的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(album);
-
-                //新增访问量实体
-                visitService.insertVisit(new Visit(EntityType.PRODUCT.getId(), product.getId()));
-
-                res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(productService.checkProductJson(param))) {
+                res.setErrorMessage(productService.checkProductJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Product product = productService.json2Product(param);
+
+            //保存新增专辑
+            productService.addProduct(product);
+
+            //刷新redis缓存
+            productService.refreshRedisProducts();
+
+            //新增访问量实体
+            visitService.insertVisit(new Visit(EntityType.PRODUCT.getId(), product.getId()));
+
+            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -165,31 +152,23 @@ public class ProductController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            if (userService.checkAuthority(request).state) {
-                //检测数据
-                if(!StringUtils.isBlank(productService.checkProductJson(param))) {
-                    res.setErrorMessage(productService.checkProductJson(param));
-                    return JSON.toJSONString(res);
-                }
-
-                Product product = productService.json2Product(param);
-
-                //修改编辑时间
-                product.setEditedTime(new Timestamp(System.currentTimeMillis()));
-
-                productService.updateProduct(product.getId(), product);
-
-                //刷新redis缓存
-                productService.refreshRedisProducts();
-
-                //将更新的专辑保存到Elasticsearch服务器索引中
-                // elasticsearchService.saveAlbum(product);
-
-                res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            //检测数据
+            if(!StringUtils.isBlank(productService.checkProductJson(param))) {
+                res.setErrorMessage(productService.checkProductJson(param));
+                return JSON.toJSONString(res);
             }
+
+            Product product = productService.json2Product(param);
+
+            //修改编辑时间
+            product.setEditedTime(new Timestamp(System.currentTimeMillis()));
+
+            productService.updateProduct(product.getId(), product);
+
+            //刷新redis缓存
+            productService.refreshRedisProducts();
+
+            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -202,21 +181,14 @@ public class ProductController {
     public String updateProductOrganizations(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
-                productService.updateProductOrganizations(id, organizations);
-                res.message = ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
+            productService.updateProductOrganizations(id, organizations);
+            res.message = ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新描述信息
@@ -225,22 +197,14 @@ public class ProductController {
     public String updateProductDescription(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String description = JSON.parseObject(json).get("description").toString();
-                productService.updateProductDescription(id, description);
-                //刷新redis缓存
-                productService.refreshRedisProducts();
-
-                res.message = ApiInfo.UPDATE_PRODUCT_DESCRIPTION_SUCCESS;
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
-            }
-            return JSON.toJSONString(res);
+            int id = JSON.parseObject(json).getInteger("id");
+            String description = JSON.parseObject(json).get("description").toString();
+            productService.updateProductDescription(id, description);
+            res.message = ApiInfo.UPDATE_PRODUCT_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //更新staff
@@ -249,29 +213,20 @@ public class ProductController {
     public String updateProductStaffs(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-                int id = JSON.parseObject(json).getInteger("id");
-                String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
-                if (StringUtils.isBlank(staffs)) {
-                    res.state = 0;
-                    res.message = "输入信息为空";
-                    return JSON.toJSONString(res);
-                }
-                productService.updateProductStaffs(id, staffs);
-                //刷新redis缓存
-                productService.refreshRedisProducts();
-
-                res.message = ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
-                // //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            int id = JSON.parseObject(json).getInteger("id");
+            String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
+            if (StringUtils.isBlank(staffs)) {
+                res.state = 0;
+                res.message = "输入信息为空";
+                return JSON.toJSONString(res);
             }
-            return JSON.toJSONString(res);
+            productService.updateProductStaffs(id, staffs);
+
+            res.message = ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
-            return JSON.toJSONString(res);
         }
+        return JSON.toJSONString(res);
     }
 
     //endregion
@@ -284,38 +239,29 @@ public class ProductController {
     public String addProductImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
-
-                if (images == null || images.length == 0) {
-                    res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                    return JSON.toJSONString(res);
-                }
-
-                //原始图片信息json数组
-                JSONArray imagesJson = JSON.parseArray(productService.getProduct(id).getImages());
-                //新增图片的信息
-                JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-                //检测数据合法性
-                String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                productService.addProductImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-                //刷新redis缓存
-                productService.refreshRedisProducts();
-
-                //更新elasticsearch中的专辑
-                // elasticsearchService.saveAlbum(albumService.getAlbumById(id));
-
-                res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+            if (images == null || images.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
             }
+
+            //原始图片信息json数组
+            JSONArray imagesJson = JSON.parseArray(productService.getProduct(id).getImages());
+            //新增图片的信息
+            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+
+            //检测数据合法性
+            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.equals("", errorMessage)) {
+                res.setErrorMessage(errorMessage);
+                return JSON.toJSONString(res);
+            }
+
+            productService.addProductImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+
+            //刷新redis缓存
+            productService.refreshRedisProducts();
+
+            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -328,38 +274,29 @@ public class ProductController {
     public String updateProductImages(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (userService.checkAuthority(request).state) {
+            //获取id
+            int id = JSON.parseObject(json).getInteger("id");
+            JSONArray images = JSON.parseObject(json).getJSONArray("images");
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+            }
 
-                //获取id
-                int id = JSON.parseObject(json).getInteger("id");
-                JSONArray images = JSON.parseObject(json).getJSONArray("images");
-                for (int i = 0; i < images.size(); i++) {
-                    images.getJSONObject(i).remove("thumbUrl");
+            //更改图片
+            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.equals("", errorMessage)) {
+                    res.setErrorMessage(errorMessage);
+                    return JSON.toJSONString(res);
                 }
 
-                //更改图片
-                if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
-
-                    //检测是否存在多张封面
-                    String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                    if (!StringUtils.equals("", errorMessage)) {
-                        res.setErrorMessage(errorMessage);
-                        return JSON.toJSONString(res);
-                    }
-
-                    res.message = productService.updateProductImages(id, images.toJSONString());
-                }//删除图片
-                else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                    res.message = productService.deleteProductImages(id, images);
-                }else {
-                    res.setErrorMessage(ApiInfo.NOT_ACTION);
-                }
-
-                //刷新redis缓存
-                productService.refreshRedisProducts();
-
-            } else {
-                res.setErrorMessage(userService.checkAuthority(request).message);
+                res.message = productService.updateProductImages(id, images.toJSONString());
+            }//删除图片
+            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
+                res.message = productService.deleteProductImages(id, images);
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
         } catch (Exception e) {
             res.setErrorMessage(e);

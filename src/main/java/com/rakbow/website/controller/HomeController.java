@@ -38,33 +38,12 @@ public class HomeController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //region ------引入实例------
-
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private FranchiseService franchiseService;
-    @Autowired
-    private AlbumService albumService;
-    @Autowired
-    private DiscService discService;
-    @Autowired
-    private BookService bookService;
-    @Autowired
-    private MerchService merchService;
-    @Autowired
-    private GameService gameService;
-    @Autowired
-    private HostHolder hostHolder;
     @Value("${website.path.img}")
     private String imgPath;
     @Value("${website.path.audio}")
     private String audioPath;
     @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
     private MeiliSearchUtils meiliSearchUtils;
-    @Autowired
-    private UserService userService;
 
     //endregion
 
