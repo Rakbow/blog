@@ -7,12 +7,15 @@ import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.DataSorter;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -26,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,21 +79,36 @@ public class DiscService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Disc getDisc(int id) {
-        return discMapper.getDisc(id);
+        return discMapper.getDisc(id, true);
+    }
+
+    /**
+     * 根据Id获取需要判断权限
+     *
+     * @param id id
+     * @return Disc
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Disc getDiscWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return discMapper.getDisc(id, true);
+        }
+        return discMapper.getDisc(id, false);
     }
 
     /**
      * 根据Id删除碟片
      *
-     * @param id 碟片id
+     * @param disc 碟片
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteDisc(int id) {
+    public void deleteDisc(Disc disc) {
         //删除前先把服务器上对应图片全部删除
-        deleteAllDiscImages(id);
+        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(disc.getImages()));
 
-        discMapper.deleteDisc(id);
+        discMapper.deleteDisc(disc.getId());
     }
 
     /**
@@ -99,8 +118,9 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateDisc(int id, Disc disc) {
+    public String updateDisc(int id, Disc disc) {
         discMapper.updateDisc(id, disc);
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.DISC.getNameZh());
     }
 
     //endregion
@@ -134,11 +154,11 @@ public class DiscService {
         }
         if (StringUtils.isBlank(discJson.getString("franchises"))
                 || StringUtils.equals(discJson.getString("franchises"), "[]")) {
-            return ApiInfo.DISC_FRANCHISES_EMPTY;
+            return ApiInfo.FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(discJson.getString("products"))
                 || StringUtils.equals(discJson.getString("products"), "[]")) {
-            return ApiInfo.DISC_PRODUCTS_EMPTY;
+            return ApiInfo.PRODUCTS_EMPTY;
         }
         if (StringUtils.isBlank(discJson.getString("mediaFormat"))
                 || StringUtils.equals(discJson.getString("mediaFormat"), "[]")) {
@@ -185,12 +205,13 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
+    public String addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.DISC, images, originalImagesJson, imageInfos, user);
 
         discMapper.updateDiscImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
     }
 
     /**
@@ -209,32 +230,19 @@ public class DiscService {
     /**
      * 删除碟片图片
      *
-     * @param id           碟片id
+     * @param disc           碟片
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteDiscImages(int id, JSONArray deleteImages) throws Exception {
+    public String deleteDiscImages(Disc disc, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getDisc(id).getImages());
+        JSONArray images = JSONArray.parseArray(disc.getImages());
 
         JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
-        discMapper.updateDiscImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        discMapper.updateDiscImages(disc.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
-    }
-
-    /**
-     * 删除该碟片所有图片
-     *
-     * @param id 碟片id
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAllDiscImages(int id) {
-        Disc disc = getDisc(id);
-        JSONArray images = JSON.parseArray(disc.getImages());
-        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion
@@ -249,8 +257,9 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateDiscSpec(int id, String spec) {
+    public String updateDiscSpec(int id, String spec) {
         discMapper.updateDiscSpec(id, spec, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DISC_SPEC_SUCCESS;
     }
 
     /**
@@ -273,8 +282,9 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateDiscBonus(int id, String bonus) {
+    public String updateDiscBonus(int id, String bonus) {
         discMapper.updateDiscBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion
@@ -345,10 +355,10 @@ public class DiscService {
         List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, null,
                         CommonUtils.ids2List(disc.getFranchises()), null, null, null,
                         null, false, "releaseDate", 1, 0, 0)
-                .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
+                .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).toList();
 
         List<Disc> queryResult = allDiscs.stream().filter(tmpDisc ->
-                StringUtils.equals(tmpDisc.getProducts(), disc.getProducts())).collect(Collectors.toList());
+                StringUtils.equals(tmpDisc.getProducts(), disc.getProducts())).toList();
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -360,7 +370,7 @@ public class DiscService {
             if (productIds.size() > 1) {
                 List<Disc> tmpQueryResult = allDiscs.stream().filter(tmpDisc ->
                         JSONObject.parseObject(tmpDisc.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).collect(Collectors.toList());
+                                .contains(productIds.get(1))).toList();
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -375,7 +385,7 @@ public class DiscService {
                 tmp.addAll(
                         allDiscs.stream().filter(tmpDisc ->
                                 JSONObject.parseObject(tmpDisc.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).collect(Collectors.toList())
+                                        .contains(productId)).toList()
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);
@@ -439,16 +449,22 @@ public class DiscService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<DiscVOAlpha> getPopularDiscs(int limit) {
-        List<DiscVOAlpha> popularDiscs = new ArrayList<>();
-
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.DISC.getId(), limit);
 
-        visits.forEach(visit -> {
-            DiscVOAlpha disc = discVOMapper.disc2VOAlpha(getDisc(visit.getEntityId()));
-            disc.setVisitNum(visit.getVisitNum());
-            popularDiscs.add(disc);
-        });
-        return popularDiscs;
+        List<Integer> ids = new ArrayList<>();
+
+        visits.sort(DataSorter.visitSortByEntityId);
+        visits.forEach(visit -> ids.add(visit.getEntityId()));
+
+        List<DiscVOAlpha> discs = discVOMapper.disc2VOAlpha(discMapper.getDiscs(ids));
+
+        for (int i = 0; i < discs.size(); i++) {
+            discs.get(i).setVisitNum(visits.get(i).getVisitNum());
+        }
+
+        discs.sort(Collections.reverseOrder(DataSorter.discSortByVisitNum));
+
+        return discs;
     }
 
     //endregion

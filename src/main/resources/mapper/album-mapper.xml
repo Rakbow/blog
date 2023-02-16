@@ -17,11 +17,29 @@
         remark, franchises, products, artists, images, track_info, added_time, edited_time, status
     </sql>
 
-    <select id="getAlbumById" resultType="Album">
+    <select id="getAlbum" resultType="Album">
         select
         <include refid="selectFields"></include>
         from album
-        where id = #{id} and status = 1
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getAlbums" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <select id="getAll" resultType="Album">
@@ -37,7 +55,7 @@
         where status = 1
     </select>
 
-    <insert id="addAlbum" parameterType="Album" keyProperty="id">
+    <insert id="addAlbum" useGeneratedKeys="true" keyProperty="id">
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{price}, #{currencyUnit}, #{albumFormat}, #{mediaFormat}, #{label}, #{publisher}, #{distributor}, #{copyright},

@@ -8,6 +8,7 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -63,15 +64,14 @@ public class GameController {
 
     //获取单个游戏详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getGameDetail(@PathVariable("id") Integer id, Model model) {
-        if (gameService.getGame(id) == null) {
+    public String getGameDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
+        Game game = gameService.getGameWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        if (game == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.GAME.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.GAME.getId(), id);
-
-        Game game = gameService.getGame(id);
 
         model.addAttribute("releaseTypeSet", redisUtil.get("releaseTypeSet"));
         model.addAttribute("regionSet", redisUtil.get("regionSet"));
@@ -101,20 +101,16 @@ public class GameController {
         JSONObject param = JSON.parseObject(json);
         try {
             //检测数据
-            if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
-                res.setErrorMessage(gameService.checkGameJson(param));
+            String errorMsg = gameService.checkGameJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
             Game game = gameService.json2Game(gameService.handleGameJson(param));
 
             //保存新增游戏
-            gameService.addGame(game);
-
-            //新增访问量实体
-            visitService.insertVisit(new Visit(EntityType.GAME.getId(), game.getId()));
-
-            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
+            res.message = gameService.addGame(game);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -126,17 +122,11 @@ public class GameController {
     @ResponseBody
     public String deleteGame(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONArray games = JSON.parseArray(json);
         try {
-            for (int i = 0; i < games.size(); i++) {
-
-                int id = games.getJSONObject(i).getInteger("id");
-
-                //从数据库中删除游戏
-                gameService.deleteGame(id);
-
-                //删除访问量实体
-                visitService.deleteVisit(EntityType.GAME.getId(), id);
+            List<Game> games = JSON.parseArray(json).toJavaList(Game.class);
+            for (Game game : games) {
+                //从数据库中删除专辑
+                gameService.deleteGame(game);
             }
             res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.GAME.getNameZh());
         } catch (Exception ex) {
@@ -153,8 +143,9 @@ public class GameController {
         JSONObject param = JSON.parseObject(json);
         try {
             //检测数据
-            if(!StringUtils.isBlank(gameService.checkGameJson(param))) {
-                res.setErrorMessage(gameService.checkGameJson(param));
+            String errorMsg = gameService.checkGameJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
@@ -163,9 +154,7 @@ public class GameController {
             //修改编辑时间
             game.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-            gameService.updateGame(game.getId(), game);
-
-            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.GAME.getNameZh());
+            res.message = gameService.updateGame(game.getId(), game);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -214,21 +203,21 @@ public class GameController {
                 return JSON.toJSONString(res);
             }
 
+            Game game = gameService.getGame(id);
+
             //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(gameService.getGame(id).getImages());
+            JSONArray imagesJson = JSON.parseArray(game.getImages());
             //新增图片的信息
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.equals("", errorMessage)) {
-                res.setErrorMessage(errorMessage);
+            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
-            gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
+            res.message = gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -243,25 +232,28 @@ public class GameController {
         try {
             //获取游戏id
             int id = JSON.parseObject(json).getInteger("id");
+            int action = JSON.parseObject(json).getIntValue("action");
             JSONArray images = JSON.parseObject(json).getJSONArray("images");
             for (int i = 0; i < images.size(); i++) {
                 images.getJSONObject(i).remove("thumbUrl");
             }
 
+            Game game = gameService.getGame(id);
+
             //更新图片信息
-            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+            if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
+                String errorMsg = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.isBlank(errorMsg)) {
+                    res.setErrorMessage(errorMsg);
                     return JSON.toJSONString(res);
                 }
 
                 res.message = gameService.updateGameImages(id, images.toJSONString());
             }//删除图片
-            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                res.message = gameService.deleteGameImages(id, images);
+            else if (action == DataActionType.REAL_DELETE.getId()) {
+                res.message = gameService.deleteGameImages(game, images);
             }else {
                 res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
@@ -279,8 +271,8 @@ public class GameController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String organizations = JSON.parseObject(json).getJSONArray("organizations").toString();
-            gameService.updateGameOrganizations(id, organizations);
-            res.message = ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
+
+            res.message = gameService.updateGameOrganizations(id, organizations);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -295,8 +287,8 @@ public class GameController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
-            gameService.updateGameStaffs(id, staffs);
-            res.message = ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
+
+            res.message = gameService.updateGameStaffs(id, staffs);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -311,8 +303,8 @@ public class GameController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String description = JSON.parseObject(json).get("description").toString();
-            gameService.updateGameDescription(id, description);
-            res.message = ApiInfo.UPDATE_GAME_DESCRIPTION_SUCCESS;
+
+            res.message = gameService.updateGameDescription(id, description);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -327,8 +319,8 @@ public class GameController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String bonus = JSON.parseObject(json).get("bonus").toString();
-            gameService.updateGameBonus(id, bonus);
-            res.message = ApiInfo.UPDATE_GAME_BONUS_SUCCESS;
+
+            res.message = gameService.updateGameBonus(id, bonus);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

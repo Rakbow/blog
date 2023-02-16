@@ -8,6 +8,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.RedisUtil;
@@ -51,26 +52,43 @@ public class FranchiseService {
 
     //新增系列
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addFranchise(Franchise franchise){
+    public String addFranchise(Franchise franchise){
         franchiseMapper.addFranchise(franchise);
         if(!FranchiseUtils.isMetaFranchise(franchise)) {
             refreshRedisFranchises();
         }
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
     }
 
     //通过id查找系列
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Franchise getFranchise(int id){
-        return franchiseMapper.getFranchise(id);
+        return franchiseMapper.getFranchise(id, true);
+    }
+
+    /**
+     * 根据Id获取Franchise,需要判断权限
+     *
+     * @param id id
+     * @return Franchise
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Franchise getFranchiseWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return franchiseMapper.getFranchise(id, true);
+        }
+        return franchiseMapper.getFranchise(id, false);
     }
 
     //修改系列信息
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateFranchise(int id, Franchise franchise){
+    public String updateFranchise(int id, Franchise franchise){
         franchiseMapper.updateFranchise(id, franchise);
         if(!FranchiseUtils.isMetaFranchise(franchise)) {
             refreshRedisFranchises();
         }
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
     }
 
     //删除系列
@@ -87,8 +105,9 @@ public class FranchiseService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateFranchiseDescription(int id, String description) {
+    public String updateFranchiseDescription(int id, String description) {
         franchiseMapper.updateFranchiseDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     /**
@@ -203,13 +222,14 @@ public class FranchiseService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addFranchiseImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
+    public String addFranchiseImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.FRANCHISE, images, originalImagesJson, imageInfos, user);
 
         franchiseMapper.updateFranchiseImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
     }
 
     /**

@@ -13,6 +13,7 @@ import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.DataSorter;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -26,8 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -62,8 +63,9 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addMerch(Merch merch) {
+    public String addMerch(Merch merch) {
         merchMapper.addMerch(merch);
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
     }
 
     /**
@@ -75,21 +77,36 @@ public class MerchService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Merch getMerch(int id) {
-        return merchMapper.getMerch(id);
+        return merchMapper.getMerch(id, true);
+    }
+
+    /**
+     * 根据Id获取Merch,需要判断权限
+     *
+     * @param id id
+     * @return Merch
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Merch getMerchWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return merchMapper.getMerch(id, true);
+        }
+        return merchMapper.getMerch(id, false);
     }
 
     /**
      * 根据Id删除周边
      *
-     * @param id 周边id
+     * @param merch 周边
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteMerch(int id) {
+    public void deleteMerch(Merch merch) {
         //删除前先把服务器上对应图片全部删除
-        deleteAllMerchImages(id);
+        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(merch.getImages()));
 
-        merchMapper.deleteMerch(id);
+        merchMapper.deleteMerch(merch.getId());
     }
 
     /**
@@ -99,8 +116,9 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMerch(int id, Merch merch) {
+    public String updateMerch(int id, Merch merch) {
         merchMapper.updateMerch(id, merch);
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
     }
 
     //endregion
@@ -117,13 +135,14 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
+    public String addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                                JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.MERCH, images, originalImagesJson, imageInfos, user);
 
         merchMapper.updateMerchImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
     }
 
     /**
@@ -142,33 +161,19 @@ public class MerchService {
     /**
      * 删除周边图片
      *
-     * @param id           周边id
+     * @param merch           周边
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteMerchImages(int id, JSONArray deleteImages) throws Exception {
+    public String deleteMerchImages(Merch merch, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getMerch(id).getImages());
+        JSONArray images = JSONArray.parseArray(merch.getImages());
 
         JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
-        merchMapper.updateMerchImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        merchMapper.updateMerchImages(merch.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
-    }
-
-    /**
-     * 删除该周边所有图片
-     *
-     * @param id 周边id
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAllMerchImages(int id) {
-        Merch merch = getMerch(id);
-        JSONArray images = JSON.parseArray(merch.getImages());
-
-        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion
@@ -205,11 +210,11 @@ public class MerchService {
         }
         if (StringUtils.isBlank(merchJson.getString("franchises"))
                 || StringUtils.equals(merchJson.getString("franchises"), "[]")) {
-            return ApiInfo.MERCH_FRANCHISES_EMPTY;
+            return ApiInfo.FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(merchJson.getString("products"))
                 || StringUtils.equals(merchJson.getString("products"), "[]")) {
-            return ApiInfo.MERCH_PRODUCTS_EMPTY;
+            return ApiInfo.PRODUCTS_EMPTY;
         }
         return "";
     }
@@ -245,8 +250,9 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMerchSpec(int id, String spec) {
+    public String updateMerchSpec(int id, String spec) {
         merchMapper.updateMerchSpec(id, spec, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_MERCH_SPEC_SUCCESS;
     }
 
     /**
@@ -257,8 +263,9 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMerchDescription(int id, String description) {
+    public String updateMerchDescription(int id, String description) {
         merchMapper.updateMerchDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     //endregion
@@ -340,11 +347,11 @@ public class MerchService {
 
         //该系列所有Merch
         List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtils.ids2List(merch.getFranchises()),
-                null, 100, null, null, false, "releaseDate", 1, 0, 0)
-                .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
+                        null, 100, null, null, false, "releaseDate", 1, 0, 0)
+                .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).toList();
 
         List<Merch> queryResult = allMerchs.stream().filter(tmpMerch ->
-                StringUtils.equals(tmpMerch.getProducts(), merch.getProducts())).collect(Collectors.toList());
+                StringUtils.equals(tmpMerch.getProducts(), merch.getProducts())).toList();
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -356,7 +363,7 @@ public class MerchService {
             if (productIds.size() > 1) {
                 List<Merch> tmpQueryResult = allMerchs.stream().filter(tmpMerch ->
                         JSONObject.parseObject(tmpMerch.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).collect(Collectors.toList());
+                                .contains(productIds.get(1))).toList();
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -371,7 +378,7 @@ public class MerchService {
                 tmp.addAll(
                         allMerchs.stream().filter(tmpMerch ->
                                 JSONObject.parseObject(tmpMerch.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).collect(Collectors.toList())
+                                        .contains(productId)).toList()
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);
@@ -416,16 +423,22 @@ public class MerchService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<MerchVOAlpha> getPopularMerchs(int limit) {
-        List<MerchVOAlpha> popularMerchs = new ArrayList<>();
-
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.MERCH.getId(), limit);
 
-        visits.forEach(visit -> {
-            MerchVOAlpha merch = merchVOMapper.merch2VOAlpha(getMerch(visit.getEntityId()));
-            merch.setVisitNum(visit.getVisitNum());
-            popularMerchs.add(merch);
-        });
-        return popularMerchs;
+        List<Integer> ids = new ArrayList<>();
+
+        visits.sort(DataSorter.visitSortByEntityId);
+        visits.forEach(visit -> ids.add(visit.getEntityId()));
+
+        List<MerchVOAlpha> merchs = merchVOMapper.merch2VOAlpha(merchMapper.getMerchs(ids));
+
+        for (int i = 0; i < merchs.size(); i++) {
+            merchs.get(i).setVisitNum(visits.get(i).getVisitNum());
+        }
+
+        merchs.sort(Collections.reverseOrder(DataSorter.merchSortByVisitNum));
+
+        return merchs;
     }
 
     //endregion

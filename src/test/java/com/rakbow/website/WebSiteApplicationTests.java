@@ -2,12 +2,12 @@ package com.rakbow.website;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.ImageInfo;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.visitUtils;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 //import com.rakbow.website.util.convertMapper.GameVoMapper;
 import com.rakbow.website.service.*;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -49,6 +48,8 @@ class WebSiteApplicationTests {
     private ProductMapper productMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private visitUtils visitUtils;
 
 
 
@@ -174,11 +175,13 @@ class WebSiteApplicationTests {
     @Test
     public void redisTest() {
 
-      productService.refreshRedisProducts();
+        visitUtils.addVisit(EntityType.ALBUM, 155);
 
-      franchiseService.refreshRedisFranchises();
-
-      commonService.refreshRedisEmunData();
+      // productService.refreshRedisProducts();
+      //
+      // franchiseService.refreshRedisFranchises();
+      //
+      // commonService.refreshRedisEmunData();
 
     }
 
@@ -189,7 +192,7 @@ class WebSiteApplicationTests {
 //                null, null, null, null,
 //                null, -1, 0, 10);
 
-        Album album = albumService.getAlbumById(11);
+        Album album = albumService.getAlbum(11);
 
         Timestamp t1 = new Timestamp(System.currentTimeMillis());
 

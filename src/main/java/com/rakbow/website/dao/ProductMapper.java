@@ -15,17 +15,19 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
 
-    //新增产品
-    int addProduct(Product product);
-
     //通过id查找作品
-    Product getProduct(int id);
+    Product getProduct(int id, boolean status);
+
+    List<Product> getProducts(List<Integer> ids);
 
     //获取所有作品
     List<Product> getAll();
 
+    //新增产品
+    void addProduct(Product product);
+
     //修改系列信息
-    int updateProduct(int id, Product product);
+    void updateProduct(int id, Product product);
 
     //删除产品
     int deleteProduct(int id);

@@ -16,7 +16,10 @@
         select
         <include refid="selectFields"></include>
         from franchise
-        where id = #{id} and status = 1
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
     </select>
 
     <select id="getAll" resultType="Franchise">

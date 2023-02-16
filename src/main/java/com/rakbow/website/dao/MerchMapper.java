@@ -17,7 +17,9 @@ import java.util.List;
 public interface MerchMapper {
 
     //通过id查询Merch
-    Merch getMerch(int id);
+    Merch getMerch(int id, boolean status);
+
+    List<Merch> getMerchs(List<Integer> ids);
 
     List<Merch> getAll();
 

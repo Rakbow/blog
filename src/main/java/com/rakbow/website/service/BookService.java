@@ -12,6 +12,7 @@ import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.util.common.DataSorter;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.entity.BookUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
@@ -24,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,8 +65,9 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addBook(Book book) {
+    public String addBook(Book book) {
         bookMapper.addBook(book);
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
     }
 
     /**
@@ -75,36 +79,36 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Book getBook(int id) {
-        return bookMapper.getBook(id, false);
+        return bookMapper.getBook(id, true);
     }
 
-    // /**
-    //  * 根据Id获取图书,需要判断权限
-    //  *
-    //  * @param id 图书id
-    //  * @return book
-    //  * @author rakbow
-    //  */
-    // @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    // public Book getBookWithAuth(int id, int userAuthority) {
-    //     if(userAuthority > 2) {
-    //         return bookMapper.getBook(id, true);
-    //     }
-    //     return bookMapper.getBook(id, false);
-    // }
+     /**
+      * 根据Id获取图书,需要判断权限
+      *
+      * @param id 图书id
+      * @return book
+      * @author rakbow
+      */
+     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+     public Book getBookWithAuth(int id, int userAuthority) {
+         if(userAuthority > 2) {
+             return bookMapper.getBook(id, true);
+         }
+         return bookMapper.getBook(id, false);
+     }
 
     /**
      * 根据Id删除图书
      *
-     * @param id 图书id
+     * @param book 图书
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteBook(int id) {
+    public void deleteBook(Book book) {
         //删除前先把服务器上对应图片全部删除
-        deleteAllBookImages(id);
+        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(book.getImages()));
 
-        bookMapper.deleteBook(id);
+        bookMapper.deleteBook(book.getId());
     }
 
     /**
@@ -114,8 +118,9 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateBook(int id, Book book) {
+    public String updateBook(int id, Book book) {
         bookMapper.updateBook(id, book);
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
     }
 
     //endregion
@@ -167,11 +172,11 @@ public class BookService {
         }
         if (StringUtils.isBlank(bookJson.getString("franchises"))
                 || StringUtils.equals(bookJson.getString("franchises"), "[]")) {
-            return ApiInfo.BOOK_FRANCHISES_EMPTY;
+            return ApiInfo.FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(bookJson.getString("products"))
                 || StringUtils.equals(bookJson.getString("products"), "[]")) {
-            return ApiInfo.BOOK_PRODUCTS_EMPTY;
+            return ApiInfo.PRODUCTS_EMPTY;
         }
         return "";
     }
@@ -211,13 +216,15 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
+    public String addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.BOOK, images, originalImagesJson, imageInfos, user);
 
         bookMapper.updateBookImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+
+        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
     }
 
     /**
@@ -236,32 +243,19 @@ public class BookService {
     /**
      * 删除图书图片
      *
-     * @param id           图书id
+     * @param book           图书
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteBookImages(int id, JSONArray deleteImages) throws Exception {
+    public String deleteBookImages(Book book, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getBook(id).getImages());
+        JSONArray images = JSONArray.parseArray(book.getImages());
 
         JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
-        bookMapper.updateBookImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        bookMapper.updateBookImages(book.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
-    }
-
-    /**
-     * 删除该图书所有图片
-     *
-     * @param id 图书id
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAllBookImages(int id) {
-        Book book = getBook(id);
-        JSONArray images = JSON.parseArray(book.getImages());
-        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion
@@ -276,8 +270,9 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateBookAuthors(int id, String authors) {
+    public String updateBookAuthors(int id, String authors) {
         bookMapper.updateBookAuthors(id, authors, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BOOK_AUTHOR_SUCCESS;
     }
 
     /**
@@ -288,8 +283,9 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateBookSpec(int id, String spec) {
+    public String updateBookSpec(int id, String spec) {
         bookMapper.updateBookSpec(id, spec, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BOOK_SPEC_SUCCESS;
     }
 
     /**
@@ -300,8 +296,9 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateBookDescription(int id, String description) {
+    public String updateBookDescription(int id, String description) {
         bookMapper.updateBookDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     /**
@@ -312,8 +309,9 @@ public class BookService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateBookBonus(int id, String bonus) {
+    public String updateBookBonus(int id, String bonus) {
         bookMapper.updateBookBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion
@@ -400,13 +398,13 @@ public class BookService {
 
         //该系列所有Book
         List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, null,
-                null, null, 100, CommonUtils.ids2List(book.getFranchises()),
+                        null, null, 100, CommonUtils.ids2List(book.getFranchises()),
                         null, null, false, "publishDate", 1, 0, 0)
-                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
+                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).toList();
 
         List<Book> queryResult = allBooks.stream().filter(tmpBook ->
                 StringUtils.equals(tmpBook.getProducts(), book.getProducts())
-                &&StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).collect(Collectors.toList());
+                        && StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).toList();
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -418,7 +416,7 @@ public class BookService {
             if (productIds.size() > 1) {
                 List<Book> tmpQueryResult = allBooks.stream().filter(tmpBook ->
                         JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).collect(Collectors.toList());
+                                .contains(productIds.get(1))).toList();
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -433,7 +431,7 @@ public class BookService {
                 tmp.addAll(
                         allBooks.stream().filter(tmpBook ->
                                 JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).collect(Collectors.toList())
+                                        .contains(productId)).toList()
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);
@@ -478,16 +476,23 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<BookVOBeta> getPopularBooks(int limit) {
-        List<BookVOBeta> popularBooks = new ArrayList<>();
 
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.BOOK.getId(), limit);
 
-        visits.forEach(visit -> {
-            BookVOBeta book = bookVOMapper.book2VOBeta(getBook(visit.getEntityId()));
-            book.setVisitNum(visit.getVisitNum());
-            popularBooks.add(book);
-        });
-        return popularBooks;
+        List<Integer> ids = new ArrayList<>();
+
+        visits.sort(DataSorter.visitSortByEntityId);
+        visits.forEach(visit -> ids.add(visit.getEntityId()));
+
+        List<BookVOBeta> books = bookVOMapper.book2VOBeta(bookMapper.getBooks(ids));
+
+        for (int i = 0; i < books.size(); i++) {
+            books.get(i).setVisitNum(visits.get(i).getVisitNum());
+        }
+
+        books.sort(Collections.reverseOrder(DataSorter.bookSortByVisitNum));
+
+        return books;
     }
 
     //endregion
@@ -501,7 +506,7 @@ public class BookService {
      * @return isbn
      * @author rakbow
      */
-    public String ISBNInterconvert(String label, String isbn) throws Exception {
+    public String getISBN(String label, String isbn) throws Exception {
 
         if(StringUtils.equals(label, "isbn13")) {
             if(isbn.length() != 10) {

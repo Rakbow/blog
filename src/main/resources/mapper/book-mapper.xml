@@ -33,6 +33,21 @@
         </if>
     </select>
 
+    <select id="getBooks" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        <where>
+        id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
     <insert id="addBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()

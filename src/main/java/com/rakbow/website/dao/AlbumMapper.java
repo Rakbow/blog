@@ -16,7 +16,9 @@ import java.util.List;
 public interface AlbumMapper {
 
     //根据id查询专辑信息
-    Album getAlbumById(int id);
+    Album getAlbum(int id, boolean status);
+
+    List<Album> getAlbums(List<Integer> ids);
 
     //超详细查询
     List<Album> getAlbumsByFilter(String catalogNo, String name, List<Integer> franchises, List<Integer> products,
@@ -30,7 +32,7 @@ public interface AlbumMapper {
                              List<Integer> mediaFormat, String hasBonus, boolean status);
 
     //新增专辑
-    void addAlbum(Album album);
+    int addAlbum(Album album);
 
     //更新专辑信息
     void updateAlbum(int id, Album album);

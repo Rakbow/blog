@@ -19,7 +19,25 @@
         select
         <include refid="selectFields"></include>
         from disc
-        where id = #{id} and status = 1
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getDiscs" resultType="Disc">
+        select
+        <include refid="selectFields"></include>
+        from disc
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <select id="getAll" resultType="Disc">

@@ -15,7 +15,9 @@ import java.util.List;
 @Mapper
 public interface MusicMapper {
 
-    Music getMusicById(int id);
+    Music getMusic(int id, boolean status);
+
+    List<Music> getMusics(List<Integer> ids);
 
     List<Music> getAll();
 
@@ -33,7 +35,7 @@ public interface MusicMapper {
 
     int updateStatusById(int id);
 
-    void updateMusicCoverUrl(int id, String coverUrl);
+    void updateMusicCoverUrl(int albumId, String coverUrl);
 
     void updateMusicArtists(int id, String artists, Timestamp editedTime);
 

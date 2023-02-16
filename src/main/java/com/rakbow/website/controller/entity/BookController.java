@@ -8,6 +8,7 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -64,7 +65,7 @@ public class BookController {
     //获取单个图书详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getBookDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
-        Book book = bookService.getBook(id);
+        Book book = bookService.getBookWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
         if (book == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
@@ -97,23 +98,19 @@ public class BookController {
     @ResponseBody
     public String addBook(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
         try {
+            JSONObject param = JSON.parseObject(json);
             //检测数据
-            if(!StringUtils.isBlank(bookService.checkBookJson(param))) {
-                res.setErrorMessage(bookService.checkBookJson(param));
+            String errorMsg = bookService.checkBookJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
             Book book = bookService.json2Book(bookService.handleBookJson(param));
 
             //保存新增图书
-            bookService.addBook(book);
-
-            //新增访问量实体
-            visitService.insertVisit(new Visit(EntityType.BOOK.getId(), book.getId()));
-
-            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
+            res.message = bookService.addBook(book);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -125,17 +122,11 @@ public class BookController {
     @ResponseBody
     public String deleteBook(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONArray books = JSON.parseArray(json);
         try {
-            for (int i = 0; i < books.size(); i++) {
-
-                int id = books.getJSONObject(i).getInteger("id");
-
-                //从数据库中删除图书
-                bookService.deleteBook(id);
-
-                //删除访问量实体
-                visitService.deleteVisit(EntityType.BOOK.getId(), id);
+            List<Book> books = JSON.parseArray(json).toJavaList(Book.class);
+            for (Book book : books) {
+                //从数据库中删除专辑
+                bookService.deleteBook(book);
             }
             res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
         } catch (Exception ex) {
@@ -152,8 +143,9 @@ public class BookController {
         JSONObject param = JSON.parseObject(json);
         try {
             //检测数据
-            if(!StringUtils.isBlank(bookService.checkBookJson(param))) {
-                res.setErrorMessage(bookService.checkBookJson(param));
+            String errorMsg = bookService.checkBookJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
@@ -162,9 +154,7 @@ public class BookController {
             //修改编辑时间
             book.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-            bookService.updateBook(book.getId(), book);
-
-            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
+            res.message = bookService.updateBook(book.getId(), book);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -213,21 +203,21 @@ public class BookController {
                 return JSON.toJSONString(res);
             }
 
+            Book book = bookService.getBook(id);
+
             //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(bookService.getBook(id).getImages());
+            JSONArray imagesJson = JSON.parseArray(book.getImages());
             //新增图片的信息
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.equals("", errorMessage)) {
-                res.setErrorMessage(errorMessage);
+            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
-            bookService.addBookImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
+            res.message = bookService.addBookImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -242,25 +232,28 @@ public class BookController {
         try {
             //获取图书id
             int id = JSON.parseObject(json).getInteger("id");
+            int action = JSON.parseObject(json).getInteger("action");
             JSONArray images = JSON.parseObject(json).getJSONArray("images");
             for (int i = 0; i < images.size(); i++) {
                 images.getJSONObject(i).remove("thumbUrl");
             }
 
+            Book book = bookService.getBook(id);
+
             //更新图片信息
-            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+            if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
+                String errorMsg = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.isBlank(errorMsg)) {
+                    res.setErrorMessage(errorMsg);
                     return JSON.toJSONString(res);
                 }
 
                 res.message = bookService.updateBookImages(id, images.toJSONString());
             }//删除图片
-            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                res.message = bookService.deleteBookImages(id, images);
+            else if (action == DataActionType.REAL_DELETE.getId()) {
+                res.message = bookService.deleteBookImages(book, images);
             }else {
                 res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
@@ -278,8 +271,12 @@ public class BookController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String authors = JSON.parseObject(json).getJSONArray("authors").toString();
-            bookService.updateBookAuthors(id, authors);
-            res.message = ApiInfo.UPDATE_BOOK_AUTHOR_SUCCESS;
+            if (StringUtils.isBlank(authors)) {
+                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+                return JSON.toJSONString(res);
+            }
+
+            res.message = bookService.updateBookAuthors(id, authors);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -294,8 +291,12 @@ public class BookController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String spec = JSON.parseObject(json).getJSONArray("spec").toString();
-            bookService.updateBookSpec(id, spec);
-            res.message = ApiInfo.UPDATE_BOOK_SPEC_SUCCESS;
+            if (StringUtils.isBlank(spec)) {
+                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+                return JSON.toJSONString(res);
+            }
+
+            res.message = bookService.updateBookSpec(id, spec);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -310,8 +311,8 @@ public class BookController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String description = JSON.parseObject(json).get("description").toString();
-            bookService.updateBookDescription(id, description);
-            res.message = ApiInfo.UPDATE_BOOK_DESCRIPTION_SUCCESS;
+
+            res.message = bookService.updateBookDescription(id, description);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -326,8 +327,8 @@ public class BookController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String bonus = JSON.parseObject(json).get("bonus").toString();
-            bookService.updateBookBonus(id, bonus);
-            res.message = ApiInfo.UPDATE_BOOK_BONUS_SUCCESS;
+
+            res.message = bookService.updateBookBonus(id, bonus);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -339,9 +340,9 @@ public class BookController {
     //region other
 
     //isbn互相转换
-    @RequestMapping(value = "/isbn-interconvert", method = RequestMethod.POST)
+    @RequestMapping(value = "/get-isbn", method = RequestMethod.POST)
     @ResponseBody
-    public String ISBNInterconvert(@RequestBody String json) {
+    public String getISBN(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
 
@@ -349,7 +350,7 @@ public class BookController {
             String label = param.getString("label");
             String isbn = param.getString("isbn");
 
-            res.data = bookService.ISBNInterconvert(label, isbn);
+            res.data = bookService.getISBN(label, isbn);
 
         }catch (Exception e) {
             res.setErrorMessage(e);

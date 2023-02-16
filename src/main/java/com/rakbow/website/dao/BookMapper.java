@@ -18,6 +18,8 @@ public interface BookMapper {
     //通过id查询Book
     Book getBook(int id, boolean status);
 
+    List<Book> getBooks(List<Integer> ids);
+
     List<Book> getAll();
 
     //根据过滤条件搜索Book

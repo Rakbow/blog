@@ -16,7 +16,9 @@ import java.util.List;
 public interface GameMapper {
 
     //通过id查询Game
-    Game getGame(int id);
+    Game getGame(int id, boolean status);
+
+    List<Game> getGames(List<Integer> ids);
 
     List<Game> getAll();
 

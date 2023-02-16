@@ -18,7 +18,25 @@
         select
         <include refid="selectFields"></include>
         from merch
-        where id = #{id} and status = 1
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getMerchs" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <select id="getAll" resultType="Merch">

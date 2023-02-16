@@ -19,7 +19,7 @@ public interface FranchiseMapper {
     void addFranchise(Franchise franchise);
 
     //通过id查找系列
-    Franchise getFranchise(int id);
+    Franchise getFranchise(int id, boolean status);
 
     //根据过滤条件搜索Book
     List<Franchise> getFranchisesByFilter(String name, String nameZh, String isMeta, boolean status,

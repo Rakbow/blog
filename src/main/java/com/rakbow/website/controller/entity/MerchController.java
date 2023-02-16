@@ -8,6 +8,7 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
@@ -63,15 +64,14 @@ public class MerchController {
 
     //获取单个周边商品详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMerchDetail(@PathVariable int id, Model model) {
-        if (merchService.getMerch(id) == null) {
+    public String getMerchDetail(@PathVariable int id, Model model, HttpServletRequest request) {
+        Merch merch = merchService.getMerchWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        if (merch == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MERCH.getNameZh()));
             return "/error/404";
         }
         //访问数+1
         visitService.increaseVisit(EntityType.MERCH.getId(), id);
-
-        Merch merch = merchService.getMerch(id);
 
         model.addAttribute("merchCategorySet", redisUtil.get("merchCategorySet"));
         model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
@@ -100,20 +100,16 @@ public class MerchController {
         JSONObject param = JSON.parseObject(json);
         try {
             //检测数据
-            if(!StringUtils.isBlank(merchService.checkMerchJson(param))) {
-                res.setErrorMessage(merchService.checkMerchJson(param));
+            String errorMsg = merchService.checkMerchJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
             Merch merch = merchService.json2Merch(merchService.handleMerchJson(param));
 
             //保存新增周边
-            merchService.addMerch(merch);
-
-            //新增访问量实体
-            visitService.insertVisit(new Visit(EntityType.MERCH.getId(), merch.getId()));
-
-            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
+            res.message = merchService.addMerch(merch);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -125,17 +121,11 @@ public class MerchController {
     @ResponseBody
     public String deleteMerch(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONArray merchs = JSON.parseArray(json);
         try {
-            for (int i = 0; i < merchs.size(); i++) {
-
-                int id = merchs.getJSONObject(i).getInteger("id");
-
-                //从数据库中删除周边
-                merchService.deleteMerch(id);
-
-                //删除访问量实体
-                visitService.deleteVisit(EntityType.MERCH.getId(), id);
+            List<Merch> merchs = JSON.parseArray(json).toJavaList(Merch.class);
+            for (Merch merch : merchs) {
+                //从数据库中删除专辑
+                merchService.deleteMerch(merch);
             }
             res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
         } catch (Exception ex) {
@@ -149,11 +139,12 @@ public class MerchController {
     @ResponseBody
     public String updateMerch(@RequestBody String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
         try {
+            JSONObject param = JSON.parseObject(json);
             //检测数据
-            if(!StringUtils.isBlank(merchService.checkMerchJson(param))) {
-                res.setErrorMessage(merchService.checkMerchJson(param));
+            String errorMsg = merchService.checkMerchJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
@@ -162,9 +153,7 @@ public class MerchController {
             //修改编辑时间
             merch.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-            merchService.updateMerch(merch.getId(), merch);
-
-            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
+            res.message = merchService.updateMerch(merch.getId(), merch);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -213,21 +202,21 @@ public class MerchController {
                 return JSON.toJSONString(res);
             }
 
+            Merch merch = merchService.getMerch(id);
+
             //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(merchService.getMerch(id).getImages());
+            JSONArray imagesJson = JSON.parseArray(merch.getImages());
             //新增图片的信息
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.equals("", errorMessage)) {
-                res.setErrorMessage(errorMessage);
+            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
-            merchService.addMerchImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
+            res.message = merchService.addMerchImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -242,25 +231,28 @@ public class MerchController {
         try {
             //获取周边id
             int id = JSON.parseObject(json).getInteger("id");
+            int action = JSON.parseObject(json).getIntValue("action");
             JSONArray images = JSON.parseObject(json).getJSONArray("images");
             for (int i = 0; i < images.size(); i++) {
                 images.getJSONObject(i).remove("thumbUrl");
             }
 
+            Merch merch = merchService.getMerch(id);
+
             //更新图片信息
-            if (JSON.parseObject(json).getInteger("action") == DataActionType.UPDATE.getId()) {
+            if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMessage = CommonImageUtils.checkUpdateImages(images);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
+                String errorMsg = CommonImageUtils.checkUpdateImages(images);
+                if (!StringUtils.isBlank(errorMsg)) {
+                    res.setErrorMessage(errorMsg);
                     return JSON.toJSONString(res);
                 }
 
                 res.message = merchService.updateMerchImages(id, images.toJSONString());
             }//删除图片
-            else if (JSON.parseObject(json).getInteger("action") == DataActionType.REAL_DELETE.getId()) {
-                res.message = merchService.deleteMerchImages(id, images);
+            else if (action == DataActionType.REAL_DELETE.getId()) {
+                res.message = merchService.deleteMerchImages(merch, images);
             }else {
                 res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
@@ -278,8 +270,8 @@ public class MerchController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String spec = JSON.parseObject(json).getJSONArray("spec").toString();
-            merchService.updateMerchSpec(id, spec);
-            res.message = ApiInfo.UPDATE_MERCH_SPEC_SUCCESS;
+
+            res.message = merchService.updateMerchSpec(id, spec);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -294,8 +286,8 @@ public class MerchController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String description = JSON.parseObject(json).get("description").toString();
-            merchService.updateMerchDescription(id, description);
-            res.message = ApiInfo.UPDATE_MERCH_DESCRIPTION_SUCCESS;
+
+            res.message = merchService.updateMerchDescription(id, description);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

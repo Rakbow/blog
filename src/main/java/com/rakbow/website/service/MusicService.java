@@ -8,17 +8,14 @@ import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.file.QiniuBaseUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,8 +60,23 @@ public class MusicService {
      * @return music
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Music getMusicById(int id) {
-        return musicMapper.getMusicById(id);
+    public Music getMusic(int id) {
+        return musicMapper.getMusic(id, true);
+    }
+
+    /**
+     * 根据Id获取Music,需要判断权限
+     *
+     * @param id id
+     * @return Music
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Music getMusicWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return musicMapper.getMusic(id, true);
+        }
+        return musicMapper.getMusic(id, false);
     }
 
     /**
@@ -102,9 +114,6 @@ public class MusicService {
     public void addMusic(Music music) throws Exception {
         try {
             musicMapper.addMusic(music);
-
-            //新增访问量实体
-            visitService.insertVisit(new Visit(EntityType.MUSIC.getId(), music.getId()));
 
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -156,24 +165,26 @@ public class MusicService {
      * @author rakbow
      * @param id,music music的id和music */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusic(int id, Music music) throws Exception {
+    public String updateMusic(int id, Music music) throws Exception {
         try {
             musicMapper.updateMusic(id, music);
         }catch (Exception ex) {
             throw new Exception(ex);
         }
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
     }
 
     /**
      * 根据id删除对应的music
      * @author rakbow
-     * @param id id  */
+     * @param music music
+     * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteMusicById(int id) throws Exception {
+    public void deleteMusic(Music music) throws Exception {
         try {
             //删除对应music的音频文件
-            deleteMusicAllFiles(id);
-            musicMapper.deleteMusicById(id);
+            deleteMusicAllFiles(music);
+            musicMapper.deleteMusicById(music.getId());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -189,9 +200,7 @@ public class MusicService {
         try {
             List<Music> musics = getMusicsByAlbumId(albumId);
             //删除对应music的音频文件
-            musics.forEach(music -> {
-                deleteMusicAllFiles(music.getId());
-            });
+            musics.forEach(this::deleteMusicAllFiles);
             musicMapper.deleteMusicByAlbumId(albumId);
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -252,13 +261,11 @@ public class MusicService {
     /**
      * 获取同属一张碟片的音频
      * @author rakbow
-     * @param id 音乐id
+     * @param music 音乐
      * @return list
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<MusicVOAlpha> getRelatedMusics(int id) {
-
-        Music music = getMusicById(id);
+    public List<MusicVOAlpha> getRelatedMusics(Music music) {
 
         //获取同属一张专辑的音频
         List<Music> sameAlbumMusics = getMusicsByAlbumId(music.getAlbumId());
@@ -269,7 +276,7 @@ public class MusicService {
 
         List<Music> tmpList = DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics);
         for (int i = 0; i < tmpList.size(); i++) {
-            if (tmpList.get(i).getId() == id) {
+            if (tmpList.get(i).getId() == music.getId()) {
                 tmpList.remove(tmpList.get(i));
             }
         }
@@ -290,8 +297,9 @@ public class MusicService {
      * @param artists 创作人员信息
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusicArtists(int id, String artists) {
+    public String updateMusicArtists(int id, String artists) {
         musicMapper.updateMusicArtists(id, artists, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
     }
 
     /**
@@ -301,8 +309,9 @@ public class MusicService {
      * @param lrcText 歌词文本
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusicLyricsText(int id, String lrcText) {
+    public String updateMusicLyricsText(int id, String lrcText) {
         musicMapper.updateMusicLyricsText(id, lrcText, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
     }
 
     /**
@@ -312,19 +321,20 @@ public class MusicService {
      * @param description 描述信息
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusicDescription(int id, String description) {
+    public String updateMusicDescription(int id, String description) {
         musicMapper.updateMusicDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     /**
      * 更新封面url
      * @author rakbow
-     * @param id 音乐id
+     * @param albumId 专辑id
      * @param coverUrl 封面url
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusicCoverUrl(int id, String coverUrl) {
-        musicMapper.updateMusicCoverUrl(id, coverUrl);
+    public void updateMusicCoverUrl(int albumId, String coverUrl) {
+        musicMapper.updateMusicCoverUrl(albumId, coverUrl);
     }
 
     /**
@@ -339,7 +349,7 @@ public class MusicService {
     public void updateMusicFile(int id, MultipartFile[] files, JSONArray fileInfos, User user) throws IOException {
 
         //原数据库里的文件信息
-        JSONArray originalFiles = JSON.parseArray(getMusicById(id).getFiles());
+        JSONArray originalFiles = JSON.parseArray(getMusic(id).getFiles());
 
         //最终保存到数据库的json信息
         JSONArray addFiles = new JSONArray();
@@ -386,7 +396,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteMusicFiles(int id, JSONArray deleteFiles) throws Exception {
         //获取原始文件json数组
-        JSONArray files = JSONArray.parseArray(getMusicById(id).getFiles());
+        JSONArray files = JSONArray.parseArray(getMusic(id).getFiles());
 
         JSONArray finalFileJson = qiniuFileUtils.commonDeleteFiles(files, deleteFiles);
 
@@ -397,11 +407,10 @@ public class MusicService {
     /**
      * 删除所有音频文件
      *
-     * @param id id
+     * @param music music
      * @author rakbow
      */
-    public void deleteMusicAllFiles(int id) {
-        Music music = getMusicById(id);
+    public void deleteMusicAllFiles(Music music) {
         JSONArray files = JSON.parseArray(music.getFiles());
         //删除七牛云上的图片
         qiniuFileUtils.commonDeleteAllFiles(files);
@@ -422,7 +431,7 @@ public class MusicService {
         }
 
         //数据库中的文件信息
-        JSONArray files = JSON.parseArray(getMusicById(id).getFiles());
+        JSONArray files = JSON.parseArray(getMusic(id).getFiles());
         if(files.size() + fileInfos.size() > 2) {
             return false;
         }
@@ -441,11 +450,7 @@ public class MusicService {
             }
         }
 
-        if (lrcFileNum > 1 || audioFileNum > 1) {
-            return false;
-        }
-
-        return true;
+        return lrcFileNum <= 1 && audioFileNum <= 1;
     }
 
 }

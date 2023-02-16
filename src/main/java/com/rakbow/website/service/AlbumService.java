@@ -14,17 +14,14 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
-import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Music;
-import com.rakbow.website.entity.User;
-import com.rakbow.website.entity.Visit;
+import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.common.DataSorter;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.file.QiniuBaseUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,8 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -75,35 +72,50 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addAlbum(Album album) {
-        albumMapper.addAlbum(album);
+    public String addAlbum(Album album) {
+        int id = albumMapper.addAlbum(album);
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
     /**
-     * 根据Id获取专辑
+     * 根据Id获取专辑,泛用
      *
      * @param id 专辑id
      * @return album
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Album getAlbumById(int id) {
-        return albumMapper.getAlbumById(id);
+    public Album getAlbum(int id) {
+        return albumMapper.getAlbum(id, true);
+    }
+
+    /**
+     * 根据Id获取Album,需要判断权限
+     *
+     * @param id id
+     * @return Album
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Album getAlbumWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return albumMapper.getAlbum(id, true);
+        }
+        return albumMapper.getAlbum(id, false);
     }
 
     /**
      * 根据Id删除专辑
      *
-     * @param id 专辑id
+     * @param album 专辑
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAlbumById(int id) {
+    public void deleteAlbumById(Album album) {
         //删除前先把服务器上对应图片全部删除
-        deleteAllAlbumImages(id);
-
+        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
         //删除专辑
-        albumMapper.deleteAlbumById(id);
+        albumMapper.deleteAlbumById(album.getId());
     }
 
     /**
@@ -113,8 +125,9 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbum(int id, Album album) {
+    public String updateAlbum(int id, Album album) {
         albumMapper.updateAlbum(id, album);
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
     //endregion
@@ -137,11 +150,11 @@ public class AlbumService {
         }
         if (StringUtils.isBlank(albumJson.getString("franchises"))
                 || StringUtils.equals(albumJson.getString("franchises"), "[]")) {
-            return ApiInfo.ALBUM_FRANCHISES_EMPTY;
+            return ApiInfo.FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(albumJson.getString("products"))
                 || StringUtils.equals(albumJson.getString("products"), "[]")) {
-            return ApiInfo.ALBUM_PRODUCTS_EMPTY;
+            return ApiInfo.PRODUCTS_EMPTY;
         }
         if (StringUtils.isBlank(albumJson.getString("publishFormat"))
                 || StringUtils.equals(albumJson.getString("publishFormat"), "[]")) {
@@ -248,9 +261,7 @@ public class AlbumService {
         //若涉及封面类型图片，则更新相应的音频封面
         String coverUrl = CommonImageUtils.getCoverUrl(addImageJson);
         if (!StringUtils.isBlank(coverUrl)) {
-            for (Music music : musics) {
-                musicService.updateMusicCoverUrl(music.getId(), coverUrl);
-            }
+            musicService.updateMusicCoverUrl(id, coverUrl);
         }
 
         albumMapper.updateAlbumImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -272,32 +283,19 @@ public class AlbumService {
     /**
      * 删除专辑图片
      *
-     * @param id           专辑id
+     * @param album 专辑
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAlbumImages(int id, JSONArray deleteImages) throws Exception {
+    public String deleteAlbumImages(Album album, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getAlbumById(id).getImages());
+        JSONArray images = JSONArray.parseArray(album.getImages());
 
         JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
-        albumMapper.updateAlbumImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        albumMapper.updateAlbumImages(album.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
-    }
-
-    /**
-     * 删除该专辑所有图片
-     *
-     * @param id 专辑id
-     * @author rakbow
-     */
-    public void deleteAllAlbumImages(int id) {
-        Album album = getAlbumById(id);
-        JSONArray images = JSON.parseArray(album.getImages());
-        //删除七牛云上的图片
-        qiniuFileUtils.commonDeleteAllFiles(images);
     }
 
     //endregion
@@ -312,8 +310,9 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbumArtists(int id, String artists) {
+    public String updateAlbumArtists(int id, String artists) {
         albumMapper.updateAlbumArtists(id, artists, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
     }
 
     /**
@@ -403,7 +402,7 @@ public class AlbumService {
         //删除对应music
         if (musics.size() != 0) {
             for (Music music : musics) {
-                musicService.deleteMusicById(music.getId());
+                musicService.deleteMusic(music);
             }
         }
     }
@@ -416,8 +415,9 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbumDescription(int id, String description) {
+    public String updateAlbumDescription(int id, String description) {
         albumMapper.updateAlbumDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     /**
@@ -428,8 +428,9 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbumBonus(int id, String bonus) {
+    public String updateAlbumBonus(int id, String bonus) {
         albumMapper.updateAlbumBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion
@@ -475,16 +476,14 @@ public class AlbumService {
     /**
      * 获取相关联专辑
      *
-     * @param id 专辑id
+     * @param album 专辑
      * @return list封装的Album
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOBeta> getRelatedAlbums(int id) {
+    public List<AlbumVOBeta> getRelatedAlbums(Album album) {
 
         List<Album> result = new ArrayList<>();
-
-        Album album = getAlbumById(id);
 
         //该专辑包含的作品id
         List<Integer> productIds = JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class);
@@ -492,10 +491,10 @@ public class AlbumService {
         //该系列所有专辑
         List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtils.ids2List(album.getFranchises()),
                 null, null, null, null, null, false, "releaseDate",
-                1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).collect(Collectors.toList());
+                1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).toList();
 
         List<Album> queryResult = allAlbums.stream().filter(tmpAlbum ->
-                StringUtils.equals(tmpAlbum.getProducts(), album.getProducts())).collect(Collectors.toList());
+                StringUtils.equals(tmpAlbum.getProducts(), album.getProducts())).toList();
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -507,7 +506,7 @@ public class AlbumService {
             if (productIds.size() > 1) {
                 List<Album> tmpQueryResult = allAlbums.stream().filter(tmpAlbum ->
                         JSONObject.parseObject(tmpAlbum.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).collect(Collectors.toList());
+                                .contains(productIds.get(1))).toList();
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -522,7 +521,7 @@ public class AlbumService {
                 tmp.addAll(
                         allAlbums.stream().filter(tmpAlbum ->
                                 JSONObject.parseObject(tmpAlbum.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).collect(Collectors.toList())
+                                        .contains(productId)).toList()
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);
@@ -567,16 +566,24 @@ public class AlbumService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<AlbumVOAlpha> getPopularAlbums(int limit) {
-        List<AlbumVOAlpha> popularAlbums = new ArrayList<>();
-
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.ALBUM.getId(), limit);
 
-        visits.forEach(visit -> {
-            AlbumVOAlpha album = albumVOMapper.album2VOAlpha(getAlbumById(visit.getEntityId()));
-            album.setVisitNum(visit.getVisitNum());
-            popularAlbums.add(album);
-        });
-        return popularAlbums;
+        List<Integer> ids = new ArrayList<>();
+
+        visits.sort(DataSorter.visitSortByEntityId);
+        for (Visit visit : visits) {
+            ids.add(visit.getEntityId());
+        }
+
+        List<AlbumVOAlpha> albums = albumVOMapper.album2VOAlpha(albumMapper.getAlbums(ids));
+
+        for (int i = 0; i < albums.size(); i++) {
+            albums.get(i).setVisitNum(visits.get(i).getVisitNum());
+        }
+
+        albums.sort(Collections.reverseOrder(DataSorter.albumSortByVisitNum));
+
+        return albums;
     }
 
     /**
@@ -597,24 +604,6 @@ public class AlbumService {
                 -1,  0, 0);
 
         return albumVOMapper.album2VOBeta(albums);
-    }
-
-    //endregion
-
-    //region ------其他------
-
-    /**
-     * 根据id获取专辑封面图，若为空返回404图片
-     *
-     * @param id 专辑id
-     * @return 图片url
-     * @author rakbow
-     */
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
-    public String getAlbumCoverUrl(int id) {
-        Album album = getAlbumById(id);
-
-        return CommonImageUtils.getCoverUrl(JSON.parseArray(album.getImages()));
     }
 
     //endregion

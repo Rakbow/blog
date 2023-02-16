@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.EntityUtils;
@@ -50,27 +51,24 @@ public class MusicController {
 
     //获取单个音频详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMusicDetail(@PathVariable("id") int musicId, Model model) {
-        if (musicService.getMusicById(musicId) == null) {
+    public String getMusicDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
+        Music music = musicService.getMusicWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        if (music == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getNameZh()));
             return "/error/404";
         }
-        //访问数+1
-        visitService.increaseVisit(EntityType.MUSIC.getId(), musicId);
-
-        Music music = musicService.getMusicById(musicId);
 
         model.addAttribute("audioTypeSet", redisUtil.get("audioTypeSet"));
         model.addAttribute("music", musicVOMapper.music2VO(music));
         model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music));
         //获取页面信息
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), musicId, music.getAddedTime(), music.getEditedTime()));
+        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), id, music.getAddedTime(), music.getEditedTime()));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频
-        model.addAttribute("relatedMusics", musicService.getRelatedMusics(musicId));
+        model.addAttribute("relatedMusics", musicService.getRelatedMusics(music));
         //获取所属专辑的信息
-        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(albumService.getAlbumById(music.getAlbumId())));
+        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(albumService.getAlbum(music.getAlbumId())));
 
         return "/database/itemDetail/music-detail";
 
@@ -81,22 +79,21 @@ public class MusicController {
     @ResponseBody
     public String updateMusic(@RequestBody  String json, HttpServletRequest request) {
         ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
         try{
+            JSONObject param = JSON.parseObject(json);
             Music music = musicService.json2Music(param);
 
             //检测数据
-            if(!StringUtils.isBlank(musicService.checkMusicJson(param))) {
-                res.setErrorMessage(musicService.checkMusicJson(param));
+            String errorMsg= musicService.checkMusicJson(param);
+            if(!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
             }
 
             //修改编辑时间
             music.setEditedTime(new Timestamp(System.currentTimeMillis()));
 
-            musicService.updateMusic(music.getId(), music);
-
-            res.message = String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
+            res.message = musicService.updateMusic(music.getId(), music);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -111,8 +108,8 @@ public class MusicController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String artists = JSON.parseObject(json).get("artists").toString();
-            musicService.updateMusicArtists(id, artists);
-            res.message = ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
+
+            res.message = musicService.updateMusicArtists(id, artists);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -127,8 +124,8 @@ public class MusicController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String lyricsText = JSON.parseObject(json).get("lyricsText").toString();
-            musicService.updateMusicLyricsText(id, lyricsText);
-            res.message = ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
+
+            res.message = musicService.updateMusicLyricsText(id, lyricsText);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -143,8 +140,8 @@ public class MusicController {
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String description = JSON.parseObject(json).get("description").toString();
-            musicService.updateMusicDescription(id, description);
-            res.message = ApiInfo.UPDATE_MUSIC_DESCRIPTION_SUCCESS;
+
+            res.message = musicService.updateMusicDescription(id, description);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

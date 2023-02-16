@@ -1,5 +1,6 @@
 package com.rakbow.website.dao;
 
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Disc;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,7 +17,9 @@ import java.util.List;
 public interface DiscMapper {
 
     //通过id查询disc
-    Disc getDisc(int id);
+    Disc getDisc(int id, boolean status);
+
+    List<Disc> getDiscs(List<Integer> ids);
 
     List<Disc> getAll();
 

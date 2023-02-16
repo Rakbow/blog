@@ -7,12 +7,15 @@ import com.rakbow.website.dao.GameMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.DataSorter;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -26,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,8 +66,9 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addGame(Game game) {
+    public String addGame(Game game) {
         gameMapper.addGame(game);
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
     }
 
     /**
@@ -75,21 +80,36 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Game getGame(int id) {
-        return gameMapper.getGame(id);
+        return gameMapper.getGame(id, true);
+    }
+
+    /**
+     * 根据Id获取Game,需要判断权限
+     *
+     * @param id id
+     * @return book
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Game getGameWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return gameMapper.getGame(id, true);
+        }
+        return gameMapper.getGame(id, false);
     }
 
     /**
      * 根据Id删除游戏
      *
-     * @param id 游戏id
+     * @param game 游戏
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteGame(int id) {
+    public void deleteGame(Game game) {
         //删除前先把服务器上对应图片全部删除
-        deleteAllGameImages(id);
+        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(game.getImages()));
 
-        gameMapper.deleteGame(id);
+        gameMapper.deleteGame(game.getId());
     }
 
     /**
@@ -99,8 +119,9 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateGame(int id, Game game) {
+    public String updateGame(int id, Game game) {
         gameMapper.updateGame(id, game);
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.GAME.getNameZh());
     }
 
     //endregion
@@ -143,11 +164,11 @@ public class GameService {
             return ApiInfo.GAME_REGION_EMPTY;
         }
         if (StringUtils.isBlank(gameJson.getString("franchises"))) {
-            return ApiInfo.GAME_FRANCHISES_EMPTY;
+            return ApiInfo.FRANCHISES_EMPTY;
         }
         if (StringUtils.isBlank(gameJson.getString("products"))
                 || StringUtils.equals(gameJson.getString("products"), "[]")) {
-            return ApiInfo.GAME_PRODUCTS_EMPTY;
+            return ApiInfo.PRODUCTS_EMPTY;
         }
         return "";
     }
@@ -184,13 +205,15 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addGameImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
+    public String addGameImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos, User user) throws IOException {
 
         JSONArray finalImageJson = qiniuImageUtils.commonAddImages
                 (id, EntityType.GAME, images, originalImagesJson, imageInfos, user);
 
         gameMapper.updateGameImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+
+        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
     }
 
     /**
@@ -209,34 +232,20 @@ public class GameService {
     /**
      * 删除游戏图片
      *
-     * @param id           游戏id
+     * @param game           游戏
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteGameImages(int id, JSONArray deleteImages) throws Exception {
+    public String deleteGameImages(Game game, JSONArray deleteImages) throws Exception {
         //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getGame(id).getImages());
+        JSONArray images = JSONArray.parseArray(game.getImages());
 
         JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
 
-        gameMapper.updateGameImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        gameMapper.updateGameImages(game.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
     }
-
-    /**
-     * 删除该游戏所有图片
-     *
-     * @param id 游戏id
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAllGameImages(int id) {
-        Game game = getGame(id);
-        JSONArray images = JSON.parseArray(game.getImages());
-        qiniuFileUtils.commonDeleteAllFiles(images);
-    }
-
     //endregion
 
     //region ------更新game数据------
@@ -249,8 +258,9 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateGameOrganizations(int id, String organizations) {
+    public String updateGameOrganizations(int id, String organizations) {
         gameMapper.updateGameOrganizations(id, organizations, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
     }
 
     /**
@@ -261,8 +271,9 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateGameStaffs(int id, String staffs) {
+    public String updateGameStaffs(int id, String staffs) {
         gameMapper.updateGameStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
     }
 
     /**
@@ -273,8 +284,9 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateGameDescription(int id, String description) {
+    public String updateGameDescription(int id, String description) {
         gameMapper.updateGameDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     /**
@@ -285,8 +297,9 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateGameBonus(int id, String bonus) {
+    public String updateGameBonus(int id, String bonus) {
         gameMapper.updateGameBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion
@@ -371,10 +384,10 @@ public class GameService {
         //该系列所有Game
         List<Game> allGames = gameMapper.getGamesByFilter(null, null, CommonUtils.ids2List(game.getFranchises()),
                         null, 100, null, false, "releaseDate", 1, 0, 0)
-                .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).collect(Collectors.toList());
+                .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).toList();
 
         List<Game> queryResult = allGames.stream().filter(tmpGame ->
-                StringUtils.equals(tmpGame.getProducts(), game.getProducts())).collect(Collectors.toList());
+                StringUtils.equals(tmpGame.getProducts(), game.getProducts())).toList();
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -386,7 +399,7 @@ public class GameService {
             if (productIds.size() > 1) {
                 List<Game> tmpQueryResult = allGames.stream().filter(tmpGame ->
                         JSONObject.parseObject(tmpGame.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).collect(Collectors.toList());
+                                .contains(productIds.get(1))).toList();
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -401,7 +414,7 @@ public class GameService {
                 tmp.addAll(
                         allGames.stream().filter(tmpGame ->
                                 JSONObject.parseObject(tmpGame.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).collect(Collectors.toList())
+                                        .contains(productId)).toList()
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);
@@ -446,16 +459,22 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<GameVOAlpha> getPopularGames(int limit) {
-        List<GameVOAlpha> popularGames = new ArrayList<>();
-
         List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.GAME.getId(), limit);
 
-        visits.forEach(visit -> {
-            GameVOAlpha game = gameVOMapper.game2VOAlpha(getGame(visit.getEntityId()));
-            game.setVisitNum(visit.getVisitNum());
-            popularGames.add(game);
-        });
-        return popularGames;
+        List<Integer> ids = new ArrayList<>();
+
+        visits.sort(DataSorter.visitSortByEntityId);
+        visits.forEach(visit -> ids.add(visit.getEntityId()));
+
+        List<GameVOAlpha> games = gameVOMapper.game2VOAlpha(gameMapper.getGames(ids));
+
+        for (int i = 0; i < games.size(); i++) {
+            games.get(i).setVisitNum(visits.get(i).getVisitNum());
+        }
+
+        games.sort(Collections.reverseOrder(DataSorter.gameSortByVisitNum));
+
+        return games;
     }
 
     //endregion

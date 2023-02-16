@@ -9,6 +9,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.entity.ProductUtils;
@@ -54,14 +55,30 @@ public class ProductService {
 
     //新增作品
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addProduct(Product product) {
+    public String addProduct(Product product) {
         productMapper.addProduct(product);
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
     //通过id查找作品
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Product getProduct(int id) {
-        return productMapper.getProduct(id);
+        return productMapper.getProduct(id, true);
+    }
+
+    /**
+     * 根据Id获取Product,需要判断权限
+     *
+     * @param id id
+     * @return Product
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public Product getProductWithAuth(int id, int userAuthority) {
+        if(userAuthority > 2) {
+            return productMapper.getProduct(id, true);
+        }
+        return productMapper.getProduct(id, false);
     }
 
     //获取所有作品
@@ -72,8 +89,9 @@ public class ProductService {
 
     //更新作品信息
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateProduct(int id, Product product) {
+    public String updateProduct(int id, Product product) {
         productMapper.updateProduct(id, product);
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
     //删除作品
@@ -169,8 +187,9 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateProductOrganizations(int id, String organizations) {
+    public String updateProductOrganizations(int id, String organizations) {
         productMapper.updateProductOrganizations(id, organizations, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
     }
 
     /**
@@ -181,8 +200,9 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateProductDescription(int id, String description) {
+    public String updateProductDescription(int id, String description) {
         productMapper.updateProductDescription(id, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     /**
@@ -193,8 +213,9 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateProductStaffs(int id, String staffs) {
+    public String updateProductStaffs(int id, String staffs) {
         productMapper.updateProductStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
     }
 
     /**

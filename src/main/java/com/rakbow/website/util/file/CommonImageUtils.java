@@ -122,10 +122,10 @@ public class CommonImageUtils {
      * @author rakbow
      */
     public static String getCoverUrl (JSONArray imageJson) {
-        for (int i = 0; i < imageJson.size(); i++) {
-            JSONObject image = imageJson.getJSONObject(i);
-            if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                return image.getString("url");
+        List<ImageInfo> images = imageJson.toJavaList(ImageInfo.class);
+        for (ImageInfo image : images) {
+            if (Integer.parseInt(image.getType()) == ImageType.COVER.getIndex()) {
+                return image.getUrl();
             }
         }
         return "";

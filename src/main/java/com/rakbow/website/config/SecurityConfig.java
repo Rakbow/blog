@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
-    public void configure(WebSecurity web) throws Exception{
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/resources/**");
     }
 
@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/db/book/update-description",
                         "/db/book/update-spec",
                         "/db/book/update-bonus",
-                        "/db/book/isbn-interconvert",
+                        "/db/book/get-isbn",
 
                         "/db/disc/add",
                         "/db/disc/update",
