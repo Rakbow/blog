@@ -54,11 +54,7 @@ public class AlbumController {
     @Autowired
     private UserService userService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private MeiliSearchUtils meiliSearchUtils;
-    @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -73,21 +69,17 @@ public class AlbumController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
-        //访问数+1
-        visitService.increaseVisit(EntityType.ALBUM.getId(), id);
 
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-        model.addAttribute("albumFormatSet", redisUtil.get("albumFormatSet"));
-        model.addAttribute("publishFormatSet", redisUtil.get("publishFormatSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("album", albumVOMapper.album2VO(album));
         if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
         }
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.ALBUM.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
+        model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
+        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
         //获取相关专辑

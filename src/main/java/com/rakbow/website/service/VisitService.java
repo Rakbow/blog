@@ -64,11 +64,4 @@ public class VisitService {
         return visitMapper.selectVisitOrderByVisitNum(entityType, limit);
     }
 
-    public pageInfo getPageInfo(int entityType, int entityId, Timestamp addedTime, Timestamp editedTime) {
-        return new pageInfo(
-                CommonUtils.timestampToString(addedTime),
-                CommonUtils.timestampToString(editedTime),
-                getVisit(entityType, entityId).getVisitNum());
-    }
-
 }

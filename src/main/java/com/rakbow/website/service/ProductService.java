@@ -47,6 +47,8 @@ public class ProductService {
     private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -56,7 +58,8 @@ public class ProductService {
     //新增作品
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addProduct(Product product) {
-        productMapper.addProduct(product);
+        int id = productMapper.addProduct(product);
+        visitUtils.addVisit(EntityType.PRODUCT.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 

@@ -8,19 +8,14 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
-import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.DiscService;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.VisitService;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +49,7 @@ public class DiscController {
     @Autowired
     private UserService userService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -72,17 +65,14 @@ public class DiscController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.DISC.getNameZh()));
             return "/error/404";
         }
-        //访问数+1
-        visitService.increaseVisit(EntityType.DISC.getId(), id);
 
-        model.addAttribute("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
         model.addAttribute("disc", discVOMapper.disc2VO(disc));
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.DISC.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
+        model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
+        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片
@@ -139,9 +129,8 @@ public class DiscController {
             Disc disc = discService.json2Disc(discService.handleDiscJson(param));
 
             //保存新增专辑
-            discService.addDisc(disc);
 
-            res.message = String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
+            res.message = discService.addDisc(disc);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

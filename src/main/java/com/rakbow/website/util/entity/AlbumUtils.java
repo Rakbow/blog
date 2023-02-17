@@ -3,6 +3,7 @@ package com.rakbow.website.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.image.ImageType;
@@ -207,7 +208,7 @@ public class AlbumUtils {
 
         RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
 
-        List<JSONObject> mediaFormats = (List<JSONObject>) redisUtil.get("mediaFormatSet");
+        List<JSONObject> mediaFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET);
 
         JSONArray mediaFormat = new JSONArray();
 

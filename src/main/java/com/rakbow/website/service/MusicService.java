@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.User;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.common.CommonUtils;
@@ -47,6 +48,8 @@ public class MusicService {
     private QiniuBaseUtils qiniuBaseUtils;
     @Autowired
     private QiniuFileUtils qiniuFileUtils;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -113,7 +116,8 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addMusic(Music music) throws Exception {
         try {
-            musicMapper.addMusic(music);
+            int id = musicMapper.addMusic(music);
+            visitUtils.addVisit(EntityType.MUSIC.getId(), id);
 
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -126,7 +130,7 @@ public class MusicService {
      * @param albumJson albumJson
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addMusicsFromAlbum(JSONObject albumJson){
+    public void addMusicsFromAlbum(JSONObject albumJson) throws Exception {
 
         int albumId = albumJson.getInteger("id");
 
@@ -154,7 +158,7 @@ public class MusicService {
                 music.setAudioLength(track.getString("audioLength"));
                 music.setAddedTime(CommonUtils.stringToTimestamp(albumJson.getString("addedTime")));
                 music.setEditedTime(CommonUtils.stringToTimestamp(albumJson.getString("editedTime")));
-                musicMapper.addMusic(music);
+                addMusic(music);
             }
         }
 
@@ -185,6 +189,7 @@ public class MusicService {
             //删除对应music的音频文件
             deleteMusicAllFiles(music);
             musicMapper.deleteMusicById(music.getId());
+            visitUtils.deleteVisit(EntityType.MUSIC.getId(), music.getId());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -201,6 +206,7 @@ public class MusicService {
             List<Music> musics = getMusicsByAlbumId(albumId);
             //删除对应music的音频文件
             musics.forEach(this::deleteMusicAllFiles);
+            musics.forEach(music -> visitUtils.deleteVisit(EntityType.MUSIC.getId(), music.getId()));
             musicMapper.deleteMusicByAlbumId(albumId);
         }catch (Exception ex) {
             throw new Exception(ex);

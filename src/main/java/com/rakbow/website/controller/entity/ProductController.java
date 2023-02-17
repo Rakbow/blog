@@ -9,16 +9,13 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +48,6 @@ public class ProductController {
     @Autowired
     private UserService userService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
     private AlbumService albumService;
     @Autowired
     private BookService bookService;
@@ -61,7 +56,7 @@ public class ProductController {
     @Autowired
     private GameService gameService;
     @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -77,10 +72,8 @@ public class ProductController {
             return "/error/404";
         }
         model.addAttribute("product", productVOMapper.product2VO(product));
-        model.addAttribute("productCategorySet", redisUtil.get("ProductCategorySet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("platformSet", redisUtil.get("platformSet"));
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.PRODUCT.getId()));
         model.addAttribute("relatedProducts", productService.getRelatedProducts(id));
 
         if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
@@ -98,7 +91,7 @@ public class ProductController {
 
         //获取页面数据
         model.addAttribute("pageInfo",
-                visitService.getPageInfo(EntityType.PRODUCT.getId(), id, product.getAddedTime(), product.getEditedTime()));
+                entityUtils.getPageInfo(EntityType.PRODUCT.getId(), id, product.getAddedTime(), product.getEditedTime()));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关

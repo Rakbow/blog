@@ -8,16 +8,13 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +49,7 @@ public class BookController {
     @Autowired
     private UserService userService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -70,18 +65,13 @@ public class BookController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
         }
-        //访问数+1
-        visitService.increaseVisit(EntityType.BOOK.getId(), id);
-
-        model.addAttribute("bookTypeSet", redisUtil.get("bookTypeSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("languageSet", redisUtil.get("languageSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("book", bookVOMapper.book2VO(book));
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.BOOK.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
+        model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
+        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书

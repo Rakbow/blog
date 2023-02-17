@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class DatabaseController {
     private GameService gameService;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private EntityUtils entityUtils;
     @Autowired
     private UserService userService;
     @Autowired
@@ -119,42 +123,31 @@ public class DatabaseController {
     @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
     @ResponseBody
     public String getIndexInitData(@RequestBody String json) {
-        String label = JSON.parseObject(json).getString("label");
+        int entityType = JSON.parseObject(json).getIntValue("entityType");
 
-        JSONObject initData = new JSONObject();
-        if(StringUtils.equals(label, EntityType.ALBUM.getNameEn().toLowerCase())) {
-            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-            initData.put("albumFormatSet", redisUtil.get("albumFormatSet"));
-            initData.put("publishFormatSet", redisUtil.get("publishFormatSet"));
+        JSONObject initData = entityUtils.getDetailOptions(entityType);
+
+        if(entityType == EntityType.ALBUM.getId()) {
             initData.put("justAddedAlbums", albumService.getJustAddedAlbums(5));
             initData.put("popularAlbums", albumService.getPopularAlbums(10));
         }
-        if(StringUtils.equals(label, EntityType.BOOK.getNameEn().toLowerCase())) {
+        if(entityType == EntityType.BOOK.getId()) {
             initData.put("justAddedBooks", bookService.getJustAddedBooks(5));
             initData.put("popularBooks", bookService.getPopularBooks(10));
-            initData.put("bookTypeSet", redisUtil.get("bookTypeSet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
-            initData.put("languageSet", redisUtil.get("languageSet"));
         }
-        if(StringUtils.equals(label, EntityType.DISC.getNameEn().toLowerCase())) {
+        if(entityType == EntityType.DISC.getId()) {
             initData.put("justAddedDiscs", discService.getJustAddedDiscs(5));
             initData.put("popularDiscs", discService.getPopularDiscs(10));
-            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
         }
-        if(StringUtils.equals(label, EntityType.GAME.getNameEn().toLowerCase())) {
+        if(entityType == EntityType.GAME.getId()) {
             initData.put("justAddedGames", gameService.getJustAddedGames(5));
             initData.put("popularGames", gameService.getPopularGames(10));
-            initData.put("gamePlatformSet", redisUtil.get("platformSet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
         }
-        if(StringUtils.equals(label, EntityType.MERCH.getNameEn().toLowerCase())) {
+        if(entityType == EntityType.MERCH.getId()) {
             initData.put("justAddedMerchs", merchService.getJustAddedMerchs(5));
             initData.put("popularMerchs", merchService.getPopularMerchs(10));
-            initData.put("merchCategorySet", redisUtil.get("merchCategorySet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
         }
-        initData.put("franchiseSet", redisUtil.get("franchiseSet"));
+
         return initData.toJSONString();
     }
 
@@ -162,37 +155,9 @@ public class DatabaseController {
     @RequestMapping(value = "/get-list-init-data", method = RequestMethod.POST)
     @ResponseBody
     public String getListInitData(@RequestBody String json, HttpServletRequest request) {
-        String label = JSON.parseObject(json).getString("label");
-
-        JSONObject initData = new JSONObject();
-        if(StringUtils.equals(label, EntityType.ALBUM.getNameEn().toLowerCase())) {
-            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-            initData.put("albumFormatSet", redisUtil.get("albumFormatSet"));
-            initData.put("publishFormatSet", redisUtil.get("publishFormatSet"));
-        }
-        if(StringUtils.equals(label, EntityType.BOOK.getNameEn().toLowerCase())) {
-            initData.put("bookTypeSet", redisUtil.get("bookTypeSet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
-            initData.put("languageSet", redisUtil.get("languageSet"));
-        }
-        if(StringUtils.equals(label, EntityType.DISC.getNameEn().toLowerCase())) {
-            initData.put("mediaFormatSet", redisUtil.get("mediaFormatSet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
-        }
-        if(StringUtils.equals(label, EntityType.GAME.getNameEn().toLowerCase())) {
-            initData.put("releaseTypeSet", redisUtil.get("releaseTypeSet"));
-            initData.put("gamePlatformSet", redisUtil.get("platformSet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
-        }
-        if(StringUtils.equals(label, EntityType.MERCH.getNameEn().toLowerCase())) {
-            initData.put("merchCategorySet", redisUtil.get("merchCategorySet"));
-            initData.put("regionSet", redisUtil.get("regionSet"));
-        }
-        if(StringUtils.equals(label, EntityType.PRODUCT.getNameEn().toLowerCase())) {
-            initData.put("productCategorySet", redisUtil.get("productCategorySet"));
-        }
+        int entityType = JSON.parseObject(json).getIntValue("entityType");
+        JSONObject initData = entityUtils.getDetailOptions(entityType);
         initData.put("editAuth", userService.getUserOperationAuthority(userService.getUserByRequest(request)));
-        initData.put("franchiseSet", redisUtil.get("franchiseSet"));
         return initData.toJSONString();
     }
     //endregion

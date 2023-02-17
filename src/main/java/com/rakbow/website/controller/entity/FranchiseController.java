@@ -9,16 +9,11 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Franchise;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.service.VisitService;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.HostHolder;
-import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.convertMapper.FranchiseVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,15 +42,11 @@ public class FranchiseController {
     @Autowired
     private FranchiseService franchiseService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private HostHolder hostHolder;
-    @Autowired
     private ProductService productService;
     @Autowired
     private UserService userService;
     @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
 
@@ -71,13 +62,12 @@ public class FranchiseController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.FRANCHISE.getNameZh()));
             return "/error/404";
         }
-
         model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
-        model.addAttribute("user", hostHolder.getUser());
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.FRANCHISE.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime()));
+        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime()));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关

@@ -16,7 +16,7 @@ import java.util.List;
 public interface FranchiseMapper {
 
     //新增系列
-    void addFranchise(Franchise franchise);
+    int addFranchise(Franchise franchise);
 
     //通过id查找系列
     Franchise getFranchise(int id, boolean status);

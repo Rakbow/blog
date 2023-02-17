@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOBeta;
@@ -11,8 +12,8 @@ import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.util.common.DataSorter;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
 import com.rakbow.website.util.entity.BookUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +51,8 @@ public class BookService {
     private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -66,7 +68,8 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addBook(Book book) {
-        bookMapper.addBook(book);
+        int id = bookMapper.addBook(book);
+        visitUtils.addVisit(EntityType.BOOK.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
     }
 
@@ -107,8 +110,8 @@ public class BookService {
     public void deleteBook(Book book) {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(book.getImages()));
-
         bookMapper.deleteBook(book.getId());
+        visitUtils.deleteVisit(EntityType.BOOK.getId(), book.getId());
     }
 
     /**
@@ -400,11 +403,11 @@ public class BookService {
         List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, null,
                         null, null, 100, CommonUtils.ids2List(book.getFranchises()),
                         null, null, false, "publishDate", 1, 0, 0)
-                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).toList();
+                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
 
         List<Book> queryResult = allBooks.stream().filter(tmpBook ->
                 StringUtils.equals(tmpBook.getProducts(), book.getProducts())
-                        && StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).toList();
+                        && StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).collect(Collectors.toList());
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -416,7 +419,7 @@ public class BookService {
             if (productIds.size() > 1) {
                 List<Book> tmpQueryResult = allBooks.stream().filter(tmpBook ->
                         JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).toList();
+                                .contains(productIds.get(1))).collect(Collectors.toList());
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -431,7 +434,7 @@ public class BookService {
                 tmp.addAll(
                         allBooks.stream().filter(tmpBook ->
                                 JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).toList()
+                                        .contains(productId)).collect(Collectors.toList())
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);

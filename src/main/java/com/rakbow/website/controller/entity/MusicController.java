@@ -4,11 +4,9 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
@@ -40,11 +38,9 @@ public class MusicController {
     @Autowired
     private AlbumService albumService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
     private UserService userService;
     @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -58,11 +54,12 @@ public class MusicController {
             return "/error/404";
         }
 
-        model.addAttribute("audioTypeSet", redisUtil.get("audioTypeSet"));
         model.addAttribute("music", musicVOMapper.music2VO(music));
         model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music));
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.MUSIC.getId()));
         //获取页面信息
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.MUSIC.getId(), id, music.getAddedTime(), music.getEditedTime()));
+        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.MUSIC.getId(), id, music.getAddedTime(), music.getEditedTime()));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频

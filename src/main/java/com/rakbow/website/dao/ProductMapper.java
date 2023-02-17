@@ -24,7 +24,7 @@ public interface ProductMapper {
     List<Product> getAll();
 
     //新增产品
-    void addProduct(Product product);
+    int addProduct(Product product);
 
     //修改系列信息
     void updateProduct(int id, Product product);

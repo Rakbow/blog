@@ -6,12 +6,15 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.util.common.CommonUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +30,11 @@ import java.io.PrintWriter;
  */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    public HttpFirewall httpFirewall() {
+        return new DefaultHttpFirewall();
+    }
 
     @Override
     public void configure(WebSecurity web) {

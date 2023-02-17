@@ -16,6 +16,7 @@ import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataSorter;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -52,6 +53,8 @@ public class GameService {
     private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -67,7 +70,8 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addGame(Game game) {
-        gameMapper.addGame(game);
+        int id = gameMapper.addGame(game);
+        visitUtils.addVisit(EntityType.GAME.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
     }
 
@@ -108,8 +112,8 @@ public class GameService {
     public void deleteGame(Game game) {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(game.getImages()));
-
         gameMapper.deleteGame(game.getId());
+        visitUtils.deleteVisit(EntityType.GAME.getId(), game.getId());
     }
 
     /**
@@ -384,10 +388,10 @@ public class GameService {
         //该系列所有Game
         List<Game> allGames = gameMapper.getGamesByFilter(null, null, CommonUtils.ids2List(game.getFranchises()),
                         null, 100, null, false, "releaseDate", 1, 0, 0)
-                .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).toList();
+                .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).collect(Collectors.toList());
 
         List<Game> queryResult = allGames.stream().filter(tmpGame ->
-                StringUtils.equals(tmpGame.getProducts(), game.getProducts())).toList();
+                StringUtils.equals(tmpGame.getProducts(), game.getProducts())).collect(Collectors.toList());
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -399,7 +403,7 @@ public class GameService {
             if (productIds.size() > 1) {
                 List<Game> tmpQueryResult = allGames.stream().filter(tmpGame ->
                         JSONObject.parseObject(tmpGame.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).toList();
+                                .contains(productIds.get(1))).collect(Collectors.toList());
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -414,7 +418,7 @@ public class GameService {
                 tmp.addAll(
                         allGames.stream().filter(tmpGame ->
                                 JSONObject.parseObject(tmpGame.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).toList()
+                                        .contains(productId)).collect(Collectors.toList())
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);

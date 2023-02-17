@@ -14,6 +14,7 @@ import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataSorter;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -29,6 +30,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -49,6 +51,8 @@ public class MerchService {
     private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
@@ -64,7 +68,8 @@ public class MerchService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addMerch(Merch merch) {
-        merchMapper.addMerch(merch);
+        int id = merchMapper.addMerch(merch);
+        visitUtils.addVisit(EntityType.MERCH.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
     }
 
@@ -105,8 +110,8 @@ public class MerchService {
     public void deleteMerch(Merch merch) {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(merch.getImages()));
-
         merchMapper.deleteMerch(merch.getId());
+        visitUtils.deleteVisit(EntityType.MERCH.getId(), merch.getId());
     }
 
     /**
@@ -348,10 +353,10 @@ public class MerchService {
         //该系列所有Merch
         List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtils.ids2List(merch.getFranchises()),
                         null, 100, null, null, false, "releaseDate", 1, 0, 0)
-                .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).toList();
+                .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
 
         List<Merch> queryResult = allMerchs.stream().filter(tmpMerch ->
-                StringUtils.equals(tmpMerch.getProducts(), merch.getProducts())).toList();
+                StringUtils.equals(tmpMerch.getProducts(), merch.getProducts())).collect(Collectors.toList());
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -363,7 +368,7 @@ public class MerchService {
             if (productIds.size() > 1) {
                 List<Merch> tmpQueryResult = allMerchs.stream().filter(tmpMerch ->
                         JSONObject.parseObject(tmpMerch.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).toList();
+                                .contains(productIds.get(1))).collect(Collectors.toList());
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -378,7 +383,7 @@ public class MerchService {
                 tmp.addAll(
                         allMerchs.stream().filter(tmpMerch ->
                                 JSONObject.parseObject(tmpMerch.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).toList()
+                                        .contains(productId)).collect(Collectors.toList())
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);

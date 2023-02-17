@@ -12,6 +12,7 @@ import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.entity.FranchiseUtils;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -45,6 +46,8 @@ public class FranchiseService {
     private QiniuImageUtils qiniuImageUtils;
     @Autowired
     private QiniuFileUtils qiniuFileUtils;
+    @Autowired
+    private VisitUtils visitUtils;
 
     //endregion
 
@@ -53,7 +56,8 @@ public class FranchiseService {
     //新增系列
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addFranchise(Franchise franchise){
-        franchiseMapper.addFranchise(franchise);
+        int id = franchiseMapper.addFranchise(franchise);
+        visitUtils.addVisit(EntityType.FRANCHISE.getId(), id);
         if(!FranchiseUtils.isMetaFranchise(franchise)) {
             refreshRedisFranchises();
         }

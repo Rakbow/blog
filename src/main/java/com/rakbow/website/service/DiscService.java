@@ -16,6 +16,7 @@ import com.rakbow.website.entity.User;
 import com.rakbow.website.entity.Visit;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataSorter;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtils;
 import com.rakbow.website.util.file.QiniuImageUtils;
@@ -52,6 +53,8 @@ public class DiscService {
     private QiniuFileUtils qiniuFileUtils;
     @Autowired
     private VisitService visitService;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -66,8 +69,10 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addDisc(Disc disc) {
-        discMapper.addDisc(disc);
+    public String addDisc(Disc disc) {
+        int id = discMapper.addDisc(disc);
+        visitUtils.addVisit(EntityType.DISC.getId(), id);
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
     }
 
     /**
@@ -107,8 +112,8 @@ public class DiscService {
     public void deleteDisc(Disc disc) {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(disc.getImages()));
-
         discMapper.deleteDisc(disc.getId());
+        visitUtils.deleteVisit(EntityType.DISC.getId(), disc.getId());
     }
 
     /**
@@ -355,10 +360,10 @@ public class DiscService {
         List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, null,
                         CommonUtils.ids2List(disc.getFranchises()), null, null, null,
                         null, false, "releaseDate", 1, 0, 0)
-                .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).toList();
+                .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
 
         List<Disc> queryResult = allDiscs.stream().filter(tmpDisc ->
-                StringUtils.equals(tmpDisc.getProducts(), disc.getProducts())).toList();
+                StringUtils.equals(tmpDisc.getProducts(), disc.getProducts())).collect(Collectors.toList());
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -370,7 +375,7 @@ public class DiscService {
             if (productIds.size() > 1) {
                 List<Disc> tmpQueryResult = allDiscs.stream().filter(tmpDisc ->
                         JSONObject.parseObject(tmpDisc.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).toList();
+                                .contains(productIds.get(1))).collect(Collectors.toList());
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -385,7 +390,7 @@ public class DiscService {
                 tmp.addAll(
                         allDiscs.stream().filter(tmpDisc ->
                                 JSONObject.parseObject(tmpDisc.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).toList()
+                                        .contains(productId)).collect(Collectors.toList())
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);

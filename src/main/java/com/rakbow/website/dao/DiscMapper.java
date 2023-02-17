@@ -33,7 +33,7 @@ public interface DiscMapper {
                              List<Integer> mediaFormat, String limited, String hasBonus, boolean status);
 
     //新增disc
-    void addDisc (Disc disc);
+    int addDisc (Disc disc);
 
     //更新disc基础信息
     void updateDisc (int id, Disc disc);

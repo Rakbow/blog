@@ -18,6 +18,7 @@ import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.CommonUtils;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.DataSorter;
+import com.rakbow.website.util.common.VisitUtils;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
 import com.rakbow.website.util.file.QiniuBaseUtils;
@@ -34,6 +35,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -55,6 +57,8 @@ public class AlbumService {
     private QiniuBaseUtils qiniuBaseUtils;
     @Autowired
     private QiniuFileUtils qiniuFileUtils;
+    @Autowired
+    private VisitUtils visitUtils;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -74,6 +78,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addAlbum(Album album) {
         int id = albumMapper.addAlbum(album);
+        visitUtils.addVisit(EntityType.ALBUM.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
@@ -116,6 +121,7 @@ public class AlbumService {
         qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
         //删除专辑
         albumMapper.deleteAlbumById(album.getId());
+        visitUtils.deleteVisit(EntityType.ALBUM.getId(), album.getId());
     }
 
     /**
@@ -491,10 +497,10 @@ public class AlbumService {
         //该系列所有专辑
         List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtils.ids2List(album.getFranchises()),
                 null, null, null, null, null, false, "releaseDate",
-                1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).toList();
+                1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).collect(Collectors.toList());
 
         List<Album> queryResult = allAlbums.stream().filter(tmpAlbum ->
-                StringUtils.equals(tmpAlbum.getProducts(), album.getProducts())).toList();
+                StringUtils.equals(tmpAlbum.getProducts(), album.getProducts())).collect(Collectors.toList());
 
         if (queryResult.size() > 5) {//结果大于5
             result.addAll(queryResult.subList(0, 5));
@@ -506,7 +512,7 @@ public class AlbumService {
             if (productIds.size() > 1) {
                 List<Album> tmpQueryResult = allAlbums.stream().filter(tmpAlbum ->
                         JSONObject.parseObject(tmpAlbum.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).toList();
+                                .contains(productIds.get(1))).collect(Collectors.toList());
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
                     tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
@@ -521,7 +527,7 @@ public class AlbumService {
                 tmp.addAll(
                         allAlbums.stream().filter(tmpAlbum ->
                                 JSONObject.parseObject(tmpAlbum.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).toList()
+                                        .contains(productId)).collect(Collectors.toList())
                 );
             }
             result = CommonUtils.removeDuplicateList(tmp);

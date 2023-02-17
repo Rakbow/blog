@@ -33,7 +33,7 @@ public interface MerchMapper {
                               int category, String region, String notForSale, boolean status);
 
     //新增Merch
-    void addMerch (Merch merch);
+    int addMerch (Merch merch);
 
     //更新Merch基础信息
     void updateMerch (int id, Merch merch);
