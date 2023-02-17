@@ -568,7 +568,7 @@ const albumDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "album"
+                entityType: ENTITY.ALBUM
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)
@@ -1366,7 +1366,7 @@ const bookDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "book"
+                entityType: ENTITY.BOOK
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)
@@ -2154,7 +2154,7 @@ const discDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "disc"
+                entityType: ENTITY.DISC
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)
@@ -2855,7 +2855,7 @@ const gameDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "game"
+                entityType: ENTITY.GAME
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)
@@ -3567,7 +3567,7 @@ const merchDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "merch"
+                entityType: ENTITY.MERCH
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)
@@ -4063,7 +4063,7 @@ const productDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "product"
+                entityType: ENTITY.PRODUCT
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)
@@ -4474,7 +4474,7 @@ const franchiseDbList = {
         initData() {
             this.loading = true;
             let json = {
-                label: "franchise"
+                entityType: ENTITY.FRANCHISE
             };
             this.totalLoading = true;
             postRequest(null, GET_LIST_INIT_DATA_URL, json)

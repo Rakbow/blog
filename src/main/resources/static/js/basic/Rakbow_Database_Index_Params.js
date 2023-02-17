@@ -360,7 +360,7 @@ const albumIndex = {
     methods: {
         init() {
             let json = {
-                label: "album"
+                entityType: ENTITY.ALBUM
             };
             this.totalLoading = true;
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
@@ -815,7 +815,7 @@ const bookIndex = {
     methods: {
         init() {
             let json = {
-                label: "book"
+                entityType: ENTITY.BOOK
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
@@ -1270,7 +1270,7 @@ const discIndex = {
     methods: {
         init() {
             let json = {
-                label: "disc"
+                entityType: ENTITY.DISC
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
@@ -1697,7 +1697,7 @@ const gameIndex = {
     methods: {
         init() {
             let json = {
-                label: "game"
+                entityType: ENTITY.GAME
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
@@ -2091,7 +2091,7 @@ const merchIndex = {
     methods: {
         init() {
             let json = {
-                label: "merch"
+                entityType: ENTITY.MERCH
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {

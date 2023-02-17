@@ -4,10 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.ImageInfo;
-import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
-import com.rakbow.website.util.common.visitUtils;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 //import com.rakbow.website.util.convertMapper.GameVoMapper;
 import com.rakbow.website.service.*;
@@ -48,8 +46,6 @@ class WebSiteApplicationTests {
     private ProductMapper productMapper;
     @Autowired
     private UserService userService;
-    @Autowired
-    private visitUtils visitUtils;
 
 
 
@@ -170,19 +166,6 @@ class WebSiteApplicationTests {
     @Test
     public void test112() {
         System.out.println(BookUtils.getISBN10("9784776722779"));
-    }
-
-    @Test
-    public void redisTest() {
-
-        visitUtils.addVisit(EntityType.ALBUM, 155);
-
-      // productService.refreshRedisProducts();
-      //
-      // franchiseService.refreshRedisFranchises();
-      //
-      // commonService.refreshRedisEmunData();
-
     }
 
     @Test

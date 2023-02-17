@@ -8,16 +8,13 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Game;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +49,7 @@ public class GameController {
     @Autowired
     private UserService userService;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private RedisUtil redisUtil;
+    private EntityUtils entityUtils;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -70,18 +65,14 @@ public class GameController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.GAME.getNameZh()));
             return "/error/404";
         }
-        //访问数+1
-        visitService.increaseVisit(EntityType.GAME.getId(), id);
 
-        model.addAttribute("releaseTypeSet", redisUtil.get("releaseTypeSet"));
-        model.addAttribute("regionSet", redisUtil.get("regionSet"));
-        model.addAttribute("gamePlatformSet", redisUtil.get("platformSet"));
-        model.addAttribute("franchiseSet", redisUtil.get("franchiseSet"));
         model.addAttribute("game", gameVOMapper.game2VO(game));
+        //前端选项数据
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.GAME.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
+        model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", visitService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
+        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(game.getImages(), 140, EntityType.GAME, false));
         //获取相关游戏
