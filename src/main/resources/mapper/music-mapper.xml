@@ -43,10 +43,6 @@
         select
         <include refid="selectFields"></include>
         from music
-        where status = 1
-        <!--        order by id desc-->
-        order by album_id asc
-        <!-- limit #{offset}, #{limit} -->
     </select>
 
     <select id="getMusicsByAlbumId" resultType="Music">

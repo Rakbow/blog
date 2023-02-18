@@ -43,7 +43,6 @@
         select
         <include refid="selectFields"></include>
         from merch
-        where status = 1
     </select>
 
     <insert id="addMerch" parameterType="Merch" useGeneratedKeys="true" keyProperty="id">
@@ -220,15 +219,6 @@
         from merch
         where status = 1
         order by added_time desc
-        limit #{limit}
-    </select>
-
-    <select id="getMerchsOrderByEditedTime" resultType="Merch">
-        select
-        <include refid="selectFields"></include>
-        from merch
-        where status = 1
-        order by edited_time desc
         limit #{limit}
     </select>
 

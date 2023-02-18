@@ -59,7 +59,4 @@ public interface GameMapper {
     //获取最新添加Game, limit
     List<Game> getGamesOrderByAddedTime(int limit);
 
-    //获取最新编辑Game, limit
-    List<Game> getGamesOrderByEditedTime(int limit);
-
 }

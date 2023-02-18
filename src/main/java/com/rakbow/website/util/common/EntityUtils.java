@@ -71,7 +71,7 @@ public class EntityUtils {
                 CommonUtils.timestampToString(addedTime),
                 CommonUtils.timestampToString(editedTime),
                 //自增并获取访问数
-                visitUtils.incVisit(entityType, entityId));
+                visitUtils.getIncVisit(entityType, entityId));
     }
 
     /**

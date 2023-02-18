@@ -430,57 +430,6 @@ public class GameService {
         return gameVOMapper.game2VOBeta(CommonUtils.removeDuplicateList(result));
     }
 
-    /**
-     * 获取最新收录的游戏
-     *
-     * @param limit 获取条数
-     * @return list封装的游戏
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<GameVOAlpha> getJustAddedGames(int limit) {
-        return gameVOMapper.game2VOAlpha(gameMapper.getGamesOrderByAddedTime(limit));
-    }
-
-    /**
-     * 获取最近编辑的Game
-     *
-     * @param limit 获取条数
-     * @return list封装的Game
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<GameVOAlpha> getJustEditedGames(int limit) {
-        return gameVOMapper.game2VOAlpha(gameMapper.getGamesOrderByEditedTime(limit));
-    }
-
-    /**
-     * 获取浏览量最高的Game
-     *
-     * @param limit 获取条数
-     * @return list封装的Game
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<GameVOAlpha> getPopularGames(int limit) {
-        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.GAME.getId(), limit);
-
-        List<Integer> ids = new ArrayList<>();
-
-        visits.sort(DataSorter.visitSortByEntityId);
-        visits.forEach(visit -> ids.add(visit.getEntityId()));
-
-        List<GameVOAlpha> games = gameVOMapper.game2VOAlpha(gameMapper.getGames(ids));
-
-        for (int i = 0; i < games.size(); i++) {
-            games.get(i).setVisitNum(visits.get(i).getVisitNum());
-        }
-
-        games.sort(Collections.reverseOrder(DataSorter.gameSortByVisitNum));
-
-        return games;
-    }
-
     //endregion
 
 }

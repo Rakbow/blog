@@ -43,7 +43,6 @@
         select
         <include refid="selectFields"></include>
         from game
-        where status = 1
     </select>
 
     <insert id="addGame" parameterType="Game" useGeneratedKeys="true" keyProperty="id">
@@ -220,15 +219,6 @@
         from game
         where status = 1
         order by added_time desc
-        limit #{limit}
-    </select>
-
-    <select id="getGamesOrderByEditedTime" resultType="Game">
-        select
-        <include refid="selectFields"></include>
-        from game
-        where status = 1
-        order by edited_time desc
         limit #{limit}
     </select>
 

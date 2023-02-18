@@ -43,7 +43,6 @@
         select
         <include refid="selectFields"></include>
         from product
-        where status = 1
     </select>
 
     <insert id="addProduct" parameterType="Product" keyProperty="id">

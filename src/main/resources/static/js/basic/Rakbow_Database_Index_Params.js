@@ -91,8 +91,8 @@ const albumIndex = {
                     <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="justAddedAlbums.length != 0"
-                             v-for="addedAlbum of justAddedAlbums">
+                             v-if="justAddedItems.length != 0"
+                             v-for="addedAlbum of justAddedItems">
                             <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
                                 <a :href="'/db/album/'+ addedAlbum.id">
                                     <img class="sidebar-panel-image-small" :src="addedAlbum.cover.blackUrl"
@@ -256,8 +256,8 @@ const albumIndex = {
                     <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="popularAlbums.length != 0"
-                             v-for="(album, index) of popularAlbums">
+                             v-if="popularItems.length != 0"
+                             v-for="(album, index) of popularItems">
                             <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
                                 <div class="col-12 p-0 m-0">
                                     <i :class="'pi remixicon ri-number-' + index"
@@ -329,8 +329,8 @@ const albumIndex = {
                 }
             },
 
-            justAddedAlbums: [],
-            popularAlbums: [],
+            justAddedItems: [],
+            popularItems: [],
             publishFormatSet: [],
             albumFormatSet: [],
             mediaFormatSet: [],
@@ -365,8 +365,8 @@ const albumIndex = {
             this.totalLoading = true;
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
-                    this.justAddedAlbums = res.justAddedAlbums;
-                    this.popularAlbums = res.popularAlbums;
+                    this.justAddedItems = res.justAddedItems;
+                    this.popularItems = res.popularItems;
                     this.publishFormatSet = res.publishFormatSet;
                     this.albumFormatSet = res.albumFormatSet;
                     this.mediaFormatSet = res.mediaFormatSet;
@@ -569,8 +569,8 @@ const bookIndex = {
                         <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="justAddedBooks.length != 0"
-                             v-for="book of justAddedBooks">
+                             v-if="justAddedItems.length != 0"
+                             v-for="book of justAddedItems">
                             <div class="sidebar-panel-image-small-div book_info_bit_thumb mt-2">
                                 <a :href="'/db/book/'+ book.id">
                                     <img class="sidebar-panel-image-small" :src="book.cover.blackUrl"
@@ -711,8 +711,8 @@ const bookIndex = {
                         <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="popularBooks.length != 0"
-                             v-for="(book, index) of popularBooks">
+                             v-if="popularItems.length != 0"
+                             v-for="(book, index) of popularItems">
                             <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
                                 <div class="col-12 p-0 m-0">
                                     <i :class="'pi remixicon ri-number-' + index"
@@ -786,8 +786,8 @@ const bookIndex = {
                 }
             },
 
-            justAddedBooks: [],
-            popularBooks: [],
+            justAddedItems: [],
+            popularItems: [],
 
             bookTypeSet: [],
             regionSet: [],
@@ -819,8 +819,8 @@ const bookIndex = {
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
-                    this.justAddedBooks = res.justAddedBooks;
-                    this.popularBooks = res.popularBooks;
+                    this.justAddedItems = res.justAddedItems;
+                    this.popularItems = res.popularItems;
                     this.bookTypeSet = res.bookTypeSet;
                     this.regionSet = res.regionSet;
                     this.languageSet = res.languageSet;
@@ -1017,8 +1017,8 @@ const discIndex = {
                         <div class="grid">
                             <span class="small_font">
                                 <div class="info_bit_small small_font grid m-0 p-0"
-                                     v-if="justAddedDiscs.length != 0"
-                                     v-for="disc of justAddedDiscs">
+                                     v-if="justAddedItems.length != 0"
+                                     v-for="disc of justAddedItems">
                                     <div class="sidebar-panel-image-small-div disc_info_bit_thumb mt-2">
                                         <a :href="'/db/disc/'+ disc.id">
                                             <img class="sidebar-panel-image-small" :src="disc.cover.blackUrl"
@@ -1167,8 +1167,8 @@ const discIndex = {
                         <div class="grid">
                             <span class="small_font">
                                 <div class="info_bit_small small_font grid m-0 p-0"
-                                     v-if="popularDiscs.length != 0"
-                                     v-for="(disc, index) of popularDiscs">
+                                     v-if="popularItems.length != 0"
+                                     v-for="(disc, index) of popularItems">
                                     <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
                                         <div class="col-12 p-0 m-0">
                                             <i :class="'pi remixicon ri-number-' + index"
@@ -1241,8 +1241,8 @@ const discIndex = {
                 }
             },
 
-            justAddedDiscs: [],
-            popularDiscs: [],
+            justAddedItems: [],
+            popularItems: [],
 
             mediaFormatSet: [],
             regionSet: [],
@@ -1274,8 +1274,8 @@ const discIndex = {
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
-                    this.justAddedDiscs = res.justAddedDiscs;
-                    this.popularDiscs = res.popularDiscs;
+                    this.justAddedItems = res.justAddedItems;
+                    this.popularItems = res.popularItems;
                     this.mediaFormatSet = res.mediaFormatSet;
                     this.regionSet = res.regionSet;
                     this.franchiseSet = res.franchiseSet;
@@ -1458,8 +1458,8 @@ const gameIndex = {
                         <div class="grid">
                             <span class="small_font">
                                 <div class="info_bit_small small_font grid m-0 p-0"
-                                     v-if="justAddedGames.length != 0"
-                                     v-for="game of justAddedGames">
+                                     v-if="justAddedItems.length != 0"
+                                     v-for="game of justAddedItems">
                                     <div class="sidebar-panel-image-small-div game_info_bit_thumb mt-2">
                                         <a :href="'/db/game/'+ game.id">
                                             <img class="sidebar-panel-image-small" :src="game.cover.blackUrl"
@@ -1597,8 +1597,8 @@ const gameIndex = {
                         <div class="grid">
                             <span class="small_font">
                                 <div class="info_bit_small small_font grid m-0 p-0"
-                                     v-if="popularGames.length != 0"
-                                     v-for="(game, index) of popularGames">
+                                     v-if="popularItems.length != 0"
+                                     v-for="(game, index) of popularItems">
                                     <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
                                         <div class="col-12 p-0 m-0">
                                             <i :class="'pi remixicon ri-number-' + index"
@@ -1669,8 +1669,8 @@ const gameIndex = {
                 }
             },
 
-            justAddedGames: [],
-            popularGames: [],
+            justAddedItems: [],
+            popularItems: [],
 
             gamePlatformSet: [],
             regionSet: [],
@@ -1701,8 +1701,8 @@ const gameIndex = {
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
-                    this.justAddedGames = res.justAddedGames;
-                    this.popularGames = res.popularGames;
+                    this.justAddedItems = res.justAddedItems;
+                    this.popularItems = res.popularItems;
                     this.gamePlatformSet = res.gamePlatformSet;
                     this.regionSet = res.regionSet;
                 })
@@ -1881,8 +1881,8 @@ const merchIndex = {
                         <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="justAddedMerchs.length != 0"
-                             v-for="merch of justAddedMerchs">
+                             v-if="justAddedItems.length != 0"
+                             v-for="merch of justAddedItems">
                             <div class="sidebar-panel-image-small-div disc_info_bit_thumb mt-2">
                                 <a :href="'/db/merch/'+ merch.id">
                                     <img class="sidebar-panel-image-small" :src="merch.cover.blackUrl"
@@ -1994,8 +1994,8 @@ const merchIndex = {
                         <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="popularMerchs.length != 0"
-                             v-for="(merch, index) of popularMerchs">
+                             v-if="popularItems.length != 0"
+                             v-for="(merch, index) of popularItems">
                             <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
                                 <div class="col-12 p-0 m-0">
                                     <i :class="'pi remixicon ri-number-' + index"
@@ -2062,8 +2062,8 @@ const merchIndex = {
                 }
             },
 
-            justAddedMerchs: [],
-            popularMerchs: [],
+            justAddedItems: [],
+            popularItems: [],
 
             merchCategorySet: [],
             regionSet: [],
@@ -2095,8 +2095,8 @@ const merchIndex = {
             };
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
-                    this.justAddedMerchs = res.justAddedMerchs;
-                    this.popularMerchs = res.popularMerchs;
+                    this.justAddedItems = res.justAddedItems;
+                    this.popularItems = res.popularItems;
                     this.merchCategorySet = res.merchCategorySet;
                     this.regionSet = res.regionSet;
                 })

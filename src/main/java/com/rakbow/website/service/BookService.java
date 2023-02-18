@@ -446,58 +446,6 @@ public class BookService {
         return bookVOMapper.book2VOBeta(CommonUtils.removeDuplicateList(result));
     }
 
-    /**
-     * 获取最新收录的图书
-     *
-     * @param limit 获取条数
-     * @return list封装的图书
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<BookVOBeta> getJustAddedBooks(int limit) {
-        return bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByAddedTime(limit));
-    }
-
-    /**
-     * 获取最近编辑的Book
-     *
-     * @param limit 获取条数
-     * @return list封装的Book
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<BookVOBeta> getJustEditedBooks(int limit) {
-        return bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByEditedTime(limit));
-    }
-
-    /**
-     * 获取浏览量最高的Book
-     *
-     * @param limit 获取条数
-     * @return list封装的Book
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<BookVOBeta> getPopularBooks(int limit) {
-
-        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.BOOK.getId(), limit);
-
-        List<Integer> ids = new ArrayList<>();
-
-        visits.sort(DataSorter.visitSortByEntityId);
-        visits.forEach(visit -> ids.add(visit.getEntityId()));
-
-        List<BookVOBeta> books = bookVOMapper.book2VOBeta(bookMapper.getBooks(ids));
-
-        for (int i = 0; i < books.size(); i++) {
-            books.get(i).setVisitNum(visits.get(i).getVisitNum());
-        }
-
-        books.sort(Collections.reverseOrder(DataSorter.bookSortByVisitNum));
-
-        return books;
-    }
-
     //endregion
 
     //region other

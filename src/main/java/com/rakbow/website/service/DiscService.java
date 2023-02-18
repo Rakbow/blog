@@ -421,57 +421,6 @@ public class DiscService {
         return discVOMapper.disc2VOBeta(discs);
     }
 
-    /**
-     * 获取最新收录的Disc
-     *
-     * @param limit 获取条数
-     * @return list封装的Disc
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<DiscVOAlpha> getJustAddedDiscs(int limit) {
-        return discVOMapper.disc2VOAlpha(discMapper.getDiscsOrderByAddedTime(limit));
-    }
-
-    /**
-     * 获取最近编辑的Disc
-     *
-     * @param limit 获取条数
-     * @return list封装的Disc
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<DiscVOAlpha> getJustEditedDiscs(int limit) {
-        return discVOMapper.disc2VOAlpha(discMapper.getDiscsOrderByEditedTime(limit));
-    }
-
-    /**
-     * 获取浏览量最高的Disc
-     *
-     * @param limit 获取条数
-     * @return list封装的Disc
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<DiscVOAlpha> getPopularDiscs(int limit) {
-        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.DISC.getId(), limit);
-
-        List<Integer> ids = new ArrayList<>();
-
-        visits.sort(DataSorter.visitSortByEntityId);
-        visits.forEach(visit -> ids.add(visit.getEntityId()));
-
-        List<DiscVOAlpha> discs = discVOMapper.disc2VOAlpha(discMapper.getDiscs(ids));
-
-        for (int i = 0; i < discs.size(); i++) {
-            discs.get(i).setVisitNum(visits.get(i).getVisitNum());
-        }
-
-        discs.sort(Collections.reverseOrder(DataSorter.discSortByVisitNum));
-
-        return discs;
-    }
-
     //endregion
 
 }

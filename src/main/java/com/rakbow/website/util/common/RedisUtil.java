@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class RedisUtil {
-    private final RedisTemplate<String, Object> redisTemplate;
+    public final RedisTemplate<String, Object> redisTemplate;
     private final HashOperations<String, String, Object> hashOperations;
     private final HashMapper<Object, String, Object> hashMapper;
 

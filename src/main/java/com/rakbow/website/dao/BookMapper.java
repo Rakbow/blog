@@ -61,7 +61,4 @@ public interface BookMapper {
     //获取最新添加Book, limit
     List<Book> getBooksOrderByAddedTime(int limit);
 
-    //获取最新编辑Book, limit
-    List<Book> getBooksOrderByEditedTime(int limit);
-
 }

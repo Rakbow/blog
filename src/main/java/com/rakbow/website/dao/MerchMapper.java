@@ -55,7 +55,4 @@ public interface MerchMapper {
     //获取最新添加Merch, limit
     List<Merch> getMerchsOrderByAddedTime(int limit);
 
-    //获取最新编辑Merch, limit
-    List<Merch> getMerchsOrderByEditedTime(int limit);
-
 }

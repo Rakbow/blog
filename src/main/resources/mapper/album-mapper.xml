@@ -46,7 +46,6 @@
         select
         <include refid="selectFields"></include>
         from album
-        where status = 1
     </select>
 
     <select id="getAlbumRows" resultType="int">
@@ -123,15 +122,6 @@
         from album
         where status = 1
         order by added_time desc
-        limit #{limit}
-    </select>
-
-    <select id="getAlbumOrderByEditedTime" resultType="Album">
-        select
-        <include refid="selectFields"></include>
-        from album
-        where status = 1
-        order by edited_time desc
         limit #{limit}
     </select>
 

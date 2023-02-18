@@ -66,7 +66,4 @@ public interface AlbumMapper {
 
     //获取最新添加专辑, limit
     List<Album> getAlbumOrderByAddedTime(int limit);
-
-    //获取最新编辑专辑, limit
-    List<Album> getAlbumOrderByEditedTime(int limit);
 }

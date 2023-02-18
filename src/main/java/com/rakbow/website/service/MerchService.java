@@ -395,57 +395,6 @@ public class MerchService {
         return merchVOMapper.merch2VOBeta(CommonUtils.removeDuplicateList(result));
     }
 
-    /**
-     * 获取最新收录的周边
-     *
-     * @param limit 获取条数
-     * @return list封装的周边
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<MerchVOAlpha> getJustAddedMerchs(int limit) {
-        return merchVOMapper.merch2VOAlpha(merchMapper.getMerchsOrderByAddedTime(limit));
-    }
-
-    /**
-     * 获取最近编辑的Merch
-     *
-     * @param limit 获取条数
-     * @return list封装的Merch
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<MerchVOAlpha> getJustEditedMerchs(int limit) {
-        return merchVOMapper.merch2VOAlpha(merchMapper.getMerchsOrderByEditedTime(limit));
-    }
-
-    /**
-     * 获取浏览量最高的Merch
-     *
-     * @param limit 获取条数
-     * @return list封装的Merch
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<MerchVOAlpha> getPopularMerchs(int limit) {
-        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.MERCH.getId(), limit);
-
-        List<Integer> ids = new ArrayList<>();
-
-        visits.sort(DataSorter.visitSortByEntityId);
-        visits.forEach(visit -> ids.add(visit.getEntityId()));
-
-        List<MerchVOAlpha> merchs = merchVOMapper.merch2VOAlpha(merchMapper.getMerchs(ids));
-
-        for (int i = 0; i < merchs.size(); i++) {
-            merchs.get(i).setVisitNum(visits.get(i).getVisitNum());
-        }
-
-        merchs.sort(Collections.reverseOrder(DataSorter.merchSortByVisitNum));
-
-        return merchs;
-    }
-
     //endregion
 
 }

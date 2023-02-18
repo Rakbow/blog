@@ -58,7 +58,4 @@ public interface DiscMapper {
     //获取最新添加Disc, limit
     List<Disc> getDiscsOrderByAddedTime(int limit);
 
-    //获取最新编辑Disc, limit
-    List<Disc> getDiscsOrderByEditedTime(int limit);
-
 }

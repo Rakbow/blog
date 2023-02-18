@@ -50,6 +50,8 @@ public class DatabaseController {
     private UserService userService;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private EntityService entityService;
 
     //endregion
 
@@ -126,27 +128,8 @@ public class DatabaseController {
         int entityType = JSON.parseObject(json).getIntValue("entityType");
 
         JSONObject initData = entityUtils.getDetailOptions(entityType);
-
-        if(entityType == EntityType.ALBUM.getId()) {
-            initData.put("justAddedAlbums", albumService.getJustAddedAlbums(5));
-            initData.put("popularAlbums", albumService.getPopularAlbums(10));
-        }
-        if(entityType == EntityType.BOOK.getId()) {
-            initData.put("justAddedBooks", bookService.getJustAddedBooks(5));
-            initData.put("popularBooks", bookService.getPopularBooks(10));
-        }
-        if(entityType == EntityType.DISC.getId()) {
-            initData.put("justAddedDiscs", discService.getJustAddedDiscs(5));
-            initData.put("popularDiscs", discService.getPopularDiscs(10));
-        }
-        if(entityType == EntityType.GAME.getId()) {
-            initData.put("justAddedGames", gameService.getJustAddedGames(5));
-            initData.put("popularGames", gameService.getPopularGames(10));
-        }
-        if(entityType == EntityType.MERCH.getId()) {
-            initData.put("justAddedMerchs", merchService.getJustAddedMerchs(5));
-            initData.put("popularMerchs", merchService.getPopularMerchs(10));
-        }
+        initData.put("justAddedItems", entityService.getJustAddedItems(entityType, 9));
+        initData.put("popularItems", entityService.getPopularItems(entityType, 9));
 
         return initData.toJSONString();
     }

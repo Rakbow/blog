@@ -32,9 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +47,6 @@ public class AlbumService {
     //region ------依赖注入------
     @Autowired
     private AlbumMapper albumMapper;
-    @Autowired
-    private VisitService visitService;
     @Autowired
     private MusicService musicService;
     @Autowired
@@ -537,59 +533,6 @@ public class AlbumService {
         }
 
         return albumVOMapper.album2VOBeta(CommonUtils.removeDuplicateList(result));
-    }
-
-    /**
-     * 获取最新收录的专辑
-     *
-     * @param limit 获取条数
-     * @return list封装的Album
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOBeta> getJustAddedAlbums(int limit) {
-        return albumVOMapper.album2VOBeta(albumMapper.getAlbumOrderByAddedTime(limit));
-    }
-
-    /**
-     * 获取最近编辑的专辑
-     *
-     * @param limit 获取条数
-     * @return list封装的Album
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOBeta> getJustEditedAlbums(int limit) {
-        return albumVOMapper.album2VOBeta(albumMapper.getAlbumOrderByEditedTime(limit));
-    }
-
-    /**
-     * 获取浏览量最高的专辑
-     *
-     * @param limit 获取条数
-     * @return list封装的Album
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOAlpha> getPopularAlbums(int limit) {
-        List<Visit> visits = visitService.selectVisitOrderByVisitNum(EntityType.ALBUM.getId(), limit);
-
-        List<Integer> ids = new ArrayList<>();
-
-        visits.sort(DataSorter.visitSortByEntityId);
-        for (Visit visit : visits) {
-            ids.add(visit.getEntityId());
-        }
-
-        List<AlbumVOAlpha> albums = albumVOMapper.album2VOAlpha(albumMapper.getAlbums(ids));
-
-        for (int i = 0; i < albums.size(); i++) {
-            albums.get(i).setVisitNum(visits.get(i).getVisitNum());
-        }
-
-        albums.sort(Collections.reverseOrder(DataSorter.albumSortByVisitNum));
-
-        return albums;
     }
 
     /**
