@@ -127,67 +127,71 @@
                         <div class="col detail-item-header-card">
                             <p-card class="mt-6">
                                 <template #content>
-                                    <table class="table-borderless table-sm ml-2">
-                                        <tbody class="detail-item-header-table">
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>商品条形码</strong>
-                                            </td>
-                                            <td>
-                                                {{merch.barcode?merch.barcode:' N/A '}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-th-large"></i>
-                                                <strong>分类</strong>
-                                            </td>
-                                            <td>
-                                                <p-tag class="ml-1" :value="merch.category.nameZh"></p-tag>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar"></i>
-                                                <strong>发售日期</strong>
-                                            </td>
-                                            <td>
-                                                {{merch.releaseDate}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-globe"></i>
-                                                <strong>地区</strong>
-                                            </td>
-                                            <td>
+                                    <div class="relative">
+                                        <table class="table-borderless table-sm ml-2">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-bar-code"></i>
+                                                    <strong>商品条形码</strong>
+                                                </td>
+                                                <td>
+                                                    {{merch.barcode?merch.barcode:' N/A '}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-th-large"></i>
+                                                    <strong>分类</strong>
+                                                </td>
+                                                <td>
+                                                    <p-tag class="ml-1" :value="merch.category.nameZh"></p-tag>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-calendar"></i>
+                                                    <strong>发售日期</strong>
+                                                </td>
+                                                <td>
+                                                    {{merch.releaseDate}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-globe"></i>
+                                                    <strong>地区</strong>
+                                                </td>
+                                                <td>
                                                 <span :class="'fi fi-' + merch.region.code" style="margin-left: 0.5rem"
                                                       v-tooltip.bottom="{value: merch.region.nameZh, class: 'region-tooltip'}"></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-wuliaojiage"></i>
-                                                <strong>发售价格</strong>
-                                            </td>
-                                            <td>
-                                                {{merch.price != 0?merch.price:" - "}} <span
-                                                    v-if="merch.currencyUnit == 'JPY'"
-                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
-                                                    v-else>{{merch.currencyUnit}}</span>
-                                            </td>
-                                        </tr>
-                                        <tr v-if="merch.notForSale">
-                                            <td>
-                                                <i class="pi pi-ban"></i>
-                                                <strong></strong>
-                                            </td>
-                                            <td>非卖品</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-wuliaojiage"></i>
+                                                    <strong>发售价格</strong>
+                                                </td>
+                                                <td>
+                                                    {{merch.price != 0?merch.price:" - "}} <span
+                                                        v-if="merch.currencyUnit == 'JPY'"
+                                                        style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                        v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                        v-else>{{merch.currencyUnit}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr v-if="merch.notForSale">
+                                                <td>
+                                                    <i class="pi pi-ban"></i>
+                                                    <strong></strong>
+                                                </td>
+                                                <td>非卖品</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
+                                    </div>
                                 </template>
                             </p-card>
                         </div>
@@ -492,8 +496,8 @@
             //region basic
             const merch = ref([[${merch}]]);
             const toast = useToast();
-            const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
+            const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
@@ -503,6 +507,28 @@
             //endregion
 
             //region edit basic info
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.MERCH,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.MERCH,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+            };
             const merchEdit = ref({});
             const productSelect = ref(true);
             const edits = ref([
@@ -692,7 +718,7 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                merch, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                merch, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
                 merchCategorySet, regionSet, productSet, relatedMerchs, responsiveOptions, regionCode2NameZh,
 
                 //edit

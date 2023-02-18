@@ -1,8 +1,9 @@
 const DOMAIN_URL = "http://localhost:8083";
 
-//region system
+//region entity common
 
 const UPDATE_ITEM_STATUS = "/db/update-item-status";
+const LIKE_ITEM_URL = "/db/like";
 
 //endregion
 
@@ -164,6 +165,7 @@ const ENTITY = {
     GAME: 5,
     FRANCHISE: 6,
     PRODUCT: 7,
+    MUSIC: 9,
 };
 
 const ENTITY_TYPE = [

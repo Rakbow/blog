@@ -12,49 +12,6 @@
         entity_type, entity_id, visit_num
     </sql>
 
-    <select id="getVisit" resultType="Visit">
-        select
-        <include refid="selectFields"></include>
-        from entityInfo
-        where entity_type = #{entityType} and entity_id = #{entityId}
-    </select>
-
-    <select id="getAll" resultType="Visit">
-        select
-        <include refid="selectFields"></include>
-        from entityInfo
-<!--        order by release_date desc-->
-    </select>
-
-    <insert id="insertVisit" parameterType="Visit">
-        insert into entityInfo (<include refid="insertFields"></include>)
-        values (#{entityType}, #{entityId}, #{visitNum})
-    </insert>
-
-    <update id="updateVisit">
-        update entityInfo
-        set
-        visit_num = #{visitNum}
-        where entity_type = #{entityType} and entity_id = #{entityId}
-    </update>
-
-    <delete id="deleteVisit">
-        delete
-        from entityInfo
-        where entity_type = #{entityType} and entity_id = #{entityId}
-    </delete>
-
-    <select id="selectVisitOrderByVisitNum" resultType="Visit">
-        select
-        <include refid="selectFields"></include>
-        from entityInfo
-        where entity_type = #{entityType}
-        order by visit_num desc
-        limit #{limit}
-    </select>
-
-
-
     <update id="updateItemStatus" keyProperty="id">
         update
         <if test=" entityName == 'album' ">

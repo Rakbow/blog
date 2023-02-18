@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
+import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
@@ -47,6 +48,8 @@ public class FranchiseController {
     private UserService userService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
 
@@ -67,7 +70,7 @@ public class FranchiseController {
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.FRANCHISE.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime()));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime(), request));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关

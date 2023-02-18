@@ -26,38 +26,12 @@ class WebSiteApplicationTests {
     @Autowired
     private AlbumService albumService;
     @Autowired
-    private GameService gameService;
-    @Autowired
     private MusicService musicService;
     @Autowired
     private MusicMapper musicMapper;
 
     @Autowired
-    private AlbumMapper albumMapper;
-    @Autowired
-    private BookMapper bookMapper;
-    @Autowired
-    private DiscMapper discMapper;
-    @Autowired
-    private GameMapper gameMapper;
-    @Autowired
-    private MerchMapper merchMapper;
-    @Autowired
     private ProductMapper productMapper;
-    @Autowired
-    private UserService userService;
-
-
-    @Autowired
-    private FranchiseService franchiseService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private CommonService commonService;
-    @Autowired
-    private RedisUtil redisUtil;
-    @Value("${website.path.img}")
-    private String imgPath;
     @Test
     void contextLoads() {
     }

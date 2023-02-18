@@ -1,3 +1,49 @@
+<div th:fragment="site_header_tmp">
+    <div class="layout-topbar flex align-items-center justify-content-between">
+        <div class="layout-topbar-left">
+            <a href="/primeflex">
+<!--                <img src="https://www.primefaces.org/primeflex/assets/images/primeflex-logo-dark.svg" alt="prime" id="topbar-logo">-->
+                <img src="https://img.rakbow.com/common/logo/logo.png" alt="prime" id="topbar-logo">
+            </a>
+            <div id="search-wrapper" class="search-wrapper">
+                <span class="inputfield-container relative ml-5 cursor-pointer">
+                    <i class="pi pi-search left-icon absolute top-50"></i>
+                    <input type="text" id="search-topbar" @click="openSearchPanel"
+                           class="inputfield hover:border-gray-400 cursor-pointer px-5" placeholder="Search ..." readonly="">
+                    <span class="right-icon absolute top-50 surface-100">⌘ K</span>
+                </span>
+                <div id="search-mask" class="search-mask">
+                    <div id="search-container" class="search-container">
+                        <span class="inputfield-container relative inline-block w-full">
+                            <i class="pi pi-search left-icon absolute top-50"></i>
+                            <input type="text" id="search-input" autocomplete="off" class="inputfield w-full pl-5" placeholder="Search ..." style="border-bottom-left-radius: 0; border-bottom-right-radius: 0px;">
+                            <div class="right-icon absolute top-50 surface-100 flex align-items-center"><div>esc</div> ⎋</div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layout-topbar-right">
+            <ul class="flex align-items-center">
+                <li><a href="/">Home</a></li>
+                <li><a href="/db/albums">Database</a></li>
+                <li><a href="/db/list/album">Database List</a></li>
+                <div th:if="${loginUser == null}">
+                    <li><a href="/login">Login</a></li>
+                </div>
+                <li>
+                    <div th:if="${loginUser != null}">
+                        <button type="button" id="scheme-button" class="button scheme-button shadow-1">
+                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                                      shape="circle"></p-avatar>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <div th:fragment="site_header">
     <div th:if="${loginUser == null}">
         <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">

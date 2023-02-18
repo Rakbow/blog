@@ -9,7 +9,8 @@ package com.rakbow.website.data;
 public class ApiInfo {
 
     //region entity common
-
+    public static final String LIKE_SUCCESS = "点赞成功!";
+    public static final String LIKE_FAILED = "已点过赞!";
     public static final String NOT_ACTION = "未进行任何操作！";
     public static final String INSERT_DATA_SUCCESS = "%s新增成功！";
     public static final String DELETE_DATA_SUCCESS = "%s删除成功！";

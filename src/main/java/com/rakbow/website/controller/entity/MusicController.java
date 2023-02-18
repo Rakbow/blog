@@ -41,6 +41,8 @@ public class MusicController {
     private UserService userService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -58,8 +60,8 @@ public class MusicController {
         model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music));
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.MUSIC.getId()));
-        //获取页面信息
-        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.MUSIC.getId(), id, music.getAddedTime(), music.getEditedTime()));
+        //获取页面数据
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music.getAddedTime(), music.getEditedTime(), request));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频

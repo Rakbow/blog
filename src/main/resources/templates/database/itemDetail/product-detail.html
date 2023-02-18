@@ -123,45 +123,49 @@
                         <div class="col detail-item-header-card">
                             <p-card>
                                 <template #content>
-                                    <table class="table-borderless table-sm ml-2">
-                                        <tbody class="detail-item-header-table">
-                                        <tr>
-                                            <td><strong>所属系列</strong></td>
-                                            <td>
-                                                <a :href="'/db/franchise/' + product.franchise.value">
-                                                    {{product.franchise.label}}
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>作品分类</strong></td>
-                                            <td>
-                                                <p-tag class="ml-1" :value="product.category.nameZh"></p-tag>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>发行时间</strong></td>
-                                            <td>
-                                                {{product.releaseDate}}
-                                            </td>
-                                        </tr>
-                                        <div v-if="product.organizations.length != 0">
-                                            <tr v-for="organization in product.organizations">
+                                    <div class="relative" style="min-height: 100px">
+                                        <table class="table-borderless table-sm ml-2">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td><strong>所属系列</strong></td>
                                                 <td>
-                                                    <i class="pi iconfont icon-gongsi mr-1"
-                                                       style="font-size: 1.3rem"></i>
-                                                    <strong>{{organization.label}}</strong>
-                                                </td>
-                                                <td v-if="organization.special == 1" v-for="item in organization.value">
-                                                    {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
-                                                </td>
-                                                <td v-if="organization.special == 0" v-for="item in organization.value">
-                                                    {{item.name}}
+                                                    <a :href="'/db/franchise/' + product.franchise.value">
+                                                        {{product.franchise.label}}
+                                                    </a>
                                                 </td>
                                             </tr>
-                                        </div>
-                                        </tbody>
-                                    </table>
+                                            <tr>
+                                                <td><strong>作品分类</strong></td>
+                                                <td>
+                                                    <p-tag class="ml-1" :value="product.category.nameZh"></p-tag>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>发行时间</strong></td>
+                                                <td>
+                                                    {{product.releaseDate}}
+                                                </td>
+                                            </tr>
+                                            <div v-if="product.organizations.length != 0">
+                                                <tr v-for="organization in product.organizations">
+                                                    <td>
+                                                        <i class="pi iconfont icon-gongsi mr-1"
+                                                           style="font-size: 1.3rem"></i>
+                                                        <strong>{{organization.label}}</strong>
+                                                    </td>
+                                                    <td v-if="organization.special == 1" v-for="item in organization.value">
+                                                        {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
+                                                    </td>
+                                                    <td v-if="organization.special == 0" v-for="item in organization.value">
+                                                        {{item.name}}
+                                                    </td>
+                                                </tr>
+                                            </div>
+                                            </tbody>
+                                        </table>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
+                                    </div>
                                 </template>
                             </p-card>
                         </div>
@@ -600,7 +604,7 @@
 </div>
 <script type="module" th:inline="javascript">
 
-    import {commonSubmit} from '/js/basic/Http_Request.js';
+    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
     import {showSearchPanel} from '/js/basic/Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
@@ -637,8 +641,8 @@
             //region basic
             const product = ref([[${product}]]);
             const toast = useToast();
-            const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
+            const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const relatedProducts = ref([[${relatedProducts}]]);
@@ -790,6 +794,28 @@
             //endregion
 
             //region edit
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.PRODUCT,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.PRODUCT,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+            };
             const editBlock = ref(false);
             const edits = ref([
                 {
@@ -875,7 +901,7 @@
 
                 //basic
                 albums, books, discs, games,
-                product, detailInfo, itemImageInfo, pageInfo, franchiseSet,
+                product, updateStatus, like, pageInfo, detailInfo, itemImageInfo, franchiseSet,
                 platformSet, regionSet, productCategorySet, relatedProducts, responsiveOptions, regionCode2NameZh,
 
                 //edit

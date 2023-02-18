@@ -126,76 +126,80 @@
                         <div class="col detail-item-header-card">
                             <p-card>
                                 <template #content>
-                                    <table class="table-borderless table-sm ml-2">
-                                        <tbody class="detail-item-header-table">
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar"></i>
-                                                <strong>发售日期</strong>
-                                            </td>
-                                            <td>
-                                                {{game.releaseDate}}
-                                            </td>
-                                        </tr>
-                                        <tr v-if="game.barcode != '' && game.barcode != null">
-                                            <td>
-                                                <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>商品条形码</strong>
-                                            </td>
-                                            <td>
-                                                {{game.barcode}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-th-large"></i>
-                                                <strong>发售类型</strong>
-                                            </td>
-                                            <td>
-                                                {{game.releaseType.nameZh}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-yingyong"></i>
-                                                <strong>发售平台</strong>
-                                            </td>
-                                            <td>
-                                                <p-tag class="ml-1" :value="game.platform.nameEn"></p-tag>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-globe"></i>
-                                                <strong>地区</strong>
-                                            </td>
-                                            <td>
-                                                <span :class="'fi fi-' + game.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: game.region.nameZh, class: 'region-tooltip'}"></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-gift"></i>
-                                                <strong>特典</strong>
-                                            </td>
-                                            <td>
-                                                <a v-if="game.hasBonus" href="#bonus" style="color: #ceffff" class="ml-2">有</a>{{(game.hasBonus)?"":"无"}}
-                                            </td>
-                                        </tr>
-                                        <div v-if="game.organizations.length != 0">
-                                            <tr v-for="item in game.organizations">
+                                    <div class="relative">
+                                        <table class="table-borderless table-sm ml-2">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
                                                 <td>
-                                                    <i class="pi iconfont icon-gongsi"></i>
-                                                    <strong>{{item.label}}</strong>
+                                                    <i class="pi pi-calendar"></i>
+                                                    <strong>发售日期</strong>
                                                 </td>
                                                 <td>
-                                                    {{item.value.join(", ")}}
+                                                    {{game.releaseDate}}
                                                 </td>
                                             </tr>
-                                        </div>
-                                        </tbody>
-                                    </table>
+                                            <tr v-if="game.barcode != '' && game.barcode != null">
+                                                <td>
+                                                    <i class="pi iconfont icon-bar-code"></i>
+                                                    <strong>商品条形码</strong>
+                                                </td>
+                                                <td>
+                                                    {{game.barcode}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-th-large"></i>
+                                                    <strong>发售类型</strong>
+                                                </td>
+                                                <td>
+                                                    {{game.releaseType.nameZh}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-yingyong"></i>
+                                                    <strong>发售平台</strong>
+                                                </td>
+                                                <td>
+                                                    <p-tag class="ml-1" :value="game.platform.nameEn"></p-tag>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-globe"></i>
+                                                    <strong>地区</strong>
+                                                </td>
+                                                <td>
+                                                <span :class="'fi fi-' + game.region.code" style="margin-left: 0.5rem"
+                                                      v-tooltip.bottom="{value: game.region.nameZh, class: 'region-tooltip'}"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-gift"></i>
+                                                    <strong>特典</strong>
+                                                </td>
+                                                <td>
+                                                    <a v-if="game.hasBonus" href="#bonus" style="color: #ceffff" class="ml-2">有</a>{{(game.hasBonus)?"":"无"}}
+                                                </td>
+                                            </tr>
+                                            <div v-if="game.organizations.length != 0">
+                                                <tr v-for="item in game.organizations">
+                                                    <td>
+                                                        <i class="pi iconfont icon-gongsi"></i>
+                                                        <strong>{{item.label}}</strong>
+                                                    </td>
+                                                    <td>
+                                                        {{item.value.join(", ")}}
+                                                    </td>
+                                                </tr>
+                                            </div>
+                                            </tbody>
+                                        </table>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
+                                    </div>
                                 </template>
                             </p-card>
                         </div>
@@ -571,8 +575,8 @@
             //region basic
             const game = ref([[${game}]]);
             const toast = useToast();
-            const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
+            const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
@@ -584,6 +588,28 @@
             //endregion
 
             //region edit basic info
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.GAME,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.GAME,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+            };
             const productSelect = ref(true);
             const edits = ref([
                 {
@@ -851,7 +877,7 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                game, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                game, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
                 gamePlatformSet, regionSet, releaseTypeSet, productSet, relatedGames, responsiveOptions,
                 regionCode2NameZh,
 

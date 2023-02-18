@@ -10,6 +10,7 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.service.DiscService;
+import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
@@ -50,6 +51,8 @@ public class DiscController {
     private UserService userService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -72,7 +75,7 @@ public class DiscController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime(), request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片

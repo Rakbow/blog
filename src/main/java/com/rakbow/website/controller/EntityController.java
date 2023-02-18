@@ -6,10 +6,12 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Project_name: website
@@ -31,6 +35,8 @@ public class EntityController {
 
     //region ------引入实例------
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
     @Autowired
     private AlbumService albumService;
     @Autowired
@@ -165,16 +171,27 @@ public class EntityController {
     //点赞
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public String likeEntity(@RequestBody String json, HttpServletRequest request) {
+    public String likeEntity(@RequestBody String json, HttpServletRequest request, HttpServletResponse response) {
         ApiResult res = new ApiResult();
+        int entityType = JSON.parseObject(json).getIntValue("entityType");
+        int entityId = JSON.parseObject(json).getIntValue("entityId");
+
         try {
             // 从cookie中获取点赞token
             String likeToken = CookieUtil.getValue(request, "like_token");
-
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            int entityId = JSON.parseObject(json).getIntValue("entityType");
-
-
+            if(likeToken == null) {
+                //生成likeToken,并返回
+                likeToken = CommonUtil.generateUUID();
+                Cookie cookie = new Cookie("like_token", likeToken);
+                cookie.setPath(contextPath);
+                response.addCookie(cookie);
+            }
+            if(entityService.entityLike(entityType, entityId, likeToken)) {
+                res.message = ApiInfo.LIKE_SUCCESS;
+            }else {
+                res.setErrorMessage(ApiInfo.LIKE_FAILED);
+                return JSON.toJSONString(res);
+            }
         }catch (Exception e) {
             res.setErrorMessage(e);
         }

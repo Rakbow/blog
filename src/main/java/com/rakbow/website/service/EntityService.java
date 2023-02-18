@@ -14,22 +14,24 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
-import com.rakbow.website.util.common.DataSorter;
-import com.rakbow.website.util.common.LikeUtil;
-import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.*;
 import com.rakbow.website.util.entity.MusicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +48,8 @@ public class EntityService {
 
     //region instance
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
     @Autowired
     private AlbumMapper albumMapper;
     @Autowired
@@ -73,6 +77,29 @@ public class EntityService {
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
     //endregion
+
+    /**
+     * 获取页面数据
+     * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
+     * @Author Rakbow
+     */
+    public pageInfo getPageInfo(int entityType, int entityId, Timestamp addedTime, Timestamp editedTime, HttpServletRequest request) {
+
+        pageInfo pageInfo = new pageInfo();
+        pageInfo.setAddedTime(CommonUtil.timestampToString(addedTime));
+        pageInfo.setEditedTime(CommonUtil.timestampToString(editedTime));
+        pageInfo.setVisitCount(visitUtil.getIncVisit(entityType, entityId));
+        pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
+
+        // 从cookie中获取点赞token
+        String likeToken = CookieUtil.getValue(request, "like_token");
+        if(likeToken == null) {
+            pageInfo.setLiked(false);
+        }else {
+            pageInfo.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
+        }
+        return pageInfo;
+    }
 
     /**
      * 获取浏览量最高的item
@@ -204,14 +231,14 @@ public class EntityService {
      * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
      * @author rakbow
      */
-    public void updateItemStatus(int entityType, int entityId, String likeToken) {
-        //若点赞token存在
-        if(likeToken != null) {
-            String likeTmpTokenKey = likeUtil.getEntityLikeTmpTokenKey(entityType, entityId, likeToken);
-        }else {
-
+    public boolean entityLike(int entityType, int entityId, String likeToken) {
+        //点过赞
+        if(likeUtil.isLike(entityType, entityId, likeToken)) {
+            return false;
+        }else {//没点过赞,自增
+            likeUtil.incLike(entityType, entityId, likeToken);
+            return true;
         }
-
     }
 
 }

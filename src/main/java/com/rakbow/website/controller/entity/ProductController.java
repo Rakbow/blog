@@ -57,6 +57,8 @@ public class ProductController {
     private GameService gameService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -90,8 +92,7 @@ public class ProductController {
         }
 
         //获取页面数据
-        model.addAttribute("pageInfo",
-                entityUtils.getPageInfo(EntityType.PRODUCT.getId(), id, product.getAddedTime(), product.getEditedTime()));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.PRODUCT.getId(), id, product.getAddedTime(), product.getEditedTime(), request));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关

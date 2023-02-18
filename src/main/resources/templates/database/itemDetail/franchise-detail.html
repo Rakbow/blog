@@ -187,7 +187,7 @@
                 </template>
             </p-card>
         </div>
-        <div class="col-2">
+        <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
             <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
@@ -243,7 +243,7 @@
 </div>
 <script type="module" th:inline="javascript">
 
-    import {commonSubmit} from '/js/basic/Http_Request.js';
+    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
     import {showSearchPanel} from '/js/basic/Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
@@ -281,13 +281,35 @@
             const franchise = ref([[${franchise}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const toast = useToast();
+            const pageInfo = ref([[${pageInfo}]]);
             const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
-            const pageInfo = ref([[${pageInfo}]]);
             const products = ref([[${products}]]);
             //endregion
 
             //region edit basic info
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.FRANCHISE,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.FRANCHISE,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+            };
             const edits = ref([
                 {
                     label: '图片管理',
@@ -357,7 +379,7 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                franchise, detailInfo, itemImageInfo, pageInfo, responsiveOptions, products, franchiseSet,
+                franchise, updateStatus, like, pageInfo, detailInfo, itemImageInfo, responsiveOptions, products, franchiseSet,
 
                 //edit
                 editBlock, franchiseEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditFranchise,

@@ -5,6 +5,35 @@ body {
     min-width: 1250px;
 }
 
+.item_statistic_info {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    height: 3rem;
+    width: 5rem;
+    border-radius: var(--border-radius);
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    display: flex;
+    color: #ffffff;
+    background-color: #2f364f;
+
+}
+
+.item_status_edit {
+    top: 0;
+    right: 0;
+    position: absolute;
+    height: 3rem;
+    width: 5rem;
+    border-radius: var(--border-radius);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    background-color: #2f364f;
+}
+
 .detail-card .p-card .p-card-title {
     padding: 0;
     margin: 0;

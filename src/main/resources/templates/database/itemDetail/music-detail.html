@@ -123,34 +123,38 @@
                         <div class="col detail-item-header-card">
                             <p-card>
                                 <template #content>
-                                    <table class="table-borderless table-sm ml-2">
-                                        <tbody class="detail-item-header-table">
-                                        <tr>
-                                            <td><strong>音频长度</strong></td>
-                                            <td>
-                                                {{music.audioLength}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>音频类型</strong></td>
-                                            <td>
-                                                {{music.audioType.label}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>碟片序号</strong></td>
-                                            <td>
-                                                {{music.discSerial}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>曲目序号</strong></td>
-                                            <td>
-                                                {{music.trackSerial}}
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="relative">
+                                        <table class="table-borderless table-sm ml-2">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td><strong>音频长度</strong></td>
+                                                <td>
+                                                    {{music.audioLength}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>音频类型</strong></td>
+                                                <td>
+                                                    {{music.audioType.label}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>碟片序号</strong></td>
+                                                <td>
+                                                    {{music.discSerial}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>曲目序号</strong></td>
+                                                <td>
+                                                    {{music.trackSerial}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
+                                    </div>
                                 </template>
                             </p-card>
                         </div>
@@ -565,8 +569,8 @@
             //region basic
             const music = ref([[${music}]]);
             const toast = useToast();
-            const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
+            const detailInfo = ref([[${detailInfo}]]);
             const audioInfo = ref([[${audioInfo}]]);
             const relatedAlbum = ref([[${relatedAlbum}]]);
             const audioTypeSet = ref([[${options.audioTypeSet}]]);
@@ -677,6 +681,28 @@
             //endregion
 
             //region edit
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.MUSIC,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.MUSIC,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+            };
             const musicEdit = ref({});
             const editBlock = ref(false);
             const edits = ref([
@@ -854,7 +880,7 @@
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
 
                 //basic
-                music, detailInfo, pageInfo, audioTypeSet, relatedAlbum, relatedMusics,
+                music, updateStatus, like, pageInfo, detailInfo, audioTypeSet, relatedAlbum, relatedMusics,
 
                 //edit
                 editBlock, musicEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditMusic,

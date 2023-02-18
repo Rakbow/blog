@@ -18,22 +18,18 @@
                         <i class="pi pi-chevron-circle-right mr-2 ml-2"></i><strong
                             class="label">录入时间</strong>
                     </div>
-                    <div class="col-11 col-offset-1 mb-2">
-                        {{pageInfo.addedTime}}
-                    </div>
+                    <div class="col-11 col-offset-1 mb-2" th:text="${pageInfo.addedTime}"></div>
                     <div class="col-fixed">
                         <i class="pi pi-chevron-circle-right mr-2 ml-2"></i><strong
                             class="label">编辑时间</strong>
                     </div>
-                    <div class="col-11 col-offset-1 mb-2">
-                        {{pageInfo.editedTime}}
-                    </div>
+                    <div class="col-11 col-offset-1 mb-2" th:text="${pageInfo.editedTime}"></div>
                     <div class="col-fixed">
                         <i class="pi pi-chart-bar mr-2 ml-2"></i><strong class="label">页面流量</strong>
                     </div>
                     <div class="col-11 col-offset-1 mb-2">
                         <i class="pi pi-eye mr-2"></i><strong>访问数：</strong>
-                        <span class="text-center">{{pageInfo.visitNum}}</span>
+                        <span class="text-center" th:text="${pageInfo.visitCount}"></span>
                     </div>
                 </div>
             </template>
@@ -290,4 +286,19 @@
             <p-button icon="pi pi-save" label="提交更新" @click="updateImage"></p-button>
         </template>
     </p-dialog>
+</div>
+
+<div th:fragment="item_statistic_info">
+    <div class="item_statistic_info">
+        <p-button class="p-button-link" @click="like">
+            <i class="pi" :class="{'pi-thumbs-up-fill': pageInfo.liked, 'pi-thumbs-up': !pageInfo.liked}"></i>
+        </p-button>
+        {{pageInfo.likeCount}}
+    </div>
+</div>
+
+<div th:fragment="item_status_edit">
+    <div class="item_status_edit" th:if="${loginUser.type > 2 || loginUser.type == 0}">
+        <p-inputswitch v-model="detailInfo.status" @click="updateStatus"></p-inputswitch>
+    </div>
 </div>

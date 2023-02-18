@@ -11,6 +11,7 @@ import com.rakbow.website.util.entity.ProductUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 
 /**
@@ -26,6 +27,8 @@ public class EntityUtils {
     private RedisUtil redisUtil;
     @Autowired
     private VisitUtil visitUtil;
+    @Autowired
+    private LikeUtil likeUtil;
 
     public ItemDetailInfo getItemDetailInfo(Object o, int entityType) {
         ItemDetailInfo detailInfo = new ItemDetailInfo();
@@ -59,19 +62,6 @@ public class EntityUtils {
         detailInfo.setStatus(json.getIntValue("status") == 1);
 
         return detailInfo;
-    }
-
-    /**
-     * 获取页面数据
-     * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
-     * @Author Rakbow
-     */
-    public pageInfo getPageInfo(int entityType, int entityId, Timestamp addedTime, Timestamp editedTime) {
-        return new pageInfo(
-                CommonUtil.timestampToString(addedTime),
-                CommonUtil.timestampToString(editedTime),
-                //自增并获取访问数
-                visitUtil.getIncVisit(entityType, entityId));
     }
 
     /**

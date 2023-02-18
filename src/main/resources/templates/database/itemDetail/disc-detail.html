@@ -129,77 +129,81 @@
                         <div class="col detail-item-header-card">
                             <p-card class="mt-5">
                                 <template #content>
-                                    <table class="table-borderless table-sm ml-2">
-                                        <tbody class="detail-item-header-table">
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-dingdanbianhao"></i>
-                                                <strong>碟片编号</strong>
-                                            </td>
-                                            <td>
-                                                {{disc.catalogNo?disc.catalogNo:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>商品条形码</strong>
-                                            </td>
-                                            <td>{{disc.barcode?disc.barcode:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar"></i>
-                                                <strong>发行时间</strong>
-                                            </td>
-                                            <td>
-                                                {{disc.releaseDate?disc.releaseDate:"N/A"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-wuliaojiage"></i>
-                                                <strong>发行价格</strong>
-                                            </td>
-                                            <td>
-                                                {{disc.price != 0?disc.price:" - "}} <span
-                                                    v-if="disc.currencyUnit == 'JPY'"
-                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
-                                                    v-else>{{disc.currencyUnit}}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-globe"></i>
-                                                <strong>地区</strong>
-                                            </td>
-                                            <td>
+                                    <div class="relative">
+                                        <table class="table-borderless table-sm ml-2">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-dingdanbianhao"></i>
+                                                    <strong>碟片编号</strong>
+                                                </td>
+                                                <td>
+                                                    {{disc.catalogNo?disc.catalogNo:"N/A"}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-bar-code"></i>
+                                                    <strong>商品条形码</strong>
+                                                </td>
+                                                <td>{{disc.barcode?disc.barcode:"N/A"}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-calendar"></i>
+                                                    <strong>发行时间</strong>
+                                                </td>
+                                                <td>
+                                                    {{disc.releaseDate?disc.releaseDate:"N/A"}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-wuliaojiage"></i>
+                                                    <strong>发行价格</strong>
+                                                </td>
+                                                <td>
+                                                    {{disc.price != 0?disc.price:" - "}} <span
+                                                        v-if="disc.currencyUnit == 'JPY'"
+                                                        style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                        v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                        v-else>{{disc.currencyUnit}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-globe"></i>
+                                                    <strong>地区</strong>
+                                                </td>
+                                                <td>
                                                 <span :class="'fi fi-' + disc.region.code" style="margin-left: 0.5rem"
                                                       v-tooltip.bottom="{value: disc.region.nameZh, class: 'region-tooltip'}"></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-gift"></i>
-                                                <strong>特典</strong>
-                                            </td>
-                                            <td>
-                                                <a v-if="disc.hasBonus" href="#bonus" style="color: #ceffff" class="ml-2">有</a>{{(disc.hasBonus)?"":"无"}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-zhuanjiguangpan"></i>
-                                                <strong>媒体类型</strong>
-                                            </td>
-                                            <td v-for="format of disc.mediaFormat" style="display:inline">
-                                                <p-tag class="ml-1" :value="format.label"></p-tag>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-gift"></i>
+                                                    <strong>特典</strong>
+                                                </td>
+                                                <td>
+                                                    <a v-if="disc.hasBonus" href="#bonus" style="color: #ceffff" class="ml-2">有</a>{{(disc.hasBonus)?"":"无"}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-zhuanjiguangpan"></i>
+                                                    <strong>媒体类型</strong>
+                                                </td>
+                                                <td v-for="format of disc.mediaFormat" style="display:inline">
+                                                    <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
+                                    </div>
                                 </template>
                             </p-card>
                         </div>
@@ -521,8 +525,8 @@
             //region basic
             const disc = ref([[${disc}]]);
             const toast = useToast();
-            const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
+            const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
@@ -532,6 +536,28 @@
             //endregion
 
             //region edit
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.DISC,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.DISC,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+            };
             const edits = ref([
                 {
                     label: '图片管理',
@@ -730,7 +756,7 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                disc, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                disc, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
                 mediaFormatSet, regionSet, productSet, relatedDiscs, responsiveOptions, regionCode2NameZh,
 
                 //edit

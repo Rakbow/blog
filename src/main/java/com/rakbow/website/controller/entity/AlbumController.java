@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -52,6 +53,8 @@ public class AlbumController {
     private UserService userService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -76,11 +79,12 @@ public class AlbumController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime(), request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(album));
+
         return "/database/itemDetail/album-detail";
     }
 

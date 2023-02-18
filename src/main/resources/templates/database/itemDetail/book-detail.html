@@ -125,96 +125,100 @@
                         <div class="col detail-item-header-card">
                             <p-card>
                                 <template #content>
-                                    <table class="table-borderless table-sm ml-2">
-                                        <tbody class="detail-item-header-table">
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>ISBN-10</strong>
-                                            </td>
-                                            <td>
-                                                {{book.isbn10}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-bar-code"></i>
-                                                <strong>ISBN-13</strong>
-                                            </td>
-                                            <td>{{book.isbn13}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-th-large"></i>
-                                                <strong>分类</strong>
-                                            </td>
-                                            <td>
-                                                <p-tag class="ml-1" :value="book.bookType.nameZh"></p-tag>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-globe"></i>
-                                                <strong>地区</strong>
-                                            </td>
-                                            <td>
+                                    <div class="relative">
+                                        <table class="table-borderless table-sm ml-2">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-bar-code"></i>
+                                                    <strong>ISBN-10</strong>
+                                                </td>
+                                                <td>
+                                                    {{book.isbn10}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-bar-code"></i>
+                                                    <strong>ISBN-13</strong>
+                                                </td>
+                                                <td>{{book.isbn13}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-th-large"></i>
+                                                    <strong>分类</strong>
+                                                </td>
+                                                <td>
+                                                    <p-tag class="ml-1" :value="book.bookType.nameZh"></p-tag>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-globe"></i>
+                                                    <strong>地区</strong>
+                                                </td>
+                                                <td>
                                                 <span :class="'fi fi-' + book.region.code" style="margin-left: 0.5rem"
                                                       v-tooltip.bottom="{value: book.region.nameZh, class: 'region-tooltip'}"></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-language"></i>
-                                                <strong>语言</strong>
-                                            </td>
-                                            <td>
-                                                {{book.publishLanguage.nameZh}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi pi-calendar"></i>
-                                                <strong>出版日期</strong>
-                                            </td>
-                                            <td>
-                                                {{book.publishDate}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-gongsi"></i>
-                                                <strong>出版社</strong>
-                                            </td>
-                                            <td>
-                                                {{book.publisher}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-wuliaojiage"></i>
-                                                <strong>出版价格</strong>
-                                            </td>
-                                            <td>
-                                                {{book.price != 0?book.price:" - "}} <span
-                                                    v-if="book.currencyUnit == 'JPY'"
-                                                    style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                    v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
-                                                    v-else>{{book.currencyUnit}}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="pi iconfont icon-gift"></i>
-                                                <strong>特典</strong>
-                                            </td>
-                                            <td>
-                                                <a v-if="book.hasBonus" href="#bonus" style="color: #ceffff"
-                                                   class="ml-3">有</a>{{(book.hasBonus)?"":"无"}}
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-language"></i>
+                                                    <strong>语言</strong>
+                                                </td>
+                                                <td>
+                                                    {{book.publishLanguage.nameZh}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-calendar"></i>
+                                                    <strong>出版日期</strong>
+                                                </td>
+                                                <td>
+                                                    {{book.publishDate}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-gongsi"></i>
+                                                    <strong>出版社</strong>
+                                                </td>
+                                                <td>
+                                                    {{book.publisher}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-wuliaojiage"></i>
+                                                    <strong>出版价格</strong>
+                                                </td>
+                                                <td>
+                                                    {{book.price != 0?book.price:" - "}} <span
+                                                        v-if="book.currencyUnit == 'JPY'"
+                                                        style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                        v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                        v-else>{{book.currencyUnit}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi iconfont icon-gift"></i>
+                                                    <strong>特典</strong>
+                                                </td>
+                                                <td>
+                                                    <a v-if="book.hasBonus" href="#bonus" style="color: #ceffff"
+                                                       class="ml-3">有</a>{{(book.hasBonus)?"":"无"}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
+                                    </div>
                                 </template>
                             </p-card>
                         </div>
@@ -652,8 +656,8 @@
             //region basic
             const book = ref([[${book}]]);
             const toast = useToast();
-            const detailInfo = ref([[${detailInfo}]]);
             const pageInfo = ref([[${pageInfo}]]);
+            const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
@@ -799,6 +803,28 @@
                         }
                         editBlock.value = false;
                     })
+            };
+            const like = () => {
+                let json = {
+                    entityType: ENTITY.BOOK,
+                    entityId: detailInfo.value.id
+                }
+                postRequest(toast, LIKE_ITEM_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            pageInfo.value.likeCount++;
+                            pageInfo.value.liked = true;
+                        }
+                    });
+            };
+            const updateStatus = () => {
+                editBlock.value = true;
+                let json = {
+                    entityType: ENTITY.BOOK,
+                    entityId: detailInfo.value.id,
+                    status: !detailInfo.value.status
+                };
+                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
             };
             //endregion
 
@@ -965,7 +991,7 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                book, detailInfo, itemImageInfo, pageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
+                book, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
                 bookTypeSet, regionSet, languageSet, productSet, relatedBooks, responsiveOptions, regionCode2NameZh,
 
                 //edit

@@ -50,6 +50,8 @@ public class BookController {
     private UserService userService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -71,7 +73,7 @@ public class BookController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime(), request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书

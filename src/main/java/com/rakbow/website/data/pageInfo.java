@@ -13,12 +13,8 @@ public class pageInfo {
 
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
-    private long visitNum;//浏览数
-
-    public pageInfo(String addedTime, String editedTime, long visitNum) {
-        this.addedTime = addedTime;
-        this.editedTime = editedTime;
-        this.visitNum = visitNum;
-    }
+    private long visitCount;//浏览数
+    private long likeCount;//点赞数
+    private boolean liked;//是否点过赞
 
 }

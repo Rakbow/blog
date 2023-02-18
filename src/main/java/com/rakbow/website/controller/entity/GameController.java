@@ -50,6 +50,8 @@ public class GameController {
     private UserService userService;
     @Autowired
     private EntityUtils entityUtils;
+    @Autowired
+    private EntityService entityService;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -72,7 +74,7 @@ public class GameController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime()));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime(), request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, EntityType.GAME, false));
         //获取相关游戏
