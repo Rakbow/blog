@@ -19,12 +19,12 @@ import java.util.List;
  * @Description:
  */
 @Component
-public class QiniuFileUtils {
+public class QiniuFileUtil {
 
-    private final QiniuBaseUtils qiniuBaseUtils;
+    private final QiniuBaseUtil qiniuBaseUtil;
 
-    public QiniuFileUtils(QiniuBaseUtils qiniuBaseUtils) {
-        this.qiniuBaseUtils = qiniuBaseUtils;
+    public QiniuFileUtil(QiniuBaseUtil qiniuBaseUtil) {
+        this.qiniuBaseUtil = qiniuBaseUtil;
     }
 
     /**
@@ -43,7 +43,7 @@ public class QiniuFileUtils {
         List<String> deleteResult = new ArrayList<>();
         //若删除的文件只有一个，调用单张删除方法
         if (deleteFiles.size() == 1) {
-            ActionResult ar = qiniuBaseUtils.deleteFileFromQiniu
+            ActionResult ar = qiniuBaseUtil.deleteFileFromQiniu
                     (deleteFiles.getJSONObject(0).getString("url"));
             if (!ar.state) {
                 throw new Exception(ar.message);
@@ -54,7 +54,7 @@ public class QiniuFileUtils {
             for (int i = 0; i < deleteFiles.size(); i++) {
                 fullFileUrlList[i] = deleteFiles.getJSONObject(i).getString("url");
             }
-            ActionResult ar = qiniuBaseUtils.deleteFilesFromQiniu(fullFileUrlList);
+            ActionResult ar = qiniuBaseUtil.deleteFilesFromQiniu(fullFileUrlList);
             deleteResult = (List<String>) ar.data;
         }
 
@@ -92,7 +92,7 @@ public class QiniuFileUtils {
             //删除七牛服务器上对应图片文件
             deleteFileKeyList[i] = deleteFileUrl;
         }
-        qiniuBaseUtils.deleteFilesFromQiniu(deleteFileKeyList);
+        qiniuBaseUtil.deleteFilesFromQiniu(deleteFileKeyList);
     }
 
 }

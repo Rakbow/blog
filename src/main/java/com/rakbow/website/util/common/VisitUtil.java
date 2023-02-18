@@ -1,16 +1,10 @@
 package com.rakbow.website.util.common;
 
-import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.pageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.PushBuilder;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -20,7 +14,7 @@ import java.util.*;
  * @Description:
  */
 @Component
-public class VisitUtils {
+public class VisitUtil {
 
     @Autowired
     private RedisUtil redisUtil;

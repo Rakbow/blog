@@ -27,7 +27,7 @@ import java.util.*;
  * @Description: 通过七牛云api实现文件的增删改查
  */
 @Component
-public class QiniuBaseUtils {
+public class QiniuBaseUtil {
 
     @Value("${website.qiniu.access-key}")
     private String ACCESS_KEY;

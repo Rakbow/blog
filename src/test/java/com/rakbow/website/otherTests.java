@@ -1,6 +1,6 @@
 package com.rakbow.website;
 
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,7 @@ public class otherTests {
     @Test
     public void tmpTest() {
         String url = "https://img.rakbow.com/album/6/f57fa8a51b594e30.jpg";
-        System.out.println(QiniuImageUtils.getImageKeyByFullUrl(url));
+        System.out.println(QiniuImageUtil.getImageKeyByFullUrl(url));
     }
 
 }

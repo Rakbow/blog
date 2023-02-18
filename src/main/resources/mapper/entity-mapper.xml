@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rakbow.website.dao.VisitMapper">
+<mapper namespace="com.rakbow.website.dao.EntityMapper">
 
     <sql id="selectFields">
         entity_type, entity_id, visit_num
@@ -15,24 +15,24 @@
     <select id="getVisit" resultType="Visit">
         select
         <include refid="selectFields"></include>
-        from visit
+        from entityInfo
         where entity_type = #{entityType} and entity_id = #{entityId}
     </select>
 
     <select id="getAll" resultType="Visit">
         select
         <include refid="selectFields"></include>
-        from visit
+        from entityInfo
 <!--        order by release_date desc-->
     </select>
 
     <insert id="insertVisit" parameterType="Visit">
-        insert into visit (<include refid="insertFields"></include>)
+        insert into entityInfo (<include refid="insertFields"></include>)
         values (#{entityType}, #{entityId}, #{visitNum})
     </insert>
 
     <update id="updateVisit">
-        update visit
+        update entityInfo
         set
         visit_num = #{visitNum}
         where entity_type = #{entityType} and entity_id = #{entityId}
@@ -40,17 +40,46 @@
 
     <delete id="deleteVisit">
         delete
-        from visit
+        from entityInfo
         where entity_type = #{entityType} and entity_id = #{entityId}
     </delete>
 
     <select id="selectVisitOrderByVisitNum" resultType="Visit">
         select
         <include refid="selectFields"></include>
-        from visit
+        from entityInfo
         where entity_type = #{entityType}
         order by visit_num desc
         limit #{limit}
     </select>
 
+
+
+    <update id="updateItemStatus" keyProperty="id">
+        update
+        <if test=" entityName == 'album' ">
+            album
+        </if>
+        <if test=" entityName == 'book' ">
+            book
+        </if>
+        <if test=" entityName == 'disc' ">
+            disc
+        </if>
+        <if test=" entityName == 'game' ">
+            game
+        </if>
+        <if test=" entityName == 'merch' ">
+            merch
+        </if>
+        <if test=" entityName == 'product' ">
+            product
+        </if>
+        <if test=" entityName == 'franchise' ">
+            franchise
+        </if>
+        set
+        status = #{status}
+        where id = #{entityId}
+    </update>
 </mapper>

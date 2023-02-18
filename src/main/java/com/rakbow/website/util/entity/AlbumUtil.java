@@ -1,18 +1,14 @@
 package com.rakbow.website.util.entity;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
-import com.rakbow.website.data.emun.image.ImageType;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.SpringUtils;
+import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,7 +23,7 @@ import java.util.Objects;
  * @Create: 2022-08-19 23:44
  * @Description:
  */
-public class AlbumUtils {
+public class AlbumUtil {
 
     /**
      * 获取可供编辑的editDiscList
@@ -134,11 +130,11 @@ public class AlbumUtils {
                 disc.put("trackList", newTrackList);
                 disc.put("albumFormat", AlbumFormat.index2NameEnArray(disc.getJSONArray("albumFormat")));
                 disc.put("mediaFormat", MediaFormat.index2NameEnArrayString(disc.getJSONArray("mediaFormat")));
-                disc.put("discLength", CommonUtils.countTotalTime(_times));
+                disc.put("discLength", CommonUtil.countTotalTime(_times));
                 newDiscList.add(disc);
             }
             trackInfo.put("discList", newDiscList);
-            trackInfo.put("totalLength", CommonUtils.countTotalTime(times));
+            trackInfo.put("totalLength", CommonUtil.countTotalTime(times));
             trackInfo.put("totalTracks", totalTrack);
         }
 
@@ -154,13 +150,13 @@ public class AlbumUtils {
      */
     public static JSONArray getAlbumFormat(String albumFormatJson) {
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
         List<JSONObject> albumFormats = (List<JSONObject>) redisUtil.get("albumFormatSet");
 
         JSONArray albumFormat = new JSONArray();
 
-        CommonUtils.ids2List(albumFormatJson)
+        CommonUtil.ids2List(albumFormatJson)
                 .forEach(id -> {
                     JSONObject format = DataFinder.findJsonByIdInSet(id, albumFormats);
                     if (format != null) {
@@ -180,13 +176,13 @@ public class AlbumUtils {
      */
     public static JSONArray getPublishFormat(String publishFormatJson) {
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
         List<JSONObject> publishFormats = (List<JSONObject>) redisUtil.get("publishFormatSet");
 
         JSONArray publishFormat = new JSONArray();
 
-        CommonUtils.ids2List(publishFormatJson)
+        CommonUtil.ids2List(publishFormatJson)
                 .forEach(id -> {
                     JSONObject format = DataFinder.findJsonByIdInSet(id, publishFormats);
                     if (format != null) {
@@ -206,13 +202,13 @@ public class AlbumUtils {
      */
     public static JSONArray getMediaFormat(String mediaFormatJson) {
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
         List<JSONObject> mediaFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET);
 
         JSONArray mediaFormat = new JSONArray();
 
-        CommonUtils.ids2List(mediaFormatJson)
+        CommonUtil.ids2List(mediaFormatJson)
                 .forEach(id -> {
                     JSONObject format = DataFinder.findJsonByIdInSet(id, mediaFormats);
                     if (format != null) {

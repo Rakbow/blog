@@ -9,12 +9,12 @@ import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOGamma;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.entity.AlbumUtils;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.entity.ProductUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.entity.AlbumUtil;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.entity.ProductUtil;
+import com.rakbow.website.util.file.CommonImageUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -52,7 +52,7 @@ public interface DiscVOMapper {
         discVO.setNameZh(disc.getNameZh());
         discVO.setNameEn(disc.getNameEn());
         discVO.setBarcode(disc.getBarcode());
-        discVO.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
+        discVO.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
         discVO.setPrice(disc.getPrice());
         discVO.setCurrencyUnit(disc.getCurrencyUnit());
         discVO.setLimited(disc.getLimited() == 1);
@@ -64,7 +64,7 @@ public interface DiscVOMapper {
         region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
         discVO.setRegion(region);
 
-        discVO.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
+        discVO.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
         discVO.setSpec(JSON.parseArray(disc.getSpec()));
         discVO.setBonus(disc.getBonus());
 
@@ -91,7 +91,7 @@ public interface DiscVOMapper {
         discVOAlpha.setNameZh(disc.getNameZh());
         discVOAlpha.setNameEn(disc.getNameEn());
         discVOAlpha.setBarcode(disc.getBarcode());
-        discVOAlpha.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
+        discVOAlpha.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
         discVOAlpha.setPrice(disc.getPrice());
         discVOAlpha.setCurrencyUnit(disc.getCurrencyUnit());
         discVOAlpha.setLimited(disc.getLimited() == 1);
@@ -103,16 +103,16 @@ public interface DiscVOMapper {
         region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
         discVOAlpha.setRegion(region);
 
-        discVOAlpha.setFranchises(FranchiseUtils.getFranchiseList(disc.getFranchises()));
-        discVOAlpha.setProducts(ProductUtils.getProductList(disc.getProducts()));
+        discVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(disc.getFranchises()));
+        discVOAlpha.setProducts(ProductUtil.getProductList(disc.getProducts()));
 
-        discVOAlpha.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
+        discVOAlpha.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
 
         //将图片分割处理
-        discVOAlpha.setCover(CommonImageUtils.generateCover(disc.getImages(), EntityType.DISC));
+        discVOAlpha.setCover(CommonImageUtil.generateCover(disc.getImages(), EntityType.DISC));
 
-        discVOAlpha.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
-        discVOAlpha.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));
+        discVOAlpha.setAddedTime(CommonUtil.timestampToString(disc.getAddedTime()));
+        discVOAlpha.setEditedTime(CommonUtil.timestampToString(disc.getEditedTime()));
         discVOAlpha.setStatus(disc.getStatus() == 1);
 
         return discVOAlpha;
@@ -155,14 +155,14 @@ public interface DiscVOMapper {
         discVOBeta.setName(disc.getName());
         discVOBeta.setNameZh(disc.getNameZh());
         discVOBeta.setNameEn(disc.getNameEn());
-        discVOBeta.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
+        discVOBeta.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
 
-        discVOBeta.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
+        discVOBeta.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
 
-        discVOBeta.setCover(CommonImageUtils.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
+        discVOBeta.setCover(CommonImageUtil.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
 
-        discVOBeta.setAddedTime(CommonUtils.timestampToString(disc.getAddedTime()));
-        discVOBeta.setEditedTime(CommonUtils.timestampToString(disc.getEditedTime()));
+        discVOBeta.setAddedTime(CommonUtil.timestampToString(disc.getAddedTime()));
+        discVOBeta.setEditedTime(CommonUtil.timestampToString(disc.getEditedTime()));
 
         return discVOBeta;
     }
@@ -202,7 +202,7 @@ public interface DiscVOMapper {
         discVOGamma.setName(disc.getName());
         discVOGamma.setNameZh(disc.getNameZh());
         discVOGamma.setNameEn(disc.getNameEn());
-        discVOGamma.setReleaseDate(CommonUtils.dateToString(disc.getReleaseDate()));
+        discVOGamma.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
         discVOGamma.setLimited(disc.getLimited() == 1);
         discVOGamma.setHasBonus(disc.getHasBonus() == 1);
 
@@ -211,12 +211,12 @@ public interface DiscVOMapper {
         region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
         discVOGamma.setRegion(region);
 
-        discVOGamma.setFranchises(FranchiseUtils.getFranchiseList(disc.getFranchises()));
-        discVOGamma.setProducts(ProductUtils.getProductList(disc.getProducts()));
+        discVOGamma.setFranchises(FranchiseUtil.getFranchiseList(disc.getFranchises()));
+        discVOGamma.setProducts(ProductUtil.getProductList(disc.getProducts()));
 
-        discVOGamma.setMediaFormat(AlbumUtils.getMediaFormat(disc.getMediaFormat()));
+        discVOGamma.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
 
-        discVOGamma.setCover(QiniuImageUtils.getThumb70Url(disc.getImages()));
+        discVOGamma.setCover(QiniuImageUtil.getThumb70Url(disc.getImages()));
 
         return discVOGamma;
     }

@@ -9,14 +9,13 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.util.entity.ProductUtils;
+import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
-import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +41,13 @@ public class ProductService {
     @Autowired
     private ProductMapper productMapper;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private QiniuImageUtil qiniuImageUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -59,7 +58,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addProduct(Product product) {
         int id = productMapper.addProduct(product);
-        visitUtils.addVisit(EntityType.PRODUCT.getId(), id);
+        visitUtil.addVisit(EntityType.PRODUCT.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
@@ -110,7 +109,7 @@ public class ProductService {
         List<Integer> franchises = new ArrayList<>();
         franchises.add(franchiseId);
 
-        List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);
+        List<Integer> categories = ProductUtil.getCategoriesByEntityType(entityType);
 
         List<JSONObject> productSet = new ArrayList<>();
         productMapper.getProductsByFilter(null, null, franchises, categories, false,
@@ -129,7 +128,7 @@ public class ProductService {
         JSONArray productSet = new JSONArray();
 
         if (franchises.size() != 0) {
-            List<Integer> categories = ProductUtils.getCategoriesByEntityType(entityType);
+            List<Integer> categories = ProductUtil.getCategoriesByEntityType(entityType);
             productMapper.getProductsByFilter(null, null, franchises, categories, false,
                     null, -1, 0, 0).forEach(product -> {
                 JSONObject jsonObject = new JSONObject();
@@ -231,7 +230,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
 
-        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
                 (id, EntityType.PRODUCT, images, originalImagesJson, imageInfos, user);
 
         productMapper.updateProductImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -262,7 +261,7 @@ public class ProductService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getProduct(id).getImages());
 
-        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         productMapper.updateProductImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
@@ -278,7 +277,7 @@ public class ProductService {
     public void deleteAllProductImages(int id) {
         Product product = getProduct(id);
         JSONArray images = JSON.parseArray(product.getImages());
-        qiniuFileUtils.commonDeleteAllFiles(images);
+        qiniuFileUtil.commonDeleteAllFiles(images);
 
     }
 

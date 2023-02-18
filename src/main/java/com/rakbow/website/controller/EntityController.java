@@ -4,12 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.RedisUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/db")
-public class DatabaseController {
+public class EntityController {
 
     //region ------引入实例------
 
@@ -48,8 +47,6 @@ public class DatabaseController {
     private EntityUtils entityUtils;
     @Autowired
     private UserService userService;
-    @Autowired
-    private CommonService commonService;
     @Autowired
     private EntityService entityService;
 
@@ -145,6 +142,7 @@ public class DatabaseController {
     }
     //endregion
 
+    //更改状态
     @RequestMapping(value = "/update-item-status", method = RequestMethod.POST)
     @ResponseBody
     public String updateItemStatus(@RequestBody String json) {
@@ -155,7 +153,7 @@ public class DatabaseController {
             int entityId = JSON.parseObject(json).getIntValue("entityId");
             boolean status = JSON.parseObject(json).getBoolean("status");
 
-            commonService.updateItemStatus(entityName, entityId, status?1:0);
+            entityService.updateItemStatus(entityName, entityId, status?1:0);
 
             res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityType));
         }catch (Exception e) {
@@ -163,5 +161,26 @@ public class DatabaseController {
         }
         return JSON.toJSONString(res);
     }
+
+    //点赞
+    @RequestMapping(path = "/like", method = RequestMethod.POST)
+    @ResponseBody
+    public String likeEntity(@RequestBody String json, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            // 从cookie中获取点赞token
+            String likeToken = CookieUtil.getValue(request, "like_token");
+
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            int entityId = JSON.parseObject(json).getIntValue("entityType");
+
+
+        }catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+
 
 }

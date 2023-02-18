@@ -9,17 +9,12 @@ import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.util.common.CommonUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,12 +24,12 @@ import java.util.Objects;
  * @Description:
  */
 @Component
-public class QiniuImageUtils {
+public class QiniuImageUtil {
 
-    private final QiniuBaseUtils qiniuBaseUtils;
+    private final QiniuBaseUtil qiniuBaseUtil;
 
-    public QiniuImageUtils(QiniuBaseUtils qiniuBaseUtils) {
-        this.qiniuBaseUtils = qiniuBaseUtils;
+    public QiniuImageUtil(QiniuBaseUtil qiniuBaseUtil) {
+        this.qiniuBaseUtil = qiniuBaseUtil;
     }
 
     /**
@@ -63,7 +58,7 @@ public class QiniuImageUtils {
 
         for (int i = 0; i < images.length; i++) {
             //上传图片
-            ActionResult ar = qiniuBaseUtils.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
+            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
             if (ar.state) {
                 ImageInfo imageInfo = new ImageInfo();
                 imageInfo.setUrl(ar.data.toString());

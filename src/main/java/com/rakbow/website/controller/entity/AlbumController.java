@@ -10,16 +10,13 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Book;
-import com.rakbow.website.entity.Music;
-import com.rakbow.website.entity.Visit;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.entity.MusicUtil;
-import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +78,7 @@ public class AlbumController {
         //获取页面数据
         model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
         //获取相关专辑
         model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(album));
         return "/database/itemDetail/album-detail";
@@ -221,7 +218,7 @@ public class AlbumController {
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
             if (!StringUtils.equals("", errorMsg)) {
                 res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
@@ -256,7 +253,7 @@ public class AlbumController {
             if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                String errorMessage = CommonImageUtil.checkUpdateImages(images);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
@@ -275,9 +272,9 @@ public class AlbumController {
                 JSONObject image = images.getJSONObject(i);
                 if(image.getIntValue("type") == ImageType.COVER.getIndex()) {
                     //和原专辑封面URL比较,若不同,则赋值新的url
-                    if(!StringUtils.equals(image.getString("url"), CommonImageUtils.getCoverUrl(images))) {
+                    if(!StringUtils.equals(image.getString("url"), CommonImageUtil.getCoverUrl(images))) {
                         //更新对应music的封面图片
-                        musicService.updateMusicCoverUrl(album.getId(), CommonImageUtils.getCoverUrl(JSON.parseArray(album.getImages())));
+                        musicService.updateMusicCoverUrl(album.getId(), CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages())));
                     }
                 }
             }
@@ -327,7 +324,7 @@ public class AlbumController {
             albumService.updateAlbumTrackInfo(id, discList);
 
             //更新对应music的封面图片
-            musicService.updateMusicCoverUrl(album.getId(), CommonImageUtils.getCoverUrl(JSON.parseArray(album.getImages())));
+            musicService.updateMusicCoverUrl(album.getId(), CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages())));
 
             res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
         } catch (Exception e) {

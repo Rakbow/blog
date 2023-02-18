@@ -11,11 +11,11 @@ import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.book.BookVOGamma;
 import com.rakbow.website.entity.Book;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.entity.ProductUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.entity.ProductUtil;
+import com.rakbow.website.util.file.CommonImageUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -53,7 +53,7 @@ public interface BookVOMapper {
         bookVO.setTitleEn(book.getTitleEn());
         bookVO.setIsbn10(book.getIsbn10());
         bookVO.setIsbn13(book.getIsbn13());
-        bookVO.setPublishDate(CommonUtils.dateToString(book.getPublishDate()));
+        bookVO.setPublishDate(CommonUtil.dateToString(book.getPublishDate()));
         bookVO.setPrice(book.getPrice());
         bookVO.setCurrencyUnit(Region.regionCode2Currency(book.getRegion()));
         bookVO.setPublisher(book.getPublisher());
@@ -104,7 +104,7 @@ public interface BookVOMapper {
         bookVOAlpha.setTitleEn(book.getTitleEn());
         bookVOAlpha.setIsbn10(book.getIsbn10());
         bookVOAlpha.setIsbn13(book.getIsbn13());
-        bookVOAlpha.setPublishDate(CommonUtils.dateToString(book.getPublishDate()));
+        bookVOAlpha.setPublishDate(CommonUtil.dateToString(book.getPublishDate()));
         bookVOAlpha.setPrice(book.getPrice());
         bookVOAlpha.setCurrencyUnit(Region.regionCode2Currency(book.getRegion()));
         bookVOAlpha.setPublisher(book.getPublisher());
@@ -128,15 +128,15 @@ public interface BookVOMapper {
         bookVOAlpha.setPublishLanguage(publishLanguage);
 
         //关联信息
-        bookVOAlpha.setProducts(ProductUtils.getProductList(book.getProducts()));
-        bookVOAlpha.setFranchises(FranchiseUtils.getFranchiseList(book.getFranchises()));
+        bookVOAlpha.setProducts(ProductUtil.getProductList(book.getProducts()));
+        bookVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(book.getFranchises()));
 
         //将图片分割处理
-        bookVOAlpha.setCover(CommonImageUtils.generateCover(book.getImages(), EntityType.BOOK));
+        bookVOAlpha.setCover(CommonImageUtil.generateCover(book.getImages(), EntityType.BOOK));
 
         //审计字段
-        bookVOAlpha.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));
-        bookVOAlpha.setEditedTime(CommonUtils.timestampToString(book.getEditedTime()));
+        bookVOAlpha.setAddedTime(CommonUtil.timestampToString(book.getAddedTime()));
+        bookVOAlpha.setEditedTime(CommonUtil.timestampToString(book.getEditedTime()));
         bookVOAlpha.setStatus(book.getStatus() == 1);
 
         return bookVOAlpha;
@@ -179,7 +179,7 @@ public interface BookVOMapper {
         bookVOBeta.setTitle(book.getTitle());
         bookVOBeta.setTitleZh(book.getTitleZh());
         bookVOBeta.setIsbn13(book.getIsbn13());
-        bookVOBeta.setPublishDate(CommonUtils.dateToString(book.getPublishDate()));
+        bookVOBeta.setPublishDate(CommonUtil.dateToString(book.getPublishDate()));
 
         JSONObject bookType = new JSONObject();
         bookType.put("id", book.getBookType());
@@ -197,11 +197,11 @@ public interface BookVOMapper {
         bookVOBeta.setPublishLanguage(publishLanguage);
 
         //将图片分割处理
-        bookVOBeta.setCover(CommonImageUtils.generateThumbCover(book.getImages(), EntityType.BOOK, 50));
+        bookVOBeta.setCover(CommonImageUtil.generateThumbCover(book.getImages(), EntityType.BOOK, 50));
 
         //审计字段
-        bookVOBeta.setAddedTime(CommonUtils.timestampToString(book.getAddedTime()));
-        bookVOBeta.setEditedTime(CommonUtils.timestampToString(book.getEditedTime()));
+        bookVOBeta.setAddedTime(CommonUtil.timestampToString(book.getAddedTime()));
+        bookVOBeta.setEditedTime(CommonUtil.timestampToString(book.getEditedTime()));
 
         return bookVOBeta;
 
@@ -244,7 +244,7 @@ public interface BookVOMapper {
         bookVOGamma.setTitleEn(book.getTitleEn());
         bookVOGamma.setIsbn10(book.getIsbn10());
         bookVOGamma.setIsbn13(book.getIsbn13());
-        bookVOGamma.setPublishDate(CommonUtils.dateToString(book.getPublishDate()));
+        bookVOGamma.setPublishDate(CommonUtil.dateToString(book.getPublishDate()));
         bookVOGamma.setPublisher(book.getPublisher());
         bookVOGamma.setSummary(book.getSummary());
         bookVOGamma.setHasBonus(book.getHasBonus() == 1);
@@ -265,10 +265,10 @@ public interface BookVOMapper {
         bookVOGamma.setPublishLanguage(publishLanguage);
 
         //关联信息
-        bookVOGamma.setProducts(ProductUtils.getProductList(book.getProducts()));
-        bookVOGamma.setFranchises(FranchiseUtils.getFranchiseList(book.getFranchises()));
+        bookVOGamma.setProducts(ProductUtil.getProductList(book.getProducts()));
+        bookVOGamma.setFranchises(FranchiseUtil.getFranchiseList(book.getFranchises()));
 
-        bookVOGamma.setCover(QiniuImageUtils.getThumb70Url(book.getImages()));
+        bookVOGamma.setCover(QiniuImageUtil.getThumb70Url(book.getImages()));
 
         return bookVOGamma;
     }

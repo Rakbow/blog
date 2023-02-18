@@ -8,14 +8,13 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.common.VisitUtils;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,11 +42,11 @@ public class FranchiseService {
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private QiniuImageUtil qiniuImageUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     //endregion
 
@@ -57,8 +56,8 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addFranchise(Franchise franchise){
         int id = franchiseMapper.addFranchise(franchise);
-        visitUtils.addVisit(EntityType.FRANCHISE.getId(), id);
-        if(!FranchiseUtils.isMetaFranchise(franchise)) {
+        visitUtil.addVisit(EntityType.FRANCHISE.getId(), id);
+        if(!FranchiseUtil.isMetaFranchise(franchise)) {
             refreshRedisFranchises();
         }
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
@@ -89,7 +88,7 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateFranchise(int id, Franchise franchise){
         franchiseMapper.updateFranchise(id, franchise);
-        if(!FranchiseUtils.isMetaFranchise(franchise)) {
+        if(!FranchiseUtil.isMetaFranchise(franchise)) {
             refreshRedisFranchises();
         }
         return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
@@ -229,7 +228,7 @@ public class FranchiseService {
     public String addFranchiseImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos, User user) throws IOException {
 
-        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
                 (id, EntityType.FRANCHISE, images, originalImagesJson, imageInfos, user);
 
         franchiseMapper.updateFranchiseImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -261,7 +260,7 @@ public class FranchiseService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(getFranchise(id).getImages());
 
-        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         franchiseMapper.updateFranchiseImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
@@ -282,7 +281,7 @@ public class FranchiseService {
         JSONArray franchiseSet = new JSONArray();
         List<Franchise> franchises = franchiseMapper.getAll();
         for (Franchise franchise : franchises) {
-            if(!FranchiseUtils.isMetaFranchise(franchise)) {
+            if(!FranchiseUtil.isMetaFranchise(franchise)) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("value", franchise.getId());
                 jsonObject.put("label", franchise.getNameZh());

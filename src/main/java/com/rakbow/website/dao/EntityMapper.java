@@ -1,6 +1,6 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.Visit;
+import com.rakbow.website.entity.EntityInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,15 +12,17 @@ import java.util.List;
  * @Description:
  */
 @Mapper
-public interface VisitMapper {
+public interface EntityMapper {
 
-    Visit getVisit(int entityType, int entityId);
+    void updateItemStatus(String entityName, int entityId, int status);
+
+    EntityInfo getVisit(int entityType, int entityId);
 
     //获取所有访问量信息
-    List<Visit> getAll();
+    List<EntityInfo> getAll();
 
     //新增新访问量实体
-    int insertVisit(Visit visit);
+    int insertVisit(EntityInfo entityInfo);
 
     //访问数量增加
     int updateVisit(int entityType, int entityId, long visitNum);
@@ -29,6 +31,6 @@ public interface VisitMapper {
     int deleteVisit(int entityType, int entityId);
 
     //按实体类型获取浏览排行
-    List<Visit> selectVisitOrderByVisitNum(int entityType, int limit);
+    List<EntityInfo> selectVisitOrderByVisitNum(int entityType, int limit);
 
 }

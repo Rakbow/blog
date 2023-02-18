@@ -1,20 +1,10 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import com.meilisearch.sdk.Client;
-import com.meilisearch.sdk.Config;
-import com.meilisearch.sdk.Index;
 import com.meilisearch.sdk.exceptions.MeilisearchException;
-import com.meilisearch.sdk.model.SearchResult;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.segmentImagesResult;
-import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.MeiliSearchUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

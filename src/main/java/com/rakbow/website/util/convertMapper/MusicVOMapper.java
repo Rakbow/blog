@@ -7,8 +7,8 @@ import com.rakbow.website.data.emun.music.AudioType;
 import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -58,9 +58,9 @@ public interface MusicVOMapper {
         musicVO.setUploadDisabled(musicVO.getFiles().size() >= 2);
 
         if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicVO.setCover(QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+            musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
         }else {
-            musicVO.setCover(QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 80));
+            musicVO.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
         }
         musicVO.setLrcText(music.getLrcText());
         musicVO.setAudioLength(music.getAudioLength());
@@ -91,15 +91,15 @@ public interface MusicVOMapper {
         musicVOAlpha.setTrackSerial(music.getTrackSerial());
 
         if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicVOAlpha.setCover(QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+            musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
         }else {
-            musicVOAlpha.setCover(QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 50));
+            musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 50));
         }
 
         musicVOAlpha.setAudioLength(music.getAudioLength());
 
-        musicVOAlpha.setAddedTime(CommonUtils.timestampToString(music.getAddedTime()));
-        musicVOAlpha.setEditedTime(CommonUtils.timestampToString(music.getEditedTime()));
+        musicVOAlpha.setAddedTime(CommonUtil.timestampToString(music.getAddedTime()));
+        musicVOAlpha.setEditedTime(CommonUtil.timestampToString(music.getEditedTime()));
 
         return musicVOAlpha;
     }

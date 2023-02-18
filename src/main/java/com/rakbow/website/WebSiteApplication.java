@@ -1,6 +1,6 @@
 package com.rakbow.website;
 
-import com.rakbow.website.util.common.SpringUtils;
+import com.rakbow.website.util.common.SpringUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -19,7 +19,7 @@ public class WebSiteApplication {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(WebSiteApplication.class, args);
-		SpringUtils.set(context);
+		SpringUtil.set(context);
 	}
 
 }

@@ -6,6 +6,6 @@ package com.rakbow.website.util.entity;
  * @Create: 2023-01-04 17:00
  * @Description:
  */
-public class MerchUtils {
+public class MerchUtil {
 
 }

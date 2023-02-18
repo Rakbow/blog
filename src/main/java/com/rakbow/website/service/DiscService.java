@@ -7,19 +7,14 @@ import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.vo.album.AlbumVOAlpha;
-import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.common.DataSorter;
-import com.rakbow.website.util.common.VisitUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
-import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,13 +42,11 @@ public class DiscService {
     @Autowired
     private DiscMapper discMapper;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private QiniuImageUtil qiniuImageUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -71,7 +63,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDisc(Disc disc) {
         int id = discMapper.addDisc(disc);
-        visitUtils.addVisit(EntityType.DISC.getId(), id);
+        visitUtil.addVisit(EntityType.DISC.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
     }
 
@@ -111,9 +103,9 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteDisc(Disc disc) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(disc.getImages()));
+        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(disc.getImages()));
         discMapper.deleteDisc(disc.getId());
-        visitUtils.deleteVisit(EntityType.DISC.getId(), disc.getId());
+        visitUtil.deleteVisit(EntityType.DISC.getId(), disc.getId());
     }
 
     /**
@@ -184,9 +176,9 @@ public class DiscService {
      */
     public JSONObject handleDiscJson(JSONObject discJson) {
 
-        String[] products = CommonUtils.str2SortedArray(discJson.getString("products"));
-        String[] franchises = CommonUtils.str2SortedArray(discJson.getString("franchises"));
-        String[] mediaFormat = CommonUtils.str2SortedArray(discJson.getString("mediaFormat"));
+        String[] products = CommonUtil.str2SortedArray(discJson.getString("products"));
+        String[] franchises = CommonUtil.str2SortedArray(discJson.getString("franchises"));
+        String[] mediaFormat = CommonUtil.str2SortedArray(discJson.getString("mediaFormat"));
 
         discJson.put("releaseDate", discJson.getDate("releaseDate"));
         discJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
@@ -212,7 +204,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
 
-        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
                 (id, EntityType.DISC, images, originalImagesJson, imageInfos, user);
 
         discMapper.updateDiscImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -244,7 +236,7 @@ public class DiscService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(disc.getImages());
 
-        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         discMapper.updateDiscImages(disc.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
@@ -358,7 +350,7 @@ public class DiscService {
 
         //该系列所有Disc
         List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, null,
-                        CommonUtils.ids2List(disc.getFranchises()), null, null, null,
+                        CommonUtil.ids2List(disc.getFranchises()), null, null, null,
                         null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
 
@@ -393,13 +385,13 @@ public class DiscService {
                                         .contains(productId)).collect(Collectors.toList())
                 );
             }
-            result = CommonUtils.removeDuplicateList(tmp);
+            result = CommonUtil.removeDuplicateList(tmp);
             if (result.size() >= 5) {
                 result = result.subList(0, 5);
             }
         }
 
-        return discVOMapper.disc2VOBeta(CommonUtils.removeDuplicateList(result));
+        return discVOMapper.disc2VOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     /**

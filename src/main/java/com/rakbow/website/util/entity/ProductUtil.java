@@ -8,9 +8,9 @@ import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.emun.product.ProductCategory;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.SpringUtils;
+import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.RedisUtil;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
  * @Description:
  */
 
-public class ProductUtils {
+public class ProductUtil {
 
     /**
      * 获取封面图片
@@ -56,13 +56,13 @@ public class ProductUtils {
      */
     public static JSONArray getProductList (String productJson) {
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
         List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get("productSet");
 
         JSONArray products = new JSONArray();
 
-        CommonUtils.ids2List(productJson)
+        CommonUtil.ids2List(productJson)
                 .forEach(id -> {
                     JSONObject product = DataFinder.findJsonByIdInSet(id, allProducts);
                     if (product != null) {

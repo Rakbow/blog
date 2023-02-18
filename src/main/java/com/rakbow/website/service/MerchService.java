@@ -7,17 +7,14 @@ import com.rakbow.website.dao.MerchMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.common.DataSorter;
-import com.rakbow.website.util.common.VisitUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
-import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,13 +42,11 @@ public class MerchService {
     @Autowired
     private MerchMapper merchMapper;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private QiniuImageUtil qiniuImageUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
@@ -69,7 +63,7 @@ public class MerchService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addMerch(Merch merch) {
         int id = merchMapper.addMerch(merch);
-        visitUtils.addVisit(EntityType.MERCH.getId(), id);
+        visitUtil.addVisit(EntityType.MERCH.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
     }
 
@@ -109,9 +103,9 @@ public class MerchService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteMerch(Merch merch) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(merch.getImages()));
+        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(merch.getImages()));
         merchMapper.deleteMerch(merch.getId());
-        visitUtils.deleteVisit(EntityType.MERCH.getId(), merch.getId());
+        visitUtil.deleteVisit(EntityType.MERCH.getId(), merch.getId());
     }
 
     /**
@@ -143,7 +137,7 @@ public class MerchService {
     public String addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                                JSONArray imageInfos, User user) throws IOException {
 
-        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
                 (id, EntityType.MERCH, images, originalImagesJson, imageInfos, user);
 
         merchMapper.updateMerchImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -175,7 +169,7 @@ public class MerchService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(merch.getImages());
 
-        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         merchMapper.updateMerchImages(merch.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
@@ -233,8 +227,8 @@ public class MerchService {
      */
     public JSONObject handleMerchJson(JSONObject merchJson) {
 
-        String[] products = CommonUtils.str2SortedArray(merchJson.getString("products"));
-        String[] franchises = CommonUtils.str2SortedArray(merchJson.getString("franchises"));
+        String[] products = CommonUtil.str2SortedArray(merchJson.getString("products"));
+        String[] franchises = CommonUtil.str2SortedArray(merchJson.getString("franchises"));
 
         merchJson.put("releaseDate", merchJson.getDate("releaseDate"));
         merchJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
@@ -351,7 +345,7 @@ public class MerchService {
         List<Integer> productIds = JSONObject.parseObject(merch.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Merch
-        List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtils.ids2List(merch.getFranchises()),
+        List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtil.ids2List(merch.getFranchises()),
                         null, 100, null, null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
 
@@ -386,13 +380,13 @@ public class MerchService {
                                         .contains(productId)).collect(Collectors.toList())
                 );
             }
-            result = CommonUtils.removeDuplicateList(tmp);
+            result = CommonUtil.removeDuplicateList(tmp);
             if (result.size() >= 5) {
                 result = result.subList(0, 5);
             }
         }
 
-        return merchVOMapper.merch2VOBeta(CommonUtils.removeDuplicateList(result));
+        return merchVOMapper.merch2VOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     //endregion

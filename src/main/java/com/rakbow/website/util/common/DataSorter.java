@@ -1,20 +1,14 @@
 package com.rakbow.website.util.common;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
-import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
-import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
-import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
-import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Merch;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.entity.Visit;
+import com.rakbow.website.entity.EntityInfo;
 
 import java.util.Comparator;
 
@@ -81,9 +75,9 @@ class JsonSetSortByValue implements Comparator<JSONObject> {
     }
 }
 
-class VisitSortByEntityId implements Comparator<Visit> {
+class VisitSortByEntityId implements Comparator<EntityInfo> {
     @Override
-    public int compare(Visit a, Visit b) {
+    public int compare(EntityInfo a, EntityInfo b) {
         return Integer.compare(a.getEntityId(), b.getEntityId());
     }
 }

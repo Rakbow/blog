@@ -15,7 +15,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
-import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class ProductController {
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(product.getImages(), 200, EntityType.PRODUCT, true));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(product.getImages(), 200, EntityType.PRODUCT, true));
 
         return "/database/itemDetail/product-detail";
     }
@@ -234,7 +234,7 @@ public class ProductController {
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMessage = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            String errorMessage = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
             if (!StringUtils.equals("", errorMessage)) {
                 res.setErrorMessage(errorMessage);
                 return JSON.toJSONString(res);
@@ -267,7 +267,7 @@ public class ProductController {
             if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMsg = CommonImageUtils.checkUpdateImages(images);
+                String errorMsg = CommonImageUtil.checkUpdateImages(images);
                 if (!StringUtils.isBlank(errorMsg)) {
                     res.setErrorMessage(errorMsg);
                     return JSON.toJSONString(res);

@@ -9,7 +9,7 @@ import java.net.InetAddress;
  * @Create: 2023-02-17 2:53
  * @Description:
  */
-public class IpUtils {
+public class IpUtil {
 
     //获取客户端IP地址
     public static String getIpAddr(HttpServletRequest request) {

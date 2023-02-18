@@ -6,14 +6,13 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,7 +77,7 @@ public class UserController {
         }
 
         // 生成随机文件名
-        fileName = CommonUtils.generateUUID() + suffix;
+        fileName = CommonUtil.generateUUID() + suffix;
         // 确定文件存放的路径
         File dest = new File(uploadPath + "/" + fileName);
         try {

@@ -12,17 +12,15 @@ import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
-import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.*;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.DataSorter;
-import com.rakbow.website.util.common.VisitUtils;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
-import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.file.QiniuBaseUtils;
-import com.rakbow.website.util.file.QiniuFileUtils;
+import com.rakbow.website.util.file.CommonImageUtil;
+import com.rakbow.website.util.file.QiniuBaseUtil;
+import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,11 +48,11 @@ public class AlbumService {
     @Autowired
     private MusicService musicService;
     @Autowired
-    private QiniuBaseUtils qiniuBaseUtils;
+    private QiniuBaseUtil qiniuBaseUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -74,7 +72,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addAlbum(Album album) {
         int id = albumMapper.addAlbum(album);
-        visitUtils.addVisit(EntityType.ALBUM.getId(), id);
+        visitUtil.addVisit(EntityType.ALBUM.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 
@@ -114,10 +112,10 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteAlbumById(Album album) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
+        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
         //删除专辑
         albumMapper.deleteAlbumById(album.getId());
-        visitUtils.deleteVisit(EntityType.ALBUM.getId(), album.getId());
+        visitUtil.deleteVisit(EntityType.ALBUM.getId(), album.getId());
     }
 
     /**
@@ -182,11 +180,11 @@ public class AlbumService {
      */
     public JSONObject handleAlbumJson(JSONObject albumJson) {
 
-        String[] products = CommonUtils.str2SortedArray(albumJson.getString("products"));
-        String[] franchises = CommonUtils.str2SortedArray(albumJson.getString("franchises"));
-        String[] publishFormat = CommonUtils.str2SortedArray(albumJson.getString("publishFormat"));
-        String[] albumFormat = CommonUtils.str2SortedArray(albumJson.getString("albumFormat"));
-        String[] mediaFormat = CommonUtils.str2SortedArray(albumJson.getString("mediaFormat"));
+        String[] products = CommonUtil.str2SortedArray(albumJson.getString("products"));
+        String[] franchises = CommonUtil.str2SortedArray(albumJson.getString("franchises"));
+        String[] publishFormat = CommonUtil.str2SortedArray(albumJson.getString("publishFormat"));
+        String[] albumFormat = CommonUtil.str2SortedArray(albumJson.getString("albumFormat"));
+        String[] mediaFormat = CommonUtil.str2SortedArray(albumJson.getString("mediaFormat"));
 
         //处理时间
         // String releaseDate = CommonUtil.dateToString(albumJson.getDate("releaseDate"));
@@ -239,7 +237,7 @@ public class AlbumService {
 
         for (int i = 0; i < images.length; i++) {
             //上传图片
-            ActionResult ar = qiniuBaseUtils.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
+            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
             if (ar.state) {
                 ImageInfo imageInfo = new ImageInfo();
                 imageInfo.setUrl(ar.data.toString());
@@ -261,7 +259,7 @@ public class AlbumService {
         List<Music> musics = musicService.getMusicsByAlbumId(id);
 
         //若涉及封面类型图片，则更新相应的音频封面
-        String coverUrl = CommonImageUtils.getCoverUrl(addImageJson);
+        String coverUrl = CommonImageUtil.getCoverUrl(addImageJson);
         if (!StringUtils.isBlank(coverUrl)) {
             musicService.updateMusicCoverUrl(id, coverUrl);
         }
@@ -294,7 +292,7 @@ public class AlbumService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(album.getImages());
 
-        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         albumMapper.updateAlbumImages(album.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
@@ -491,7 +489,7 @@ public class AlbumService {
         List<Integer> productIds = JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class);
 
         //该系列所有专辑
-        List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtils.ids2List(album.getFranchises()),
+        List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtil.ids2List(album.getFranchises()),
                 null, null, null, null, null, false, "releaseDate",
                 1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).collect(Collectors.toList());
 
@@ -526,13 +524,13 @@ public class AlbumService {
                                         .contains(productId)).collect(Collectors.toList())
                 );
             }
-            result = CommonUtils.removeDuplicateList(tmp);
+            result = CommonUtil.removeDuplicateList(tmp);
             if (result.size() >= 5) {
                 result = result.subList(0, 5);
             }
         }
 
-        return albumVOMapper.album2VOBeta(CommonUtils.removeDuplicateList(result));
+        return albumVOMapper.album2VOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     /**

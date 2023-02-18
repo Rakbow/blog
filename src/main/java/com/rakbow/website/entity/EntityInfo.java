@@ -9,19 +9,19 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class Visit {
+public class EntityInfo {
 
     private int entityType;//实体类型
     private int entityId;//实体id
-    private long visitNum;//访问数
+    private long visitCount;//访问数
+    private long likeCount;//点赞数
+    private long collectCount;//收藏数
 
-    public Visit(int entityType, int entityId) {
+    public EntityInfo(int entityType, int entityId) {
         this.entityType = entityType;
         this.entityId = entityId;
-        this.visitNum = 0;
-    }
-
-    public void increaseVisitNum() {
-        this.visitNum++;
+        this.visitCount = 0;
+        this.likeCount = 0;
+        this.collectCount = 0;
     }
 }

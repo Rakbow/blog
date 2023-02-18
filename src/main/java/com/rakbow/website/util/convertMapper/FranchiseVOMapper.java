@@ -6,9 +6,9 @@ import com.rakbow.website.data.vo.franchise.FranchiseVO;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.data.vo.franchise.ParentFranchiseVO;
 import com.rakbow.website.entity.Franchise;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -42,19 +42,19 @@ public interface FranchiseVOMapper {
         franchiseVO.setName(franchise.getName());
         franchiseVO.setNameZh(franchise.getNameZh());
         franchiseVO.setNameEn(franchise.getNameEn());
-        franchiseVO.setOriginDate(CommonUtils.dateToString(franchise.getOriginDate()));
+        franchiseVO.setOriginDate(CommonUtil.dateToString(franchise.getOriginDate()));
         franchiseVO.setRemark(franchise.getRemark());
 
         MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
         if(StringUtils.equals(metaInfo.isMeta, "1")) {
             franchiseVO.setMetaLabel(true);
-            franchiseVO.setChildFranchises(FranchiseUtils.getChildFranchiseIds(franchise));
-            franchiseVO.setChildFranchiseInfos(FranchiseUtils.getChildFranchises(franchise));
+            franchiseVO.setChildFranchises(FranchiseUtil.getChildFranchiseIds(franchise));
+            franchiseVO.setChildFranchiseInfos(FranchiseUtil.getChildFranchises(franchise));
         }else {
             franchiseVO.setMetaLabel(false);
         }
         if(!StringUtils.equals(metaInfo.metaId, "0")) {
-            franchiseVO.setParentFranchise(franchise2ParentVO(FranchiseUtils.getParentFranchise(franchise)));
+            franchiseVO.setParentFranchise(franchise2ParentVO(FranchiseUtil.getParentFranchise(franchise)));
         }
 
         return franchiseVO;
@@ -75,19 +75,19 @@ public interface FranchiseVOMapper {
         franchiseVOAlpha.setName(franchise.getName());
         franchiseVOAlpha.setNameZh(franchise.getNameZh());
         franchiseVOAlpha.setNameEn(franchise.getNameEn());
-        franchiseVOAlpha.setOriginDate(CommonUtils.dateToString(franchise.getOriginDate()));
+        franchiseVOAlpha.setOriginDate(CommonUtil.dateToString(franchise.getOriginDate()));
         franchiseVOAlpha.setRemark(franchise.getRemark());
 
-        franchiseVOAlpha.setCover(CommonImageUtils.generateCover(franchise.getImages(), EntityType.FRANCHISE));
+        franchiseVOAlpha.setCover(CommonImageUtil.generateCover(franchise.getImages(), EntityType.FRANCHISE));
 
-        franchiseVOAlpha.setAddedTime(CommonUtils.timestampToString(franchise.getAddedTime()));
-        franchiseVOAlpha.setEditedTime(CommonUtils.timestampToString(franchise.getEditedTime()));
+        franchiseVOAlpha.setAddedTime(CommonUtil.timestampToString(franchise.getAddedTime()));
+        franchiseVOAlpha.setEditedTime(CommonUtil.timestampToString(franchise.getEditedTime()));
 
         MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
 
         if(StringUtils.equals(metaInfo.isMeta, "1")) {
             franchiseVOAlpha.setMetaLabel(true);
-            franchiseVOAlpha.setChildFranchises(FranchiseUtils.getChildFranchiseIds(franchise));
+            franchiseVOAlpha.setChildFranchises(FranchiseUtil.getChildFranchiseIds(franchise));
         }else {
             franchiseVOAlpha.setMetaLabel(false);
         }

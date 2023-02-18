@@ -4,16 +4,14 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
-import com.rakbow.website.data.vo.franchise.ParentFranchiseVO;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.service.FranchiseService;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.SpringUtils;
+import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -22,7 +20,7 @@ import java.util.List;
  * @Create: 2023-01-07 20:38
  * @Description:
  */
-public class FranchiseUtils {
+public class FranchiseUtil {
 
     /**
      * 将数据库实体类franchise的json字符串转为JSONArray
@@ -33,13 +31,13 @@ public class FranchiseUtils {
      */
     public static JSONArray getFranchiseList (String franchisesJson) {
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
         List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
 
         JSONArray franchises = new JSONArray();
 
-        CommonUtils.ids2List(franchisesJson)
+        CommonUtil.ids2List(franchisesJson)
                 .forEach(id -> {
                     JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
                     if (franchise != null) {
@@ -59,7 +57,7 @@ public class FranchiseUtils {
      */
     public static JSONObject getFranchise(int franchiseId) {
 
-        RedisUtil redisUtil = SpringUtils.getBean("redisUtil");
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
         List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
 
         return DataFinder.findJsonByIdInSet(franchiseId, allFranchises);
@@ -85,7 +83,7 @@ public class FranchiseUtils {
      * @author rakbow
      */
     public static JSONArray getChildFranchises(Franchise originFranchise) {
-        FranchiseService franchiseService = SpringUtils.getBean("franchiseService");
+        FranchiseService franchiseService = SpringUtil.getBean("franchiseService");
 
         return JSON.parseArray(JSON.toJSONString(
                 franchiseService.getFranchisesByParentId(Integer.parseInt(Integer.toString(originFranchise.getId())))));
@@ -113,7 +111,7 @@ public class FranchiseUtils {
      */
     public static Franchise getParentFranchise(Franchise franchise) {
         int parentFranchiseId = Integer.parseInt(new MetaInfo(franchise.getMetaInfo()).metaId);
-        FranchiseService franchiseService = SpringUtils.getBean("franchiseService");
+        FranchiseService franchiseService = SpringUtil.getBean("franchiseService");
 
         return franchiseService.getFranchise(parentFranchiseId);
 

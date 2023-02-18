@@ -10,13 +10,13 @@ import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
-import com.rakbow.website.util.entity.AlbumUtils;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.CommonImageUtils;
-import com.rakbow.website.util.entity.ProductUtils;
-import com.rakbow.website.util.common.SpringUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.entity.AlbumUtil;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.file.CommonImageUtil;
+import com.rakbow.website.util.entity.ProductUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -47,7 +47,7 @@ public interface AlbumVOMapper {
         }
         AlbumVO albumVo = new AlbumVO();
 
-        MusicService musicService = SpringUtils.getBean("musicService");
+        MusicService musicService = SpringUtil.getBean("musicService");
         List<Music> musics = musicService.getMusicsByAlbumId(album.getId());
 
         //基础信息
@@ -60,7 +60,7 @@ public interface AlbumVOMapper {
         albumVo.setPrice(album.getPrice());
         albumVo.setCurrencyUnit(album.getCurrencyUnit());
         albumVo.setRemark(album.getRemark());
-        albumVo.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
+        albumVo.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
         albumVo.setHasBonus(album.getHasBonus() == 1);
 
         //厂商
@@ -70,18 +70,18 @@ public interface AlbumVOMapper {
         albumVo.setCopyright(album.getCopyright());
 
         //规格信息
-        albumVo.setPublishFormat(AlbumUtils.getPublishFormat(album.getPublishFormat()));
-        albumVo.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
-        albumVo.setMediaFormat(AlbumUtils.getMediaFormat(album.getMediaFormat()));
+        albumVo.setPublishFormat(AlbumUtil.getPublishFormat(album.getPublishFormat()));
+        albumVo.setAlbumFormat(AlbumUtil.getAlbumFormat(album.getAlbumFormat()));
+        albumVo.setMediaFormat(AlbumUtil.getMediaFormat(album.getMediaFormat()));
 
         //大文本字段
         albumVo.setBonus(album.getBonus());
         albumVo.setArtists(JSONArray.parseArray(album.getArtists()));
 
         //可供编辑的editDiscList
-        JSONArray editDiscList = AlbumUtils.getEditDiscList(album.getTrackInfo(), musics);
+        JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
         //音轨信息
-        JSONObject trackInfo = AlbumUtils.getFinalTrackInfo(album.getTrackInfo(), musics);
+        JSONObject trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
 
         albumVo.setEditDiscList(editDiscList);
         albumVo.setTrackInfo(trackInfo);
@@ -112,15 +112,15 @@ public interface AlbumVOMapper {
         albumVOAlpha.setPrice(album.getPrice());
         albumVOAlpha.setCurrencyUnit(album.getCurrencyUnit());
         albumVOAlpha.setRemark(album.getRemark());
-        albumVOAlpha.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
+        albumVOAlpha.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
         albumVOAlpha.setHasBonus(album.getHasBonus() == 1);
 
         //图片相关
-        albumVOAlpha.setCover(CommonImageUtils.generateCover(album.getImages(), EntityType.ALBUM));
+        albumVOAlpha.setCover(CommonImageUtil.generateCover(album.getImages(), EntityType.ALBUM));
 
         //关联信息
-        albumVOAlpha.setProducts(ProductUtils.getProductList(album.getProducts()));
-        albumVOAlpha.setFranchises(FranchiseUtils.getFranchiseList(album.getFranchises()));
+        albumVOAlpha.setProducts(ProductUtil.getProductList(album.getProducts()));
+        albumVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(album.getFranchises()));
 
         //厂商信息
         albumVOAlpha.setLabel(album.getLabel());
@@ -129,13 +129,13 @@ public interface AlbumVOMapper {
         albumVOAlpha.setCopyright(album.getCopyright());
 
         //规格信息
-        albumVOAlpha.setPublishFormat(AlbumUtils.getPublishFormat(album.getPublishFormat()));
-        albumVOAlpha.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
-        albumVOAlpha.setMediaFormat(AlbumUtils.getMediaFormat(album.getMediaFormat()));
+        albumVOAlpha.setPublishFormat(AlbumUtil.getPublishFormat(album.getPublishFormat()));
+        albumVOAlpha.setAlbumFormat(AlbumUtil.getAlbumFormat(album.getAlbumFormat()));
+        albumVOAlpha.setMediaFormat(AlbumUtil.getMediaFormat(album.getMediaFormat()));
 
         //审计字段
-        albumVOAlpha.setAddedTime(CommonUtils.timestampToString(album.getAddedTime()));
-        albumVOAlpha.setEditedTime(CommonUtils.timestampToString(album.getEditedTime()));
+        albumVOAlpha.setAddedTime(CommonUtil.timestampToString(album.getAddedTime()));
+        albumVOAlpha.setEditedTime(CommonUtil.timestampToString(album.getEditedTime()));
         albumVOAlpha.setStatus(album.getStatus() == 1);
 
         return albumVOAlpha;
@@ -179,11 +179,11 @@ public interface AlbumVOMapper {
         albumVOBeta.setName(album.getName());
         albumVOBeta.setNameEn(album.getNameEn());
         albumVOBeta.setNameZh(album.getNameZh());
-        albumVOBeta.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
-        albumVOBeta.setCover(CommonImageUtils.generateThumbCover(album.getImages(), EntityType.ALBUM, 50));
-        albumVOBeta.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
-        albumVOBeta.setAddedTime(CommonUtils.timestampToString(album.getAddedTime()));
-        albumVOBeta.setEditedTime(CommonUtils.timestampToString(album.getEditedTime()));
+        albumVOBeta.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
+        albumVOBeta.setCover(CommonImageUtil.generateThumbCover(album.getImages(), EntityType.ALBUM, 50));
+        albumVOBeta.setAlbumFormat(AlbumUtil.getAlbumFormat(album.getAlbumFormat()));
+        albumVOBeta.setAddedTime(CommonUtil.timestampToString(album.getAddedTime()));
+        albumVOBeta.setEditedTime(CommonUtil.timestampToString(album.getEditedTime()));
 
         return albumVOBeta;
     }
@@ -224,15 +224,15 @@ public interface AlbumVOMapper {
         albumVOGamma.setName(album.getName());
         albumVOGamma.setNameEn(album.getNameEn());
         albumVOGamma.setNameZh(album.getNameZh());
-        albumVOGamma.setReleaseDate(CommonUtils.dateToString(album.getReleaseDate()));
+        albumVOGamma.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
         albumVOGamma.setHasBonus(album.getHasBonus() == 1);
 
         //关联信息
-        albumVOGamma.setProducts(ProductUtils.getProductList(album.getProducts()));
-        albumVOGamma.setFranchises(FranchiseUtils.getFranchiseList(album.getFranchises()));
-        albumVOGamma.setAlbumFormat(AlbumUtils.getAlbumFormat(album.getAlbumFormat()));
+        albumVOGamma.setProducts(ProductUtil.getProductList(album.getProducts()));
+        albumVOGamma.setFranchises(FranchiseUtil.getFranchiseList(album.getFranchises()));
+        albumVOGamma.setAlbumFormat(AlbumUtil.getAlbumFormat(album.getAlbumFormat()));
 
-        albumVOGamma.setCover(QiniuImageUtils.getThumb70Url(album.getImages()));
+        albumVOGamma.setCover(QiniuImageUtil.getThumb70Url(album.getImages()));
 
         return albumVOGamma;
     }

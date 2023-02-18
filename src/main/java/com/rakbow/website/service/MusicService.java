@@ -10,13 +10,13 @@ import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.util.common.VisitUtils;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.util.common.CommonUtils;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.file.QiniuBaseUtils;
-import com.rakbow.website.util.file.QiniuFileUtils;
+import com.rakbow.website.util.file.QiniuBaseUtil;
+import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,13 +43,11 @@ public class MusicService {
     @Autowired
     private MusicMapper musicMapper;
     @Autowired
-    private VisitService visitService;
+    private QiniuBaseUtil qiniuBaseUtil;
     @Autowired
-    private QiniuBaseUtils qiniuBaseUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
-    @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -117,7 +115,7 @@ public class MusicService {
     public void addMusic(Music music) throws Exception {
         try {
             int id = musicMapper.addMusic(music);
-            visitUtils.addVisit(EntityType.MUSIC.getId(), id);
+            visitUtil.addVisit(EntityType.MUSIC.getId(), id);
 
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -156,8 +154,8 @@ public class MusicService {
                 music.setTrackSerial(track.getString("serial"));
                 music.setCoverUrl(cover.getString("url"));
                 music.setAudioLength(track.getString("audioLength"));
-                music.setAddedTime(CommonUtils.stringToTimestamp(albumJson.getString("addedTime")));
-                music.setEditedTime(CommonUtils.stringToTimestamp(albumJson.getString("editedTime")));
+                music.setAddedTime(CommonUtil.stringToTimestamp(albumJson.getString("addedTime")));
+                music.setEditedTime(CommonUtil.stringToTimestamp(albumJson.getString("editedTime")));
                 addMusic(music);
             }
         }
@@ -189,7 +187,7 @@ public class MusicService {
             //删除对应music的音频文件
             deleteMusicAllFiles(music);
             musicMapper.deleteMusicById(music.getId());
-            visitUtils.deleteVisit(EntityType.MUSIC.getId(), music.getId());
+            visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -206,7 +204,7 @@ public class MusicService {
             List<Music> musics = getMusicsByAlbumId(albumId);
             //删除对应music的音频文件
             musics.forEach(this::deleteMusicAllFiles);
-            musics.forEach(music -> visitUtils.deleteVisit(EntityType.MUSIC.getId(), music.getId()));
+            musics.forEach(music -> visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId()));
             musicMapper.deleteMusicByAlbumId(albumId);
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -369,10 +367,10 @@ public class MusicService {
             //判断文件是否为lrc歌词
             if (StringUtils.equals(files[i].getOriginalFilename().substring(files[i].getOriginalFilename().lastIndexOf(".")+1), "lrc")) {
                 //上传lrc歌词文件
-                ar = qiniuBaseUtils.uploadFileToQiniu(files[i], filePath, FileType.TEXT);
+                ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.TEXT);
             }else {
                 //上传音频文件
-                ar = qiniuBaseUtils.uploadFileToQiniu(files[i], filePath, FileType.AUDIO);
+                ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.AUDIO);
             }
             if (ar.state) {
                 JSONObject jo = new JSONObject();
@@ -380,7 +378,7 @@ public class MusicService {
                 jo.put("name", fileInfos.getJSONObject(i).getString("name"));
                 jo.put("size", fileInfos.getJSONObject(i).getIntValue("size"));
                 jo.put("type", fileInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", CommonUtils.getCurrentTime());
+                jo.put("uploadTime", CommonUtil.getCurrentTime());
                 jo.put("uploadUser", user.getUsername());
                 addFiles.add(jo);
             }
@@ -404,7 +402,7 @@ public class MusicService {
         //获取原始文件json数组
         JSONArray files = JSONArray.parseArray(getMusic(id).getFiles());
 
-        JSONArray finalFileJson = qiniuFileUtils.commonDeleteFiles(files, deleteFiles);
+        JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
 
         musicMapper.updateMusicFiles(id, finalFileJson.toString(), new Timestamp(System.currentTimeMillis()));
         return ApiInfo.DELETE_FILES_SUCCESS;
@@ -419,7 +417,7 @@ public class MusicService {
     public void deleteMusicAllFiles(Music music) {
         JSONArray files = JSON.parseArray(music.getFiles());
         //删除七牛云上的图片
-        qiniuFileUtils.commonDeleteAllFiles(files);
+        qiniuFileUtil.commonDeleteAllFiles(files);
     }
 
     //endregion

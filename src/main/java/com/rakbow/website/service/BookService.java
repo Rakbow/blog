@@ -10,14 +10,12 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.User;
-import com.rakbow.website.entity.Visit;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.common.DataSorter;
-import com.rakbow.website.util.common.VisitUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
-import com.rakbow.website.util.entity.BookUtils;
-import com.rakbow.website.util.file.QiniuFileUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.entity.BookUtil;
+import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,13 +43,11 @@ public class BookService {
     @Autowired
     private BookMapper bookMapper;
     @Autowired
-    private QiniuImageUtils qiniuImageUtils;
+    private QiniuImageUtil qiniuImageUtil;
     @Autowired
-    private QiniuFileUtils qiniuFileUtils;
+    private QiniuFileUtil qiniuFileUtil;
     @Autowired
-    private VisitService visitService;
-    @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -69,7 +64,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addBook(Book book) {
         int id = bookMapper.addBook(book);
-        visitUtils.addVisit(EntityType.BOOK.getId(), id);
+        visitUtil.addVisit(EntityType.BOOK.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
     }
 
@@ -109,9 +104,9 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteBook(Book book) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtils.commonDeleteAllFiles(JSON.parseArray(book.getImages()));
+        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(book.getImages()));
         bookMapper.deleteBook(book.getId());
-        visitUtils.deleteVisit(EntityType.BOOK.getId(), book.getId());
+        visitUtil.deleteVisit(EntityType.BOOK.getId(), book.getId());
     }
 
     /**
@@ -193,8 +188,8 @@ public class BookService {
      */
     public JSONObject handleBookJson(JSONObject bookJson) {
 
-        String[] products = CommonUtils.str2SortedArray(bookJson.getString("products"));
-        String[] franchises = CommonUtils.str2SortedArray(bookJson.getString("franchises"));
+        String[] products = CommonUtil.str2SortedArray(bookJson.getString("products"));
+        String[] franchises = CommonUtil.str2SortedArray(bookJson.getString("franchises"));
 
         bookJson.put("isbn10", bookJson.getString("isbn10").replaceAll("-", ""));
         bookJson.put("isbn13", bookJson.getString("isbn13").replaceAll("-", ""));
@@ -222,7 +217,7 @@ public class BookService {
     public String addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
                               JSONArray imageInfos, User user) throws IOException {
 
-        JSONArray finalImageJson = qiniuImageUtils.commonAddImages
+        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
                 (id, EntityType.BOOK, images, originalImagesJson, imageInfos, user);
 
         bookMapper.updateBookImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
@@ -255,7 +250,7 @@ public class BookService {
         //获取原始图片json数组
         JSONArray images = JSONArray.parseArray(book.getImages());
 
-        JSONArray finalImageJson = qiniuFileUtils.commonDeleteFiles(images, deleteImages);
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         bookMapper.updateBookImages(book.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
         return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
@@ -401,7 +396,7 @@ public class BookService {
 
         //该系列所有Book
         List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, null,
-                        null, null, 100, CommonUtils.ids2List(book.getFranchises()),
+                        null, null, 100, CommonUtil.ids2List(book.getFranchises()),
                         null, null, false, "publishDate", 1, 0, 0)
                 .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
 
@@ -437,13 +432,13 @@ public class BookService {
                                         .contains(productId)).collect(Collectors.toList())
                 );
             }
-            result = CommonUtils.removeDuplicateList(tmp);
+            result = CommonUtil.removeDuplicateList(tmp);
             if (result.size() >= 5) {
                 result = result.subList(0, 5);
             }
         }
 
-        return bookVOMapper.book2VOBeta(CommonUtils.removeDuplicateList(result));
+        return bookVOMapper.book2VOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     //endregion
@@ -463,13 +458,13 @@ public class BookService {
             if(isbn.length() != 10) {
                 throw new Exception(ApiInfo.BOOK_ISBN10_LENGTH_EXCEPTION);
             }
-            return BookUtils.getISBN13(isbn);
+            return BookUtil.getISBN13(isbn);
         }
         if(StringUtils.equals(label, "isbn10")) {
             if(isbn.length() != 13) {
                 throw new Exception(ApiInfo.BOOK_ISBN13_LENGTH_EXCEPTION);
             }
-            return BookUtils.getISBN10(isbn);
+            return BookUtil.getISBN10(isbn);
         }
         return null;
     }

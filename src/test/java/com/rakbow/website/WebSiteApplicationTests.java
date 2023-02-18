@@ -9,7 +9,7 @@ import com.rakbow.website.entity.*;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 //import com.rakbow.website.util.convertMapper.GameVoMapper;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.entity.BookUtils;
+import com.rakbow.website.util.entity.BookUtil;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.RedisUtil;
 import org.junit.jupiter.api.Test;
@@ -48,16 +48,6 @@ class WebSiteApplicationTests {
     private UserService userService;
 
 
-
-
-
-
-
-
-
-
-    @Autowired
-    private VisitService visitService;
     @Autowired
     private FranchiseService franchiseService;
     @Autowired
@@ -165,7 +155,7 @@ class WebSiteApplicationTests {
 
     @Test
     public void test112() {
-        System.out.println(BookUtils.getISBN10("9784776722779"));
+        System.out.println(BookUtil.getISBN10("9784776722779"));
     }
 
     @Test

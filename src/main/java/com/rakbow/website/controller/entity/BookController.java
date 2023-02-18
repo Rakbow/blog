@@ -14,7 +14,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.BookVOMapper;
-import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class BookController {
         //获取页面数据
         model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书
         model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/database/itemDetail/book-detail";
@@ -201,7 +201,7 @@ public class BookController {
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
             if (!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
@@ -234,7 +234,7 @@ public class BookController {
             if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMsg = CommonImageUtils.checkUpdateImages(images);
+                String errorMsg = CommonImageUtil.checkUpdateImages(images);
                 if (!StringUtils.isBlank(errorMsg)) {
                     res.setErrorMessage(errorMsg);
                     return JSON.toJSONString(res);

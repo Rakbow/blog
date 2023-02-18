@@ -6,7 +6,7 @@ package com.rakbow.website.util.entity;
  * @Create: 2022-12-29 20:47
  * @Description:
  */
-public class BookUtils {
+public class BookUtil {
 
     /**
      * ISBN-10转ISBN-13

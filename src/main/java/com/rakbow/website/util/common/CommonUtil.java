@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @Create: 2022-08-02 0:38
  * @Description:
  */
-public class CommonUtils {
+public class CommonUtil {
 
     //删除服务器上的文件
     //dir: 文件夹路径，fileName: 文件名（不包含后缀）
@@ -416,7 +416,7 @@ public class CommonUtils {
             file.getParentFile().mkdir();
         }
 
-        CommonUtils.imageCompress(oldFilePath, 200, 200, outFilePath, true);
+        CommonUtil.imageCompress(oldFilePath, 200, 200, outFilePath, true);
         return "/db/" + entity + "/" + entityId + "/compress/" + fileName;
     }
 

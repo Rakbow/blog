@@ -5,14 +5,12 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.music.AudioType;
-import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,9 +70,9 @@ public class MusicUtil {
                 audioInfo.put("artist", getArtistFromMusic(music));
                 audioInfo.put("url", files.getJSONObject(i).getString("url"));
                 if (StringUtils.isBlank(music.getCoverUrl())) {
-                    audioInfo.put("cover", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
                 }else {
-                    audioInfo.put("cover", QiniuImageUtils.getThumbUrl(music.getCoverUrl(), 80));
+                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
                 }
             }
             //判断是否有歌词文件

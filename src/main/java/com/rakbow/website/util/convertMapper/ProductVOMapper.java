@@ -8,9 +8,9 @@ import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.data.vo.product.ProductVOBeta;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.common.CommonUtils;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.file.QiniuImageUtils;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import com.rakbow.website.data.CommonConstant;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -46,12 +46,12 @@ public interface ProductVOMapper {
         productVO.setName(product.getName());
         productVO.setNameEn(product.getNameEn());
         productVO.setNameZh(product.getNameZh());
-        productVO.setReleaseDate(CommonUtils.dateToString(product.getReleaseDate()));
+        productVO.setReleaseDate(CommonUtil.dateToString(product.getReleaseDate()));
         productVO.setCategory(ProductCategory.getProductCategory(product.getCategory()));
         productVO.setRemark(product.getRemark());
 
         //关联信息
-        productVO.setFranchise(FranchiseUtils.getFranchise(product.getFranchise()));
+        productVO.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
 
         productVO.setOrganizations(JSON.parseArray(product.getOrganizations()));
         productVO.setStaffs(JSON.parseArray(product.getStaffs()));
@@ -75,33 +75,33 @@ public interface ProductVOMapper {
         productVOAlpha.setName(product.getName());
         productVOAlpha.setNameEn(product.getNameEn());
         productVOAlpha.setNameZh(product.getNameZh());
-        productVOAlpha.setReleaseDate(CommonUtils.dateToString(product.getReleaseDate()));
+        productVOAlpha.setReleaseDate(CommonUtil.dateToString(product.getReleaseDate()));
         productVOAlpha.setCategory(ProductCategory.getProductCategory(product.getCategory()));
         productVOAlpha.setRemark(product.getRemark());
 
         //关联信息
-        productVOAlpha.setFranchise(FranchiseUtils.getFranchise(product.getFranchise()));
+        productVOAlpha.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
         JSONArray images = JSON.parseArray(product.getImages());
-        cover.put("url", QiniuImageUtils.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
+        cover.put("url", QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
+        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtils.getThumbUrlWidth(image.getString("url"), 50));
-                    cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 50));
+                    cover.put("url", QiniuImageUtil.getThumbUrlWidth(image.getString("url"), 50));
+                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
         }
         productVOAlpha.setCover(cover);
 
-        productVOAlpha.setAddedTime(CommonUtils.timestampToString(product.getAddedTime()));
-        productVOAlpha.setEditedTime(CommonUtils.timestampToString(product.getEditedTime()));
+        productVOAlpha.setAddedTime(CommonUtil.timestampToString(product.getAddedTime()));
+        productVOAlpha.setEditedTime(CommonUtil.timestampToString(product.getEditedTime()));
         productVOAlpha.setStatus(product.getStatus() == 1);
 
         return productVOAlpha;
@@ -144,13 +144,13 @@ public interface ProductVOMapper {
         productVOBeta.setName(product.getName());
         productVOBeta.setNameEn(product.getNameEn());
         productVOBeta.setNameZh(product.getNameZh());
-        productVOBeta.setReleaseDate(CommonUtils.dateToString(product.getReleaseDate()));
+        productVOBeta.setReleaseDate(CommonUtil.dateToString(product.getReleaseDate()));
         productVOBeta.setCategory(ProductCategory.getProductCategory(product.getCategory()));
 
         //关联信息
-        productVOBeta.setFranchise(FranchiseUtils.getFranchise(product.getFranchise()));
+        productVOBeta.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
 
-        productVOBeta.setCover(QiniuImageUtils.getThumb70Url(product.getImages()));
+        productVOBeta.setCover(QiniuImageUtil.getThumb70Url(product.getImages()));
 
         return productVOBeta;
     }

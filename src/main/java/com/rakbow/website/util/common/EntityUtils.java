@@ -6,8 +6,8 @@ import com.rakbow.website.data.ItemDetailInfo;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.pageInfo;
-import com.rakbow.website.util.entity.FranchiseUtils;
-import com.rakbow.website.util.entity.ProductUtils;
+import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.entity.ProductUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class EntityUtils {
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
-    private VisitUtils visitUtils;
+    private VisitUtil visitUtil;
 
     public ItemDetailInfo getItemDetailInfo(Object o, int entityType) {
         ItemDetailInfo detailInfo = new ItemDetailInfo();
@@ -36,8 +36,8 @@ public class EntityUtils {
         detailInfo.setId(json.getInteger("id"));
 
         detailInfo.setDescription(json.getString("description"));
-        detailInfo.setProducts(ProductUtils.getProductList(json.getString("products")));
-        detailInfo.setFranchises(FranchiseUtils.getFranchiseList(json.getString("franchises")));
+        detailInfo.setProducts(ProductUtil.getProductList(json.getString("products")));
+        detailInfo.setFranchises(FranchiseUtil.getFranchiseList(json.getString("franchises")));
 
         detailInfo.setEntityType(entityType);
         detailInfo.setStatus(json.getIntValue("status") == 1);
@@ -68,10 +68,10 @@ public class EntityUtils {
      */
     public pageInfo getPageInfo(int entityType, int entityId, Timestamp addedTime, Timestamp editedTime) {
         return new pageInfo(
-                CommonUtils.timestampToString(addedTime),
-                CommonUtils.timestampToString(editedTime),
+                CommonUtil.timestampToString(addedTime),
+                CommonUtil.timestampToString(editedTime),
                 //自增并获取访问数
-                visitUtils.getIncVisit(entityType, entityId));
+                visitUtil.getIncVisit(entityType, entityId));
     }
 
     /**

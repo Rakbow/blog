@@ -15,7 +15,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
-import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public class DiscController {
         //获取页面数据
         model.addAttribute("pageInfo", entityUtils.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片
         model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/database/itemDetail/disc-detail";
@@ -204,7 +204,7 @@ public class DiscController {
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
             if (!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
@@ -237,7 +237,7 @@ public class DiscController {
             if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMsg = CommonImageUtils.checkUpdateImages(images);
+                String errorMsg = CommonImageUtil.checkUpdateImages(images);
                 if (!StringUtils.isBlank(errorMsg)) {
                     res.setErrorMessage(errorMsg);
                     return JSON.toJSONString(res);

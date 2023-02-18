@@ -11,7 +11,6 @@ import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.segmentImagesResult;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.vo.ImageVO;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,7 +25,7 @@ import java.util.*;
  * @Create: 2022-12-31 1:18
  * @Description:
  */
-public class CommonImageUtils {
+public class CommonImageUtil {
 
     //region ------检测------
 
@@ -148,23 +147,23 @@ public class CommonImageUtils {
         //添加缩略图
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                imageVO.setThumbUrl(QiniuImageUtils.getThumbUrl(imageVO.getUrl(), 70));
-                imageVO.setThumbUrl50(QiniuImageUtils.getThumbUrl(imageVO.getUrl(), 50));
+                imageVO.setThumbUrl(QiniuImageUtil.getThumbUrl(imageVO.getUrl(), 70));
+                imageVO.setThumbUrl50(QiniuImageUtil.getThumbUrl(imageVO.getUrl(), 50));
             }
         }
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
         if (isWidth) {
-            cover.put("url", QiniuImageUtils.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
+            cover.put("url", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
         }else {
-            cover.put("url", QiniuImageUtils.getThumbUrl(getDefaultImageUrl(entityType), coverSize));
+            cover.put("url", QiniuImageUtil.getThumbUrl(getDefaultImageUrl(entityType), coverSize));
         }
         cover.put("name", "404");
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
                 if (Integer.parseInt(imageVO.getType()) == ImageType.COVER.getIndex()) {
-                    cover.put("url", QiniuImageUtils.getThumbUrl(imageVO.getUrl(), coverSize));
+                    cover.put("url", QiniuImageUtil.getThumbUrl(imageVO.getUrl(), coverSize));
                     cover.put("name", imageVO.getNameEn());
                 }
             }
@@ -215,19 +214,19 @@ public class CommonImageUtils {
 
         //对图片封面进行处理
         JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageUtils.getThumbBackgroundUrl(defaultImageUrl, 200));
-        cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(defaultImageUrl, 50));
-        cover.put("thumbUrl70", QiniuImageUtils.getThumbUrl(defaultImageUrl, 70));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(defaultImageUrl, 50));
+        cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 200));
+        cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(defaultImageUrl, 50));
+        cover.put("thumbUrl70", QiniuImageUtil.getThumbUrl(defaultImageUrl, 70));
+        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 200));
-                    cover.put("thumbUrl", QiniuImageUtils.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 70));
-                    cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), 50));
+                    cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 200));
+                    cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getString("url"), 50));
+                    cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 70));
+                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 50));
                     cover.put("name", image.getString("nameEn"));
                 }
             }
@@ -246,15 +245,15 @@ public class CommonImageUtils {
         JSONObject cover = new JSONObject();
         JSONArray images = JSONArray.parseArray(imagesJson);
         String defaultImageUrl = getDefaultImageUrl(entityType);
-        cover.put("url", QiniuImageUtils.getThumbUrl(defaultImageUrl, size));
-        cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(defaultImageUrl, size));
+        cover.put("url", QiniuImageUtil.getThumbUrl(defaultImageUrl, size));
+        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
         cover.put("name", "404");
         if (images.size() != 0) {
             for (int i = 0; i < images.size(); i++) {
                 JSONObject image = images.getJSONObject(i);
                 if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtils.getThumbUrl(image.getString("url"), size));
-                    cover.put("blackUrl", QiniuImageUtils.getThumbBackgroundUrl(image.getString("url"), size));
+                    cover.put("url", QiniuImageUtil.getThumbUrl(image.getString("url"), size));
+                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), size));
                     cover.put("name", image.getString("nameEn"));
                 }
             }

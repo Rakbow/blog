@@ -15,7 +15,7 @@ import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.FranchiseVOMapper;
-import com.rakbow.website.util.file.CommonImageUtils;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,7 +71,7 @@ public class FranchiseController {
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtils.segmentImages(franchise.getImages(), 200, EntityType.FRANCHISE, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(franchise.getImages(), 200, EntityType.FRANCHISE, false));
         return "/database/itemDetail/franchise-detail";
     }
 
@@ -186,7 +186,7 @@ public class FranchiseController {
             JSONArray imageInfosJson = JSON.parseArray(imageInfos);
 
             //检测数据合法性
-            String errorMsg = CommonImageUtils.checkAddImages(imageInfosJson, imagesJson);
+            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
             if (!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
                 return JSON.toJSONString(res);
@@ -217,7 +217,7 @@ public class FranchiseController {
             if (action == DataActionType.UPDATE.getId()) {
 
                 //检测是否存在多张封面
-                String errorMessage = CommonImageUtils.checkUpdateImages(images);
+                String errorMessage = CommonImageUtil.checkUpdateImages(images);
                 if (!StringUtils.equals("", errorMessage)) {
                     res.setErrorMessage(errorMessage);
                     return JSON.toJSONString(res);
