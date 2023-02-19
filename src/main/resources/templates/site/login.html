@@ -11,6 +11,7 @@
     <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/topbar.css}" rel="stylesheet"/>
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/bootstrap4-dark-blue.css}" rel="stylesheet"/>
@@ -32,18 +33,6 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
 
-    <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
-    <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
-    <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
-    <script th:src="@{/js/primevue/components/divider.min.js}"></script>
-    <script th:src="@{/js/primevue/components/chip.min.js}"></script>
-    <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
-    <script th:src="@{/js/primevue/components/tag.min.js}"></script>
-
-
-
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -54,80 +43,69 @@
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 </head>
 <body>
-<div id="app">
+ <div id="app" style="margin-top: 60px">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header>
 
-    <p-toast></p-toast>
-    <form class="mt-5" method="post" th:action="@{/login}">
-        <div id="main" class="flex justify-content-center">
-            <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
-                <div class="text-center mb-5">
-                    <img src="https://img.rakbow.com/common/logo/logo.png" alt="Image" height="50" class="mb-3">
-<!--                    <div class="text-900 text-3xl font-medium mb-3">魔女的茶会入口</div>-->
-                    <div th:if="${loginUser == null}">
-                        <div class="text-900 text-3xl font-medium mb-3">&nbsp;登&nbsp;录&nbsp;后&nbsp;台&nbsp;</div>
-                        <span v-if="error != null && error != ''" class="font-medium line-height-3"
-                              style="color: red">{{error}}</span>
-                    </div>
-                    <div th:if="${loginUser != null}">
-                        <p-avatar class="mr-3" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
-                                  shape="circle"></p-avatar>
-                        <span>已登录</span>
-                    </div>
-                </div>
-                <div th:if="${loginUser == null}">
-                    <label htmlFor="username" class="block text-900 font-medium mb-2">账号</label>
-                    <p-inputtext id="username" name="username" v-model="param.username" type="text"
-                                 class="w-full mb-3"></p-inputtext>
+    <<form class="mt-5" method="post" th:action="@{/login}">
+         <div id="main" class="flex justify-content-center">
+             <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
+                 <div class="text-center mb-5">
+                     <img src="https://img.rakbow.com/common/logo/logo.png" alt="Image" height="50" class="mb-3">
+                     <!--                    <div class="text-900 text-3xl font-medium mb-3">魔女的茶会入口</div>-->
+                     <div th:if="${loginUser == null}">
+                         <div class="text-900 text-3xl font-medium mb-3">&nbsp;登&nbsp;录&nbsp;后&nbsp;台&nbsp;</div>
+                         <span v-if="error != null && error != ''" class="font-medium line-height-3"
+                               style="color: red">{{error}}</span>
+                     </div>
+                     <div th:if="${loginUser != null}">
+                         <p-avatar class="mr-3" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                                   shape="circle"></p-avatar>
+                         <span>已登录</span>
+                     </div>
+                 </div>
+                 <div th:if="${loginUser == null}">
+                     <label htmlFor="username" class="block text-900 font-medium mb-2">账号</label>
+                     <p-inputtext id="username" name="username" v-model="param.username" type="text"
+                                  class="w-full mb-3"></p-inputtext>
 
-                    <label htmlFor="password" class="block text-900 font-medium mb-2">密码</label>
-                    <p-inputText id="password" name="password" v-model="param.password" type="password"
-                                 class="w-full mb-3"></p-inputtext>
-                    <!--                <p-password id="password" v-model="param.password" type="password" :feedback="false" class="w-full mb-3"></p-password>-->
+                     <label htmlFor="password" class="block text-900 font-medium mb-2">密码</label>
+                     <p-inputText id="password" name="password" v-model="param.password" type="password"
+                                  class="w-full mb-3"></p-inputtext>
+                     <!--                <p-password id="password" v-model="param.password" type="password" :feedback="false" class="w-full mb-3"></p-password>-->
 
-                    <div class="flex align-items-center justify-content-between mb-6">
-                        <div class="flex align-items-center">
-                            <p-inputtext id="verifyCode" name="verifyCode" v-model="param.verifyCode" class="mr-1"
-                                         placeholder="验证码"></p-inputtext>
-                            <!--                        <label htmlFor="verifyCode" class="block text-900 font-medium mb-2">验证码</label>-->
-                        </div>
-                        <div class="flex align-items-center">
-                            <img th:src="@{/kaptcha}" id="kaptcha" style="width:100px;height:40px;" class="mr-2" />
-                            <p-button @click="refreshKaptcha" icon="pi pi-refresh"
-                                      class="p-button-rounded p-button-text"></p-button>
-                        </div>
-                    </div>
+                     <div class="flex align-items-center justify-content-between mb-6">
+                         <div class="flex align-items-center">
+                             <p-inputtext id="verifyCode" name="verifyCode" v-model="param.verifyCode" class="mr-1"
+                                          placeholder="验证码"></p-inputtext>
+                             <!--                        <label htmlFor="verifyCode" class="block text-900 font-medium mb-2">验证码</label>-->
+                         </div>
+                         <div class="flex align-items-center">
+                             <img th:src="@{/kaptcha}" id="kaptcha" style="width:100px;height:40px;" class="mr-2" />
+                             <p-button @click="refreshKaptcha" icon="pi pi-refresh"
+                                       class="p-button-rounded p-button-text"></p-button>
+                         </div>
+                     </div>
 
-                    <div class="flex align-items-center justify-content-between mb-6">
-                        <div class="flex align-items-center">
-                            <p-checkbox id="rememberMe" name="rememberMe" v-model="param.rememberMe" :binary="true"
-                                        class="mr-2"></p-checkbox>
-                            <label htmlFor="binary">记住我</label>
-                        </div>
-                        <!--                    <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot-->
-                        <!--                        password?</a>-->
-                    </div>
-                    <!--                    <p-button type="submit" label="登录" class="w-full" @click="login" icon="pi pi-user"></p-button>-->
-                    <p-button type="submit" label="登录" class="w-full form-control" icon="pi pi-user"></p-button>
-                </div>
-            </div>
-        </div>
+                     <div class="flex align-items-center justify-content-between mb-6">
+                         <div class="flex align-items-center">
+                             <p-checkbox id="rememberMe" name="rememberMe" v-model="param.rememberMe" :binary="true"
+                                         class="mr-2"></p-checkbox>
+                             <label htmlFor="binary">记住我</label>
+                         </div>
+                     </div>
+                     <p-button type="submit" label="登录" class="w-full form-control" icon="pi pi-user"></p-button>
+                 </div>
+             </div>
+         </div>
     </form>
 
     <!-- 尾部 -->
     <footer th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 
-<!-- 尾部 -->
-<!--	<footer th:insert="~{template/footer :: site_footer}"></footer>-->
-
 <script type="module" th:inline="javascript">
     const { createApp, onMounted, ref } = Vue;
-    const { FilterMatchMode, FilterOperator } = primevue.api;
-    const Tooltip = primevue.tooltip;
-    const { useDialog } = primevue.usedialog;
-    const { useToast } = primevue.usetoast;
     const App = {
         setup() {
             onMounted(() => {
@@ -137,13 +115,6 @@
 
                 $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
             });
-
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
 
             const error = [[${ error }]];
 
@@ -155,20 +126,6 @@
                 verifyCode: "",
                 rememberMe: false,
             });
-            const toast = useToast();
-
-            //提交登陆信息
-            const login = () => {
-                axiosPostRequest(LOGIN_URL, param.value)
-                    .then(res => {
-                        if (res.state === 0) {
-                            toast.add({ severity: 'error', summary: 'Error', detail: res.message, life: 3000 });
-                        } else {
-                            window.location.href = DOMAIN_URL;
-                        }
-                    }).catch(err => {
-                });
-            };
 
             //刷新验证码
             const refreshKaptcha = () => {
@@ -176,7 +133,7 @@
                 $("#kaptcha").attr("src", path);
             }
 
-            return { param, refreshKaptcha, login, loginUser, error, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, }
+            return { param, refreshKaptcha, loginUser, error, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, }
         },
         components: {
             "p-button": primevue.button,
@@ -199,10 +156,9 @@
         }
     };
 
-    const routes = [{ path: "/", component: App }];
+    const routes = [{ path: "/login", component: App }];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });
@@ -210,9 +166,6 @@
     const app = createApp(App);
     app.use(router);
     app.use(primevue.config.default);
-    app.directive('tooltip', Tooltip);
-    app.use(primevue.toastservice);
-    app.use(primevue.dialogservice)
         .mount("#app");
 </script>
 </body>

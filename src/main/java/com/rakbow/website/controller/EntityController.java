@@ -1,10 +1,12 @@
 package com.rakbow.website.controller;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
@@ -22,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -62,7 +66,7 @@ public class EntityController {
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ModelAndView getDatabasePage() {
         ModelAndView view = new ModelAndView();
-        view.setViewName("/database/database-search");
+        view.setViewName("/database/database-index");
         return view;
     }
 
@@ -164,6 +168,31 @@ public class EntityController {
             res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityType));
         }catch (Exception e) {
             res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //批量更改状态
+    @RequestMapping(value = "/update-items-status", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemsStatus(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            JSONArray items = JSON.parseObject(json).getJSONArray("items");
+            boolean status = JSON.parseObject(json).getBoolean("status");
+
+            List<Integer> ids = new ArrayList<>();
+
+            for (Object item : items) {
+                ids.add(((JSONObject) item).getIntValue("id"));
+            }
+
+            entityService.updateItemsStatus(entityName, ids, status?1:0);
+            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityType));
+        } catch (Exception ex) {
+            res.setErrorMessage(ex.getMessage());
         }
         return JSON.toJSONString(res);
     }

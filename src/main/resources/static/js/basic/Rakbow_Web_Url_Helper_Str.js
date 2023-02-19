@@ -3,6 +3,7 @@ const DOMAIN_URL = "http://localhost:8083";
 //region entity common
 
 const UPDATE_ITEM_STATUS = "/db/update-item-status";
+const UPDATE_ITEMS_STATUS = "/db/update-items-status";
 const LIKE_ITEM_URL = "/db/like";
 
 //endregion

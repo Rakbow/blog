@@ -11,6 +11,7 @@
     <link th:href="@{/css/global.css}" rel="stylesheet" />
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" type="text/css" />
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
+    <link th:href="@{/css/topbar.css}" rel="stylesheet"/>
 
     <!-- PrimeVue -->
     <link th:href="@{/css/primevue/bootstrap4-dark-blue.css}" rel="stylesheet"/>
@@ -38,18 +39,15 @@
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
 
-
-
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-
     <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
 </head>
 <body>
-<div id="app">
+ <div id="app" style="margin-top: 60px">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header><br>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header><br>
 
     <div class="grid grid-nogutter surface-section text-800">
         <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
@@ -63,18 +61,17 @@
             </section>
         </div>
         <div class="col-12 md:col-6 overflow-hidden">
-            <img src="https://img.rakbow.com/common/logo/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
+            <img src="/img/index_temp.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
+<!--            <img src="https://img.rakbow.com/common/logo/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">-->
         </div>
     </div>
 
-    <p-dynamicdialog></p-dynamicdialog>
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+
     const {createApp, onMounted, ref} = Vue;
-    const { useDialog } = primevue.usedialog;
-    const Tooltip = primevue.tooltip;
 
     const App = {
         setup() {
@@ -91,14 +88,7 @@
 
             const domainUrl = DOMAIN_URL;
 
-            //region 页面header
-            const dialog = useDialog();
-            const openSearchPanel = () => {
-                showSearchPanel(dialog);
-            }
-            //endregion
-
-            return { goDb, goBlog, domainUrl, dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS, }
+            return { goDb, goBlog, domainUrl}
         },
         components: {
             "p-button": primevue.button,
@@ -106,21 +96,12 @@
             "p-avatar": primevue.avatar,
             "p-inputtext": primevue.inputtext,
             "p-dropdown": primevue.dropdown,
-
-            "p-chip": primevue.chip,
-            "p-tag": primevue.tag,
-            "p-scrollpanel": primevue.scrollpanel,
-            "p-scrolltop": primevue.scrolltop,
-            "p-paginator": primevue.paginator,
-            "p-dynamicdialog": primevue.dynamicdialog,
-            "p-divider": primevue.divider,
         }
     };
 
     const routes = [{ path: "/", component: App }];
 
     const router = VueRouter.createRouter({
-        // history: VueRouter.createWebHashHistory(),
         history: VueRouter.createWebHistory(),
         routes
     });
@@ -128,8 +109,6 @@
     createApp(App)
         .use(router)
         .use(primevue.config.default)
-        .use(primevue.dialogservice)
-        .directive('tooltip', Tooltip)
         .mount("#app");
 </script>
 </body>

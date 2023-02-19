@@ -20,21 +20,24 @@ const albumDbList = {
                      current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                      responsive-layout="scroll">
             <template #header>
-                <div class="grid p-fluid">
+                <p-blockui :blocked="editBlock" class="grid">
                     <div class="col-9" v-if="editAuth > 1">
                         <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                                   @click="openNewDialog" style="width: 6em"></p-button>
                         <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
                                   :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
-                        <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                        <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                        <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                                   @click="exportCSV($event)" style="width: 8em"></p-button>
                     </div>
                     <div class="col-3">
                         <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
-                                       @update:model-value="onToggle" class=" text-end"
-                                       placeholder="可选显示列" style="width: 20em"></p-multiselect>
+                                   @update:model-value="onToggle" class=" text-end"
+                                   placeholder="可选显示列" style="width: 20em"></p-multiselect>
                     </div>
-                </div>
+                </p-blockui>
             </template>
             <template #empty>
                         <span class="emptyInfo">
@@ -55,7 +58,7 @@ const albumDbList = {
             </p-column>
             <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -544,9 +547,10 @@ const albumDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
             selectedItems: null,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             deleteDialog: false,
@@ -556,6 +560,22 @@ const albumDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.ALBUM,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -774,6 +794,7 @@ const albumDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 
@@ -794,13 +815,16 @@ const bookDbList = {
                 current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                 responsive-layout="scroll">
     <template #header>
-        <div class="grid p-fluid">
+        <p-blockui :blocked="editBlock" class="grid">
             <div class="col-9" v-if="editAuth > 1">
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                             @click="openNewDialog" style="width: 6em"></p-button>
                 <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
                             :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
-                <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                             @click="exportCSV($event)" style="width: 8em"></p-button>
             </div>
             <div class="col-3">
@@ -808,7 +832,7 @@ const bookDbList = {
                                 @update:model-value="onToggle" class=" text-end"
                                 placeholder="可选显示列" style="width: 20em"></p-multiselect>
             </div>
-        </div>
+        </p-blockui>
     </template>
     <template #empty>
         <span class="emptyInfo">
@@ -831,7 +855,7 @@ const bookDbList = {
     </p-column>
     <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -1342,9 +1366,10 @@ const bookDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
             selectedItems: null,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             deleteDialog: false,
@@ -1354,6 +1379,22 @@ const bookDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.BOOK,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -1601,6 +1642,7 @@ const bookDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 
@@ -1621,21 +1663,25 @@ const discDbList = {
                  current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                  responsive-layout="scroll">
             <template #header>
-            <div class="grid p-fluid">
+            <p-blockui :blocked="editBlock" class="grid">
                 <div class="col-9" v-if="editAuth > 1">
-                    <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
-                                @click="openNewDialog" style="width: 6em"></p-button>
-                    <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
-                                :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
-                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
-                                @click="exportCSV($event)" style="width: 8em"></p-button>
+                        <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+                                    @click="openNewDialog" style="width: 6em"></p-button>
+                        <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
+                                    :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
+                        <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                        <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
+                                    @click="exportCSV($event)" style="width: 8em"></p-button>
+                    </p-blockui>
                 </div>
                 <div class="col-3">
                     <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
                                     @update:model-value="onToggle" class=" text-end"
                                     placeholder="可选显示列" style="width: 20em"></p-multiselect>
                 </div>
-            </div>
+            </p-blockui>
         </template>
         <template #empty>
             <span class="emptyInfo">
@@ -1658,7 +1704,7 @@ const discDbList = {
         </p-column> 
         <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -2130,9 +2176,10 @@ const discDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
             selectedItems: null,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             deleteDialog: false,
@@ -2142,6 +2189,22 @@ const discDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.DISC,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -2359,6 +2422,7 @@ const discDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 
@@ -2379,13 +2443,16 @@ const gameDbList = {
                  current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                  responsive-layout="scroll">
         <template #header>
-            <div class="grid p-fluid">
+            <p-blockui :blocked="editBlock" class="grid">
                 <div class="col-9" v-if="editAuth > 1">
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                                 @click="openNewDialog" style="width: 6em"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
                                 :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
-                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                    <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                                 @click="exportCSV($event)" style="width: 8em"></p-button>
                 </div>
                 <div class="col-3">
@@ -2393,7 +2460,7 @@ const gameDbList = {
                                     @update:model-value="onToggle" class=" text-end"
                                     placeholder="可选显示列" style="width: 20em"></p-multiselect>
                 </div>
-            </div>
+            </p-blockui>
         </template>
         <template #empty>
             <span class="emptyInfo">
@@ -2416,7 +2483,7 @@ const gameDbList = {
         </p-column>
         <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -2831,9 +2898,10 @@ const gameDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
             selectedItems: null,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             deleteDialog: false,
@@ -2843,6 +2911,22 @@ const gameDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.GAME,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -3061,6 +3145,7 @@ const gameDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 
@@ -3081,13 +3166,16 @@ const merchDbList = {
                  current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                  responsive-layout="scroll">
         <template #header>
-            <div class="grid p-fluid">
+            <p-blockui :blocked="editBlock" class="grid">
                 <div class="col-9" v-if="editAuth > 1">
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                               @click="openNewDialog" style="width: 6em"></p-button>
                     <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
                               :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
-                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                    <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                               @click="exportCSV($event)" style="width: 8em"></p-button>
                 </div>
                 <div class="col-3">
@@ -3095,7 +3183,7 @@ const merchDbList = {
                                    @update:model-value="onToggle" class=" text-end"
                                    placeholder="可选显示列" style="width: 20em"></p-multiselect>
                 </div>
-            </div>
+            </p-blockui>
         </template>
         <template #empty>
                 <span class="emptyInfo">
@@ -3118,7 +3206,7 @@ const merchDbList = {
         </p-column>
         <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -3543,9 +3631,10 @@ const merchDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
             selectedItems: null,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             deleteDialog: false,
@@ -3555,6 +3644,22 @@ const merchDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.MERCH,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -3771,6 +3876,7 @@ const merchDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 
@@ -3780,6 +3886,7 @@ const productDbList = {
     <p-datatable ref="dt" :value="products" class=" p-datatable-sm" :always-show-paginator="products != 0"
                  :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                  @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                 v-model:selection="selectedItems"
                  filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
                  :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
                  :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
@@ -3788,11 +3895,14 @@ const productDbList = {
                  current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                  responsive-layout="scroll">
         <template #header>
-            <div class="grid p-fluid">
+            <p-blockui :blocked="editBlock" class="grid">
                 <div class="col-9" v-if="editAuth > 1">
                     <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                               @click="openNewDialog" style="width: 6em"></p-button>
-                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                    <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                    <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                               @click="exportCSV($event)" style="width: 8em"></p-button>
                 </div>
                 <div class="col-3">
@@ -3800,7 +3910,7 @@ const productDbList = {
                                    @update:model-value="onToggle" class=" text-end"
                                    placeholder="可选显示列" style="width: 20em"></p-multiselect>
                 </div>
-            </div>
+            </p-blockui>
         </template>
         <template #empty>
                     <span class="emptyInfo">
@@ -3813,6 +3923,7 @@ const productDbList = {
         <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
         <span>加载中，别急~</span>
     </template>
+        <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
         <p-column header="序号" field="id" exportHeader="Product Id" :sortable="true" style="flex: 0 0 5rem">
             <template #body="slotProps" v-if="editAuth > 2">
                 <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
@@ -3822,7 +3933,7 @@ const productDbList = {
         </p-column>
         <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -4028,7 +4139,7 @@ const productDbList = {
             product: {},
             products: [],
             franchiseSet: [],
-
+            selectedItems: null,
             productCategorySet: [],
             columns: [
                 {field: 'nameEn', header: '作品名称(英文)'},
@@ -4041,8 +4152,9 @@ const productDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             //endregion
@@ -4051,6 +4163,22 @@ const productDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.PRODUCT,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -4200,6 +4328,7 @@ const productDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 
@@ -4209,6 +4338,7 @@ const franchiseDbList = {
 <p-datatable ref="dt" :value="franchises" class=" p-datatable-sm" :always-show-paginator="franchises != 0"
                 :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                 @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                v-model:selection="selectedItems"
                 filter-display="row" :globalFilterFields="['name','nameZh']" dataKey="id"
                 :paginator="true" :rows="10" striped-rows :resizable-columns="true" column-resize-mode="expand"
                 :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
@@ -4217,11 +4347,14 @@ const franchiseDbList = {
                 current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                 responsive-layout="scroll">
     <template #header>
-        <div class="grid p-fluid">
+        <p-blockui :blocked="editBlock" class="grid">
             <div class="col-9" v-if="editAuth > 1">
                 <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                             @click="openNewDialog" style="width: 6em"></p-button>
-                <p-button label="导出(CSV)" icon="pi pi-external-link" class="p-button-help p-button-sm"
+                <p-selectbutton v-model="itemsStatus" :options="statusOptions" aria-labelledby="single"
+                                  :unselectable="false" @change="updateItemsStatus($event.value)"
+                                  :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
+                <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                             @click="exportCSV($event)" style="width: 8em"></p-button>
             </div>
             <div class="col-3">
@@ -4229,7 +4362,7 @@ const franchiseDbList = {
                                 @update:model-value="onToggle" class=" text-end"
                                 placeholder="可选显示列" style="width: 20em"></p-multiselect>
             </div>
-        </div>
+        </p-blockui>
     </template>
     <template #empty>
             <span class="emptyInfo">
@@ -4242,6 +4375,7 @@ const franchiseDbList = {
         <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
         <span>加载中，别急~</span>
     </template>
+    <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
     <p-column header="序号" field="id" exportHeader="Franchise Id" :sortable="true" style="flex: 0 0 5rem">
         <template #body="slotProps" v-if="editAuth > 2">
             <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
@@ -4251,7 +4385,7 @@ const franchiseDbList = {
     </p-column>
     <p-column header="状态" field="status" :sortable="true" style="flex: 0 0 5rem" v-if="editAuth > 2">
                 <template #body="{data}">
-                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)">
+                    <p-button class="p-button-link" @click="updateStatus(data.id, data.status)" :disabled="editBlock">
                         <i class="pi" :class="{'true-icon pi-circle-fill': data.status, 'false-icon pi-circle-fill': !data.status}"></i>
                     </p-button>
                 </template>
@@ -4452,8 +4586,10 @@ const franchiseDbList = {
             //region edit
             itemEdit: {},
             editBlock: false,
+            itemsStatus: null,
+            statusOptions,
+            selectedItems: null,
             selectedColumns: null,
-
             displayNewDialog: false,
             displayEditDialog: false,
             //endregion
@@ -4462,6 +4598,22 @@ const franchiseDbList = {
     },
     methods: {
         //region common
+        updateItemsStatus(value) {
+            this.editBlock = true;
+            let json = {
+                entityType: ENTITY.FRANCHISE,
+                items: this.selectedItems,
+                status: value
+            };
+            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.init();
+                    }
+                    this.editBlock = false;
+                })
+
+        },
         exportCSV() {
             getRequest(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
@@ -4610,6 +4762,7 @@ const franchiseDbList = {
         "p-dropdown": primevue.dropdown,
         "p-tristatecheckbox": primevue.tristatecheckbox,
         "p-blockui": primevue.blockui,
+        "p-selectbutton": primevue.selectbutton,
     }
 }
 

@@ -227,6 +227,15 @@ public class EntityService {
     }
 
     /**
+     * 批量更新数据库实体激活状态
+     * @param entityName,ids,status 实体表名,ids,状态
+     * @author rakbow
+     */
+    public void updateItemsStatus(String entityName, List<Integer> ids, int status) {
+        entityMapper.updateItemsStatus(entityName, ids, status);
+    }
+
+    /**
      * 点赞实体
      * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
      * @author rakbow

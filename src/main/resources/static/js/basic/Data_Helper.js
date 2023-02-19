@@ -399,3 +399,5 @@ const entityTypeValue2LabelEn = (value) => {
         }
     }
 }
+
+const statusOptions = [false, true];

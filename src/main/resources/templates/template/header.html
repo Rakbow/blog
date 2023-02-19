@@ -1,8 +1,13 @@
-<div th:fragment="site_header_tmp">
+<div th:fragment="site_header">
     <div class="layout-topbar flex align-items-center justify-content-between">
+        <div class="mobile-menu-wrapper">
+            <a href="/">
+                <img src="https://img.rakbow.com/common/logo/logo.png" alt="logo" id="mobile-logo">
+            </a>
+            <a class="mobile-search-button" id="mobile-search-button" @click="openSearchPanel"><i class="pi pi-search"></i></a>
+        </div>
         <div class="layout-topbar-left">
-            <a href="/primeflex">
-<!--                <img src="https://www.primefaces.org/primeflex/assets/images/primeflex-logo-dark.svg" alt="prime" id="topbar-logo">-->
+            <a href="/">
                 <img src="https://img.rakbow.com/common/logo/logo.png" alt="prime" id="topbar-logo">
             </a>
             <div id="search-wrapper" class="search-wrapper">
@@ -12,82 +17,113 @@
                            class="inputfield hover:border-gray-400 cursor-pointer px-5" placeholder="Search ..." readonly="">
                     <span class="right-icon absolute top-50 surface-100">⌘ K</span>
                 </span>
-                <div id="search-mask" class="search-mask">
-                    <div id="search-container" class="search-container">
-                        <span class="inputfield-container relative inline-block w-full">
-                            <i class="pi pi-search left-icon absolute top-50"></i>
-                            <input type="text" id="search-input" autocomplete="off" class="inputfield w-full pl-5" placeholder="Search ..." style="border-bottom-left-radius: 0; border-bottom-right-radius: 0px;">
-                            <div class="right-icon absolute top-50 surface-100 flex align-items-center"><div>esc</div> ⎋</div>
-                        </span>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="layout-topbar-right">
             <ul class="flex align-items-center">
-                <li><a href="/">Home</a></li>
-                <li><a href="/db/albums">Database</a></li>
-                <li><a href="/db/list/album">Database List</a></li>
-                <div th:if="${loginUser == null}">
-                    <li><a href="/login">Login</a></li>
-                </div>
-                <li>
-                    <div th:if="${loginUser != null}">
-                        <button type="button" id="scheme-button" class="button scheme-button shadow-1">
-                            <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
-                                      shape="circle"></p-avatar>
-                        </button>
-                    </div>
+                <li><a href="/db/albums">Album</a></li>
+                <li><a href="/db/books">Book</a></li>
+                <li><a href="/db/discs">DVD/BD</a></li>
+                <li><a href="/db/games">Game</a></li>
+                <li><a href="/db/merchs">Merch</a></li>
+                <li><a href="/db/list">DBList</a></li>
+                <li th:if="${loginUser == null}"><a href="/login">Login</a></li>
+                <li th:if="${loginUser != null}"><a href="/logout">Logout</a></li>
+                <li th:if="${loginUser != null}">
+                    <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                              shape="circle" id="scheme-button" class="button scheme-button shadow-1"></p-avatar>
                 </li>
             </ul>
+
+            <div class="mobile-topbar-menu-wrapper">
+                <ul class="mobile-topbar-menu clearlist" id="mobile-topbar-menu">
+                    <li><a href="/db/albums">Album</a></li>
+                    <li><a href="/db/books">Book</a></li>
+                    <li><a href="/db/discs">DVD/BD</a></li>
+                    <li><a href="/db/games">Game</a></li>
+                    <li><a href="/db/merchs">Merch</a></li>
+                    <li><a href="/db/list">DBList</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
-<div th:fragment="site_header">
-    <div th:if="${loginUser == null}">
-        <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">
-            <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
-            </template>
-            <template #end>
-                <p-button icon="pi pi-search" @click="openSearchPanel"
-                          class="p-button-rounded p-button-warning"></p-button>
-            </template>
-        </p-menubar>
-    </div>
-    <div th:if="${loginUser != null}">
-        <p-menubar :model="LOGIN_NAVBAR_ITEMS">
-            <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
-            </template>
-            <template #end>
-                <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
-                          shape="circle"></p-avatar>
-                <p-button icon="pi pi-search" @click="openSearchPanel"
-                          class="p-button-rounded p-button-warning"></p-button>
-            </template>
-        </p-menubar>
+<div th:fragment="no_search_header">
+    <div class="layout-topbar flex align-items-center justify-content-between">
+        <div class="mobile-menu-wrapper">
+            <a href="/">
+                <img src="https://img.rakbow.com/common/logo/logo.png" alt="logo" id="mobile-logo">
+            </a>
+        </div>
+        <div class="layout-topbar-left">
+            <a href="/">
+                <img src="https://img.rakbow.com/common/logo/logo.png" alt="prime" id="topbar-logo">
+            </a>
+        </div>
+        <div class="layout-topbar-right">
+            <ul class="flex align-items-center">
+                <li><a href="/db/albums">Album</a></li>
+                <li><a href="/db/books">Book</a></li>
+                <li><a href="/db/discs">DVD/BD</a></li>
+                <li><a href="/db/games">Game</a></li>
+                <li><a href="/db/merchs">Merch</a></li>
+                <li><a href="/db/list">DBList</a></li>
+                <li th:if="${loginUser == null}"><a href="/login">Login</a></li>
+                <li th:if="${loginUser != null}"><a href="/logout">Logout</a></li>
+                <li th:if="${loginUser != null}">
+                    <p-avatar th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
+                              shape="circle" id="scheme-button" class="button scheme-button shadow-1"></p-avatar>
+                </li>
+            </ul>
+
+            <div class="mobile-topbar-menu-wrapper">
+                <ul class="mobile-topbar-menu clearlist" id="mobile-topbar-menu">
+                    <li><a href="/db/albums">Album</a></li>
+                    <li><a href="/db/books">Book</a></li>
+                    <li><a href="/db/discs">DVD/BD</a></li>
+                    <li><a href="/db/games">Game</a></li>
+                    <li><a href="/db/merchs">Merch</a></li>
+                    <li><a href="/db/list">DBList</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
-<div th:fragment="database_header">
-    <div th:if="${loginUser == null}">
-        <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">
-            <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
-            </template>
-        </p-menubar>
-    </div>
-    <div th:if="${loginUser != null}">
-        <p-menubar :model="LOGIN_NAVBAR_ITEMS">
-            <template #start>
-                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">
-            </template>
-            <template #end>
-                <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"
-                          shape="circle"></p-avatar>
-            </template>
-        </p-menubar>
-    </div>
-</div>
+<!--<div th:fragment="site_header">-->
+<!--    <div th:if="${loginUser == null}">-->
+<!--        <p-menubar :model="NOT_LOGIN_NAVBAR_ITEMS">-->
+<!--            <template #start>-->
+<!--                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">-->
+<!--            </template>-->
+<!--            <template #end>-->
+<!--                <p-button icon="pi pi-search" @click="openSearchPanel"-->
+<!--                          class="p-button-rounded p-button-warning"></p-button>-->
+<!--            </template>-->
+<!--        </p-menubar>-->
+<!--    </div>-->
+<!--    <div th:if="${loginUser != null}">-->
+<!--        <p-menubar :model="LOGIN_NAVBAR_ITEMS">-->
+<!--            <template #start>-->
+<!--                <img alt="logo" src="https://img.rakbow.com/common/logo/logo.png" height="30" class="mr-2">-->
+<!--            </template>-->
+<!--            <template #end>-->
+<!--                <p-avatar class="mr-2" th:if="${loginUser != null}" th:image="${loginUser.headerUrl}" size="small"-->
+<!--                          shape="circle"></p-avatar>-->
+<!--                <p-button icon="pi pi-search" @click="openSearchPanel"-->
+<!--                          class="p-button-rounded p-button-warning"></p-button>-->
+<!--            </template>-->
+<!--        </p-menubar>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+
+
+
+
+
+
+
+

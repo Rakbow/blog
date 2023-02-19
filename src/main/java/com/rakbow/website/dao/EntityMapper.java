@@ -14,6 +14,10 @@ import java.util.List;
 @Mapper
 public interface EntityMapper {
 
+    //修改状态(单个)
     void updateItemStatus(String entityName, int entityId, int status);
+
+    //修改状态(批量)
+    void updateItemsStatus(String entityName, List<Integer> ids, int status);
 
 }

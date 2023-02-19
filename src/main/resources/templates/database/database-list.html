@@ -46,6 +46,7 @@
     <script th:src="@{/js/primevue/components/tristatecheckbox.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
     <script th:src="@{/js/primevue/components/tabmenu.min.js}"></script>
+    <script th:src="@{/js/primevue/components/selectbutton.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
@@ -64,13 +65,14 @@
 
     <!--other css -->
     <link th:href="@{/css/global.css}" rel="stylesheet"/>
+    <link th:href="@{/css/topbar.css}" rel="stylesheet"/>
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-list.css}" rel="stylesheet"/>
 </head>
 <body>
-<div id="app">
+ <div id="app" style="margin-top: 60px">
     <!-- 头部 -->
-    <header class="sticky-top mb-2" th:insert="~{template/header :: database_header}"></header>
+    <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header>
     <div id="main">
         <p-tabmenu :model="dbListTabs"></p-tabmenu>
         <router-view></router-view>

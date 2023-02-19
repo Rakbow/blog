@@ -1,5 +1,107 @@
 import {postRequest} from '/js/basic/Http_Request.js';
 
+const dbIndex = {
+    template: `
+        <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
+                <div class="mb-3 font-bold text-2xl">
+                    <span class="text-900">欢迎，来到</span>
+                    <span class="text-blue-600">Rakbow的在线数据库</span>
+                </div>
+                <div class="text-700 text-sm mb-6">
+                    还没想到这一段具体写什么
+                </div>
+                <div class="grid">
+
+                    <div class="col-12 md:col-4 mb-4 px-5">
+                        <router-link to="/db/albums">
+                                <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                                    <i class="pi iconfont icon-24gl-musicAlbum2 text-6xl text-blue-500"></i>
+                                </span>
+                        </router-link>
+                        <div class="text-900 mb-3 font-medium">音乐专辑</div>
+                        <span class="text-700 text-sm line-height-3">
+                            包含TV动画、OVA和游戏的有声出版专辑
+                        </span>
+                    </div>
+
+                    <div class="col-12 md:col-4 mb-4 px-5">
+                        <router-link to="/db/books">
+                                <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                                    <i class="pi iconfont icon-book text-6xl text-blue-500"></i>
+                                </span>
+                        </router-link>
+                        <div class="text-900 mb-3 font-medium">图书</div>
+                        <span class="text-700 text-sm line-height-3">
+                            包含TV动画、游戏衍生出的小说、漫画和设定集等纸质印刷出版物
+                        </span>
+                    </div>
+
+                    <div class="col-12 md:col-4 mb-4 px-5">
+                        <router-link to="/db/discs">
+                                <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                                    <i class="pi iconfont icon-Video-Disc text-6xl text-blue-500"></i>
+                                </span>
+                        </router-link>
+                        <div class="text-900 mb-3 font-medium">动画碟片</div>
+                        <span class="text-700 text-sm line-height-3">
+                            包含TV动画、OVA等DVD和蓝光碟片
+                        </span>
+                    </div>
+    
+                    <div class="col-12 md:col-4 mb-4 px-5">
+                        <router-link to="/db/games">
+                                <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                                    <i class="pi iconfont icon-youxi text-6xl text-blue-500"></i>
+                                </span>
+                        </router-link>
+                        <div class="text-900 mb-3 font-medium">游戏</div>
+                        <span class="text-700 text-sm line-height-3">
+                            建设中
+                        </span>
+                    </div>
+
+                    <div class="col-12 md:col-4 mb-4 px-5">
+                        <router-link to="/db/merchs">
+                                <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                                    <i class="pi iconfont icon-yinshuabaozhuang text-6xl text-blue-500"></i>
+                                </span>
+                        </router-link>
+                        <div class="text-900 mb-3 font-medium">周边</div>
+                        <span class="text-700 text-sm line-height-3">
+                            建设中
+                        </span>
+                    </div>
+
+                    <div class="col-12 md:col-4 md:mb-4 mb-0 px-3">
+                        <a href="/db/product/list">
+                                <span class="p-3 shadow-2 mb-3 inline-block surface-card" style="border-radius: 10px">
+                                    <i class="pi iconfont icon-_classification text-6xl text-blue-500"></i>
+                                </span>
+                        </a>
+                        <div class="text-900 mb-3 font-medium">产品</div>
+                        <span class="text-700 text-sm line-height-3">
+                            还没想到这一段具体写什么
+                        </span>
+                    </div>
+                </div>
+            </div>
+    `,
+    mounted() {
+
+    },
+    data() {
+        return {
+
+        }
+    },
+    methods: {
+
+    },
+    components: {
+
+    }
+};
+
 const albumIndex = {
     template: `
         <div class="grid mt-2">
@@ -2191,6 +2293,10 @@ const merchIndex = {
 };
 
 export const DATABASE_INDEX_ROUTER = [
+    {
+        path: '/db',
+        component: dbIndex
+    },
     {
         path: '/db/albums',
         component: albumIndex

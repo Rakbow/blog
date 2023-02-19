@@ -139,7 +139,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/db/music/upload-file",
                         "/db/music/delete-file-file",
 
-                        "/db/update-item-status"
+                        "/db/update-item-status",
+                        "/db/update-items-status"
                         //endregion
                 )
                 .hasAnyAuthority(
