@@ -13,56 +13,14 @@
     </sql>
 
     <update id="updateItemStatus" keyProperty="id">
-        update
-        <if test=" entityName == 'album' ">
-            album
-        </if>
-        <if test=" entityName == 'book' ">
-            book
-        </if>
-        <if test=" entityName == 'disc' ">
-            disc
-        </if>
-        <if test=" entityName == 'game' ">
-            game
-        </if>
-        <if test=" entityName == 'merch' ">
-            merch
-        </if>
-        <if test=" entityName == 'product' ">
-            product
-        </if>
-        <if test=" entityName == 'franchise' ">
-            franchise
-        </if>
+        update ${param1}
         set
         status = #{status}
         where id = #{entityId}
     </update>
 
     <update id="updateItemsStatus" keyProperty="id">
-        update
-        <if test=" entityName == 'album' ">
-            album
-        </if>
-        <if test=" entityName == 'book' ">
-            book
-        </if>
-        <if test=" entityName == 'disc' ">
-            disc
-        </if>
-        <if test=" entityName == 'game' ">
-            game
-        </if>
-        <if test=" entityName == 'merch' ">
-            merch
-        </if>
-        <if test=" entityName == 'product' ">
-            product
-        </if>
-        <if test=" entityName == 'franchise' ">
-            franchise
-        </if>
+        update ${param1}
         set
         status = #{status}
         <where>
@@ -74,6 +32,34 @@
                 </foreach>
             </if>
         </where>
+    </update>
+
+    <update id="updateItemDescription" keyProperty="id">
+        update ${param1}
+        set
+        description = #{description}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <update id="updateItemBonus" keyProperty="id">
+        update ${param1}
+        set
+        description = #{bonus}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <select id="getItemImages" resultType="string">
+        select
+        images
+        from ${param1}
+        where id = #{entityId}
+    </select>
+
+    <update id="updateItemImages" keyProperty="id">
+        update ${param1}
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{entityId}
     </update>
 
 </mapper>

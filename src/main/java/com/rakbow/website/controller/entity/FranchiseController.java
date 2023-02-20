@@ -83,6 +83,7 @@ public class FranchiseController {
     //region ------增删改查------
 
     //根据搜索条件获取专辑
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-franchises", method = RequestMethod.POST)
     @ResponseBody
     public String getFranchisesByFilterList(@RequestBody String json, HttpServletRequest request) {
@@ -105,7 +106,7 @@ public class FranchiseController {
     //新增
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addFranchise(@RequestBody String json, HttpServletRequest request) {
+    public String addFranchise(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -129,7 +130,7 @@ public class FranchiseController {
     //更新基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateFranchise(@RequestBody String json, HttpServletRequest request) {
+    public String updateFranchise(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -148,93 +149,6 @@ public class FranchiseController {
             res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateFranchiseDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-
-            res.message = franchiseService.updateFranchiseDescription(id, description);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //endregion
-
-    //region ------图片操作------
-
-    //新增图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addFranchiseImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(franchiseService.getFranchise(id).getImages());
-            //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-            //检测数据合法性
-            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            res.message = franchiseService.addFranchiseImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateFranchiseImages(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取id
-            int id = JSON.parseObject(json).getInteger("id");
-            int action = JSON.parseObject(json).getIntValue("action");
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-            }
-
-            //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMessage = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = franchiseService.updateFranchiseImages(id, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = franchiseService.deleteFranchiseImages(id, images);
-            } else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
-        } catch (Exception e) {
-            res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }

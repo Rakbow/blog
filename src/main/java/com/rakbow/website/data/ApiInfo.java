@@ -24,9 +24,9 @@ public class ApiInfo {
     public static final String GET_FILE_FAILED = "读取文件失败: ";
     public static final String FILE_FORMAT_EXCEPTION = "%s格式错误";
     public static final String FILE_FORMAT_UNSUPPORTED_EXCEPTION = "不支持的%s格式";
-    public static final String UPDATE_IMAGES_SUCCESS = "%s图片更改成功！";
-    public static final String INSERT_IMAGES_SUCCESS = "%s图片新增成功！";
-    public static final String DELETE_IMAGES_SUCCESS = "%s图片删除成功！";
+    public static final String UPDATE_IMAGES_SUCCESS = "图片更改成功！";
+    public static final String INSERT_IMAGES_SUCCESS = "图片新增成功！";
+    public static final String DELETE_IMAGES_SUCCESS = "图片删除成功！";
     public static final String COVER_COUNT_EXCEPTION = "只允许一张图片类型为封面！";
     public static final String IMAGE_NAME_EN_REPEAT_EXCEPTION = "图片英文名不能重复！";
     public static final String INPUT_TEXT_EMPTY = "输入内容为空!";

@@ -88,7 +88,7 @@ public class BookController {
     //新增图书
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addBook(@RequestBody String json, HttpServletRequest request) {
+    public String addBook(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             JSONObject param = JSON.parseObject(json);
@@ -112,7 +112,7 @@ public class BookController {
     //删除图书(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteBook(@RequestBody String json, HttpServletRequest request) {
+    public String deleteBook(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             List<Book> books = JSON.parseArray(json).toJavaList(Book.class);
@@ -130,7 +130,7 @@ public class BookController {
     //更新图书基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateBook(@RequestBody String json, HttpServletRequest request) {
+    public String updateBook(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -158,7 +158,8 @@ public class BookController {
     //region ------进阶信息增删改查------
 
     //根据搜索条件获取图书--列表界面
-     @RequestMapping(value = "/get-books", method = RequestMethod.POST)
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/get-books", method = RequestMethod.POST)
      @ResponseBody
      public String getBooksByFilterList(@RequestBody String json, HttpServletRequest request) {
          JSONObject param = JSON.parseObject(json);
@@ -184,81 +185,10 @@ public class BookController {
          return JSON.toJSONString(result);
      }
 
-    //新增图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addBookImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            Book book = bookService.getBook(id);
-
-            //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(book.getImages());
-            //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-            //检测数据合法性
-            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            res.message = bookService.addBookImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateBookImages(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取图书id
-            int id = JSON.parseObject(json).getInteger("id");
-            int action = JSON.parseObject(json).getInteger("action");
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-            }
-
-            Book book = bookService.getBook(id);
-
-            //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMsg = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.isBlank(errorMsg)) {
-                    res.setErrorMessage(errorMsg);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = bookService.updateBookImages(id, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = bookService.deleteBookImages(book, images);
-            }else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     //更新图书作者信息
     @RequestMapping(path = "/update-authors", method = RequestMethod.POST)
     @ResponseBody
-    public String updateBookAuthors(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookAuthors(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -278,7 +208,7 @@ public class BookController {
     //更新图书规格信息
     @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
     @ResponseBody
-    public String updateBookSpec(@RequestBody String json, HttpServletRequest request) {
+    public String updateBookSpec(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -289,38 +219,6 @@ public class BookController {
             }
 
             res.message = bookService.updateBookSpec(id, spec);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图书描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateBookDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-
-            res.message = bookService.updateBookDescription(id, description);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图书特典信息
-    @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateBookBonus(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String bonus = JSON.parseObject(json).get("bonus").toString();
-
-            res.message = bookService.updateBookBonus(id, bonus);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

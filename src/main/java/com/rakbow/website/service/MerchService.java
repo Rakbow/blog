@@ -122,61 +122,6 @@ public class MerchService {
 
     //endregion
 
-    //region ------图片操作------
-
-    /**
-     * 新增周边图片
-     *
-     * @param id                 周边id
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addMerchImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                               JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (id, EntityType.MERCH, images, originalImagesJson, imageInfos, user);
-
-        merchMapper.updateMerchImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
-    }
-
-    /**
-     * 更新周边图片
-     *
-     * @param id     周边id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateMerchImages(int id, String images) {
-        merchMapper.updateMerchImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
-    }
-
-    /**
-     * 删除周边图片
-     *
-     * @param merch           周边
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteMerchImages(Merch merch, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(merch.getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        merchMapper.updateMerchImages(merch.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.MERCH.getNameZh());
-    }
-
-    //endregion
-
     //region ------数据处理------
 
     /**
@@ -252,19 +197,6 @@ public class MerchService {
     public String updateMerchSpec(int id, String spec) {
         merchMapper.updateMerchSpec(id, spec, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_MERCH_SPEC_SUCCESS;
-    }
-
-    /**
-     * 更新周边描述
-     *
-     * @param id          周边id
-     * @param description 周边的描述json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateMerchDescription(int id, String description) {
-        merchMapper.updateMerchDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
     //endregion

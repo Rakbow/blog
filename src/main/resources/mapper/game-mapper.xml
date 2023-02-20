@@ -86,27 +86,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateGameImages" keyProperty="id">
-        update game
-        set
-        images = #{images}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateGameDescription" keyProperty="id">
-        update game
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateGameBonus" keyProperty="id">
-        update game
-        set
-        bonus = #{bonus}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <update id="updateStatusById" keyProperty="id">
         update game
         set

@@ -75,13 +75,6 @@
         where id = #{id}
     </delete>
 
-    <update id="updateBookImages" keyProperty="id">
-        update book
-        set
-        images = #{images}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <update id="updateBookAuthors" keyProperty="id">
         update book
         set
@@ -93,20 +86,6 @@
         update book
         set
         spec = #{spec}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateBookDescription" keyProperty="id">
-        update book
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateBookBonus" keyProperty="id">
-        update book
-        set
-        bonus = #{bonus}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

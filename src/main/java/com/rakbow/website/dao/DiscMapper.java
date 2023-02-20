@@ -41,17 +41,8 @@ public interface DiscMapper {
     //删除单个disc
     void deleteDisc(int id);
 
-    //更新图片
-    void updateDiscImages(int id, String images, Timestamp editedTime);
-
     //更新规格信息
     void updateDiscSpec(int id, String spec, Timestamp editedTime);
-
-    //更新描述信息
-    void updateDiscDescription(int id, String description, Timestamp editedTime);
-
-    //更新特典信息
-    void updateDiscBonus(int id, String bonus, Timestamp editedTime);
 
     int updateStatusById(int id);
 

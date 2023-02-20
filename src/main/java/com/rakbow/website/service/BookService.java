@@ -202,62 +202,6 @@ public class BookService {
 
     //endregion
 
-    //region ------图片操作------
-
-    /**
-     * 新增图书图片
-     *
-     * @param id                 图书id
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addBookImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (id, EntityType.BOOK, images, originalImagesJson, imageInfos, user);
-
-        bookMapper.updateBookImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-
-        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
-    }
-
-    /**
-     * 更新图书图片
-     *
-     * @param id     图书id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateBookImages(int id, String images) {
-        bookMapper.updateBookImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
-    }
-
-    /**
-     * 删除图书图片
-     *
-     * @param book           图书
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteBookImages(Book book, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(book.getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        bookMapper.updateBookImages(book.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.BOOK.getNameZh());
-    }
-
-    //endregion
-
     //region ------更新book数据------
 
     /**
@@ -284,32 +228,6 @@ public class BookService {
     public String updateBookSpec(int id, String spec) {
         bookMapper.updateBookSpec(id, spec, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_BOOK_SPEC_SUCCESS;
-    }
-
-    /**
-     * 更新图书描述
-     *
-     * @param id          图书id
-     * @param description 图书的描述json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateBookDescription(int id, String description) {
-        bookMapper.updateBookDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
-    }
-
-    /**
-     * 更新特典信息
-     *
-     * @param id    图书id
-     * @param bonus 图书的特典信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateBookBonus(int id, String bonus) {
-        bookMapper.updateBookBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion

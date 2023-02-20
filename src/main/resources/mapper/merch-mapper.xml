@@ -72,24 +72,10 @@
         where id = #{id}
     </delete>
 
-    <update id="updateMerchImages" keyProperty="id">
-        update merch
-        set
-        images = #{images}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <update id="updateMerchSpec" keyProperty="id">
         update merch
         set
         spec = #{spec}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateMerchDescription" keyProperty="id">
-        update merch
-        set
-        description = #{description}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

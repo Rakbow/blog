@@ -5,13 +5,17 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.file.CommonImageUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
@@ -197,6 +202,40 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
+    //更新专辑描述信息
+    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemsDescription(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityId = JSON.parseObject(json).getInteger("entityId");
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            String description = JSON.parseObject(json).get("description").toString();
+            res.message = entityService.updateItemDescription(entityName, entityId, description);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //更新专辑特典信息
+    @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemBonus(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityId = JSON.parseObject(json).getInteger("entityId");
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            String bonus = JSON.parseObject(json).get("bonus").toString();
+            res.message = entityService.updateItemBonus(entityName, entityId, bonus);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
     //点赞
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
@@ -227,6 +266,81 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
+    //region image
 
+    //新增图片
+    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
+    @ResponseBody
+    public String addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
+        ApiResult res = new ApiResult();
+        try {
+            if (images == null || images.length == 0) {
+                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                return JSON.toJSONString(res);
+            }
+
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+
+            //原始图片信息json数组
+            JSONArray imagesJson = entityService.getItemImages(entityName, entityId);
+            //新增图片的信息
+            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+
+            //检测数据合法性
+            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
+            if (!StringUtils.isBlank(errorMsg)) {
+                res.setErrorMessage(errorMsg);
+                return JSON.toJSONString(res);
+            }
+
+            res.message = entityService.addItemImages(entityName, entityId, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //更新图片，删除或更改信息
+    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemImages(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            //获取图书id
+            int entityType = JSON.parseObject(json).getInteger("entityType");
+            int entityId = JSON.parseObject(json).getInteger("entityId");
+            int action = JSON.parseObject(json).getInteger("action");
+
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            JSONArray images = JSON.parseObject(json).getJSONArray("images");
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+                images.getJSONObject(i).remove("thumbUrl50");
+            }
+
+            //更新图片信息
+            if (action == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMsg = CommonImageUtil.checkUpdateImages(images);
+                if (!StringUtils.isBlank(errorMsg)) {
+                    res.setErrorMessage(errorMsg);
+                    return JSON.toJSONString(res);
+                }
+
+                res.message = entityService.updateItemImages(entityName, entityId, images.toJSONString());
+            }//删除图片
+            else if (action == DataActionType.REAL_DELETE.getId()) {
+                res.message = entityService.deleteItemImages(entityName, entityId, images);
+            }else {
+                res.setErrorMessage(ApiInfo.NOT_ACTION);
+            }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //endregion
 
 }

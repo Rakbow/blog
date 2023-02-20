@@ -3,6 +3,7 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
+import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -20,17 +21,23 @@ import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
+import com.rakbow.website.entity.Book;
+import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.*;
 import com.rakbow.website.util.entity.MusicUtil;
+import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.file.QiniuImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,8 +55,6 @@ public class EntityService {
 
     //region instance
 
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
     @Autowired
     private AlbumMapper albumMapper;
     @Autowired
@@ -66,6 +71,10 @@ public class EntityService {
     private LikeUtil likeUtil;
     @Autowired
     private EntityMapper entityMapper;
+    @Autowired
+    private QiniuImageUtil qiniuImageUtil;
+    @Autowired
+    private QiniuFileUtil qiniuFileUtil;
 
     @Autowired
     private VisitUtil visitUtil;
@@ -234,6 +243,100 @@ public class EntityService {
     public void updateItemsStatus(String entityName, List<Integer> ids, int status) {
         entityMapper.updateItemsStatus(entityName, ids, status);
     }
+
+    /**
+     * 更新描述
+     *
+     * @param entityName,entityId 实体表名,实体id
+     * @param description 描述json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String updateItemDescription(String entityName, int entityId, String description) {
+        entityMapper.updateItemDescription(entityName, entityId, description, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
+    }
+
+    /**
+     * 更新特典信息
+     *
+     * @param entityName,entityId 实体表名,实体id
+     * @param bonus 描述json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String updateItemBonus(String entityName, int entityId, String bonus) {
+        entityMapper.updateItemBonus(entityName, entityId, bonus, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_BONUS_SUCCESS;
+    }
+
+    /**
+     * 根据实体类型和实体Id获取图片
+     *
+     * @param entityName,entityId 实体表名 实体id
+     * @return JSONArray
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public JSONArray getItemImages(String entityName, int entityId) {
+        return JSON.parseArray(entityMapper.getItemImages(entityName, entityId));
+    }
+
+    //region
+
+    /**
+     * 新增图片
+     *
+     * @param entityId           实体id
+     * @param images             新增图片文件数组
+     * @param originalImagesJson 数据库中现存的图片json数据
+     * @param imageInfos         新增图片json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String addItemImages(String entityName, int entityId, MultipartFile[] images, JSONArray originalImagesJson,
+                                JSONArray imageInfos, User user) throws IOException {
+
+        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
+                (entityId, entityName, images, originalImagesJson, imageInfos, user);
+
+        entityMapper.updateItemImages(entityName, entityId, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+
+        return ApiInfo.INSERT_IMAGES_SUCCESS;
+    }
+
+    /**
+     * 更新图片
+     *
+     * @param entityId     图书id
+     * @param images 需要更新的图片json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String updateItemImages(String entityName, int entityId, String images) {
+        entityMapper.updateItemImages(entityName, entityId, images, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_IMAGES_SUCCESS;
+    }
+
+    /**
+     * 删除图片
+     *
+     * @param entityName,entityId,images,deleteImages 实体表名,实体id,原图片信息,删除图片
+     * @param deleteImages 需要删除的图片jsonArray
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String deleteItemImages(String entityName, int entityId, JSONArray deleteImages) throws Exception {
+
+        JSONArray images = getItemImages(entityName, entityId);
+
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
+
+        entityMapper.updateItemImages(entityName, entityId, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.DELETE_IMAGES_SUCCESS;
+    }
+
+    //endregion
 
     /**
      * 点赞实体

@@ -89,7 +89,7 @@ public class GameController {
     //新增游戏
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addGame(@RequestBody String json, HttpServletRequest request) {
+    public String addGame(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -113,7 +113,7 @@ public class GameController {
     //删除游戏(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteGame(@RequestBody String json, HttpServletRequest request) {
+    public String deleteGame(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             List<Game> games = JSON.parseArray(json).toJavaList(Game.class);
@@ -131,7 +131,7 @@ public class GameController {
     //更新游戏基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGame(@RequestBody String json, HttpServletRequest request) {
+    public String updateGame(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -159,6 +159,7 @@ public class GameController {
     //region ------进阶信息增删改查------
 
     //根据搜索条件获取游戏--列表界面
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-games", method = RequestMethod.POST)
     @ResponseBody
     public String getGamesByFilterList(@RequestBody String json, HttpServletRequest request) {
@@ -185,81 +186,10 @@ public class GameController {
         return JSON.toJSONString(result);
     }
 
-    //新增图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addGameImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            Game game = gameService.getGame(id);
-
-            //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(game.getImages());
-            //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-            //检测数据合法性
-            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            res.message = gameService.addGameImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateGameImages(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取游戏id
-            int id = JSON.parseObject(json).getInteger("id");
-            int action = JSON.parseObject(json).getIntValue("action");
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-            }
-
-            Game game = gameService.getGame(id);
-
-            //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMsg = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.isBlank(errorMsg)) {
-                    res.setErrorMessage(errorMsg);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = gameService.updateGameImages(id, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = gameService.deleteGameImages(game, images);
-            }else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     //更新游戏作者信息
     @RequestMapping(path = "/update-organizations", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameOrganizations(@RequestBody String json, HttpServletRequest request) {
+    public String updateGameOrganizations(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -275,45 +205,13 @@ public class GameController {
     //更新游戏规格信息
     @RequestMapping(path = "/update-staffs", method = RequestMethod.POST)
     @ResponseBody
-    public String updateGameStaffs(@RequestBody String json, HttpServletRequest request) {
+    public String updateGameStaffs(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
 
             res.message = gameService.updateGameStaffs(id, staffs);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新游戏描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateGameDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-
-            res.message = gameService.updateGameDescription(id, description);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新游戏特典信息
-    @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateGameBonus(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String bonus = JSON.parseObject(json).get("bonus").toString();
-
-            res.message = gameService.updateGameBonus(id, bonus);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

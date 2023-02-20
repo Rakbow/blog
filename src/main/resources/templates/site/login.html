@@ -47,7 +47,7 @@
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header>
 
-    <<form class="mt-5" method="post" th:action="@{/login}">
+    <form class="mt-5" method="post" th:action="@{/login}">
          <div id="main" class="flex justify-content-center">
              <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
                  <div class="text-center mb-5">
@@ -163,9 +163,9 @@
         routes
     });
 
-    const app = createApp(App);
-    app.use(router);
-    app.use(primevue.config.default);
+    createApp(App)
+        .use(router)
+        .use(primevue.config.default)
         .mount("#app");
 </script>
 </body>

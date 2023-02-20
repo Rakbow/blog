@@ -277,7 +277,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateAlbumImages(int id, String images) {
         albumMapper.updateAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
+        return ApiInfo.UPDATE_IMAGES_SUCCESS;
     }
 
     /**
@@ -295,7 +295,7 @@ public class AlbumService {
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         albumMapper.updateAlbumImages(album.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.ALBUM.getNameZh());
+        return ApiInfo.DELETE_IMAGES_SUCCESS;
     }
 
     //endregion
@@ -405,32 +405,6 @@ public class AlbumService {
                 musicService.deleteMusic(music);
             }
         }
-    }
-
-    /**
-     * 更新专辑描述
-     *
-     * @param id          专辑id
-     * @param description 专辑的描述json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateAlbumDescription(int id, String description) {
-        albumMapper.updateAlbumDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
-    }
-
-    /**
-     * 更新特典信息
-     *
-     * @param id    专辑id
-     * @param bonus 专辑的特典信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateAlbumBonus(int id, String bonus) {
-        albumMapper.updateAlbumBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion

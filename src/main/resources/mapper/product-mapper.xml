@@ -66,24 +66,10 @@
         where id = #{id}
     </delete>
 
-    <update id="updateProductDescription" keyProperty="id">
-        update product
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <update id="updateProductStaffs" keyProperty="id">
         update product
         set
         staffs = #{staffs}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateProductImages" keyProperty="id">
-        update product
-        set
-        images = #{images}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

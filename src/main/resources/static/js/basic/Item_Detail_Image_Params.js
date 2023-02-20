@@ -238,12 +238,12 @@ const imageEditPanel = {
         updateImage() {
             this.editBlock = true;
             let json = {
-                id: this.detailInfo.id,
+                entityType: this.detailInfo.entityType,
+                entityId: this.detailInfo.id,
                 images: this.itemImageInfo.images,
                 action: "1"
             };
-            let updateImageUrl = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-images";
-            commonVueSubmit(this.toast, updateImageUrl, json)
+            commonVueSubmit(this.toast, UPDATE_IMAGES_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.closeImageEditDialog();
@@ -265,13 +265,12 @@ const imageEditPanel = {
         deleteImage() {
             this.editBlock = true;
             let json = {
-                id: this.detailInfo.id,
+                entityType: this.detailInfo.entityType,
+                entityId: this.detailInfo.id,
                 images: this.selectedImage,
                 action: "2"
             };
-            let updateImageUrl = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-images";
-
-            commonVueSubmit(this.toast, updateImageUrl, json)
+            commonVueSubmit(this.toast, UPDATE_IMAGES_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteImageDialog = false;
@@ -354,12 +353,11 @@ const imageEditPanel = {
             for (const img of this.imageInfos) {
                 formData.append("images", img.image);
             }
-            formData.append("id", this.detailInfo.id);
+            formData.append("entityType", this.detailInfo.entityType);
+            formData.append("entityId", this.detailInfo.id);
             formData.append("imageInfos", JSON.stringify(this.imageInfos));
 
-            let insertImageUrl = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/add-images";
-
-            formRequest(this.toast, this.editBlock, insertImageUrl, formData)
+            formRequest(this.toast, this.editBlock, INSERT_IMAGES_URL, formData)
                 .then(res => {
                     if (res.state === 1) {
                         this.closeImageEditDialog();

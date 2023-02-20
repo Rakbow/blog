@@ -44,12 +44,6 @@ public interface MerchMapper {
     //更新规格信息
     void updateMerchSpec(int id, String spec, Timestamp editedTime);
 
-    //更新图片
-    void updateMerchImages(int id, String images, Timestamp editedTime);
-
-    //更新描述信息
-    void updateMerchDescription(int id, String description, Timestamp editedTime);
-
     int updateStatusById(int id);
 
     //获取最新添加Merch, limit

@@ -56,11 +56,11 @@ const bonusEditPanel = {
         submitBonus() {
             this.editBlock = true;
             let json = {
-                id: this.detailInfo.id,
+                entityType: this.detailInfo.entityType,
+                entityId: this.detailInfo.id,
                 bonus: this.bonusMd
             };
-            let url = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-bonus";
-            commonVueSubmit(this.toast, url, json)
+            commonVueSubmit(this.toast, UPDATE_BONUS_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();
@@ -133,11 +133,11 @@ const descriptionEditPanel = {
         submitDescription() {
             this.editBlock = true;
             let json = {
-                id: this.detailInfo.id,
+                entityType: this.detailInfo.entityType,
+                entityId: this.detailInfo.id,
                 description: this.descriptionMd
             }
-            let url = "/db/" + entityTypeValue2LabelEn(this.detailInfo.entityType) + "/update-description";
-            commonVueSubmit(this.toast, url, json)
+            commonVueSubmit(this.toast, UPDATE_DESCRIPTION_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();

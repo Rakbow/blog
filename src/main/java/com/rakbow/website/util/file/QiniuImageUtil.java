@@ -36,7 +36,7 @@ public class QiniuImageUtil {
      * 通用新增图片
      *
      * @param entityId                 实体id
-     * @param entityType               实体类型
+     * @param entityName               实体表名
      * @param images             新增图片文件数组
      * @param originalImagesJson 数据库中现存的图片json数据
      * @param imageInfos         新增图片json数据
@@ -45,7 +45,7 @@ public class QiniuImageUtil {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public JSONArray commonAddImages(int entityId, EntityType entityType, MultipartFile[] images,
+    public JSONArray commonAddImages(int entityId, String entityName, MultipartFile[] images,
                                      JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
         //最终保存到数据库的json信息
         JSONArray finalImageJson = new JSONArray();
@@ -54,7 +54,7 @@ public class QiniuImageUtil {
         JSONArray addImageJson = new JSONArray();
 
         //创建存储链接前缀
-        String filePath = entityType.getNameEn().toLowerCase() + "/" + entityId + "/";
+        String filePath = entityName + "/" + entityId + "/";
 
         for (int i = 0; i < images.length; i++) {
             //上传图片

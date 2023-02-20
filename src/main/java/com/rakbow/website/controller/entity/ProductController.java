@@ -107,7 +107,7 @@ public class ProductController {
     //新增作品
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addProduct(@RequestBody String json, HttpServletRequest request) {
+    public String addProduct(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -134,7 +134,7 @@ public class ProductController {
     //更新作品基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateProduct(@RequestBody String json, HttpServletRequest request) {
+    public String updateProduct(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -163,7 +163,7 @@ public class ProductController {
     //更新游戏作者信息
     @RequestMapping(path = "/update-organizations", method = RequestMethod.POST)
     @ResponseBody
-    public String updateProductOrganizations(@RequestBody String json, HttpServletRequest request) {
+    public String updateProductOrganizations(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -176,26 +176,10 @@ public class ProductController {
         return JSON.toJSONString(res);
     }
 
-    //更新描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateProductDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-
-            res.message = productService.updateProductDescription(id, description);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     //更新staff
     @RequestMapping(path = "/update-staffs", method = RequestMethod.POST)
     @ResponseBody
-    public String updateProductStaffs(@RequestBody String json, HttpServletRequest request) {
+    public String updateProductStaffs(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -206,81 +190,6 @@ public class ProductController {
             }
 
             res.message = productService.updateProductStaffs(id, staffs);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //endregion
-
-    //region ------图片操纵-------
-
-    //新增图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addProductImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            Product product = productService.getProduct(id);
-
-            //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(product.getImages());
-            //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-            //检测数据合法性
-            String errorMessage = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.equals("", errorMessage)) {
-                res.setErrorMessage(errorMessage);
-                return JSON.toJSONString(res);
-            }
-
-            productService.addProductImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-
-            res.message = String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新专辑图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateProductImages(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取id
-            int id = JSON.parseObject(json).getInteger("id");
-            int action = JSON.parseObject(json).getIntValue("action");
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-            }
-
-            //更改图片
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMsg = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.isBlank(errorMsg)) {
-                    res.setErrorMessage(errorMsg);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = productService.updateProductImages(id, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = productService.deleteProductImages(id, images);
-            }else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -307,6 +216,7 @@ public class ProductController {
         return JSON.toJSONString(res);
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(path = "/get-products", method = RequestMethod.POST)
     @ResponseBody
     public String getProductsByFilter(@RequestBody String json, HttpServletRequest request){

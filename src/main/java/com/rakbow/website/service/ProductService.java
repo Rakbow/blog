@@ -195,19 +195,6 @@ public class ProductService {
     }
 
     /**
-     * 更新描述信息
-     *
-     * @param id          作品id
-     * @param description 描述信息
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateProductDescription(int id, String description) {
-        productMapper.updateProductDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
-    }
-
-    /**
      * 更新Staff
      *
      * @param id     作品id
@@ -218,53 +205,6 @@ public class ProductService {
     public String updateProductStaffs(int id, String staffs) {
         productMapper.updateProductStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
-    }
-
-    /**
-     * 新增图片
-     *
-     * @param id     专辑id
-     * @param images 图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addProductImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (id, EntityType.PRODUCT, images, originalImagesJson, imageInfos, user);
-
-        productMapper.updateProductImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-    }
-
-    /**
-     * 更新图片
-     *
-     * @param id     id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateProductImages(int id, String images) {
-        productMapper.updateProductImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
-    }
-
-    /**
-     * 删除图片
-     *
-     * @param id           专辑id
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteProductImages(int id, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getProduct(id).getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        productMapper.updateProductImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 
     /**

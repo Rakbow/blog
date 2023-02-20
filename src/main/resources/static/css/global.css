@@ -2,6 +2,12 @@ html {
     font-size: 14px;
 }
 
+.like-tooltip .p-tooltip-text {
+    text-align: center;
+    width: 3.5rem;
+    font-size: 9px;
+}
+
 body {
     /*background-color: var(--surface-ground);*/
     background-color: #001122;

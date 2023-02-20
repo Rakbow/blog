@@ -76,7 +76,7 @@ public class MusicController {
     //更新Music
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateMusic(@RequestBody  String json, HttpServletRequest request) {
+    public String updateMusic(@RequestBody  String json) {
         ApiResult res = new ApiResult();
         try{
             JSONObject param = JSON.parseObject(json);
@@ -102,7 +102,7 @@ public class MusicController {
     //更新music创作人员信息
     @RequestMapping(path = "/update-artists", method = RequestMethod.POST)
     @ResponseBody
-    public String updateMusicArtists(@RequestBody String json, HttpServletRequest request) {
+    public String updateMusicArtists(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -118,29 +118,13 @@ public class MusicController {
     //更新歌词文本
     @RequestMapping(path = "/update-lyrics-text", method = RequestMethod.POST)
     @ResponseBody
-    public String updateMusicLyricsText(@RequestBody String json, HttpServletRequest request) {
+    public String updateMusicLyricsText(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String lyricsText = JSON.parseObject(json).get("lyricsText").toString();
 
             res.message = musicService.updateMusicLyricsText(id, lyricsText);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateMusicDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-
-            res.message = musicService.updateMusicDescription(id, description);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -176,7 +160,7 @@ public class MusicController {
     //删除音频文件
     @RequestMapping(path = "/delete-file", method = RequestMethod.POST)
     @ResponseBody
-    public String deleteMusicFile(@RequestBody String json, HttpServletRequest request) {
+    public String deleteMusicFile(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");

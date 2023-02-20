@@ -102,20 +102,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateAlbumDescription" keyProperty="id">
-        update album
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateAlbumBonus" keyProperty="id">
-        update album
-        set
-        bonus = #{bonus}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <select id="getAlbumOrderByAddedTime" resultType="Album">
         select
         <include refid="selectFields"></include>

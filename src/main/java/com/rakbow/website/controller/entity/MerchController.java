@@ -88,7 +88,7 @@ public class MerchController {
     //新增周边
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addMerch(@RequestBody String json, HttpServletRequest request) {
+    public String addMerch(@RequestBody String json) {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
@@ -112,7 +112,7 @@ public class MerchController {
     //删除周边(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteMerch(@RequestBody String json, HttpServletRequest request) {
+    public String deleteMerch(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             List<Merch> merchs = JSON.parseArray(json).toJavaList(Merch.class);
@@ -130,7 +130,7 @@ public class MerchController {
     //更新周边基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateMerch(@RequestBody String json, HttpServletRequest request) {
+    public String updateMerch(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             JSONObject param = JSON.parseObject(json);
@@ -158,6 +158,7 @@ public class MerchController {
     //region ------进阶信息增删改查------
 
     //根据搜索条件获取周边--列表界面
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-merchs", method = RequestMethod.POST)
     @ResponseBody
     public String getMerchsByFilterList(@RequestBody String json, HttpServletRequest request) {
@@ -184,103 +185,16 @@ public class MerchController {
         return JSON.toJSONString(result);
     }
 
-    //新增图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addMerchImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            Merch merch = merchService.getMerch(id);
-
-            //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(merch.getImages());
-            //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-            //检测数据合法性
-            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            res.message = merchService.addMerchImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateMerchImages(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取周边id
-            int id = JSON.parseObject(json).getInteger("id");
-            int action = JSON.parseObject(json).getIntValue("action");
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-            }
-
-            Merch merch = merchService.getMerch(id);
-
-            //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMsg = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.isBlank(errorMsg)) {
-                    res.setErrorMessage(errorMsg);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = merchService.updateMerchImages(id, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = merchService.deleteMerchImages(merch, images);
-            }else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     //更新周边规格信息
     @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
     @ResponseBody
-    public String updateMerchSpec(@RequestBody String json, HttpServletRequest request) {
+    public String updateMerchSpec(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
             String spec = JSON.parseObject(json).getJSONArray("spec").toString();
 
             res.message = merchService.updateMerchSpec(id, spec);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新周边描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateMerchDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-
-            res.message = merchService.updateMerchDescription(id, description);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

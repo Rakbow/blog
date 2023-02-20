@@ -101,19 +101,6 @@ public class FranchiseService {
     }
 
     /**
-     * 更新描述
-     *
-     * @param id id
-     * @param description 描述json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateFranchiseDescription(int id, String description) {
-        franchiseMapper.updateFranchiseDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
-    }
-
-    /**
      * 更新父级系列
      *
      * @param parentFranchiseId,childFranchiseIds 父系列id，子系列ids
@@ -209,61 +196,6 @@ public class FranchiseService {
         updateParentFranchise(franchiseJson.getIntValue("id"), childFranchiseIds);
 
         return franchiseJson;
-    }
-
-    //endregion
-
-    //region ------图片操作------
-
-    /**
-     * 新增图片
-     *
-     * @param id                 id
-     * @param images             图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addFranchiseImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (id, EntityType.FRANCHISE, images, originalImagesJson, imageInfos, user);
-
-        franchiseMapper.updateFranchiseImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
-    }
-
-    /**
-     * 更新图片
-     *
-     * @param id     id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateFranchiseImages(int id, String images) {
-        franchiseMapper.updateFranchiseImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
-    }
-
-    /**
-     * 删除图片
-     *
-     * @param id           id
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteFranchiseImages(int id, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(getFranchise(id).getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        franchiseMapper.updateFranchiseImages(id, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.FRANCHISE.getNameZh());
     }
 
     //endregion

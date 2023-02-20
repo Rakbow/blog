@@ -43,20 +43,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateFranchiseDescription" keyProperty="id">
-        update franchise
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateFranchiseImages" keyProperty="id">
-        update franchise
-        set
-        images = #{images}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <select id="getFranchisesByFilter" resultType="Franchise">
         select
         <include refid="selectFields"></include>

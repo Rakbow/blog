@@ -5,6 +5,10 @@ const DOMAIN_URL = "http://localhost:8083";
 const UPDATE_ITEM_STATUS = "/db/update-item-status";
 const UPDATE_ITEMS_STATUS = "/db/update-items-status";
 const LIKE_ITEM_URL = "/db/like";
+const UPDATE_DESCRIPTION_URL = "/db/update-description";
+const UPDATE_BONUS_URL = "/db/update-bonus";
+const INSERT_IMAGES_URL = "/db/add-images";
+const UPDATE_IMAGES_URL = "/db/update-images";
 
 //endregion
 
@@ -51,8 +55,6 @@ const UPDATE_ALBUM_ARTISTS_URL = "/db/album/update-artists";
 const UPDATE_ALBUM_TRACK_INFO_URL = "/db/album/update-trackInfo";
 const INSERT_ALBUM_IMAGES_URL = "/db/album/add-images";
 const UPDATE_ALBUM_IMAGES_URL = "/db/album/update-images";
-const UPDATE_ALBUM_DESCRIPTION_URL = "/db/album/update-description";
-const UPDATE_ALBUM_BONUS_URL = "/db/album/update-bonus";
 //endregion
 
 //region music
@@ -62,7 +64,6 @@ const DELETE_MUSIC_FILE_URL = "/db/music/delete-file";
 const UPDATE_MUSIC_URL = "/db/music/update";
 const UPDATE_MUSIC_ARTISTS_URL = "/db/music/update-artists";
 const UPDATE_MUSIC_LYRICS_TEXT_URL = "/db/music/update-lyrics-text";
-const UPDATE_MUSIC_DESCRIPTION_URL = "/db/music/update-description";
 //endregion
 
 //region user
@@ -78,10 +79,7 @@ const GET_PRODUCT_SET_URL = "/db/product/get-product-set";
 const ADD_PRODUCT_URL = "/db/product/add";
 const UPDATE_PRODUCT_URL = "/db/product/update";
 const UPDATE_PRODUCT_ORGANIZATIONS_URL = "/db/product/update-organizations";
-const UPDATE_PRODUCT_DESCRIPTION_URL = "/db/product/update-description";
 const UPDATE_PRODUCT_STAFF_URL = "/db/product/update-staffs";
-const INSERT_PRODUCT_IMAGES_URL = "/db/product/add-images";
-const UPDATE_PRODUCT_IMAGES_URL = "/db/product/update-images";
 //endregion
 
 //region disc
@@ -91,11 +89,7 @@ const UPDATE_DISC_URL = "/db/disc/update";
 const INSERT_DISC_URL = "/db/disc/add";
 const GET_DISCS_URL = "/db/disc/get-discs";
 
-const INSERT_DISC_IMAGES_URL = "/db/disc/add-images";
-const UPDATE_DISC_IMAGES_URL = "/db/disc/update-images";
 const UPDATE_DISC_SPEC_URL = "/db/disc/update-spec";
-const UPDATE_DISC_DESCRIPTION_URL = "/db/disc/update-description";
-const UPDATE_DISC_BONUS_URL = "/db/disc/update-bonus";
 //endregion
 
 //region book
@@ -107,12 +101,8 @@ const GET_BOOKS_URL = "/db/book/get-books";
 
 const BOOK_ISBN_INTERCONVERT = "/db/book/isbn-interconvert";
 
-const INSERT_BOOK_IMAGES_URL = "/db/book/add-images";
-const UPDATE_BOOK_IMAGES_URL = "/db/book/update-images";
 const UPDATE_BOOK_AUTHORS_URL = "/db/book/update-authors";
 const UPDATE_BOOK_SPEC_URL = "/db/book/update-spec";
-const UPDATE_BOOK_DESCRIPTION_URL = "/db/book/update-description";
-const UPDATE_BOOK_BONUS_URL = "/db/book/update-bonus";
 //endregion
 
 //region merch
@@ -122,10 +112,7 @@ const UPDATE_MERCH_URL = "/db/merch/update";
 const INSERT_MERCH_URL = "/db/merch/add";
 const GET_MERCHS_URL = "/db/merch/get-merchs";
 
-const INSERT_MERCH_IMAGES_URL = "/db/merch/add-images";
-const UPDATE_MERCH_IMAGES_URL = "/db/merch/update-images";
 const UPDATE_MERCH_SPEC_URL = "/db/merch/update-spec";
-const UPDATE_MERCH_DESCRIPTION_URL = "/db/merch/update-description";
 //endregion
 
 //region game
@@ -135,12 +122,8 @@ const UPDATE_GAME_URL = "/db/game/update";
 const INSERT_GAME_URL = "/db/game/add";
 const GET_GAMES_URL = "/db/game/get-games";
 
-const INSERT_GAME_IMAGES_URL = "/db/game/add-images";
-const UPDATE_GAME_IMAGES_URL = "/db/game/update-images";
 const UPDATE_GAME_ORGANIZATIONS_URL = "/db/game/update-organizations";
 const UPDATE_GAME_STAFFS_URL = "/db/game/update-staffs";
-const UPDATE_GAME_DESCRIPTION_URL = "/db/game/update-description";
-const UPDATE_GAME_BONUS_URL = "/db/game/update-bonus";
 //endregion
 
 //region franchise
@@ -150,9 +133,6 @@ const UPDATE_FRANCHISE_URL = "/db/franchise/update";
 const ADD_FRANCHISE_URL = "/db/franchise/add";
 const GET_FRANCHISES_URL = "/db/franchise/get-franchises";
 
-const INSERT_FRANCHISE_IMAGES_URL = "/db/franchise/add-images";
-const UPDATE_FRANCHISE_IMAGES_URL = "/db/franchise/update-images";
-const UPDATE_FRANCHISE_DESCRIPTION_URL = "/db/franchise/update-description";
 
 //endregion
 

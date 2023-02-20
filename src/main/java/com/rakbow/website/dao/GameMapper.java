@@ -45,15 +45,6 @@ public interface GameMapper {
     //更新开发制作人员
     int updateGameStaffs(int id, String staffs, Timestamp editedTime);
 
-    //更新图片
-    int updateGameImages(int id, String images, Timestamp editedTime);
-
-    //更新描述信息
-    int updateGameDescription(int id, String description, Timestamp editedTime);
-
-    //更新特典信息
-    int updateGameBonus(int id, String bonus, Timestamp editedTime);
-
     int updateStatusById(int id);
 
     //获取最新添加Game, limit

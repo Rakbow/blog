@@ -58,12 +58,6 @@ public interface AlbumMapper {
     //更新音轨信息
     void updateAlbumTrackInfo(int id, String trackInfo, Timestamp editedTime);
 
-    //更新描述信息
-    void updateAlbumDescription(int id, String description, Timestamp editedTime);
-
-    //更新特典信息
-    void updateAlbumBonus(int id, String bonus, Timestamp editedTime);
-
     //获取最新添加专辑, limit
     List<Album> getAlbumOrderByAddedTime(int limit);
 }

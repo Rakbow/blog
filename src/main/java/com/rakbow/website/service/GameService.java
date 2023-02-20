@@ -189,61 +189,6 @@ public class GameService {
 
     //endregion
 
-    //region ------图片操作------
-
-    /**
-     * 新增游戏图片
-     *
-     * @param id                 游戏id
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addGameImages(int id, MultipartFile[] images, JSONArray originalImagesJson,
-                              JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (id, EntityType.GAME, images, originalImagesJson, imageInfos, user);
-
-        gameMapper.updateGameImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-
-        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
-    }
-
-    /**
-     * 更新游戏图片
-     *
-     * @param id     游戏id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateGameImages(int id, String images) {
-        gameMapper.updateGameImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
-    }
-
-    /**
-     * 删除游戏图片
-     *
-     * @param game           游戏
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteGameImages(Game game, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(game.getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        gameMapper.updateGameImages(game.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.GAME.getNameZh());
-    }
-    //endregion
-
     //region ------更新game数据------
 
     /**
@@ -270,32 +215,6 @@ public class GameService {
     public String updateGameStaffs(int id, String staffs) {
         gameMapper.updateGameStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
-    }
-
-    /**
-     * 更新游戏描述
-     *
-     * @param id          游戏id
-     * @param description 游戏的描述json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateGameDescription(int id, String description) {
-        gameMapper.updateGameDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
-    }
-
-    /**
-     * 更新特典信息
-     *
-     * @param id    游戏id
-     * @param bonus 游戏的特典信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateGameBonus(int id, String bonus) {
-        gameMapper.updateGameBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion

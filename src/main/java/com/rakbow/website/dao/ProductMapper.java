@@ -32,14 +32,8 @@ public interface ProductMapper {
     //删除产品
     int deleteProduct(int id);
 
-    //更新描述
-    void updateProductDescription(int id, String description, Timestamp editedTime);
-
     //更新staff
     void updateProductStaffs(int id, String staffs, Timestamp editedTime);
-
-    //更新图片
-    void updateProductImages(int id, String images, Timestamp editedTime);
 
     //更新组织
     void updateProductOrganizations(int id, String organizations, Timestamp editedTime);

@@ -190,60 +190,6 @@ public class DiscService {
 
     //endregion
 
-    //region ------图片操作------
-
-    /**
-     * 新增碟片图片
-     *
-     * @param id                 碟片id
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addDiscImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (id, EntityType.DISC, images, originalImagesJson, imageInfos, user);
-
-        discMapper.updateDiscImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.INSERT_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
-    }
-
-    /**
-     * 更新碟片图片
-     *
-     * @param id     碟片id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateDiscImages(int id, String images) {
-        discMapper.updateDiscImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.UPDATE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
-    }
-
-    /**
-     * 删除碟片图片
-     *
-     * @param disc           碟片
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteDiscImages(Disc disc, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(disc.getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        discMapper.updateDiscImages(disc.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return String.format(ApiInfo.DELETE_IMAGES_SUCCESS, EntityType.DISC.getNameZh());
-    }
-
-    //endregion
-
     //region ------更新数据------
 
     /**
@@ -257,31 +203,6 @@ public class DiscService {
     public String updateDiscSpec(int id, String spec) {
         discMapper.updateDiscSpec(id, spec, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_DISC_SPEC_SUCCESS;
-    }
-
-    /**
-     * 更新碟片描述
-     *
-     * @param id          碟片id
-     * @param description 碟片的描述json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateDiscDescription(int id, String description) {
-        discMapper.updateDiscDescription(id, description, new Timestamp(System.currentTimeMillis()));
-    }
-
-    /**
-     * 更新特典信息
-     *
-     * @param id    碟片id
-     * @param bonus 碟片的特典信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateDiscBonus(int id, String bonus) {
-        discMapper.updateDiscBonus(id, bonus, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
     //endregion

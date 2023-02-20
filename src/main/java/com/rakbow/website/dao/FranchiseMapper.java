@@ -37,12 +37,6 @@ public interface FranchiseMapper {
     //获取所有系列
     List<Franchise> getAll();
 
-    //更新描述信息
-    void updateFranchiseDescription(int id, String description, Timestamp editedTime);
-
-    //更新图片
-    void updateFranchiseImages(int id, String images, Timestamp editedTime);
-
     void updateMetaInfo(int id, String metaInfo);
 
     //根据父系列id获取子系列

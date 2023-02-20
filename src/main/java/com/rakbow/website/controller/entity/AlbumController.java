@@ -93,6 +93,7 @@ public class AlbumController {
     //region ------增删改查------
 
     //根据搜索条件获取专辑
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
     public String getAlbumsByFilter(@RequestBody String json, HttpServletRequest request) {
@@ -123,7 +124,7 @@ public class AlbumController {
     //新增专辑
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addAlbum(@RequestBody String json, HttpServletRequest request) {
+    public String addAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             JSONObject param = JSON.parseObject(json);
@@ -151,7 +152,7 @@ public class AlbumController {
     //删除专辑(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteAlbum(@RequestBody String json, HttpServletRequest request) {
+    public String deleteAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             List<Album> albums = JSON.parseArray(json).toJavaList(Album.class);
@@ -177,7 +178,7 @@ public class AlbumController {
     //更新专辑基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbum(@RequestBody String json, HttpServletRequest request) {
+    public String updateAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             JSONObject param = JSON.parseObject(json);
@@ -206,7 +207,7 @@ public class AlbumController {
     //新增专辑图片
     @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
-    public String addAlbumImages(int id, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
+    public String addAlbumImages(int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (images == null || images.length == 0) {
@@ -214,7 +215,7 @@ public class AlbumController {
                 return JSON.toJSONString(res);
             }
 
-            Album album = albumService.getAlbum(id);
+            Album album = albumService.getAlbum(entityId);
 
             //原始图片信息json数组
             JSONArray imagesJson = JSON.parseArray(album.getImages());
@@ -228,7 +229,7 @@ public class AlbumController {
                 return JSON.toJSONString(res);
             }
 
-            albumService.addAlbumImages(id, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+            albumService.addAlbumImages(entityId, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -238,15 +239,15 @@ public class AlbumController {
     //更新专辑图片，删除或更改信息
     @RequestMapping(path = "/update-images", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbumImages(@RequestBody String json, HttpServletRequest request) {
+    public String updateAlbumImages(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             //获取专辑id
-            int id = JSON.parseObject(json).getInteger("id");
+            int entityId = JSON.parseObject(json).getInteger("id");
             JSONArray images = JSON.parseObject(json).getJSONArray("images");
             int action = JSON.parseObject(json).getInteger("action");
 
-            Album album = albumService.getAlbum(id);
+            Album album = albumService.getAlbum(entityId);
 
             for (int i = 0; i < images.size(); i++) {
                 images.getJSONObject(i).remove("thumbUrl");
@@ -263,7 +264,7 @@ public class AlbumController {
                     return JSON.toJSONString(res);
                 }
 
-                res.message = albumService.updateAlbumImages(id, images.toJSONString());
+                res.message = albumService.updateAlbumImages(entityId, images.toJSONString());
             }//删除图片
             else if (action == DataActionType.REAL_DELETE.getId()) {
                 res.message = albumService.deleteAlbumImages(album, images);
@@ -291,7 +292,7 @@ public class AlbumController {
     //更新专辑音乐创作相关Artists
     @RequestMapping(path = "/update-artists", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbumArtists(@RequestBody String json, HttpServletRequest request) {
+    public String updateAlbumArtists(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -310,7 +311,7 @@ public class AlbumController {
     //更新专辑音轨信息TrackInfo
     @RequestMapping(path = "/update-trackInfo", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbumTrackInfo(@RequestBody String json, HttpServletRequest request) {
+    public String updateAlbumTrackInfo(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
             int id = JSON.parseObject(json).getInteger("id");
@@ -331,36 +332,6 @@ public class AlbumController {
             musicService.updateMusicCoverUrl(album.getId(), CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages())));
 
             res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新专辑描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateAlbumDescription(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String description = JSON.parseObject(json).get("description").toString();
-            res.message = albumService.updateAlbumDescription(id, description);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新专辑特典信息
-    @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateAlbumBonus(@RequestBody String json, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String bonus = JSON.parseObject(json).get("bonus").toString();
-            res.message = albumService.updateAlbumBonus(id, bonus);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

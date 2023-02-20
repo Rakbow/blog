@@ -115,13 +115,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateMusicDescription" keyProperty="id">
-        update music
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <update id="updateMusicFiles" keyProperty="id">
         update music
         set

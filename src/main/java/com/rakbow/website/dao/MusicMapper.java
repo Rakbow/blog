@@ -41,8 +41,6 @@ public interface MusicMapper {
 
     void updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
 
-    void updateMusicDescription(int id, String description, Timestamp editedTime);
-
     void updateMusicFiles(int id, String files, Timestamp editedTime);
 
 }

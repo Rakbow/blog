@@ -73,31 +73,10 @@
         where id = #{id}
     </delete>
 
-    <update id="updateDiscImages" keyProperty="id">
-        update disc
-        set
-        images = #{images}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <update id="updateDiscSpec" keyProperty="id">
         update disc
         set
         spec = #{spec}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateDiscDescription" keyProperty="id">
-        update disc
-        set
-        description = #{description}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateDiscBonus" keyProperty="id">
-        update disc
-        set
-        bonus = #{bonus}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

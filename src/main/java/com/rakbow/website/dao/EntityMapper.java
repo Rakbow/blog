@@ -3,6 +3,7 @@ package com.rakbow.website.dao;
 import com.rakbow.website.entity.EntityInfo;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -19,5 +20,16 @@ public interface EntityMapper {
 
     //修改状态(批量)
     void updateItemsStatus(String entityName, List<Integer> ids, int status);
+
+    //通用更新描述
+    void updateItemDescription(String entityName, int entityId, String description, Timestamp editedTime);
+
+    //通用更新特典信息
+    void updateItemBonus(String entityName, int entityId, String bonus, Timestamp editedTime);
+
+    String getItemImages(String entityName, int entityId);
+
+    //更新图片
+    void updateItemImages(String entityName, int entityId, String images, Timestamp editedTime);
 
 }

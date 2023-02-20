@@ -319,18 +319,6 @@ public class MusicService {
     }
 
     /**
-     * 更新描述信息
-     * @author rakbow
-     * @param id 音乐id
-     * @param description 描述信息
-     * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateMusicDescription(int id, String description) {
-        musicMapper.updateMusicDescription(id, description, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
-    }
-
-    /**
      * 更新封面url
      * @author rakbow
      * @param albumId 专辑id

@@ -290,10 +290,10 @@
 
 <div th:fragment="item_statistic_info">
     <div class="item_statistic_info">
-        <p-button class="p-button-link" @click="like">
+        <p-button class="p-button-link" @click="like" v-tooltip.bottom="{value:'点赞', class: 'like-tooltip'}">
             <i class="pi" :class="{'pi-thumbs-up-fill': pageInfo.liked, 'pi-thumbs-up': !pageInfo.liked}"></i>
         </p-button>
-        {{pageInfo.likeCount}}
+        <span class="ml-1 mr-2">{{pageInfo.likeCount}}</span>
     </div>
 </div>
 
