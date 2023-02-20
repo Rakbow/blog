@@ -132,7 +132,7 @@ public interface BookVOMapper {
         bookVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(book.getFranchises()));
 
         //将图片分割处理
-        bookVOAlpha.setCover(CommonImageUtil.generateCover(book.getImages(), EntityType.BOOK));
+        bookVOAlpha.setCover(CommonImageUtil.generateBookCover(book.getImages(), EntityType.BOOK));
 
         //审计字段
         bookVOAlpha.setAddedTime(CommonUtil.timestampToString(book.getAddedTime()));

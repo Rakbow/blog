@@ -69,7 +69,7 @@ public class MerchController {
         }
         model.addAttribute("merch", merchVOMapper.merch2VO(merch));
         //前端选项数据
-        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.PRODUCT.getId()));
+        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.MERCH.getId()));
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(merch, EntityType.MERCH.getId()));
         //获取页面数据

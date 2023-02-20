@@ -235,6 +235,41 @@ public class CommonImageUtil {
     }
 
     /**
+     * 获取各尺寸封面图片(标准书本)
+     *
+     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @return JSONObject
+     * @author rakbow
+     */
+    public static JSONObject generateBookCover(String imagesJson, EntityType entityType) {
+
+        JSONArray images = JSONArray.parseArray(imagesJson);
+
+        String defaultImageUrl = getDefaultImageUrl(entityType);
+
+        //对图片封面进行处理
+        JSONObject cover = new JSONObject();
+        cover.put("url", QiniuImageUtil.getBookThumbBackgroundUrl(defaultImageUrl, 180, 254.558));
+        cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(defaultImageUrl, 50));
+        cover.put("thumbUrl70", QiniuImageUtil.getThumbUrl(defaultImageUrl, 70));
+        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 50));
+        cover.put("name", "404");
+        if (images.size() != 0) {
+            for (int i = 0; i < images.size(); i++) {
+                JSONObject image = images.getJSONObject(i);
+                if (Objects.equals(image.getString("type"), "1")) {
+                    cover.put("url", QiniuImageUtil.getBookThumbBackgroundUrl(image.getString("url"), 180, 254.558));
+                    cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getString("url"), 50));
+                    cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 70));
+                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 50));
+                    cover.put("name", image.getString("nameEn"));
+                }
+            }
+        }
+        return cover;
+    }
+
+    /**
      * 获取封面图片缩略图
      *
      * @param imagesJson 数据库原图片合集的JSON字符串

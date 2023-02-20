@@ -312,7 +312,8 @@ b.rbot {
 }
 
 .p-tooltip-text {
-    width: 16rem;
+    font-size: 11px;
+    width: 13.5rem;
 }
 
 .edit-image {

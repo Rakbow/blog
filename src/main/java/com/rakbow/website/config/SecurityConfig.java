@@ -56,42 +56,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .antMatchers(
                         //region 需要初级编辑权限
+                        "/db/update-description",
+                        "/db/update-bonus",
+
                         "/db/album/add",
                         "/db/album/update",
                         "/db/album/update-artists",
-                        "/db/album/update-description",
-                        "/db/album/update-bonus",
 
                         "/db/book/add",
                         "/db/book/update",
                         "/db/book/update-authors",
-                        "/db/book/update-description",
                         "/db/book/update-spec",
-                        "/db/book/update-bonus",
                         "/db/book/get-isbn",
 
                         "/db/disc/add",
                         "/db/disc/update",
                         "/db/disc/update-spec",
-                        "/db/disc/update-description",
-                        "/db/disc/update-bonus",
 
                         "/db/game/add",
                         "/db/game/update",
                         "/db/game/update-organizations",
                         "/db/game/update-staffs",
-                        "/db/game/update-description",
-                        "/db/game/update-bonus",
 
                         "/db/merch/add",
                         "/db/merch/update",
                         "/db/merch/update-spec",
-                        "/db/merch/update-description",
 
                         "/db/music/update",
                         "/db/music/update-artists",
-                        "/db/music/update-lyrics-text",
-                        "/db/music/update-description"
+                        "/db/music/update-lyrics-text"
                         //endregion
                 )
                 .hasAnyAuthority(
@@ -101,40 +94,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         )
                 .antMatchers(
                         //region 需要高级编辑权限 如文件操作,更改上传文件(图片,音频)状态,删除文件等
+                        "/db/add-images",
+                        "/db/update-images",
+
                         "/db/album/add-images",
                         "/db/album/update-images",
                         "/db/album/update-trackInfo",
                         "/db/album/delete",
 
                         "/db/book/delete",
-                        "/db/book/add-images",
-                        "/db/book/update-images",
 
                         "/db/disc/delete",
-                        "/db/disc/add-images",
-                        "/db/disc/update-images",
 
                         "/db/game/delete",
-                        "/db/game/add-images",
-                        "/db/game/update-images",
 
                         "/db/merch/delete",
-                        "/db/merch/add-images",
-                        "/db/merch/update-images",
 
                         "/db/product/add",
                         "/db/product/update",
                         "/db/product/update-organizations",
-                        "/db/product/update-description",
                         "/db/product/update-staffs",
-                        "/db/product/add-images",
-                        "/db/product/update-images",
 
                         "/db/franchise/add",
                         "/db/franchise/update",
-                        "/db/franchise/update-description",
-                        "/db/franchise/add-images",
-                        "/db/franchise/update-images",
 
                         "/db/music/upload-file",
                         "/db/music/delete-file-file",

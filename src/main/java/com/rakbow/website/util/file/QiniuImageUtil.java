@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -97,6 +98,12 @@ public class QiniuImageUtil {
     public static String getThumbBackgroundUrl(String imageUrl, int size) {
         return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size
                 + "/extent/" + size + "x" + size + "/background/IzJmMzY0Zg==";
+    }
+
+    public static String getBookThumbBackgroundUrl(String imageUrl, double width, double height) {
+
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + width + "x" + height
+                + "/extent/" + width + "x" + height + "/background/IzJmMzY0Zg==";
     }
 
     /**

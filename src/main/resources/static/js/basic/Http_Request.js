@@ -18,7 +18,7 @@ export function  postRequest(toast, url, data) {
                 }
             }else {
                 if(res.data.message !== '') {
-                    toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                    toast.add({severity: 'success', summary: 'Success', detail: res.data.message, life: 3000});
                 }
             }
         }
@@ -45,7 +45,7 @@ export function getRequest(toast, url) {
                 }
             }else {
                 if(res.data.message !== '') {
-                    toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                    toast.add({severity: 'success', summary: 'Success', detail: res.data.message, life: 3000});
                 }
             }
         }
@@ -73,7 +73,7 @@ export function  commonSubmit(toast, editBlock, url, data) {
             }
         }else {
             if(res.data.message !== '') {
-                toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                toast.add({severity: 'success', summary: 'Success', detail: res.data.message, life: 3000});
             }
         }
         return res.data;
@@ -99,7 +99,7 @@ export function  commonVueSubmit(toast, url, data) {
             }
         }else {
             if(res.data.message !== '') {
-                toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                toast.add({severity: 'success', summary: 'Success', detail: res.data.message, life: 3000});
             }
         }
         return res.data;
@@ -126,7 +126,7 @@ export function  deleteRequest(toast, url, data) {
                 }
             }else {
                 if(res.data.message !== '') {
-                    toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                    toast.add({severity: 'success', summary: 'Success', detail: res.data.message, life: 3000});
                 }
             }
         }
@@ -154,7 +154,7 @@ export function  formRequest(toast, editBlock, url, data) {
             }
         }else {
             if(res.data.message !== '') {
-                toast.add({severity: 'success', summary: 'Error', detail: res.data.message, life: 3000});
+                toast.add({severity: 'success', summary: 'Success', detail: res.data.message, life: 3000});
             }
         }
         return res.data;

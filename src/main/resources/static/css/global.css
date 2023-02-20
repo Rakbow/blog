@@ -226,16 +226,19 @@ img.flag {
 }
 
 .time-tooltip .p-tooltip-text {
-    width: 15rem;
+    font-size: 11px;
+    width: 13.5rem;
 }
 
 .common-tooltip .p-tooltip-text {
+    font-size: 11px;
     width: 8rem;
 }
 
 .region-tooltip .p-tooltip-text {
     text-align: center;
     width: 5rem;
+    font-size: 11px;
 }
 
 .text-truncate-2 {
@@ -408,7 +411,8 @@ ul.info_bit_detail {
 }
 
 .item-upload-time-tooltip .p-tooltip-text {
-    width: 16rem;
+    font-size: 11px;
+    width: 13.5rem;
 }
 
 .sidebar-panel-image-small-no-radius {

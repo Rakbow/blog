@@ -10,7 +10,8 @@ a {
 }
 
 .p-tooltip-text {
-    width: 16rem;
+    font-size: 11px;
+    width: 13.5rem;
 }
 
 .has-bonus-tag .p-tag {
@@ -48,6 +49,16 @@ a {
     background-repeat: no-repeat;
     background-size: 100%,100%;
     border-radius: 10px 10px 0 0;
+}
+
+.book-block-img {
+    width: 180px;
+    height: 254.558px;
+    padding-bottom: 100%;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: 100%,100%;
+    /*border-radius: 10px 10px 0 0;*/
 }
 
 .price-text {
@@ -116,17 +127,18 @@ a {
     overflow-y: auto;
 }
 
+.p-tag {
+    padding-top: 0;
+    padding-bottom: 0;
+}
 
-
+.p-tag .p-tag-value {
+    font-size: 12px;
+}
 
 .index-item-grid-card {
     margin: .5rem;
     border: 1px solid var(--surface-border);
-}
-
-.p-tag {
-    padding-top: 0;
-    padding-bottom: 0;
 }
 
 .index-item-grid-card .p-card .p-card-body {
@@ -172,20 +184,50 @@ a {
     margin: 0;
 }
 
-/*.index-tabmenu .p-tabview-panels {*/
-/*    background-color: #001122;*/
-/*}*/
+.index-book-grid-card {
+    width: 180px;
+    margin: .25rem;
+    border: 1px solid var(--surface-border);
+}
 
-/*.index-tabmenu .p-tabview-selected {*/
-/*    background-color: #2f364f;*/
-/*}*/
+.index-book-grid-card .p-card .p-card-body {
+    width: 180px;
+    background-color: #2F364F;
+    /*border: red solid 1px;*/
+    margin: 0;
+    padding: 0.25rem;
+    /*border-radius: 0 0 10px 10px;*/
+}
 
-/*.index-tabmenu .p-tabmenu-nav i {*/
-/*    border-width: 2px;*/
-/*    vertical-align: middle;*/
-/*    font-size: 2rem;*/
-/*    color: #788990;*/
-/*}*/
+.index-book-grid-card .p-card .p-card-title {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 2px;
+    margin: 0;
+}
+
+.index-book-grid-card .p-card .p-card-title a:hover {
+    text-decoration: none;
+}
+
+.index-book-grid-card .p-card .p-card-title span {
+    min-height: 39px;
+}
+
+.index-book-grid-card .p-card .p-card-subtitle {
+    padding: 2px;
+    margin: 0;
+}
+
+.index-book-grid-card .p-card .p-card-content {
+    padding: 0.25rem;
+    margin: 0;
+}
+
+.index-book-grid-card .p-card .p-card-footer {
+    padding: 0.25rem;
+    margin: 0;
+}
 
 .p-tabmenu .p-menuitem-icon {
     border-width: 2px;

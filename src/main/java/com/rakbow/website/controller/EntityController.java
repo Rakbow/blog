@@ -140,7 +140,7 @@ public class EntityController {
         int entityType = JSON.parseObject(json).getIntValue("entityType");
 
         JSONObject initData = entityUtils.getDetailOptions(entityType);
-        initData.put("justAddedItems", entityService.getJustAddedItems(entityType, 9));
+        initData.put("justAddedItems", entityService.getJustAddedItems(entityType, 5));
         initData.put("popularItems", entityService.getPopularItems(entityType, 9));
 
         return initData.toJSONString();
