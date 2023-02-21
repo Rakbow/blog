@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
@@ -58,6 +59,7 @@ public class FranchiseController {
     //region ------获取页面------
 
     //获取单个系列详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getFranchiseDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         Franchise franchise = franchiseService.getFranchiseWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -70,7 +72,7 @@ public class FranchiseController {
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.FRANCHISE.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise.getAddedTime(), franchise.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise, request));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关

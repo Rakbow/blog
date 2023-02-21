@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -66,6 +67,7 @@ public class ProductController {
     //region ------获取页面------
 
     //获取单个产品详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getProductDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         Product product = productService.getProductWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -92,7 +94,7 @@ public class ProductController {
         }
 
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.PRODUCT.getId(), id, product.getAddedTime(), product.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.PRODUCT.getId(), id, product, request));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关

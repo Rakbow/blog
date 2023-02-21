@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
@@ -221,9 +222,9 @@ public class FranchiseService {
             }
         }
 
-        redisUtil.set("franchiseSet", franchiseSet);
+        redisUtil.set(RedisCacheConstant.FRANCHISE_SET, franchiseSet);
         //缓存时间1个月
-        redisUtil.expire("franchiseSet", 2592000);
+        redisUtil.expire(RedisCacheConstant.FRANCHISE_SET, 2592000);
 
     }
 

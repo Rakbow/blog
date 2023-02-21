@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -60,6 +61,7 @@ public class GameController {
     //region ------获取页面------
 
     //获取单个游戏详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getGameDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
         Game game = gameService.getGameWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -74,7 +76,7 @@ public class GameController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(game, EntityType.GAME.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.GAME.getId(), id, game.getAddedTime(), game.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.GAME.getId(), id, game, request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, EntityType.GAME, false));
         //获取相关游戏

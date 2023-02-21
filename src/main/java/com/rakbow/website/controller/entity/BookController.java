@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.common.DataActionType;
@@ -60,6 +61,7 @@ public class BookController {
     //region ------获取页面------
 
     //获取单个图书详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getBookDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
         Book book = bookService.getBookWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -73,7 +75,7 @@ public class BookController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book.getAddedTime(), book.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book, request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书

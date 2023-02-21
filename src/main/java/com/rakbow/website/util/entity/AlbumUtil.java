@@ -148,11 +148,12 @@ public class AlbumUtil {
      * @return JSONArray
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     public static JSONArray getAlbumFormat(String albumFormatJson) {
 
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-        List<JSONObject> albumFormats = (List<JSONObject>) redisUtil.get("albumFormatSet");
+        List<JSONObject> albumFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.ALBUM_FORMAT_SET);
 
         JSONArray albumFormat = new JSONArray();
 
@@ -174,11 +175,12 @@ public class AlbumUtil {
      * @return JSONArray
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     public static JSONArray getPublishFormat(String publishFormatJson) {
 
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-        List<JSONObject> publishFormats = (List<JSONObject>) redisUtil.get("publishFormatSet");
+        List<JSONObject> publishFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.PUBLISH_FORMAT_SET);
 
         JSONArray publishFormat = new JSONArray();
 
@@ -200,6 +202,7 @@ public class AlbumUtil {
      * @return JSONArray
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     public static JSONArray getMediaFormat(String mediaFormatJson) {
 
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");

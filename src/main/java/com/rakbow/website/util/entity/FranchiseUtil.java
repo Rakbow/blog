@@ -3,6 +3,7 @@ package com.rakbow.website.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.service.FranchiseService;
@@ -29,11 +30,12 @@ public class FranchiseUtil {
      * @return JSONArray
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     public static JSONArray getFranchiseList (String franchisesJson) {
 
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get(RedisCacheConstant.FRANCHISE_SET);
 
         JSONArray franchises = new JSONArray();
 
@@ -55,10 +57,11 @@ public class FranchiseUtil {
      * @return JSONObject
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     public static JSONObject getFranchise(int franchiseId) {
 
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get("franchiseSet");
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get(RedisCacheConstant.FRANCHISE_SET);
 
         return DataFinder.findJsonByIdInSet(franchiseId, allFranchises);
     }

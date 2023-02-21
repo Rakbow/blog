@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
@@ -48,6 +49,7 @@ public class MusicController {
     //endregion
 
     //获取单个音频详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getMusicDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         Music music = musicService.getMusicWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -61,7 +63,7 @@ public class MusicController {
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.MUSIC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music.getAddedTime(), music.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music, request));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频

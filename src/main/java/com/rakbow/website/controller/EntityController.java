@@ -47,18 +47,6 @@ public class EntityController {
     @Value("${server.servlet.context-path}")
     private String contextPath;
     @Autowired
-    private AlbumService albumService;
-    @Autowired
-    private DiscService discService;
-    @Autowired
-    private BookService bookService;
-    @Autowired
-    private MerchService merchService;
-    @Autowired
-    private GameService gameService;
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
     private EntityUtils entityUtils;
     @Autowired
     private UserService userService;
@@ -241,10 +229,10 @@ public class EntityController {
     @ResponseBody
     public String likeEntity(@RequestBody String json, HttpServletRequest request, HttpServletResponse response) {
         ApiResult res = new ApiResult();
-        int entityType = JSON.parseObject(json).getIntValue("entityType");
-        int entityId = JSON.parseObject(json).getIntValue("entityId");
-
         try {
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            int entityId = JSON.parseObject(json).getIntValue("entityId");
+
             // 从cookie中获取点赞token
             String likeToken = CookieUtil.getValue(request, "like_token");
             if(likeToken == null) {

@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
@@ -298,9 +299,9 @@ public class ProductService {
             products.add(jo);
         });
 
-        redisUtil.set("productSet", products);
+        redisUtil.set(RedisCacheConstant.PRODUCT_SET, products);
         //缓存时间1个月
-        redisUtil.expire("productSet", 2592000);
+        redisUtil.expire(RedisCacheConstant.PRODUCT_SET, 2592000);
 
     }
 

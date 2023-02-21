@@ -3,6 +3,9 @@ package com.rakbow.website;
 import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.entity.*;
+import com.rakbow.website.service.EntityService;
+import com.rakbow.website.service.FranchiseService;
+import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.VisitUtil;
@@ -23,6 +26,12 @@ public class RedisTests {
     @Autowired
     private UserService userService;
     @Autowired
+    private EntityService entityService;
+    @Autowired
+    private FranchiseService franchiseService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
     private AlbumMapper albumMapper;
     @Autowired
     private BookMapper bookMapper;
@@ -42,6 +51,13 @@ public class RedisTests {
     private VisitUtil visitUtil;
     @Autowired
     private RedisUtil redisUtil;
+
+    @Test
+    public void refreshData() {
+        productService.refreshRedisProducts();
+        franchiseService.refreshRedisFranchises();
+        // entityService.refreshRedisEmunData();
+    }
 
     @Test
     public void redisTest1() {

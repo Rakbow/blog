@@ -1,0 +1,287 @@
+
+<div class="grid mt-2">
+        <div class="col-2" style="min-width: 310px">
+            <p-panel>
+                <template #header>
+            <span class="text-start side-panel-header">
+                <i class="pi pi-filter"></i><span><strong>条件过滤</strong></span>
+            </span>
+                </template>
+                <div class="grid p-fluid">
+                    <div class="col-6 p-1">
+                        <label>书名</label>
+                        <p-inputtext v-model.trim="queryParams.filters.title.value"></p-inputtext>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>图书类型</label>
+                        <p-dropdown v-model="queryParams.filters.bookType.value" :options="bookTypeSet"
+                                    placeholder="所有" option-label="label"
+                                    option-value="value">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>ISBN-10</label>
+                        <p-inputtext v-model.trim="queryParams.filters.isbn10.value"></p-inputtext>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>ISBN-13</label>
+                        <p-inputtext v-model.trim="queryParams.filters.isbn13.value"></p-inputtext>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>所属系列</label>
+                        <p-multiselect v-model="queryParams.filters.franchises.value" @change="getProducts($event.value)"
+                                        :options="franchiseSet" placeholder="所属系列"
+                                        option-label="label" option-value="value" display="chip" :filter="true">
+                        </p-multiselect>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>所属作品</label>
+                        <p-multiselect v-model="queryParams.filters.products.value" :options="productSet"
+                                        option-label="label" option-value="value" placeholder="请先选择所属系列"
+                                        display="chip" :filter="true" :disabled="productSelect">
+                        </p-multiselect>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>是否包含特典</label>
+                        <p-dropdown v-model="queryParams.filters.hasBonus.value" :options="hasBonusSet"
+                                    placeholder="所有" option-label="label"
+                                    option-value="value">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>出版社</label>
+                        <p-inputtext v-model.trim="queryParams.filters.publisher.value"></p-inputtext>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>区域</label>
+                        <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
+                                    :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
+                            <template #value="slotProps">
+                                <div class="country-item" v-if="slotProps.value">
+                                    <span :class="'fi fi-' + slotProps.value"></span>
+                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                </div>
+                                <span v-else>选择地区</span>
+                            </template>
+                            <template #option="slotProps">
+                                <div class="country-item">
+                                    <span :class="'fi fi-' + slotProps.option.code"></span>
+                                    <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                </div>
+                            </template>
+                        </p-dropdown>
+                    </div>
+                    <div class="col-6 p-1">
+                        <label>语言</label>
+                        <p-dropdown v-model="queryParams.filters.publishLanguage.value" :options="languageSet"
+                                    placeholder="所有" option-label="nameZh"
+                                    option-value="code">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-4 col-offset-2" style="text-align: right">
+                        <p-button icon="pi pi-filter-slash"
+                                    class="p-button-rounded p-button-info"
+                                    v-tooltip.bottom="'清空'"
+                                    @click="clearSearch"></p-button>
+                    </div>
+                    <div class="col-4" style="text-align: left">
+                        <p-button icon="pi pi-search"
+                                    class="p-button-rounded p-button-success"
+                                    v-tooltip.bottom="'搜索'"
+                                    @click="getBooks"></p-button>
+                    </div>
+                </div>
+            </p-panel>
+            <br>
+            <p-panel>
+                <template #header>
+            <span class="text-start side-panel-header">
+                <i class="pi iconfont icon-book"></i><span><strong>最新收录</strong></span>
+            </span>
+                </template>
+                <div class="grid">
+            <span class="small_font">
+                <div class="info_bit_small small_font grid m-0 p-0"
+                        v-if="justAddedItems.length != 0"
+                        v-for="book of justAddedItems">
+                    <div class="sidebar-panel-image-small-div book_info_bit_thumb mt-2">
+                        <a :href="'/db/book/'+ book.id">
+                            <img class="sidebar-panel-image-small" :src="book.cover.blackUrl"
+                                    v-tooltip.right="'收录时间: ' + book.addedTime + '编辑时间: ' + book.editedTime">
+                        </a>
+                    </div>
+                    <div class="col p-0" style="height: 80px">
+                        <ul class="info_bit_small_other">
+                            <li>
+                                <a class="small_font"
+                                    :href="'/db/book/'+ book.id ">
+                                    <span class="text-truncate-2 ml-2 mr-2">
+                                        {{book.title}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <span class="small_font col-6 related-item-catalog">
+                                    {{book.isbn13}}
+                                </span>
+                                <span class="small_font col-6 related-item-date">
+                                    {{book.publishDate}}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </span>
+                </div>
+            </p-panel>
+        </div>
+        <div class="col">
+            <p-dataview :value="books" :layout="layout" :paginator="true" :rows="itemRows"
+                        :always-show-paginator="totalRecords != 0"
+                        :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
+                        :lazy="true" @page="onPage($event)" :total-records="totalRecords"
+                        :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
+                PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据">
+                <template #empty>
+                    <div class="mt-2 mb-2">
+                        <span class="emptyInfo">暂无符合条件的结果</span>
+                    </div>
+                </template>
+                <template #header>
+                    <div class="grid grid-nogutter">
+                        <div class="col-6" style="text-align: left">
+                            <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
+                                        placeholder="按出版时间排序"
+                                        @change="onSortChange($event)"></p-dropdown>
+                        </div>
+                        <!--                        <div class="col-4 index-dataview-title">-->
+                        <!--                            <h2><i class="pi iconfont icon-24gl-musicAlbum2"></i>&nbsp&nbsp专&nbsp&nbsp辑&nbsp&nbsp库&nbsp&nbsp</h2>-->
+                        <!--                        </div>-->
+                        <div class="col-6" style="text-align: right">
+                            <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
+                        </div>
+                    </div>
+                </template>
+                <template #grid="slotProps">
+                    <div style="width: 141.443px">
+                        <div class="index-item-grid-card card">
+                            <p-card>
+                                <template #header>
+                                    <a :href="'/db/book/'+ slotProps.data.id">
+                                        <div class="book-block-img"
+                                                :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                            <div class="absolute releaseDate">
+                                                <span class="text-center" style="color: white">{{slotProps.data.publishDate}}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </template>
+                                <template #title>
+                            <span class="text-truncate-2">
+                                <a :href="'/db/merch/'+ slotProps.data.id">{{slotProps.data.title}}</a>
+                            </span>
+                                </template>
+                                <template #subtitle>
+                            <span :class="'fi fi-' + slotProps.data.region.code"
+                                    v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
+                                    &nbsp&nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span>
+                                </template>
+                                <template #content>
+                                    <div class="grid">
+                                <span class="p-1">
+                                    <p-tag class="ml-1" :value="slotProps.data.bookType.nameZh"></p-tag>
+                                </span>
+                                        <span class="p-1 has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                    <p-tag style="background: #2f364f" class="ml-1" value="特典"></p-tag>
+                                </span>
+                                    </div>
+                                </template>
+                            </p-card>
+                        </div>
+                    </div>
+                </template>
+                <template #list="slotProps">
+                    <div class="col-12">
+                        <div class="index-list-item">
+                            <a class="text-center" :href="'/db/book/'+ slotProps.data.id">
+                                <img :src="slotProps.data.cover.thumbUrl70" :alt="slotProps.data.cover.name"/>
+                            </a>
+                            <div class="index-list-item-detail">
+                        <span class="index-list-item-name text-truncate-1">
+                            <a :href="'/db/book/'+ slotProps.data.id">{{slotProps.data.title}}</a>
+                        </span>
+                                <span class="small-font" style="margin: 0 0 .5rem 0;">
+                            <b class="label">{{slotProps.data.isbn13}}</b><span class="label">&nbsp{{slotProps.data.publishDate}}</span>
+                        </span><br>
+                                <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
+                                        v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
+                                &nbsp&nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
+                                <span>
+                            <span class="p-1">
+                                <p-tag :value="slotProps.data.bookType.nameZh"></p-tag>
+                            </span>
+                            <span class="has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                <p-tag style="background: #001122" class="ml-1" value="特典"></p-tag>
+                            </span>
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </p-dataview>
+        </div>
+        <div class="col-2" style="min-width: 300px">
+            <p-panel>
+                <template #header>
+            <span class="text-start side-panel-header">
+                <i class="pi iconfont icon-book"></i><span><strong>浏览排名</strong></span>
+            </span>
+                </template>
+                <div class="grid">
+            <span class="small_font">
+                <div class="info_bit_small small_font grid m-0 p-0"
+                        v-if="popularItems.length != 0"
+                        v-for="(book, index) of popularItems">
+                    <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                        <div class="col-12 p-0 m-0">
+                            <i :class="'pi remixicon ri-number-' + index"
+                                style="font-size: 2rem"></i>
+                        </div>
+                        <span class="col-12 p-0 m-0" style="font-size: 9px">
+                            <i class="pi pi-eye"></i><br>{{book.visitNum}}
+                        </span>
+                    </div>
+                    <div class="sidebar-panel-image-small-div book_info_bit_thumb mt-2">
+                        <a :href="'/db/book/'+ book.id">
+                            <img class="sidebar-panel-image-small" :src="book.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + book.addedTime + '编辑时间: ' + book.editedTime">
+                        </a>
+                    </div>
+                    <div class="col p-0" style="height: 90px">
+                        <ul class="info_bit_small_other">
+                            <li>
+                                <a class="small_font"
+                                    :href="'/db/book/'+ book.id ">
+                                    <span class="text-truncate-2 ml-2 mr-2">
+                                        {{book.title}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <span class="small_font col-6 related-item-catalog">
+                                    {{book.isbn13}}
+                                </span>
+                            </li>
+                            <li>
+                                <span class="small_font col-6 related-item-date">
+                                    {{book.publishDate}}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </span>
+                </div>
+            </p-panel>
+        </div>
+</div>

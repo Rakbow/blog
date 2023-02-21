@@ -2,8 +2,10 @@ package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -92,13 +94,14 @@ public class EntityService {
      * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
      * @Author Rakbow
      */
-    public pageInfo getPageInfo(int entityType, int entityId, Timestamp addedTime, Timestamp editedTime, HttpServletRequest request) {
+    public pageInfo getPageInfo(int entityType, int entityId, Object entity, HttpServletRequest request) {
+
+        JSONObject json = JSON.parseObject(JSON.toJSONString(entity));
+
+        Timestamp addedTime = new Timestamp(json.getDate("addedTime").getTime());
+        Timestamp editedTime = new Timestamp(json.getDate("editedTime").getTime());
 
         pageInfo pageInfo = new pageInfo();
-        pageInfo.setAddedTime(CommonUtil.timestampToString(addedTime));
-        pageInfo.setEditedTime(CommonUtil.timestampToString(editedTime));
-        pageInfo.setVisitCount(visitUtil.getIncVisit(entityType, entityId));
-        pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
 
         // 从cookie中获取点赞token
         String likeToken = CookieUtil.getValue(request, "like_token");
@@ -107,6 +110,15 @@ public class EntityService {
         }else {
             pageInfo.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
         }
+
+        // 从cookie中获取访问token
+        String visitToken = CookieUtil.getValue(request, "visit_token");
+
+        pageInfo.setAddedTime(CommonUtil.timestampToString(addedTime));
+        pageInfo.setEditedTime(CommonUtil.timestampToString(editedTime));
+        pageInfo.setVisitCount(visitUtil.incSingleVisit(entityType, entityId, visitToken));
+        pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
+
         return pageInfo;
     }
 
@@ -212,17 +224,17 @@ public class EntityService {
      */
     public void refreshRedisEmunData () {
 
-        redisUtil.set("albumFormatSet", AlbumFormat.getAlbumFormatSet());
-        redisUtil.set("publishFormatSet", PublishFormat.getPublishFormatSet());
-        redisUtil.set("mediaFormatSet", MediaFormat.getMediaFormatSet());
-        redisUtil.set("bookTypeSet", BookType.getBookTypeSet());
-        redisUtil.set("regionSet", Region.getRegionSet());
-        redisUtil.set("languageSet", Language.getLanguageSet());
-        redisUtil.set("merchCategorySet", MerchCategory.getMerchCategorySet());
-        redisUtil.set("platformSet", GamePlatform.getGamePlatformSet());
-        redisUtil.set("releaseTypeSet", ReleaseType.getReleaseTypeSet());
-        redisUtil.set("productCategorySet", ProductCategory.getProductCategorySet());
-        redisUtil.set("audioTypeSet", MusicUtil.getAudioTypeSet());
+        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET, AlbumFormat.getAlbumFormatSet());
+        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET, PublishFormat.getPublishFormatSet());
+        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET, MediaFormat.getMediaFormatSet());
+        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET, BookType.getBookTypeSet());
+        redisUtil.set(RedisCacheConstant.REGION_SET, Region.getRegionSet());
+        redisUtil.set(RedisCacheConstant.LANGUAGE_SET, Language.getLanguageSet());
+        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET, MerchCategory.getMerchCategorySet());
+        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET, GamePlatform.getGamePlatformSet());
+        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET, ReleaseType.getReleaseTypeSet());
+        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET, ProductCategory.getProductCategorySet());
+        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET, MusicUtil.getAudioTypeSet());
 
     }
 

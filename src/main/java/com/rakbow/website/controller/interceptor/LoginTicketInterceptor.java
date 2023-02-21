@@ -5,6 +5,7 @@ import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.HostHolder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,7 +35,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     private HostHolder hostHolder;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
 
         // 从cookie中获取凭证
         String ticket = CookieUtil.getValue(request, "ticket");
@@ -65,7 +66,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, ModelAndView modelAndView) {
         User user = hostHolder.getUser();
         if (user != null && modelAndView != null) {
             modelAndView.addObject("loginUser", user);
@@ -73,7 +74,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, Exception ex) {
         hostHolder.clear();
     }
 

@@ -161,21 +161,4 @@ class WebSiteApplicationTests {
         System.out.println(t4.getTime() - t3.getTime());
     }
 
-    @Test
-    public void imageTests() {
-        List<Product> products = productMapper.getAll();
-        products.forEach(product -> {
-            JSONArray images = JSON.parseArray(product.getImages());
-            if(!images.isEmpty()) {
-                JSONArray newImages = new JSONArray();
-                for (int i = 0; i < images.size(); i++) {
-                    ImageInfo imageInfo = JSON.to(ImageInfo.class, images.getJSONObject(i));
-                    imageInfo.setUploadUser("rakbow");
-                    newImages.add(imageInfo);
-                }
-                productMapper.updateProductImages(product.getId(), newImages.toJSONString(), product.getEditedTime());
-            }
-        });
-    }
-
 }

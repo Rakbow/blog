@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -60,6 +61,7 @@ public class MerchController {
     //region ------获取页面------
 
     //获取单个周边商品详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getMerchDetail(@PathVariable int id, Model model, HttpServletRequest request) {
         Merch merch = merchService.getMerchWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -73,7 +75,7 @@ public class MerchController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(merch, EntityType.MERCH.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MERCH.getId(), id, merch.getAddedTime(), merch.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MERCH.getId(), id, merch, request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(merch.getImages(), 200, EntityType.MERCH, false));
         //获取相关周边

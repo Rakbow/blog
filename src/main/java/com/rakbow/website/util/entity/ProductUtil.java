@@ -3,6 +3,7 @@ package com.rakbow.website.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.emun.product.ProductCategory;
@@ -54,11 +55,12 @@ public class ProductUtil {
      * @return JSONArray
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     public static JSONArray getProductList (String productJson) {
 
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-        List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get("productSet");
+        List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get(RedisCacheConstant.PRODUCT_SET);
 
         JSONArray products = new JSONArray();
 

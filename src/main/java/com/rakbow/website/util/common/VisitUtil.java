@@ -19,6 +19,85 @@ public class VisitUtil {
     @Autowired
     private RedisUtil redisUtil;
 
+    public static final String SPLIT = ":";
+    public static final String PREFIX_VISIT_TOKEN = "visit_token";
+    public static final String PREFIX_VISIT = "visit";
+
+    /**
+     * 新增浏览数存入redis缓存
+     * @param entityType,entityId 实体类型，实体id
+     * @Author Rakbow
+     */
+    public void addSingleVisit(int entityType, int entityId) {
+        String key = getSingleVisitKey(entityType, entityId);
+        redisUtil.set(key, 1);
+    }
+
+    /**
+     * 获取浏览数
+     * @param entityType,entityId 实体类型，实体id
+     * @Author Rakbow
+     */
+    public long getSingleVisit(int entityType, int entityId) {
+        String key = getSingleVisitKey(entityType, entityId);
+        if(!redisUtil.hasKey(key)) {
+            addSingleVisit(entityType, entityId);
+        }
+        return Long.parseLong(redisUtil.get(key).toString());
+    }
+
+    /**
+     * 自增并返回浏览数
+     * @param entityType,entityId 实体类型,实体id
+     * @Author Rakbow
+     */
+    public long incSingleVisit(int entityType, int entityId, String visitToken) {
+        String key = getSingleVisitKey(entityType, entityId);
+        String tokenKey = getEntityVisitTokenKey(entityType, entityId, visitToken);
+        if(redisUtil.hasKey(tokenKey)) {
+            return getSingleVisit(entityType, entityId);
+        }else {
+            redisUtil.set(tokenKey, 1);
+            redisUtil.expire(tokenKey, 3600*24);
+            return redisUtil.increment(key, 1);
+        }
+    }
+
+    /**
+     * 删除浏览数
+     * @param entityType,entityId 实体类型，实体id
+     * @Author Rakbow
+     */
+    public void deleteSingleVisit(int entityType, int entityId) {
+        String key = getSingleVisitKey(entityType, entityId);
+        redisUtil.delete(key);
+    }
+
+    /**
+     * 获取实体访问token key,用于判断是否第一次访问
+     * */
+    public String getEntityVisitTokenKey(int entityType, int entityId, String visitToken) {
+        return PREFIX_VISIT_TOKEN + SPLIT + entityType + SPLIT + entityId + SPLIT + visitToken;
+    }
+
+    /**
+     * 获取实体浏览数key,用于记录浏览数
+     * */
+    public String getSingleVisitKey(int entityType, int entityId) {
+        return PREFIX_VISIT + SPLIT + entityType + SPLIT + entityId;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 获取浏览数
      * @param entityType,entityId 实体类型，实体id
@@ -129,8 +208,6 @@ public class VisitUtil {
         return "";
     }
 
-    public String getEntityVisitKey(int entityType, int entityId) {
-        return "VISIT_" + entityType + "_" + entityId;
-    }
+
 
 }

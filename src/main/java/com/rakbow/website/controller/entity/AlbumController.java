@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -26,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
@@ -63,7 +65,8 @@ public class AlbumController {
 
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
+    @UniqueVisitor
+    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request, HttpServletResponse response) {
         Album album = albumService.getAlbumWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
         if (album == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
@@ -79,7 +82,7 @@ public class AlbumController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album.getAddedTime(), album.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album, request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
         //获取相关专辑

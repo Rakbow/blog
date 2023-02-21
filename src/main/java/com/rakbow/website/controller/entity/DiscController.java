@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -61,6 +62,7 @@ public class DiscController {
     //region ------获取页面------
 
     //获取单个专辑详细信息页面
+    @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         Disc disc = discService.getDiscWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
@@ -75,7 +77,7 @@ public class DiscController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(disc, EntityType.DISC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.DISC.getId(), id, disc.getAddedTime(), disc.getEditedTime(), request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.DISC.getId(), id, disc, request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片
