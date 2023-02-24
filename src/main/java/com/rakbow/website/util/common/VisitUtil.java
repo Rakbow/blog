@@ -97,48 +97,6 @@ public class VisitUtil {
 
 
 
-
-    /**
-     * 获取浏览数
-     * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
-     */
-    public long getVisit(int entityType, int entityId) {
-        String rankKey = getEntityVisitRankingKeyName(entityType);
-        String key = String.valueOf(entityId);
-        return Math.round(redisUtil.redisTemplate.opsForZSet().score(rankKey, key));
-    }
-
-    /**
-     * 获取浏览数通过visit key name
-     * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
-     */
-    public long getVisitByKey(int entityType, String key) {
-        String rankKey = getEntityVisitRankingKeyName(entityType);
-        return Math.round(redisUtil.redisTemplate.opsForZSet().score(rankKey, key));
-    }
-
-    /**
-     * 自增并返回浏览数
-     * @param entityType,entityId 实体类型,实体id
-     * @Author Rakbow
-     */
-    public long getIncVisit(int entityType, int entityId) {
-        String rankKey = getEntityVisitRankingKeyName(entityType);
-        String key = String.valueOf(entityId);
-        return Math.round(redisUtil.redisTemplate.opsForZSet().incrementScore(rankKey, key, 1));
-    }
-
-    /**
-     * 新增浏览数存入redis缓存
-     * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
-     */
-    public void addVisit(int entityType, int entityId) {
-        setEntityVisitRanking(entityType, entityId, 0);
-    }
-
     /**
      * 删除浏览数
      * @param entityType,entityId 实体类型，实体id
@@ -163,24 +121,42 @@ public class VisitUtil {
             //0,-1的参数代表查询该key下的所有value
             Set<Object> keys = redisUtil.redisTemplate.opsForZSet().reverseRange(rankKey, 0, limit);
             for (Object key : keys) {
-                res.put(Integer.parseInt(key.toString()), getVisitByKey(entityType, key.toString()));
+                res.put(Integer.parseInt(key.toString()), Math.round(redisUtil.redisTemplate.opsForZSet().score(rankKey, key)));
             }
         }
         return res;
     }
 
     /**
-     * 更新浏览数排名的set
-     * @param entityType,entityId,visitNum 实体类型,实体id,浏览数
+     * 清空所有浏览数据
      * @Author Rakbow
      */
-    public void setEntityVisitRanking(int entityType, int entityId, long visitNum) {
+    public void clearAllVisitRank() {
+
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.ALBUM_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.BOOK_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.DISC_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.GAME_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MERCH_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MUSIC_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.PRODUCT_VISIT_RANKING, 0, -1);
+        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.FRANCHISE_VISIT_RANKING, 0, -1);
+
+    }
+
+    /**
+     * 更新浏览数排名的set
+     * @param entityType,entityId,visitCount 实体类型,实体id,浏览数
+     * @Author Rakbow
+     */
+    public void setEntityVisitRanking(int entityType, int entityId, long visitCount) {
         String key = String.valueOf(entityId);
         String rankingKey = getEntityVisitRankingKeyName(entityType);
-        redisUtil.redisTemplate.opsForZSet().add(rankingKey, key, visitNum);
+        redisUtil.redisTemplate.opsForZSet().add(rankingKey, key, visitCount);
     }
 
     public String getEntityVisitRankingKeyName(int entityType) {
+
         if(entityType == EntityType.ALBUM.getId()) {
             return RedisCacheConstant.ALBUM_VISIT_RANKING;
         }

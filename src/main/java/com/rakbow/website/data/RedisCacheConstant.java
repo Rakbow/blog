@@ -8,11 +8,16 @@ package com.rakbow.website.data;
  */
 public class RedisCacheConstant {
 
-
-    //region options
+    //region common
 
     public static final String SPLIT = ":";
     public static final String OPTIONS = "options";
+    public static final String VISIT_RANK = "visit_rank";
+
+    //endregion
+
+    //region options
+
     public static final String MEDIA_FORMAT_SET = OPTIONS + SPLIT + "mediaFormatSet";
     public static final String ALBUM_FORMAT_SET = OPTIONS + SPLIT + "albumFormatSet";
     public static final String PUBLISH_FORMAT_SET = OPTIONS + SPLIT + "publishFormatSet";
@@ -31,14 +36,14 @@ public class RedisCacheConstant {
 
     //region ranking
 
-    public static final String ALBUM_VISIT_RANKING = "ALBUM_VISIT_RANKING";
-    public static final String BOOK_VISIT_RANKING = "BOOK_VISIT_RANKING";
-    public static final String DISC_VISIT_RANKING = "DISC_VISIT_RANKING";
-    public static final String GAME_VISIT_RANKING = "GAME_VISIT_RANKING";
-    public static final String MERCH_VISIT_RANKING = "MERCH_VISIT_RANKING";
-    public static final String MUSIC_VISIT_RANKING = "MUSIC_VISIT_RANKING";
-    public static final String PRODUCT_VISIT_RANKING = "PRODUCT_VISIT_RANKING";
-    public static final String FRANCHISE_VISIT_RANKING = "FRANCHISE_VISIT_RANKING";
+    public static final String ALBUM_VISIT_RANKING = VISIT_RANK + SPLIT + "ALBUM";
+    public static final String BOOK_VISIT_RANKING = VISIT_RANK + SPLIT + "BOOK";
+    public static final String DISC_VISIT_RANKING = VISIT_RANK + SPLIT + "DISC";
+    public static final String GAME_VISIT_RANKING = VISIT_RANK + SPLIT + "GAME";
+    public static final String MERCH_VISIT_RANKING = VISIT_RANK + SPLIT + "MERCH";
+    public static final String MUSIC_VISIT_RANKING = VISIT_RANK + SPLIT + "MUSIC";
+    public static final String PRODUCT_VISIT_RANKING = VISIT_RANK + SPLIT + "PRODUCT";
+    public static final String FRANCHISE_VISIT_RANKING = VISIT_RANK + SPLIT + "FRANCHISE";
 
     //endregion
 

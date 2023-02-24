@@ -63,7 +63,6 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDisc(Disc disc) {
         int id = discMapper.addDisc(disc);
-        visitUtil.addVisit(EntityType.DISC.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
     }
 

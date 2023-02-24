@@ -294,7 +294,7 @@ public class EntityService {
         return JSON.parseArray(entityMapper.getItemImages(entityName, entityId));
     }
 
-    //region
+    //region image operation
 
     /**
      * 新增图片

@@ -115,7 +115,6 @@ public class MusicService {
     public void addMusic(Music music) throws Exception {
         try {
             int id = musicMapper.addMusic(music);
-            visitUtil.addVisit(EntityType.MUSIC.getId(), id);
 
         }catch (Exception ex) {
             throw new Exception(ex);

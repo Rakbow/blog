@@ -59,7 +59,6 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addProduct(Product product) {
         int id = productMapper.addProduct(product);
-        visitUtil.addVisit(EntityType.PRODUCT.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
     }
 

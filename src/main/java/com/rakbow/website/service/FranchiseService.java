@@ -57,7 +57,6 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addFranchise(Franchise franchise){
         int id = franchiseMapper.addFranchise(franchise);
-        visitUtil.addVisit(EntityType.FRANCHISE.getId(), id);
         if(!FranchiseUtil.isMetaFranchise(franchise)) {
             refreshRedisFranchises();
         }

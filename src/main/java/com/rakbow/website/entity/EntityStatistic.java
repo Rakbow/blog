@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class EntityInfo {
+public class EntityStatistic {
 
     private int entityType;//实体类型
     private int entityId;//实体id
@@ -17,11 +17,14 @@ public class EntityInfo {
     private long likeCount;//点赞数
     private long collectCount;//收藏数
 
-    public EntityInfo(int entityType, int entityId) {
+    private int status;//状态
+
+    public EntityStatistic(int entityType, int entityId, int status) {
         this.entityType = entityType;
         this.entityId = entityId;
         this.visitCount = 0;
         this.likeCount = 0;
         this.collectCount = 0;
+        this.status = status;
     }
 }

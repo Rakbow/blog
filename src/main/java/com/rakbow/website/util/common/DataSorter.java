@@ -8,7 +8,6 @@ import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.entity.EntityInfo;
 
 import java.util.Comparator;
 
@@ -25,7 +24,7 @@ public class DataSorter {
     public static MusicSortByTrackSerial musicSortByTrackSerial = new MusicSortByTrackSerial();
     public static JsonSortById jsonSortById = new JsonSortById();
     public static JsonSetSortByValue jsonSetSortByValue = new JsonSetSortByValue();
-    public static VisitSortByEntityId visitSortByEntityId = new VisitSortByEntityId();
+    // public static VisitSortByEntityId visitSortByEntityId = new VisitSortByEntityId();
 
     public static AlbumSortByVisitNum albumSortByVisitNum = new AlbumSortByVisitNum();
     public static BookSortByVisitNum bookSortByVisitNum = new BookSortByVisitNum();
@@ -75,12 +74,12 @@ class JsonSetSortByValue implements Comparator<JSONObject> {
     }
 }
 
-class VisitSortByEntityId implements Comparator<EntityInfo> {
-    @Override
-    public int compare(EntityInfo a, EntityInfo b) {
-        return Integer.compare(a.getEntityId(), b.getEntityId());
-    }
-}
+// class VisitSortByEntityId implements Comparator<EntityInfo> {
+//     @Override
+//     public int compare(EntityInfo a, EntityInfo b) {
+//         return Integer.compare(a.getEntityId(), b.getEntityId());
+//     }
+// }
 
 class AlbumSortByVisitNum implements Comparator<AlbumVOAlpha> {
     @Override

@@ -2,6 +2,7 @@ package com.rakbow.website;
 
 import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.dao.*;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.FranchiseService;
@@ -61,48 +62,7 @@ public class RedisTests {
 
     @Test
     public void redisTest1() {
-
-        List<Album> albums = albumMapper.getAll();
-        albums.forEach(album -> {
-            // visitUtils.setEntityVisitRanking(1, album.getId(), Long.parseLong(redisUtil.get(key).toString()));
-            // visitUtils.setEntityVisitRanking(1, album.getId(), 0);
-            visitUtil.addVisit(1, album.getId());
-        });
-        List<Disc> discs = discMapper.getAll();
-        discs.forEach(disc -> {
-            // visitUtils.setEntityVisitRanking(2, disc.getId(), 0);
-            visitUtil.addVisit(2, disc.getId());
-        });
-        List<Book> books = bookMapper.getAll();
-        books.forEach(book -> {
-            // visitUtils.setEntityVisitRanking(3, book.getId(), 0);
-            visitUtil.addVisit(3, book.getId());
-        });
-        List<Merch> merchs = merchMapper.getAll();
-        merchs.forEach(merch -> {
-            // visitUtils.setEntityVisitRanking(4, merch.getId(), 0);
-            visitUtil.addVisit(4, merch.getId());
-        });
-        List<Game> games = gameMapper.getAll();
-        games.forEach(game -> {
-            // visitUtils.setEntityVisitRanking(5, game.getId(), 0);
-            visitUtil.addVisit(5, game.getId());
-        });
-        List<Franchise> franchises = franchiseMapper.getAll();
-        franchises.forEach(franchise -> {
-            // visitUtils.setEntityVisitRanking(6, franchise.getId(), 0);
-            visitUtil.addVisit(6, franchise.getId());
-        });
-        List<Product> products = productMapper.getAll();
-        products.forEach(product -> {
-            // visitUtils.setEntityVisitRanking(7, product.getId(), 0);
-            visitUtil.addVisit(7, product.getId());
-        });
-        List<Music> musics = musicMapper.getAll();
-        musics.forEach(music -> {
-            // visitUtils.setEntityVisitRanking(9, music.getId(), 0);
-            visitUtil.addVisit(9, music.getId());
-        });
+        redisUtil.redisTemplate.opsForZSet().add(RedisCacheConstant.ALBUM_VISIT_RANKING, 1, 0);
     }
 
     @Test

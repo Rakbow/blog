@@ -4,8 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.ImageInfo;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 //import com.rakbow.website.util.convertMapper.GameVoMapper;
 import com.rakbow.website.service.*;
@@ -32,6 +35,27 @@ class WebSiteApplicationTests {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private AlbumMapper albumMapper;
+    @Autowired
+    private BookMapper bookMapper;
+    @Autowired
+    private DiscMapper discMapper;
+    @Autowired
+    private GameMapper gameMapper;
+    @Autowired
+    private MerchMapper merchMapper;
+    @Autowired
+    private FranchiseMapper franchiseMapper;
+
+    @Autowired
+    private LikeUtil likeUtil;
+    @Autowired
+    private VisitUtil visitUtil;
+    @Autowired
+    private StatisticMapper statisticMapper;
+
     @Test
     void contextLoads() {
     }
@@ -159,6 +183,61 @@ class WebSiteApplicationTests {
         Timestamp t4 = new Timestamp(System.currentTimeMillis());
 
         System.out.println(t4.getTime() - t3.getTime());
+    }
+
+    @Test
+    public void addStatisticInfo() {
+        // List<Album> albums = albumMapper.getAll();
+        List<Book> books = bookMapper.getAll();
+        List<Disc> discs = discMapper.getAll();
+        List<Game> games = gameMapper.getAll();
+        List<Merch> merches = merchMapper.getAll();
+        List<Product> products = productMapper.getAll();
+        List<Franchise> franchises = franchiseMapper.getAll();
+        List<Music> musics = musicMapper.getAll();
+
+        books.forEach(book -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.BOOK.getId(), book.getId(), book.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.BOOK.getId(), book.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.BOOK.getId(), book.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
+        discs.forEach(disc -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.DISC.getId(), disc.getId(), disc.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.DISC.getId(), disc.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.DISC.getId(), disc.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
+        games.forEach(game -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.GAME.getId(), game.getId(), game.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.GAME.getId(), game.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.GAME.getId(), game.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
+        merches.forEach(merch -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.MERCH.getId(), merch.getId(), merch.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.MERCH.getId(), merch.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.MERCH.getId(), merch.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
+        products.forEach(product -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.PRODUCT.getId(), product.getId(), product.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.PRODUCT.getId(), product.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.PRODUCT.getId(), product.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
+        franchises.forEach(franchise -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.FRANCHISE.getId(), franchise.getId(), franchise.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.FRANCHISE.getId(), franchise.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.FRANCHISE.getId(), franchise.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
+        musics.forEach(music -> {
+            EntityStatistic entityStatistic = new EntityStatistic(EntityType.MUSIC.getId(), music.getId(), music.getStatus());
+            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.MUSIC.getId(), music.getId()));
+            entityStatistic.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), music.getId()));
+            statisticMapper.addStatistic(entityStatistic);
+        });
     }
 
 }

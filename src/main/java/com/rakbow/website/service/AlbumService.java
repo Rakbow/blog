@@ -72,7 +72,6 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addAlbum(Album album) {
         int id = albumMapper.addAlbum(album);
-        visitUtil.addVisit(EntityType.ALBUM.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
     }
 

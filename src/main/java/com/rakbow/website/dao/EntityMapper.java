@@ -1,6 +1,5 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.EntityInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Timestamp;

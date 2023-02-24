@@ -64,7 +64,6 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addBook(Book book) {
         int id = bookMapper.addBook(book);
-        visitUtil.addVisit(EntityType.BOOK.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
     }
 

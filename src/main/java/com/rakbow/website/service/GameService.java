@@ -63,7 +63,6 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addGame(Game game) {
         int id = gameMapper.addGame(game);
-        visitUtil.addVisit(EntityType.GAME.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
     }
 

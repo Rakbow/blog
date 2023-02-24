@@ -63,7 +63,6 @@ public class MerchService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addMerch(Merch merch) {
         int id = merchMapper.addMerch(merch);
-        visitUtil.addVisit(EntityType.MERCH.getId(), id);
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
     }
 
