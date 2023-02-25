@@ -3,9 +3,14 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.meilisearch.sdk.Client;
+import com.meilisearch.sdk.Config;
+import com.meilisearch.sdk.SearchRequest;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
+import com.meilisearch.sdk.model.SearchResult;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.*;
+import com.rakbow.website.data.common.Visit;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -17,27 +22,23 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
-import com.rakbow.website.entity.Book;
-import com.rakbow.website.entity.User;
+import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.*;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -77,7 +78,8 @@ public class EntityService {
     private QiniuImageUtil qiniuImageUtil;
     @Autowired
     private QiniuFileUtil qiniuFileUtil;
-
+    @Autowired
+    private StatisticPOMapper statisticPOMapper;
     @Autowired
     private VisitUtil visitUtil;
 
@@ -86,6 +88,14 @@ public class EntityService {
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
+
+    private final List<Integer> searchEntityTypes = new ArrayList<>(){{
+        add(EntityType.ALBUM.getId());
+        add(EntityType.BOOK.getId());
+        add(EntityType.DISC.getId());
+        add(EntityType.GAME.getId());
+        add(EntityType.MERCH.getId());
+    }};
 
     //endregion
 
@@ -116,7 +126,7 @@ public class EntityService {
 
         pageInfo.setAddedTime(CommonUtil.timestampToString(addedTime));
         pageInfo.setEditedTime(CommonUtil.timestampToString(editedTime));
-        pageInfo.setVisitCount(visitUtil.incSingleVisit(entityType, entityId, visitToken));
+        pageInfo.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
         pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
 
         return pageInfo;
@@ -363,6 +373,87 @@ public class EntityService {
             likeUtil.incLike(entityType, entityId, likeToken);
             return true;
         }
+    }
+
+    public void refreshVisitData() {
+        System.out.println("------redis缓存数据获取中------");
+        //获取所有浏览数据
+        List<String> visitKeys = redisUtil.keys(VisitUtil.PREFIX_VISIT + "*");
+        System.out.println("------redis缓存数据获取完毕------");
+
+        System.out.println("------缓存数据转换中------");
+        List<Visit> visits = statisticPOMapper.keys2Visit(visitKeys);
+        System.out.println("------缓存数据转换完毕------");
+
+        System.out.println("------正在更新浏览排名------");
+        //清空浏览数据
+        visitUtil.clearAllVisitRank();
+        //更新数据
+        visits.forEach(visit -> {
+            visitUtil.setEntityVisitRanking(visit.getEntityType(), visit.getEntityId(), visit.getVisitCount());
+        });
+        System.out.println("------浏览排名更新完毕------");
+    }
+
+    /**
+     * 查询
+     *
+     * @param keyword 关键字
+     * @author rakbow
+     */
+    public SimpleSearchResult simpleSearch(String keyword, int entityType, int offset, int limit) {
+
+        // String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+
+        SimpleSearchResult res = new SimpleSearchResult(keyword, entityType, EntityType.getItemNameZhByIndex(entityType), offset, limit);
+
+        if (keyword.isEmpty()) {
+            return res;
+        }
+
+        if (!searchEntityTypes.contains(entityType)) {
+            return res;
+        }
+
+        if(entityType == EntityType.ALBUM.getId()) {
+            List<Album> albums = albumMapper.simpleSearch(keyword, limit, offset);
+            if(!albums.isEmpty()) {
+                res.setData(JSON.parseArray(JSON.toJSONString(albumVOMapper.album2VOGamma(albums))));
+                res.setTotal(albumMapper.simpleSearchCount(keyword));
+            }
+        }
+        if(entityType == EntityType.BOOK.getId()) {
+            List<Book> books = bookMapper.simpleSearch(keyword, limit, offset);
+            if(!books.isEmpty()) {
+                res.setData(JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOGamma(books))));
+                res.setTotal(bookMapper.simpleSearchCount(keyword));
+            }
+        }
+        if(entityType == EntityType.DISC.getId()) {
+            List<Disc> discs = discMapper.simpleSearch(keyword, limit, offset);
+            if(!discs.isEmpty()) {
+                res.setData(JSON.parseArray(JSON.toJSONString(discVOMapper.disc2VOGamma(discs))));
+                res.setTotal(discMapper.simpleSearchCount(keyword));
+            }
+        }
+        if(entityType == EntityType.GAME.getId()) {
+            List<Game> games = gameMapper.simpleSearch(keyword, limit, offset);
+            if(!games.isEmpty()) {
+                res.setData(JSON.parseArray(JSON.toJSONString(gameVOMapper.game2VOGamma(games))));
+                res.setTotal(gameMapper.simpleSearchCount(keyword));
+            }
+        }
+        if(entityType == EntityType.MERCH.getId()) {
+            List<Merch> merchs = merchMapper.simpleSearch(keyword, limit, offset);
+            if(!merchs.isEmpty()) {
+                res.setData(JSON.parseArray(JSON.toJSONString(merchVOMapper.merch2VOGamma(merchs))));
+                res.setTotal(merchMapper.simpleSearchCount(keyword));
+            }
+        }
+
+
+
+        return res;
     }
 
 }

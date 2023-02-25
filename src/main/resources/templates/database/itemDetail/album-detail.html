@@ -81,6 +81,9 @@
 
     <script th:src="@{/js/clipboard.js}"></script>
 
+    <!-- flag-icons -->
+    <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
+
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
@@ -802,7 +805,7 @@
 <script type="module" th:inline="javascript">
 
     import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
-    import {showSearchPanel} from '/js/basic/Search_Params.js';
+    import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;

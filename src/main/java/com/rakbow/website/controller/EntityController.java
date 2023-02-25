@@ -3,6 +3,7 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.DataActionType;
@@ -144,6 +145,23 @@ public class EntityController {
         return initData.toJSONString();
     }
     //endregion
+
+    @RequestMapping(path = "/simpleSearch", method = RequestMethod.POST)
+    @ResponseBody
+    public String simpleSearch(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            String keyword = JSON.parseObject(json).getString("keyword");
+            int entityType = JSON.parseObject(json).getInteger("entityType");
+            int offset = JSON.parseObject(json).getInteger("offset");
+            int limit = JSON.parseObject(json).getInteger("limit");
+
+            res.data = entityService.simpleSearch(keyword, entityType, offset, limit);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
 
     //更改状态
     @RequestMapping(value = "/update-item-status", method = RequestMethod.POST)

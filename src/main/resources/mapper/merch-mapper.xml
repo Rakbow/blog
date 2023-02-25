@@ -79,13 +79,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateStatusById" keyProperty="id">
-        update merch
-        set
-        status = 0
-        where id = #{id}
-    </update>
-
     <select id="getMerchsByFilter" resultType="Merch">
         select
         <include refid="selectFields"></include>
@@ -206,6 +199,33 @@
         where status = 1
         order by added_time desc
         limit #{limit}
+    </select>
+
+    <select id="simpleSearch" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by release_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from merch
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
     </select>
 
 </mapper>

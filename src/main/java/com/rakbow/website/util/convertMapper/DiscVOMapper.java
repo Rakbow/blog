@@ -10,6 +10,9 @@ import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOGamma;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.AlbumUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -187,7 +190,7 @@ public interface DiscVOMapper {
     /**
      * 转VO对象，用于存储到搜索引擎
      *
-     * @param
+     * @param disc disc
      * @return DiscVOGamma
      * @author rakbow
      */
@@ -195,6 +198,9 @@ public interface DiscVOMapper {
         if (disc == null) {
             return null;
         }
+        VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
+
         DiscVOGamma discVOGamma = new DiscVOGamma();
 
         discVOGamma.setId(disc.getId());
@@ -217,6 +223,9 @@ public interface DiscVOMapper {
         discVOGamma.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
 
         discVOGamma.setCover(QiniuImageUtil.getThumb70Url(disc.getImages()));
+
+        discVOGamma.setVisitCount(visitUtil.getVisit(EntityType.DISC.getId(), disc.getId()));
+        discVOGamma.setLikeCount(likeUtil.getLike(EntityType.DISC.getId(), disc.getId()));
 
         return discVOGamma;
     }

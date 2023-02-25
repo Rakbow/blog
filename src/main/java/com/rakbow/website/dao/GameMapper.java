@@ -1,5 +1,6 @@
 package com.rakbow.website.dao;
 
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Game;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -45,9 +46,12 @@ public interface GameMapper {
     //更新开发制作人员
     int updateGameStaffs(int id, String staffs, Timestamp editedTime);
 
-    int updateStatusById(int id);
-
     //获取最新添加Game, limit
     List<Game> getGamesOrderByAddedTime(int limit);
+
+    //简单搜索
+    List<Game> simpleSearch(String keyWorld, int limit, int offset);
+
+    int simpleSearchCount(String keyWorld);
 
 }

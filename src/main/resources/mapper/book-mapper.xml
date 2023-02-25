@@ -89,13 +89,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateStatusById" keyProperty="id">
-        update book
-        set
-        status = 0
-        where id = #{id}
-    </update>
-
     <select id="getBooksByFilter" resultType="Book">
         select
         <include refid="selectFields"></include>
@@ -227,7 +220,40 @@
         </where>
     </select>
 
-    <select id="getBooksOrderByAddedTime" resultType="Book">
+    <select id="simpleSearch" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where
+        (
+        isbn_10 like concat('%', #{keyWorld}, '%')
+        or isbn_13 like concat('%', #{keyWorld}, '%')
+        or title like concat('%', #{keyWorld}, '%')
+        or title_zh like concat('%', #{keyWorld}, '%')
+        or title_en like concat('%', #{keyWorld}, '%')
+        or publisher like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by publish_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from book
+        where
+        (
+        isbn_10 like concat('%', #{keyWorld}, '%')
+        or isbn_13 like concat('%', #{keyWorld}, '%')
+        or title like concat('%', #{keyWorld}, '%')
+        or title_zh like concat('%', #{keyWorld}, '%')
+        or title_en like concat('%', #{keyWorld}, '%')
+        or publisher like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
+
+    <select id="getBookOrderByAddedTime" resultType="Book">
         select
         <include refid="selectFields"></include>
         from book

@@ -1,5 +1,6 @@
 package com.rakbow.website.dao;
 
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Merch;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -44,9 +45,12 @@ public interface MerchMapper {
     //更新规格信息
     void updateMerchSpec(int id, String spec, Timestamp editedTime);
 
-    int updateStatusById(int id);
-
     //获取最新添加Merch, limit
     List<Merch> getMerchsOrderByAddedTime(int limit);
+
+    //简单搜索
+    List<Merch> simpleSearch(String keyWorld, int limit, int offset);
+
+    int simpleSearchCount(String keyWorld);
 
 }

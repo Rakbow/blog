@@ -86,13 +86,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateStatusById" keyProperty="id">
-        update game
-        set
-        status = 0
-        where id = #{id}
-    </update>
-
     <select id="getGamesByFilter" resultType="Game">
         select
         <include refid="selectFields"></include>
@@ -199,6 +192,33 @@
         where status = 1
         order by added_time desc
         limit #{limit}
+    </select>
+
+    <select id="simpleSearch" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by release_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from game
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
     </select>
 
 </mapper>

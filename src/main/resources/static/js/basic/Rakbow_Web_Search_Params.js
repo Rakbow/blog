@@ -1,4 +1,32 @@
-<div class="formgrid grid search">
+import {postRequest} from '/js/basic/Http_Request.js';
+
+export const showSearchPanel = (dialog) => {
+    const dialogRef = dialog.open(SearchPanel, {
+        props: {
+            header: '全站搜索',
+            style: {
+                width: '43vw',
+            },
+            class: 'search-dialog',
+            // breakpoints:{
+            //     '960px': '75vw',
+            //     '640px': '90vw'
+            // },
+            modal: true
+        },
+        templates: {
+            // header: () => {
+            //     return [
+            //         Vue.h('span', {class: 'search-dialog'}, '搜索面板')
+            //     ]
+            // }
+        },
+    });
+};
+
+const SearchPanel = {
+    template: `
+        <div class="formgrid grid search">
     <div class="col">
         <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search" class="search-input"></p-inputtext>
     </div>
@@ -21,15 +49,15 @@
     </div>                       
 </div>
 <div v-if="searchResult != null">
-    <div v-if="searchResult.total != 0">
+    <div v-if="searchResult.total != 0" style="height: 600px">
         <div class="text-start mt-3">
-            <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;
-            <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;
-            <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;
+            <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
+            <span>查询类型: {{searchResult.entityName}}</span>&nbsp;&nbsp;&nbsp;
+            <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;&nbsp;
+            <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;&nbsp;
         </div>
         <p-scrollpanel style="max-height: 500px">
             <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
-
                 <div class="col-12">
                     <div class="search-item">
                         <a class="text-center" :href="'/db/album/'+ result.id">
@@ -42,21 +70,23 @@
                             <span class="small-font" style="margin: 0 0 .5rem 0;">
                                     <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span
                                     class="label">&nbsp{{result.releaseDate}}</span>
-                                </span>
-                            <span class="ml-2">
-                                    <span class="has-bonus-tag" v-if="result.hasBonus">
-                                        <p-tag style="background: #1B273D" class="ml-1"
-                                                value="特典"></p-tag>
-                                    </span>
+                                </span><br/>
+                            <span class="grid">
+                                <span class="text-start col-6">
                                     <div v-for="format of result.albumFormat" style="display:inline">
                                         <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
                                     </div>
-                                </span><br/>
-                            <span v-for="product of result.products" style="display:inline">
-                                    <a class="no-text-decoration" :href="'/db/product/' + product.value">
-                                        <p-chip :label="product.label"></p-chip>
-                                    </a>
+                                    <span class="has-bonus-tag" v-if="result.hasBonus">
+                                        <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                    </span>
                                 </span>
+                                <span class="text-end col-5">
+                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-4">{{result.visitCount}}</span>
+                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-2">{{result.likeCount}}</span>
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -75,18 +105,26 @@
                             <span class="small-font" style="margin: 0 0 .5rem 0;">
                             <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span class="label">&nbsp{{result.releaseDate}}</span>
                         </span><br>
-                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                    v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                        <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
                         </span>
-                            <span>
-                            <span v-for="format of result.mediaFormat" style="display:inline">
-                                <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                        <span class="grid">
+                            <span class="text-start col-6">
+                                <span v-for="format of result.mediaFormat" style="display:inline">
+                                    <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                                </span>
+                                <span class="has-bonus-tag" v-if="result.hasBonus">
+                                    <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                </span>
+                                <span class="limited-tag" v-if="result.limited">
+                                    <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
+                                </span>
                             </span>
-                            <span class="has-bonus-tag" v-if="result.hasBonus">
-                                <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
-                            </span>
-                            <span class="limited-tag" v-if="result.limited">
-                                <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
+                            <span class="text-end col-5">
+                                <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                <span class="ml-2 mr-4">{{result.visitCount}}</span>
+                                <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                <span class="ml-2 mr-2">{{result.likeCount}}</span>
                             </span>
                         </span>
                         </div>
@@ -110,14 +148,25 @@
                             <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
                                     v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
                             &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
-                            <span>
-                                    <span class="p-1">
-                                        <p-tag :value="result.bookType.nameZh"></p-tag>
+                            <span class="grid">
+                                <span class="text-start col-6">
+                                    <span v-for="format of result.mediaFormat" style="display:inline">
+                                        <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
                                     </span>
                                     <span class="has-bonus-tag" v-if="result.hasBonus">
                                         <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
                                     </span>
+                                    <span class="limited-tag" v-if="result.limited">
+                                        <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
+                                    </span>
                                 </span>
+                                <span class="text-end col-5">
+                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-4">{{result.visitCount}}</span>
+                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-2">{{result.likeCount}}</span>
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -133,12 +182,22 @@
                                 <span class="search-item-name text-truncate-1">
                                     <a :href="'/db/merch/'+ result.id">{{result.name}}</a>
                                 </span>
-                            <span class="small-font">
-                                    <span class="label">{{result.releaseDate}}</span>
+                            <span class="grid">
+                                <span class="text-start col-6">
+                                    <span class="small-font">
+                                        <span class="label">{{result.releaseDate}}</span>
+                                    </span>
+                                    <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                        v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                    </span>
                                 </span>
-                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                    v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                <span class="text-end col-5">
+                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-4">{{result.visitCount}}</span>
+                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                 </span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -160,7 +219,9 @@
                             <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
                                     v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
                                 </span>
-                            <span>
+                                
+                            <span class="grid">
+                                <span class="text-start col-6">
                                     <span>
                                         <p-tag class="ml-1" :value="result.platform.nameEn"></p-tag>
                                     </span>
@@ -168,6 +229,13 @@
                                         <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
                                     </span>
                                 </span>
+                                <span class="text-end col-5">
+                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-4">{{result.visitCount}}</span>
+                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                    <span class="ml-2 mr-2">{{result.likeCount}}</span>
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -187,3 +255,49 @@
         <img src="https://img.rakbow.com/common/icon/no-results.svg" /><br><span>暂无搜索结果</span>
     </div>
 </div>
+    `,
+    inject: ['dialogRef'],
+    data() {
+        return {
+            searchParams: {
+                keyword: "",
+                entityType: 0,
+                offset: 0,
+                limit: 10
+            },
+            searchResult: null,
+            entityType: ENTITY_TYPE,
+        }
+    },
+    watch: {
+
+    },
+    methods: {
+        search() {
+            postRequest(null, INDEX_SEARCH_URL, this.searchParams)
+                .then(res => {
+                    if(res.state === 1) {
+                        this.searchResult = res.data;
+                    }
+                });
+        },
+        pageChange(ev) {
+            this.searchParams.offset = ev.first;
+            this.searchParams.limit = ev.rows;
+            this.search();
+        },
+        entityTypeValue2Icon,
+        entityTypeValue2Label
+    },
+    components: {
+        "p-button": primevue.button,
+        "p-inputtext": primevue.inputtext,
+        "p-dropdown": primevue.dropdown,
+        "p-divider": primevue.divider,
+        "p-scrollpanel": primevue.scrollpanel,
+        "p-chip": primevue.chip,
+        "p-tag": primevue.tag,
+        "p-scrolltop": primevue.scrolltop,
+        "p-paginator": primevue.paginator,
+    }
+};

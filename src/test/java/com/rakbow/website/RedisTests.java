@@ -1,9 +1,7 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.entity.*;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.service.ProductService;
@@ -75,7 +73,7 @@ public class RedisTests {
 
     @Test
     public void redisTest3() {
-        System.out.println(JSON.toJSON(visitUtil.getEntityVisitRanking(1, 10)));
+        entityService.refreshVisitData();
     }
 
 }

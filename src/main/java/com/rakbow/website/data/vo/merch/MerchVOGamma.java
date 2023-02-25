@@ -30,5 +30,8 @@ public class MerchVOGamma {
 
     private String cover;
 
+    private long visitCount;//浏览数
+    private long likeCount;//点赞数
+
 
 }

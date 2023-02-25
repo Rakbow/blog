@@ -10,12 +10,11 @@ import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.entity.AlbumUtil;
-import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.entity.ProductUtil;
-import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -218,6 +217,10 @@ public interface AlbumVOMapper {
         if (album == null) {
             return null;
         }
+
+        VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
+
         AlbumVOGamma albumVOGamma = new AlbumVOGamma();
         albumVOGamma.setId(album.getId());
         albumVOGamma.setCatalogNo(album.getCatalogNo());
@@ -233,6 +236,9 @@ public interface AlbumVOMapper {
         albumVOGamma.setAlbumFormat(AlbumUtil.getAlbumFormat(album.getAlbumFormat()));
 
         albumVOGamma.setCover(QiniuImageUtil.getThumb70Url(album.getImages()));
+
+        albumVOGamma.setVisitCount(visitUtil.getVisit(EntityType.ALBUM.getId(), album.getId()));
+        albumVOGamma.setLikeCount(likeUtil.getLike(EntityType.ALBUM.getId(), album.getId()));
 
         return albumVOGamma;
     }

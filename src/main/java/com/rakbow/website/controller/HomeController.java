@@ -157,21 +157,21 @@ public class HomeController {
         }
     }
 
-    @RequestMapping(path = "/db/simpleSearch", method = RequestMethod.POST)
-    @ResponseBody
-    public String simpleSearch(@RequestBody String json, HttpServletRequest request) throws MeilisearchException {
-        ApiResult res = new ApiResult();
-        try {
-            String keyword = JSON.parseObject(json).getString("keyword");
-            int entityType = JSON.parseObject(json).getInteger("entityType");
-            int offset = JSON.parseObject(json).getInteger("offset");
-            int limit = JSON.parseObject(json).getInteger("limit");
-
-            res.data = meiliSearchUtils.simpleSearch(keyword, entityType, offset, limit);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
+    // @RequestMapping(path = "/db/simpleSearch", method = RequestMethod.POST)
+    // @ResponseBody
+    // public String simpleSearch(@RequestBody String json, HttpServletRequest request) throws MeilisearchException {
+    //     ApiResult res = new ApiResult();
+    //     try {
+    //         String keyword = JSON.parseObject(json).getString("keyword");
+    //         int entityType = JSON.parseObject(json).getInteger("entityType");
+    //         int offset = JSON.parseObject(json).getInteger("offset");
+    //         int limit = JSON.parseObject(json).getInteger("limit");
+    //
+    //         res.data = meiliSearchUtils.simpleSearch(keyword, entityType, offset, limit);
+    //     } catch (Exception e) {
+    //         res.setErrorMessage(e);
+    //     }
+    //     return JSON.toJSONString(res);
+    // }
 
 }

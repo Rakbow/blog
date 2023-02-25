@@ -11,6 +11,9 @@ import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.data.vo.merch.MerchVOGamma;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -204,6 +207,9 @@ public interface MerchVOMapper {
         if (merch == null) {
             return null;
         }
+        VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
+
         MerchVOGamma merchVOGamma = new MerchVOGamma();
 
         //基础信息
@@ -227,6 +233,9 @@ public interface MerchVOMapper {
         merchVOGamma.setRegion(region);
 
         merchVOGamma.setCover(QiniuImageUtil.getThumb70Url(merch.getImages()));
+
+        merchVOGamma.setVisitCount(visitUtil.getVisit(EntityType.MERCH.getId(), merch.getId()));
+        merchVOGamma.setLikeCount(likeUtil.getLike(EntityType.MERCH.getId(), merch.getId()));
 
         return merchVOGamma;
     }

@@ -11,6 +11,9 @@ import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.data.vo.game.GameVOGamma;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -188,7 +191,7 @@ public interface GameVOMapper {
     /**
      * 转VO对象，用于存储到搜索引擎
      *
-     * @param
+     * @param game game
      * @return GameVOGamma
      * @author rakbow
      */
@@ -196,6 +199,9 @@ public interface GameVOMapper {
         if (game == null) {
             return null;
         }
+        VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
+
         GameVOGamma gameVOGamma = new GameVOGamma();
 
         //基础信息
@@ -215,6 +221,9 @@ public interface GameVOMapper {
         gameVOGamma.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
 
         gameVOGamma.setCover(QiniuImageUtil.getThumb70Url(game.getImages()));
+
+        gameVOGamma.setVisitCount(visitUtil.getVisit(EntityType.GAME.getId(), game.getId()));
+        gameVOGamma.setLikeCount(likeUtil.getLike(EntityType.GAME.getId(), game.getId()));
 
         return gameVOGamma;
     }

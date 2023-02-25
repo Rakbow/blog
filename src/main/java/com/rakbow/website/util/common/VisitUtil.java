@@ -28,7 +28,7 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public void addSingleVisit(int entityType, int entityId) {
+    public void addVisit(int entityType, int entityId) {
         String key = getSingleVisitKey(entityType, entityId);
         redisUtil.set(key, 1);
     }
@@ -38,10 +38,10 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public long getSingleVisit(int entityType, int entityId) {
+    public long getVisit(int entityType, int entityId) {
         String key = getSingleVisitKey(entityType, entityId);
         if(!redisUtil.hasKey(key)) {
-            addSingleVisit(entityType, entityId);
+            addVisit(entityType, entityId);
         }
         return Long.parseLong(redisUtil.get(key).toString());
     }
@@ -51,11 +51,11 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型,实体id
      * @Author Rakbow
      */
-    public long incSingleVisit(int entityType, int entityId, String visitToken) {
+    public long incVisit(int entityType, int entityId, String visitToken) {
         String key = getSingleVisitKey(entityType, entityId);
         String tokenKey = getEntityVisitTokenKey(entityType, entityId, visitToken);
         if(redisUtil.hasKey(tokenKey)) {
-            return getSingleVisit(entityType, entityId);
+            return getVisit(entityType, entityId);
         }else {
             redisUtil.set(tokenKey, 1);
             redisUtil.expire(tokenKey, 3600*24);
@@ -68,7 +68,7 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public void deleteSingleVisit(int entityType, int entityId) {
+    public void deleteVisit(int entityType, int entityId) {
         String key = getSingleVisitKey(entityType, entityId);
         redisUtil.delete(key);
     }
@@ -89,24 +89,6 @@ public class VisitUtil {
 
 
 
-
-
-
-
-
-
-
-
-    /**
-     * 删除浏览数
-     * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
-     */
-    public void deleteVisit(int entityType, int entityId) {
-        String rankKey = getEntityVisitRankingKeyName(entityType);
-        String key = String.valueOf(entityId);
-        redisUtil.redisTemplate.opsForZSet().remove(rankKey, key);
-    }
 
     /**
      * 获取浏览数排名,并返回指定数量的排名数据

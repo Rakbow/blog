@@ -12,6 +12,9 @@ import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.book.BookVOGamma;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -237,6 +240,9 @@ public interface BookVOMapper {
         if (book == null) {
             return null;
         }
+        VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
+
         BookVOGamma bookVOGamma = new BookVOGamma();
         bookVOGamma.setId(book.getId());
         bookVOGamma.setTitle(book.getTitle());
@@ -269,6 +275,9 @@ public interface BookVOMapper {
         bookVOGamma.setFranchises(FranchiseUtil.getFranchiseList(book.getFranchises()));
 
         bookVOGamma.setCover(QiniuImageUtil.getThumb70Url(book.getImages()));
+
+        bookVOGamma.setVisitCount(visitUtil.getVisit(EntityType.BOOK.getId(), book.getId()));
+        bookVOGamma.setLikeCount(likeUtil.getLike(EntityType.BOOK.getId(), book.getId()));
 
         return bookVOGamma;
     }

@@ -1,9 +1,6 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
@@ -14,10 +11,8 @@ import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.entity.BookUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
@@ -198,43 +193,43 @@ class WebSiteApplicationTests {
 
         books.forEach(book -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.BOOK.getId(), book.getId(), book.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.BOOK.getId(), book.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.BOOK.getId(), book.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.BOOK.getId(), book.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
         discs.forEach(disc -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.DISC.getId(), disc.getId(), disc.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.DISC.getId(), disc.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.DISC.getId(), disc.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.DISC.getId(), disc.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
         games.forEach(game -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.GAME.getId(), game.getId(), game.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.GAME.getId(), game.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.GAME.getId(), game.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.GAME.getId(), game.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
         merches.forEach(merch -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.MERCH.getId(), merch.getId(), merch.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.MERCH.getId(), merch.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.MERCH.getId(), merch.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.MERCH.getId(), merch.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
         products.forEach(product -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.PRODUCT.getId(), product.getId(), product.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.PRODUCT.getId(), product.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.PRODUCT.getId(), product.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.PRODUCT.getId(), product.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
         franchises.forEach(franchise -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.FRANCHISE.getId(), franchise.getId(), franchise.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.FRANCHISE.getId(), franchise.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.FRANCHISE.getId(), franchise.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.FRANCHISE.getId(), franchise.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
         musics.forEach(music -> {
             EntityStatistic entityStatistic = new EntityStatistic(EntityType.MUSIC.getId(), music.getId(), music.getStatus());
-            entityStatistic.setVisitCount(visitUtil.getSingleVisit(EntityType.MUSIC.getId(), music.getId()));
+            entityStatistic.setVisitCount(visitUtil.getVisit(EntityType.MUSIC.getId(), music.getId()));
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), music.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });

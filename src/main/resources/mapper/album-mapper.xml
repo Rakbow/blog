@@ -248,4 +248,33 @@
         </where>
     </select>
 
+    <select id="simpleSearch" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where
+        (
+        catalog_no like concat('%', #{keyWorld}, '%')
+        or name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by release_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from album
+        where
+        (
+        catalog_no like concat('%', #{keyWorld}, '%')
+        or name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
+
 </mapper>
