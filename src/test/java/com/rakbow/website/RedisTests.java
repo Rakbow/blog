@@ -55,7 +55,7 @@ public class RedisTests {
     public void refreshData() {
         productService.refreshRedisProducts();
         franchiseService.refreshRedisFranchises();
-        // entityService.refreshRedisEmunData();
+        entityService.refreshRedisEmunData();
     }
 
     @Test

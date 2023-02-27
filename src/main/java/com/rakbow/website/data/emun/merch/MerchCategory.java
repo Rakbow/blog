@@ -18,12 +18,28 @@ import java.util.List;
 public enum MerchCategory {
 
     UNCLASSIFIED(0,"未分类", "Unclassified"),
-    BADGE(1,"徽章", "Badge"),
-    ILLUSTRATE(2,"色纸", "Illustration"),
-    POSTERS(3,"海报", "Posters"),
-    TOY(4,"小玩具", "Toy"),
-    FIGURE(5,"手办", "Figure"),
-    OTHER(6,"其他", "Other");
+    CARD(1,"收藏卡片", "Card"),
+    CLOTHING(2,"衣物", "Clothing"),
+    ACCESSORY(3,"小物", "Accessory"),
+    STATIONERY(4,"文具", "Stationery"),
+    SEAL_STICKER(5,"印章/贴纸", "Seal/Sticker"),
+    BADGE(6,"徽章", "Badge"),
+    KEY_RING(7,"钥匙挂坠/钥匙圈", "Key ring"),
+    BAG(8,"包", "Bag"),
+    TOWEL_HANDKERCHIEF(9,"毛巾/手帕", "Towel/Handkerchief"),
+    CUSHION_SHEETS_PILLOW_COVER(10,"软垫/床垫/枕套", "Cushion/Sheets/Pillow cover"),
+    CALENDAR(11,"日历", "Calendar"),
+    POSTER(12,"海报", "Poster"),
+    TAPESTRY(13,"挂毯", "Tapestry"),
+    POSTCARD_COLORED_PAPER(14,"明信片/色纸", "Postcard/Colored paper"),
+    CUP_TABLEWARE(15,"杯子/餐具", "Cup/Tableware"),
+    DAILY_NECESSITIES(16,"日用品", "Daily necessities"),
+    PLASTIC_MODEL(17,"塑料模型", "Plastic model"),
+    FIGURE(18,"手办", "Figure"),
+    TOY(19,"玩具", "Toy"),
+    STUFFED_TOY(20,"布偶/毛绒玩具", "Stuffed toy"),
+    DOLL(21,"娃娃", "Doll"),
+    MISC(99,"杂物", "Misc");
 
     @Getter
     private final int index;

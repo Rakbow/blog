@@ -371,6 +371,8 @@ public class BookService {
      */
     public String getISBN(String label, String isbn) throws Exception {
 
+        isbn = isbn.replaceAll("-", "");
+
         if(StringUtils.equals(label, "isbn13")) {
             if(isbn.length() != 10) {
                 throw new Exception(ApiInfo.BOOK_ISBN10_LENGTH_EXCEPTION);

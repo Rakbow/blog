@@ -49,6 +49,7 @@
     <script th:src="@{/js/primevue/components/inputswitch.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
+    <script th:src="@{/js/primevue/components/skeleton.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -105,7 +106,7 @@
                                 {{product.name}}
                             </b><span style="font-size: 13px" class="label">({{product.category.nameZh}})</span>
                         </h4>
-                        <div th:insert="~{template/item-detail-template :: item_common_edit_button}"></div>
+                        <div th:insert="~{template/item-detail-template :: item_common_edit_button}" v-if="product.id != 0"></div>
                     </div>
                 </template>
                 <template #subtitle>
@@ -125,7 +126,47 @@
                             <p-card>
                                 <template #content>
                                     <div class="relative" style="min-height: 100px">
-                                        <table class="table-borderless table-sm ml-2">
+                                        <table class="table-borderless table-sm ml-2" v-if="product.id == 0">
+                                            <tbody class="detail-item-header-table">
+                                            <tr>
+                                                <td><strong><p-skeleton width="3rem"></p-skeleton></strong></td>
+                                                <td>
+                                                    <p-skeleton width="5rem"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong><p-skeleton width="3rem"></p-skeleton></strong></td>
+                                                <td>
+                                                    <p-skeleton width="5rem"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong><p-skeleton width="3rem"></p-skeleton></strong></td>
+                                                <td>
+                                                    <p-skeleton width="5rem"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong><p-skeleton width="3rem"></p-skeleton></strong></td>
+                                                <td>
+                                                    <p-skeleton width="5rem"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong><p-skeleton width="3rem"></p-skeleton></strong></td>
+                                                <td>
+                                                    <p-skeleton width="5rem"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong><p-skeleton width="3rem"></p-skeleton></strong></td>
+                                                <td>
+                                                    <p-skeleton width="5rem"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <table class="table-borderless table-sm ml-2" v-if="product.id != 0">
                                             <tbody class="detail-item-header-table">
                                             <tr>
                                                 <td><strong>所属系列</strong></td>
@@ -164,7 +205,7 @@
                                             </div>
                                             </tbody>
                                         </table>
-                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
+                                        <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}" v-if="product.id != 0"></div>
                                         <div th:insert="~{template/item-detail-template :: item_statistic_info}"></div>
                                     </div>
                                 </template>
@@ -312,7 +353,7 @@
         </div>
         <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
-            <p-panel class="mt-2">
+            <p-panel class="mt-2" v-if="product.id != 0">
                 <template #header>
                     <span class="text-start side-panel-header">
                         <i class="pi iconfont icon-_classification"></i><span><strong>相关作品</strong></span>
@@ -946,6 +987,7 @@
             "p-inputswitch": primevue.inputswitch,
             "p-card": primevue.card,
             "p-blockui": primevue.blockui,
+            "p-skeleton": primevue.skeleton,
 
             "p-dynamicdialog": primevue.dynamicdialog,
         }

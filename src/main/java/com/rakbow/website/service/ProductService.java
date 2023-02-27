@@ -291,11 +291,11 @@ public class ProductService {
 
         JSONArray products = new JSONArray();
         getAllProduct().forEach(product -> {
-            JSONObject jo = new JSONObject();
-            jo.put("value", product.getId());
-            jo.put("label", product.getNameZh() + "(" +
+            JSONObject item = new JSONObject();
+            item.put("value", product.getId());
+            item.put("label", product.getNameZh() + "(" +
                     ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
-            products.add(jo);
+            products.add(item);
         });
 
         redisUtil.set(RedisCacheConstant.PRODUCT_SET, products);

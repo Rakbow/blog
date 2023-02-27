@@ -110,7 +110,7 @@
                                 <span v-else style="font-size: 13px" class="label">(系列)</span>
                             </h3>
                         </div>
-                        <div th:insert="~{template/item-detail-template :: item_common_edit_button}"></div>
+                        <div th:insert="~{template/item-detail-template :: item_common_edit_button}" v-if="franchise.id != 0"></div>
                     </div>
                 </template>
                 <template #subtitle>

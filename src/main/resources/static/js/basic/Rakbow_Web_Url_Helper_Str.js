@@ -99,7 +99,7 @@ const UPDATE_BOOK_URL = "/db/book/update";
 const INSERT_BOOK_URL = "/db/book/add";
 const GET_BOOKS_URL = "/db/book/get-books";
 
-const BOOK_ISBN_INTERCONVERT = "/db/book/isbn-interconvert";
+const BOOK_ISBN_INTERCONVERT = "/db/book/get-isbn";
 
 const UPDATE_BOOK_AUTHORS_URL = "/db/book/update-authors";
 const UPDATE_BOOK_SPEC_URL = "/db/book/update-spec";
