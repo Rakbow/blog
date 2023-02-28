@@ -1,189 +1,31 @@
-<div class="formgrid grid search">
-    <div class="col">
-        <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search" class="search-input"></p-inputtext>
+<p-blockui :blocked="editBlock">
+    <md-editor-v3 v-model="descriptionMd" preview-theme="github"></md-editor-v3>
+    <div class="text-end mt-3 mb-2">
+        <p-button icon="pi pi-times" label="取消" @click="closeDescriptionEditDialog"
+              class="p-button-text"></p-button>
+        <p-button icon="pi pi-save" label="保存" @click="submitDescription"></p-button>
     </div>
-    <div class="col-2" style="margin: auto;">
-        <p-dropdown v-model="searchParams.entityType" :options="entityType" option-label="label"
-            option-value="value" placeholder="类型">
-            <template #value="slotProps">
-                <div class="country-item country-item-value" v-if="slotProps.value">
-                    <i :class="entityTypeValue2Icon(slotProps.value)"></i>
-                    <span class="ml-1">{{entityTypeValue2Label(slotProps.value)}}</span>
-                </div>
-            </template>
-            <template #option="slotProps">
-                <div class="country-item">
-                    <i :class="slotProps.option.icon"></i>
-                    <span class="ml-1">{{slotProps.option.label}}</span>
-                </div>
-            </template>
-        </p-dropdown>
-    </div>                       
-</div>
-<div v-if="searchResult != null">
-    <div v-if="searchResult.total != 0">
-        <div class="text-start mt-3">
-            <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;
-            <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;
-            <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;
+    <p-panel>
+        <div v-if="images.length != 0">
+            <p-datatable :value="images" class="p-datatable-sm" striped-rows>
+                <p-column header="图片" header-style="width: 8%">
+                    <template #body="slotProps">
+                        <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
+                             class="edit-image"/>
+                    </template>
+                </p-column>
+                <p-column field="url" header="URL" header-style="width: 10%">
+                    <template #body="slotProps">
+                        {{slotProps.data.url.substr(22)}}
+                    </template>
+                </p-column>
+                <p-column field="nameZh" header="名(中)" header-style="width: 10%"></p-column>
+                <p-column field="nameEn" header="名(英)" header-style="width: 10%"></p-column>
+                <p-column field="description" header="描述" header-style="width: 15%"></p-column>
+            </p-datatable>
         </div>
-        <p-scrollpanel style="max-height: 500px">
-            <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
-
-                <div class="col-12">
-                    <div class="search-item">
-                        <a class="text-center" :href="'/db/album/'+ result.id">
-                            <img :src="result.cover"/>
-                        </a>
-                        <div class="search-item-detail">
-                                <span class="search-item-name text-truncate-1">
-                                    <a :href="'/db/album/'+ result.id">{{result.name}}</a>
-                                </span>
-                            <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                    <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span
-                                    class="label">&nbsp{{result.releaseDate}}</span>
-                                </span>
-                            <span class="ml-2">
-                                    <span class="has-bonus-tag" v-if="result.hasBonus">
-                                        <p-tag style="background: #1B273D" class="ml-1"
-                                                value="特典"></p-tag>
-                                    </span>
-                                    <div v-for="format of result.albumFormat" style="display:inline">
-                                        <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
-                                    </div>
-                                </span><br/>
-                            <span v-for="product of result.products" style="display:inline">
-                                    <a class="no-text-decoration" :href="'/db/product/' + product.value">
-                                        <p-chip :label="product.label"></p-chip>
-                                    </a>
-                                </span>
-                        </div>
-                    </div>
-                </div>
-                <p-divider></p-divider>
-            </div>
-            <div v-if="searchResult.entityType == 2" v-for="result of searchResult.data">
-                <div class="col-12">
-                    <div class="search-item">
-                        <a class="text-center" :href="'/db/disc/'+ result.id">
-                            <img :src="result.cover" />
-                        </a>
-                        <div class="search-item-detail">
-                        <span class="search-item-name text-truncate-1">
-                            <a :href="'/db/disc/'+ result.id">{{result.name}}</a>
-                        </span>
-                            <span class="small-font" style="margin: 0 0 .5rem 0;">
-                            <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span class="label">&nbsp{{result.releaseDate}}</span>
-                        </span><br>
-                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                    v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
-                        </span>
-                            <span>
-                            <span v-for="format of result.mediaFormat" style="display:inline">
-                                <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
-                            </span>
-                            <span class="has-bonus-tag" v-if="result.hasBonus">
-                                <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
-                            </span>
-                            <span class="limited-tag" v-if="result.limited">
-                                <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
-                            </span>
-                        </span>
-                        </div>
-                    </div>
-                </div>
-                <p-divider></p-divider>
-            </div>
-            <div v-if="searchResult.entityType == 3" v-for="result of searchResult.data">
-                <div class="col-12">
-                    <div class="search-item">
-                        <a class="text-center" :href="'/db/book/'+ result.id">
-                            <img :src="result.cover"/>
-                        </a>
-                        <div class="search-item-detail">
-                                <span class="search-item-name text-truncate-1">
-                                    <a :href="'/db/book/'+ result.id">{{result.title}}</a>
-                                </span>
-                            <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                    <b class="label">{{result.isbn13}}</b><span class="label">&nbsp{{result.publishDate}}</span>
-                                </span><br>
-                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                    v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
-                            &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
-                            <span>
-                                    <span class="p-1">
-                                        <p-tag :value="result.bookType.nameZh"></p-tag>
-                                    </span>
-                                    <span class="has-bonus-tag" v-if="result.hasBonus">
-                                        <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
-                                    </span>
-                                </span>
-                        </div>
-                    </div>
-                </div>
-                <p-divider></p-divider>
-            </div>
-            <div v-if="searchResult.entityType == 4" v-for="result of searchResult.data">
-                <div class="col-12">
-                    <div class="search-item">
-                        <a class="text-center" :href="'/db/merch/'+ result.id">
-                            <img :src="result.cover" />
-                        </a>
-                        <div class="search-item-detail">
-                                <span class="search-item-name text-truncate-1">
-                                    <a :href="'/db/merch/'+ result.id">{{result.name}}</a>
-                                </span>
-                            <span class="small-font">
-                                    <span class="label">{{result.releaseDate}}</span>
-                                </span>
-                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                    v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
-                                </span>
-                        </div>
-                    </div>
-                </div>
-                <p-divider></p-divider>
-            </div>
-            <div v-if="searchResult.entityType == 5" v-for="result of searchResult.data">
-                <div class="col-12">
-                    <div class="search-item">
-                        <a class="text-center" :href="'/db/game/'+ result.id">
-                            <img :src="result.cover" />
-                        </a>
-                        <div class="search-item-detail">
-                                <span class="search-item-name text-truncate-1">
-                                    <a :href="'/db/game/'+ result.id">{{result.name}}</a>
-                                </span>
-                            <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                    <span class="label">&nbsp{{result.releaseDate}}</span>
-                                </span><br>
-                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                    v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
-                                </span>
-                            <span>
-                                    <span>
-                                        <p-tag class="ml-1" :value="result.platform.nameEn"></p-tag>
-                                    </span>
-                                    <span class="has-bonus-tag" v-if="result.hasBonus">
-                                        <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
-                                    </span>
-                                </span>
-                        </div>
-                    </div>
-                </div>
-                <p-divider></p-divider>
-            </div>
-            <p-scrolltop target="parent" :threshold="100" class="search-scrolltop" icon="pi pi-arrow-up"></p-scrolltop>
-        </p-scrollpanel>
-        <p-paginator
-            :template="{
-                default: 'FirstPageLink PrevPageLink PageLinks NextPageLinLastPageLink LastPageLink JumpToPageDropdown'
-                }"
-            v-model:first="searchResult.offset" :rows="searchResult.limit"
-            :total-records="searchResult.total" @page="pageChange($event)">
-        </p-paginator>
-    </div>
-    <div v-else class="text-center mt-2">
-        <img src="https://img.rakbow.com/common/icon/no-results.svg" /><br><span>暂无搜索结果</span>
-    </div>
-</div>
+        <div v-else>
+            <span class="emptyInfo"><em>暂无图片</em></span>
+        </div>
+    </p-panel>
+</p-blockui>

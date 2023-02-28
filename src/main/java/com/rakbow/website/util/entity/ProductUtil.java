@@ -89,21 +89,31 @@ public class ProductUtil {
             categories.add(ProductCategory.UNCLASSIFIED.getIndex());
             categories.add(ProductCategory.GAME.getIndex());
             categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.OVA_OAD.getIndex());
+            categories.add(ProductCategory.TV_SERIES.getIndex());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
-            categories.add(ProductCategory.BOOK.getIndex());
+            categories.add(ProductCategory.NOVEL.getIndex());
+            categories.add(ProductCategory.MANGA.getIndex());
+            categories.add(ProductCategory.PUBLICATION.getIndex());
             categories.add(ProductCategory.MISC.getIndex());
         }
         if (entityType == EntityType.ALBUM.getId()) {
             categories.add(ProductCategory.GAME.getIndex());
             categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.OVA_OAD.getIndex());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
+            categories.add(ProductCategory.TV_SERIES.getIndex());
         }
         if (entityType == EntityType.BOOK.getId()) {
-            categories.add(ProductCategory.BOOK.getIndex());
+            categories.add(ProductCategory.NOVEL.getIndex());
+            categories.add(ProductCategory.MANGA.getIndex());
+            categories.add(ProductCategory.PUBLICATION.getIndex());
         }
         if (entityType == EntityType.DISC.getId()) {
             categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.OVA_OAD.getIndex());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
+            categories.add(ProductCategory.TV_SERIES.getIndex());
         }
         if (entityType == EntityType.GAME.getId()) {
             categories.add(ProductCategory.GAME.getIndex());
@@ -111,8 +121,12 @@ public class ProductUtil {
         if (entityType == EntityType.MERCH.getId()) {
             categories.add(ProductCategory.GAME.getIndex());
             categories.add(ProductCategory.ANIMATION.getIndex());
+            categories.add(ProductCategory.OVA_OAD.getIndex());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
-            categories.add(ProductCategory.BOOK.getIndex());
+            categories.add(ProductCategory.TV_SERIES.getIndex());
+            categories.add(ProductCategory.NOVEL.getIndex());
+            categories.add(ProductCategory.MANGA.getIndex());
+            categories.add(ProductCategory.PUBLICATION.getIndex());
         }
         return categories;
     }

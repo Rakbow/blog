@@ -4,6 +4,7 @@ import com.rakbow.website.dao.*;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
+import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -23,6 +25,8 @@ class WebSiteApplicationTests {
 
     @Autowired
     private AlbumService albumService;
+    @Autowired
+    private BookService bookService;
     @Autowired
     private MusicService musicService;
     @Autowired
@@ -55,18 +59,15 @@ class WebSiteApplicationTests {
     void contextLoads() {
     }
 
-    // @Test
-    // public void test1() {
-    //     Album album = albumService.findAlbumById(55);
-    //     List<Album> albums = new ArrayList<>();
-    //     albums.add(album);
-    //     albums.add(album);
-    //     albums.add(album);
-    //     albums.add(album);
-    //     System.out.println("原数组：" + albums);
-    //     albums = CommonUtil.removeDuplicateList(albums);
-    //     System.out.println("后数组：" + albums);
-    // }
+    @Test
+    public void test1() {
+        Album album = albumService.getAlbum(11);
+        Timestamp t1 = new Timestamp(System.currentTimeMillis());
+        // bookService.getRelatedBooks(148);
+        albumService.getRelatedAlbums(album);
+        Timestamp t2 = new Timestamp(System.currentTimeMillis());
+        System.out.println(t2.getTime()-t1.getTime());
+    }
 
     // @Test
     // public void test2() {

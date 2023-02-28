@@ -81,11 +81,15 @@ public class ProductController {
         model.addAttribute("relatedProducts", productService.getRelatedProducts(id));
 
         if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
-                || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getIndex()) {
+                || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getIndex()
+                || product.getCategory() == ProductCategory.OVA_OAD.getIndex()
+                || product.getCategory() == ProductCategory.TV_SERIES.getIndex()) {
             model.addAttribute("albums", albumService.getAlbumsByProductId(id));
             model.addAttribute("discs", discService.getDiscsByProductId(id));
         }
-        if (product.getCategory() == ProductCategory.BOOK.getIndex()) {
+        if (product.getCategory() == ProductCategory.NOVEL.getIndex()
+                || product.getCategory() == ProductCategory.MANGA.getIndex()
+                || product.getCategory() == ProductCategory.PUBLICATION.getIndex()) {
             model.addAttribute("books", bookService.getBooksByProductId(id));
         }
         if (product.getCategory() == ProductCategory.GAME.getIndex()) {

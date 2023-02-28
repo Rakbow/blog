@@ -578,14 +578,14 @@
                     label: '描述信息',
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        showDescriptionEditDialog(toast, dialog, detailInfo.value);
+                        showDescriptionEditDialog(toast, dialog, detailInfo.value, itemImageInfo.value.images);
                     }
                 },
                 {
                     label: '特典信息',
                     icon: 'pi iconfont icon-gift',
                     command: () => {
-                        showBonusEditDialog(toast, dialog, detailInfo.value, disc.value.bonus);
+                        showBonusEditDialog(toast, dialog, detailInfo.value, disc.value.bonus, itemImageInfo.value.images);
                     }
                 }
             ]);

@@ -253,7 +253,7 @@
         and status = 1
     </select>
 
-    <select id="getBookOrderByAddedTime" resultType="Book">
+    <select id="getBooksOrderByAddedTime" resultType="Book">
         select
         <include refid="selectFields"></include>
         from book
