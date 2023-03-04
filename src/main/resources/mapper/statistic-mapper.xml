@@ -19,6 +19,12 @@
         where entity_type = #{entityType} and entity_id = #{entityId}
     </select>
 
+    <select id="getAll" resultType="EntityStatistic">
+        select
+        <include refid="selectFields"></include>
+        from entity_statistic
+    </select>
+
     <insert id="addStatistic">
         insert into entity_statistic (<include refid="insertFields"></include>)
         values (#{entityType}, #{entityId}, #{visitCount}, #{likeCount}, #{collectCount}, #{status})

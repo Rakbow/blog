@@ -30,7 +30,9 @@ import java.util.stream.Collectors;
 public class VisitRankTask extends QuartzJobBean {
 
     @Autowired
-    private EntityService entityService;
+    private RedisUtil redisUtil;
+    @Autowired
+    private VisitUtil visitUtil;
 
     private final StatisticPOMapper statisticPOMapper = StatisticPOMapper.INSTANCES;
 
@@ -38,7 +40,23 @@ public class VisitRankTask extends QuartzJobBean {
     protected void executeInternal(@NotNull JobExecutionContext context) {
         // 定时任务逻辑
         // TODO
-        entityService.refreshVisitData();
+        System.out.println("------redis缓存数据获取中------");
+        //获取所有浏览数据
+        List<String> visitKeys = redisUtil.keys(VisitUtil.PREFIX_VISIT + VisitUtil.SPLIT + "*");
+        System.out.println("------redis缓存数据获取完毕------");
+
+        System.out.println("------缓存数据转换中------");
+        List<Visit> visits = statisticPOMapper.keys2Visit(visitKeys);
+        System.out.println("------缓存数据转换完毕------");
+
+        System.out.println("------正在更新浏览排名------");
+        //清空浏览数据
+        visitUtil.clearAllVisitRank();
+        //更新数据
+        visits.forEach(visit -> {
+            visitUtil.setEntityVisitRanking(visit.getEntityType(), visit.getEntityId(), visit.getVisitCount());
+        });
+        System.out.println("------浏览排名更新完毕------");
     }
 
 }

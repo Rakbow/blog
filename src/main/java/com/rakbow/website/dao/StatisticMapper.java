@@ -16,6 +16,8 @@ public interface StatisticMapper {
 
     EntityStatistic getStatistic(int entityType, int entityId);
 
+    List<EntityStatistic> getAll();
+
     void addStatistic(EntityStatistic entityStatistic);
 
     //更新浏览数

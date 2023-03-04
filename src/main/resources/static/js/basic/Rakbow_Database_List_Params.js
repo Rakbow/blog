@@ -4768,6 +4768,10 @@ const franchiseDbList = {
 
 export const DATABASE_LIST_ROUTER = [
     {
+        path: '/db/list',
+        component: albumDbList
+    },
+    {
         path: '/db/list/album',
         component: albumDbList
     },

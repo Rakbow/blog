@@ -6,13 +6,13 @@
 
     <sql id="selectFields">
         id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, authors,
-        publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
+        publisher, publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 
     <sql id="insertFields">
         title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, authors,
-        publisher,publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
+        publisher, publish_date, price, summary, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 

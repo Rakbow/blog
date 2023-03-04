@@ -43,7 +43,7 @@ public class VisitUtil {
         if(!redisUtil.hasKey(key)) {
             addVisit(entityType, entityId);
         }
-        return Long.parseLong(redisUtil.get(key).toString());
+        return Integer.parseInt(redisUtil.get(key).toString());
     }
 
     /**
@@ -115,14 +115,30 @@ public class VisitUtil {
      */
     public void clearAllVisitRank() {
 
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.ALBUM_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.BOOK_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.DISC_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.GAME_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MERCH_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MUSIC_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.PRODUCT_VISIT_RANKING, 0, -1);
-        redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.FRANCHISE_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisCacheConstant.ALBUM_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.ALBUM_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.BOOK_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.BOOK_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.DISC_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.DISC_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.GAME_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.GAME_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.MERCH_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MERCH_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.MUSIC_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MUSIC_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.PRODUCT_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.PRODUCT_VISIT_RANKING, 0, -1);
+        }
+        if(redisUtil.hasKey(RedisCacheConstant.FRANCHISE_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.FRANCHISE_VISIT_RANKING, 0, -1);
+        }
 
     }
 
