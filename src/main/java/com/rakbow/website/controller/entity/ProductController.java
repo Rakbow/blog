@@ -102,7 +102,7 @@ public class ProductController {
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(product.getImages(), 200, EntityType.PRODUCT, true));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(product.getImages(), 100, EntityType.PRODUCT, true));
 
         return "/database/itemDetail/product-detail";
     }

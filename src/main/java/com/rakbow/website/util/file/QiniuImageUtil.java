@@ -92,7 +92,7 @@ public class QiniuImageUtil {
     }
 
     public static String getThumbUrlWidth(String imageUrl, int size) {
-        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + "x" + size;
+        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + 200 + "x" + size;
     }
 
     public static String getThumbBackgroundUrl(String imageUrl, int size) {

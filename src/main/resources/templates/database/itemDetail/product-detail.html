@@ -213,6 +213,30 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
+                        <!-- staff -->
+                        <p-fieldset :toggleable="true" v-if="product.staffs.length != 0">
+                            <template #legend>
+                                <i class="pi pi-users"></i>
+                                <b>Staff信息</b>
+                            </template>
+                            <div class="grid ml-4" v-if="product.staffs.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr v-for="item in product.staffs">
+                                        <td width="120px"><strong>{{item.pos}}</strong></td>
+                                        <td>
+                                            {{item.name.join(", ")}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>暂无Staff相关信息</em></span>
+                            </div>
+                        </p-fieldset>
+                        <!-- description -->
+                        <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
                         <!-- game -->
                         <p-fieldset :toggleable="true" v-if="games">
                             <template #legend>
@@ -245,28 +269,6 @@
                             </div>
                             <div v-else>
                                 <span class="emptyInfo"><em>暂无游戏</em></span>
-                            </div>
-                        </p-fieldset>
-                        <!-- staff -->
-                        <p-fieldset :toggleable="true" v-if="product.staffs.length != 0">
-                            <template #legend>
-                                <i class="pi pi-users"></i>
-                                <b>Staff信息</b>
-                            </template>
-                            <div class="grid ml-4" v-if="product.staffs.length != 0">
-                                <table class="table-borderless table-sm">
-                                    <tbody class="detail-item-artists-table">
-                                    <tr v-for="item in product.staffs">
-                                        <td width="120px"><strong>{{item.pos}}</strong></td>
-                                        <td>
-                                            {{item.name.join(", ")}}
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>暂无Staff相关信息</em></span>
                             </div>
                         </p-fieldset>
                         <!-- album -->
@@ -345,8 +347,6 @@
                                 </p-timeline>
                             </div>
                         </p-fieldset>
-                        <!-- description -->
-                        <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
                     </div>
                 </template>
             </p-card>
@@ -926,7 +926,7 @@
             };
             const text2marked = () => {
 
-                const description = product.value.description;
+                const description = detailInfo.value.description;
 
                 if (description != null && description !== "") {
                     document.getElementById("description").innerHTML = marked.parse(description);

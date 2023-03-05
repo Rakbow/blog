@@ -155,7 +155,7 @@ public class CommonImageUtil {
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
         if (isWidth) {
-            cover.put("url", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
+            cover.put("url", QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
         }else {
             cover.put("url", QiniuImageUtil.getThumbUrl(getDefaultImageUrl(entityType), coverSize));
         }
@@ -163,7 +163,12 @@ public class CommonImageUtil {
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
                 if (Integer.parseInt(imageVO.getType()) == ImageType.COVER.getIndex()) {
-                    cover.put("url", QiniuImageUtil.getThumbUrl(imageVO.getUrl(), coverSize));
+
+                    if (isWidth) {
+                        cover.put("url", QiniuImageUtil.getThumbUrlWidth(imageVO.getUrl(), coverSize));
+                    }else {
+                        cover.put("url", QiniuImageUtil.getThumbUrl(imageVO.getUrl(), coverSize));
+                    }
                     cover.put("name", imageVO.getNameEn());
                 }
             }

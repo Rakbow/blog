@@ -146,55 +146,57 @@ public class EntityService {
 
         List<Integer> ids = new ArrayList<>(visits.keySet());
 
-        if(entityType == EntityType.ALBUM.getId()) {
-            List<AlbumVOAlpha> items = albumVOMapper.album2VOAlpha(albumMapper.getAlbums(ids));
+        if(!ids.isEmpty()) {
+            if(entityType == EntityType.ALBUM.getId()) {
+                List<AlbumVOAlpha> items = albumVOMapper.album2VOAlpha(albumMapper.getAlbums(ids));
 
-            for (AlbumVOAlpha item : items) {
-                item.setVisitNum(visits.get(item.getId()));
+                for (AlbumVOAlpha item : items) {
+                    item.setVisitNum(visits.get(item.getId()));
+                }
+
+                items.sort(Collections.reverseOrder(DataSorter.albumSortByVisitNum));
+                return JSON.parseArray(JSON.toJSONString(items));
             }
+            if(entityType == EntityType.BOOK.getId()) {
+                List<BookVOBeta> items = bookVOMapper.book2VOBeta(bookMapper.getBooks(ids));
 
-            items.sort(Collections.reverseOrder(DataSorter.albumSortByVisitNum));
-            return JSON.parseArray(JSON.toJSONString(items));
-        }
-        if(entityType == EntityType.BOOK.getId()) {
-            List<BookVOBeta> items = bookVOMapper.book2VOBeta(bookMapper.getBooks(ids));
+                for (BookVOBeta item : items) {
+                    item.setVisitNum(visits.get(item.getId()));
+                }
 
-            for (BookVOBeta item : items) {
-                item.setVisitNum(visits.get(item.getId()));
+                items.sort(Collections.reverseOrder(DataSorter.bookSortByVisitNum));
+                return JSON.parseArray(JSON.toJSONString(items));
             }
+            if(entityType == EntityType.DISC.getId()) {
+                List<DiscVOAlpha> items = discVOMapper.disc2VOAlpha(discMapper.getDiscs(ids));
 
-            items.sort(Collections.reverseOrder(DataSorter.bookSortByVisitNum));
-            return JSON.parseArray(JSON.toJSONString(items));
-        }
-        if(entityType == EntityType.DISC.getId()) {
-            List<DiscVOAlpha> items = discVOMapper.disc2VOAlpha(discMapper.getDiscs(ids));
+                for (DiscVOAlpha item : items) {
+                    item.setVisitNum(visits.get(item.getId()));
+                }
 
-            for (DiscVOAlpha item : items) {
-                item.setVisitNum(visits.get(item.getId()));
+                items.sort(Collections.reverseOrder(DataSorter.discSortByVisitNum));
+                return JSON.parseArray(JSON.toJSONString(items));
             }
+            if(entityType == EntityType.GAME.getId()) {
+                List<GameVOAlpha> items = gameVOMapper.game2VOAlpha(gameMapper.getGames(ids));
 
-            items.sort(Collections.reverseOrder(DataSorter.discSortByVisitNum));
-            return JSON.parseArray(JSON.toJSONString(items));
-        }
-        if(entityType == EntityType.GAME.getId()) {
-            List<GameVOAlpha> items = gameVOMapper.game2VOAlpha(gameMapper.getGames(ids));
+                for (GameVOAlpha item : items) {
+                    item.setVisitNum(visits.get(item.getId()));
+                }
 
-            for (GameVOAlpha item : items) {
-                item.setVisitNum(visits.get(item.getId()));
+                items.sort(Collections.reverseOrder(DataSorter.gameSortByVisitNum));
+                return JSON.parseArray(JSON.toJSONString(items));
             }
+            if(entityType == EntityType.MERCH.getId()) {
+                List<MerchVOAlpha> items = merchVOMapper.merch2VOAlpha(merchMapper.getMerchs(ids));
 
-            items.sort(Collections.reverseOrder(DataSorter.gameSortByVisitNum));
-            return JSON.parseArray(JSON.toJSONString(items));
-        }
-        if(entityType == EntityType.MERCH.getId()) {
-            List<MerchVOAlpha> items = merchVOMapper.merch2VOAlpha(merchMapper.getMerchs(ids));
+                for (MerchVOAlpha item : items) {
+                    item.setVisitNum(visits.get(item.getId()));
+                }
 
-            for (MerchVOAlpha item : items) {
-                item.setVisitNum(visits.get(item.getId()));
+                items.sort(Collections.reverseOrder(DataSorter.merchSortByVisitNum));
+                return JSON.parseArray(JSON.toJSONString(items));
             }
-
-            items.sort(Collections.reverseOrder(DataSorter.merchSortByVisitNum));
-            return JSON.parseArray(JSON.toJSONString(items));
         }
 
         return null;

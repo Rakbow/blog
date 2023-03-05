@@ -150,8 +150,8 @@ const SearchPanel = {
                             &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
                             <span class="grid">
                                 <span class="text-start col-6">
-                                    <span v-for="format of result.mediaFormat" style="display:inline">
-                                        <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
+                                    <span style="display:inline">
+                                        <p-tag class="product-tag ml-1" :value="result.bookType.nameZh"></p-tag>
                                     </span>
                                     <span class="has-bonus-tag" v-if="result.hasBonus">
                                         <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
