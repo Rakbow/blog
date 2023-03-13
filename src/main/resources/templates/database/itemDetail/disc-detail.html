@@ -245,7 +245,7 @@
         <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: belong_to_panel}"></div>
             <div class="mt-2" th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
-            <p-panel class="mt-2">
+            <p-panel class="mt-2" v-if="relatedDiscs.length != 0">
                 <template #header>
                     <span class="text-start side-panel-header">
                         <i class="pi iconfont icon-Video-Disc"></i><span><strong>相关碟片</strong></span>
@@ -254,7 +254,6 @@
                 <div class="grid">
                     <span class="small_font">
                         <div class="info_bit_small small_font grid m-0 p-0"
-                             v-if="relatedDiscs.length != 0"
                              v-for="relatedDisc of relatedDiscs">
                             <div class="sidebar-panel-image-small-div disc_info_bit_thumb mt-2">
                                 <a :href="'/db/disc/'+ relatedDisc.id">
