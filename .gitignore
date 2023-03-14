@@ -69,3 +69,5 @@ gen
 !/src/main/resources/application-produce.properties
 /src/main/resources/static/js/node_modules/
 !/src/main/resources/templates/tmp.html
+!/src/main/resources/static/js/primevue-3.23.0.7z
+!/src/main/resources/templates/tmp.html
