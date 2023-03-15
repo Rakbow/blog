@@ -48,12 +48,14 @@
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
 
+    <!-- Jquery -->
+    <script th:src="@{/js/jquery.js}"></script>
+
     <!-- flag-icons -->
     <link th:href="@{/css/flag-icons/css/flag-icons.css}" rel="stylesheet">
 
     <!-- basic js -->
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
-
     <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Database_Index_Params.js}" type="module"></script>
@@ -69,8 +71,10 @@
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header>
 
-    <p-tabmenu :model="dbIndexTabs"></p-tabmenu>
-    <router-view></router-view>
+     <div id="main">
+        <p-tabmenu :model="dbIndexTabs"></p-tabmenu>
+        <router-view></router-view>
+     </div>
 
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
@@ -85,7 +89,15 @@
     const App = {
         setup() {
             onMounted(() => {
+                init();
+                $(window).resize(function () {
+                    $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+                });
             });
+
+            const init = () => {
+                $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
+            };
 
             return {
                 dbIndexTabs, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
