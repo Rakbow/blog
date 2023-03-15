@@ -2,7 +2,8 @@ import {postRequest} from '/js/basic/Http_Request.js';
 
 const SearchPanel = {
     template: `
-    <div class="flex align-items-center justify-content-center flex-wrap card-container" style="height: 650px">
+    <div class="flex align-items-center justify-content-center flex-wrap card-container"
+                bg-no-repeat style="height: 650px;background-image: url('http://localhost:8083/img/db_index.jpg')">
         <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
             <div class="formgrid grid search">
                 <div class="col">
@@ -27,14 +28,14 @@ const SearchPanel = {
                 </div>                       
             </div>
             <div v-if="searchResult != null">
-                <div v-if="searchResult.total != 0" style="height: 550px">
+                <div v-if="searchResult.total != 0" style="height: 500px">
                     <div class="text-start mt-3">
                         <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
                         <span>查询类型: {{searchResult.entityName}}</span>&nbsp;&nbsp;&nbsp;
                         <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;&nbsp;
                         <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;&nbsp;
                     </div>
-                    <p-scrollpanel style="height: 450px">
+                    <p-scrollpanel style="height: 400px">
                         <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
                             <div class="col-12">
                                 <div class="search-item">
