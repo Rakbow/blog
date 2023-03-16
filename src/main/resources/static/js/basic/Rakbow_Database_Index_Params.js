@@ -4,7 +4,7 @@ const SearchPanel = {
     template: `
     <div class="flex align-items-center justify-content-center flex-wrap card-container"
                 bg-no-repeat style="height: 650px;background-image: url('http://localhost:8083/img/db_index.jpg')">
-        <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+        <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6" style="min-width: 800px">
             <div class="formgrid grid search">
                 <div class="col">
                     <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search" class="search-input"></p-inputtext>

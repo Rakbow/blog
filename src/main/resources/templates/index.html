@@ -43,27 +43,52 @@
     <script th:src="@{/js/basic/Data_Helper.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Url_Helper_Str.js}"></script>
     <script th:src="@{/js/basic/Rakbow_Web_Exception_Str_CN.js}"></script>
+
+    <!-- Jquery -->
+    <script th:src="@{/js/jquery.js}"></script>
+
+    <!-- fullpage -->
+    <script th:src="@{/tool/fullpage/fullpage.js}"></script>
+    <link th:href="@{/tool/fullpage/fullpage.min.css}" rel="stylesheet"/>
+
+    <!-- rainyday -->
+    <script th:src="@{/js/rainyday.min.js}"></script>
 </head>
 <body>
- <div id="app" style="margin-top: 60px">
+<!-- <div id="app" style="margin-top: 60px">-->
+ <div id="app">
     <!-- 头部 -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header><br>
 
-    <div id="main" class="grid grid-nogutter surface-section text-800">
-        <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
-            <section>
-                <span class="block text-6xl font-bold mb-1">欢迎来到</span>
-                <div class="text-6xl text-primary font-bold mb-3">Rakbow的私人在线数据库</div>
-                <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
+     <div id="index">
+         <div class="section">
+             <div id="main" class="grid grid-nogutter surface-section text-800">
+                 <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center ">
+                     <section>
+                         <span class="block text-6xl font-bold mb-1">欢迎来到</span>
+                         <div class="text-6xl text-primary font-bold mb-3">Rakbow的私人在线数据库</div>
+                         <p class="mt-0 mb-4 text-700 line-height-3">数据库收录包含各种数据</p>
 
-                <p-button label="数据库" type="button" @click.native="goDb" class="mr-3 p-button-raised"></p-button>
-<!--                <p-button label="博客" type="button" @click.native="goBlog" class="p-button-outlined"></p-button>-->
-            </section>
-        </div>
-        <div class="col-12 md:col-6 overflow-hidden">
-            <img src="https://img.rakbow.com/common/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
-        </div>
-    </div>
+                         <p-button label="数据库" type="button" @click.native="goDb" class="mr-3 p-button-raised"></p-button>
+                         <!--                <p-button label="博客" type="button" @click.native="goBlog" class="p-button-outlined"></p-button>-->
+                     </section>
+                 </div>
+                 <div class="col-12 md:col-6 overflow-hidden">
+                     <img src="https://img.rakbow.com/common/index.jpg" alt="Image" class="md:ml-auto block md:h-full" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)">
+                 </div>
+             </div>
+         </div>
+         <div class="section">
+             <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+                 <div class="text-700 text-center">
+                     <div class="text-blue-600 font-bold mb-3"><i class="pi pi-discord"></i>&nbsp;POWERED BY DISCORD</div>
+                     <div class="text-900 font-bold text-5xl mb-3">Join Our Design Community</div>
+                     <div class="text-700 text-2xl mb-5">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit numquam eligendi quos.</div>
+                     <p-button label="Join Now" icon="pi pi-discord" class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
+                 </div>
+             </div>
+         </div>
+     </div>
 
     <!-- 尾部 -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
@@ -75,6 +100,18 @@
     const App = {
         setup() {
             onMounted(() => {
+                new fullpage('#index', {
+                    scrollingSpeed: 500, //滚动的时间
+                });
+
+                function run() {
+                    var rainyDay = new RainyDay({
+                        image: 'background'
+                    });
+                    window.setTimeout(function () {
+                        // rainyDay.destroy()
+                    }, 1000)
+                }
             })
 
             const goBlog = () => {
@@ -110,5 +147,34 @@
         .use(primevue.config.default)
         .mount("#app");
 </script>
+ <style>
+     .section {
+         width: 100%;
+         height: 100%;
+         text-align: center;
+         color: #fff;
+     }
+
+     #index .section:nth-child(1) {
+         background-image: url('http://localhost:8083/img/index_1.jpg');
+         background-repeat: no-repeat;
+         background-size: cover;
+     }
+
+     #index .section:nth-child(2) {
+         background: yellowgreen;
+     }
+
+     #index .section:nth-child(3) {
+         background: orangered;
+     }
+
+     #index .section:last-child {
+         padding: 100px;
+         background-image: url('http://localhost:8083/img/index_2.jpg');
+         background-repeat: no-repeat;
+         background-size: cover;
+     }
+ </style>
 </body>
 </html>

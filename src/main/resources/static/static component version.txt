@@ -1,6 +1,6 @@
 vue.global.js 3.2.45
 vue-router 4.1.6
-primevue 3.23.0
+primevue 3.25.0
 axios 1.3.2
 jquery 3.6.3
 
@@ -16,3 +16,5 @@ md-editor-v3 2.5.0
 Aplayer 1.10.1
 
 color-thief 2.3.2
+
+fullpage 4.0.19
