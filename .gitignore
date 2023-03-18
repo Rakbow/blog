@@ -19,6 +19,7 @@ target/
 /src/main/resources/static/js/color-thief.min.js
 /src/main/resources/static/js/jquery.js
 /src/main/resources/static/js/marked.min.js
+/src/main/resources/static/js/rainyday.min.js
 /src/main/resources/static/js/node_modules
 
 ### STS ###
@@ -71,3 +72,5 @@ gen
 !/src/main/resources/templates/tmp.html
 !/src/main/resources/static/js/primevue-3.23.0.7z
 !/src/main/resources/templates/tmp.html
+!/src/main/resources/templates/tmp.html
+!/src/main/resources/static/js/rainyday.min.js
