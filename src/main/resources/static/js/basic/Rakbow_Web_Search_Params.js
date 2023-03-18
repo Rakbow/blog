@@ -256,6 +256,43 @@ const SearchPanel = {
     </div>
 </div>
     `,
+    mounted() {
+        superplaceholder({
+            el: document.querySelector('#globalSearch'),
+            sentences: [
+                '例: とある飛空士への誓約',
+                '例: ひぐらしのなく頃に解 SOUNDTRACK',
+                '例: ひぐらしのなく頃に 初回限定版'
+            ],
+            options: {
+                // delay between letters (in milliseconds)
+                // 各个字符显示之间的延迟时间，单位毫秒。
+                letterDelay: 100, // milliseconds
+                // delay between sentences (in milliseconds)
+                // 各个句子之间的延迟时间，单位毫秒。
+                sentenceDelay: 1000,
+                // should start on input focus. Set false to autostart
+                // 在输入框聚焦时才开始播放，设置为false会自动开始播放。
+                startOnFocus: false,
+                // loop through passed sentences
+                // 是否循环播放。
+                loop: true,
+                // Initially shuffle the passed sentences
+                // 是否打乱传入的句子。
+                shuffle: false,
+                // Show cursor or not. Shows by default
+                // 是否显示光标，默认为显示。
+                showCursor: true,
+                // String to show as cursor
+                // 光标字符串。
+                cursor: '|',
+                // // Control onFocus behaviour. Default is `superplaceholder.Actions.START`
+                // onFocusAction: superplaceholder.Actions.[NOTHING|START|STOP],
+                // // Control onBlur behaviour. Default is `superplaceholder.Actions.STOP`
+                // onBlurAction: superplaceholder.Actions.[NOTHING|START|STOP]
+            }
+        });
+    },
     inject: ['dialogRef'],
     data() {
         return {
