@@ -38,8 +38,8 @@ public class EntityInfoTask extends QuartzJobBean {
         // TODO
         System.out.println("------redis缓存数据获取中------");
         //获取所有
-        List<String> likeKeys = redisUtil.keys(LikeUtil.PREFIX_LIKE);
-        List<String> visitKeys = redisUtil.keys(VisitUtil.PREFIX_VISIT);
+        List<String> likeKeys = redisUtil.keys(LikeUtil.PREFIX_LIKE + LikeUtil.SPLIT + "*");
+        List<String> visitKeys = redisUtil.keys(VisitUtil.PREFIX_VISIT + VisitUtil.SPLIT + "*");
         System.out.println("------redis缓存数据获取完毕------");
 
         System.out.println("------缓存数据转换中------");

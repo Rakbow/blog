@@ -828,35 +828,34 @@
                 });
             })
 
-            //region model
-
-            // instanciate new modal
-            const modal = new tingle.modal({
-                footer: true,
-                stickyFooter: false,
+            //region tingle
+            const descriptionModal = new tingle.modal({
                 closeMethods: ['overlay', 'button', 'escape'],
                 closeLabel: "Close",
-                cssClass: [],
+                cssClass: ['tingle-markdown-body'],
                 onOpen: function () {
-                    console.log('modal open');
                     if (detailInfo.value.description != null && detailInfo.value.description !== "") {
-                        modal.setContent(marked.parse(detailInfo.value.description));
+                        descriptionModal.setContent(marked.parse(detailInfo.value.description));
                     }
-                },
-                onClose: function () {
-                    console.log('modal closed');
-                },
-                beforeClose: function () {
-                    // here's goes some logic
-                    // e.g. save content before closing the modal
-                    return true; // close the modal
+                }
+            });
+            const bonusModal = new tingle.modal({
+                closeMethods: ['overlay', 'button', 'escape'],
+                closeLabel: "Close",
+                cssClass: ['tingle-markdown-body'],
+                onOpen: function () {
+                    if (album.value.hasBonus && album.value.bonus != null && album.value.bonus !== "") {
+                        bonusModal.setContent(marked.parse(album.value.bonus));
+                    }
                 }
             });
 
-            const openFullPageDescription = () => {
-                modal.open();
+            const openTingleDescription = () => {
+                descriptionModal.open();
             };
-
+            const openTingleBonus = () => {
+                bonusModal.open();
+            };
             //endregion
 
             //region common header
@@ -1345,7 +1344,7 @@
             // }
 
             return {
-                openFullPageDescription,
+                openTingleDescription, openTingleBonus,
 
                 //header
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,

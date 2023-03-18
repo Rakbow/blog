@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QuartzConfig {
 
-    //region 24小时更新数据
+//     //region 24小时更新数据
 //     @Bean
 //     public JobDetail entityInfoQuartzDetail(){
 //         // withIdentity指定的是这个job的id
@@ -38,9 +38,9 @@ public class QuartzConfig {
 //                 .withSchedule(scheduleBuilder)
 //                 .build();
 //     }
-    //endregion
-
-    //region 1小时更新浏览排名
+//     //endregion
+//
+//     //region 1小时更新浏览排名
 //     @Bean
 //     public JobDetail visitRankQuartzDetail(){
 //         // withIdentity指定的是这个job的id
@@ -63,7 +63,7 @@ public class QuartzConfig {
 //                 .withSchedule(scheduleBuilder)
 //                 .build();
 //     }
-    //endregion
+//     //endregion
 
 }
 

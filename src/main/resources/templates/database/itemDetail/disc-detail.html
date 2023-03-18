@@ -96,6 +96,10 @@
 
     <!-- superplaceholder -->
     <script th:src="@{/tool/superplaceholder/superplaceholder.min.js}"></script>
+
+    <!-- tingle -->
+    <script th:src="@{/tool/tingle/tingle.min.js}"></script>
+    <link th:href="@{/tool/tingle/tingle.min.css}" rel="stylesheet">
 </head>
 <body>
  <div id="app" style="margin-top: 60px">
@@ -509,6 +513,36 @@
                 });
             })
 
+            //region tingle
+            const descriptionModal = new tingle.modal({
+                closeMethods: ['overlay', 'button', 'escape'],
+                closeLabel: "Close",
+                cssClass: ['tingle-markdown-body'],
+                onOpen: function () {
+                    if (detailInfo.value.description != null && detailInfo.value.description !== "") {
+                        descriptionModal.setContent(marked.parse(detailInfo.value.description));
+                    }
+                }
+            });
+            const bonusModal = new tingle.modal({
+                closeMethods: ['overlay', 'button', 'escape'],
+                closeLabel: "Close",
+                cssClass: ['tingle-markdown-body'],
+                onOpen: function () {
+                    if (disc.value.hasBonus && disc.value.bonus != null && disc.value.bonus !== "") {
+                        bonusModal.setContent(marked.parse(disc.value.bonus));
+                    }
+                }
+            });
+
+            const openTingleDescription = () => {
+                descriptionModal.open();
+            };
+            const openTingleBonus = () => {
+                bonusModal.open();
+            };
+            //endregion
+
             //region common header
             const dialog = useDialog();
             const openSearchPanel = () => {
@@ -752,6 +786,8 @@
             //endregion
 
             return {
+                openTingleDescription, openTingleBonus,
+
                 //header
                 dialog, openSearchPanel, NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
 

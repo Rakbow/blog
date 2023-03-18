@@ -1674,7 +1674,6 @@ const discDbList = {
                                   :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
                         <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                                     @click="exportCSV($event)" style="width: 8em"></p-button>
-                    </p-blockui>
                 </div>
                 <div class="col-3">
                     <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
@@ -3913,14 +3912,14 @@ const productDbList = {
             </p-blockui>
         </template>
         <template #empty>
-                    <span class="emptyInfo">
-                        未检索到符合条件的数据
-                    </span>
+            <span class="emptyInfo">
+                未检索到符合条件的数据
+            </span>
         </template>
         <template #loading>
-        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-                <span>加载中，别急~</span>
-        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                    <span>加载中，别急~</span>
+            <i class="pi pi-spin pi-spinner mr-2" style="font-size: 2rem"></i>
         <span>加载中，别急~</span>
     </template>
         <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>

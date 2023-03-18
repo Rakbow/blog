@@ -299,6 +299,11 @@ b.rbot {
     background-color: #2F364F;
 }
 
+.tingle-markdown-body {
+    color: black;
+    /*background-color: #2F364F;*/
+}
+
 .markdown-body a:hover ,
 .markdown-body a:visited ,
 .markdown-body a {
