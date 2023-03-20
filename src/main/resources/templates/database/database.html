@@ -66,8 +66,6 @@
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 
-
-
     <!-- fullpage -->
 <!--    <script th:src="@{/tool/fullpage/fullpage.js}"></script>-->
     <link th:href="@{/tool/fullpage/fullpage.min.css}" rel="stylesheet"/>
@@ -80,7 +78,7 @@
     <div id="index">
         <div class="section">
             <div class="flex align-items-center justify-content-center flex-wrap card-container">
-                <div class="surface-card p-2 shadow-2 border-round w-full lg:w-6" style="min-width: 800px">
+                <div class="p-2 shadow-2 border-round w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)">
                     <div class="formgrid grid search">
                         <div class="col">
                             <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search" class="search-input"></p-inputtext>
@@ -103,30 +101,31 @@
                             </p-dropdown>
                         </div>
                     </div>
-                    <div v-if="searchResult != null">
-                        <div v-if="searchResult.total != 0" style="height: 500px">
-                            <div class="text-start mt-3">
-                                <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
-                                <span>查询类型: {{searchResult.entityName}}</span>&nbsp;&nbsp;&nbsp;
-                                <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;&nbsp;
-                                <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;&nbsp;
-                            </div>
-                            <p-scrollpanel style="height: 400px">
-                                <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
-                                    <div class="col-12">
-                                        <div class="search-item">
-                                            <a class="text-center" :href="'/db/album/'+ result.id">
-                                                <img :src="result.cover"/>
-                                            </a>
-                                            <div class="search-item-detail">
+                </div>
+                <div class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-if="searchResult != null">
+                    <div v-if="searchResult.total != 0" style="height: 600px">
+                        <div class="text-start mt-3">
+                            <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
+                            <span>查询类型: {{searchResult.entityName}}</span>&nbsp;&nbsp;&nbsp;
+                            <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;&nbsp;
+                            <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <p-scrollpanel style="height: 530px">
+                            <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="search-item">
+                                        <a class="text-center" :href="'/db/album/'+ result.id">
+                                            <img :src="result.cover"/>
+                                        </a>
+                                        <div class="search-item-detail">
                                                 <span class="search-item-name text-truncate-1">
                                                     <a :href="'/db/album/'+ result.id">{{result.name}}</a>
                                                 </span>
-                                                <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
                                                     <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span
-                                                        class="label">&nbsp{{result.releaseDate}}</span>
+                                                    class="label">&nbsp{{result.releaseDate}}</span>
                                                 </span><br/>
-                                                <span class="grid">
+                                            <span class="grid">
                                                 <span class="text-start col-6">
                                                     <div v-for="format of result.albumFormat" style="display:inline">
                                                         <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
@@ -142,28 +141,28 @@
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    <p-divider></p-divider>
                                 </div>
-                                <div v-if="searchResult.entityType == 2" v-for="result of searchResult.data">
-                                    <div class="col-12">
-                                        <div class="search-item">
-                                            <a class="text-center" :href="'/db/disc/'+ result.id">
-                                                <img :src="result.cover" />
-                                            </a>
-                                            <div class="search-item-detail">
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 2" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="search-item">
+                                        <a class="text-center" :href="'/db/disc/'+ result.id">
+                                            <img :src="result.cover" />
+                                        </a>
+                                        <div class="search-item-detail">
                                         <span class="search-item-name text-truncate-1">
                                             <a :href="'/db/disc/'+ result.id">{{result.name}}</a>
                                         </span>
-                                                <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
                                             <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span class="label">&nbsp{{result.releaseDate}}</span>
                                         </span><br>
-                                                <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
                                         </span>
-                                                <span class="grid">
+                                            <span class="grid">
                                             <span class="text-start col-6">
                                                 <span v-for="format of result.mediaFormat" style="display:inline">
                                                     <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
@@ -182,28 +181,28 @@
                                                 <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                             </span>
                                         </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    <p-divider></p-divider>
                                 </div>
-                                <div v-if="searchResult.entityType == 3" v-for="result of searchResult.data">
-                                    <div class="col-12">
-                                        <div class="search-item">
-                                            <a class="text-center" :href="'/db/book/'+ result.id">
-                                                <img :src="result.cover"/>
-                                            </a>
-                                            <div class="search-item-detail">
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 3" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="search-item">
+                                        <a class="text-center" :href="'/db/book/'+ result.id">
+                                            <img :src="result.cover"/>
+                                        </a>
+                                        <div class="search-item-detail">
                                                 <span class="search-item-name text-truncate-1">
                                                     <a :href="'/db/book/'+ result.id">{{result.title}}</a>
                                                 </span>
-                                                <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
                                                     <b class="label">{{result.isbn13}}</b><span class="label">&nbsp{{result.publishDate}}</span>
                                                 </span><br>
-                                                <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
-                                                &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
-                                                <span class="grid">
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
+                                            &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
+                                            <span class="grid">
                                                 <span class="text-start col-6">
                                                     <span style="display:inline">
                                                         <p-tag class="product-tag ml-1" :value="result.bookType.nameZh"></p-tag>
@@ -222,22 +221,22 @@
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    <p-divider></p-divider>
                                 </div>
-                                <div v-if="searchResult.entityType == 4" v-for="result of searchResult.data">
-                                    <div class="col-12">
-                                        <div class="search-item">
-                                            <a class="text-center" :href="'/db/merch/'+ result.id">
-                                                <img :src="result.cover" />
-                                            </a>
-                                            <div class="search-item-detail">
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 4" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="search-item">
+                                        <a class="text-center" :href="'/db/merch/'+ result.id">
+                                            <img :src="result.cover" />
+                                        </a>
+                                        <div class="search-item-detail">
                                                 <span class="search-item-name text-truncate-1">
                                                     <a :href="'/db/merch/'+ result.id">{{result.name}}</a>
                                                 </span>
-                                                <span class="grid">
+                                            <span class="grid">
                                                 <span class="text-start col-6">
                                                     <span class="small-font">
                                                         <span class="label">{{result.releaseDate}}</span>
@@ -253,29 +252,29 @@
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    <p-divider></p-divider>
                                 </div>
-                                <div v-if="searchResult.entityType == 5" v-for="result of searchResult.data">
-                                    <div class="col-12">
-                                        <div class="search-item">
-                                            <a class="text-center" :href="'/db/game/'+ result.id">
-                                                <img :src="result.cover" />
-                                            </a>
-                                            <div class="search-item-detail">
+                                <p-divider></p-divider>
+                            </div>
+                            <div v-if="searchResult.entityType == 5" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="search-item">
+                                        <a class="text-center" :href="'/db/game/'+ result.id">
+                                            <img :src="result.cover" />
+                                        </a>
+                                        <div class="search-item-detail">
                                                 <span class="search-item-name text-truncate-1">
                                                     <a :href="'/db/game/'+ result.id">{{result.name}}</a>
                                                 </span>
-                                                <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
                                                     <span class="label">&nbsp{{result.releaseDate}}</span>
                                                 </span><br>
-                                                <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
+                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
                                                 </span>
 
-                                                <span class="grid">
+                                            <span class="grid">
                                                 <span class="text-start col-6">
                                                     <span>
                                                         <p-tag class="ml-1" :value="result.platform.nameEn"></p-tag>
@@ -291,35 +290,33 @@
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    <p-divider></p-divider>
                                 </div>
-                                <p-scrolltop target="parent" :threshold="100" class="search-scrolltop" icon="pi pi-arrow-up"></p-scrolltop>
-                            </p-scrollpanel>
-                            <p-paginator
-                                    :template="{
+                                <p-divider></p-divider>
+                            </div>
+                            <p-scrolltop target="parent" :threshold="100" class="search-scrolltop" icon="pi pi-arrow-up"></p-scrolltop>
+                        </p-scrollpanel>
+                        <p-paginator
+                                :template="{
                                 default: 'FirstPageLink PrevPageLink PageLinks NextPageLinLastPageLink LastPageLink JumpToPageDropdown'
                                 }"
-                                    v-model:first="searchResult.offset" :rows="searchResult.limit"
-                                    :total-records="searchResult.total" @page="pageChange($event)">
-                            </p-paginator>
-                        </div>
-                        <div v-else class="text-center mt-2">
-                            <img src="https://img.rakbow.com/common/icon/no-results.svg" /><br><span>暂无搜索结果</span>
-                        </div>
+                                v-model:first="searchResult.offset" :rows="searchResult.limit"
+                                :total-records="searchResult.total" @page="pageChange($event)">
+                        </p-paginator>
+                    </div>
+                    <div v-else class="text-center mt-2">
+                        <img src="https://img.rakbow.com/common/icon/no-results.svg" /><br><span>暂无搜索结果</span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="section">
-
         </div>
     </div>
 
     <!-- 尾部 -->
-    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
+<!--    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>-->
 </div>
 <script type="module" th:inline="javascript">
 
@@ -335,7 +332,14 @@
             onMounted(() => {
                 fullpage('#index', {
                     scrollingSpeed: 500, //滚动的时间
+                    keyboardScrolling: false,
+                    navigation: true,
+                    navigationPosition: 'right',
+                    navigationTooltips: ['搜索', '高级搜索'],
+                    showActiveTooltip: true,
+                    slidesNavigation: true,
                 });
+                fullpage_api.setAllowScrolling(false);
 
                 superplaceholder({
                     el: document.querySelector('#globalSearch'),
@@ -377,20 +381,27 @@
             //region search
 
             const searchParams = ref({
-                keyword: "",
-                    entityType: 0,
-                    offset: 0,
-                    limit: 10
+                keyword: '',
+                entityType: 0,
+                offset: 0,
+                limit: 10
             });
             const searchResult = ref(null);
+            watch(() => {
+                if (searchParams.value.keyword === '') {
+                    searchResult.value = null;
+                }
+            });
 
             const search = () => {
-                postRequest(null, INDEX_SEARCH_URL, searchParams.value)
-                    .then(res => {
-                        if(res.state === 1) {
-                            searchResult.value = res.data;
-                        }
-                    });
+                if(searchParams.value.keyword !== '') {
+                    postRequest(null, INDEX_SEARCH_URL, searchParams.value)
+                        .then(res => {
+                            if(res.state === 1) {
+                                searchResult.value = res.data;
+                            }
+                        });
+                }
             };
             const pageChange = (ev) => {
                 searchParams.value.offset = ev.first;
@@ -439,10 +450,21 @@
         .mount("#app");
 </script>
 <style>
+    .p-paginator {
+        background-color: rgba(0,0,0,0.3)
+    }
+
+    #fp-nav ul li a span, .fp-slidesNav ul li a span {
+        background: #d7fdd4;
+    }
+
+    #fp-nav.fp-right {
+        right: 40px;
+    }
+
     .section {
         width: 100%;
         height: 100%;
-        text-align: center;
         color: #fff;
     }
 
@@ -453,13 +475,13 @@
         background-size: cover;
     }
 
-    #index .section:nth-child(2) {
-        background: yellowgreen;
-    }
+    /*#index .section:nth-child(2) {*/
+    /*    background: yellowgreen;*/
+    /*}*/
 
-    #index .section:nth-child(3) {
-        background: orangered;
-    }
+    /*#index .section:nth-child(3) {*/
+    /*    background: orangered;*/
+    /*}*/
 
     #index .section:last-child {
         background-image: url('http://localhost:8083/img/db_index.jpg');

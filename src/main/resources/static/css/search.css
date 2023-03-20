@@ -36,7 +36,8 @@
 }
 
 .p-scrollpanel .p-scrollpanel-content {
-    background: #1B273D;
+    background-color: rgba(0,0,0,0.3);
+    /*background: #1B273D;*/
     padding: 10px;
     margin-top: 10px;
 }
