@@ -60,7 +60,7 @@ public class EntityController {
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ModelAndView getDatabasePage() {
         ModelAndView view = new ModelAndView();
-        view.setViewName("/database/database-index");
+        view.setViewName("/database/database");
         return view;
     }
 

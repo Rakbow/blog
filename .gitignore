@@ -74,3 +74,4 @@ gen
 !/src/main/resources/templates/tmp.html
 !/src/main/resources/templates/tmp.html
 !/src/main/resources/static/js/rainyday.min.js
+!/src/main/resources/static/js/rainyday.min.js

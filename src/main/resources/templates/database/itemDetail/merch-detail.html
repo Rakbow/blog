@@ -20,9 +20,9 @@
     <link th:href="@{/css/primevue/primeicon/primeicons.css}" rel="stylesheet"/>
 
     <!-- Vue3 -->
-    <script th:src="@{/js/vue/vue.global.js}"></script>
+    <script th:src="@{/js/vue/vue.global.min.js}"></script>
     <script th:src="@{/js/primevue/core.min.js}"></script>
-    <script th:src="@{/js/vue/vue-router.global.js}"></script>
+    <script th:src="@{/js/vue/vue-router.global.min.js}"></script>
 
     <!-- PrimeVue Components -->
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
@@ -70,10 +70,10 @@
 
     <!-- md-editor-v3 -->
     <script th:src="@{/tool/md-editor-v3/md-editor-v3.umd.js}"></script>
-    <link th:href="@{/tool/md-editor-v3/style.css}" rel="stylesheet">
+    <link th:href="@{/tool/md-editor-v3/style.min.css}" rel="stylesheet">
 
     <!-- marked -->
-    <script th:src="@{/js/marked.min.js}"></script>
+
     <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet" />
 
     <script th:src="@{/js/clipboard.js}"></script>
@@ -92,8 +92,7 @@
     <link th:href="@{/css/search.css}" rel="stylesheet"/>
     <link th:href="@{/css/item-detail.css}" rel="stylesheet"/>
 
-    <!-- superplaceholder -->
-    <script th:src="@{/tool/superplaceholder/superplaceholder.min.js}"></script>
+
 
     <!-- tingle -->
     <script th:src="@{/tool/tingle/tingle.min.js}"></script>
@@ -466,7 +465,7 @@
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
-
+    import {marked} from '/tool/marked/marked.esm.js';
     import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';

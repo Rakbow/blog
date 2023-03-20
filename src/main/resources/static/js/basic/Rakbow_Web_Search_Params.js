@@ -1,4 +1,5 @@
 import {postRequest} from '/js/basic/Http_Request.js';
+import superplaceholder from '/tool/superplaceholder/superplaceholder.esm.js';
 
 export const showSearchPanel = (dialog) => {
     const dialogRef = dialog.open(SearchPanel, {
