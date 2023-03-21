@@ -133,6 +133,21 @@ public class EntityService {
     }
 
     /**
+     * 获取实体表数据
+     *
+     * @return JSONObject
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public JSONObject getItemAmount() {
+        JSONObject entityAmounts = new JSONObject();
+        for (EntityType type : EntityType.ENTITY_TYPES) {
+            entityAmounts.put(type.getNameEn().toLowerCase() + "Amount", redisUtil.get("entity_amount:" + type.getId()));
+        }
+        return entityAmounts;
+    }
+
+    /**
      * 获取浏览量最高的item
      *
      * @param limit 获取条数

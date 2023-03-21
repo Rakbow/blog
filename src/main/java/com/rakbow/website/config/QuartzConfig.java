@@ -1,5 +1,6 @@
 package com.rakbow.website.config;
 
+import com.rakbow.website.task.EntityAmountTask;
 import com.rakbow.website.task.EntityInfoTask;
 import com.rakbow.website.task.VisitRankTask;
 import org.quartz.*;
@@ -63,7 +64,32 @@ public class QuartzConfig {
 //                 .withSchedule(scheduleBuilder)
 //                 .build();
 //     }
-//     //endregion
+//     //endregion EntityAmountTask
+
+    //region 24小时更新一次数据总数
+    @Bean
+    public JobDetail EntityAmountQuartzDetail(){
+        // withIdentity指定的是这个job的id
+        return JobBuilder
+                .newJob(EntityAmountTask.class)
+                .withIdentity("ENTITY_AMOUNT_TASK_IDENTITY")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    public Trigger EntityAmountQuartzTrigger(){ //触发器
+        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+                // .withIntervalInSeconds(30)  //设置时间周期单位秒
+                .withIntervalInHours(24)  //24小时执行一次
+                .repeatForever();
+        return TriggerBuilder.newTrigger().forJob(EntityAmountQuartzDetail())
+//                .forJob(quartzDetail_2())
+                .withIdentity("ENTITY_AMOUNT_INFO_TRIGGER")
+                .withSchedule(scheduleBuilder)
+                .build();
+    }
+    //endregion
 
 }
 

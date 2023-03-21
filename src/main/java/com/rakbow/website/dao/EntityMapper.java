@@ -31,4 +31,7 @@ public interface EntityMapper {
     //更新图片
     void updateItemImages(String entityName, int entityId, String images, Timestamp editedTime);
 
+    //获取数据数
+    int getItemAmount(String entityName);
+
 }

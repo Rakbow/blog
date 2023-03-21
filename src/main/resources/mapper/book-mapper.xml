@@ -261,5 +261,4 @@
         order by added_time desc
         limit #{limit}
     </select>
-
 </mapper>

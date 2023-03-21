@@ -322,7 +322,7 @@
 
     import fullpage from '/tool/fullpage/fullpage.esm.js';
     import superplaceholder from '/tool/superplaceholder/superplaceholder.esm.js';
-    import {postRequest} from '/js/basic/Http_Request.js';
+    import {getRequest, postRequest} from '/js/basic/Http_Request.js';
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
@@ -330,6 +330,9 @@
     const App = {
         setup() {
             onMounted(() => {
+
+                init();
+
                 fullpage('#index', {
                     scrollingSpeed: 500, //滚动的时间
                     keyboardScrolling: false,
@@ -380,6 +383,8 @@
 
             //region search
 
+            const entityAmountInfo = ref();
+
             const searchParams = ref({
                 keyword: '',
                 entityType: 0,
@@ -408,12 +413,23 @@
                 searchParams.value.limit = ev.rows;
                 search();
             };
+
+            const getEntityAmountInfo = () => {
+                getRequest(null, GET_ENTITY_AMOUNT_INFO)
+                    .then(res => {
+                        if(res.state === 1) {
+                            entityAmountInfo.value = res.data;
+                            console.log(entityAmountInfo.value);
+                        }
+                    });
+            };
             //endregion
             const init = () => {
+                getEntityAmountInfo();
             };
 
             return {
-                searchParams, searchResult, ENTITY_TYPE,
+                searchParams, searchResult, ENTITY_TYPE, entityAmountInfo,
                 search, pageChange, entityTypeValue2Icon, entityTypeValue2Label,
                 NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
             }

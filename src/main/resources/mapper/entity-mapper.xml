@@ -54,4 +54,9 @@
         where id = #{entityId}
     </update>
 
+    <select id="getItemAmount" resultType="int">
+        select count(id)
+        from ${param1}
+    </select>
+
 </mapper>

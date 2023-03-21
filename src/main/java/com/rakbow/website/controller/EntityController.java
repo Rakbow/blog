@@ -146,7 +146,19 @@ public class EntityController {
     }
     //endregion
 
-    @RequestMapping(path = "/simpleSearch", method = RequestMethod.POST)
+    @RequestMapping(path = "/get-entity-amount-info", method = RequestMethod.GET)
+    @ResponseBody
+    public String getEntityAmountInfo() {
+        ApiResult res = new ApiResult();
+        try {
+            res.data = entityService.getItemAmount();
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(path = "/simple-search", method = RequestMethod.POST)
     @ResponseBody
     public String simpleSearch(@RequestBody String json) {
         ApiResult res = new ApiResult();

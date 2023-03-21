@@ -26,6 +26,8 @@ public enum EntityType {
     ARTICLE(8,"文章", "Article"),
     MUSIC(9,"音乐", "Music");
 
+    public static final EntityType[] ENTITY_TYPES = {ALBUM, DISC, BOOK, MERCH, GAME, FRANCHISE, PRODUCT, MUSIC};
+
     @Getter
     private final int id;
     @Getter
