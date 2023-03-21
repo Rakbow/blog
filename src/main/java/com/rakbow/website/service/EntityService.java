@@ -142,7 +142,14 @@ public class EntityService {
     public JSONObject getItemAmount() {
         JSONObject entityAmounts = new JSONObject();
         for (EntityType type : EntityType.ENTITY_TYPES) {
-            entityAmounts.put(type.getNameEn().toLowerCase() + "Amount", redisUtil.get("entity_amount:" + type.getId()));
+            Object amount;
+            try {
+                amount = redisUtil.get("entity_amount:" + type.getId());
+            }
+            catch (Exception e) {
+                amount = 0;
+            }
+            entityAmounts.put(type.getNameEn().toLowerCase() + "Amount", amount);
         }
         return entityAmounts;
     }

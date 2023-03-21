@@ -12,8 +12,8 @@
     <link th:href="@{/css/bootstrap/myBootstrap.min.css}" rel="stylesheet"/>
 
     <link href="https://img.rakbow.com/common/logo/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
-    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
-    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet" />
+    <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet"/>
+    <link th:href="@{/css/remixicon/remixicon.css}" rel="stylesheet"/>
 
     <!-- PrimeVue css -->
     <link th:href="@{/css/primevue/bootstrap4-dark-blue.css}" rel="stylesheet"/>
@@ -67,7 +67,7 @@
     <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 
     <!-- fullpage -->
-<!--    <script th:src="@{/tool/fullpage/fullpage.js}"></script>-->
+    <!--    <script th:src="@{/tool/fullpage/fullpage.js}"></script>-->
     <link th:href="@{/tool/fullpage/fullpage.min.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -78,10 +78,12 @@
     <div id="index">
         <div class="section">
             <div class="flex align-items-center justify-content-center flex-wrap card-container">
-                <div class="p-2 shadow-2 border-round w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)">
+                <div class="p-2 shadow-2 border-round w-full lg:w-6"
+                     style="min-width: 900px;background-color: rgba(0,0,0,0.2)">
                     <div class="formgrid grid search">
                         <div class="col">
-                            <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search" class="search-input"></p-inputtext>
+                            <p-inputtext id="globalSearch" v-model="searchParams.keyword" @keypress="search"
+                                         class="search-input"></p-inputtext>
                         </div>
                         <div class="col-2" style="margin: auto;">
                             <p-dropdown v-model="searchParams.entityType" :options="ENTITY_TYPE" option-label="label"
@@ -102,7 +104,76 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-if="searchResult != null">
+                <div class="p-2 w-full lg:w-6" style="min-width: 1020px;background-color: rgba(0,0,0,0)"
+                     v-if="searchResult == null">
+
+                    <section class="network-data">
+                        <div class="wrapper-lg">
+                        <div class="network-data_stats">
+                            <div class="network-data_stats_item">
+                                <img width="80" height="80" src="/img/tmp/svg/1.svg">
+                                <div class="network-data_stats_item_green">
+                                    <span>1 mil+</span>
+                                    <span>active oss projects served</span>
+                                </div>
+                            </div>
+                            <div class="network-data_stats_item">
+                                <img width="80" height="80" src="/img/tmp/svg/2.svg">
+                                <div class="network-data_stats_item_green">
+                                    <span>99.46%</span>
+                                    <span>cache hit ratio</span>
+                                </div>
+                            </div>
+                            <div class="network-data_stats_item">
+                                <img width="80" height="80" src="/img/tmp/svg/3.svg">
+                                <div class="network-data_stats_item_regular">
+                                    <span>86 334</span>
+                                    <span>requests per second</span>
+                                </div>
+                            </div>
+                            <div class="network-data_stats_item">
+                                <img width="80" height="80" src="/img/tmp/svg/4.svg">
+                                <div class="network-data_stats_item_regular">
+                                    <span>24 485 Mbps</span>
+                                    <span>bandwidth</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-link-to">
+                            <a class="btn-arrow" href="/network#map">
+                                <span>View our network map</span>
+                                <img width="20" height="20" src="/img/tmp/svg/arrow-right.svg">
+                            </a>
+                        </div>
+                    </div>
+                    </section>
+
+                    <!--                    <section class="features wrapper">-->
+                    <!--                        <div class="features_features-list">-->
+                    <!--                            <a href="/network/infographic">-->
+                    <!--                                <img width="64" height="64" src="/img/tmp/svg/1.svg">-->
+                    <!--                                <h6>Four CDN<br> &amp; three DNS providers</h6>-->
+                    <!--                            </a>-->
+                    <!--                            <a href="/network#map">-->
+                    <!--                                <img width="64" height="64" src="/img/tmp/svg/1.svg">-->
+                    <!--                                <h6>More than 540 points<br> of presence</h6></a>-->
+                    <!--                            <a href="/network#china">-->
+                    <!--                                <img width="64" height="64" src="/img/tmp/svg/1.svg">-->
+                    <!--                                <h6>Low latency "Near China"<br> network</h6></a>-->
+                    <!--                            <a href="/documentation#id-multi-cdn">-->
+                    <!--                                <img width="64" height="64" src="/img/tmp/svg/1.svg">-->
+                    <!--                                <h6>Smart load-balancing<br> and routing</h6></a>-->
+                    <!--                            <a href="/network#failover">-->
+                    <!--                                <img width="64" height="64" src="/img/tmp/svg/1.svg">-->
+                    <!--                                <h6>Multi-layer cache<br> and failover</h6></a>-->
+                    <!--                            <a href="/terms">-->
+                    <!--                                <img width="64" height="64" src="/img/tmp/svg/1.svg">-->
+                    <!--                                <h6>Formal ToS<br> and Privacy Policy</h6>-->
+                    <!--                            </a>-->
+                    <!--                        </div>-->
+                    <!--                    </section>-->
+                </div>
+                <div class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-else>
                     <div v-if="searchResult.total != 0" style="height: 600px">
                         <div class="text-start mt-3">
                             <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
@@ -131,13 +202,16 @@
                                                         <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
                                                     </div>
                                                     <span class="has-bonus-tag" v-if="result.hasBonus">
-                                                        <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                                        <p-tag style="background: #1B273D" class="ml-1"
+                                                               value="特典"></p-tag>
                                                     </span>
                                                 </span>
                                                 <span class="text-end col-5">
-                                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-eye"
+                                                       v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-4">{{result.visitCount}}</span>
-                                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-thumbs-up-fill"
+                                                       v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
@@ -150,14 +224,15 @@
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/disc/'+ result.id">
-                                            <img :src="result.cover" />
+                                            <img :src="result.cover"/>
                                         </a>
                                         <div class="search-item-detail">
                                         <span class="search-item-name text-truncate-1">
                                             <a :href="'/db/disc/'+ result.id">{{result.name}}</a>
                                         </span>
                                             <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                            <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span class="label">&nbsp{{result.releaseDate}}</span>
+                                            <b class="label">{{result.catalogNo?result.catalogNo:'N/A'}}</b><span
+                                                    class="label">&nbsp{{result.releaseDate}}</span>
                                         </span><br>
                                             <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
                                                   v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
@@ -168,16 +243,20 @@
                                                     <p-tag class="product-tag ml-1" :value="format.label"></p-tag>
                                                 </span>
                                                 <span class="has-bonus-tag" v-if="result.hasBonus">
-                                                    <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                                    <p-tag style="background: #1B273D" class="ml-1"
+                                                           value="特典"></p-tag>
                                                 </span>
                                                 <span class="limited-tag" v-if="result.limited">
-                                                    <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
+                                                    <p-tag style="background: #1B273D" class="ml-1"
+                                                           value="限定"></p-tag>
                                                 </span>
                                             </span>
                                             <span class="text-end col-5">
-                                                <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                                <i class="pi pi-eye"
+                                                   v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
                                                 <span class="ml-2 mr-4">{{result.visitCount}}</span>
-                                                <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                                <i class="pi pi-thumbs-up-fill"
+                                                   v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
                                                 <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                             </span>
                                         </span>
@@ -201,23 +280,29 @@
                                                 </span><br>
                                             <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
                                                   v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
-                                            &nbsp&nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
+                                            &nbsp&nbsp<span class="label"
+                                                            style="font-size: 7px">{{result.publisher}}</span><br>
                                             <span class="grid">
                                                 <span class="text-start col-6">
                                                     <span style="display:inline">
-                                                        <p-tag class="product-tag ml-1" :value="result.bookType.nameZh"></p-tag>
+                                                        <p-tag class="product-tag ml-1"
+                                                               :value="result.bookType.nameZh"></p-tag>
                                                     </span>
                                                     <span class="has-bonus-tag" v-if="result.hasBonus">
-                                                        <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                                        <p-tag style="background: #1B273D" class="ml-1"
+                                                               value="特典"></p-tag>
                                                     </span>
                                                     <span class="limited-tag" v-if="result.limited">
-                                                        <p-tag style="background: #1B273D" class="ml-1" value="限定"></p-tag>
+                                                        <p-tag style="background: #1B273D" class="ml-1"
+                                                               value="限定"></p-tag>
                                                     </span>
                                                 </span>
                                                 <span class="text-end col-5">
-                                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-eye"
+                                                       v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-4">{{result.visitCount}}</span>
-                                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-thumbs-up-fill"
+                                                       v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
@@ -230,7 +315,7 @@
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/merch/'+ result.id">
-                                            <img :src="result.cover" />
+                                            <img :src="result.cover"/>
                                         </a>
                                         <div class="search-item-detail">
                                                 <span class="search-item-name text-truncate-1">
@@ -241,14 +326,17 @@
                                                     <span class="small-font">
                                                         <span class="label">{{result.releaseDate}}</span>
                                                     </span>
-                                                    <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
+                                                    <span :class="'fi fi-' + result.region.code"
+                                                          style="margin-left: 0.5rem"
                                                           v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}">
                                                     </span>
                                                 </span>
                                                 <span class="text-end col-5">
-                                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-eye"
+                                                       v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-4">{{result.visitCount}}</span>
-                                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-thumbs-up-fill"
+                                                       v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
@@ -261,7 +349,7 @@
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/game/'+ result.id">
-                                            <img :src="result.cover" />
+                                            <img :src="result.cover"/>
                                         </a>
                                         <div class="search-item-detail">
                                                 <span class="search-item-name text-truncate-1">
@@ -280,13 +368,16 @@
                                                         <p-tag class="ml-1" :value="result.platform.nameEn"></p-tag>
                                                     </span>
                                                     <span class="has-bonus-tag" v-if="result.hasBonus">
-                                                        <p-tag style="background: #1B273D" class="ml-1" value="特典"></p-tag>
+                                                        <p-tag style="background: #1B273D" class="ml-1"
+                                                               value="特典"></p-tag>
                                                     </span>
                                                 </span>
                                                 <span class="text-end col-5">
-                                                    <i class="pi pi-eye" v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-eye"
+                                                       v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-4">{{result.visitCount}}</span>
-                                                    <i class="pi pi-thumbs-up-fill" v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                                    <i class="pi pi-thumbs-up-fill"
+                                                       v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
                                                     <span class="ml-2 mr-2">{{result.likeCount}}</span>
                                                 </span>
                                             </span>
@@ -295,7 +386,8 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
-                            <p-scrolltop target="parent" :threshold="100" class="search-scrolltop" icon="pi pi-arrow-up"></p-scrolltop>
+                            <p-scrolltop target="parent" :threshold="100" class="search-scrolltop"
+                                         icon="pi pi-arrow-up"></p-scrolltop>
                         </p-scrollpanel>
                         <p-paginator
                                 :template="{
@@ -306,7 +398,7 @@
                         </p-paginator>
                     </div>
                     <div v-else class="text-center mt-2">
-                        <img src="https://img.rakbow.com/common/icon/no-results.svg" /><br><span>暂无搜索结果</span>
+                        <img src="https://img.rakbow.com/common/icon/no-results.svg"/><br><span>暂无搜索结果</span>
                     </div>
                 </div>
             </div>
@@ -316,13 +408,14 @@
     </div>
 
     <!-- 尾部 -->
-<!--    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>-->
+    <!--    <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>-->
 </div>
 <script type="module" th:inline="javascript">
 
     import fullpage from '/tool/fullpage/fullpage.esm.js';
     import superplaceholder from '/tool/superplaceholder/superplaceholder.esm.js';
     import {getRequest, postRequest} from '/js/basic/Http_Request.js';
+
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useToast} = primevue.usetoast;
@@ -399,10 +492,10 @@
             });
 
             const search = () => {
-                if(searchParams.value.keyword !== '') {
+                if (searchParams.value.keyword !== '') {
                     postRequest(null, INDEX_SEARCH_URL, searchParams.value)
                         .then(res => {
-                            if(res.state === 1) {
+                            if (res.state === 1) {
                                 searchResult.value = res.data;
                             }
                         });
@@ -417,7 +510,7 @@
             const getEntityAmountInfo = () => {
                 getRequest(null, GET_ENTITY_AMOUNT_INFO)
                     .then(res => {
-                        if(res.state === 1) {
+                        if (res.state === 1) {
                             entityAmountInfo.value = res.data;
                             console.log(entityAmountInfo.value);
                         }
@@ -466,8 +559,172 @@
         .mount("#app");
 </script>
 <style>
+    @media (min-width: 768px) {
+        .network-data {
+            margin-top: 64px;
+            height: 428px;
+            padding: 96px 0;
+            width: 100%;
+        }
+    }
+
+    .network-data {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        margin-top: 40px;
+        padding: 40px 0;
+        background-image: url('/img/tmp/svg/map.webp');
+        background-repeat: no-repeat;
+        background-position: center;
+        overflow: hidden;
+    }
+
+    .wrapper-lg {
+        z-index: 2;
+        width: 100%;
+        max-width: 1224px;
+    }
+
+    @media (min-width: 992px) {
+        .network-data_stats {
+            gap: 0;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .network-data_stats {
+            flex-flow: row wrap;
+        }
+        .network-data_stats_item {
+            flex-direction: column;
+            flex-basis: 0;
+            min-height: 172px;
+        }
+    }
+
+    .network-data_stats_item {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        flex-grow: 1;
+        flex-basis: calc(50% - 24px);
+        gap: 24px;
+        min-height: 56px;
+    }
+
+    @media (min-width: 768px) {
+        .network-data_stats_item_green, .network-data_stats_item_regular {
+            align-items: center;
+        }
+    }
+
+    .network-data_stats_item_green, .network-data_stats_item_regular {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .network-data_stats {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+        .network-data_stats_item_green>span:nth-child(1), .network-data_stats_item_regular>span:nth-child(1) {
+            font-size: 32px;
+            line-height: 44px;
+        }
+    }
+
+    .network-data_stats_item_green>span:nth-child(1), .network-data_stats_item_regular>span:nth-child(1) {
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 36px;
+        letter-spacing: .2px;
+    }
+
+    .network-data_stats_item_green>span, .network-data_stats_item_regular>span {
+        white-space: nowrap;
+    }
+
+    @media (min-width: 992px) {
+            .network-data_stats_item {
+                flex-direction: column;
+                flex-basis: 0;
+                min-height: 172px;
+            }
+        .network-data_stats_item_green>span:nth-child(2), .network-data_stats_item_regular>span:nth-child(2) {
+            text-align: center;
+        }
+    }
+
+    .network-data_stats_item {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        flex-grow: 1;
+        flex-basis: calc(50% - 24px);
+        gap: 24px;
+        min-height: 56px;
+    }
+
+    @media (min-width: 768px) {
+        .network-data_stats_item_green>span:nth-child(2), .network-data_stats_item_regular>span:nth-child(2) {
+            font-size: 16px;
+            line-height: 24px;
+        }
+    }
+
+    .network-data_stats_item_green>span:nth-child(2), .network-data_stats_item_regular>span:nth-child(2) {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: left;
+        width: 100%;
+    }
+
+    .network-data_stats_item_green>span, .network-data_stats_item_regular>span {
+        white-space: nowrap;
+    }
+
+    /*@media (min-width: 768px) {*/
+    /*    .features_features-list {*/
+    /*        gap: 40px 22px;*/
+    /*    }*/
+
+    /*    .features {*/
+    /*        padding: 80px 0 0;*/
+    /*    }*/
+    /*}*/
+
+    /*.features_features-list > a {*/
+    /*    display: flex;*/
+    /*    align-items: center;*/
+    /*    flex-grow: 1;*/
+    /*    flex-basis: 300px;*/
+    /*    gap: 20px;*/
+    /*}*/
+
+    /*.wrapper {*/
+    /*    width: 100%;*/
+    /*    max-width: 1016px;*/
+    /*}*/
+
+    /*.features {*/
+    /*    padding: 32px 0 0;*/
+    /*}*/
+
+    /*.features_features-list {*/
+    /*    display: flex;*/
+    /*    flex-flow: row wrap;*/
+    /*    margin-top: 32px;*/
+    /*    gap: 24px 22px;*/
+    /*}*/
+
     .p-paginator {
-        background-color: rgba(0,0,0,0.3)
+        background-color: rgba(0, 0, 0, 0.3)
     }
 
     #fp-nav ul li a span, .fp-slidesNav ul li a span {
