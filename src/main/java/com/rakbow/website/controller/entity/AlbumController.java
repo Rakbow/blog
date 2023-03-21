@@ -72,10 +72,10 @@ public class AlbumController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
-
+        String coverUrl = CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages()));
         model.addAttribute("album", albumVOMapper.album2VO(album));
         if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
-            model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id)));
+            model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.ALBUM.getId()));

@@ -89,13 +89,13 @@ public class MusicUtil {
      * @author rakbow
      * @param musics 音乐
      * */
-    public static JSONArray getMusicAudioInfo(List<Music> musics) {
+    public static JSONArray getMusicAudioInfo(List<Music> musics, String coverUrl) {
         if (musics.size() == 0) {
             return null;
         }
         JSONArray audioInfos = new JSONArray();
         musics.forEach(music -> {
-            JSONObject audioInfo = getMusicAudioInfo(music);
+            JSONObject audioInfo = getMusicAudioInfo(music, coverUrl);
             if (audioInfo != null) {
                 audioInfos.add(audioInfo);
             }
