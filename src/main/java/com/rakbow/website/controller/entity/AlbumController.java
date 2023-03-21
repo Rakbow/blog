@@ -274,18 +274,6 @@ public class AlbumController {
             }else {
                 res.setErrorMessage(ApiInfo.NOT_ACTION);
             }
-
-            for (int i = 0; i < images.size(); i++) {
-                //若更新图片中有封面
-                JSONObject image = images.getJSONObject(i);
-                if(image.getIntValue("type") == ImageType.COVER.getIndex()) {
-                    //和原专辑封面URL比较,若不同,则赋值新的url
-                    if(!StringUtils.equals(image.getString("url"), CommonImageUtil.getCoverUrl(images))) {
-                        //更新对应music的封面图片
-                        musicService.updateMusicCoverUrl(album.getId(), CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages())));
-                    }
-                }
-            }
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -330,9 +318,6 @@ public class AlbumController {
             }
 
             albumService.updateAlbumTrackInfo(id, discList);
-
-            //更新对应music的封面图片
-            musicService.updateMusicCoverUrl(album.getId(), CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages())));
 
             res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
         } catch (Exception e) {

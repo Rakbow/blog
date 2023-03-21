@@ -57,11 +57,12 @@ public interface MusicVOMapper {
         musicVO.setFiles(JSON.parseArray(music.getFiles()));
         musicVO.setUploadDisabled(musicVO.getFiles().size() >= 2);
 
-        if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
-        }else {
-            musicVO.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
-        }
+        musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+        // if (StringUtils.isBlank(music.getCoverUrl())) {
+        //     musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+        // }else {
+        //     musicVO.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
+        // }
         musicVO.setLrcText(music.getLrcText());
         musicVO.setAudioLength(music.getAudioLength());
         musicVO.setRemark(music.getRemark());
@@ -90,11 +91,12 @@ public interface MusicVOMapper {
         musicVOAlpha.setDiscSerial(music.getDiscSerial());
         musicVOAlpha.setTrackSerial(music.getTrackSerial());
 
-        if (StringUtils.isBlank(music.getCoverUrl())) {
-            musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        }else {
-            musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 50));
-        }
+        musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        // if (StringUtils.isBlank(music.getCoverUrl())) {
+        //     musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        // }else {
+        //     musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 50));
+        // }
 
         musicVOAlpha.setAudioLength(music.getAudioLength());
 

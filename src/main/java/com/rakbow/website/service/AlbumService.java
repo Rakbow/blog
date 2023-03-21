@@ -255,14 +255,6 @@ public class AlbumService {
         finalImageJson.addAll(originalImagesJson);
         finalImageJson.addAll(addImageJson);
 
-        List<Music> musics = musicService.getMusicsByAlbumId(id);
-
-        //若涉及封面类型图片，则更新相应的音频封面
-        String coverUrl = CommonImageUtil.getCoverUrl(addImageJson);
-        if (!StringUtils.isBlank(coverUrl)) {
-            musicService.updateMusicCoverUrl(id, coverUrl);
-        }
-
         albumMapper.updateAlbumImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
     }
 

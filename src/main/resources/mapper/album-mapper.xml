@@ -48,12 +48,6 @@
         from album
     </select>
 
-    <select id="getAlbumRows" resultType="int">
-        select count(id)
-        from album
-        where status = 1
-    </select>
-
     <insert id="addAlbum" useGeneratedKeys="true" keyProperty="id">
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},

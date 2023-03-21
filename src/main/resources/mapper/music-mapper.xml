@@ -5,12 +5,12 @@
 <mapper namespace="com.rakbow.website.dao.MusicMapper">
 
     <sql id="selectFields">
-        id, name, name_en, artists, audio_type, album_id, disc_serial, track_serial, cover_url, files, lrc_text,
+        id, name, name_en, artists, audio_type, album_id, disc_serial, track_serial, files, lrc_text,
         audio_length, description, remark, added_time, edited_time, status
     </sql>
 
     <sql id="insertFields">
-        name, name_en, artists, audio_type, album_id, disc_serial, track_serial, cover_url, files, lrc_text,
+        name, name_en, artists, audio_type, album_id, disc_serial, track_serial, files, lrc_text,
         audio_length, description, remark, added_time, edited_time, status
     </sql>
 
@@ -52,11 +52,6 @@
         where album_id = #{albumId} and status = 1
     </select>
 
-    <select id="getMusicRows" resultType="int">
-        select count(id)
-        from music
-    </select>
-
     <insert id="addMusic" parameterType="Music" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
@@ -86,20 +81,6 @@
         from music
         where album_id = #{albumId}
     </delete>
-
-    <update id="updateStatusById" keyProperty="id">
-        update music
-        set
-        status = 0
-        where id = #{id}
-    </update>
-
-    <update id="updateMusicCoverUrl" keyProperty="id">
-        update music
-        set
-        cover_url = #{coverUrl}
-        where album_id = #{albumId}
-    </update>
 
     <update id="updateMusicArtists" keyProperty="id">
         update music

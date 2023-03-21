@@ -69,11 +69,12 @@ public class MusicUtil {
                 audioInfo.put("name", music.getName());
                 audioInfo.put("artist", getArtistFromMusic(music));
                 audioInfo.put("url", files.getJSONObject(i).getString("url"));
-                if (StringUtils.isBlank(music.getCoverUrl())) {
-                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
-                }else {
-                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
-                }
+                audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                // if (StringUtils.isBlank(music.getCoverUrl())) {
+                //     audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                // }else {
+                //     audioInfo.put("cover", QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
+                // }
             }
             //判断是否有歌词文件
             if (files.getJSONObject(i).getString("type").contains("text")) {

@@ -33,10 +33,6 @@ public interface MusicMapper {
 
     void deleteMusicByAlbumId(int albumId);
 
-    int updateStatusById(int id);
-
-    void updateMusicCoverUrl(int albumId, String coverUrl);
-
     void updateMusicArtists(int id, String artists, Timestamp editedTime);
 
     void updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);

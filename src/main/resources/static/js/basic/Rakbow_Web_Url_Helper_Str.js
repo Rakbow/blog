@@ -17,7 +17,9 @@ const UPDATE_IMAGES_URL = "/db/update-images";
 const DATABASE_INDEX_URL = "/db";
 const DATABASE_LIST_URL = "/db/list";
 
-const INDEX_SEARCH_URL = "/db/simpleSearch";
+const INDEX_SEARCH_URL = "/db/simple-search";
+
+const GET_ENTITY_AMOUNT_INFO = "/db/get-entity-amount-info";
 
 const APP_INDEX_URL = "/app";
 const BLOG_INDEX_URL = "/blog";

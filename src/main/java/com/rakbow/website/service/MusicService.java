@@ -151,7 +151,6 @@ public class MusicService {
                 music.setAlbumId(albumId);
                 music.setDiscSerial(disc.getInteger("serial"));
                 music.setTrackSerial(track.getString("serial"));
-                music.setCoverUrl(cover.getString("url"));
                 music.setAudioLength(track.getString("audioLength"));
                 music.setAddedTime(CommonUtil.stringToTimestamp(albumJson.getString("addedTime")));
                 music.setEditedTime(CommonUtil.stringToTimestamp(albumJson.getString("editedTime")));
@@ -205,20 +204,6 @@ public class MusicService {
             musics.forEach(this::deleteMusicAllFiles);
             musics.forEach(music -> visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId()));
             musicMapper.deleteMusicByAlbumId(albumId);
-        }catch (Exception ex) {
-            throw new Exception(ex);
-        }
-    }
-
-    /**
-     * 修改状态
-     * @author rakbow
-     * @param id 音乐id
-     * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateStatusById(int id) throws Exception {
-        try {
-            musicMapper.updateStatusById(id);
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -315,17 +300,6 @@ public class MusicService {
     public String updateMusicLyricsText(int id, String lrcText) {
         musicMapper.updateMusicLyricsText(id, lrcText, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
-    }
-
-    /**
-     * 更新封面url
-     * @author rakbow
-     * @param albumId 专辑id
-     * @param coverUrl 封面url
-     * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusicCoverUrl(int albumId, String coverUrl) {
-        musicMapper.updateMusicCoverUrl(albumId, coverUrl);
     }
 
     /**
