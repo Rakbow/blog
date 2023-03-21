@@ -57,7 +57,7 @@ public class MusicUtil {
      * @author rakbow
      * @param music 音乐
      * */
-    public static JSONObject getMusicAudioInfo(Music music) {
+    public static JSONObject getMusicAudioInfo(Music music, String coverUrl) {
         JSONArray files = JSON.parseArray(music.getFiles());
         if (files.size() == 0) {
             return null;
@@ -70,11 +70,11 @@ public class MusicUtil {
                 audioInfo.put("artist", getArtistFromMusic(music));
                 audioInfo.put("url", files.getJSONObject(i).getString("url"));
                 audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
-                // if (StringUtils.isBlank(music.getCoverUrl())) {
-                //     audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
-                // }else {
-                //     audioInfo.put("cover", QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
-                // }
+                if (StringUtils.isBlank(coverUrl)) {
+                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                }else {
+                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(coverUrl, 80));
+                }
             }
             //判断是否有歌词文件
             if (files.getJSONObject(i).getString("type").contains("text")) {

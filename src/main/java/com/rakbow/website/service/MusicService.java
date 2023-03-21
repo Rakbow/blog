@@ -253,7 +253,7 @@ public class MusicService {
      * @return list
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<MusicVOAlpha> getRelatedMusics(Music music) {
+    public List<MusicVOAlpha> getRelatedMusics(Music music, String coverUrl) {
 
         //获取同属一张专辑的音频
         List<Music> sameAlbumMusics = getMusicsByAlbumId(music.getAlbumId());
@@ -270,7 +270,7 @@ public class MusicService {
         }
 
         //筛选出同一张碟片的音频，并按照序号排序
-        return musicVOMapper.music2VOAlpha(tmpList);
+        return musicVOMapper.music2VOAlpha(tmpList, coverUrl);
     }
 
     //endregion

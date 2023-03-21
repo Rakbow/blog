@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.EntityUtils;
@@ -13,6 +14,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
+import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,9 +59,14 @@ public class MusicController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getNameZh()));
             return "/error/404";
         }
+        Album album = albumService.getAlbum(music.getAlbumId());
+        String coverUrl = CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages()));
 
-        model.addAttribute("music", musicVOMapper.music2VO(music));
-        model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music));
+        model.addAttribute("music", musicVOMapper.music2VO(music, coverUrl));
+
+        if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
+            model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
+        }
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.MUSIC.getId()));
         //获取页面数据
@@ -67,9 +74,9 @@ public class MusicController {
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频
-        model.addAttribute("relatedMusics", musicService.getRelatedMusics(music));
+        model.addAttribute("relatedMusics", musicService.getRelatedMusics(music, coverUrl));
         //获取所属专辑的信息
-        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(albumService.getAlbum(music.getAlbumId())));
+        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(album));
 
         return "/database/itemDetail/music-detail";
 

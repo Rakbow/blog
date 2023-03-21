@@ -34,7 +34,7 @@ public interface MusicVOMapper {
      * @return MusicVO
      * @author rakbow
      */
-    default MusicVO music2VO(Music music) {
+    default MusicVO music2VO(Music music, String coverUrl) {
         if (music == null) {
             return null;
         }
@@ -57,12 +57,11 @@ public interface MusicVOMapper {
         musicVO.setFiles(JSON.parseArray(music.getFiles()));
         musicVO.setUploadDisabled(musicVO.getFiles().size() >= 2);
 
-        musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
-        // if (StringUtils.isBlank(music.getCoverUrl())) {
-        //     musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
-        // }else {
-        //     musicVO.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 80));
-        // }
+        if (StringUtils.isBlank(coverUrl)) {
+            musicVO.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+        }else {
+            musicVO.setCover(QiniuImageUtil.getThumbUrl(coverUrl, 80));
+        }
         musicVO.setLrcText(music.getLrcText());
         musicVO.setAudioLength(music.getAudioLength());
         musicVO.setRemark(music.getRemark());
@@ -78,7 +77,7 @@ public interface MusicVOMapper {
      * @return MusicVOAlpha
      * @author rakbow
      */
-    default MusicVOAlpha music2VOAlpha(Music music) {
+    default MusicVOAlpha music2VOAlpha(Music music, String coverUrl) {
         if (music == null) {
             return null;
         }
@@ -91,12 +90,11 @@ public interface MusicVOMapper {
         musicVOAlpha.setDiscSerial(music.getDiscSerial());
         musicVOAlpha.setTrackSerial(music.getTrackSerial());
 
-        musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        // if (StringUtils.isBlank(music.getCoverUrl())) {
-        //     musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
-        // }else {
-        //     musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(music.getCoverUrl(), 50));
-        // }
+        if (StringUtils.isBlank(coverUrl)) {
+            musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 50));
+        }else {
+            musicVOAlpha.setCover(QiniuImageUtil.getThumbUrl(coverUrl, 50));
+        }
 
         musicVOAlpha.setAudioLength(music.getAudioLength());
 
@@ -114,10 +112,10 @@ public interface MusicVOMapper {
      * @return List<MusicVOAlpha>
      * @author rakbow
      */
-    default List<MusicVOAlpha> music2VOAlpha(List<Music> musics) {
+    default List<MusicVOAlpha> music2VOAlpha(List<Music> musics, String coverUrl) {
         List<MusicVOAlpha> musicVOAlphas = new ArrayList<>();
         if (!musics.isEmpty()) {
-            musics.forEach(music -> musicVOAlphas.add(music2VOAlpha(music)));
+            musics.forEach(music -> musicVOAlphas.add(music2VOAlpha(music, coverUrl)));
         }
         return musicVOAlphas;
     }
