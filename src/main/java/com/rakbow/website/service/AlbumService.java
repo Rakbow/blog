@@ -48,8 +48,6 @@ public class AlbumService {
     @Autowired
     private MusicService musicService;
     @Autowired
-    private QiniuBaseUtil qiniuBaseUtil;
-    @Autowired
     private QiniuFileUtil qiniuFileUtil;
     @Autowired
     private VisitUtil visitUtil;
@@ -207,86 +205,6 @@ public class AlbumService {
      */
     public Album json2Album(JSONObject albumJson) {
         return JSON.to(Album.class, albumJson);
-    }
-
-    //endregion
-
-    //region ------图片操作------
-
-    /**
-     * 新增专辑图片
-     *
-     * @param id     专辑id
-     * @param images 新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos 新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addAlbumImages(int id, MultipartFile[] images, JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
-
-        //最终保存到数据库的json信息
-        JSONArray finalImageJson = new JSONArray();
-
-        //新增图片信息json
-        JSONArray addImageJson = new JSONArray();
-
-        //创建存储链接前缀
-        String filePath = EntityType.ALBUM.getNameEn().toLowerCase() + "/" + id + "/";
-
-        for (int i = 0; i < images.length; i++) {
-            //上传图片
-            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
-            if (ar.state) {
-                ImageInfo imageInfo = new ImageInfo();
-                imageInfo.setUrl(ar.data.toString());
-                imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
-                imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
-                imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
-                if(imageInfos.getJSONObject(i).getString("description").isEmpty()) {
-                    imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
-                }
-                imageInfo.setUploadUser(user.getUsername());
-                addImageJson.add(JSON.toJSON(imageInfo));
-            }
-        }
-
-        //汇总
-        finalImageJson.addAll(originalImagesJson);
-        finalImageJson.addAll(addImageJson);
-
-        albumMapper.updateAlbumImages(id, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-    }
-
-    /**
-     * 更新专辑图片
-     *
-     * @param id    专辑id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateAlbumImages(int id, String images) {
-        albumMapper.updateAlbumImages(id, images, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_IMAGES_SUCCESS;
-    }
-
-    /**
-     * 删除专辑图片
-     *
-     * @param album 专辑
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteAlbumImages(Album album, JSONArray deleteImages) throws Exception {
-        //获取原始图片json数组
-        JSONArray images = JSONArray.parseArray(album.getImages());
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        albumMapper.updateAlbumImages(album.getId(), finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.DELETE_IMAGES_SUCCESS;
     }
 
     //endregion

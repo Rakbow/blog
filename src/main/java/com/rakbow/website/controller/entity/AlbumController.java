@@ -93,7 +93,7 @@ public class AlbumController {
 
     //endregion
 
-    //region ------增删改查------
+    //region ------基础增删改------
 
     //根据搜索条件获取专辑
     @SuppressWarnings("unchecked")
@@ -205,80 +205,7 @@ public class AlbumController {
 
     //endregion
 
-    //region 新增图片、Artists和音轨信息等
-
-    //新增专辑图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addAlbumImages(int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            Album album = albumService.getAlbum(entityId);
-
-            //原始图片信息json数组
-            JSONArray imagesJson = JSON.parseArray(album.getImages());
-            //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
-
-            //检测数据合法性
-            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.equals("", errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            albumService.addAlbumImages(entityId, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新专辑图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateAlbumImages(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取专辑id
-            int entityId = JSON.parseObject(json).getInteger("id");
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            int action = JSON.parseObject(json).getInteger("action");
-
-            Album album = albumService.getAlbum(entityId);
-
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-                images.getJSONObject(i).remove("thumbUrl50");
-            }
-
-            //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMessage = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.equals("", errorMessage)) {
-                    res.setErrorMessage(errorMessage);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = albumService.updateAlbumImages(entityId, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = albumService.deleteAlbumImages(album, images);
-            }else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
+    //region ------进阶增删改------
 
     //更新专辑音乐创作相关Artists
     @RequestMapping(path = "/update-artists", method = RequestMethod.POST)
