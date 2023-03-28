@@ -1,6 +1,3 @@
-const DOMAIN_URL = "http://localhost:8083";
-// const DOMAIN_URL = "https://rakbow.com";
-
 //region entity common
 
 const UPDATE_ITEM_STATUS = "/db/update-item-status";
@@ -56,8 +53,6 @@ const GET_ALBUMS_URL = "/db/album/get-albums";
 
 const UPDATE_ALBUM_ARTISTS_URL = "/db/album/update-artists";
 const UPDATE_ALBUM_TRACK_INFO_URL = "/db/album/update-trackInfo";
-const INSERT_ALBUM_IMAGES_URL = "/db/album/add-images";
-const UPDATE_ALBUM_IMAGES_URL = "/db/album/update-images";
 //endregion
 
 //region music
@@ -165,7 +160,7 @@ const ENTITY_TYPE = [
 
 const NOT_LOGIN_NAVBAR_ITEMS = [
     {
-        label: '首页', icon: 'pi pi-fw pi-home', url: DOMAIN_URL
+        label: '首页', icon: 'pi pi-fw pi-home', url: "/"
     },
     {
         label: '数据库',
@@ -198,7 +193,7 @@ const LOGIN_NAVBAR_ITEMS = [
     {
         label: '首页',
         icon: 'pi pi-fw pi-home',
-        url: DOMAIN_URL
+        url: "/"
     },
     {
         label: '数据库',

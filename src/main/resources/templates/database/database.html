@@ -67,8 +67,13 @@
     <link th:href="@{/css/item-index.css}" rel="stylesheet"/>
 
     <!-- fullpage -->
-    <!--    <script th:src="@{/tool/fullpage/fullpage.js}"></script>-->
+<!--    <script th:src="@{/tool/fullpage/fullpage.min.js}"></script>-->
+<!--    <script th:src="@{/tool/fullpage/fullpage.extensions.min.js}"></script>-->
     <link th:href="@{/tool/fullpage/fullpage.min.css}" rel="stylesheet"/>
+
+    <!-- swiper -->
+        <script th:src="@{/tool/swiper/swiper-bundle.min.js}"></script>
+    <link th:href="@{/tool/swiper/swiper-bundle.min.css}" rel="stylesheet"/>
 </head>
 <body>
 <div id="app">
@@ -76,9 +81,9 @@
     <header class="sticky-top mb-2" th:insert="~{template/header :: no_search_header}"></header>
 
     <div id="index">
-        <div class="section">
+        <div class="section " id="section0">
             <div class="flex align-items-center justify-content-center flex-wrap card-container">
-                <div class="p-2 shadow-2 border-round w-full lg:w-6"
+                <div id="search_panel_top" class="p-2 shadow-2 border-round w-full lg:w-6"
                      style="min-width: 900px;background-color: rgba(0,0,0,0.2)">
                     <div class="formgrid grid search">
                         <div class="col p-input-icon-right">
@@ -105,7 +110,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-2 w-full lg:w-6" style="min-width: 1250px;background-color: rgba(0,0,0,0)"
+                <div id="search_panel_bottom" class="p-2 w-full lg:w-6" style="min-width: 1250px;background-color: rgba(0,0,0,0)"
                      v-if="searchResult == null">
                     <section class="network-data">
                         <div class="wrapper-lg">
@@ -148,7 +153,7 @@
                         </div>
                     </section>
                 </div>
-                <div class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-else>
+                <div id="search_panel_result" class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-else>
                     <div v-if="searchResult.total != 0" style="height: 600px">
                         <div class="text-start mt-3">
                             <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
@@ -378,7 +383,64 @@
                 </div>
             </div>
         </div>
-        <div class="section">
+        <div class="section" id="section1">
+            <div class="slide" id="slide1">
+                <div>
+                    <h1>Slide 1</h1>
+                </div>
+                <!--            <div class="swiper mySwiper swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">-->
+                <!--                <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" id="swiper-wrapper-63fa5bb6824c2104a" aria-live="polite">-->
+                <!--                    <div class="swiper-slide" role="group" aria-label="1 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -400px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -3;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-1.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -2;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-2.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="3 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(100deg) scale(1); z-index: -1;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-3.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 0;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-4.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="5 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 1;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-5.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible swiper-slide-next" role="group" aria-label="6 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(-50deg) scale(1); z-index: 0;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-6.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 1; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="7 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(-100deg) scale(1); z-index: -1;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-7.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 2; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="8 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(-150deg) scale(1); z-index: -2;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-8.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 3; transition-duration: 0ms;"></div></div>-->
+                <!--                    <div class="swiper-slide" role="group" aria-label="9 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -400px) rotateX(0deg) rotateY(-200deg) scale(1); z-index: -3;">-->
+                <!--                        <img src="/img/Swiper_demo1_files/nature-9.jpg">-->
+                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 4; transition-duration: 0ms;"></div></div>-->
+                <!--                </div>-->
+                <!--                <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal"><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span></div>-->
+                <!--                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>-->
+            </div>
+            <div class="slide" id="slide2">
+                <div>
+                    <h1>Slide 2</h1>
+                </div>
+            </div>
+            <div class="slide" id="slide3">
+                <div>
+                    <h1>Slide 3</h1>
+                </div>
+            </div>
+            <div class="slide" id="slide4">
+                <div>
+                    <h1>Slide 4</h1>
+                </div>
+            </div>
+            <div class="slide" id="slide5">
+                <div>
+                    <h1>Slide 5</h1>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -401,7 +463,27 @@
 
                 init();
 
+                // const swiper = new Swiper(".mySwiper", {
+                //     effect: "coverflow",
+                //     grabCursor: true,
+                //     centeredSlides: true,
+                //     slidesPerView: "auto",
+                //     coverflowEffect: {
+                //         rotate: 50,
+                //         stretch: 0,
+                //         depth: 100,
+                //         modifier: 1,
+                //         slideShadows: true,
+                //     },
+                //     pagination: {
+                //         el: ".swiper-pagination",
+                //     },
+                // });
+
                 fullpage('#index', {
+                    anchors: ['simpleSearch', 'advanceSearch'],
+                    css3: true,
+                    dragAndMove: true,
                     scrollingSpeed: 500, //滚动的时间
                     keyboardScrolling: false,
                     navigation: true,
@@ -409,8 +491,9 @@
                     navigationTooltips: ['搜索', '高级搜索'],
                     showActiveTooltip: true,
                     slidesNavigation: true,
+                    normalScrollElements: '#search_panel_top, #search_panel_result',
                 });
-                fullpage_api.setAllowScrolling(false);
+                // fullpage_api.setAllowScrolling(false);
 
                 superplaceholder({
                     el: document.querySelector('#globalSearch'),
@@ -491,7 +574,6 @@
                     .then(res => {
                         if (res.state === 1) {
                             entityAmountInfo.value = res.data;
-                            console.log(entityAmountInfo.value);
                         }
                     });
             };
@@ -538,9 +620,65 @@
         .mount("#app");
 </script>
 <style>
-    .p-blockui {
-        background-color: rgba(0, 0, 0, 0);
+
+    /* Centered texts in each section
+    * --------------------------------------- */
+    /*.section {*/
+    /*    text-align:center;*/
+    /*}*/
+
+    /* Fixed header and footer.
+    * --------------------------------------- */
+    #header, #footer{
+        position:fixed;
+        height: 50px;
+        display:block;
+        width: 100%;
+        background: #333;
+        z-index:9;
+        text-align:center;
+        color: #f2f2f2;
+        padding: 20px 0 0 0;
     }
+
+    #header{
+        top:0;
+    }
+    #footer{
+        bottom:0;
+    }
+
+    /*.section_2 {*/
+    /*    position: relative;*/
+    /*    height: 100%;*/
+    /*}*/
+
+    /*.section_2 {*/
+    /*    background: #eee;*/
+    /*    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;*/
+    /*    font-size: 14px;*/
+    /*    color: #000;*/
+    /*    margin: 0;*/
+    /*    padding: 0;*/
+    /*}*/
+
+    /*.swiper {*/
+    /*    width: 100%;*/
+    /*    padding-top: 50px;*/
+    /*    padding-bottom: 50px;*/
+    /*}*/
+
+    /*.swiper-slide {*/
+    /*    background-position: center;*/
+    /*    background-size: cover;*/
+    /*    width: 300px;*/
+    /*    height: 300px;*/
+    /*}*/
+
+    /*.swiper-slide img {*/
+    /*    display: block;*/
+    /*    width: 100%;*/
+    /*}*/
 
     @media (min-width: 768px) {
         .network-data .btn-link-to {
@@ -724,8 +862,10 @@
     }
 
     #fp-nav.fp-right {
-        right: 40px;
+        right: 50px;
     }
+
+
 
     .section {
         width: 100%;

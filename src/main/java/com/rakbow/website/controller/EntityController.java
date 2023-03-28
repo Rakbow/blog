@@ -3,18 +3,14 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.meilisearch.sdk.exceptions.MeilisearchException;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Book;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -56,12 +51,18 @@ public class EntityController {
 
     //endregion
 
+//    //获取在线数据库首页
+//    @RequestMapping(path = "", method = RequestMethod.GET)
+//    public ModelAndView getDatabasePage() {
+//        ModelAndView view = new ModelAndView();
+//        view.setViewName("database");
+//        return view;
+//    }
+
     //获取在线数据库首页
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public ModelAndView getDatabasePage() {
-        ModelAndView view = new ModelAndView();
-        view.setViewName("/database/database");
-        return view;
+    public String getDatabasePage() {
+        return "database/database";
     }
 
     //region 获取数据库搜索主页
