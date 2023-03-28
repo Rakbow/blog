@@ -236,13 +236,11 @@ public class AlbumController {
 
             String discList = JSON.parseObject(json).get("discList").toString();
 
-            Album album = albumService.getAlbum(id);
-
-            //若discList为空
-            if (Objects.equals(discList, "[]")) {
-                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                return JSON.toJSONString(res);
-            }
+//            //若discList为空
+//            if (Objects.equals(discList, "[]")) {
+//                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+//                return JSON.toJSONString(res);
+//            }
 
             albumService.updateAlbumTrackInfo(id, discList);
 

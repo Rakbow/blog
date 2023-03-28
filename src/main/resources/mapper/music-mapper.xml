@@ -57,7 +57,7 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into music (<include refid="insertFields"></include>)
-        values (#{name}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial}, #{coverUrl},
+        values (#{name}, #{nameEn}, #{artists}, #{audioType}, #{albumId}, #{discSerial}, #{trackSerial},
         #{files}, #{lrcText}, #{audioLength}, #{description}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 

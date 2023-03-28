@@ -4,31 +4,27 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.AlbumMapper;
-import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.ImageInfo;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.bo.AlbumDiscBO;
+import com.rakbow.website.data.dto.AlbumDiscDTO;
+import com.rakbow.website.data.dto.AlbumTrackDTO;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
-import com.rakbow.website.util.file.CommonImageUtil;
-import com.rakbow.website.util.file.QiniuBaseUtil;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -234,78 +230,78 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbumTrackInfo(int id, String _discList) throws Exception {
 
+        List<AlbumDiscDTO> albumDiscDTOs = JSON.parseArray(_discList).toJavaList(AlbumDiscDTO.class);
+
         //获取该专辑对应的音乐合集
         List<Music> musics = musicService.getMusicsByAlbumId(id);
 
         JSONObject trackInfo = new JSONObject();
 
-        JSONArray discList = new JSONArray();
+        List<AlbumDiscBO> discList = new ArrayList<>();
 
         int discSerial = 1;
 
         String trackSerial;
 
-        for (Object _disc : JSON.parseArray(_discList)) {
-            JSONObject disc = new JSONObject();
-            JSONArray track_list = new JSONArray();
-            // List<String> _times = new ArrayList<>();
+        for (AlbumDiscDTO albumDiscDTO : albumDiscDTOs) {
+            AlbumDiscBO albumDiscBO = new AlbumDiscBO();
+            JSONArray trackList = new JSONArray();
             int i = 1;
-            for (Object _track : JSON.parseArray(JSON.parseObject(_disc.toString()).getString("trackList"))) {
-                JSONObject track = JSON.parseObject(_track.toString());
+            for (AlbumTrackDTO _track : albumDiscDTO.getTrackList()) {
                 if (i < 10) {
                     trackSerial = "0" + i;
                 } else {
                     trackSerial = Integer.toString(i);
                 }
-                track.put("serial", trackSerial);
+                _track.setSerial(trackSerial);
 
                 //往music表中添加新数据
                 //若musicId为0则代表该条数据为新增数据
-                if (track.getInteger("musicId") == 0) {
+                if (_track.getMusicId() == 0) {
                     Music music = new Music();
-                    music.setName(track.getString("name"));
+                    music.setName(_track.getName());
                     music.setAlbumId(id);
                     music.setDiscSerial(discSerial);
                     music.setTrackSerial(trackSerial);
 
                     //去除时间中含有的\t影响
-                    String _time = track.get("length").toString();
+                    String _time = _track.getLength();
                     if (_time.contains("\t")) {
                         music.setAudioLength(_time.replace("\t", ""));
                     }else {
                         music.setAudioLength(_time);
                     }
 
-                    music.setAudioLength(track.getString("length"));
                     musicService.addMusic(music);
-                    track_list.add(music.getId());
-                } else {//若musicId不为0则代表之前已经添加进music表中，需要进一步更新
-                    Music currentMusic = DataFinder.findMusicById(track.getInteger("musicId"), musics);
+                    trackList.add(music.getId());
+                } else {
+                    //若musicId不为0则代表之前已经添加进music表中，需要进一步更新
+                    Music currentMusic = DataFinder.findMusicById(_track.getMusicId(), musics);
                     assert currentMusic != null;
-                    currentMusic.setName(track.getString("name"));
-                    currentMusic.setAudioLength(track.getString("length"));
+                    currentMusic.setName(_track.getName());
+                    currentMusic.setAudioLength(_track.getLength());
                     currentMusic.setDiscSerial(discSerial);
                     currentMusic.setTrackSerial(trackSerial);
                     //更新对应music
                     musicService.updateMusic(currentMusic.getId(), currentMusic);
-                    track_list.add(currentMusic.getId());
+                    trackList.add(currentMusic.getId());
                     musics.remove(currentMusic);
                 }
 
                 i++;
             }
 
-            disc.put("serial", discSerial);
-            disc.put("mediaFormat", MediaFormat.nameEn2IndexArray(
-                    JSON.parseObject(_disc.toString()).getJSONArray("mediaFormat")));
-            disc.put("albumFormat", AlbumFormat.nameEn2IndexArray(
-                    JSON.parseObject(_disc.toString()).getJSONArray("albumFormat")));
-            disc.put("trackList", track_list);
+            albumDiscBO.setSerial(discSerial);
+            albumDiscBO.setMediaFormat(MediaFormat.nameEn2IndexArray(albumDiscDTO.getMediaFormat()));
+            albumDiscBO.setAlbumFormat(AlbumFormat.nameEn2IndexArray(albumDiscDTO.getAlbumFormat()));
+            albumDiscBO.setTrackList(trackList);
 
             discSerial++;
-            discList.add(disc);
+            discList.add(albumDiscBO);
         }
-        trackInfo.put("discList", discList);
+        if(discList.size() != 0) {
+            trackInfo.put("discList", discList);
+        }
         albumMapper.updateAlbumTrackInfo(id, trackInfo.toJSONString(), new Timestamp(System.currentTimeMillis()));
 
         //删除对应music
