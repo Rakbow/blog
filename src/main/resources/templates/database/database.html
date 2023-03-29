@@ -68,7 +68,7 @@
 
     <!-- fullpage -->
 <!--    <script th:src="@{/tool/fullpage/fullpage.min.js}"></script>-->
-<!--    <script th:src="@{/tool/fullpage/fullpage.extensions.min.js}"></script>-->
+    <script th:src="@{/tool/fullpage/fullpage.extensions.min.js}"></script>
     <link th:href="@{/tool/fullpage/fullpage.min.css}" rel="stylesheet"/>
 
     <!-- swiper -->
@@ -145,7 +145,7 @@
                                 </div>
                             </div>
                             <div class="btn-link-to">
-                                <a class="btn-arrow" href="/db/albums">
+                                <a class="btn-arrow" href="/db#advanceSearch">
                                     <span>高级搜索</span>
                                     <img width="20" height="20" src="/img/tmp/svg/arrow-right.svg">
                                 </a>
@@ -386,59 +386,161 @@
         <div class="section" id="section1">
             <div class="slide" id="slide1">
                 <div>
-                    <h1>Slide 1</h1>
+                    <h1>Albums</h1>
                 </div>
-                <!--            <div class="swiper mySwiper swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">-->
-                <!--                <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" id="swiper-wrapper-63fa5bb6824c2104a" aria-live="polite">-->
-                <!--                    <div class="swiper-slide" role="group" aria-label="1 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -400px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -3;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-1.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -2;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-2.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="3 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(100deg) scale(1); z-index: -1;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-3.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 0;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-4.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="5 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 1;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-5.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible swiper-slide-next" role="group" aria-label="6 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(-50deg) scale(1); z-index: 0;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-6.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 1; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="7 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(-100deg) scale(1); z-index: -1;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-7.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 2; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide swiper-slide-visible" role="group" aria-label="8 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(-150deg) scale(1); z-index: -2;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-8.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 3; transition-duration: 0ms;"></div></div>-->
-                <!--                    <div class="swiper-slide" role="group" aria-label="9 / 9" style="transition-duration: 0ms; transform: translate3d(0px, 0px, -400px) rotateX(0deg) rotateY(-200deg) scale(1); z-index: -3;">-->
-                <!--                        <img src="/img/Swiper_demo1_files/nature-9.jpg">-->
-                <!--                        <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div><div class="swiper-slide-shadow-right" style="opacity: 4; transition-duration: 0ms;"></div></div>-->
-                <!--                </div>-->
-                <!--                <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal"><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span></div>-->
-                <!--                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>-->
+                <div class="swiper swiper_1 swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
+                    <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" aria-live="polite">
+                        <div class="swiper-slide" role="group" aria-label="1 / 5" style="transition-duration: 0ms;
+                         transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -2;">
+                            <img src="https://img.rakbow.com/album/11/514f71deda65b570.png?imageMogr2/auto-orient/thumbnail/500x500">
+                            <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 5" style="transition-duration: 0ms;
+                         transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -1;">
+                            <img src="https://img.rakbow.com/album/13/28146f628e256396.png?imageMogr2/auto-orient/thumbnail/500x500">
+                            <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
+                         transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(100deg) scale(1); z-index: 0;">
+                            <img src="https://img.rakbow.com/album/109/17b010a613746d22.jpg?imageMogr2/auto-orient/thumbnail/500x500">
+                            <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 5" style="transition-duration: 0ms;
+                         transform: translate3d(0px, 0px, 100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 1;">
+                            <img src="https://img.rakbow.com/album/10/9dcf93b45f21403b.jpg?imageMogr2/auto-orient/thumbnail/500x500">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="5 / 5" style="transition-duration: 0ms;
+                         transform: translate3d(0px, 0px, 200px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 2;">
+                            <img src="https://img.rakbow.com/album/6/b2a0b4c4ce9745b9.jpg?imageMogr2/auto-orient/thumbnail/500x500">
+                            <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
+                        <span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
+                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
+                    </div>
+                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                </div>
             </div>
             <div class="slide" id="slide2">
                 <div>
-                    <h1>Slide 2</h1>
+                    <h1>Books</h1>
+                </div>
+                <div class="swiper swiper_2 swiper-cards swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
+                    <div class="swiper-wrapper" aria-live="polite" style="cursor: grab;">
+                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" style="width: 240px; z-index: 9; transform: translate3d(0px, 0px, 0px) rotateZ(0deg) scale(1);" role="group" aria-label="1 / 5">
+                            <div class="swiper-slide-shadow" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-next" style="width: 240px; z-index: 8; transform: translate3d(calc(-240px + 7.25%), 0px, -100px) rotateZ(2deg) scale(1);" role="group" aria-label="2 / 5">
+                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 240px; z-index: 7; transform: translate3d(calc(-480px + 13%), 0px, -200px) rotateZ(4deg) scale(1);" role="group" aria-label="3 / 5">
+                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 240px; z-index: 6; transform: translate3d(calc(-720px + 17.25%), 0px, -300px) rotateZ(6deg) scale(1);" role="group" aria-label="4 / 5">
+                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 240px; z-index: 5; transform: translate3d(calc(-960px + 20%), 0px, -400px) rotateZ(8deg) scale(1);" role="group" aria-label="5 / 5">
+                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
+                        </div>
+                    </div>
+                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                 </div>
             </div>
             <div class="slide" id="slide3">
                 <div>
-                    <h1>Slide 3</h1>
+                    <h1>Discs</h1>
+                </div>
+                <div class="swiper swiper_3 swiper-cube swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
+                    <div class="swiper-wrapper" style="cursor: grab; transform-origin: 50% 50% -150px; transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg); --swiper-cube-translate-z:0px;" aria-live="polite">
+                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" style="width: 300px; transform: rotateX(0deg) rotateY(0deg) translate3d(0px, 0px, 0px);" role="group" aria-label="1 / 4">
+                            <img src="https://img.rakbow.com/disc/114/8bc0c613bc264e7c.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 0;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-next" style="width: 300px; transform: rotateX(0deg) rotateY(90deg) translate3d(0px, 0px, 0px);" role="group" aria-label="2 / 4">
+                            <img src="https://img.rakbow.com/disc/1/8490f1288e2e9efa.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 300px; transform: rotateX(0deg) rotateY(180deg) translate3d(300px, 0px, 300px);" role="group" aria-label="3 / 4">
+                            <img src="https://img.rakbow.com/disc/114/8bc0c613bc264e7c.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide" role="group" aria-label="4 / 4" style="width: 300px; transform: rotateX(0deg) rotateY(270deg) translate3d(-300px, 0px, 900px);">
+                            <img src="https://img.rakbow.com/disc/1/8490f1288e2e9efa.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-cube-shadow" style="height: 300px; transform: translate3d(0px, 170px, -150px) rotateX(90deg) rotateZ(0deg) scale(0.94);"></div>
+                    </div>
+                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
+                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                    </div>
+                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                 </div>
             </div>
             <div class="slide" id="slide4">
                 <div>
-                    <h1>Slide 4</h1>
+                    <h1>Games</h1>
+                </div>
+                <div class="swiper swiper_4 swiper-flip swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
+                    <div class="swiper-wrapper" style="cursor: grab;" aria-live="polite">
+                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" style="width: 300px; z-index: 6; transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);" role="group" aria-label="1 / 5">
+                            <img src="https://img.rakbow.com/game/1/5820479809af4241.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 0;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide swiper-slide-next" style="width: 300px; z-index: 5; transform: translate3d(-300px, 0px, 0px) rotateX(0deg) rotateY(180deg);" role="group" aria-label="2 / 5">
+                            <img src="https://img.rakbow.com/game/1/5820479809af4241.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 300px; z-index: 5; transform: translate3d(-600px, 0px, 0px) rotateX(0deg) rotateY(180deg);" role="group" aria-label="3 / 5">
+                            <img src="https://img.rakbow.com/game/1/5820479809af4241.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 300px; z-index: 5; transform: translate3d(-900px, 0px, 0px) rotateX(0deg) rotateY(180deg);" role="group" aria-label="4 / 5">
+                            <img src="https://img.rakbow.com/game/1/5820479809af4241.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                        <div class="swiper-slide" style="width: 300px; z-index: 5; transform: translate3d(-1200px, 0px, 0px) rotateX(0deg) rotateY(180deg);" role="group" aria-label="5 / 5">
+                            <img src="https://img.rakbow.com/game/1/5820479809af4241.jpg?imageMogr2/auto-orient/thumbnail/300x300">
+                            <div class="swiper-slide-shadow-left" style="opacity: 1;"></div>
+                            <div class="swiper-slide-shadow-right" style="opacity: 0;"></div>
+                        </div>
+                    </div>
+                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-e955b6cb49b0cc99" aria-disabled="false"></div>
+                    <div class="swiper-button-prev swiper-button-disabled" tabindex="-1" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-e955b6cb49b0cc99" aria-disabled="true"></div>
+                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
+                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
+                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
+                        <span class="swiper-pagination-bullet"></span>
+                    </div>
+                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                 </div>
             </div>
             <div class="slide" id="slide5">
                 <div>
-                    <h1>Slide 5</h1>
+                    <h1>Merchs</h1>
                 </div>
             </div>
         </div>
@@ -463,27 +565,61 @@
 
                 init();
 
-                // const swiper = new Swiper(".mySwiper", {
-                //     effect: "coverflow",
-                //     grabCursor: true,
-                //     centeredSlides: true,
-                //     slidesPerView: "auto",
-                //     coverflowEffect: {
-                //         rotate: 50,
-                //         stretch: 0,
-                //         depth: 100,
-                //         modifier: 1,
-                //         slideShadows: true,
-                //     },
-                //     pagination: {
-                //         el: ".swiper-pagination",
-                //     },
-                // });
+                //region swiper
+
+                const swiper_1 = new Swiper(".swiper_1", {
+                    effect: "coverflow",
+                    grabCursor: true,
+                    centeredSlides: true,
+                    slidesPerView: "auto",
+                    coverflowEffect: {
+                        rotate: 50,
+                        stretch: 0,
+                        depth: 100,
+                        modifier: 1,
+                        slideShadows: true,
+                    },
+                    pagination: {
+                        el: ".swiper-pagination",
+                    },
+                });
+
+                const swiper_2 = new Swiper(".swiper_2", {
+                    effect: "cards",
+                    grabCursor: true,
+                });
+
+                const swiper_3 = new Swiper(".swiper_3", {
+                    effect: "cube",
+                    grabCursor: true,
+                    cubeEffect: {
+                        shadow: true,
+                        slideShadows: true,
+                        shadowOffset: 20,
+                        shadowScale: 0.94,
+                    },
+                    pagination: {
+                        el: ".swiper-pagination",
+                    },
+                });
+
+                const swiper_4 = new Swiper(".swiper_4", {
+                    effect: "flip",
+                    grabCursor: true,
+                    pagination: {
+                        el: ".swiper-pagination",
+                    },
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev",
+                    },
+                });
+
+                //endregion
 
                 fullpage('#index', {
                     anchors: ['simpleSearch', 'advanceSearch'],
                     css3: true,
-                    dragAndMove: true,
                     scrollingSpeed: 500, //滚动的时间
                     keyboardScrolling: false,
                     navigation: true,
@@ -625,14 +761,6 @@
         text-align: center;
     }
 
-    /* Centered texts in each section
-    * --------------------------------------- */
-    /*.section {*/
-    /*    text-align:center;*/
-    /*}*/
-
-    /* Fixed header and footer.
-    * --------------------------------------- */
     #header, #footer{
         position:fixed;
         height: 50px;
@@ -652,37 +780,448 @@
         bottom:0;
     }
 
-    /*.section_2 {*/
-    /*    position: relative;*/
-    /*    height: 100%;*/
-    /*}*/
+    #slide1 .swiper {
+        width: 100%;
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
 
-    /*.section_2 {*/
-    /*    background: #eee;*/
-    /*    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;*/
-    /*    font-size: 14px;*/
-    /*    color: #000;*/
-    /*    margin: 0;*/
-    /*    padding: 0;*/
-    /*}*/
+    #slide1 .swiper-slide {
+        background-position: center;
+        background-size: cover;
+        width: 300px;
+        height: 300px;
+    }
 
-    /*.swiper {*/
-    /*    width: 100%;*/
-    /*    padding-top: 50px;*/
-    /*    padding-bottom: 50px;*/
-    /*}*/
+    #slide1 .swiper-slide img {
+        display: block;
+        width: 100%;
+    }
 
-    /*.swiper-slide {*/
-    /*    background-position: center;*/
-    /*    background-size: cover;*/
-    /*    width: 300px;*/
-    /*    height: 300px;*/
-    /*}*/
+    #slide2 .swiper {
+        width: 240px;
+        height: 320px;
+    }
 
-    /*.swiper-slide img {*/
-    /*    display: block;*/
-    /*    width: 100%;*/
-    /*}*/
+    #slide2 .swiper-slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    #slide2 .swiper-slide:nth-child(1n) {
+        background-image: url('https://img.rakbow.com/book/148/0de68b3a62324dea.jpg?imageMogr2/auto-orient/thumbnail/240x');
+    }
+
+    #slide2 .swiper-slide:nth-child(2n) {
+        background-image: url('https://img.rakbow.com/book/173/5f966677d156428f.jpg?imageMogr2/auto-orient/thumbnail/240x');
+    }
+
+    #slide2 .swiper-slide:nth-child(3n) {
+        background-image: url('https://img.rakbow.com/book/121/a3c14b39cba647c4.jpg?imageMogr2/auto-orient/thumbnail/240x');
+    }
+
+    #slide2 .swiper-slide:nth-child(4n) {
+        background-image: url('https://img.rakbow.com/book/18/55f24d0a12424267.jpg?imageMogr2/auto-orient/thumbnail/240x');
+    }
+
+    #slide2 .swiper-slide:nth-child(5n) {
+        background-image: url('https://img.rakbow.com/book/36/1073cea67c834fd9.jpg?imageMogr2/auto-orient/thumbnail/240x');
+    }
+
+    #slide3 .swiper {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+
+    #slide3 .swiper-slide {
+        background-position: center;
+        background-size: cover;
+    }
+
+    #slide3 .swiper-slide img {
+        display: block;
+        width: 100%;
+    }
+
+    @keyframes caretBlink {
+        from { opacity: 1.0; }
+        to { opacity: 0.0; }
+    }
+
+    @keyframes rotateSpinner {
+        from {
+            transform:rotate(0deg);
+        }
+        to {
+            transform:rotate(360deg);
+        }
+    }
+
+    #slide3 #text-tool-caret {
+        animation-name: caretBlink;
+        animation-iteration-count: infinite;
+        animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+        animation-duration: 1s;
+    }
+
+    #slide3 #en-markup-loading-spinner {
+        position: absolute;
+        top: calc(50% - 16px);
+        left: calc(50% - 16px);
+        width: 32px;
+        height: 32px;
+    }
+
+    #slide3 #en-markup-loading-spinner img {
+        position: relative;
+        top: 0;
+        left: 0;
+        animation-name: rotateSpinner;
+        animation-duration: 0.6s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+    #slide3 .skitchToastBoxContainer {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        top: 30px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        pointer-events: none;
+    }
+
+    #slide3 .skitchToastBox {
+        width: 200px;
+        height: 16px;
+        padding: 12px;
+        background-color: rgba(47, 55, 61, 0.95);
+        border-radius: 4px;
+        color: white;
+        cursor: default;
+        font-size: 10pt;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.32);
+        font-family: 'Soleil', Helvetica, Arial, sans-serif;
+        border: 2px rgba(255, 255, 255, 0.38) solid;
+    }
+
+    #slide3 .lang-zh-cn .skitchToastBox {
+        font-family: '微软雅黑', 'Microsoft YaHei', SimSun,
+        '&#x30E1;&#x30A4;&#x30EA;&#x30AA;', Meiryo, 'MS PGothic', 'Soleil',
+        Helvetica, Arial, sans-serif;
+    }
+
+    #slide3 .lang-ja-jp .skitchToastBox {
+        font-family: '&#x30E1;&#x30A4;&#x30EA;&#x30AA;', Meiryo, 'MS PGothic',
+        '微软雅黑', 'Microsoft YaHei', SimSun, 'Soleil', Helvetica, Arial,
+        sans-serif;
+    }
+
+    #slide3 .skitchToast {
+        padding-left: 20px;
+        padding-right: 20px;
+        display: inline-block;
+        height: 10px;
+        color: #f1f5f8;
+        text-align: center;
+    }
+
+    #slide3 .skitchVisible {
+        /* Don't remove this class it's a hack used by the Evernote Clipper */
+    }
+
+    @font-face {
+        font-family: 'Soleil';
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    #slide3 #en-markup-disabled {
+        position: fixed;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        cursor: default;
+        -webkit-user-select: none;
+    }
+
+    #slide3 #en-markup-alert-container {
+        position: absolute;
+        z-index: 9999;
+        width: 450px;
+        left: calc(50% - 225px);
+        top: calc(50% - 85px);
+        background-color: white;
+        box-shadow: 0 2px 7px 1px rgba(0,0,0,0.35);
+        -webkit-user-select: none;
+    }
+
+    #slide3 #en-markup-alert-container .cell-1 {
+        position: relative;
+        height: 110px;
+        width: 105px;
+        float: left;
+        text-align: center;
+        background-position: 65% 50%;
+        background-repeat: no-repeat;
+    }
+
+    #slide3 #en-markup-alert-container .cell-2 {
+        position: relative;
+        float: left;
+        width: 345px;
+        margin-top: 29px;
+        margin-bottom: 20px;
+    }
+
+    #slide3 #en-markup-alert-container .cell-2 .cell-2-title {
+        margin-bottom: 5px;
+        padding-right: 30px;
+        font-size: 12pt;
+        font-family: Tahoma, Arial;
+    }
+
+    #slide3 #en-markup-alert-container .cell-2 .cell-2-message {
+        padding-right: 30px;
+        font-size: 9.5pt;
+        font-family: Tahoma, Arial;
+    }
+
+    #slide3 #en-markup-alert-container .cell-3 {
+        position: relative;
+        width: 450px;
+        height: 60px;
+        float: left;
+        background-color: rgb(240,240,240);
+    }
+
+    #slide3 #en-markup-alert-container .cell-3 button {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        width: 110px;
+        height: 36px;
+    }
+
+    #slide3 #en-markup-alert-container .cell-3 button.alt-button {
+        position: absolute;
+        top: 12px;
+        right: 140px;
+        width: 110px;
+        height: 36px;
+    }
+
+    #slide4 .swiper {
+        width: 500px;
+        height: 500px;
+        padding: 50px;
+    }
+
+    #slide4 .swiper-slide {
+        background-position: center;
+        background-size: cover;
+        width: 300px;
+        height: 300px;
+    }
+
+    #slide4 .swiper-slide img {
+        display: block;
+        width: 100%;
+    }
+
+    @keyframes caretBlink {
+        from { opacity: 1.0; }
+        to { opacity: 0.0; }
+    }
+
+    @keyframes rotateSpinner {
+        from {
+            transform:rotate(0deg);
+        }
+        to {
+            transform:rotate(360deg);
+        }
+    }
+
+    #slide4 #text-tool-caret {
+        animation-name: caretBlink;
+        animation-iteration-count: infinite;
+        animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+        animation-duration: 1s;
+    }
+
+    #slide4 #en-markup-loading-spinner {
+        position: absolute;
+        top: calc(50% - 16px);
+        left: calc(50% - 16px);
+        width: 32px;
+        height: 32px;
+    }
+
+    #slide4 #en-markup-loading-spinner img {
+        position: relative;
+        top: 0;
+        left: 0;
+        animation-name: rotateSpinner;
+        animation-duration: 0.6s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+    #slide4 .skitchToastBoxContainer {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        top: 30px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        pointer-events: none;
+    }
+
+    #slide4 .skitchToastBox {
+        width: 200px;
+        height: 16px;
+        padding: 12px;
+        background-color: rgba(47, 55, 61, 0.95);
+        border-radius: 4px;
+        color: white;
+        cursor: default;
+        font-size: 10pt;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.32);
+        font-family: 'Soleil', Helvetica, Arial, sans-serif;
+        border: 2px rgba(255, 255, 255, 0.38) solid;
+    }
+
+    #slide4 .lang-zh-cn .skitchToastBox {
+        font-family: '微软雅黑', 'Microsoft YaHei', SimSun,
+        '&#x30E1;&#x30A4;&#x30EA;&#x30AA;', Meiryo, 'MS PGothic', 'Soleil',
+        Helvetica, Arial, sans-serif;
+    }
+
+    #slide4 .lang-ja-jp .skitchToastBox {
+        font-family: '&#x30E1;&#x30A4;&#x30EA;&#x30AA;', Meiryo, 'MS PGothic',
+        '微软雅黑', 'Microsoft YaHei', SimSun, 'Soleil', Helvetica, Arial,
+        sans-serif;
+    }
+
+    #slide4 .skitchToast {
+        padding-left: 20px;
+        padding-right: 20px;
+        display: inline-block;
+        height: 10px;
+        color: #f1f5f8;
+        text-align: center;
+    }
+
+    @font-face {
+        font-family: 'Soleil';
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    #slide4 #en-markup-disabled {
+        position: fixed;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        cursor: default;
+        -webkit-user-select: none;
+    }
+
+    #slide4 #en-markup-alert-container {
+        position: absolute;
+        z-index: 9999;
+        width: 450px;
+        left: calc(50% - 225px);
+        top: calc(50% - 85px);
+        background-color: white;
+        box-shadow: 0 2px 7px 1px rgba(0,0,0,0.35);
+        -webkit-user-select: none;
+    }
+
+    #slide4 #en-markup-alert-container .cell-1 {
+        position: relative;
+        height: 110px;
+        width: 105px;
+        float: left;
+        text-align: center;
+        /*background-image: url();*/
+        background-position: 65% 50%;
+        background-repeat: no-repeat;
+    }
+
+    #slide4 #en-markup-alert-container .cell-2 {
+        position: relative;
+        float: left;
+        width: 345px;
+        margin-top: 29px;
+        margin-bottom: 20px;
+    }
+
+    #slide4 #en-markup-alert-container .cell-2 .cell-2-title {
+        margin-bottom: 5px;
+        padding-right: 30px;
+        font-size: 12pt;
+        font-family: Tahoma, Arial, serif;
+    }
+
+    #slide4 #en-markup-alert-container .cell-2 .cell-2-message {
+        padding-right: 30px;
+        font-size: 9.5pt;
+        font-family: Tahoma, Arial, serif;
+    }
+
+    #slide4 #en-markup-alert-container .cell-3 {
+        position: relative;
+        width: 450px;
+        height: 60px;
+        float: left;
+        background-color: rgb(240,240,240);
+    }
+
+    #slide4 #en-markup-alert-container .cell-3 button {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        width: 110px;
+        height: 36px;
+    }
+
+    #slide4 #en-markup-alert-container .cell-3 button.alt-button {
+        position: absolute;
+        top: 12px;
+        right: 140px;
+        width: 110px;
+        height: 36px;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @media (min-width: 768px) {
         .network-data .btn-link-to {
@@ -732,8 +1271,6 @@
 
     @media (min-width: 768px) {
         .network-data {
-            /*margin-top: 64px;*/
-            /*height: 428px;*/
             padding: 30px 0;
             width: 100%;
         }
@@ -743,11 +1280,7 @@
         display: flex;
         justify-content: center;
         position: relative;
-        /*margin-top: 40px;*/
         padding: 30px 0;
-        /*background-image: url('/img/tmp/svg/map.webp');*/
-        /*background-repeat: no-repeat;*/
-        /*background-position: center;*/
         overflow: hidden;
     }
 
@@ -866,7 +1399,7 @@
     }
 
     #fp-nav.fp-right {
-        right: 50px;
+        right: 70px;
     }
 
 
@@ -884,18 +1417,14 @@
         background-size: cover;
     }
 
-    /*#index .section:nth-child(2) {*/
-    /*    background: yellowgreen;*/
-    /*}*/
-
-    /*#index .section:nth-child(3) {*/
-    /*    background: orangered;*/
-    /*}*/
-
     #index .section:last-child {
         background-image: url('https://img.rakbow.com/common/db_index_2.jpg');
         background-repeat: no-repeat;
         background-size: cover;
+    }
+
+    .fp-is-overflow .fp-overflow.fp-auto-height, .fp-is-overflow .fp-overflow.fp-auto-height-responsive, .fp-is-overflow > .fp-overflow {
+        overflow-y: hidden;
     }
 </style>
 </body>

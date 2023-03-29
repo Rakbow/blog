@@ -875,7 +875,7 @@ const bookIndex = {
         onPage(event) {
             this.queryParams.first = event.first;
             this.queryParams.rows = event.rows;
-            this.getAlbums();
+            this.getBooks();
         },
         onSortChange(event) {
             console.log(event);
