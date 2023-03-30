@@ -5,17 +5,20 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
 import com.rakbow.website.util.common.EntityUtils;
+import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,20 +51,15 @@ public class EntityController {
     private UserService userService;
     @Autowired
     private EntityService entityService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     //endregion
 
-//    //获取在线数据库首页
-//    @RequestMapping(path = "", method = RequestMethod.GET)
-//    public ModelAndView getDatabasePage() {
-//        ModelAndView view = new ModelAndView();
-//        view.setViewName("database");
-//        return view;
-//    }
-
     //获取在线数据库首页
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public String getDatabasePage() {
+    public String getDatabasePage(Model model) {
+        model.addAttribute("indexBooksCoverUrls", redisUtil.get(RedisCacheConstant.INDEX_COVER_BOOK_URLS));
         return "database/database";
     }
 

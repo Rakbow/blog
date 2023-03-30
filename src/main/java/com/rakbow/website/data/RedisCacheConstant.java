@@ -11,8 +11,10 @@ public class RedisCacheConstant {
     //region common
 
     public static final String SPLIT = ":";
-    public static final String OPTIONS = "options";
-    public static final String VISIT_RANK = "visit_rank";
+    private static final String OPTIONS = "options";
+    private static final String VISIT_RANK = "visit_rank";
+
+    private static final String INDEX_COVER_URLS_PREFIX = "INDEX_COVER_URLS";
 
     //endregion
 
@@ -44,6 +46,16 @@ public class RedisCacheConstant {
     public static final String MUSIC_VISIT_RANKING = VISIT_RANK + SPLIT + "MUSIC";
     public static final String PRODUCT_VISIT_RANKING = VISIT_RANK + SPLIT + "PRODUCT";
     public static final String FRANCHISE_VISIT_RANKING = VISIT_RANK + SPLIT + "FRANCHISE";
+
+    //endregion
+
+    //region index cover urls
+
+    public static final String INDEX_COVER_ALBUM_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "ALBUM";
+    public static final String INDEX_COVER_BOOK_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "BOOK";
+    public static final String INDEX_COVER_DISC_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "DISC";
+    public static final String INDEX_COVER_GAME_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "GAME";
+    public static final String INDEX_COVER_MERCH_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "MERCH";
 
     //endregion
 

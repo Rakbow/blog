@@ -1,5 +1,6 @@
 package com.rakbow.website;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.entity.EntityStatistic;
@@ -18,6 +19,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -93,6 +95,20 @@ public class RedisTests {
             redisUtil.set(visitUtil.getSingleVisitKey(s.getEntityType(), s.getEntityId()), (int)s.getVisitCount());
             redisUtil.set(likeUtil.getEntityLikeKey(s.getEntityType(), s.getEntityId()), (int)s.getLikeCount());
         });
+
+    }
+
+    @Test
+    public void redisTest4() {
+
+        List<String> indexBooksCoverUrls = new ArrayList<>();
+        indexBooksCoverUrls.add("https://img.rakbow.com/book/148/0de68b3a62324dea.jpg?imageMogr2/auto-orient/thumbnail/240x");
+        indexBooksCoverUrls.add("https://img.rakbow.com/book/173/5f966677d156428f.jpg?imageMogr2/auto-orient/thumbnail/240x");
+        indexBooksCoverUrls.add("https://img.rakbow.com/book/121/a3c14b39cba647c4.jpg?imageMogr2/auto-orient/thumbnail/240x");
+        indexBooksCoverUrls.add("https://img.rakbow.com/book/18/55f24d0a12424267.jpg?imageMogr2/auto-orient/thumbnail/240x");
+        indexBooksCoverUrls.add("https://img.rakbow.com/book/36/1073cea67c834fd9.jpg?imageMogr2/auto-orient/thumbnail/240x");
+
+        redisUtil.set(RedisCacheConstant.INDEX_COVER_BOOK_URLS, indexBooksCoverUrls);
 
     }
 
