@@ -19,6 +19,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,37 +28,37 @@ import java.util.List;
 @ContextConfiguration(classes = WebSiteApplication.class)
 public class RedisTests {
 
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityService entityService;
-    @Autowired
+    @Resource
     private FranchiseService franchiseService;
-    @Autowired
+    @Resource
     private ProductService productService;
-    @Autowired
+    @Resource
     private AlbumMapper albumMapper;
-    @Autowired
+    @Resource
     private BookMapper bookMapper;
-    @Autowired
+    @Resource
     private DiscMapper discMapper;
-    @Autowired
+    @Resource
     private GameMapper gameMapper;
-    @Autowired
+    @Resource
     private MerchMapper merchMapper;
-    @Autowired
+    @Resource
     private MusicMapper musicMapper;
-    @Autowired
+    @Resource
     private ProductMapper productMapper;
-    @Autowired
+    @Resource
     private StatisticMapper statisticMapper;
-    @Autowired
+    @Resource
     private FranchiseMapper franchiseMapper;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
-    @Autowired
+    @Resource
     private LikeUtil likeUtil;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
 
     @Test
@@ -99,16 +100,9 @@ public class RedisTests {
     }
 
     @Test
-    public void redisTest4() {
+    public void refreshIndexCoverUrls() {
 
-        List<String> indexBooksCoverUrls = new ArrayList<>();
-        indexBooksCoverUrls.add("https://img.rakbow.com/book/148/0de68b3a62324dea.jpg?imageMogr2/auto-orient/thumbnail/240x");
-        indexBooksCoverUrls.add("https://img.rakbow.com/book/173/5f966677d156428f.jpg?imageMogr2/auto-orient/thumbnail/240x");
-        indexBooksCoverUrls.add("https://img.rakbow.com/book/121/a3c14b39cba647c4.jpg?imageMogr2/auto-orient/thumbnail/240x");
-        indexBooksCoverUrls.add("https://img.rakbow.com/book/18/55f24d0a12424267.jpg?imageMogr2/auto-orient/thumbnail/240x");
-        indexBooksCoverUrls.add("https://img.rakbow.com/book/36/1073cea67c834fd9.jpg?imageMogr2/auto-orient/thumbnail/240x");
-
-        redisUtil.set(RedisCacheConstant.INDEX_COVER_BOOK_URLS, indexBooksCoverUrls);
+        entityService.refreshIndexCoverUrls();
 
     }
 

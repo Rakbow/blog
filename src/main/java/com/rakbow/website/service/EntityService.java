@@ -281,13 +281,29 @@ public class EntityService {
      */
     public void refreshIndexCoverUrls () {
 
+        JSONObject indexCoverUrl = new JSONObject();
+
         List<String> bookUrls = new ArrayList<>();
+        List<String> albumUrls = new ArrayList<>();
+        List<String> discUrls = new ArrayList<>();
+        List<String> gameUrls = new ArrayList<>();
+        List<String> merchUrls = new ArrayList<>();
+
+        albumMapper.getAlbums(new ArrayList<>(){{
+            add(11);add(13);add(109);add(10);add(6);
+        }}).forEach(album -> albumUrls.add(QiniuImageUtil.getThumbUrl(CommonImageUtil.getCoverUrl(album.getImages()), 500)));
 
         bookMapper.getBooks(new ArrayList<>(){{
             add(148);add(173);add(121);add(18);add(36);
         }}).forEach(book -> bookUrls.add(QiniuImageUtil.getCustomThumbUrl(CommonImageUtil.getCoverUrl(book.getImages()), 240, 0)));
 
-        redisUtil.set(RedisCacheConstant.INDEX_COVER_BOOK_URLS, bookUrls);
+        indexCoverUrl.put("album", albumUrls);
+        indexCoverUrl.put("book", bookUrls);
+        indexCoverUrl.put("disc", discUrls);
+        indexCoverUrl.put("game", gameUrls);
+        indexCoverUrl.put("merch", merchUrls);
+
+        redisUtil.set(RedisCacheConstant.INDEX_COVER_URL, indexCoverUrl);
 
     }
 

@@ -60,7 +60,7 @@ public class EntityController {
     //获取在线数据库首页
     @RequestMapping(path = "", method = RequestMethod.GET)
     public String getDatabasePage(Model model) {
-        model.addAttribute("indexBooksCoverUrls", redisUtil.get(RedisCacheConstant.INDEX_COVER_BOOK_URLS));
+        model.addAttribute("indexCoverUrl", redisUtil.get(RedisCacheConstant.INDEX_COVER_URL));
         return "database/database";
     }
 

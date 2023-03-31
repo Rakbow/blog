@@ -14,8 +14,6 @@ public class RedisCacheConstant {
     private static final String OPTIONS = "options";
     private static final String VISIT_RANK = "visit_rank";
 
-    private static final String INDEX_COVER_URLS_PREFIX = "INDEX_COVER_URLS";
-
     //endregion
 
     //region options
@@ -51,11 +49,7 @@ public class RedisCacheConstant {
 
     //region index cover urls
 
-    public static final String INDEX_COVER_ALBUM_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "ALBUM";
-    public static final String INDEX_COVER_BOOK_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "BOOK";
-    public static final String INDEX_COVER_DISC_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "DISC";
-    public static final String INDEX_COVER_GAME_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "GAME";
-    public static final String INDEX_COVER_MERCH_URLS = INDEX_COVER_URLS_PREFIX + SPLIT + "MERCH";
+    public static final String INDEX_COVER_URL = "INDEX_COVER_URL";
 
     //endregion
 
