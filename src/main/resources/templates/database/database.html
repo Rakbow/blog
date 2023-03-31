@@ -385,14 +385,8 @@
         </div>
         <div class="section" id="section1">
             <div class="slide" id="slide1">
-                <div class="px-4 py-4 md:px-6 lg:px-8" style="background-color: rgba(0,0,0,0)">
-                    <div class="text-700 text-center">
-                        <div class="text-blue-600 font-bold mb-3"><i class="pi pi-database"></i>&nbsp;POWERED BY RAKBOW</div>
-                        <div class="text-900 font-bold text-5xl mb-3">专辑</div>
-                        <div class="text-700 text-2xl mb-5">包含作品衍生的各种音乐专辑、动画原声带、游戏原声带和广播剧等音频出版物</div>
-                        <p-button label="详情" icon="pi iconfont icon-album" @click.native="goItemDb('/db/albums')"
-                                  class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
-                    </div>
+                <div>
+                    <h1>Albums</h1>
                 </div>
                 <div class="swiper swiper_1 swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
                     <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" aria-live="polite">
@@ -408,7 +402,7 @@
                             <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div>
                             <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
                         </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
+                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
                          transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(100deg) scale(1); z-index: 0;">
                             <img :src="indexCoverUrl.album[2]">
                             <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div>
@@ -697,10 +691,6 @@
 
             //region search
 
-            const goItemDb = (url) => {
-                window.location.href = url;
-            };
-
             const searchLoading = ref(false);
 
             const entityAmountInfo = ref();
@@ -750,7 +740,7 @@
             };
 
             return {
-                indexCoverUrl, goItemDb,
+                indexCoverUrl,
                 searchParams, searchResult, ENTITY_TYPE, entityAmountInfo, searchLoading,
                 search, pageChange, entityTypeValue2Icon, entityTypeValue2Label,
                 NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
