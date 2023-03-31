@@ -3,14 +3,10 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.meilisearch.sdk.Client;
-import com.meilisearch.sdk.Config;
-import com.meilisearch.sdk.SearchRequest;
-import com.meilisearch.sdk.exceptions.MeilisearchException;
-import com.meilisearch.sdk.model.SearchResult;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.*;
-import com.rakbow.website.data.common.Visit;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.SimpleSearchResult;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -22,6 +18,7 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -31,14 +28,15 @@ import com.rakbow.website.entity.*;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.*;
 import com.rakbow.website.util.entity.MusicUtil;
+import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -58,29 +56,27 @@ public class EntityService {
 
     //region instance
 
-    @Autowired
+    @Resource
     private AlbumMapper albumMapper;
-    @Autowired
+    @Resource
     private BookMapper bookMapper;
-    @Autowired
+    @Resource
     private DiscMapper discMapper;
-    @Autowired
+    @Resource
     private GameMapper gameMapper;
-    @Autowired
+    @Resource
     private MerchMapper merchMapper;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
-    @Autowired
+    @Resource
     private LikeUtil likeUtil;
-    @Autowired
+    @Resource
     private EntityMapper entityMapper;
-    @Autowired
+    @Resource
     private QiniuImageUtil qiniuImageUtil;
-    @Autowired
+    @Resource
     private QiniuFileUtil qiniuFileUtil;
-    @Autowired
-    private StatisticPOMapper statisticPOMapper;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
@@ -98,6 +94,8 @@ public class EntityService {
     }};
 
     //endregion
+
+    //region common get data
 
     /**
      * 获取页面数据
@@ -251,6 +249,10 @@ public class EntityService {
         return null;
     }
 
+    //endregion
+
+    //region refresh redis data
+
     /**
      * 刷新Redis缓存中的枚举类数据
      *
@@ -273,6 +275,27 @@ public class EntityService {
     }
 
     /**
+     * 刷新Redis缓存中的搜索页首页图片连接地址
+     *
+     * @author rakbow
+     */
+    public void refreshIndexCoverUrls () {
+
+        List<String> bookUrls = new ArrayList<>();
+
+        bookMapper.getBooks(new ArrayList<>(){{
+            add(148);add(173);add(121);add(18);add(36);
+        }}).forEach(book -> bookUrls.add(QiniuImageUtil.getCustomThumbUrl(CommonImageUtil.getCoverUrl(book.getImages()), 240, 0)));
+
+        redisUtil.set(RedisCacheConstant.INDEX_COVER_BOOK_URLS, bookUrls);
+
+    }
+
+    //endregion
+
+    //region common CRUD
+
+    /**
      * 更新数据库实体激活状态
      * @param entityName,entityId,status 实体表名,实体id,状态
      * @author rakbow
@@ -288,6 +311,21 @@ public class EntityService {
      */
     public void updateItemsStatus(String entityName, List<Integer> ids, int status) {
         entityMapper.updateItemsStatus(entityName, ids, status);
+    }
+
+    /**
+     * 点赞实体
+     * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
+     * @author rakbow
+     */
+    public boolean entityLike(int entityType, int entityId, String likeToken) {
+        //点过赞
+        if(likeUtil.isLike(entityType, entityId, likeToken)) {
+            return false;
+        }else {//没点过赞,自增
+            likeUtil.incLike(entityType, entityId, likeToken);
+            return true;
+        }
     }
 
     /**
@@ -316,6 +354,10 @@ public class EntityService {
         return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
+    //endregion
+
+    //region image operation
+
     /**
      * 根据实体类型和实体Id获取图片
      *
@@ -327,8 +369,6 @@ public class EntityService {
     public JSONArray getItemImages(String entityName, int entityId) {
         return JSON.parseArray(entityMapper.getItemImages(entityName, entityId));
     }
-
-    //region image operation
 
     /**
      * 新增图片
@@ -384,40 +424,7 @@ public class EntityService {
 
     //endregion
 
-    /**
-     * 点赞实体
-     * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
-     * @author rakbow
-     */
-    public boolean entityLike(int entityType, int entityId, String likeToken) {
-        //点过赞
-        if(likeUtil.isLike(entityType, entityId, likeToken)) {
-            return false;
-        }else {//没点过赞,自增
-            likeUtil.incLike(entityType, entityId, likeToken);
-            return true;
-        }
-    }
-
-    public void refreshVisitData() {
-        System.out.println("------redis缓存数据获取中------");
-        //获取所有浏览数据
-        List<String> visitKeys = redisUtil.keys(VisitUtil.PREFIX_VISIT + "*");
-        System.out.println("------redis缓存数据获取完毕------");
-
-        System.out.println("------缓存数据转换中------");
-        List<Visit> visits = statisticPOMapper.keys2Visit(visitKeys);
-        System.out.println("------缓存数据转换完毕------");
-
-        System.out.println("------正在更新浏览排名------");
-        //清空浏览数据
-        visitUtil.clearAllVisitRank();
-        //更新数据
-        visits.forEach(visit -> {
-            visitUtil.setEntityVisitRanking(visit.getEntityType(), visit.getEntityId(), visit.getVisitCount());
-        });
-        System.out.println("------浏览排名更新完毕------");
-    }
+    //region search
 
     /**
      * 查询
@@ -474,10 +481,9 @@ public class EntityService {
                 res.setTotal(merchMapper.simpleSearchCount(keyword));
             }
         }
-
-
-
         return res;
     }
+
+    //endregion
 
 }

@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -46,13 +47,13 @@ public class DiscController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
+    @Resource
     private DiscService discService;
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityUtils entityUtils;
-    @Autowired
+    @Resource
     private EntityService entityService;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;

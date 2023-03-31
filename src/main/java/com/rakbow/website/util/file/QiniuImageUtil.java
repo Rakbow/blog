@@ -91,6 +91,14 @@ public class QiniuImageUtil {
         return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size;
     }
 
+    public static String getCustomThumbUrl(String imageUrl, int size, int lengthLabel) {
+        if(lengthLabel == 0) {
+            return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x";
+        }else {
+            return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + "x" + size;
+        }
+    }
+
     public static String getThumbUrlWidth(String imageUrl, int size) {
         return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + 200 + "x" + size;
     }

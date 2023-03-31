@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
@@ -42,7 +43,7 @@ public class HomeController {
     private String imgPath;
     @Value("${website.path.audio}")
     private String audioPath;
-    @Autowired
+    @Resource
     private MeiliSearchUtils meiliSearchUtils;
 
     //endregion

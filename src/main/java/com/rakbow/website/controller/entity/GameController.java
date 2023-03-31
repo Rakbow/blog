@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,13 +46,13 @@ public class GameController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
+    @Resource
     private GameService gameService;
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityUtils entityUtils;
-    @Autowired
+    @Resource
     private EntityService entityService;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;

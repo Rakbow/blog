@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,15 +48,15 @@ public class AlbumController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
+    @Resource
     private AlbumService albumService;
-    @Autowired
+    @Resource
     private MusicService musicService;
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityUtils entityUtils;
-    @Autowired
+    @Resource
     private EntityService entityService;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
@@ -72,7 +73,7 @@ public class AlbumController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
-        String coverUrl = CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages()));
+        String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
         model.addAttribute("album", albumVOMapper.album2VO(album));
         if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));

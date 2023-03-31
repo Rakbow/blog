@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -40,13 +41,13 @@ import java.util.Objects;
 public class MusicService {
 
     //region ------引入实例------
-    @Autowired
+    @Resource
     private MusicMapper musicMapper;
-    @Autowired
+    @Resource
     private QiniuBaseUtil qiniuBaseUtil;
-    @Autowired
+    @Resource
     private QiniuFileUtil qiniuFileUtil;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;

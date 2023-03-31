@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,13 +46,13 @@ public class EntityController {
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    @Autowired
+    @Resource
     private EntityUtils entityUtils;
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityService entityService;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
 
     //endregion

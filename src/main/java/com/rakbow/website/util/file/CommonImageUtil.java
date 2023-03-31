@@ -116,18 +116,19 @@ public class CommonImageUtil {
     /**
      * 通过遍历通用图片信息json数组获取封面url
      *
-     * @param imageJson 图片信息
+     * @param imageString 图片信息
      * @return coverUrl
      * @author rakbow
      */
-    public static String getCoverUrl (JSONArray imageJson) {
+    public static String getCoverUrl (String imageString) {
+        JSONArray imageJson = JSON.parseArray(imageString);
         List<ImageInfo> images = imageJson.toJavaList(ImageInfo.class);
         for (ImageInfo image : images) {
             if (Integer.parseInt(image.getType()) == ImageType.COVER.getIndex()) {
                 return image.getUrl();
             }
         }
-        return "";
+        return CommonConstant.EMPTY_IMAGE_URL;
     }
 
     /**

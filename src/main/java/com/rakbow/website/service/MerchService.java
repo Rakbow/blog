@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -39,13 +40,11 @@ public class MerchService {
 
     //region ------引入实例------
 
-    @Autowired
+    @Resource
     private MerchMapper merchMapper;
-    @Autowired
-    private QiniuImageUtil qiniuImageUtil;
-    @Autowired
+    @Resource
     private QiniuFileUtil qiniuFileUtil;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
 
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;

@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 
@@ -36,15 +37,15 @@ import java.sql.Timestamp;
 public class MusicController {
 
     //region ------引入实例------
-    @Autowired
+    @Resource
     private MusicService musicService;
-    @Autowired
+    @Resource
     private AlbumService albumService;
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityUtils entityUtils;
-    @Autowired
+    @Resource
     private EntityService entityService;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
@@ -60,7 +61,7 @@ public class MusicController {
             return "/error/404";
         }
         Album album = albumService.getAlbum(music.getAlbumId());
-        String coverUrl = CommonImageUtil.getCoverUrl(JSON.parseArray(album.getImages()));
+        String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
 
         model.addAttribute("music", musicVOMapper.music2VO(music, coverUrl));
 

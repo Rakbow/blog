@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -38,16 +39,10 @@ public class FranchiseService {
 
     //region ------依赖注入------
 
-    @Autowired
+    @Resource
     private FranchiseMapper franchiseMapper;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
-    @Autowired
-    private QiniuImageUtil qiniuImageUtil;
-    @Autowired
-    private QiniuFileUtil qiniuFileUtil;
-    @Autowired
-    private VisitUtil visitUtil;
 
     //endregion
 

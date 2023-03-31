@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -33,16 +34,16 @@ import java.util.*;
 @Service
 public class UserService{
 
-    @Autowired
+    @Resource
     private UserMapper userMapper;
 
-    @Autowired
+    @Resource
     private MailClient mailClient;
 
-    @Autowired
+    @Resource
     private TemplateEngine templateEngine;
 
-    @Autowired
+    @Resource
     private LoginTicketMapper loginTicketMapper;
 
     @Value("${website.path.domain}")

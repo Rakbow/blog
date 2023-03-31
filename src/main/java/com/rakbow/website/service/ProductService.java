@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
@@ -39,16 +40,12 @@ import java.util.*;
 public class ProductService {
 
     //region ------注入实例------
-    @Autowired
+    @Resource
     private ProductMapper productMapper;
-    @Autowired
-    private QiniuImageUtil qiniuImageUtil;
-    @Autowired
+    @Resource
     private QiniuFileUtil qiniuFileUtil;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
-    @Autowired
-    private VisitUtil visitUtil;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion

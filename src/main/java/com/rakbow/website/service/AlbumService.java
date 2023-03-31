@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,13 +40,13 @@ import java.util.stream.Collectors;
 public class AlbumService {
 
     //region ------依赖注入------
-    @Autowired
+    @Resource
     private AlbumMapper albumMapper;
-    @Autowired
+    @Resource
     private MusicService musicService;
-    @Autowired
+    @Resource
     private QiniuFileUtil qiniuFileUtil;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;

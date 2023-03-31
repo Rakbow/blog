@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.List;
@@ -41,15 +42,15 @@ public class FranchiseController {
 
     //region ------注入依赖------
 
-    @Autowired
+    @Resource
     private FranchiseService franchiseService;
-    @Autowired
+    @Resource
     private ProductService productService;
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private EntityUtils entityUtils;
-    @Autowired
+    @Resource
     private EntityService entityService;
 
     private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
