@@ -37,6 +37,13 @@
                 </foreach>
             </if>
         </where>
+        order by
+        <if test="ids != null and ids.size() != 0">
+            <foreach item="item" index="index" collection="ids" open="FIELD(id,"
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
     </select>
 
     <select id="getAll" resultType="Game">
