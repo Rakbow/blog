@@ -139,6 +139,7 @@ public class EntityService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public JSONObject getItemAmount() {
         JSONObject entityAmounts = new JSONObject();
+        int total = 0;
         for (EntityType type : EntityType.ENTITY_TYPES) {
             Object amount;
             try {
@@ -147,8 +148,10 @@ public class EntityService {
             catch (Exception e) {
                 amount = 0;
             }
+            total += Integer.parseInt(amount.toString());
             entityAmounts.put(type.getNameEn().toLowerCase() + "Amount", amount);
         }
+        entityAmounts.put("Total", total);
         return entityAmounts;
     }
 
@@ -296,6 +299,18 @@ public class EntityService {
         bookMapper.getBooks(new ArrayList<>(){{
             add(148);add(173);add(121);add(18);add(36);
         }}).forEach(book -> bookUrls.add(QiniuImageUtil.getCustomThumbUrl(CommonImageUtil.getCoverUrl(book.getImages()), 240, 0)));
+
+        discMapper.getDiscs(new ArrayList<>(){{
+            add(114);add(57);add(58);add(59);add(1);
+        }}).forEach(disc -> discUrls.add(QiniuImageUtil.getThumbBackgroundUrl(CommonImageUtil.getCoverUrl(disc.getImages()), 500)));
+
+        gameMapper.getGames(new ArrayList<>(){{
+            add(1);add(1);add(1);add(1);add(1);
+        }}).forEach(game -> gameUrls.add(QiniuImageUtil.getThumbBackgroundUrl(CommonImageUtil.getCoverUrl(game.getImages()), 500)));
+
+        merchMapper.getMerchs(new ArrayList<>(){{
+            add(1);add(2);add(1);add(2);add(1);
+        }}).forEach(merch -> merchUrls.add(QiniuImageUtil.getThumbBackgroundUrl(CommonImageUtil.getCoverUrl(merch.getImages()), 500)));
 
         indexCoverUrl.put("album", albumUrls);
         indexCoverUrl.put("book", bookUrls);
