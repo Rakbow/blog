@@ -148,7 +148,7 @@
         </p-galleria>
 
         <p-scrollpanel style="max-height: 300px;max-width: 265px">
-            <div v-if="itemImageInfo.displayImages" class="grid justify-content-evenly justify-content-start">
+            <div v-if="itemImageInfo.displayImages" class="grid justify-content-evenly justify-content-start" style="width: 260px">
                 <div class="col-4 mt-2 mb-2" id="panel-image-div"
                          v-for="(image, index) of itemImageInfo.displayImages" :key="index">
                         <img class="sidebar-panel-image-middle" :src="image.thumbUrl"

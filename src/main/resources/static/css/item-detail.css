@@ -5,6 +5,19 @@ body {
     min-width: 1250px;
 }
 
+.p-scrollpanel .p-scrollpanel-bar-y {
+    background-color: var(--primary-400);
+    opacity: 1;
+}
+
+.p-scrollpanel .p-scrollpanel-bar-x {
+    opacity: 0;
+}
+
+.p-scrollpanel .p-scrollpanel-bar-x:hover {
+    opacity: 0;
+}
+
 .p-scrollpanel .p-scrollpanel-content {
     width: 260px;
     padding-left: 0;
