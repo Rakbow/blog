@@ -5,6 +5,13 @@ body {
     min-width: 1250px;
 }
 
+.p-scrollpanel .p-scrollpanel-content {
+    width: 260px;
+    padding-left: 0;
+    padding-right: 0;
+    background-color: #2F364F;
+}
+
 .item_statistic_info {
     bottom: 0;
     right: 0;
