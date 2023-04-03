@@ -84,6 +84,11 @@
             <p-button class="p-button-link absolute top-0 right-0" icon="pi pi-external-link" @click="openTingleDescription"
                       v-tooltip.bottom="{value:'全屏', class: 'short-tooltip'}"></p-button>
             <article id="description" class="markdown-body" style="width: 100%;font-size: 13px"></article>
+<!--            <p-scrollpanel style="height: 500px">-->
+<!--                <article id="description" class="markdown-body" style="width: 100%;font-size: 13px"></article>-->
+<!--                <p-scrolltop target="parent" :threshold="100" class="search-scrolltop"-->
+<!--                             icon="pi pi-arrow-up"></p-scrolltop>-->
+<!--            </p-scrollpanel>-->
         </div>
     </p-fieldset>
 </div>
@@ -98,6 +103,11 @@
             <p-button class="p-button-link absolute top-0 right-0" icon="pi pi-external-link" @click="openTingleBonus"
                       v-tooltip.bottom="{value:'全屏', class: 'short-tooltip'}"></p-button>
             <article id="bonus" class="markdown-body" style="width: 100%;font-size: 13px"></article>
+<!--            <p-scrollpanel style="max-height: 500px">-->
+<!--                <article id="bonus" class="markdown-body" style="width: 100%;font-size: 13px"></article>-->
+<!--                <p-scrolltop target="parent" :threshold="100" class="search-scrolltop"-->
+<!--                             icon="pi pi-arrow-up"></p-scrolltop>-->
+<!--            </p-scrollpanel>-->
         </div>
     </p-fieldset>
 </div>
@@ -122,11 +132,11 @@
             <template #caption="{item}">
                 <div class="custom-galleria-footer">
                     <div class="col-6">
-                                <span v-if="itemImageInfo.displayImages" class="title-container">
-                                    <span>共{{itemImageInfo.displayImages.length}}张</span>
-                                    <span class="title">{{item.nameZh}}</span>
-                                    <span style="font-size: 10px">{{item.description}}</span>
-                                </span>
+                        <span v-if="itemImageInfo.displayImages" class="title-container">
+                            <span>共{{itemImageInfo.displayImages.length}}张</span>
+                            <span class="title">{{item.nameZh}}</span>
+                            <span style="font-size: 10px">{{item.description}}</span>
+                        </span>
                     </div>
                     <div class="col-6 text-end">
                         <span v-if="itemImageInfo.displayImages">
@@ -136,16 +146,22 @@
                 </div>
             </template>
         </p-galleria>
-        <div v-if="itemImageInfo.displayImages" class="grid justify-content-evenly justify-content-start">
-            <div class="col-4 mt-2 mb-2" id="panel-image-div"
-                 v-for="(image, index) of itemImageInfo.displayImages" :key="index">
-                <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
-                     draggable="false"
-                     oncontextmenu="return false"
-                     v-tooltip.bottom="{value: '上传于 ' + image.uploadTime + ' 提交者 ' + image.uploadUser, class: 'time-tooltip'}"
-                     @click="imageClick(index)"/>
+
+        <p-scrollpanel style="max-height: 300px;max-width: 265px">
+            <div v-if="itemImageInfo.displayImages" class="grid justify-content-evenly justify-content-start" style="width: 260px">
+                <div class="col-4 mt-2 mb-2" id="panel-image-div"
+                         v-for="(image, index) of itemImageInfo.displayImages" :key="index">
+                        <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
+                             draggable="false"
+                             oncontextmenu="return false"
+                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime + ' 提交者 ' + image.uploadUser, class: 'time-tooltip'}"
+                             @click="imageClick(index)"/>
+                    </div>
             </div>
-        </div>
+            <p-scrolltop target="parent" :threshold="100" class="search-scrolltop"
+                         icon="pi pi-arrow-up"></p-scrolltop>
+        </p-scrollpanel>
+
         <br>
         <b class="rbot"><b></b></b>
     </p-panel>
