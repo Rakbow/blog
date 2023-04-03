@@ -102,7 +102,7 @@ public class MerchController {
                 return JSON.toJSONString(res);
             }
 
-            Merch merch = merchService.json2Merch(merchService.handleMerchJson(param));
+            Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
 
             //保存新增周边
             res.message = merchService.addMerch(merch);
@@ -144,7 +144,7 @@ public class MerchController {
                 return JSON.toJSONString(res);
             }
 
-            Merch merch = merchService.json2Merch(merchService.handleMerchJson(param));
+            Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
 
             //修改编辑时间
             merch.setEditedTime(new Timestamp(System.currentTimeMillis()));

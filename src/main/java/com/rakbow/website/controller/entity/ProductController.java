@@ -125,7 +125,7 @@ public class ProductController {
                 return JSON.toJSONString(res);
             }
 
-            Product product = productService.json2Product(param);
+            Product product = entityService.json2Entity(param, Product.class);
 
             //保存新增专辑
             res.message = productService.addProduct(product);
@@ -152,7 +152,7 @@ public class ProductController {
                 return JSON.toJSONString(res);
             }
 
-            Product product = productService.json2Product(param);
+            Product product = entityService.json2Entity(param, Product.class);
 
             //修改编辑时间
             product.setEditedTime(new Timestamp(System.currentTimeMillis()));

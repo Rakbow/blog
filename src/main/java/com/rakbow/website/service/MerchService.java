@@ -123,17 +123,6 @@ public class MerchService {
     //region ------数据处理------
 
     /**
-     * json对象转Merch，以便保存到数据库
-     *
-     * @param merchJson merchJson
-     * @return merch
-     * @author rakbow
-     */
-    public Merch json2Merch(JSONObject merchJson) {
-        return JSON.to(Merch.class, merchJson);
-    }
-
-    /**
      * 检测数据合法性
      *
      * @param merchJson merchJson

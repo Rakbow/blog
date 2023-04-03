@@ -124,17 +124,6 @@ public class BookService {
     //region ------数据处理------
 
     /**
-     * json对象转Book，以便保存到数据库
-     *
-     * @param bookJson bookJson
-     * @return book
-     * @author rakbow
-     */
-    public Book json2Book(JSONObject bookJson) {
-        return JSON.to(Book.class, bookJson);
-    }
-
-    /**
      * 检测数据合法性
      *
      * @param bookJson bookJson

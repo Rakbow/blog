@@ -123,17 +123,6 @@ public class GameService {
     //region ------数据处理------
 
     /**
-     * json对象转Game，以便保存到数据库
-     *
-     * @param gameJson gameJson
-     * @return game
-     * @author rakbow
-     */
-    public Game json2Game(JSONObject gameJson) {
-        return JSON.to(Game.class, gameJson);
-    }
-
-    /**
      * 检测数据合法性
      *
      * @param gameJson gameJson

@@ -103,7 +103,7 @@ public class GameController {
                 return JSON.toJSONString(res);
             }
 
-            Game game = gameService.json2Game(gameService.handleGameJson(param));
+            Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
 
             //保存新增游戏
             res.message = gameService.addGame(game);
@@ -145,7 +145,7 @@ public class GameController {
                 return JSON.toJSONString(res);
             }
 
-            Game game = gameService.json2Game(gameService.handleGameJson(param));
+            Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
 
             //修改编辑时间
             game.setEditedTime(new Timestamp(System.currentTimeMillis()));

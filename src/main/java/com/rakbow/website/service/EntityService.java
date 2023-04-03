@@ -95,6 +95,17 @@ public class EntityService {
 
     //endregion
 
+    /**
+     * json对象转实体，以便保存到数据库
+     *
+     * @param json,entityClass json,entityClass
+     * @return T
+     * @author rakbow
+     */
+    public <T> T json2Entity(JSONObject json, Class<T> entityClass) {
+        return JSON.to(entityClass, json);
+    }
+
     //region common get data
 
     /**

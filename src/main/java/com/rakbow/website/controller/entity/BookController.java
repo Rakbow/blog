@@ -102,7 +102,7 @@ public class BookController {
                 return JSON.toJSONString(res);
             }
 
-            Book book = bookService.json2Book(bookService.handleBookJson(param));
+            Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
 
             //保存新增图书
             res.message = bookService.addBook(book);
@@ -144,7 +144,7 @@ public class BookController {
                 return JSON.toJSONString(res);
             }
 
-            Book book = bookService.json2Book(bookService.handleBookJson(param));
+            Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
 
             //修改编辑时间
             book.setEditedTime(new Timestamp(System.currentTimeMillis()));

@@ -133,7 +133,7 @@ public class DiscController {
                 return JSON.toJSONString(res);
             }
 
-            Disc disc = discService.json2Disc(discService.handleDiscJson(param));
+            Disc disc = entityService.json2Entity(discService.handleDiscJson(param), Disc.class);
 
             //保存新增专辑
 
@@ -176,7 +176,7 @@ public class DiscController {
                 return JSON.toJSONString(res);
             }
 
-            Disc disc = discService.json2Disc(discService.handleDiscJson(param));
+            Disc disc = entityService.json2Entity(discService.handleDiscJson(param), Disc.class);
 
             //修改编辑时间
             disc.setEditedTime(new Timestamp(System.currentTimeMillis()));

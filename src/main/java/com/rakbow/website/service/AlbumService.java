@@ -13,21 +13,22 @@ import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
-import com.rakbow.website.entity.*;
+import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -191,17 +192,6 @@ public class AlbumService {
         albumJson.put("mediaFormat", "{\"ids\":[" + StringUtils.join(mediaFormat, ",") + "]}");
 
         return albumJson;
-    }
-
-    /**
-     * json对象转Album，以便保存到数据库
-     *
-     * @param albumJson 专辑json
-     * @return Album
-     * @author rakbow
-     */
-    public Album json2Album(JSONObject albumJson) {
-        return JSON.to(Album.class, albumJson);
     }
 
     //endregion

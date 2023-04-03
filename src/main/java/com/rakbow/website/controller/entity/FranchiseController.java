@@ -120,7 +120,7 @@ public class FranchiseController {
                 return JSON.toJSONString(res);
             }
 
-            Franchise franchise = franchiseService.json2Franchise(franchiseService.handleFranchiseJson(param));
+            Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
 
             //保存新增
             res.message = franchiseService.addFranchise(franchise);
@@ -144,7 +144,7 @@ public class FranchiseController {
                 return JSON.toJSONString(res);
             }
 
-            Franchise franchise = franchiseService.json2Franchise(franchiseService.handleFranchiseJson(param));
+            Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
 
             //修改编辑时间
             franchise.setEditedTime(new Timestamp(System.currentTimeMillis()));

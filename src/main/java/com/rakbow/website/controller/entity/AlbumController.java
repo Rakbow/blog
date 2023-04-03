@@ -139,7 +139,7 @@ public class AlbumController {
                 return JSON.toJSONString(res);
             }
 
-            Album album = albumService.json2Album(albumService.handleAlbumJson(param));
+            Album album = entityService.json2Entity(albumService.handleAlbumJson(param), Album.class);
 
             //保存新增专辑
             res.message = albumService.addAlbum(album);
@@ -192,7 +192,7 @@ public class AlbumController {
                 return JSON.toJSONString(res);
             }
 
-            Album album = albumService.json2Album(albumService.handleAlbumJson(param));
+            Album album = entityService.json2Entity(albumService.handleAlbumJson(param), Album.class);
 
             //修改编辑时间
             album.setEditedTime(new Timestamp(System.currentTimeMillis()));

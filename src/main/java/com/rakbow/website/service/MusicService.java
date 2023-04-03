@@ -233,16 +233,6 @@ public class MusicService {
         return "";
     }
 
-    /**
-     * json转music
-     * @author rakbow
-     * @param musicJson musicJson
-     * @return music
-     * */
-    public Music json2Music(@RequestBody JSONObject musicJson) {
-        return JSON.to(Music.class, musicJson);
-    }
-
     //endregion
 
     //region ------特殊查询------

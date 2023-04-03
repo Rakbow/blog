@@ -142,17 +142,6 @@ public class ProductService {
     //region ------数据处理------
 
     /**
-     * json对象转Product，以便保存到数据库
-     *
-     * @param productJson json
-     * @return Album
-     * @author rakbow
-     */
-    public Product json2Product(JSONObject productJson) {
-        return JSON.to(Product.class, productJson);
-    }
-
-    /**
      * 检测数据合法性
      *
      * @param productJson json
@@ -297,7 +286,7 @@ public class ProductService {
 
         redisUtil.set(RedisCacheConstant.PRODUCT_SET, products);
         //缓存时间1个月
-        redisUtil.expire(RedisCacheConstant.PRODUCT_SET, 2592000);
+//        redisUtil.expire(RedisCacheConstant.PRODUCT_SET, 2592000);
 
     }
 

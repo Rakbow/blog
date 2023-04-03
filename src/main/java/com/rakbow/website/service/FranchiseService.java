@@ -137,17 +137,6 @@ public class FranchiseService {
     //region ------数据处理------
 
     /**
-     * json对象转Franchise，以便保存到数据库
-     *
-     * @param franchiseJson franchiseJson
-     * @return franchise
-     * @author rakbow
-     */
-    public Franchise json2Franchise(JSONObject franchiseJson) {
-        return JSON.to(Franchise.class, franchiseJson);
-    }
-
-    /**
      * 检测数据合法性
      *
      * @param franchiseJson franchiseJson
@@ -218,7 +207,7 @@ public class FranchiseService {
 
         redisUtil.set(RedisCacheConstant.FRANCHISE_SET, franchiseSet);
         //缓存时间1个月
-        redisUtil.expire(RedisCacheConstant.FRANCHISE_SET, 2592000);
+//        redisUtil.expire(RedisCacheConstant.FRANCHISE_SET, 2592000);
 
     }
 

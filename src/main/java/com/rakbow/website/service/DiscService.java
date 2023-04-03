@@ -123,17 +123,6 @@ public class DiscService {
     //region ------数据处理------
 
     /**
-     * json对象转Disc，以便保存到数据库
-     *
-     * @param discJson discJson
-     * @return Disc
-     * @author rakbow
-     */
-    public Disc json2Disc(JSONObject discJson) {
-        return JSON.to(Disc.class, discJson);
-    }
-
-    /**
      * 检测数据合法性
      *
      * @param discJson discJson

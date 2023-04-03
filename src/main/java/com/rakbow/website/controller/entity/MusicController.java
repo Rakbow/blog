@@ -90,7 +90,7 @@ public class MusicController {
         ApiResult res = new ApiResult();
         try{
             JSONObject param = JSON.parseObject(json);
-            Music music = musicService.json2Music(param);
+            Music music = entityService.json2Entity(param, Music.class);
 
             //检测数据
             String errorMsg= musicService.checkMusicJson(param);
