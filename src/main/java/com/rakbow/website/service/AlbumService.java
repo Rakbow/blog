@@ -344,14 +344,14 @@ public class AlbumService {
     }
 
     /**
-     * 获取相关联专辑
+     * 生成关联专辑信息
      *
      * @param album 专辑
      * @return list封装的Album
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOBeta> getRelatedAlbums(Album album) {
+    public int[] generateRelatedAlbumIds(Album album) {
 
         List<Album> result = new ArrayList<>();
 
@@ -399,6 +399,27 @@ public class AlbumService {
                 result = result.subList(0, 5);
             }
         }
+        //去重
+        CommonUtil.removeDuplicateList(result);
+
+        List<Integer> ids = new ArrayList<>();
+
+        result.forEach(a -> ids.add(a.getId()));
+
+        return ids.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    /**
+     * 获取相关联专辑
+     *
+     * @param album 专辑
+     * @return list封装的Album
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public List<AlbumVOBeta> getRelatedAlbums(int id) {
+
+
 
         return albumVOMapper.album2VOBeta(CommonUtil.removeDuplicateList(result));
     }

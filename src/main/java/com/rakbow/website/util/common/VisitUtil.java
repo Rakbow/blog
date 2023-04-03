@@ -5,6 +5,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -16,7 +17,7 @@ import java.util.*;
 @Component
 public class VisitUtil {
 
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
 
     public static final String SPLIT = ":";
@@ -95,8 +96,8 @@ public class VisitUtil {
      * @param entityType 实体类型
      * @Author Rakbow
      */
-    public SortedMap<Integer, Long> getEntityVisitRanking(int entityType, int limit) {
-        SortedMap<Integer, Long> res = new TreeMap<>();
+    public LinkedHashMap<Integer, Long> getEntityVisitRanking(int entityType, int limit) {
+        LinkedHashMap<Integer, Long> res = new LinkedHashMap<>();
         //rankKey
         String rankKey = getEntityVisitRankingKeyName(entityType);
         if(redisUtil.hasKey(rankKey)) {

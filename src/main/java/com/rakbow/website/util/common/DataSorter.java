@@ -26,12 +26,6 @@ public class DataSorter {
     public static JsonSetSortByValue jsonSetSortByValue = new JsonSetSortByValue();
     // public static VisitSortByEntityId visitSortByEntityId = new VisitSortByEntityId();
 
-    public static AlbumSortByVisitNum albumSortByVisitNum = new AlbumSortByVisitNum();
-    public static BookSortByVisitNum bookSortByVisitNum = new BookSortByVisitNum();
-    public static DiscSortByVisitNum discSortByVisitNum = new DiscSortByVisitNum();
-    public static GameSortByVisitNum gameSortByVisitNum = new GameSortByVisitNum();
-    public static MerchSortByVisitNum merchSortByVisitNum = new MerchSortByVisitNum();
-
 }
 
 class AlbumSortById implements Comparator<Album> {
@@ -80,39 +74,4 @@ class JsonSetSortByValue implements Comparator<JSONObject> {
 //         return Integer.compare(a.getEntityId(), b.getEntityId());
 //     }
 // }
-
-class AlbumSortByVisitNum implements Comparator<AlbumVOAlpha> {
-    @Override
-    public int compare(AlbumVOAlpha a, AlbumVOAlpha b) {
-        return Long.compare(a.getVisitNum(), b.getVisitNum());
-    }
-}
-
-class BookSortByVisitNum implements Comparator<BookVOBeta> {
-    @Override
-    public int compare(BookVOBeta a, BookVOBeta b) {
-        return Long.compare(a.getVisitNum(), b.getVisitNum());
-    }
-}
-
-class DiscSortByVisitNum implements Comparator<DiscVOAlpha> {
-    @Override
-    public int compare(DiscVOAlpha a, DiscVOAlpha b) {
-        return Long.compare(a.getVisitNum(), b.getVisitNum());
-    }
-}
-
-class GameSortByVisitNum implements Comparator<GameVOAlpha> {
-    @Override
-    public int compare(GameVOAlpha a, GameVOAlpha b) {
-        return Long.compare(a.getVisitNum(), b.getVisitNum());
-    }
-}
-
-class MerchSortByVisitNum implements Comparator<MerchVOAlpha> {
-    @Override
-    public int compare(MerchVOAlpha a, MerchVOAlpha b) {
-        return Long.compare(a.getVisitNum(), b.getVisitNum());
-    }
-}
 

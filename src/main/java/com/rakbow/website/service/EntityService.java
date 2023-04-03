@@ -40,10 +40,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedMap;
+import java.util.*;
 
 /**
  * @Project_name: website
@@ -176,7 +173,7 @@ public class EntityService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public JSONArray getPopularItems(int entityType, int limit) {
 
-        SortedMap<Integer, Long> visits = visitUtil.getEntityVisitRanking(entityType, limit);
+        LinkedHashMap<Integer, Long> visits = visitUtil.getEntityVisitRanking(entityType, limit);
 
         List<Integer> ids = new ArrayList<>(visits.keySet());
 
@@ -187,8 +184,6 @@ public class EntityService {
                 for (AlbumVOAlpha item : items) {
                     item.setVisitNum(visits.get(item.getId()));
                 }
-
-                items.sort(Collections.reverseOrder(DataSorter.albumSortByVisitNum));
                 return JSON.parseArray(JSON.toJSONString(items));
             }
             if(entityType == EntityType.BOOK.getId()) {
@@ -197,8 +192,6 @@ public class EntityService {
                 for (BookVOBeta item : items) {
                     item.setVisitNum(visits.get(item.getId()));
                 }
-
-                items.sort(Collections.reverseOrder(DataSorter.bookSortByVisitNum));
                 return JSON.parseArray(JSON.toJSONString(items));
             }
             if(entityType == EntityType.DISC.getId()) {
@@ -207,8 +200,6 @@ public class EntityService {
                 for (DiscVOAlpha item : items) {
                     item.setVisitNum(visits.get(item.getId()));
                 }
-
-                items.sort(Collections.reverseOrder(DataSorter.discSortByVisitNum));
                 return JSON.parseArray(JSON.toJSONString(items));
             }
             if(entityType == EntityType.GAME.getId()) {
@@ -217,8 +208,6 @@ public class EntityService {
                 for (GameVOAlpha item : items) {
                     item.setVisitNum(visits.get(item.getId()));
                 }
-
-                items.sort(Collections.reverseOrder(DataSorter.gameSortByVisitNum));
                 return JSON.parseArray(JSON.toJSONString(items));
             }
             if(entityType == EntityType.MERCH.getId()) {
@@ -227,8 +216,6 @@ public class EntityService {
                 for (MerchVOAlpha item : items) {
                     item.setVisitNum(visits.get(item.getId()));
                 }
-
-                items.sort(Collections.reverseOrder(DataSorter.merchSortByVisitNum));
                 return JSON.parseArray(JSON.toJSONString(items));
             }
         }

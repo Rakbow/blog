@@ -1,5 +1,7 @@
 package com.rakbow.website.data;
 
+import com.rakbow.website.data.emun.common.EntityType;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -50,6 +52,12 @@ public class RedisCacheConstant {
     //region index cover urls
 
     public static final String INDEX_COVER_URL = "INDEX_COVER_URL";
+
+    //endregion
+
+    //region entity related item
+
+    public static final String ENTITY_RELATED_ITEM = "entity_related_item";
 
     //endregion
 
