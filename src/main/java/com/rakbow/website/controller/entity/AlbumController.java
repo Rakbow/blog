@@ -87,7 +87,7 @@ public class AlbumController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
         //获取相关专辑
-        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(album));
+        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(album.getId()));
 
         return "/database/itemDetail/album-detail";
     }

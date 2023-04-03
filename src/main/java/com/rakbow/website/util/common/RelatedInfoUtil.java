@@ -4,6 +4,7 @@ import com.rakbow.website.data.RedisCacheConstant;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -22,7 +23,7 @@ public class RelatedInfoUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public void addRelatedInfo(int entityType, int entityId, int[] relatedItems) {
+    public void addRelatedInfo(int entityType, int entityId, List<Integer> relatedItems) {
         String key = getRelatedKey(entityType, entityId);
         redisUtil.set(key, relatedItems);
     }
@@ -32,12 +33,12 @@ public class RelatedInfoUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public int[] getRelatedInfo(int entityType, int entityId) {
+    public List<Integer> getRelatedInfo(int entityType, int entityId) {
         String key = getRelatedKey(entityType, entityId);
         if(!redisUtil.hasKey(key)) {
             return null;
         }
-        return (int[]) redisUtil.get(key);
+        return (List<Integer>) redisUtil.get(key);
     }
 
     /**
@@ -45,7 +46,7 @@ public class RelatedInfoUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public void deleteVisit(int entityType, int entityId) {
+    public void deleteRelatedInfo(int entityType, int entityId) {
         String key = getRelatedKey(entityType, entityId);
         redisUtil.delete(key);
     }

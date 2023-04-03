@@ -60,34 +60,6 @@ class WebSiteApplicationTests {
     }
 
     @Test
-    public void test1() {
-        Album album = albumService.getAlbum(11);
-        Timestamp t1 = new Timestamp(System.currentTimeMillis());
-        // bookService.getRelatedBooks(148);
-        albumService.getRelatedAlbums(album);
-        Timestamp t2 = new Timestamp(System.currentTimeMillis());
-        System.out.println(t2.getTime()-t1.getTime());
-    }
-
-    // @Test
-    // public void test2() {
-    //     System.out.println(CommonUtil.getCurrentTime());
-    //     DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    //     System.out.println(sdf.format(new Timestamp(System.currentTimeMillis())));
-    //     System.out.println(CommonUtil.timestampToString(new Timestamp(System.currentTimeMillis())));
-    //     // List<Album> albums = albumService.getAll();
-    //     // for (Album album : albums) {
-    //     // 	JSONArray images = JSON.parseArray(album.getImages());
-    //     // 	if (!images.isEmpty()) {
-    //     // 		for (int j = 0; j < images.size(); j++) {
-    //     // 			JSONObject jo = images.getJSONObject(j);
-    //     // 			jo.put("uploadTime", CommonUtil.timestampToString(new Timestamp(System.currentTimeMillis()), "yyyy/MM/dd hh:mm:ss"));
-    //     // 		}
-    //     // 	}
-    //     // }
-    // }
-
-    @Test
     public void test3() {
         List<Music> musics = musicService.getAll();
         System.out.println(DataFinder.findMusicById(5, musics));

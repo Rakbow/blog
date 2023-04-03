@@ -15,9 +15,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @Project_name: website
@@ -49,6 +50,8 @@ public class AlbumService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private RelatedInfoUtil relatedInfoUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -351,7 +354,7 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public int[] generateRelatedAlbumIds(Album album) {
+    public void generateRelatedAlbumIds(Album album) {
 
         List<Album> result = new ArrayList<>();
 
@@ -402,26 +405,32 @@ public class AlbumService {
         //去重
         CommonUtil.removeDuplicateList(result);
 
-        List<Integer> ids = new ArrayList<>();
+        List<Integer> ids = result.stream().map(Album::getId).collect(Collectors.toList());
 
-        result.forEach(a -> ids.add(a.getId()));
+        relatedInfoUtil.addRelatedInfo(EntityType.ALBUM.getId(), album.getId(), ids);
 
-        return ids.stream().mapToInt(Integer::intValue).toArray();
     }
 
     /**
      * 获取相关联专辑
      *
-     * @param album 专辑
+     * @param id 专辑id
      * @return list封装的Album
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<AlbumVOBeta> getRelatedAlbums(int id) {
 
+        try {
+            List<Integer> relatedAlbumIds = relatedInfoUtil.getRelatedInfo(EntityType.ALBUM.getId(), id);
 
-
-        return albumVOMapper.album2VOBeta(CommonUtil.removeDuplicateList(result));
+            if(relatedAlbumIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+            return albumVOMapper.album2VOBeta(albumMapper.getAlbums(relatedAlbumIds));
+        }catch (Exception ex) {
+            return new ArrayList<>();
+        }
     }
 
     /**

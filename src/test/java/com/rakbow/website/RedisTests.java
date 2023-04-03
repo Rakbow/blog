@@ -3,11 +3,9 @@ package com.rakbow.website;
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.EntityStatistic;
-import com.rakbow.website.service.EntityService;
-import com.rakbow.website.service.FranchiseService;
-import com.rakbow.website.service.ProductService;
-import com.rakbow.website.service.UserService;
+import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.VisitUtil;
@@ -32,6 +30,8 @@ public class RedisTests {
     private UserService userService;
     @Resource
     private EntityService entityService;
+    @Resource
+    private AlbumService albumService;
     @Resource
     private FranchiseService franchiseService;
     @Resource
@@ -104,6 +104,14 @@ public class RedisTests {
 
         entityService.refreshIndexCoverUrls();
 
+    }
+
+    @Test
+    public void refreshRelatedInfos() {
+        List<Album> albums = albumMapper.getAll();
+        albums.forEach(album -> albumService.generateRelatedAlbumIds(album));
+        // List<String> keys = redisUtil.keys("entity_related_item:*");
+        // keys.forEach(key -> redisUtil.delete(key));
     }
 
 }
