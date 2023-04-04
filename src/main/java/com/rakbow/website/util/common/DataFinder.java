@@ -1,6 +1,7 @@
 package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Product;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,16 @@ public class DataFinder {
 
     //region album
 
-
+    public static Album findAlbumById(int id, List<Album> albums) {
+        Album finder = new Album();
+        finder.setId(id);
+        int idx = Collections.binarySearch(albums, finder, DataSorter.albumSortById);
+        if (idx >= 0) {
+            return albums.get(idx);
+        }else {
+            return null;
+        }
+    }
 
     //endregion
 

@@ -8,6 +8,7 @@ import com.rakbow.website.entity.EntityStatistic;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.common.RelatedInfoUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,6 +61,8 @@ public class RedisTests {
     private LikeUtil likeUtil;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private RelatedInfoUtil relatedInfoUtil;
 
     @Test
     public void refreshData() {
@@ -108,10 +111,13 @@ public class RedisTests {
 
     @Test
     public void refreshRelatedInfos() {
-        List<Album> albums = albumMapper.getAll();
-        albums.forEach(album -> albumService.generateRelatedAlbumIds(album));
+//        List<Album> albums = albumMapper.getAll();
+//        albums.forEach(album -> albumService.generateRelatedAlbumIds(album));
         // List<String> keys = redisUtil.keys("entity_related_item:*");
         // keys.forEach(key -> redisUtil.delete(key));
+
+        entityService.refreshEntityRelatedInfo(1, 3);
+
     }
 
 }

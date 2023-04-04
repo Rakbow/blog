@@ -1,6 +1,8 @@
 package com.rakbow.website.util.common;
 
+import com.rakbow.website.data.EntityInfo;
 import com.rakbow.website.data.RedisCacheConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -42,6 +44,18 @@ public class RelatedInfoUtil {
     }
 
     /**
+     * 获取关联信息
+     * @param key key
+     * @Author Rakbow
+     */
+    public List<Integer> getRelatedInfo(String key) {
+        if(!redisUtil.hasKey(key)) {
+            return null;
+        }
+        return (List<Integer>) redisUtil.get(key);
+    }
+
+    /**
      * 删除关联信息
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
@@ -49,6 +63,23 @@ public class RelatedInfoUtil {
     public void deleteRelatedInfo(int entityType, int entityId) {
         String key = getRelatedKey(entityType, entityId);
         redisUtil.delete(key);
+    }
+
+    /**
+     * 通过key获取实体信息
+     * @param key key
+     * @return entityInfo
+     * @Author Rakbow
+     */
+    public EntityInfo getEntityInfo(String key) {
+        EntityInfo info = new EntityInfo();
+        if(StringUtils.isBlank(key)) {
+            return info;
+        }
+        String[] tmp = key.split(":");
+        info.setEntityType(Integer.parseInt(tmp[1]));
+        info.setEntityId(Integer.parseInt(tmp[2]));
+        return info;
     }
 
     /**

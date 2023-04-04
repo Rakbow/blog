@@ -64,6 +64,18 @@ public class EntityService {
     @Resource
     private MerchMapper merchMapper;
     @Resource
+    private AlbumService albumService;
+    @Resource
+    private BookService bookService;
+    @Resource
+    private DiscService discService;
+    @Resource
+    private GameService gameService;
+    @Resource
+    private MerchService merchService;
+    @Resource
+    private ProductService productService;
+    @Resource
     private RedisUtil redisUtil;
     @Resource
     private LikeUtil likeUtil;
@@ -75,6 +87,8 @@ public class EntityService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private RelatedInfoUtil relatedInfoUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
@@ -511,6 +525,56 @@ public class EntityService {
             }
         }
         return res;
+    }
+
+    //endregion
+
+    //region other
+
+    /**
+     * 刷新实体类关联信息缓存
+     *
+     * @param entityType,entityId 实体类型，实体ID
+     * @author rakbow
+     */
+    public void refreshEntityRelatedInfo(int entityType, int entityId) {
+
+        //从redis种获取该类型的所有key
+        List<String> keys = redisUtil.keys(RedisCacheConstant.ENTITY_RELATED_ITEM + RedisCacheConstant.SPLIT + entityType + RedisCacheConstant.SPLIT + "*");
+
+        if(entityType == EntityType.ALBUM.getId()) {
+            List<Album> albums = albumMapper.getAll();
+
+            Album album = DataFinder.findAlbumById(entityId, albums);
+            //刷新该实体的关联信息
+            assert album != null;
+            albumService.generateRelatedAlbumIds(album);
+            //刷新关联信息哩包含该实体的关联信息
+            keys.forEach(key -> {
+                if(relatedInfoUtil.getRelatedInfo(key).contains(entityId)) {
+                    int tmpId = relatedInfoUtil.getEntityInfo(key);
+                    Album album = DataFinder.findAlbumById(entityId, albums);
+                    //刷新该实体的关联信息
+                    assert album != null;
+                    albumService.generateRelatedAlbumIds(album);
+                }
+            });
+        }
+        if(entityType == EntityType.BOOK.getId()) {
+
+        }
+        if(entityType == EntityType.DISC.getId()) {
+
+        }
+        if(entityType == EntityType.GAME.getId()) {
+
+        }
+        if(entityType == EntityType.MERCH.getId()) {
+
+        }
+        if(entityType == EntityType.PRODUCT.getId()) {
+
+        }
     }
 
     //endregion
