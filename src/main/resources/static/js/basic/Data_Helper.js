@@ -348,25 +348,8 @@ const dbListTabs = [
     },
 ];
 
-const tmpList10 = [
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-];
-const tmpList5 = [
-    {},
-    {},
-    {},
-    {},
-    {},
-];
+const tmpList10 = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+const tmpList5 = [{}, {}, {}, {}, {}];
 
 const indexTabChange = (ev) => {
     dbIndexTabs.forEach(tab => {

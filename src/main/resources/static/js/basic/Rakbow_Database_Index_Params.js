@@ -82,10 +82,49 @@ const albumIndex = {
                     </div>
                 </p-panel>
                 <br>
-                <p-panel>
+                <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList5.length != 0"
+                                 v-for="(index) of tmpList5">
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <a>
+                                        <p-skeleton size="4rem"></p-skeleton>
+                                    </a>
+                                </div>
+                                <div class="col p-0" style="height: 80px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 ml-2 mr-2">
+                                                    <p-skeleton width="8rem"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font col-6 related-item-catalog">
+                                                <p-skeleton width="3rem"></p-skeleton>
+                                            </span>
+                                            <span class="small_font col-6 related-item-date">
+                                                <p-skeleton width="3rem"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                <p-panel v-if="!totalLoading">
                     <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-album"></i><span><strong>最新收录</strong></span>
+                        <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
                     </span>
                     </template>
                     <div class="grid">
@@ -247,10 +286,58 @@ const albumIndex = {
                 </p-dataview>
             </div>
             <div class="col-2" style="min-width: 300px">
-                <p-panel>
+                <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i>
+                            <span><strong>浏览排名</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList10.length != 0"
+                                 v-for="(index) of tmpList10">
+                                <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                    <div class="col-12 p-0 m-0">
+                                        <p-skeleton width="3rem" class="mt-2"></p-skeleton>
+                                    </div>
+                                    <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                        <i class="pi pi-eye mt-1 mb-1"></i><br><p-skeleton width="3rem" class="mb-1"></p-skeleton>
+                                    </span>
+                                </div>
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </div>
+                                <div class="col p-0" style="height: 90px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 mr-2">
+                                                    <p-skeleton width="8rem" class="mb-1 mt-1"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-catalog">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-date">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                <p-panel v-if="!totalLoading">
                     <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-album"></i><span><strong>浏览排名</strong></span>
+                        <i class="pi pi-list"></i><span><strong>浏览排名</strong></span>
                     </span>
                     </template>
                     <div class="grid">
@@ -346,6 +433,7 @@ const albumIndex = {
 
             totalLoading: false,
             tmpList10,
+            tmpList5,
         }
     },
     watch: {
@@ -561,10 +649,49 @@ const bookIndex = {
                 </div>
             </p-panel>
             <br>
-            <p-panel>
+            <p-panel v-if="totalLoading">
+                <template #header>
+                    <span class="text-start side-panel-header">
+                        <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
+                    </span>
+                </template>
+                <div class="grid">
+                    <span class="small_font">
+                        <div class="info_bit_small small_font grid m-0 p-0"
+                             v-if="tmpList5.length != 0"
+                             v-for="(index) of tmpList5">
+                            <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                <a>
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </a>
+                            </div>
+                            <div class="col p-0" style="height: 80px">
+                                <ul class="info_bit_small_other">
+                                    <li>
+                                        <a>
+                                            <span class="text-truncate-2 ml-2 mr-2">
+                                                <p-skeleton width="8rem"></p-skeleton>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <span class="small_font col-6 related-item-catalog">
+                                            <p-skeleton width="3rem"></p-skeleton>
+                                        </span>
+                                        <span class="small_font col-6 related-item-date">
+                                            <p-skeleton width="3rem"></p-skeleton>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </p-panel>
+            <p-panel v-if="!totalLoading">
                 <template #header>
             <span class="text-start side-panel-header">
-                <i class="pi iconfont icon-book"></i><span><strong>最新收录</strong></span>
+                <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
             </span>
                 </template>
                 <div class="grid">
@@ -698,10 +825,58 @@ const bookIndex = {
             </p-dataview>
         </div>
         <div class="col-2" style="min-width: 300px">
-            <p-panel>
+            <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i>
+                            <span><strong>浏览排名</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList10.length != 0"
+                                 v-for="(index) of tmpList10">
+                                <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                    <div class="col-12 p-0 m-0">
+                                        <p-skeleton width="3rem" class="mt-2"></p-skeleton>
+                                    </div>
+                                    <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                        <i class="pi pi-eye mt-1 mb-1"></i><br><p-skeleton width="3rem" class="mb-1"></p-skeleton>
+                                    </span>
+                                </div>
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </div>
+                                <div class="col p-0" style="height: 90px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 mr-2">
+                                                    <p-skeleton width="8rem" class="mb-1 mt-1"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-catalog">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-date">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+            <p-panel v-if="!totalLoading">
                 <template #header>
             <span class="text-start side-panel-header">
-                <i class="pi iconfont icon-book"></i><span><strong>浏览排名</strong></span>
+                <i class="pi pi-list"></i><span><strong>浏览排名</strong></span>
             </span>
                 </template>
                 <div class="grid">
@@ -797,6 +972,10 @@ const bookIndex = {
             productSelect: true,
             productSet: null,
             franchiseSet: [],
+
+            totalLoading: false,
+            tmpList10,
+            tmpList5,
         }
     },
     watch: {
@@ -813,6 +992,7 @@ const bookIndex = {
             let json = {
                 entityType: ENTITY.BOOK
             };
+            this.totalLoading = true;
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
@@ -821,6 +1001,7 @@ const bookIndex = {
                     this.regionSet = res.regionSet;
                     this.languageSet = res.languageSet;
                     this.franchiseSet = res.franchiseSet;
+                    this.totalLoading = false;
                 })
         },
         clearSearch() {
@@ -913,6 +1094,7 @@ const bookIndex = {
         "p-dropdown": primevue.dropdown,
         "p-button": primevue.button,
         "p-divider": primevue.divider,
+        "p-skeleton": primevue.skeleton,
     }
 };
 
@@ -1004,10 +1186,49 @@ const discIndex = {
                         </div>
                     </p-panel>
                     <br>
-                    <p-panel>
+                    <p-panel v-if="totalLoading">
                         <template #header>
                             <span class="text-start side-panel-header">
-                                <i class="pi iconfont icon-Video-Disc"></i><span><strong>最新收录</strong></span>
+                                <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
+                            </span>
+                        </template>
+                        <div class="grid">
+                            <span class="small_font">
+                                <div class="info_bit_small small_font grid m-0 p-0"
+                                     v-if="tmpList5.length != 0"
+                                     v-for="(index) of tmpList5">
+                                    <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                        <a>
+                                            <p-skeleton size="4rem"></p-skeleton>
+                                        </a>
+                                    </div>
+                                    <div class="col p-0" style="height: 80px">
+                                        <ul class="info_bit_small_other">
+                                            <li>
+                                                <a>
+                                                    <span class="text-truncate-2 ml-2 mr-2">
+                                                        <p-skeleton width="8rem"></p-skeleton>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <span class="small_font col-6 related-item-catalog">
+                                                    <p-skeleton width="3rem"></p-skeleton>
+                                                </span>
+                                                <span class="small_font col-6 related-item-date">
+                                                    <p-skeleton width="3rem"></p-skeleton>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+                    </p-panel>
+                    <p-panel v-if="!totalLoading">
+                        <template #header>
+                            <span class="text-start side-panel-header">
+                                <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
                             </span>
                         </template>
                         <div class="grid">
@@ -1154,7 +1375,55 @@ const discIndex = {
                     </p-dataview>
                 </div>
                 <div class="col-2" style="min-width: 300px">
-                    <p-panel>
+                    <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i>
+                            <span><strong>浏览排名</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList10.length != 0"
+                                 v-for="(index) of tmpList10">
+                                <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                    <div class="col-12 p-0 m-0">
+                                        <p-skeleton width="3rem" class="mt-2"></p-skeleton>
+                                    </div>
+                                    <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                        <i class="pi pi-eye mt-1 mb-1"></i><br><p-skeleton width="3rem" class="mb-1"></p-skeleton>
+                                    </span>
+                                </div>
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </div>
+                                <div class="col p-0" style="height: 90px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 mr-2">
+                                                    <p-skeleton width="8rem" class="mb-1 mt-1"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-catalog">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-date">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                    <p-panel v-if="!totalLoading">
                         <template #header>
                             <span class="text-start side-panel-header">
                                 <i class="pi iconfont icon-Video-Disc"></i><span><strong>浏览排名</strong></span>
@@ -1252,6 +1521,10 @@ const discIndex = {
             hasBonusSet,
             isLimitedSet,
             franchiseSet: [],
+
+            totalLoading: false,
+            tmpList10,
+            tmpList5,
         }
     },
     watch: {
@@ -1268,6 +1541,7 @@ const discIndex = {
             let json = {
                 entityType: ENTITY.DISC
             };
+            this.totalLoading = true;
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
@@ -1275,6 +1549,7 @@ const discIndex = {
                     this.mediaFormatSet = res.mediaFormatSet;
                     this.regionSet = res.regionSet;
                     this.franchiseSet = res.franchiseSet;
+                    this.totalLoading = false;
                 })
         },
         clearSearch() {
@@ -1364,6 +1639,7 @@ const discIndex = {
         "p-dropdown": primevue.dropdown,
         "p-button": primevue.button,
         "p-divider": primevue.divider,
+        "p-skeleton": primevue.skeleton,
     }
 };
 
@@ -1445,7 +1721,46 @@ const gameIndex = {
                         </div>
                     </p-panel>
                     <br>
-                    <p-panel>
+                    <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList5.length != 0"
+                                 v-for="(index) of tmpList5">
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <a>
+                                        <p-skeleton size="4rem"></p-skeleton>
+                                    </a>
+                                </div>
+                                <div class="col p-0" style="height: 80px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 ml-2 mr-2">
+                                                    <p-skeleton width="8rem"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font col-6 related-item-catalog">
+                                                <p-skeleton width="3rem"></p-skeleton>
+                                            </span>
+                                            <span class="small_font col-6 related-item-date">
+                                                <p-skeleton width="3rem"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                    <p-panel v-if="!totalLoading">
                         <template #header>
                             <span class="text-start side-panel-header">
                                 <i class="pi iconfont icon-youxi"></i><span><strong>最新收录</strong></span>
@@ -1584,7 +1899,55 @@ const gameIndex = {
                     </p-dataview>
                 </div>
                 <div class="col-2" style="min-width: 300px">
-                    <p-panel>
+                    <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i>
+                            <span><strong>浏览排名</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList10.length != 0"
+                                 v-for="(index) of tmpList10">
+                                <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                    <div class="col-12 p-0 m-0">
+                                        <p-skeleton width="3rem" class="mt-2"></p-skeleton>
+                                    </div>
+                                    <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                        <i class="pi pi-eye mt-1 mb-1"></i><br><p-skeleton width="3rem" class="mb-1"></p-skeleton>
+                                    </span>
+                                </div>
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </div>
+                                <div class="col p-0" style="height: 90px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 mr-2">
+                                                    <p-skeleton width="8rem" class="mb-1 mt-1"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-catalog">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-date">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                    <p-panel v-if="!totalLoading">
                         <template #header>
                             <span class="text-start side-panel-header">
                                 <i class="pi iconfont icon-youxi"></i><span><strong>浏览排名</strong></span>
@@ -1679,6 +2042,10 @@ const gameIndex = {
             productSet: null,
             hasBonusSet,
             franchiseSet: [],
+
+            totalLoading: false,
+            tmpList10,
+            tmpList5,
         }
     },
     watch: {
@@ -1695,12 +2062,14 @@ const gameIndex = {
             let json = {
                 entityType: ENTITY.GAME
             };
+            this.totalLoading = true;
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
                     this.gamePlatformSet = res.gamePlatformSet;
                     this.regionSet = res.regionSet;
+                    this.totalLoading = false;
                 })
         },
         clearSearch() {
@@ -1788,6 +2157,7 @@ const gameIndex = {
         "p-dropdown": primevue.dropdown,
         "p-button": primevue.button,
         "p-divider": primevue.divider,
+        "p-skeleton": primevue.skeleton,
     }
 };
 
@@ -1868,10 +2238,49 @@ const merchIndex = {
                         </div>
                     </p-panel>
                     <br>
-                    <p-panel>
+                    <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList5.length != 0"
+                                 v-for="(index) of tmpList5">
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <a>
+                                        <p-skeleton size="4rem"></p-skeleton>
+                                    </a>
+                                </div>
+                                <div class="col p-0" style="height: 80px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 ml-2 mr-2">
+                                                    <p-skeleton width="8rem"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font col-6 related-item-catalog">
+                                                <p-skeleton width="3rem"></p-skeleton>
+                                            </span>
+                                            <span class="small_font col-6 related-item-date">
+                                                <p-skeleton width="3rem"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                    <p-panel v-if="!totalLoading">
                         <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-yinshuabaozhuang"></i><span><strong>最新收录</strong></span>
+                        <i class="pi pi-list"></i><span><strong>最新收录</strong></span>
                     </span>
                         </template>
                         <div class="grid">
@@ -1981,7 +2390,55 @@ const merchIndex = {
                     </p-dataview>
                 </div>
                 <div class="col-2" style="min-width: 300px">
-                    <p-panel>
+                    <p-panel v-if="totalLoading">
+                    <template #header>
+                        <span class="text-start side-panel-header">
+                            <i class="pi pi-list"></i>
+                            <span><strong>浏览排名</strong></span>
+                        </span>
+                    </template>
+                    <div class="grid">
+                        <span class="small_font">
+                            <div class="info_bit_small small_font grid m-0 p-0"
+                                 v-if="tmpList10.length != 0"
+                                 v-for="(index) of tmpList10">
+                                <div class="col-2 p-0 mt-2 mb-0 ml-0 mr-0 text-center">
+                                    <div class="col-12 p-0 m-0">
+                                        <p-skeleton width="3rem" class="mt-2"></p-skeleton>
+                                    </div>
+                                    <span class="col-12 p-0 m-0" style="font-size: 9px">
+                                        <i class="pi pi-eye mt-1 mb-1"></i><br><p-skeleton width="3rem" class="mb-1"></p-skeleton>
+                                    </span>
+                                </div>
+                                <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                                    <p-skeleton size="4rem"></p-skeleton>
+                                </div>
+                                <div class="col p-0" style="height: 90px">
+                                    <ul class="info_bit_small_other">
+                                        <li>
+                                            <a>
+                                                <span class="text-truncate-2 mr-2">
+                                                    <p-skeleton width="8rem" class="mb-1 mt-1"></p-skeleton>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-catalog">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span class="small_font related-item-date">
+                                                <p-skeleton width="6rem" class="mb-1"></p-skeleton>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </p-panel>
+                    <p-panel v-if="!totalLoading">
                         <template #header>
                     <span class="text-start side-panel-header">
                         <i class="pi iconfont icon-yinshuabaozhuang"></i><span><strong>浏览排名</strong></span>
@@ -2073,6 +2530,10 @@ const merchIndex = {
             hasBonusSet,
             isNotForSaleSet,
             franchiseSet: [],
+
+            totalLoading: false,
+            tmpList10,
+            tmpList5,
         }
     },
     watch: {
@@ -2089,12 +2550,14 @@ const merchIndex = {
             let json = {
                 entityType: ENTITY.MERCH
             };
+            this.totalLoading = true;
             postRequest(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
                     this.merchCategorySet = res.merchCategorySet;
                     this.regionSet = res.regionSet;
+                    this.totalLoading = false;
                 })
         },
         clearSearch() {
@@ -2183,6 +2646,7 @@ const merchIndex = {
         "p-dropdown": primevue.dropdown,
         "p-button": primevue.button,
         "p-divider": primevue.divider,
+        "p-skeleton": primevue.skeleton,
     }
 };
 

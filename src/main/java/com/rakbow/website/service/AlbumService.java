@@ -350,8 +350,8 @@ public class AlbumService {
      * 生成关联专辑信息
      *
      * @param album 专辑
-     * @return list封装的Album
      * @author rakbow
+     * @return list封装的Album
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public void generateRelatedAlbumIds(Album album) {

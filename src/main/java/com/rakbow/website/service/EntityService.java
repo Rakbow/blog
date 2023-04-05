@@ -4,9 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.SimpleSearchResult;
+import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -18,7 +16,6 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -38,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
@@ -549,32 +547,32 @@ public class EntityService {
             //刷新该实体的关联信息
             assert album != null;
             albumService.generateRelatedAlbumIds(album);
-            //刷新关联信息哩包含该实体的关联信息
+            //刷新关联信息里包含该实体的关联信息
             keys.forEach(key -> {
                 if(relatedInfoUtil.getRelatedInfo(key).contains(entityId)) {
-                    int tmpId = relatedInfoUtil.getEntityInfo(key);
-                    Album album = DataFinder.findAlbumById(entityId, albums);
+                    EntityInfo info = relatedInfoUtil.getEntityInfo(key);
+                    Album tmpAlbum = DataFinder.findAlbumById(info.getEntityId(), albums);
                     //刷新该实体的关联信息
-                    assert album != null;
-                    albumService.generateRelatedAlbumIds(album);
+                    assert tmpAlbum != null;
+                    albumService.generateRelatedAlbumIds(tmpAlbum);
                 }
             });
         }
-        if(entityType == EntityType.BOOK.getId()) {
-
-        }
-        if(entityType == EntityType.DISC.getId()) {
-
-        }
-        if(entityType == EntityType.GAME.getId()) {
-
-        }
-        if(entityType == EntityType.MERCH.getId()) {
-
-        }
-        if(entityType == EntityType.PRODUCT.getId()) {
-
-        }
+        // if(entityType == EntityType.BOOK.getId()) {
+        //
+        // }
+        // if(entityType == EntityType.DISC.getId()) {
+        //
+        // }
+        // if(entityType == EntityType.GAME.getId()) {
+        //
+        // }
+        // if(entityType == EntityType.MERCH.getId()) {
+        //
+        // }
+        // if(entityType == EntityType.PRODUCT.getId()) {
+        //
+        // }
     }
 
     //endregion

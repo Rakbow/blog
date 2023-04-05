@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +117,13 @@ public class RedisTests {
         // List<String> keys = redisUtil.keys("entity_related_item:*");
         // keys.forEach(key -> redisUtil.delete(key));
 
+        long t1 = new Timestamp(System.currentTimeMillis()).getTime();
+
         entityService.refreshEntityRelatedInfo(1, 3);
+
+        long t2 = new Timestamp(System.currentTimeMillis()).getTime();
+
+        System.out.println(t2 - t1);
 
     }
 
