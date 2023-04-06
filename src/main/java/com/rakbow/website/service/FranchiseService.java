@@ -7,6 +7,7 @@ import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
@@ -216,14 +217,9 @@ public class FranchiseService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getFranchisesByFilter(JSONObject queryParams, int userAuthority) {
+    public SearchResult getFranchisesByFilter(QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String name = filter.getJSONObject("name").getString("value");
         String nameZh = filter.getJSONObject("nameZh").getString("value");
@@ -236,7 +232,7 @@ public class FranchiseService {
         }
 
         List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
-                userAuthority > 2, sortField, sortOrder, first, row);
+                userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, userAuthority > 2);
 

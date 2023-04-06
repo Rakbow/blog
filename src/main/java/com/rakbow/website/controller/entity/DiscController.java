@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
@@ -97,12 +98,12 @@ public class DiscController {
     public String getDiscsByFilterList(@RequestBody String json, HttpServletRequest request) {
 
         JSONObject param = JSON.parseObject(json);
-        JSONObject queryParams = param.getJSONObject("queryParams");
+        QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
         String pageLabel = param.getString("pageLabel");
 
         List<DiscVOAlpha> discs = new ArrayList<>();
 
-        SearchResult searchResult = discService.getDiscsByFilterList(queryParams,
+        SearchResult searchResult = discService.getDiscsByFilterList(queryParam,
                 userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {

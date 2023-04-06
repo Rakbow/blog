@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
@@ -166,12 +167,12 @@ public class BookController {
      @ResponseBody
      public String getBooksByFilterList(@RequestBody String json, HttpServletRequest request) {
          JSONObject param = JSON.parseObject(json);
-         JSONObject queryParams = param.getJSONObject("queryParams");
+        QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
          String pageLabel = param.getString("pageLabel");
 
          List<BookVOAlpha> books = new ArrayList<>();
 
-         SearchResult searchResult = bookService.getBooksByFilter(queryParams, 
+         SearchResult searchResult = bookService.getBooksByFilter(queryParam,
                  userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
          if (StringUtils.equals(pageLabel, "list")) {

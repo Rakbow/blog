@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.product.ProductCategory;
@@ -246,14 +247,9 @@ public class ProductService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getProductsByFilter(JSONObject queryParams, int userAuthority) {
+    public SearchResult getProductsByFilter(QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String name = filter.getJSONObject("name").getString("value");
         String nameZh = filter.getJSONObject("nameZh").getString("value");
@@ -261,7 +257,7 @@ public class ProductService {
         List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
 
         List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, userAuthority > 2,
-                sortField, sortOrder, first, row);
+                param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
         int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, userAuthority > 2);
 
         return new SearchResult(total, products);

@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
@@ -197,14 +198,9 @@ public class DiscService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getDiscsByFilterList (JSONObject queryParams, int userAuthority) {
+    public SearchResult getDiscsByFilterList (QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String catalogNo = filter.getJSONObject("catalogNo").getString("value");
         String name = filter.getJSONObject("name").getString("value");
@@ -231,7 +227,7 @@ public class DiscService {
         }
 
         List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, userAuthority > 2, sortField, sortOrder,  first, row);
+                mediaFormat, limited, hasBonus, userAuthority > 2, param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
                 mediaFormat, limited, hasBonus, userAuthority > 2);

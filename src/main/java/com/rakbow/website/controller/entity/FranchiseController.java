@@ -7,6 +7,7 @@ import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
@@ -92,9 +93,9 @@ public class FranchiseController {
     public String getFranchisesByFilterList(@RequestBody String json, HttpServletRequest request) {
 
         JSONObject param = JSON.parseObject(json);
-        JSONObject queryParams = param.getJSONObject("queryParams");
+        QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
 
-        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParams,
+        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParam,
                  userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
