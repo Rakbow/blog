@@ -821,7 +821,7 @@
 
             };
 
-            const ISBNInterconvert = (label, isbn) => {
+            const ISBNInterConvert = (label, isbn) => {
                 editBlock.value = true;
                 let json = {
                     label: label,
@@ -1018,6 +1018,21 @@
                     //]]>
                 }
             };
+
+            const getRelatedBooks = () => {
+                let json = {
+                    id: detailInfo.value.id
+                };
+                postRequest(null, GET_RELATED_BOOKS, json)
+                    .then(res => {
+                        if(res.state === 1) {
+                            if (res.length !== 0) {
+                                relatedBooks.value = res.data;
+                            }
+                        }
+                    });
+            };
+
             //endregion
 
             return {
@@ -1035,7 +1050,7 @@
 
                 //edit
                 editBlock, bookEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditBook,
-                ISBNInterconvert,
+                ISBNInterconvert: ISBNInterConvert,
 
                 //authors
                 displayAuthorEditDialog, tmpAuthors, cm, author, authors, menuModel, editingRows, selectedAuthor,
