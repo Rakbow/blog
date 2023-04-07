@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.BookMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
@@ -222,14 +223,9 @@ public class BookService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getBooksByFilter(JSONObject queryParams, int userAuthority) {
+    public SearchResult getBooksByFilter(QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String title = filter.getJSONObject("title").getString("value");
         String isbn10 = filter.getJSONObject("isbn10").getString("value");
@@ -255,7 +251,7 @@ public class BookService {
         }
 
         List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, franchises, products, hasBonus, userAuthority > 2, sortField, sortOrder, first, row);
+                bookType, franchises, products, hasBonus, userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
                 bookType, franchises, products, hasBonus, userAuthority > 2);

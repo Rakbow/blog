@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.GameMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
@@ -209,14 +210,9 @@ public class GameService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getGamesByFilter(JSONObject queryParams, int userAuthority) {
+    public SearchResult getGamesByFilter(QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String name = filter.getJSONObject("name").getString("value");
         String region = filter.getJSONObject("region").getString("value");
@@ -241,7 +237,7 @@ public class GameService {
 
 
         List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
-                userAuthority > 2, sortField, sortOrder, first, row);
+                userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, userAuthority > 2);
 

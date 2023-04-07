@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.MerchMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
@@ -191,14 +192,9 @@ public class MerchService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getMerchsByFilterList(JSONObject queryParams, int userAuthority) {
+    public SearchResult getMerchsByFilterList(QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String name = filter.getJSONObject("name").getString("value");
         String barcode = filter.getJSONObject("barcode").getString("value");
@@ -221,7 +217,7 @@ public class MerchService {
         }
 
         List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
-                notForSale, userAuthority > 2, sortField, sortOrder, first, row);
+                notForSale, userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, userAuthority > 2);
 

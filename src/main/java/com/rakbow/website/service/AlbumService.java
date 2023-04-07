@@ -9,13 +9,17 @@ import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.bo.AlbumDiscBO;
 import com.rakbow.website.data.dto.AlbumDiscDTO;
 import com.rakbow.website.data.dto.AlbumTrackDTO;
+import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.common.RelatedInfoUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @Project_name: website
@@ -309,14 +310,9 @@ public class AlbumService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getAlbumsByFilter(JSONObject queryParams, int userAuthority) {
+    public SearchResult getAlbumsByFilter(QueryParams param, int userAuthority) {
 
-        JSONObject filter = queryParams.getJSONObject("filters");
-
-        String sortField = queryParams.getString("sortField");
-        int sortOrder = queryParams.getIntValue("sortOrder");
-        int first = queryParams.getIntValue("first");
-        int row = queryParams.getIntValue("rows");
+        JSONObject filter = param.getFilters();
 
         String catalogNo = filter.getJSONObject("catalogNo").getString("value");
         String name = filter.getJSONObject("name").getString("value");
@@ -336,7 +332,7 @@ public class AlbumService {
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, userAuthority > 2, sortField, sortOrder,  first, row);
+                albumFormat, mediaFormat, hasBonus, userAuthority > 2, param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = albumMapper.getAlbumRowsByFilter(catalogNo, name, franchises, products, publishFormat,
                 albumFormat, mediaFormat, hasBonus, userAuthority > 2);
