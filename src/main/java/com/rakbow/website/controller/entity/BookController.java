@@ -80,7 +80,7 @@ public class BookController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书
-        model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
+        // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/database/itemDetail/book-detail";
     }
 
@@ -244,6 +244,22 @@ public class BookController {
             String isbn = param.getString("isbn");
 
             res.data = bookService.getISBN(label, isbn);
+
+        }catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(value = "/get-related-books", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRelatedBooks(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            int id = param.getInteger("id");
+            res.data = bookService.getRelatedBooks(id);
 
         }catch (Exception e) {
             res.setErrorMessage(e);

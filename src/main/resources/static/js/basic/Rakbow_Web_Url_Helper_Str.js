@@ -50,7 +50,7 @@ const DELETE_ALBUM_URL = "/db/album/delete";
 const UPDATE_ALBUM_URL = "/db/album/update";
 const INSERT_ALBUM_URL = "/db/album/add";
 const GET_ALBUMS_URL = "/db/album/get-albums";
-
+const GET_RELATED_ALBUMS_URL = "/db/album/get-related-albums";
 const UPDATE_ALBUM_ARTISTS_URL = "/db/album/update-artists";
 const UPDATE_ALBUM_TRACK_INFO_URL = "/db/album/update-trackInfo";
 //endregion
@@ -78,6 +78,7 @@ const ADD_PRODUCT_URL = "/db/product/add";
 const UPDATE_PRODUCT_URL = "/db/product/update";
 const UPDATE_PRODUCT_ORGANIZATIONS_URL = "/db/product/update-organizations";
 const UPDATE_PRODUCT_STAFF_URL = "/db/product/update-staffs";
+const GET_RELATED_PRODUCTS_URL = "/db/product/get-related-products";
 //endregion
 
 //region disc
@@ -86,7 +87,7 @@ const DELETE_DISC_URL = "/db/disc/delete";
 const UPDATE_DISC_URL = "/db/disc/update";
 const INSERT_DISC_URL = "/db/disc/add";
 const GET_DISCS_URL = "/db/disc/get-discs";
-
+const GET_RELATED_DISCS_URL = "/db/disc/get-related-discs";
 const UPDATE_DISC_SPEC_URL = "/db/disc/update-spec";
 //endregion
 
@@ -96,6 +97,7 @@ const DELETE_BOOK_URL = "/db/book/delete";
 const UPDATE_BOOK_URL = "/db/book/update";
 const INSERT_BOOK_URL = "/db/book/add";
 const GET_BOOKS_URL = "/db/book/get-books";
+const GET_RELATED_BOOKS_URL = "/db/book/get-related-books";
 
 const BOOK_ISBN_INTERCONVERT = "/db/book/get-isbn";
 
@@ -109,7 +111,7 @@ const DELETE_MERCH_URL = "/db/merch/delete";
 const UPDATE_MERCH_URL = "/db/merch/update";
 const INSERT_MERCH_URL = "/db/merch/add";
 const GET_MERCHS_URL = "/db/merch/get-merchs";
-
+const GET_RELATED_MERCHS_URL = "/db/merch/get-related-merchs";
 const UPDATE_MERCH_SPEC_URL = "/db/merch/update-spec";
 //endregion
 
@@ -119,7 +121,7 @@ const DELETE_GAME_URL = "/db/game/delete";
 const UPDATE_GAME_URL = "/db/game/update";
 const INSERT_GAME_URL = "/db/game/add";
 const GET_GAMES_URL = "/db/game/get-games";
-
+const GET_RELATED_GAMES_URL = "/db/game/get-related-games";
 const UPDATE_GAME_ORGANIZATIONS_URL = "/db/game/update-organizations";
 const UPDATE_GAME_STAFFS_URL = "/db/game/update-staffs";
 //endregion

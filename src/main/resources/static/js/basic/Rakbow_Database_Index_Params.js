@@ -1614,7 +1614,7 @@ const discIndex = {
                 this.queryParams.first = 0;
                 this.queryParams.rows = this.itemRows;
                 this.sortKey = sortValue;
-                this.getAlbums();
+                this.getDiscs();
             } else {
                 this.queryParams.sortOrder = 1;
                 this.queryParams.sortField = value;

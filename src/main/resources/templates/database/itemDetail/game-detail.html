@@ -60,6 +60,7 @@
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/skeleton.min.js}"></script>
 
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
@@ -247,10 +248,11 @@
         <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: belong_to_panel}"></div>
             <div class="mt-2" th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
-            <p-panel class="mt-2">
+            <div class="mt-2" th:insert="~{template/item-detail-template :: index_loading_related_item_panel}"></div>
+            <p-panel class="mt-2" v-if="!relatedItemLoad">
                 <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-youxi"></i><span><strong>相关游戏</strong></span>
+                        <i class="pi pi-list"></i><span><strong>相关游戏</strong></span>
                     </span>
                 </template>
                 <div class="grid">
@@ -561,6 +563,7 @@
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 });
+                getRelatedGames();
             })
 
             //region tingle
@@ -617,7 +620,8 @@
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
-            const relatedGames = ref([[${relatedGames}]]);
+            const relatedItemLoad = ref(true);
+            const relatedGames = ref([]);
             const releaseTypeSet = ref([[${options.releaseTypeSet}]]);
             const regionSet = ref([[${options.regionSet}]]);
             const gamePlatformSet = ref([[${options.gamePlatformSet}]]);
@@ -904,6 +908,19 @@
                         }
                     })
             };
+            const getRelatedGames = () => {
+                relatedItemLoad.value = true;
+                let json = {
+                    id: detailInfo.value.id
+                }
+                postRequest(null, GET_RELATED_GAMES_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            relatedGames.value = res.data;
+                        }
+                        relatedItemLoad.value = false;
+                    });
+            };
             //endregion
 
             return {
@@ -917,7 +934,7 @@
 
                 //basic
                 game, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                gamePlatformSet, regionSet, releaseTypeSet, productSet, relatedGames, responsiveOptions,
+                gamePlatformSet, regionSet, releaseTypeSet, productSet, relatedGames, responsiveOptions, relatedItemLoad, tmpList5,
                 regionCode2NameZh,
 
                 //edit
@@ -963,6 +980,7 @@
             "p-tag": primevue.tag,
             "p-scrollpanel": primevue.scrollpanel,
             "p-scrolltop": primevue.scrolltop,
+            "p-skeleton": primevue.skeleton,
 
             "p-dynamicdialog": primevue.dynamicdialog,
         }

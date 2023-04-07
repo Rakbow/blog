@@ -50,8 +50,6 @@ public class AlbumService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private RelatedInfoUtil relatedInfoUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -347,16 +345,18 @@ public class AlbumService {
     }
 
     /**
-     * 生成关联专辑信息
+     * 获取相关联专辑
      *
-     * @param album 专辑
-     * @author rakbow
+     * @param id 专辑id
      * @return list封装的Album
+     * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void generateRelatedAlbumIds(Album album) {
+    public List<AlbumVOBeta> getRelatedAlbums(int id) {
 
         List<Album> result = new ArrayList<>();
+
+        Album album = getAlbum(id);
 
         //该专辑包含的作品id
         List<Integer> productIds = JSONObject.parseObject(album.getProducts()).getList("ids", Integer.class);
@@ -402,35 +402,8 @@ public class AlbumService {
                 result = result.subList(0, 5);
             }
         }
-        //去重
-        CommonUtil.removeDuplicateList(result);
 
-        List<Integer> ids = result.stream().map(Album::getId).collect(Collectors.toList());
-
-        relatedInfoUtil.addRelatedInfo(EntityType.ALBUM.getId(), album.getId(), ids);
-
-    }
-
-    /**
-     * 获取相关联专辑
-     *
-     * @param id 专辑id
-     * @return list封装的Album
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOBeta> getRelatedAlbums(int id) {
-
-        try {
-            List<Integer> relatedAlbumIds = relatedInfoUtil.getRelatedInfo(EntityType.ALBUM.getId(), id);
-
-            if(relatedAlbumIds.isEmpty()) {
-                return new ArrayList<>();
-            }
-            return albumVOMapper.album2VOBeta(albumMapper.getAlbums(relatedAlbumIds));
-        }catch (Exception ex) {
-            return new ArrayList<>();
-        }
+        return albumVOMapper.album2VOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     /**

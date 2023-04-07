@@ -535,45 +535,45 @@ public class EntityService {
      * @param entityType,entityId 实体类型，实体ID
      * @author rakbow
      */
-    public void refreshEntityRelatedInfo(int entityType, int entityId) {
-
-        //从redis种获取该类型的所有key
-        List<String> keys = redisUtil.keys(RedisCacheConstant.ENTITY_RELATED_ITEM + RedisCacheConstant.SPLIT + entityType + RedisCacheConstant.SPLIT + "*");
-
-        if(entityType == EntityType.ALBUM.getId()) {
-            List<Album> albums = albumMapper.getAll();
-
-            Album album = DataFinder.findAlbumById(entityId, albums);
-            //刷新该实体的关联信息
-            assert album != null;
-            albumService.generateRelatedAlbumIds(album);
-            //刷新关联信息里包含该实体的关联信息
-            keys.forEach(key -> {
-                if(relatedInfoUtil.getRelatedInfo(key).contains(entityId)) {
-                    EntityInfo info = relatedInfoUtil.getEntityInfo(key);
-                    Album tmpAlbum = DataFinder.findAlbumById(info.getEntityId(), albums);
-                    //刷新该实体的关联信息
-                    assert tmpAlbum != null;
-                    albumService.generateRelatedAlbumIds(tmpAlbum);
-                }
-            });
-        }
-        // if(entityType == EntityType.BOOK.getId()) {
-        //
-        // }
-        // if(entityType == EntityType.DISC.getId()) {
-        //
-        // }
-        // if(entityType == EntityType.GAME.getId()) {
-        //
-        // }
-        // if(entityType == EntityType.MERCH.getId()) {
-        //
-        // }
-        // if(entityType == EntityType.PRODUCT.getId()) {
-        //
-        // }
-    }
+    // public void refreshEntityRelatedInfo(int entityType, int entityId) {
+    //
+    //     //从redis种获取该类型的所有key
+    //     List<String> keys = redisUtil.keys(RedisCacheConstant.ENTITY_RELATED_ITEM + RedisCacheConstant.SPLIT + entityType + RedisCacheConstant.SPLIT + "*");
+    //
+    //     if(entityType == EntityType.ALBUM.getId()) {
+    //         List<Album> albums = albumMapper.getAll();
+    //
+    //         Album album = DataFinder.findAlbumById(entityId, albums);
+    //         //刷新该实体的关联信息
+    //         assert album != null;
+    //         albumService.generateRelatedAlbumIds(album);
+    //         //刷新关联信息里包含该实体的关联信息
+    //         keys.forEach(key -> {
+    //             if(relatedInfoUtil.getRelatedInfo(key).contains(entityId)) {
+    //                 EntityInfo info = relatedInfoUtil.getEntityInfo(key);
+    //                 Album tmpAlbum = DataFinder.findAlbumById(info.getEntityId(), albums);
+    //                 //刷新该实体的关联信息
+    //                 assert tmpAlbum != null;
+    //                 albumService.generateRelatedAlbumIds(tmpAlbum);
+    //             }
+    //         });
+    //     }
+    //     // if(entityType == EntityType.BOOK.getId()) {
+    //     //
+    //     // }
+    //     // if(entityType == EntityType.DISC.getId()) {
+    //     //
+    //     // }
+    //     // if(entityType == EntityType.GAME.getId()) {
+    //     //
+    //     // }
+    //     // if(entityType == EntityType.MERCH.getId()) {
+    //     //
+    //     // }
+    //     // if(entityType == EntityType.PRODUCT.getId()) {
+    //     //
+    //     // }
+    // }
 
     //endregion
 

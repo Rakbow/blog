@@ -82,7 +82,7 @@ public class DiscController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片
-        model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
+        // model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/database/itemDetail/disc-detail";
     }
 
@@ -207,6 +207,22 @@ public class DiscController {
 
             res.message = discService.updateDiscSpec(id, spec);
         } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(value = "/get-related-discs", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRelatedDiscs(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            int id = param.getInteger("id");
+            res.data = discService.getRelatedDiscs(id);
+
+        }catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);

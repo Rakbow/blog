@@ -59,6 +59,7 @@
     <script th:src="@{/js/primevue/components/dynamicdialog.min.js}"></script>
     <script th:src="@{/js/primevue/components/dialogservice.min.js}"></script>
     <script th:src="@{/js/primevue/components/chip.min.js}"></script>
+    <script th:src="@{/js/primevue/components/skeleton.min.js}"></script>
 
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
@@ -401,7 +402,8 @@
         <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: belong_to_panel}"></div>
             <div class="mt-2" th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
-            <p-panel class="mt-2">
+            <div class="mt-2" th:insert="~{template/item-detail-template :: index_loading_related_item_panel}"></div>
+            <p-panel class="mt-2" v-if="!relatedItemLoad">
                 <template #header>
                     <span class="text-start side-panel-header">
                         <i class="pi iconfont icon-album"></i><span><strong>相关专辑</strong></span>
@@ -823,6 +825,7 @@
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 });
+                getRelatedAlbums();
             })
 
             //region tingle
@@ -868,7 +871,8 @@
             const pageInfo = ref([[${pageInfo}]]);
             const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
-            const relatedAlbums = ref([[${relatedAlbums}]]);
+            const relatedItemLoad = ref(true);
+            const relatedAlbums = ref([]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
             const productSelect = ref(true);
@@ -1330,6 +1334,19 @@
                         }
                     })
             };
+            const getRelatedAlbums = () => {
+                relatedItemLoad.value = true;
+                let json = {
+                    id: detailInfo.value.id
+                }
+                postRequest(null, GET_RELATED_ALBUMS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            relatedAlbums.value = res.data;
+                        }
+                        relatedItemLoad.value = false;
+                    });
+            };
             //endregion
 
             // const initImageClass = (url) => {
@@ -1351,7 +1368,7 @@
 
                 //basic
                 album, like, updateStatus, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                mediaFormatSet, albumFormatSet, publishFormatSet, productSet, relatedAlbums, responsiveOptions,
+                mediaFormatSet, albumFormatSet, publishFormatSet, productSet, relatedAlbums, responsiveOptions, relatedItemLoad, tmpList5,
 
                 //edit
                 editBlock, albumEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditAlbum,
@@ -1396,7 +1413,7 @@
             "p-tag": primevue.tag,
             "p-card": primevue.card,
             "p-blockui": primevue.blockui,
-
+            "p-skeleton": primevue.skeleton,
             "p-scrollpanel": primevue.scrollpanel,
             "p-scrolltop": primevue.scrolltop,
 

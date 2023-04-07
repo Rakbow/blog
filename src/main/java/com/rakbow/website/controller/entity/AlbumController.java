@@ -86,8 +86,6 @@ public class AlbumController {
         model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album, request));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
-        //获取相关专辑
-        model.addAttribute("relatedAlbums", albumService.getRelatedAlbums(album.getId()));
 
         return "/database/itemDetail/album-detail";
     }
@@ -247,6 +245,22 @@ public class AlbumController {
 
             res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
         } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(value = "/get-related-albums", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRelatedAlbums(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            int id = param.getInteger("id");
+            res.data = albumService.getRelatedAlbums(id);
+
+        }catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);

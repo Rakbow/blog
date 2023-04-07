@@ -230,6 +230,11 @@ img.flag {
     width: 13.5rem;
 }
 
+.image-tooltip .p-tooltip-text {
+    font-size: 9px;
+    width: 13.5rem;
+}
+
 .common-tooltip .p-tooltip-text {
     font-size: 9px;
     width: 8rem;
