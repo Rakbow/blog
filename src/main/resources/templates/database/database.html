@@ -107,6 +107,10 @@
                                     </div>
                                 </template>
                             </p-dropdown>
+                            <br>
+                            <div class="text-center" v-if="searchResult == null">
+                                <a href="/db/albums">高级查询>></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,12 +158,17 @@
 <!--                    </section>-->
 <!--                </div>-->
                 <div id="search_panel_result" class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-if="searchResult != null">
-                    <div v-if="searchResult.total != 0" style="height: 600px">
-                        <div class="text-start mt-3">
-                            <span>共{{searchResult.total}}条结果</span>&nbsp;&nbsp;&nbsp;
-                            <span>查询类型: {{searchResult.entityName}}</span>&nbsp;&nbsp;&nbsp;
-                            <span>关键词: {{searchResult.keyword}}</span>&nbsp;&nbsp;&nbsp;
-                            <span>查询时间: {{searchResult.searchTime}}</span>&nbsp;&nbsp;&nbsp;
+                    <div v-if="searchResult.total != 0" style="height: 650px">
+                        <div class="formgrid grid">
+                            <div class="field col-9 text-start mt-3">
+                                <span class="ml-3">共&nbsp;<span style="color: orange">{{searchResult.total}}</span>&nbsp;条结果</span>&nbsp;&nbsp;&nbsp;
+                                <span>查询类型: <span style="color: orange">{{searchResult.entityName}}</span></span>&nbsp;&nbsp;&nbsp;
+                                <span>关键词: <span style="color: orange">{{searchResult.keyword}}</span></span>&nbsp;&nbsp;&nbsp;
+                                <span>查询时间: <span style="color: orange">{{searchResult.searchTime}}</span></span>&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="field col-3 text-end mt-3">
+                                <a class="mr-3" href="/db/albums">高级查询>></a>
+                            </div>
                         </div>
                         <p-scrollpanel style="height: 530px">
                             <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
