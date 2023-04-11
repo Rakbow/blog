@@ -202,11 +202,14 @@
                                                            style="font-size: 1.3rem"></i>
                                                         <strong>{{organization.label}}</strong>
                                                     </td>
-                                                    <td v-if="organization.special == 1" v-for="item in organization.value">
-                                                        {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
-                                                    </td>
-                                                    <td v-if="organization.special == 0" v-for="item in organization.value">
+                                                    <td v-if="organization.format == 0" v-for="item in organization.value">
                                                         {{item.name}}
+                                                    </td>
+                                                    <td v-if="organization.format == 1" v-for="item in organization.value">
+                                                        {{item.name}} <span :class="'fi fi-' + item.region"></span>
+                                                    </td>
+                                                    <td v-if="organization.format == 2" v-for="item in organization.value">
+                                                        {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(", ")}})
                                                     </td>
                                                 </tr>
                                             </div>
@@ -464,8 +467,8 @@
                 <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
                 <b>新增</b>
             </template>
-            <div class="grid">
-                <div class="col-3">
+            <div class="formgrid grid">
+                <div class="field col-4">
                     <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi pi-tag"></i>
@@ -473,7 +476,7 @@
                         <p-inputtext v-model="organization.label" placeholder="组织类型"></p-inputtext>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="field col-4">
                     <div class="p-inputgroup">
                                     <span class="p-inputgroup-addon">
                                         <i class="pi iconfont icon-gongsi"></i>
@@ -481,42 +484,60 @@
                         <p-inputtext v-model="organizationItem.name" placeholder="组织名称"></p-inputtext>
                     </div>
                 </div>
-                <div class="col-6" v-if="organization.special == 1">
-                    <div class="col-3">
-                        <p-dropdown v-model="organizationItem.region" :options="regionSet" :filter="true"
-                                    :show-clear="true" option-label="nameZh" option-value="code">
-                            <template #value="slotProps">
-                                <div class="country-item" v-if="slotProps.value">
-                                    <span :class="'fi fi-' + slotProps.value"></span>
-                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
-                                </div>
-                                <span v-else>选择地区</span>
-                            </template>
-                            <template #option="slotProps">
-                                <div class="country-item">
-                                    <span :class="'fi fi-' + slotProps.option.code"></span>
-                                    <div class="ml-2">{{slotProps.option.nameZh}}</div>
-                                </div>
-                            </template>
-                        </p-dropdown>
-                    </div>
-                    <div class="col-3">
-                        <p-multiselect v-model="organizationItem.platforms" :options="platformSet"
-                                       placeholder="所属平台" option-label="labelEn" option-value="labelEn"
-                                       display="chip" :filter="true">
-                        </p-multiselect>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <span>是否特殊项</span><p-inputswitch v-model="organization.special" :true-value="1" :false-value="0"></p-inputswitch>
-                </div>
-                <div class="col-2">
-                    <p-button label="新增组织成员" icon="pi pi-save"
+                <div class="field col-2">
+                    <p-button label="新增单项" icon="pi pi-save"
                               @click="addOrganizationItem"></p-button>
                 </div>
-                <div class="col-2">
+                <div class="field col-2">
                     <p-button label="新增组织" icon="pi pi-save"
                               @click="addOrganization"></p-button>
+                </div>
+                <div class="field col-4">
+                    <p-dropdown v-model="organization.format" :options="PRODUCT_ORGANIZATION_FORMAT" option-label="label"
+                                option-value="value"></p-dropdown>
+                    <!--                    <p-inputswitch v-model="organization.special" :true-value="1" :false-value="0"></p-inputswitch>-->
+                </div>
+                <div class="field col-4" v-if="organization.format == 1">
+                    <p-dropdown v-model="organizationItem.region" :options="regionSet" :filter="true"
+                                :show-clear="true" option-label="nameZh" option-value="code">
+                        <template #value="slotProps">
+                            <div class="country-item" v-if="slotProps.value">
+                                <span :class="'fi fi-' + slotProps.value"></span>
+                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            </div>
+                            <span v-else>选择地区</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="country-item">
+                                <span :class="'fi fi-' + slotProps.option.code"></span>
+                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            </div>
+                        </template>
+                    </p-dropdown>
+                </div>
+                <div class="field col-4" v-if="organization.format == 2">
+                    <p-dropdown v-model="organizationItem.region" :options="regionSet" :filter="true"
+                                :show-clear="true" option-label="nameZh" option-value="code">
+                        <template #value="slotProps">
+                            <div class="country-item" v-if="slotProps.value">
+                                <span :class="'fi fi-' + slotProps.value"></span>
+                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            </div>
+                            <span v-else>选择地区</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="country-item">
+                                <span :class="'fi fi-' + slotProps.option.code"></span>
+                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            </div>
+                        </template>
+                    </p-dropdown>
+                </div>
+                <div class="field col-4" v-if="organization.format == 2">
+                    <p-multiselect v-model="organizationItem.platforms" :options="platformSet"
+                                   placeholder="所属平台" option-label="labelEn" option-value="labelEn"
+                                   display="chip" :filter="true">
+                    </p-multiselect>
                 </div>
             </div>
         </p-panel>
@@ -539,17 +560,24 @@
                     </p-column>
                     <p-column field="value" header="组织">
                         <template #body="slotProps">
-                            <div v-if="slotProps.data.special == 1">
+                            <div v-if="slotProps.data.format == 0">
+                                <div v-for="item in slotProps.data.value" style="display:inline">
+                                    {{item.name}}
+                                </div>
+                            </div>
+                            <div v-if="slotProps.data.format == 1">
+                                <ul class="px-4">
+                                    <li v-for="item in slotProps.data.value">
+                                        {{item.name}} <span :class="'fi fi-' + item.region"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div v-if="slotProps.data.format == 2">
                                 <ul class="px-4">
                                     <li v-for="item in slotProps.data.value">
                                         {{item.name}} (<span :class="'fi fi-' + item.region"></span>,{{item.platforms.join(",")}})
                                     </li>
                                 </ul>
-                            </div>
-                            <div v-else>
-                                <div v-for="item in slotProps.data.value" style="display:inline">
-                                    {{item.name}}
-                                </div>
                             </div>
                         </template>
                     </p-column>
@@ -759,7 +787,9 @@
 
             const openOrganizationEditDialog = () => {
                 tmpOrganizations.value = JSON.parse(JSON.stringify(product.value.organizations));
-                organization.value = {};
+                organization.value = {
+                    format: 0
+                };
                 displayOrganizationEditDialog.value = true;
             };
             const clearOrganizations = () => {
@@ -774,8 +804,8 @@
                 organizationItem.value = {};
             };
             const addOrganization = () => {
-                if (organization.value.special === null || organization.value.special === undefined) {
-                    organization.value.special = 0;
+                if (organization.value.format === null || organization.value.format === undefined) {
+                    organization.value.format = 0;
                 }
                 tmpOrganizations.value.push(organization.value);
                 organization.value = {};
@@ -987,7 +1017,7 @@
                 albums, books, discs, games,
                 product, updateStatus, like, pageInfo, detailInfo, itemImageInfo, franchiseSet,
                 platformSet, regionSet, productCategorySet, relatedProducts, responsiveOptions, regionCode2NameZh,
-                relatedItemLoad, tmpList5,
+                relatedItemLoad, tmpList5, PRODUCT_ORGANIZATION_FORMAT,
 
                 //edit
                 editBlock, productEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,

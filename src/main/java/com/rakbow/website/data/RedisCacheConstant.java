@@ -31,7 +31,7 @@ public class RedisCacheConstant {
     public static final String MERCH_CATEGORY_SET = OPTIONS + SPLIT + "merchCategorySet";
     public static final String AUDIO_TYPE_SET = OPTIONS + SPLIT + "audioTypeSet";
     public static final String PRODUCT_CATEGORY_SET = OPTIONS + SPLIT + "productCategorySet";
-    public static final String PLATFORM_SET = OPTIONS + SPLIT + "platformSet";
+    public static final String PLATFORM_SET = OPTIONS + SPLIT + "gamePlatformSet";
     public static final String FRANCHISE_SET = OPTIONS + SPLIT + "franchiseSet";
     public static final String PRODUCT_SET = OPTIONS + SPLIT + "productSet";
     //endregion

@@ -160,6 +160,12 @@ const ENTITY_TYPE = [
     // {label: '文章', labelEn: 'Article', value: '8', icon: 'pi pi-bars'}
 ];
 
+const PRODUCT_ORGANIZATION_FORMAT = [
+    {label: '名称(默认)', value: 0},
+    {label: '名称/地区', value: 1},
+    {label: '名称/地区/平台', value: 2}
+];
+
 const NOT_LOGIN_NAVBAR_ITEMS = [
     {
         label: '首页', icon: 'pi pi-fw pi-home', url: "/"

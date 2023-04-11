@@ -119,7 +119,7 @@ public class RedisTests {
 
         long t1 = new Timestamp(System.currentTimeMillis()).getTime();
 
-        entityService.refreshEntityRelatedInfo(1, 3);
+
 
         long t2 = new Timestamp(System.currentTimeMillis()).getTime();
 
