@@ -60,6 +60,7 @@
     <script th:src="@{/js/primevue/components/menubar.min.js}"></script>
     <script th:src="@{/js/primevue/components/avatar.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/skeleton.min.js}"></script>
 
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
@@ -359,10 +360,11 @@
         </div>
         <div class="col-2" style="min-width: 300px">
             <div th:insert="~{template/item-detail-template :: sider_image_panel}"></div>
-            <p-panel class="mt-2" v-if="product.id != 0">
+            <div class="mt-2" th:insert="~{template/item-detail-template :: index_loading_related_item_panel}"></div>
+            <p-panel class="mt-2" v-if="product.id != 0 && !relatedItemLoad">
                 <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-_classification"></i><span><strong>相关作品</strong></span>
+                        <i class="pi pi-list"></i><span><strong>相关作品</strong></span>
                     </span>
                 </template>
                 <div class="grid">
@@ -668,6 +670,7 @@
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 });
+                getRelatedProducts();
             });
 
             //region tingle
@@ -710,7 +713,8 @@
             const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
-            const relatedProducts = ref([[${relatedProducts}]]);
+            const relatedItemLoad = ref(true);
+            const relatedProducts = ref([]);
             const productCategorySet = ref([[${options.productCategorySet}]]);
             const platformSet = ref([[${options.platformSet}]]);
             const regionSet = ref([[${options.regionSet}]]);
@@ -955,6 +959,19 @@
                     document.getElementById("description").innerHTML = marked.parse(description);
                 }
             };
+            const getRelatedProducts = () => {
+                relatedItemLoad.value = true;
+                let json = {
+                    id: detailInfo.value.id
+                }
+                postRequest(null, GET_RELATED_PRODUCTS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            relatedProducts.value = res.data;
+                        }
+                        relatedItemLoad.value = false;
+                    });
+            };
             //endregion
 
             return {
@@ -970,6 +987,7 @@
                 albums, books, discs, games,
                 product, updateStatus, like, pageInfo, detailInfo, itemImageInfo, franchiseSet,
                 platformSet, regionSet, productCategorySet, relatedProducts, responsiveOptions, regionCode2NameZh,
+                relatedItemLoad, tmpList5,
 
                 //edit
                 editBlock, productEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditProduct,

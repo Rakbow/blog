@@ -154,7 +154,7 @@
                         <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                              draggable="false"
                              oncontextmenu="return false"
-                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime + ' 提交者 ' + image.uploadUser, class: 'time-tooltip'}"
+                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime + ' 提交者 ' + image.uploadUser, class: 'image-tooltip'}"
                              @click="imageClick(index)"/>
                     </div>
             </div>
@@ -325,4 +325,46 @@
     <div class="item_status_edit" th:if="${loginUser.type > 2 || loginUser.type == 0}">
         <p-inputswitch v-model="detailInfo.status" @click="updateStatus"></p-inputswitch>
     </div>
+</div>
+
+<div th:fragment="index_loading_related_item_panel">
+    <p-panel v-if="relatedItemLoad">
+        <template #header>
+            <span class="text-start side-panel-header">
+                <i class="pi pi-list"></i><span><strong>相关信息</strong></span>
+            </span>
+        </template>
+        <div class="grid">
+            <span class="small_font">
+                <div class="info_bit_small small_font grid m-0 p-0"
+                     v-if="tmpList5.length != 0"
+                     v-for="(index) of tmpList5">
+                    <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
+                        <a>
+                            <p-skeleton size="4rem"></p-skeleton>
+                        </a>
+                    </div>
+                    <div class="col p-0" style="height: 80px">
+                        <ul class="info_bit_small_other">
+                            <li>
+                                <a>
+                                    <span class="text-truncate-2 ml-2 mr-2">
+                                        <p-skeleton width="8rem"></p-skeleton>
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <span class="small_font col-6 related-item-catalog">
+                                    <p-skeleton width="3rem"></p-skeleton>
+                                </span>
+                                <span class="small_font col-6 related-item-date">
+                                    <p-skeleton width="3rem"></p-skeleton>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </span>
+        </div>
+    </p-panel>
 </div>

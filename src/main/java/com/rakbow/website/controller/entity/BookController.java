@@ -81,13 +81,13 @@ public class BookController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书
-//        model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
+        // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/database/itemDetail/book-detail";
     }
 
     //endregion
 
-    //region ------CRUD------
+    //region ------增删改查------
 
     //新增图书
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -251,8 +251,6 @@ public class BookController {
         }
         return JSON.toJSONString(res);
     }
-
-    //get related data
 
     @RequestMapping(value = "/get-related-books", method = RequestMethod.POST)
     @ResponseBody

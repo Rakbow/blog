@@ -81,7 +81,7 @@ public class MerchController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(merch.getImages(), 200, EntityType.MERCH, false));
         //获取相关周边
-        model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
+        // model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
         return "/database/itemDetail/merch-detail";
     }
 
@@ -200,6 +200,22 @@ public class MerchController {
 
             res.message = merchService.updateMerchSpec(id, spec);
         } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(value = "/get-related-merchs", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRelatedMerchs(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            int id = param.getInteger("id");
+            res.data = merchService.getRelatedMerchs(id);
+
+        }catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);

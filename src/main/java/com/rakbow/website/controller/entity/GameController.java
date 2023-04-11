@@ -82,7 +82,7 @@ public class GameController {
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, EntityType.GAME, false));
         //获取相关游戏
-        model.addAttribute("relatedGames", gameService.getRelatedGames(id));
+        // model.addAttribute("relatedGames", gameService.getRelatedGames(id));
         return "/database/itemDetail/game-detail";
     }
 
@@ -217,6 +217,22 @@ public class GameController {
 
             res.message = gameService.updateGameStaffs(id, staffs);
         } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(value = "/get-related-games", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRelatedGames(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            int id = param.getInteger("id");
+            res.data = gameService.getRelatedGames(id);
+
+        }catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);

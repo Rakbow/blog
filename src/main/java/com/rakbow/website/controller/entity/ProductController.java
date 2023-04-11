@@ -80,7 +80,7 @@ public class ProductController {
         model.addAttribute("product", productVOMapper.product2VO(product));
         //前端选项数据
         model.addAttribute("options", entityUtils.getDetailOptions(EntityType.PRODUCT.getId()));
-        model.addAttribute("relatedProducts", productService.getRelatedProducts(id));
+        // model.addAttribute("relatedProducts", productService.getRelatedProducts(id));
 
         if (product.getCategory() == ProductCategory.ANIMATION.getIndex()
                 || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getIndex()
@@ -242,6 +242,22 @@ public class ProductController {
         result.put("total", searchResult.total);
 
         return JSON.toJSONString(result);
+    }
+
+    @RequestMapping(value = "/get-related-products", method = RequestMethod.POST)
+    @ResponseBody
+    public String getRelatedProducts(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+
+            JSONObject param = JSON.parseObject(json);
+            int id = param.getInteger("id");
+            res.data = productService.getRelatedProducts(id);
+
+        }catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
     }
 
     //endregion
