@@ -125,7 +125,7 @@
 
     <select id="simpleSearchCount" resultType="int">
         select count(id)
-        from album
+        from music
         where
         (
         name like concat('%', #{keyWorld}, '%')

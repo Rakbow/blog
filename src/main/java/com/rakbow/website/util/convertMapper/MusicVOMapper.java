@@ -11,6 +11,7 @@ import com.rakbow.website.data.vo.music.MusicVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -144,10 +145,15 @@ public interface MusicVOMapper {
         musicVOBeta.setId(music.getId());
         musicVOBeta.setName(music.getName());
         musicVOBeta.setNameEn(music.getNameEn());
-//        musicVOBeta.setArtists();
-
+        musicVOBeta.setArtists(MusicUtil.getArtists(music));
+        musicVOBeta.setAudioType(AudioType.getNameByIndex(music.getAudioType()));
+        musicVOBeta.setAudioLength(music.getAudioLength());
+        musicVOBeta.setHasLrc(MusicUtil.hasLrc(music));
+        musicVOBeta.setHasFile(MusicUtil.hasFile(music));
 
         assert album != null;
+        musicVOBeta.setAlbumId(music.getAlbumId());
+        musicVOBeta.setAlbumName(album.getName());
         musicVOBeta.setCover(QiniuImageUtil.getThumb70Url(album.getImages()));
 
         musicVOBeta.setVisitCount(visitUtil.getVisit(EntityType.MUSIC.getId(), music.getId()));

@@ -157,7 +157,8 @@ const ENTITY_TYPE = [
     {label: '游戏', labelEn: 'Game', value: '5', icon: 'pi iconfont icon-youxi'},
     // {label: '系列', labelEn: 'Franchise', value: '6', icon: 'pi pi-bookmark'},
     // {label: '作品', labelEn: 'Product', value: '7', icon: 'pi pi-th-large'},
-    // {label: '文章', labelEn: 'Article', value: '8', icon: 'pi pi-bars'}
+    // {label: '文章', labelEn: 'Article', value: '8', icon: 'pi pi-bars'},
+    {label: '音乐', labelEn: 'Music', value: '9', icon: 'pi iconfont icon-music'}
 ];
 
 const PRODUCT_ORGANIZATION_FORMAT = [

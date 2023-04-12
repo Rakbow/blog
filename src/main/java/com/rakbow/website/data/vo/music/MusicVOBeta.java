@@ -17,7 +17,9 @@ public class MusicVOBeta {
     private int id;//主键编号
     private String name;//曲名（原文）
     private String nameEn;//曲名（英文）
-    private String[] artists;//作者信息
+    private String artists;//
+    private int albumId;//所属专辑id
+    private String albumName;//所属专辑名
     private String audioType;//音频类型
     private String cover;// 封面图片url
     private String audioLength;// 音频长度

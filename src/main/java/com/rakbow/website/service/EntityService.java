@@ -93,6 +93,7 @@ public class EntityService {
         add(EntityType.DISC.getId());
         add(EntityType.GAME.getId());
         add(EntityType.MERCH.getId());
+        add(EntityType.MUSIC.getId());
     }};
 
     //endregion
@@ -515,13 +516,16 @@ public class EntityService {
                 res.setTotal(merchMapper.simpleSearchCount(keyword));
             }
         }
-//        if(entityType == EntityType.MUSIC.getId()) {
-//            List<Music> musics = musicMapper.simpleSearch(keyword, limit, offset);
-//            if(!musics.isEmpty()) {
-//                res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));
-//                res.setTotal(musicMapper.simpleSearchCount(keyword));
-//            }
-//        }
+       if(entityType == EntityType.MUSIC.getId()) {
+           List<Music> musics = musicMapper.simpleSearch(keyword, limit, offset);
+           if(!musics.isEmpty()) {
+
+               List<Album> albums = albumMapper.getAlbums(MusicUtil.getAlbumIds(musics));
+
+               res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics, albums))));
+               res.setTotal(musicMapper.simpleSearchCount(keyword));
+           }
+       }
         return res;
     }
 

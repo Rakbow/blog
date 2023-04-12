@@ -349,6 +349,45 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
+                            <div v-if="searchResult.entityType == 9" v-for="result of searchResult.data">
+                                <div class="col-12">
+                                    <div class="search-item">
+                                        <a class="text-center" :href="'/db/music/'+ result.id">
+                                            <img :src="result.cover"/>
+                                        </a>
+                                        <div class="search-item-detail">
+                                            <span class="search-item-name text-truncate-1">
+                                                <a :href="'/db/music/'+ result.id">{{result.name}}</a>
+                                            </span>
+                                            <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                                {{result.audioLength}}<span
+                                            class="label">&nbsp<b class="label">{{result.artists}}</b></span>
+                                            </span><br/>
+                                            <span class="search-item-name text-truncate-1">
+                                                <a :href="'/db/album/'+ result.albumId"><i>{{result.albumName}}</i></a>
+                                            </span>
+                                            <span class="grid">
+                                                <span class="text-start col-6">
+                                                    <p-tag class="product-tag ml-1" :value="result.audioType" style="display:inline"></p-tag>
+                                                    &nbsp&nbsp<i class="pi pi-paperclip" v-if="result.hasFile"
+                                                       v-tooltip.bottom="{value:'附件', class: 'short-tooltip'}"></i>
+                                                    &nbsp&nbsp<i class="pi pi-file" v-if="result.hasLrc"
+                                                       v-tooltip.bottom="{value:'歌词', class: 'short-tooltip'}"></i>
+                                                </span>
+                                                <span class="text-end col-5">
+                                                    <i class="pi pi-eye"
+                                                       v-tooltip.bottom="{value:'浏览', class: 'short-tooltip'}"></i>
+                                                    <span class="ml-2 mr-4">{{result.visitCount}}</span>
+                                                    <i class="pi pi-thumbs-up-fill"
+                                                       v-tooltip.bottom="{value:'点赞', class: 'short-tooltip'}"></i>
+                                                    <span class="ml-2 mr-2">{{result.likeCount}}</span>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
                             <p-scrolltop target="parent" :threshold="100" class="search-scrolltop"
                                          icon="pi pi-arrow-up"></p-scrolltop>
                         </p-scrollpanel>

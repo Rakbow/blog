@@ -1,6 +1,7 @@
 package com.rakbow.website;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.AlbumService;
@@ -32,6 +33,8 @@ public class otherTests {
     private AlbumService albumService;
     @Resource
     private MusicService musicService;
+    @Resource
+    private MusicMapper musicMapper;
 
     @Test
     public void tmpTest() {
@@ -41,9 +44,7 @@ public class otherTests {
 
     @Test
     public void tmpTest1() {
-        Music music = musicService.getMusic(93);
-
-        System.out.println(MusicUtil.getArtists(music));
+        MusicUtil.getAlbumIds(musicMapper.getAll()).forEach(System.out::println);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.rakbow.website;
 
 import com.rakbow.website.dao.*;
+import com.rakbow.website.data.SimpleSearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
@@ -26,7 +27,7 @@ class WebSiteApplicationTests {
     @Autowired
     private AlbumService albumService;
     @Autowired
-    private BookService bookService;
+    private EntityService entityService;
     @Autowired
     private MusicService musicService;
     @Autowired
@@ -206,6 +207,12 @@ class WebSiteApplicationTests {
             entityStatistic.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), music.getId()));
             statisticMapper.addStatistic(entityStatistic);
         });
+    }
+
+    @Test
+    public void searchTest() {
+        SimpleSearchResult result = entityService.simpleSearch("ひぐらし", 9, 0, 10);
+        System.out.println(result.data);
     }
 
 }

@@ -11,7 +11,10 @@ import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Project_name: website
@@ -125,6 +128,38 @@ public class MusicUtil {
             }
         }
         return "unknown";
+    }
+
+    /**
+     * 判断该音频信息是否包含附件
+     * @author rakbow
+     * @param music 音乐
+     * */
+    public static boolean hasFile(Music music) {
+        JSONArray files = JSONArray.parseArray(music.getFiles());
+        return files.size() != 0;
+    }
+
+    /**
+     * 判断该音频信息是否有歌词
+     * @author rakbow
+     * @param music 音乐
+     * */
+    public static boolean hasLrc(Music music) {
+        return !StringUtils.isBlank(music.getLrcText());
+    }
+
+    /**
+     * 获取所属专辑ids
+     * @author rakbow
+     * @param musics 音乐
+     * */
+    public static List<Integer> getAlbumIds(List<Music> musics) {
+        Set<Integer> tmpIds = new HashSet<>();
+
+        musics.forEach(music -> tmpIds.add(music.getAlbumId()));
+
+        return new ArrayList<>(tmpIds);
     }
 
 }
