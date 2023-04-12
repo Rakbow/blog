@@ -48,6 +48,11 @@
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
 
+    <!-- index -->
+    <script th:src="@{/js/index/webfont.js}"></script>
+    <link href="https://use.typekit.net/odx1odf.css" rel="stylesheet">
+    <link th:href="@{/css/index/base.css}" rel="stylesheet">
+
     <!-- Jquery -->
     <script th:src="@{/js/jquery.js}"></script>
 
@@ -70,10 +75,6 @@
 <!--    <script th:src="@{/tool/fullpage/fullpage.min.js}"></script>-->
     <script th:src="@{/tool/fullpage/fullpage.extensions.min.js}"></script>
     <link th:href="@{/tool/fullpage/fullpage.min.css}" rel="stylesheet"/>
-
-    <!-- swiper -->
-        <script th:src="@{/tool/swiper/swiper-bundle.min.js}"></script>
-    <link th:href="@{/tool/swiper/swiper-bundle.min.css}" rel="stylesheet"/>
 </head>
 <body>
 <div id="app">
@@ -82,6 +83,22 @@
 
     <div id="index">
         <div class="section" id="section0">
+            <div class="frame" style="top: 0">
+                <h1 class="frame__pagetitle">搜索</h1>
+                <div class="frame__header">
+                    <!--                        <h2 class="frame__title">Background Scale Hover Effect</h2>-->
+                    <nav class="frame__nav">
+                        <a href="/">首页</a>
+                        <a href="">article</a>
+                        <a href="">github</a>
+                    </nav>
+                </div>
+                <span class="frame__menu">Menu</span>
+                <div class="frame__demos">
+                    <a href="#search" class="frame__demo frame__demo--current">搜索</a>
+                    <a href="#overview" class="frame__demo">总览</a>
+                </div>
+            </div>
             <div class="flex align-items-center justify-content-center flex-wrap card-container">
                 <div id="search_panel_top" class="p-2 shadow-2 border-round w-full lg:w-6"
                      style="min-width: 900px;background-color: rgba(0,0,0,0.2)">
@@ -114,49 +131,6 @@
                         </div>
                     </div>
                 </div>
-<!--                <div id="search_panel_bottom" class="p-2 w-full lg:w-6" style="min-width: 910px;background-color: rgba(0,0,0,0)"-->
-<!--                     v-if="searchResult == null">-->
-<!--                    <section class="network-data">-->
-<!--                        <div class="wrapper-lg">-->
-<!--                            <div class="network-data_stats">-->
-<!--                                <div class="network-data_stats_item">-->
-<!--                                    <img width="80" height="80" src="/img/tmp/svg/1.svg">-->
-<!--                                    <div class="network-data_stats_item_green">-->
-<!--                                        <span>815</span>-->
-<!--                                        <span>收录数据</span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <div class="network-data_stats_item">-->
-<!--                                    <img width="80" height="80" src="/img/tmp/svg/2.svg">-->
-<!--                                    <div class="network-data_stats_item_green">-->
-<!--                                        <span>99.46%</span>-->
-<!--                                        <span>信息完整度</span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--&lt;!&ndash;                                <div class="network-data_stats_item">&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <img width="80" height="80" src="/img/tmp/svg/3.svg">&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <div class="network-data_stats_item_regular">&ndash;&gt;-->
-<!--&lt;!&ndash;                                        <span>86 334</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        <span>requests per second</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--                                <div class="network-data_stats_item">-->
-<!--                                    <img width="80" height="80" src="/img/tmp/svg/4.svg">-->
-<!--                                    <div class="network-data_stats_item_regular">-->
-<!--                                        <span>10GB+</span>-->
-<!--                                        <span>数据配图</span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="btn-link-to">-->
-<!--                                <a class="btn-arrow" href="/db/albums">-->
-<!--                                    <span>高级搜索</span>-->
-<!--                                    <img width="20" height="20" src="/img/tmp/svg/arrow-right.svg">-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </section>-->
-<!--                </div>-->
                 <div id="search_panel_result" class="p-2 w-full lg:w-6" style="min-width: 900px;background-color: rgba(0,0,0,0.2)" v-if="searchResult != null">
                     <div v-if="searchResult.total != 0" style="height: 650px">
                         <div class="formgrid grid">
@@ -393,266 +367,78 @@
             </div>
         </div>
         <div class="section" id="section1">
-            <div class="slide slide-tmp" id="slide1">
-                <div class="px-4 md:px-6 lg:px-8" style="background-color: rgba(0,0,0,0)">
-                    <div class="text-700 text-center">
-<!--                        <div class="text-blue-600 font-bold mb-3"><i class="pi iconfont icon-album"></i>&nbsp;POWERED BY RAKBOW</div>-->
-                        <div class="text-900 font-bold text-5xl mb-3">专辑</div>
-                        <div class="text-700 text-2xl mb-5">收录动画游戏等作品衍生出的音乐专辑、原声带和广播剧等影像音频出版物</div>
-                        <p-button label="详情" icon="pi iconfont icon-album" @click.native="goItemDb('/db/albums')"
-                                  class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
+            <div class="demo-4 loading index_page_2">
+                <div class="frame">
+                    <h1 class="frame__pagetitle">总览</h1>
+                    <div class="frame__header">
+<!--                        <h2 class="frame__title">Background Scale Hover Effect</h2>-->
+                        <nav class="frame__nav">
+                            <a href="/">首页</a>
+                            <a href="">article</a>
+                            <a href="">github</a>
+                        </nav>
+                    </div>
+                    <span class="frame__menu">Menu</span>
+                    <div class="frame__demos">
+                        <a href="#search" class="frame__demo">搜索</a>
+                        <a href="#overview" class="frame__demo frame__demo--current">总览</a>
                     </div>
                 </div>
-                <div class="swiper swiper_1 swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
-                    <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" aria-live="polite">
-                        <div class="swiper-slide" role="group" aria-label="1 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -2;">
-                            <img :src="indexCoverUrl.album[0]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -1;">
-                            <img :src="indexCoverUrl.album[1]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(100deg) scale(1); z-index: 0;">
-                            <img :src="indexCoverUrl.album[2]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 1;">
-                            <img :src="indexCoverUrl.album[3]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="5 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 200px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 2;">
-                            <img :src="indexCoverUrl.album[4]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
+                <div class="screens" aria-hidden="true">
+                    <div class="screen__item" style="--bg-img:url('/img/tmp/12.jpg');">
+                        <div class="screen screen--full"></div>
+                        <div class="screen screen--clip screen--clip-1"></div>
+                        <div class="screen screen--clip screen--clip-2"></div>
+                        <div class="screen screen--clip screen--clip-3"></div>
                     </div>
-                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
+                    <div class="screen__item" style="--bg-img:url('/img/tmp/13.jpg');">
+                        <div class="screen screen--full"></div>
+                        <div class="screen screen--clip screen--clip-1"></div>
+                        <div class="screen screen--clip screen--clip-2"></div>
+                        <div class="screen screen--clip screen--clip-3"></div>
                     </div>
-                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
-            </div>
-            <div class="slide" id="slide2">
-                <div class="px-4 py-4 md:px-6 lg:px-8" style="background-color: rgba(0,0,0,0)">
-                    <div class="text-700 text-center">
-                        <div class="text-900 font-bold text-5xl mb-3">图书</div>
-                        <div class="text-700 text-2xl mb-5">收录各系列衍生出的小说、漫画、设定集和艺术集等纸质出版物</div>
-                        <p-button label="详情" icon="pi iconfont icon-book" @click.native="goItemDb('/db/books')"
-                                  class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
+                    <div class="screen__item" style="--bg-img:url('/img/tmp/14.jpg');">
+                        <div class="screen screen--full"></div>
+                        <div class="screen screen--clip screen--clip-1"></div>
+                        <div class="screen screen--clip screen--clip-2"></div>
+                        <div class="screen screen--clip screen--clip-3"></div>
+                    </div>
+                    <div class="screen__item" style="--bg-img:url('/img/tmp/15.jpg');">
+                        <div class="screen screen--full"></div>
+                        <div class="screen screen--clip screen--clip-1"></div>
+                        <div class="screen screen--clip screen--clip-2"></div>
+                        <div class="screen screen--clip screen--clip-3"></div>
+                    </div>
+                    <div class="screen__item" style="--bg-img:url('/img/tmp/16.jpg');">
+                        <div class="screen screen--full"></div>
+                        <div class="screen screen--clip screen--clip-1"></div>
+                        <div class="screen screen--clip screen--clip-2"></div>
+                        <div class="screen screen--clip screen--clip-3"></div>
                     </div>
                 </div>
-                <div class="swiper swiper_2 swiper-cards swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
-                    <div class="swiper-wrapper" aria-live="polite" style="cursor: grab;">
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-active"
-                             :style="'background-image:url(' + indexCoverUrl.book[0] + ');'"
-                             style="z-index: 5; transform: translate3d(0px, 0px, 0px) rotateZ(0deg) scale(1);"
-                             role="group" aria-label="1 / 5">
-                            <div class="swiper-slide-shadow" style="opacity: 0;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-next"
-                             :style="'background-image:url(' + indexCoverUrl.book[1] + ');'"
-                             style="z-index: 4; transform: translate3d(calc(-240px + 7.25%), 0px, -100px) rotateZ(2deg) scale(1);"
-                             role="group" aria-label="2 / 5">
-                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
-                        </div>
-                        <div class="swiper-slide"
-                             :style="'background-image:url(' + indexCoverUrl.book[2] + ');'"
-                             style="z-index: 3; transform: translate3d(calc(-480px + 13%), 0px, -200px) rotateZ(4deg) scale(1);"
-                             role="group" aria-label="3 / 5">
-                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
-                        </div>
-                        <div class="swiper-slide"
-                             :style="'background-image:url(' + indexCoverUrl.book[3] + ');'"
-                             style="z-index: 2; transform: translate3d(calc(-720px + 17.25%), 0px, -300px) rotateZ(6deg) scale(1);"
-                             role="group" aria-label="4 / 5">
-                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
-                        </div>
-                        <div class="swiper-slide"
-                             :style="'background-image:url(' + indexCoverUrl.book[4] + ');'"
-                             style="z-index: 1; transform: translate3d(calc(-960px + 20%), 0px, -400px) rotateZ(8deg) scale(1);"
-                             role="group" aria-label="5 / 5">
-                            <div class="swiper-slide-shadow" style="opacity: 1;"></div>
-                        </div>
-                    </div>
-                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
-            </div>
-            <div class="slide slide-tmp" id="slide3">
-                <div class="px-4 md:px-6 lg:px-8" style="background-color: rgba(0,0,0,0)">
-                    <div class="text-700 text-center">
-                        <div class="text-900 font-bold text-5xl mb-3">DVD/Blu-ray</div>
-                        <div class="text-700 text-2xl mb-5">收录各作品衍生出的DVD和蓝光碟片等影像出版物</div>
-                        <p-button label="详情" icon="pi iconfont icon-video-disc" @click.native="goItemDb('/db/discs')"
-                                  class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
-                    </div>
-                </div>
-                <div class="swiper swiper_3 swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
-                    <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" aria-live="polite">
-                        <div class="swiper-slide" role="group" aria-label="1 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -2;">
-                                <img :src="indexCoverUrl.disc[0]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -1;">
-                            <img :src="indexCoverUrl.disc[1]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(100deg) scale(1); z-index: 0;">
-                            <img :src="indexCoverUrl.disc[2]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 1;">
-                            <img :src="indexCoverUrl.disc[3]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="5 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 200px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 2;">
-                            <img :src="indexCoverUrl.disc[4]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                    </div>
-                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
-            </div>
-            <div class="slide slide-tmp" id="slide4">
-                <div class="px-4 md:px-6 lg:px-8" style="background-color: rgba(0,0,0,0)">
-                    <div class="text-700 text-center">
-                        <div class="text-900 font-bold text-5xl mb-3">游戏</div>
-                        <div class="text-700 text-2xl mb-5">收录各种游戏的实体版信息</div>
-                        <p-button label="详情" icon="pi iconfont icon-youxi" @click.native="goItemDb('/db/games')"
-                                  class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
-                    </div>
-                </div>
-                <div class="swiper swiper_4 swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
-                    <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" aria-live="polite">
-                        <div class="swiper-slide" role="group" aria-label="1 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -2;">
-                            <img :src="indexCoverUrl.game[0]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -1;">
-                            <img :src="indexCoverUrl.game[1]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(100deg) scale(1); z-index: 0;">
-                            <img :src="indexCoverUrl.game[2]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 1;">
-                            <img :src="indexCoverUrl.game[3]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="5 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 200px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 2;">
-                            <img :src="indexCoverUrl.game[4]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                    </div>
-                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
-            </div>
-            <div class="slide slide-tmp" id="slide5">
-                <div class="px-4 md:px-6 lg:px-8" style="background-color: rgba(0,0,0,0)">
-                    <div class="text-700 text-center">
-                        <div class="text-900 font-bold text-5xl mb-3">关联商品</div>
-                        <div class="text-700 text-2xl mb-5">收录动画游戏图书等作品衍生出的周边商品信息</div>
-                        <p-button label="详情" icon="pi iconfont icon-yinshuabaozhuang" @click.native="goItemDb('/db/merchs')"
-                                  class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></p-button>
-                    </div>
-                </div>
-                <div class="swiper swiper_5 swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress">
-                    <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms; transform: translate3d(-390px, 0px, 0px);" aria-live="polite">
-                        <div class="swiper-slide" role="group" aria-label="1 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -200px) rotateX(0deg) rotateY(200deg) scale(1); z-index: -2;">
-                            <img :src="indexCoverUrl.merch[0]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 4; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="2 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, -100px) rotateX(0deg) rotateY(150deg) scale(1); z-index: -1;">
-                            <img :src="indexCoverUrl.merch[1]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 3; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-active" role="group" aria-label="3 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(100deg) scale(1); z-index: 0;">
-                            <img :src="indexCoverUrl.merch[2]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 2; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible swiper-slide-prev" role="group" aria-label="4 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 100px) rotateX(0deg) rotateY(50deg) scale(1); z-index: 1;">
-                            <img :src="indexCoverUrl.merch[3]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 1; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-visible" role="group" aria-label="5 / 5" style="transition-duration: 0ms;
-                         transform: translate3d(0px, 0px, 200px) rotateX(0deg) rotateY(0deg) scale(1); z-index: 2;">
-                            <img :src="indexCoverUrl.merch[4]">
-                            <div class="swiper-slide-shadow-left" style="opacity: 0; transition-duration: 0ms;"></div>
-                            <div class="swiper-slide-shadow-right" style="opacity: 0; transition-duration: 0ms;"></div>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal">
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet swiper-pagination-bullet-active" aria-current="true"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                        <span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span>
-                    </div>
-                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                <div class="content">
+                    <nav class="menu">
+					<span class="menu__item" href="#">
+						<span class="menu__item-tag">Adrienne Hoareau</span>
+						<a class="menu__item-link" href="/db/albums">Album</a>
+					</span>
+                        <span class="menu__item" href="#">
+						<span class="menu__item-tag">Slyvie Payet</span>
+						<a class="menu__item-link" href="/db/discs">DVD/Blu-ray</a>
+					</span><br/>
+                        <span class="menu__item" href="#">
+						<span class="menu__item-tag">Lilou Bakame</span>
+						<a class="menu__item-link"  href="/db/books">Book</a>
+					</span>
+                        <span class="menu__item" href="#">
+						<span class="menu__item-tag">Juliette Esparon</span>
+						<a class="menu__item-link" href="/db/games">Game</a>
+					</span>
+                        <span class="menu__item" href="#">
+						<span class="menu__item-tag">Juliette Esparon</span>
+						<a class="menu__item-link" href="/db/merchs">Merch</a>
+					</span>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -663,6 +449,7 @@
 </div>
 <script type="module" th:inline="javascript">
 
+    import Navigation from "./js/index/navigation.js";
     import fullpage from '/tool/fullpage/fullpage.esm.js';
     import superplaceholder from '/tool/superplaceholder/superplaceholder.esm.js';
     import {getRequest, postRequest} from '/js/basic/Http_Request.js';
@@ -677,91 +464,17 @@
 
                 init();
 
-                //region swiper
-
-                const swiper_1 = new Swiper(".swiper_1", {
-                    effect: "coverflow",
-                    grabCursor: true,
-                    centeredSlides: true,
-                    slidesPerView: "auto",
-                    coverflowEffect: {
-                        rotate: 50,
-                        stretch: 0,
-                        depth: 100,
-                        modifier: 1,
-                        slideShadows: true,
-                    },
-                    pagination: {
-                        el: ".swiper-pagination",
-                    },
-                });
-
-                const swiper_2 = new Swiper(".swiper_2", {
-                    effect: "cards",
-                    grabCursor: true,
-                });
-
-                const swiper_3 = new Swiper(".swiper_3", {
-                    effect: "coverflow",
-                    grabCursor: true,
-                    centeredSlides: true,
-                    slidesPerView: "auto",
-                    coverflowEffect: {
-                        rotate: 50,
-                        stretch: 0,
-                        depth: 100,
-                        modifier: 1,
-                        slideShadows: true,
-                    },
-                    pagination: {
-                        el: ".swiper-pagination",
-                    },
-                });
-
-                const swiper_4 = new Swiper(".swiper_4", {
-                    effect: "coverflow",
-                    grabCursor: true,
-                    centeredSlides: true,
-                    slidesPerView: "auto",
-                    coverflowEffect: {
-                        rotate: 50,
-                        stretch: 0,
-                        depth: 100,
-                        modifier: 1,
-                        slideShadows: true,
-                    },
-                    pagination: {
-                        el: ".swiper-pagination",
-                    },
-                });
-
-                const swiper_5 = new Swiper(".swiper_5", {
-                    effect: "coverflow",
-                    grabCursor: true,
-                    centeredSlides: true,
-                    slidesPerView: "auto",
-                    coverflowEffect: {
-                        rotate: 50,
-                        stretch: 0,
-                        depth: 100,
-                        modifier: 1,
-                        slideShadows: true,
-                    },
-                    pagination: {
-                        el: ".swiper-pagination",
-                    },
-                });
-
-                //endregion
+                new Navigation(document.querySelector('.menu'));
+                document.body.classList.remove('loading');
 
                 fullpage('#index', {
-                    anchors: ['simpleSearch', 'advanceSearch'],
+                    anchors: ['search', 'overview'],
                     css3: true,
                     scrollingSpeed: 500, //滚动的时间
                     keyboardScrolling: false,
                     navigation: true,
                     navigationPosition: 'right',
-                    navigationTooltips: ['搜索', '高级搜索'],
+                    navigationTooltips: ['搜索', '总览'],
                     showActiveTooltip: true,
                     slidesNavigation: true,
                     normalScrollElements: '#search_panel_top, #search_panel_result',
@@ -928,206 +641,6 @@
         bottom:0;
     }
 
-    .slide-tmp .swiper {
-        width: 100%;
-        padding-top: 50px;
-        padding-bottom: 50px;
-    }
-
-    .slide-tmp .swiper-slide {
-        background-position: center;
-        background-size: cover;
-        width: 300px;
-        height: 300px;
-    }
-
-    .slide-tmp .swiper-slide img {
-        display: block;
-        width: 100%;
-    }
-
-    #slide2 .swiper {
-        width: 240px;
-        height: 340px;
-    }
-
-    #slide2 .swiper-slide {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        font-size: 22px;
-        font-weight: bold;
-        color: #fff;
-    }
-
-    @media (min-width: 768px) {
-        .network-data .btn-link-to {
-            justify-content: center;
-        }
-        .btn-link-to {
-            justify-content: flex-start;
-            margin-top: 40px;
-        }
-    }
-
-    .btn-link-to {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        margin-top: 24px;
-    }
-
-    @media (min-width: 768px) {
-        .btn-link-to {
-            justify-content: flex-start;
-            margin-top: 40px;
-        }
-    }
-
-    .btn-link-to>a {
-        display: flex;
-        align-items: center;
-    }
-
-    .btn-arrow {
-        display: inline-flex;
-        align-items: center;
-        font-weight: 600;
-        color: #ff5627;
-    }
-
-    .fa, a {
-        cursor: pointer;
-    }
-
-    @media (min-width: 576px) {
-        .network-data_stats {
-            /*flex-flow: row wrap;*/
-        }
-    }
-
-    @media (min-width: 768px) {
-        .network-data {
-            padding: 30px 0;
-            width: 100%;
-        }
-    }
-
-    .network-data {
-        display: flex;
-        justify-content: center;
-        position: relative;
-        padding: 30px 0;
-        overflow: hidden;
-    }
-
-    .wrapper-lg {
-        z-index: 2;
-        width: 100%;
-        max-width: 1224px;
-    }
-
-    @media (min-width: 992px) {
-        .network-data_stats {
-            gap: 0;
-        }
-    }
-
-    @media (min-width: 992px) {
-        .network-data_stats_item {
-            flex-direction: column;
-            flex-basis: 0;
-            min-height: 172px;
-        }
-    }
-
-    .network-data_stats_item {
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        flex-grow: 1;
-        flex-basis: calc(50% - 24px);
-        gap: 24px;
-        min-height: 56px;
-    }
-
-    @media (min-width: 768px) {
-        .network-data_stats_item_green, .network-data_stats_item_regular {
-            align-items: center;
-        }
-    }
-
-    .network-data_stats_item_green, .network-data_stats_item_regular {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .network-data_stats {
-        display: flex;
-        /*flex-direction: column;*/
-        align-items: flex-start;
-        gap: 24px;
-    }
-
-    @media (min-width: 768px) {
-        .network-data_stats_item_green>span:nth-child(1), .network-data_stats_item_regular>span:nth-child(1) {
-            font-size: 32px;
-            line-height: 44px;
-        }
-    }
-
-    .network-data_stats_item_green>span:nth-child(1), .network-data_stats_item_regular>span:nth-child(1) {
-        font-weight: 600;
-        font-size: 24px;
-        line-height: 36px;
-        letter-spacing: .2px;
-    }
-
-    .network-data_stats_item_green>span, .network-data_stats_item_regular>span {
-        white-space: nowrap;
-    }
-
-    @media (min-width: 992px) {
-            .network-data_stats_item {
-                flex-direction: column;
-                flex-basis: 0;
-                min-height: 172px;
-            }
-        .network-data_stats_item_green>span:nth-child(2), .network-data_stats_item_regular>span:nth-child(2) {
-            text-align: center;
-        }
-    }
-
-    .network-data_stats_item {
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        flex-grow: 1;
-        flex-basis: calc(50% - 24px);
-        gap: 24px;
-        min-height: 56px;
-    }
-
-    @media (min-width: 768px) {
-        .network-data_stats_item_green>span:nth-child(2), .network-data_stats_item_regular>span:nth-child(2) {
-            font-size: 16px;
-            line-height: 24px;
-        }
-    }
-
-    .network-data_stats_item_green>span:nth-child(2), .network-data_stats_item_regular>span:nth-child(2) {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        text-align: left;
-        width: 100%;
-    }
-
-    .network-data_stats_item_green>span, .network-data_stats_item_regular>span {
-        white-space: nowrap;
-    }
-
     .p-paginator {
         background-color: rgba(0, 0, 0, 0.3)
     }
@@ -1139,8 +652,6 @@
     #fp-nav.fp-right {
         right: 70px;
     }
-
-
 
     .section {
         width: 100%;
@@ -1156,9 +667,9 @@
     }
 
     #index .section:last-child {
-        background-image: url('https://img.rakbow.com/common/db_index_2.jpg');
-        background-repeat: no-repeat;
-        background-size: cover;
+        /*background-image: url('https://img.rakbow.com/common/db_index_2.jpg');*/
+        /*background-repeat: no-repeat;*/
+        /*background-size: cover;*/
     }
 
     .fp-is-overflow .fp-overflow.fp-auto-height, .fp-is-overflow .fp-overflow.fp-auto-height-responsive, .fp-is-overflow > .fp-overflow {
