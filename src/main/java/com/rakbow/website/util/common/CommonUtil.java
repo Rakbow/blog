@@ -229,6 +229,21 @@ public class CommonUtil {
         return new ArrayList<>(JSONObject.parseObject(idsJson).getList("ids", Integer.class));
     }
 
+    public static List<String> getJsonArrayKeys(JSONArray jsonArray, String key) {
+
+        if(jsonArray == null || jsonArray.isEmpty()) {
+            return null;
+        }
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject json = jsonArray.getJSONObject(i);
+            if(!StringUtils.isBlank(json.getString(key))) {
+                keys.add(json.getString(key));
+            }
+        }
+        return keys;
+    }
+
     //region ------暂时废弃------
 
     /**

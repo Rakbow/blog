@@ -3,11 +3,14 @@ package com.rakbow.website.util.convertMapper;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.CommonConstant;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.music.AudioType;
 import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
+import com.rakbow.website.data.vo.music.MusicVOBeta;
+import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -104,7 +107,6 @@ public interface MusicVOMapper {
         return musicVOAlpha;
     }
 
-
     /**
      * 列表，Music转VO对象，用于list和index页面，转换量较少
      *
@@ -120,4 +122,54 @@ public interface MusicVOMapper {
         return musicVOAlphas;
     }
 
+    /**
+     * 转VO对象，用于存储到搜索引擎
+     *
+     * @param music 音乐
+     * @return MusicVOBeta
+     * @author rakbow
+     */
+    default MusicVOBeta music2VOBeta(Music music, List<Album> albums) {
+        if (music == null) {
+            return null;
+        }
+        VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
+
+        Album album = DataFinder.findAlbumById(music.getAlbumId(), albums);
+
+        MusicVOBeta musicVOBeta = new MusicVOBeta();
+
+        //基础信息
+        musicVOBeta.setId(music.getId());
+        musicVOBeta.setName(music.getName());
+        musicVOBeta.setNameEn(music.getNameEn());
+//        musicVOBeta.setArtists();
+
+
+        assert album != null;
+        musicVOBeta.setCover(QiniuImageUtil.getThumb70Url(album.getImages()));
+
+        musicVOBeta.setVisitCount(visitUtil.getVisit(EntityType.MUSIC.getId(), music.getId()));
+        musicVOBeta.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), music.getId()));
+
+        return musicVOBeta;
+    }
+
+    /**
+     * 列表转换, 转VO对象，用于存储到搜索引擎
+     *
+     * @param musics 列表
+     * @return List<MusicVOBeta>
+     * @author rakbow
+     */
+    default List<MusicVOBeta> music2VOBeta(List<Music> musics, List<Album> albums) {
+        List<MusicVOBeta> musicVOBetas = new ArrayList<>();
+
+        if (!musics.isEmpty()) {
+            musics.forEach(music -> musicVOBetas.add(music2VOBeta(music, albums)));
+        }
+
+        return musicVOBetas;
+    }
 }

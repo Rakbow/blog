@@ -4,7 +4,9 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.*;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.SimpleSearchResult;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -16,6 +18,7 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -35,10 +38,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -62,17 +66,7 @@ public class EntityService {
     @Resource
     private MerchMapper merchMapper;
     @Resource
-    private AlbumService albumService;
-    @Resource
-    private BookService bookService;
-    @Resource
-    private DiscService discService;
-    @Resource
-    private GameService gameService;
-    @Resource
-    private MerchService merchService;
-    @Resource
-    private ProductService productService;
+    private MusicMapper musicMapper;
     @Resource
     private RedisUtil redisUtil;
     @Resource
@@ -85,14 +79,13 @@ public class EntityService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private RelatedInfoUtil relatedInfoUtil;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
+    private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
 
     private final List<Integer> searchEntityTypes = new ArrayList<>(){{
         add(EntityType.ALBUM.getId());
@@ -522,6 +515,13 @@ public class EntityService {
                 res.setTotal(merchMapper.simpleSearchCount(keyword));
             }
         }
+//        if(entityType == EntityType.MUSIC.getId()) {
+//            List<Music> musics = musicMapper.simpleSearch(keyword, limit, offset);
+//            if(!musics.isEmpty()) {
+//                res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));
+//                res.setTotal(musicMapper.simpleSearchCount(keyword));
+//            }
+//        }
         return res;
     }
 

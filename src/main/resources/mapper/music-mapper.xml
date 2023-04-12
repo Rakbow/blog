@@ -110,4 +110,26 @@
         where id = #{id}
     </update>
 
+    <select id="simpleSearch" resultType="Music">
+        select
+        <include refid="selectFields"></include>
+        from music
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by id desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from album
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
 </mapper>
