@@ -9,8 +9,8 @@ import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class MusicUtil {
 
-    @Autowired
+    @Resource
     private static MusicService musicService;
 
     private static final String[] VOCAL_LIST = new String[] {"vocal", "vocals", "演唱"};
@@ -67,7 +67,7 @@ public class MusicUtil {
             //判断是否有音频文件
             if (files.getJSONObject(i).getString("type").contains("audio")) {
                 audioInfo.put("name", music.getName());
-                audioInfo.put("artist", getArtistFromMusic(music));
+                audioInfo.put("artist", getArtists(music));
                 audioInfo.put("url", files.getJSONObject(i).getString("url"));
                 audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
                 if (StringUtils.isBlank(coverUrl)) {
@@ -111,7 +111,7 @@ public class MusicUtil {
      * @author rakbow
      * @param music 音乐
      * */
-    public static String getArtistFromMusic(Music music) {
+    public static String getArtists(Music music) {
         JSONArray artists = JSON.parseArray(music.getArtists());
         if (artists.size() == 0) {
             return "unknown";
@@ -119,12 +119,8 @@ public class MusicUtil {
         for (int i = 0; i < artists.size(); i++) {
             for (int j = 0; j < VOCAL_LIST.length; j++) {
                 if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), VOCAL_LIST[j])) {
-                    JSONArray vocals = artists.getJSONObject(i).getJSONArray("name");
-                    String vocal = "";
-                    for (int k = 0; k < vocals.size(); k++) {
-                        vocal += vocals.getString(k);
-                    }
-                    return vocal;
+                    List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
+                    return String.join("/", vocals);
                 }
             }
         }
