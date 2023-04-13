@@ -810,7 +810,7 @@
 <script type="module" th:inline="javascript">
 
     import {marked} from '/tool/marked/marked.esm.js';
-    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
@@ -1017,7 +1017,7 @@
                     franchises: albumEdit.value.franchises,
                     entityType: ENTITY.ALBUM
                 };
-                postRequest(toast, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(toast, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if(res.state === 1) {
                             if (res.data.length !== 0) {
@@ -1039,7 +1039,7 @@
             //保存编辑数据
             const submitEditAlbum = () => {
                 editBlock.value = true;
-                commonSubmit(toast, editBlock, UPDATE_ALBUM_URL, albumEdit.value)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ALBUM_URL, albumEdit.value)
                     .then(res => {
                         if (res !== undefined) {
                             albumEdit.value = {};
@@ -1058,7 +1058,7 @@
                         franchises: ev.value,
                         entityType: ENTITY.ALBUM
                     };
-                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                    HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
                             if(res.state === 1) {
                                 if (res.data.length !== 0) {
@@ -1080,7 +1080,7 @@
                     entityType: ENTITY.ALBUM,
                     entityId: detailInfo.value.id
                 }
-                postRequest(toast, LIKE_ITEM_URL, json)
+                HttpUtil.post(toast, LIKE_ITEM_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             pageInfo.value.likeCount++;
@@ -1095,7 +1095,7 @@
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
-                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
             };
             //endregion
 
@@ -1265,7 +1265,7 @@
                     id: album.value.id,
                     discList: tmpEditDiscList.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_ALBUM_TRACK_INFO_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ALBUM_TRACK_INFO_URL, json)
                     .then(res => {
                         if (res !== undefined) {
                             displayTrackEditDialog.value = false;
@@ -1325,7 +1325,7 @@
                     id: album.value.id,
                     artists: tmpArtists.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_ALBUM_ARTISTS_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ALBUM_ARTISTS_URL, json)
                     .then(res => {
                         if (res !== undefined) {
                             displayArtistEditDialog.value = false;
@@ -1339,7 +1339,7 @@
                 let json = {
                     id: detailInfo.value.id
                 }
-                postRequest(null, GET_RELATED_ALBUMS_URL, json)
+                HttpUtil.post(null, GET_RELATED_ALBUMS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             relatedAlbums.value = res.data;

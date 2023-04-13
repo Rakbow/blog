@@ -1,4 +1,4 @@
-import {commonVueSubmit} from '/js/basic/Http_Request.js';
+import {HttpUtil} from '/js/basic/Http_Util.js';
 
 export const showBonusEditDialog = (toast, dialog, detailInfo, bonus, images) => {
     const dialogRef = dialog.open(bonusEditPanel, {
@@ -89,7 +89,7 @@ const bonusEditPanel = {
                 entityId: this.detailInfo.id,
                 bonus: this.bonusMd
             };
-            commonVueSubmit(this.toast, UPDATE_BONUS_URL, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_BONUS_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();
@@ -199,7 +199,7 @@ const descriptionEditPanel = {
                 entityId: this.detailInfo.id,
                 description: this.descriptionMd
             }
-            commonVueSubmit(this.toast, UPDATE_DESCRIPTION_URL, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_DESCRIPTION_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();

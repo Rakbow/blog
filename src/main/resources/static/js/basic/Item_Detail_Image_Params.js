@@ -1,4 +1,4 @@
-import {commonVueSubmit, formRequest} from '/js/basic/Http_Request.js';
+import {HttpUtil} from '/js/basic/Http_Util.js';
 
 export const showImageEditDialog = (toast, dialog, itemImageInfo, detailInfo) => {
     const dialogRef = dialog.open(imageEditPanel, {
@@ -243,7 +243,7 @@ const imageEditPanel = {
                 images: this.itemImageInfo.images,
                 action: "1"
             };
-            commonVueSubmit(this.toast, UPDATE_IMAGES_URL, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_IMAGES_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.closeImageEditDialog();
@@ -270,7 +270,7 @@ const imageEditPanel = {
                 images: this.selectedImage,
                 action: "2"
             };
-            commonVueSubmit(this.toast, UPDATE_IMAGES_URL, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_IMAGES_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteImageDialog = false;
@@ -357,7 +357,7 @@ const imageEditPanel = {
             formData.append("entityId", this.detailInfo.id);
             formData.append("imageInfos", JSON.stringify(this.imageInfos));
 
-            formRequest(this.toast, this.editBlock, INSERT_IMAGES_URL, formData)
+            HttpUtil.formPost(this.toast, this.editBlock, INSERT_IMAGES_URL, formData)
                 .then(res => {
                     if (res.state === 1) {
                         this.closeImageEditDialog();

@@ -18,3 +18,5 @@ Aplayer 1.10.1
 color-thief 2.3.2
 
 fullpage 4.0.19
+
+xlsx 0.18.5

@@ -491,7 +491,7 @@
     import Navigation from "./js/index/navigation.js";
     import fullpage from '/tool/fullpage/fullpage.esm.js';
     import superplaceholder from '/tool/superplaceholder/superplaceholder.esm.js';
-    import {getRequest, postRequest} from '/js/basic/Http_Request.js';
+    import {HttpUtil} from '/js/basic/Http_Util.js';
 
     const {createApp, onMounted, watch, ref} = Vue;
     const Tooltip = primevue.tooltip;
@@ -589,7 +589,7 @@
             const search = () => {
                 if (searchParams.value.keyword !== '' && !searchLoading.value) {
                     searchLoading.value = true;
-                    postRequest(null, INDEX_SEARCH_URL, searchParams.value)
+                    HttpUtil.post(null, INDEX_SEARCH_URL, searchParams.value)
                         .then(res => {
                             if (res.state === 1) {
                                 searchResult.value = res.data;
@@ -605,7 +605,7 @@
             };
 
             const getEntityAmountInfo = () => {
-                getRequest(null, GET_ENTITY_AMOUNT_INFO)
+                HttpUtil.get(null, GET_ENTITY_AMOUNT_INFO)
                     .then(res => {
                         if (res.state === 1) {
                             entityAmountInfo.value = res.data;

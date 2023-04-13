@@ -51,7 +51,7 @@ function dateToString(date) {
 
 //日元(100)转为人民币
 function JPY2CNY(jpy) {
-    axiosGetRequest('https://www.chinamoney.com.cn/ags/ms/cm-u-bk-ccpr/CcprHisNew?currency=100JPY/CNY')
+    get('https://www.chinamoney.com.cn/ags/ms/cm-u-bk-ccpr/CcprHisNew?currency=100JPY/CNY')
         .then(res => {
             const result = {};
             result.price = parseFloat(jpy) * parseFloat(res.records[0].values[0]) / 100;

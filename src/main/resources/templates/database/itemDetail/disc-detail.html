@@ -496,7 +496,7 @@
 </div>
 <script type="module" th:inline="javascript">
     import {marked} from '/tool/marked/marked.esm.js';
-    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
@@ -582,7 +582,7 @@
                     entityType: ENTITY.DISC,
                     entityId: detailInfo.value.id
                 }
-                postRequest(toast, LIKE_ITEM_URL, json)
+                HttpUtil.post(toast, LIKE_ITEM_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             pageInfo.value.likeCount++;
@@ -597,7 +597,7 @@
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
-                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
             };
             const edits = ref([
                 {
@@ -646,7 +646,7 @@
                     franchises: discEdit.value.franchises,
                     entityType: ENTITY.DISC
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if(res.state === 1) {
                             if (res.data.length !== 0) {
@@ -668,7 +668,7 @@
             //保存编辑数据
             const submitEditDisc = () => {
                 editBlock.value = true;
-                commonSubmit(toast, editBlock, UPDATE_DISC_URL, discEdit.value)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_DISC_URL, discEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             discEdit.value = {};
@@ -686,7 +686,7 @@
                         franchises: ev.value,
                         entityType: ENTITY.DISC
                     };
-                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                    HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
                             if(res.state === 1) {
                                 if (res.length !== 0) {
@@ -755,7 +755,7 @@
                     id: disc.value.id,
                     spec: tmpSpec.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_DISC_SPEC_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_DISC_SPEC_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             displaySpecEditDialog.value = false;
@@ -792,7 +792,7 @@
                 let json = {
                     id: detailInfo.value.id
                 }
-                postRequest(null, GET_RELATED_DISCS_URL, json)
+                HttpUtil.post(null, GET_RELATED_DISCS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             relatedDiscs.value = res.data;

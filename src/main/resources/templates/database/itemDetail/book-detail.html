@@ -628,7 +628,7 @@
 </div>
 <script type="module" th:inline="javascript">
     import {marked} from '/tool/marked/marked.esm.js';
-    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
@@ -764,7 +764,7 @@
                     franchises: bookEdit.value.franchises,
                     entityType: ENTITY.BOOK
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if(res.state === 1) {
                             if (res.data.length !== 0) {
@@ -788,7 +788,7 @@
             //保存编辑数据
             const submitEditBook = () => {
                 editBlock.value = true;
-                commonSubmit(toast, editBlock, UPDATE_BOOK_URL, bookEdit.value)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_BOOK_URL, bookEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             bookEdit.value = {};
@@ -807,7 +807,7 @@
                         franchises: ev.value,
                         entityType: ENTITY.BOOK
                     };
-                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                    HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
                             if(res.state === 1) {
                                 if (res.length !== 0) {
@@ -832,7 +832,7 @@
                     label: label,
                     isbn: isbn
                 };
-                commonSubmit(toast, editBlock, BOOK_ISBN_INTERCONVERT, json)
+                HttpUtil.commonSubmit(toast, editBlock, BOOK_ISBN_INTERCONVERT, json)
                     .then(res => {
                         if(res.state === 1) {
                             console.log(res.data)
@@ -851,7 +851,7 @@
                     entityType: ENTITY.BOOK,
                     entityId: detailInfo.value.id
                 }
-                postRequest(toast, LIKE_ITEM_URL, json)
+                HttpUtil.post(toast, LIKE_ITEM_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             pageInfo.value.likeCount++;
@@ -866,7 +866,7 @@
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
-                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
             };
             //endregion
 
@@ -920,7 +920,7 @@
                     id: book.value.id,
                     authors: tmpAuthors.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_BOOK_AUTHORS_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_BOOK_AUTHORS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             displayAuthorEditDialog.value = false;
@@ -981,7 +981,7 @@
                     id: book.value.id,
                     spec: tmpSpec.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_BOOK_SPEC_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_BOOK_SPEC_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             displaySpecEditDialog.value = false;
@@ -1028,7 +1028,7 @@
                 let json = {
                     id: detailInfo.value.id
                 }
-                postRequest(null, GET_RELATED_BOOKS_URL, json)
+                HttpUtil.post(null, GET_RELATED_BOOKS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             relatedBooks.value = res.data;

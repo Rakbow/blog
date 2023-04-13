@@ -1,12 +1,8 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.MusicMapper;
-import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.MusicService;
-import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.junit.Test;
@@ -16,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Project_name: website

@@ -1,4 +1,4 @@
-import {postRequest} from '/js/basic/Http_Request.js';
+import {HttpUtil} from '/js/basic/Http_Util.js';
 
 const albumIndex = {
     template: `
@@ -437,7 +437,7 @@ const albumIndex = {
         }
     },
     watch: {
-        layout:function(newValue, oldValue) {
+        layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
             } else {
@@ -451,7 +451,7 @@ const albumIndex = {
                 entityType: ENTITY.ALBUM
             };
             this.totalLoading = true;
-            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
@@ -487,7 +487,7 @@ const albumIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_ALBUMS_URL, json)
+            HttpUtil.post(null, GET_ALBUMS_URL, json)
                 .then(res => {
                     this.albums = res.data;
                     this.totalRecords = res.total;
@@ -498,7 +498,7 @@ const albumIndex = {
                 franchises: data,
                 entityType: ENTITY.ALBUM
             };
-            postRequest(null, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -979,7 +979,7 @@ const bookIndex = {
         }
     },
     watch: {
-        layout:function(newValue, oldValue) {
+        layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
             } else {
@@ -993,7 +993,7 @@ const bookIndex = {
                 entityType: ENTITY.BOOK
             };
             this.totalLoading = true;
-            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
@@ -1031,7 +1031,7 @@ const bookIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_BOOKS_URL, json)
+            HttpUtil.post(null, GET_BOOKS_URL, json)
                 .then(res => {
                     this.books = res.data;
                     this.totalRecords = res.total;
@@ -1042,7 +1042,7 @@ const bookIndex = {
                 franchises: data,
                 entityType: ENTITY.BOOK
             };
-            postRequest(null, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -1528,7 +1528,7 @@ const discIndex = {
         }
     },
     watch: {
-        layout:function(newValue, oldValue) {
+        layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
             } else {
@@ -1542,7 +1542,7 @@ const discIndex = {
                 entityType: ENTITY.DISC
             };
             this.totalLoading = true;
-            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
@@ -1577,7 +1577,7 @@ const discIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_DISCS_URL, json)
+            HttpUtil.post(null, GET_DISCS_URL, json)
                 .then(res => {
                     this.discs = res.data;
                     this.totalRecords = res.total;
@@ -1588,7 +1588,7 @@ const discIndex = {
                 franchises: data,
                 entityType: ENTITY.DISC
             };
-            postRequest(null, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -2049,7 +2049,7 @@ const gameIndex = {
         }
     },
     watch: {
-        layout:function(newValue, oldValue) {
+        layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
             } else {
@@ -2063,7 +2063,7 @@ const gameIndex = {
                 entityType: ENTITY.GAME
             };
             this.totalLoading = true;
-            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
@@ -2095,7 +2095,7 @@ const gameIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_GAMES_URL, json)
+            HttpUtil.post(null, GET_GAMES_URL, json)
                 .then(res => {
                     this.games = res.data;
                     this.totalRecords = res.total;
@@ -2106,7 +2106,7 @@ const gameIndex = {
                 franchises: data,
                 entityType: ENTITY.GAME
             };
-            postRequest(null, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];
@@ -2551,7 +2551,7 @@ const merchIndex = {
                 entityType: ENTITY.MERCH
             };
             this.totalLoading = true;
-            postRequest(null, GET_INDEX_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_INDEX_INIT_DATA_URL, json)
                 .then(res => {
                     this.justAddedItems = res.justAddedItems;
                     this.popularItems = res.popularItems;
@@ -2584,7 +2584,7 @@ const merchIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_MERCHS_URL, json)
+            HttpUtil.post(null, GET_MERCHS_URL, json)
                 .then(res => {
                     this.merchs = res.data;
                     this.totalRecords = res.total;
@@ -2595,7 +2595,7 @@ const merchIndex = {
                 franchises: data,
                 entityType: ENTITY.MERCH
             };
-            postRequest(null, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.length !== 0) {
                         this.queryParams.filters.products.value = [];

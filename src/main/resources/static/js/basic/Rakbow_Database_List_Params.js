@@ -1,4 +1,4 @@
-import {deleteRequest, getRequest, postRequest, commonVueSubmit} from '/js/basic/Http_Request.js';
+import {HttpUtil} from '/js/basic/Http_Util.js';
 
 const {useToast} = primevue.usetoast;
 const Tooltip = primevue.tooltip;
@@ -567,7 +567,7 @@ const albumDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -577,7 +577,7 @@ const albumDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -591,7 +591,7 @@ const albumDbList = {
                 entityType: ENTITY.ALBUM
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.mediaFormatSet = res.mediaFormatSet;
@@ -638,7 +638,7 @@ const albumDbList = {
                 pageLabel: "list",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_ALBUMS_URL, json)
+            HttpUtil.post(null, GET_ALBUMS_URL, json)
                 .then(res => {
                     this.albums = res.data;
                     this.totalRecords = res.total;
@@ -653,7 +653,7 @@ const albumDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -666,7 +666,7 @@ const albumDbList = {
         },
         deleteSelectedItems() {
             this.editBlock = true;
-            deleteRequest(this.toast, DELETE_ALBUM_URL, this.selectedItems)
+            HttpUtil.deleteRequest(this.toast, DELETE_ALBUM_URL, this.selectedItems)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteDialog = false;
@@ -689,7 +689,7 @@ const albumDbList = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.ALBUM
             };
-            postRequest(this.toast, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         if (res.data.length !== 0) {
@@ -712,7 +712,7 @@ const albumDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_ALBUM_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ALBUM_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -737,7 +737,7 @@ const albumDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, INSERT_ALBUM_URL, this.album)
+            HttpUtil.commonVueSubmit(this.toast, INSERT_ALBUM_URL, this.album)
                 .then(res => {
                     if (res.state === 1) {
                         this.album = {};
@@ -754,7 +754,7 @@ const albumDbList = {
                     franchises: ev.value,
                     entityType: ENTITY.ALBUM
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             if (res.data.length !== 0) {
@@ -1386,7 +1386,7 @@ const bookDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -1396,7 +1396,7 @@ const bookDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -1410,7 +1410,7 @@ const bookDbList = {
                 entityType: ENTITY.BOOK
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.bookTypeSet = res.bookTypeSet;
@@ -1457,7 +1457,7 @@ const bookDbList = {
                 pageLabel: "list",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_BOOKS_URL, json)
+            HttpUtil.post(null, GET_BOOKS_URL, json)
                 .then(res => {
                     this.books = res.data;
                     this.totalRecords = res.total;
@@ -1472,7 +1472,7 @@ const bookDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -1486,7 +1486,7 @@ const bookDbList = {
         },
         deleteSelectedItems() {
             this.editBlock = true;
-            deleteRequest(this.toast, DELETE_BOOK_URL, this.selectedItems)
+            HttpUtil.deleteRequest(this.toast, DELETE_BOOK_URL, this.selectedItems)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteDialog = false;
@@ -1509,7 +1509,7 @@ const bookDbList = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.BOOK
             };
-            postRequest(this.toast, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         if (res.data.length !== 0) {
@@ -1531,7 +1531,7 @@ const bookDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_BOOK_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_BOOK_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -1556,7 +1556,7 @@ const bookDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, INSERT_BOOK_URL, this.book)
+            HttpUtil.commonVueSubmit(this.toast, INSERT_BOOK_URL, this.book)
                 .then(res => {
                     if (res.state === 1) {
                         this.book = {};
@@ -1573,7 +1573,7 @@ const bookDbList = {
                     franchises: ev.value,
                     entityType: ENTITY.BOOK
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             if (res.data.length !== 0) {
@@ -1598,7 +1598,7 @@ const bookDbList = {
                 label: label,
                 isbn: isbn
             };
-            commonVueSubmit(this.toast, BOOK_ISBN_INTERCONVERT, json)
+            HttpUtil.commonVueSubmit(this.toast, BOOK_ISBN_INTERCONVERT, json)
                 .then(res => {
                     if(res.state === 1) {
                         if(method === 'add') {
@@ -2195,7 +2195,7 @@ const discDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -2205,7 +2205,7 @@ const discDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -2219,7 +2219,7 @@ const discDbList = {
                 entityType: ENTITY.DISC
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.mediaFormatSet = res.mediaFormatSet;
@@ -2265,7 +2265,7 @@ const discDbList = {
                 pageLabel: "list",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_DISCS_URL, json)
+            HttpUtil.post(null, GET_DISCS_URL, json)
                 .then(res => {
                     this.discs = res.data;
                     this.totalRecords = res.total;
@@ -2280,7 +2280,7 @@ const discDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -2294,7 +2294,7 @@ const discDbList = {
         },
         deleteSelectedItems() {
             this.editBlock = true;
-            deleteRequest(this.toast, DELETE_DISC_URL, this.selectedItems)
+            HttpUtil.deleteRequest(this.toast, DELETE_DISC_URL, this.selectedItems)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteDialog = false;
@@ -2317,7 +2317,7 @@ const discDbList = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.DISC
             };
-            postRequest(this.toast, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         if (res.data.length !== 0) {
@@ -2339,7 +2339,7 @@ const discDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_DISC_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_DISC_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -2364,7 +2364,7 @@ const discDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, INSERT_DISC_URL, this.disc)
+            HttpUtil.commonVueSubmit(this.toast, INSERT_DISC_URL, this.disc)
                 .then(res => {
                     if (res.state === 1) {
                         this.disc = {};
@@ -2381,7 +2381,7 @@ const discDbList = {
                     franchises: ev.value,
                     entityType: ENTITY.DISC
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             if (res.data.length !== 0) {
@@ -2917,7 +2917,7 @@ const gameDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -2927,7 +2927,7 @@ const gameDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -2941,7 +2941,7 @@ const gameDbList = {
                 entityType: ENTITY.GAME
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.gamePlatformSet = res.gamePlatformSet;
@@ -2988,7 +2988,7 @@ const gameDbList = {
                 pageLabel: "list",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_GAMES_URL, json)
+            HttpUtil.post(null, GET_GAMES_URL, json)
                 .then(res => {
                     this.games = res.data;
                     this.totalRecords = res.total;
@@ -3003,7 +3003,7 @@ const gameDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -3017,7 +3017,7 @@ const gameDbList = {
         },
         deleteSelectedItems() {
             this.editBlock = true;
-            deleteRequest(this.toast, DELETE_GAME_URL, this.selectedItems)
+            HttpUtil.deleteRequest(this.toast, DELETE_GAME_URL, this.selectedItems)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteDialog = false;
@@ -3040,7 +3040,7 @@ const gameDbList = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.GAME
             };
-            postRequest(this.toast, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         if (res.data.length !== 0) {
@@ -3062,7 +3062,7 @@ const gameDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_GAME_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_GAME_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -3087,7 +3087,7 @@ const gameDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, INSERT_GAME_URL, this.game)
+            HttpUtil.commonVueSubmit(this.toast, INSERT_GAME_URL, this.game)
                 .then(res => {
                     if (res.state === 1) {
                         this.game = {};
@@ -3104,7 +3104,7 @@ const gameDbList = {
                     franchises: ev.value,
                     entityType: ENTITY.GAME
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             if (res.data.length !== 0) {
@@ -3650,7 +3650,7 @@ const merchDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -3660,7 +3660,7 @@ const merchDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -3674,7 +3674,7 @@ const merchDbList = {
                 entityType: ENTITY.MERCH
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.merchCategorySet = res.merchCategorySet;
@@ -3720,7 +3720,7 @@ const merchDbList = {
                 pageLabel: "list",
                 queryParams: this.queryParams
             }
-            postRequest(null, GET_MERCHS_URL, json)
+            HttpUtil.post(null, GET_MERCHS_URL, json)
                 .then(res => {
                     this.merchs = res.data;
                     this.totalRecords = res.total;
@@ -3735,7 +3735,7 @@ const merchDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -3749,7 +3749,7 @@ const merchDbList = {
         },
         deleteSelectedItems() {
             this.editBlock = true;
-            deleteRequest(this.toast, DELETE_MERCH_URL, this.selectedItems)
+            HttpUtil.deleteRequest(this.toast, DELETE_MERCH_URL, this.selectedItems)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteDialog = false;
@@ -3771,7 +3771,7 @@ const merchDbList = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.MERCH
             };
-            postRequest(this.toast, GET_PRODUCT_SET_URL, json)
+            HttpUtil.post(this.toast, GET_PRODUCT_SET_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         if (res.data.length !== 0) {
@@ -3793,7 +3793,7 @@ const merchDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_MERCH_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_MERCH_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -3818,7 +3818,7 @@ const merchDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, INSERT_MERCH_URL, this.merch)
+            HttpUtil.commonVueSubmit(this.toast, INSERT_MERCH_URL, this.merch)
                 .then(res => {
                     if (res.state === 1) {
                         this.merch = {};
@@ -3835,7 +3835,7 @@ const merchDbList = {
                     franchises: ev.value,
                     entityType: ENTITY.MERCH
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             if (res.data.length !== 0) {
@@ -4169,7 +4169,7 @@ const productDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4179,7 +4179,7 @@ const productDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -4193,7 +4193,7 @@ const productDbList = {
                 entityType: ENTITY.PRODUCT
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.productCategorySet = res.productCategorySet;
@@ -4234,7 +4234,7 @@ const productDbList = {
             this.getProducts();
         },
         getProducts() {
-            postRequest(null, GET_PRODUCTS_URL, {queryParams: this.queryParams})
+            HttpUtil.post(null, GET_PRODUCTS_URL, {queryParams: this.queryParams})
                 .then(res => {
                     this.products = res.data;
                     this.totalRecords = res.total;
@@ -4249,7 +4249,7 @@ const productDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4272,7 +4272,7 @@ const productDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_PRODUCT_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_PRODUCT_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -4296,7 +4296,7 @@ const productDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, ADD_PRODUCT_URL, this.product)
+            HttpUtil.commonVueSubmit(this.toast, ADD_PRODUCT_URL, this.product)
                 .then(res => {
                     if (res.state === 1) {
                         this.product = {};
@@ -4604,7 +4604,7 @@ const franchiseDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4614,7 +4614,7 @@ const franchiseDbList = {
 
         },
         exportCSV() {
-            getRequest(null, CHECK_USER_AUTHORITY_URL)
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
                 .then(res => {
                     if (res.state === 1) {
                         this.$refs.dt.exportCSV();
@@ -4628,7 +4628,7 @@ const franchiseDbList = {
                 entityType: ENTITY.FRANCHISE
             };
             this.totalLoading = true;
-            postRequest(null, GET_LIST_INIT_DATA_URL, json)
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
                 .then(res => {
                     this.editAuth = res.editAuth;
                     this.franchiseSet = res.franchiseSet;
@@ -4668,7 +4668,7 @@ const franchiseDbList = {
             this.getFranchises();
         },
         getFranchises() {
-            postRequest(null, GET_FRANCHISES_URL, {queryParams: this.queryParams})
+            HttpUtil.post(null, GET_FRANCHISES_URL, {queryParams: this.queryParams})
                 .then(res => {
                     this.franchises = res.data;
                     this.totalRecords = res.total;
@@ -4683,7 +4683,7 @@ const franchiseDbList = {
                 entityId: id,
                 status: !status
             };
-            commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4703,7 +4703,7 @@ const franchiseDbList = {
         //保存编辑数据
         submitEditItem() {
             this.editBlock = true;
-            commonVueSubmit(this.toast, UPDATE_FRANCHISE_URL, this.itemEdit)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_FRANCHISE_URL, this.itemEdit)
                 .then(res => {
                     if (res.state === 1) {
                         this.itemEdit = {};
@@ -4730,7 +4730,7 @@ const franchiseDbList = {
         },
         //提交新增数据
         submitNewItem() {
-            commonVueSubmit(this.toast, ADD_FRANCHISE_URL, this.product)
+            HttpUtil.commonVueSubmit(this.toast, ADD_FRANCHISE_URL, this.product)
                 .then(res => {
                     if (res.state === 1) {
                         this.franchise = {};

@@ -529,7 +529,7 @@
 </div>
 <script type="module" th:inline="javascript">
     import {marked} from '/tool/marked/marked.esm.js';
-    import {postRequest, commonSubmit, formRequest} from '/js/basic/Http_Request.js';
+    import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
@@ -677,7 +677,7 @@
                 }
                 formData.append("id", music.value.id);
                 formData.append("fileInfos", JSON.stringify(fileInfos.value));
-                formRequest(toast, editBlock, UPLOAD_MUSIC_FILE_URL, formData)
+                HttpUtil.formPost(toast, editBlock, UPLOAD_MUSIC_FILE_URL, formData)
                     .then(res => {
                         if (res.state === 1) {
                             editBlock.value = false;
@@ -693,7 +693,7 @@
                     id: music.value.id,
                     files: selectedFiles.value
                 };
-                postRequest(null, DELETE_MUSIC_FILE_URL, json)
+                HttpUtil.post(null, DELETE_MUSIC_FILE_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             deleteFileDialog.value = false;
@@ -713,7 +713,7 @@
                     entityType: ENTITY.MUSIC,
                     entityId: detailInfo.value.id
                 }
-                postRequest(toast, LIKE_ITEM_URL, json)
+                HttpUtil.post(toast, LIKE_ITEM_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             pageInfo.value.likeCount++;
@@ -728,7 +728,7 @@
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
-                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
             };
             const musicEdit = ref({});
             const editBlock = ref(false);
@@ -778,7 +778,7 @@
             //保存编辑好的基础信息
             const submitEditMusic = () => {
                 editBlock.value = true;
-                commonSubmit(toast, editBlock, UPDATE_MUSIC_URL, musicEdit.value)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_MUSIC_URL, musicEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             musicEdit.value = {};
@@ -837,7 +837,7 @@
                     id: music.value.id,
                     artists: music.value.artists
                 }
-                commonSubmit(toast, editBlock, UPDATE_MUSIC_ARTISTS_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_MUSIC_ARTISTS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             displayArtistEditDialog.value = false;
@@ -869,7 +869,7 @@
                     id: music.value.id,
                     lyricsText: lyricsMd.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_MUSIC_LYRICS_TEXT_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_MUSIC_LYRICS_TEXT_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             music.value.lrcText = lyricsMd.value;

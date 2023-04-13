@@ -468,7 +468,7 @@
 </div>
 <script type="module" th:inline="javascript">
     import {marked} from '/tool/marked/marked.esm.js';
-    import {postRequest, commonSubmit} from '/js/basic/Http_Request.js';
+    import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
     import {showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
@@ -540,7 +540,7 @@
                     entityType: ENTITY.MERCH,
                     entityId: detailInfo.value.id
                 }
-                postRequest(toast, LIKE_ITEM_URL, json)
+                HttpUtil.post(toast, LIKE_ITEM_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             pageInfo.value.likeCount++;
@@ -555,7 +555,7 @@
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
-                commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ITEM_STATUS, json);
             };
             const merchEdit = ref({});
             const productSelect = ref(true);
@@ -596,7 +596,7 @@
                     franchises: merchEdit.value.franchises,
                     entityType: ENTITY.MERCH
                 };
-                postRequest(null, GET_PRODUCT_SET_URL, json)
+                HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
                         if(res.state === 1) {
                             if (res.data.length !== 0) {
@@ -618,7 +618,7 @@
             //保存编辑数据
             const submitEditMerch = () => {
                 editBlock.value = true;
-                commonSubmit(toast, editBlock, UPDATE_MERCH_URL, merchEdit.value)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_MERCH_URL, merchEdit.value)
                     .then(res => {
                         if (res.state === 1) {
                             merchEdit.value = {};
@@ -646,7 +646,7 @@
                         franchises: ev.value,
                         entityType: ENTITY.MERCH
                     };
-                    postRequest(null, GET_PRODUCT_SET_URL, json)
+                    HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
                             if(res.state === 1) {
                                 if (res.length !== 0) {
@@ -714,7 +714,7 @@
                     id: merch.value.id,
                     spec: tmpSpec.value
                 }
-                commonSubmit(toast, editBlock, UPDATE_MERCH_SPEC_URL, json)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_MERCH_SPEC_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             displaySpecEditDialog.value = false;
@@ -741,7 +741,7 @@
                 let json = {
                     id: detailInfo.value.id
                 }
-                postRequest(null, GET_RELATED_MERCHS_URL, json)
+                HttpUtil.post(null, GET_RELATED_MERCHS_URL, json)
                     .then(res => {
                         if (res.state === 1) {
                             relatedMerchs.value = res.data;

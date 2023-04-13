@@ -1,4 +1,4 @@
-import {postRequest} from '/js/basic/Http_Request.js';
+import {HttpUtil} from '/js/basic/Http_Util.js';
 import superplaceholder from '/tool/superplaceholder/superplaceholder.esm.js';
 
 export const showSearchPanel = (dialog) => {
@@ -312,7 +312,7 @@ const SearchPanel = {
     },
     methods: {
         search() {
-            postRequest(null, INDEX_SEARCH_URL, this.searchParams)
+            HttpUtil.post(null, INDEX_SEARCH_URL, this.searchParams)
                 .then(res => {
                     if(res.state === 1) {
                         this.searchResult = res.data;
