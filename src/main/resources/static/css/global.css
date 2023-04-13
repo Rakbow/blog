@@ -495,3 +495,14 @@ a {
 .a_with_underline a:hover {
     border-bottom: 1px solid #ceffff;
 }
+
+.down-arrow {
+    font-size: 120px;
+    /*margin-top: 90px;*/
+    /*margin-bottom: 90px;*/
+    text-shadow: 0 -20px #C33329, 0 0 #80a1bf;
+    color: rgba(0,0,0,0);
+    -webkit-transform: scaleY(0.8);
+    -moz-transform: scaleY(0.8);
+    transform: scaleY(0.8);
+}

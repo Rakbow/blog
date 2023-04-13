@@ -165,30 +165,51 @@ const albumIndex = {
             </div>
             <div class="col">
                 <p-dataview :value="albums" :layout="layout" :paginator="true" :rows="itemRows"
-                            :always-show-paginator="totalRecords != 0"
+                            :always-show-paginator="totalRecords != 0 && totalRecords != null"
                             :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                             :lazy="true" @page="onPage($event)" :total-records="totalRecords"
                             :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
                         PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                             current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据">
-                    <template #empty>
-                        <div class="mt-2 mb-2">
-                            <span class="emptyInfo">暂无符合条件的结果</span>
-                        </div>
-                    </template>
+<!--                    <template #empty>-->
+<!--                        <div class="mt-2 mb-2">-->
+<!--                            <span class="emptyInfo">暂无符合条件的结果</span>-->
+<!--                        </div>-->
+<!--                    </template>-->
                     <template #header>
                         <div class="grid grid-nogutter">
                             <div class="col-6" style="text-align: left">
                                 <p-dropdown v-model="sortKey" :options="sortOptions" option-label="label"
-                                            placeholder="按发行时间排序"
-                                            @change="onSortChange($event)"></p-dropdown>
+                                            placeholder="按发行时间排序" @change="onSortChange($event)"></p-dropdown>
                             </div>
                             <div class="col-6" style="text-align: right">
                                 <p-dataviewlayoutoptions v-model="layout"></p-dataviewlayoutoptions>
                             </div>
                         </div>
                     </template>
-                    <template #grid="slotProps">
+                    <template v-if="dataLoading" #grid>
+                        <div style="width: 197px">
+                            <div class="index-item-grid-card card">
+                                <p-card>
+                                    <template #header>
+                                        <p-skeleton style="width: 181px;height: 181px"></p-skeleton>
+                                    </template>
+                                    <template #title>
+                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                    </template>
+                                    <template #content>
+                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                    </template>
+                                    <template #footer>
+                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                    </template>
+                                </p-card>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="!dataLoading" #grid="slotProps">
                         <div style="width: 197px">
                             <div class="index-item-grid-card card">
                                 <p-card>
@@ -431,12 +452,17 @@ const albumIndex = {
             hasBonusSet,
             franchiseSet: [],
 
+            dataLoading: false,
             totalLoading: false,
             tmpList10,
             tmpList5,
         }
     },
     watch: {
+        dataLoading:function(newValue, oldValue) {
+            console.log("newValue: " + newValue);
+            console.log("oldValue: " + oldValue);
+        },
         layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
@@ -482,6 +508,7 @@ const albumIndex = {
             this.getAlbums();
         },
         getAlbums() {
+            this.dataLoading = true;
             this.queryParams.rows = this.itemRows;
             let json = {
                 pageLabel: "index",
@@ -491,6 +518,7 @@ const albumIndex = {
                 .then(res => {
                     this.albums = res.data;
                     this.totalRecords = res.total;
+                    this.dataLoading = false;
                 })
         },
         getProducts(data) {
@@ -732,7 +760,7 @@ const bookIndex = {
         </div>
         <div class="col">
             <p-dataview :value="books" :layout="layout" :paginator="true" :rows="itemRows"
-                        :always-show-paginator="totalRecords != 0"
+                        :always-show-paginator="totalRecords != 0 && totalRecords != null"
                         :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                         :lazy="true" @page="onPage($event)" :total-records="totalRecords"
                         :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
@@ -1269,7 +1297,7 @@ const discIndex = {
                 </div>
                 <div class="col">
                     <p-dataview :value="discs" :layout="layout" :paginator="true" :rows="itemRows"
-                                :always-show-paginator="totalRecords != 0"
+                                :always-show-paginator="totalRecords != 0 && totalRecords != null"
                                 :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                                 :lazy="true" @page="onPage($event)" :total-records="totalRecords"
                                 :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
@@ -1804,7 +1832,7 @@ const gameIndex = {
                 </div>
                 <div class="col">
                     <p-dataview :value="games" :layout="layout" :paginator="true" :rows="itemRows"
-                                :always-show-paginator="totalRecords != 0"
+                                :always-show-paginator="totalRecords != 0 && totalRecords != null"
                                 :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                                 :lazy="true" @page="onPage($event)" :total-records="totalRecords"
                                 :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink
@@ -2318,7 +2346,7 @@ const merchIndex = {
                 </div>
                 <div class="col">
                     <p-dataview :value="merchs" :layout="layout" :paginator="true" :rows="itemRows"
-                                :always-show-paginator="totalRecords != 0"
+                                :always-show-paginator="totalRecords != 0 && totalRecords != null"
                                 :sort-order="queryParams.sortOrder" :sort-field="queryParams.sortField"
                                 :lazy="true" @page="onPage($event)" :total-records="totalRecords"
                                 :rows-per-page-options="[10,20]" paginator-template="FirstPageLink PrevPageLink

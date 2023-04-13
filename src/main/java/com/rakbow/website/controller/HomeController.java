@@ -48,9 +48,14 @@ public class HomeController {
 
     //endregion
 
+//    @RequestMapping(path = "", method = RequestMethod.GET)
+//    public String getIndexPage() {
+//        return "/index";
+//    }
+
     @RequestMapping(path = "", method = RequestMethod.GET)
     public String getIndexPage() {
-        return "/index";
+        return "database/database";
     }
 
     //获取图像
