@@ -187,23 +187,40 @@ const albumIndex = {
                             </div>
                         </div>
                     </template>
+                    <template v-if="dataLoading" #list>
+                        <div class="col-12">
+                            <div class="index-list-item">
+                                <p-skeleton width="5rem" height="5rem"></p-skeleton>
+                                <div class="index-list-item-detail">
+                                    <span class="index-list-item-name text-truncate-1">
+                                        <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
+                                    </span>
+                                    <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    </span>
+                                    <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                     <template v-if="dataLoading" #grid>
                         <div style="width: 197px">
                             <div class="index-item-grid-card card">
                                 <p-card>
                                     <template #header>
-                                        <p-skeleton style="width: 181px;height: 181px"></p-skeleton>
+                                        <p-skeleton width="13rem" height="13rem"></p-skeleton>
                                     </template>
                                     <template #title>
-                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                        <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
                                     </template>
                                     <template #content>
-                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
-                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
                                     </template>
                                     <template #footer>
-                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
-                                        <p-skeleton class="w-8rem border-round h-2rem"></p-skeleton>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
                                     </template>
                                 </p-card>
                             </div>
@@ -271,7 +288,7 @@ const albumIndex = {
                             </div>
                         </div>
                     </template>
-                    <template #list="slotProps">
+                    <template v-if="!dataLoading" #list="slotProps">
                         <div class="col-12">
                             <div class="index-list-item">
                                 <a class="text-center" :href="'/db/album/'+ slotProps.data.id">
@@ -459,10 +476,6 @@ const albumIndex = {
         }
     },
     watch: {
-        dataLoading:function(newValue, oldValue) {
-            console.log("newValue: " + newValue);
-            console.log("oldValue: " + oldValue);
-        },
         layout:function(newValue) {
             if (newValue === "grid") {
                 this.itemRows = 20;
@@ -508,12 +521,12 @@ const albumIndex = {
             this.getAlbums();
         },
         getAlbums() {
-            this.dataLoading = true;
             this.queryParams.rows = this.itemRows;
             let json = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
+            this.dataLoading = true;
             HttpUtil.post(null, GET_ALBUMS_URL, json)
                 .then(res => {
                     this.albums = res.data;
@@ -786,7 +799,46 @@ const bookIndex = {
                         </div>
                     </div>
                 </template>
-                <template #grid="slotProps">
+                <template v-if="dataLoading" #list>
+                        <div class="col-12">
+                            <div class="index-list-item">
+                                <p-skeleton width="5rem" height="5rem"></p-skeleton>
+                                <div class="index-list-item-detail">
+                                    <span class="index-list-item-name text-truncate-1">
+                                        <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
+                                    </span>
+                                    <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    </span>
+                                    <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="dataLoading" #grid>
+                        <div style="width: 197px">
+                            <div class="index-item-grid-card card">
+                                <p-card>
+                                    <template #header>
+                                        <p-skeleton width="13rem" height="18rem"></p-skeleton>
+                                    </template>
+                                    <template #title>
+                                        <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
+                                    </template>
+                                    <template #content>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                    </template>
+                                    <template #footer>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                    </template>
+                                </p-card>
+                            </div>
+                        </div>
+                    </template>
+                <template v-if="!dataLoading" #grid="slotProps">
                     <div class="index-book-grid-card">
                             <p-card>
                                 <template #header>
@@ -822,7 +874,7 @@ const bookIndex = {
                             </p-card>
                         </div>
                 </template>
-                <template #list="slotProps">
+                <template v-if="!dataLoading" #list="slotProps">
                     <div class="col-12">
                         <div class="index-list-item">
                             <a class="text-center" :href="'/db/book/'+ slotProps.data.id">
@@ -1002,6 +1054,7 @@ const bookIndex = {
             franchiseSet: [],
 
             totalLoading: false,
+            dataLoading: false,
             tmpList10,
             tmpList5,
         }
@@ -1059,10 +1112,12 @@ const bookIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
+            this.dataLoading = true;
             HttpUtil.post(null, GET_BOOKS_URL, json)
                 .then(res => {
                     this.books = res.data;
                     this.totalRecords = res.total;
+                    this.dataLoading = false;
                 })
         },
         getProducts(data) {
@@ -1087,7 +1142,6 @@ const bookIndex = {
             this.getBooks();
         },
         onSortChange(event) {
-            console.log(event);
             const value = event.value.value;
             const sortValue = value;
 
@@ -1323,7 +1377,46 @@ const discIndex = {
                                 </div>
                             </div>
                         </template>
-                        <template #grid="slotProps">
+                        <template v-if="dataLoading" #list>
+                            <div class="col-12">
+                                <div class="index-list-item">
+                                    <p-skeleton width="5rem" height="5rem"></p-skeleton>
+                                    <div class="index-list-item-detail">
+                                        <span class="index-list-item-name text-truncate-1">
+                                            <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
+                                        </span>
+                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                        </span>
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="dataLoading" #grid>
+                            <div style="width: 197px">
+                                <div class="index-item-grid-card card">
+                                    <p-card>
+                                        <template #header>
+                                            <p-skeleton width="13rem" height="13rem"></p-skeleton>
+                                        </template>
+                                        <template #title>
+                                            <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
+                                        </template>
+                                        <template #content>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        </template>
+                                        <template #footer>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        </template>
+                                    </p-card>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="!dataLoading" #grid="slotProps">
                             <div style="width: 197px">
                                 <div class="index-item-grid-card card">
                                     <p-card>
@@ -1369,7 +1462,7 @@ const discIndex = {
                                 </div>
                             </div>
                         </template>
-                        <template #list="slotProps">
+                        <template v-if="!dataLoading" #list="slotProps">
                             <div class="col-12">
                                 <div class="index-list-item">
                                     <a class="text-center" :href="'/db/disc/'+ slotProps.data.id">
@@ -1551,6 +1644,7 @@ const discIndex = {
             franchiseSet: [],
 
             totalLoading: false,
+            dataLoading: false,
             tmpList10,
             tmpList5,
         }
@@ -1605,10 +1699,12 @@ const discIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
+            this.dataLoading = true;
             HttpUtil.post(null, GET_DISCS_URL, json)
                 .then(res => {
                     this.discs = res.data;
                     this.totalRecords = res.total;
+                    this.dataLoading = false;
                 })
         },
         getProducts(data) {
@@ -1858,7 +1954,46 @@ const gameIndex = {
                                 </div>
                             </div>
                         </template>
-                        <template #grid="slotProps">
+                        <template v-if="dataLoading" #list>
+                            <div class="col-12">
+                                <div class="index-list-item">
+                                    <p-skeleton width="5rem" height="5rem"></p-skeleton>
+                                    <div class="index-list-item-detail">
+                                        <span class="index-list-item-name text-truncate-1">
+                                            <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
+                                        </span>
+                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                        </span>
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="dataLoading" #grid>
+                            <div style="width: 197px">
+                                <div class="index-item-grid-card card">
+                                    <p-card>
+                                        <template #header>
+                                            <p-skeleton width="13rem" height="13rem"></p-skeleton>
+                                        </template>
+                                        <template #title>
+                                            <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
+                                        </template>
+                                        <template #content>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        </template>
+                                        <template #footer>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        </template>
+                                    </p-card>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="!dataLoading" #grid="slotProps">
                             <div style="width: 197px">
                                 <div class="index-item-grid-card card">
                                     <p-card>
@@ -1896,7 +2031,7 @@ const gameIndex = {
                                 </div>
                             </div>
                         </template>
-                        <template #list="slotProps">
+                        <template v-if="!dataLoading" #list="slotProps">
                             <div class="col-12">
                                 <div class="index-list-item">
                                     <a class="text-center" :href="'/db/game/'+ slotProps.data.id">
@@ -2072,6 +2207,7 @@ const gameIndex = {
             franchiseSet: [],
 
             totalLoading: false,
+            dataLoading:false,
             tmpList10,
             tmpList5,
         }
@@ -2123,10 +2259,12 @@ const gameIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
+            this.dataLoading = true;
             HttpUtil.post(null, GET_GAMES_URL, json)
                 .then(res => {
                     this.games = res.data;
                     this.totalRecords = res.total;
+                    this.dataLoading = false;
                 })
         },
         getProducts(data) {
@@ -2372,7 +2510,46 @@ const merchIndex = {
                                 </div>
                             </div>
                         </template>
-                        <template #grid="slotProps">
+                        <template v-if="dataLoading" #list>
+                            <div class="col-12">
+                                <div class="index-list-item">
+                                    <p-skeleton width="5rem" height="5rem"></p-skeleton>
+                                    <div class="index-list-item-detail">
+                                        <span class="index-list-item-name text-truncate-1">
+                                            <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
+                                        </span>
+                                        <span class="small-font" style="margin: 0 0 .5rem 0;">
+                                            <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                        </span>
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="dataLoading" #grid>
+                            <div style="width: 197px">
+                                <div class="index-item-grid-card card">
+                                    <p-card>
+                                        <template #header>
+                                            <p-skeleton width="13rem" height="13rem"></p-skeleton>
+                                        </template>
+                                        <template #title>
+                                            <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
+                                        </template>
+                                        <template #content>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        </template>
+                                        <template #footer>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                            <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                        </template>
+                                    </p-card>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="!dataLoading" #grid="slotProps">
                             <div style="width: 197px">
                                 <div class="index-item-grid-card card">
                                     <p-card>
@@ -2395,7 +2572,7 @@ const merchIndex = {
                                 </div>
                             </div>
                         </template>
-                        <template #list="slotProps">
+                        <template v-if="!dataLoading" #list="slotProps">
                             <div class="col-12">
                                 <div class="index-list-item">
                                     <a class="text-center" :href="'/db/merch/'+ slotProps.data.id">
@@ -2560,6 +2737,7 @@ const merchIndex = {
             franchiseSet: [],
 
             totalLoading: false,
+            dataLoading: false,
             tmpList10,
             tmpList5,
         }
@@ -2612,10 +2790,12 @@ const merchIndex = {
                 pageLabel: "index",
                 queryParams: this.queryParams
             }
+            this.dataLoading = true;
             HttpUtil.post(null, GET_MERCHS_URL, json)
                 .then(res => {
                     this.merchs = res.data;
                     this.totalRecords = res.total;
+                    this.dataLoading = false;
                 })
         },
         getProducts(data) {
