@@ -117,17 +117,17 @@ public class MusicUtil {
     public static String getArtists(Music music) {
         JSONArray artists = JSON.parseArray(music.getArtists());
         if (artists.size() == 0) {
-            return "unknown";
+            return "N/A";
         }
         for (int i = 0; i < artists.size(); i++) {
-            for (int j = 0; j < VOCAL_LIST.length; j++) {
-                if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), VOCAL_LIST[j])) {
+            for (String s : VOCAL_LIST) {
+                if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), s)) {
                     List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
                     return String.join("/", vocals);
                 }
             }
         }
-        return "unknown";
+        return "N/A";
     }
 
     /**

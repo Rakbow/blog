@@ -1,5 +1,12 @@
 package com.rakbow.website.util.entity;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.rakbow.website.entity.Book;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -8,10 +15,12 @@ package com.rakbow.website.util.entity;
  */
 public class BookUtil {
 
+    private static final String[] AUTHOR_LIST = new String[] {"原著", "原作", "作者"};
+
     /**
      * ISBN-10转ISBN-13
      *
-     * @param isbn10
+     * @param isbn10，isbn书号(10位)
      * @return ISBN-13
      * @author rakbow
      */
@@ -42,7 +51,7 @@ public class BookUtil {
     /**
      * ISBN-13转ISBN-10
      *
-     * @param isbn13
+     * @param isbn13，isbn书号(13位)
      * @return ISBN-10
      * @author rakbow
      */
@@ -72,6 +81,27 @@ public class BookUtil {
             isbn10 += tmp_num;
         }
         return isbn10;
+    }
+
+    /**
+     * 获取图书信息中的作者
+     * @author rakbow
+     * @param book 图书
+     * */
+    public static String getAuthors(Book book) {
+        JSONArray authors = JSON.parseArray(book.getAuthors());
+        if (authors.size() == 0) {
+            return "N/A";
+        }
+        for (int i = 0; i < authors.size(); i++) {
+            for (String s : AUTHOR_LIST) {
+                if (StringUtils.equals(authors.getJSONObject(i).getString("pos"), s)) {
+                    List<String> vocals = authors.getJSONObject(i).getList("name", String.class);
+                    return String.join("/", vocals);
+                }
+            }
+        }
+        return "N/A";
     }
 
 }

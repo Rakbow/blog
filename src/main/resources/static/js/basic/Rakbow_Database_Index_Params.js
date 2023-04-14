@@ -800,79 +800,80 @@ const bookIndex = {
                     </div>
                 </template>
                 <template v-if="dataLoading" #list>
-                        <div class="col-12">
-                            <div class="index-list-item">
-                                <p-skeleton width="5rem" height="5rem"></p-skeleton>
-                                <div class="index-list-item-detail">
-                                    <span class="index-list-item-name text-truncate-1">
-                                        <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
-                                    </span>
-                                    <span class="small-font" style="margin: 0 0 .5rem 0;">
-                                        <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
-                                    </span>
+                    <div class="col-12">
+                        <div class="index-list-item">
+                            <p-skeleton width="5rem" height="5rem"></p-skeleton>
+                            <div class="index-list-item-detail">
+                                <span class="index-list-item-name text-truncate-1">
+                                    <p-skeleton class="ml-5 w-20rem border-round h-2rem"></p-skeleton>
+                                </span>
+                                <span class="small-font" style="margin: 0 0 .5rem 0;">
                                     <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
-                                    <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
-                                </div>
+                                </span>
+                                <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
+                                <p-skeleton class="ml-5 w-15rem border-round h-1rem"></p-skeleton>
                             </div>
                         </div>
-                    </template>
-                    <template v-if="dataLoading" #grid>
-                        <div style="width: 197px">
-                            <div class="index-item-grid-card card">
-                                <p-card>
-                                    <template #header>
-                                        <p-skeleton width="13rem" height="18rem"></p-skeleton>
-                                    </template>
-                                    <template #title>
-                                        <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
-                                    </template>
-                                    <template #content>
-                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
-                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
-                                    </template>
-                                    <template #footer>
-                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
-                                        <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
-                                    </template>
-                                </p-card>
-                            </div>
-                        </div>
-                    </template>
-                <template v-if="!dataLoading" #grid="slotProps">
-                    <div class="index-book-grid-card">
+                    </div>
+                </template>
+                <template v-if="dataLoading" #grid>
+                    <div style="width: 197px">
+                        <div class="index-item-grid-card card">
                             <p-card>
                                 <template #header>
-                                    <a :href="'/db/book/'+ slotProps.data.id" style="width: 180px;display: block">
-                                        <div class="book-block-img"
-                                                :style="'background-image:url('+ slotProps.data.cover.url+');' ">
-                                            <div class="absolute releaseDate">
-                                                <span class="text-center" style="color: white">{{slotProps.data.publishDate}}</span>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    <p-skeleton width="13rem" height="18rem"></p-skeleton>
                                 </template>
                                 <template #title>
-                            <span class="text-truncate-2">
-                                <a :href="'/db/merch/'+ slotProps.data.id">{{slotProps.data.title}}</a>
-                            </span>
-                                </template>
-                                <template #subtitle>
-                            <span :class="'fi fi-' + slotProps.data.region.code"
-                                    v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
-                                    &nbsp&nbsp<span class="label" style="font-size: 9px;">{{slotProps.data.publisher}}</span>
+                                    <p-skeleton class="w-12rem border-round h-2rem"></p-skeleton>
                                 </template>
                                 <template #content>
-                                    <div class="grid">
-                                        <span class="p-1">
-                                            <p-tag class="ml-1" :value="slotProps.data.bookType.nameZh"></p-tag>
-                                        </span>
-                                        <span class="p-1 has-bonus-tag" v-if="slotProps.data.hasBonus">
-                                            <p-tag style="background: #2f364f" class="ml-1" value="特典"></p-tag>
-                                        </span>
-                                    </div>
+                                    <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                    <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                </template>
+                                <template #footer>
+                                    <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
+                                    <p-skeleton class="text-center w-10rem border-round h-1rem"></p-skeleton>
                                 </template>
                             </p-card>
                         </div>
+                    </div>
+                </template>
+                <template v-if="!dataLoading" #grid="slotProps">
+                    <div class="index-book-grid-card">
+                        <p-card>
+                            <template #header>
+                                <a :href="'/db/book/'+ slotProps.data.id" style="width: 180px;display: block">
+                                    <div class="book-block-img"
+                                            :style="'background-image:url('+ slotProps.data.cover.url+');' ">
+                                        <div class="absolute releaseDate">
+                                            <span class="text-center" style="color: white">{{slotProps.data.publishDate}}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </template>
+                            <template #title>
+                                <span class="text-truncate-2">
+                                    <a :href="'/db/merch/'+ slotProps.data.id">{{slotProps.data.title}}</a>
+                                </span>
+                            </template>
+                            <template #subtitle>
+                                <span style="font-size: 11px;color: white"><b>{{slotProps.data.authors}}</b></span>
+                                &nbsp<span class="label" style="font-size: 9px;">{{slotProps.data.publisher}}</span>
+                            </template>
+                            <template #content>
+                                <div class="grid">
+                                    <span :class="'fi fi-' + slotProps.data.region.code" class="ml-2"
+                                        v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
+                                    <span class="p-1">
+                                        <p-tag class="ml-1" :value="slotProps.data.bookType.nameZh"></p-tag>
+                                    </span>
+                                    <span class="p-1 has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                        <p-tag style="background: #2f364f" class="ml-1" value="特典"></p-tag>
+                                    </span>
+                                </div>
+                            </template>
+                        </p-card>
+                    </div>
                 </template>
                 <template v-if="!dataLoading" #list="slotProps">
                     <div class="col-12">
@@ -889,7 +890,8 @@ const bookIndex = {
                         </span><br>
                                 <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
                                         v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
-                                &nbsp&nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
+                                &nbsp<span style="font-size: 11px;color: white"><b>{{slotProps.data.authors}}</b></span>
+                                &nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
                                 <span>
                             <span class="p-1">
                                 <p-tag :value="slotProps.data.bookType.nameZh"></p-tag>
