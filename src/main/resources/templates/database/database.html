@@ -241,12 +241,12 @@
                                             <span class="small-font" style="margin: 0 0 .5rem 0;">
                                                         <b class="label">{{result.isbn13}}</b><span class="label">&nbsp{{result.publishDate}}</span>
                                                     </span><br>
-                                            <span :class="'fi fi-' + result.region.code" style="margin-left: 0.5rem"
-                                                  v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
-                                            &nbsp&nbsp<span class="label"
-                                                            style="font-size: 7px">{{result.publisher}}</span><br>
+                                            <span class="label" style="font-size: 11px;color: white"><b>{{result.authors}}</b></span>
+                                            &nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
                                             <span class="grid">
                                                     <span class="text-start col-6">
+                                                        <span :class="'fi fi-' + result.region.code"
+                                                              v-tooltip.bottom="{value: result.region.nameZh, class: 'region-tooltip'}"></span>
                                                         <span style="display:inline">
                                                             <p-tag class="product-tag ml-1"
                                                                    :value="result.bookType.nameZh"></p-tag>

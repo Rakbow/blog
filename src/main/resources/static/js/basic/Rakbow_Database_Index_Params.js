@@ -2,7 +2,7 @@ import {HttpUtil} from '/js/basic/Http_Util.js';
 
 const albumIndex = {
     template: `
-        <div class="grid mt-2">
+    <div class="grid mt-2">
             <div class="col-2" style="min-width: 300px">
                 <p-panel>
                     <template #header>
@@ -816,7 +816,7 @@ const bookIndex = {
                             </div>
                         </div>
                     </template>
-                    <template v-if="dataLoading" #grid>
+                <template v-if="dataLoading" #grid>
                         <div style="width: 197px">
                             <div class="index-item-grid-card card">
                                 <p-card>
@@ -857,12 +857,13 @@ const bookIndex = {
                             </span>
                                 </template>
                                 <template #subtitle>
-                            <span :class="'fi fi-' + slotProps.data.region.code"
-                                    v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
-                                    &nbsp&nbsp<span class="label" style="font-size: 9px;">{{slotProps.data.publisher}}</span>
+                                    <span class="label" style="font-size: 11px;color: white"><b>{{slotProps.data.authors}}</b></span>
+                                    &nbsp<span class="label" style="font-size: 9px;">{{slotProps.data.publisher}}</span>
                                 </template>
                                 <template #content>
                                     <div class="grid">
+                                        <span :class="'fi fi-' + slotProps.data.region.code" class="ml-2"
+                                        v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
                                         <span class="p-1">
                                             <p-tag class="ml-1" :value="slotProps.data.bookType.nameZh"></p-tag>
                                         </span>
@@ -887,17 +888,18 @@ const bookIndex = {
                                 <span class="small-font" style="margin: 0 0 .5rem 0;">
                             <b class="label">{{slotProps.data.isbn13}}</b><span class="label">&nbsp{{slotProps.data.publishDate}}</span>
                         </span><br>
+                            <span class="label" style="font-size: 11px;color: white"><b>{{slotProps.data.authors}}</b></span>
+                            &nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
+                            <span>
                                 <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
-                                        v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
-                                &nbsp&nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
-                                <span>
-                            <span class="p-1">
-                                <p-tag :value="slotProps.data.bookType.nameZh"></p-tag>
+                                    v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
+                                <span class="p-1">
+                                    <p-tag :value="slotProps.data.bookType.nameZh"></p-tag>
+                                </span>
+                                <span class="has-bonus-tag" v-if="slotProps.data.hasBonus">
+                                    <p-tag style="background: #001122" class="ml-1" value="特典"></p-tag>
+                                </span>
                             </span>
-                            <span class="has-bonus-tag" v-if="slotProps.data.hasBonus">
-                                <p-tag style="background: #001122" class="ml-1" value="特典"></p-tag>
-                            </span>
-                        </span>
                             </div>
                         </div>
                     </div>

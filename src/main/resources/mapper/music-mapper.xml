@@ -15,7 +15,7 @@
     </sql>
 
     <sql id="MusicAlbumViewFields">
-        id, name, artists, album_id, album_name, audio_type, album_images, audio_length, has_file, has_lrc
+        id, name, album_id, album_name, audio_type, audio_length, artists, album_images, has_file, has_lrc
     </sql>
 
     <select id="getMusic" resultType="Music">
