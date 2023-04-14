@@ -15,7 +15,6 @@ import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.VisitUtil;
-import com.rakbow.website.util.entity.BookUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -108,7 +107,6 @@ public interface BookVOMapper {
         bookVOAlpha.setTitleEn(book.getTitleEn());
         bookVOAlpha.setIsbn10(book.getIsbn10());
         bookVOAlpha.setIsbn13(book.getIsbn13());
-        bookVOAlpha.setAuthors(BookUtil.getAuthors(book));
         bookVOAlpha.setPublishDate(CommonUtil.dateToString(book.getPublishDate()));
         bookVOAlpha.setPrice(book.getPrice());
         bookVOAlpha.setCurrencyUnit(Region.regionCode2Currency(book.getRegion()));
@@ -252,7 +250,6 @@ public interface BookVOMapper {
         bookVOGamma.setTitleEn(book.getTitleEn());
         bookVOGamma.setIsbn10(book.getIsbn10());
         bookVOGamma.setIsbn13(book.getIsbn13());
-        bookVOGamma.setAuthors(BookUtil.getAuthors(book));
         bookVOGamma.setPublishDate(CommonUtil.dateToString(book.getPublishDate()));
         bookVOGamma.setPublisher(book.getPublisher());
         bookVOGamma.setSummary(book.getSummary());
