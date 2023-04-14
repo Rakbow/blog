@@ -2,6 +2,7 @@ package com.rakbow.website.util.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
+import com.rakbow.website.data.emun.book.BookType;
 import com.rakbow.website.entity.Book;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class BookUtil {
 
     private static final String[] AUTHOR_LIST = new String[] {"原著", "原作", "作者"};
+    private static final String[] COMIC_AUTHOR_LIST = new String[] {"作画", "作者"};
 
     /**
      * ISBN-10转ISBN-13
@@ -89,15 +91,29 @@ public class BookUtil {
      * @param book 图书
      * */
     public static String getAuthors(Book book) {
-        JSONArray authors = JSON.parseArray(book.getAuthors());
-        if (authors.size() == 0) {
+        JSONArray authorJson = JSON.parseArray(book.getAuthors());
+        if (authorJson.size() == 0) {
             return "N/A";
         }
-        for (int i = 0; i < authors.size(); i++) {
-            for (String s : AUTHOR_LIST) {
-                if (StringUtils.equals(authors.getJSONObject(i).getString("pos"), s)) {
-                    List<String> vocals = authors.getJSONObject(i).getList("name", String.class);
-                    return String.join("/", vocals);
+        for (int i = 0; i < authorJson.size(); i++) {
+            if(book.getBookType() == BookType.COMIC.getIndex()) {
+                for (String s : COMIC_AUTHOR_LIST) {
+                    if (StringUtils.equals(authorJson.getJSONObject(i).getString("pos"), s)) {
+                        List<String> authors = authorJson.getJSONObject(i).getList("name", String.class);
+                        if(authors.size() > 0 && authors.size() <= 2) {
+                            return String.join("/", authors);
+                        }
+                        if(authors.size() > 2) {
+                            return authors.get(0) + " etc.";
+                        }
+                    }
+                }
+            }else {
+                for (String s : AUTHOR_LIST) {
+                    if (StringUtils.equals(authorJson.getJSONObject(i).getString("pos"), s)) {
+                        List<String> vocals = authorJson.getJSONObject(i).getList("name", String.class);
+                        return String.join("/", vocals);
+                    }
                 }
             }
         }

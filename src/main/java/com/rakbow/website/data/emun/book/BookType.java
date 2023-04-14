@@ -19,7 +19,7 @@ public enum BookType {
 
     UNCLASSIFIED(0,"未分类", "Unclassified"),
     NOVEL(1,"小说", "Novel"),
-    comic(2,"漫画", "comic"),
+    COMIC(2,"漫画", "comic"),
     ANTHOLOGY(3,"作品集", "Anthology"),
     ART_BOOK(4,"原画集/设定集", "Art Book"),
     ELECTRONIC_BOOK(5,"电子书", "e-book"),
