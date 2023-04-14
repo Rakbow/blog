@@ -5,55 +5,57 @@ import com.rakbow.website.data.SimpleSearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.entity.*;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.service.AlbumService;
+import com.rakbow.website.service.EntityService;
+import com.rakbow.website.service.MusicService;
+import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
-//import com.rakbow.website.util.convertMapper.GameVoMapper;
-import com.rakbow.website.service.*;
 import com.rakbow.website.util.entity.BookUtil;
-import com.rakbow.website.util.common.DataFinder;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+//import com.rakbow.website.util.convertMapper.GameVoMapper;
 
 @SpringBootTest
 class WebSiteApplicationTests {
 
-    @Autowired
+    @Resource
     private AlbumService albumService;
-    @Autowired
+    @Resource
     private EntityService entityService;
-    @Autowired
+    @Resource
     private MusicService musicService;
-    @Autowired
+    @Resource
     private MusicMapper musicMapper;
 
-    @Autowired
+    @Resource
     private ProductMapper productMapper;
 
-    @Autowired
+    @Resource
     private AlbumMapper albumMapper;
-    @Autowired
+    @Resource
     private BookMapper bookMapper;
-    @Autowired
+    @Resource
     private DiscMapper discMapper;
-    @Autowired
+    @Resource
     private GameMapper gameMapper;
-    @Autowired
+    @Resource
     private MerchMapper merchMapper;
-    @Autowired
+    @Resource
     private FranchiseMapper franchiseMapper;
 
-    @Autowired
+    @Resource
     private LikeUtil likeUtil;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
-    @Autowired
+    @Resource
     private StatisticMapper statisticMapper;
 
     @Test
@@ -211,8 +213,10 @@ class WebSiteApplicationTests {
 
     @Test
     public void searchTest() {
-        SimpleSearchResult result = entityService.simpleSearch("ひぐらし", 9, 0, 10);
-        System.out.println(result.data);
+        long t1 = new Date().getTime();
+        SimpleSearchResult result = entityService.simpleSearch("i believe", 9, 0, 10);
+        long t2 = new Date().getTime();
+        System.out.println(t2 - t1);
     }
 
 }

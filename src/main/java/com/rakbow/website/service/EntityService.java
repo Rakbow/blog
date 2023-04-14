@@ -25,6 +25,7 @@ import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.entity.*;
+import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.*;
 import com.rakbow.website.util.entity.MusicUtil;
@@ -517,12 +518,9 @@ public class EntityService {
             }
         }
        if(entityType == EntityType.MUSIC.getId()) {
-           List<Music> musics = musicMapper.simpleSearch(keyword, limit, offset);
+           List<MusicAlbumView> musics = musicMapper.simpleSearch(keyword, limit, offset);
            if(!musics.isEmpty()) {
-
-               List<Album> albums = albumMapper.getAlbums(MusicUtil.getAlbumIds(musics));
-
-               res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics, albums))));
+               res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));
                res.setTotal(musicMapper.simpleSearchCount(keyword));
            }
        }

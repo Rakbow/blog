@@ -5,10 +5,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.music.AudioType;
+import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.data.vo.music.MusicVOBeta;
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.entity.MusicUtil;
@@ -126,38 +126,34 @@ public interface MusicVOMapper {
     /**
      * 转VO对象，用于存储到搜索引擎
      *
-     * @param music 音乐
+     * @param musicAlbumView 音乐
      * @return MusicVOBeta
      * @author rakbow
      */
-    default MusicVOBeta music2VOBeta(Music music, List<Album> albums) {
-        if (music == null) {
+    default MusicVOBeta music2VOBeta(MusicAlbumView musicAlbumView) {
+        if (musicAlbumView == null) {
             return null;
         }
         VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
         LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
 
-        Album album = DataFinder.findAlbumById(music.getAlbumId(), albums);
-
         MusicVOBeta musicVOBeta = new MusicVOBeta();
 
         //基础信息
-        musicVOBeta.setId(music.getId());
-        musicVOBeta.setName(music.getName());
-        musicVOBeta.setNameEn(music.getNameEn());
-        musicVOBeta.setArtists(MusicUtil.getArtists(music));
-        musicVOBeta.setAudioType(AudioType.getNameByIndex(music.getAudioType()));
-        musicVOBeta.setAudioLength(music.getAudioLength());
-        musicVOBeta.setHasLrc(MusicUtil.hasLrc(music));
-        musicVOBeta.setHasFile(MusicUtil.hasFile(music));
+        musicVOBeta.setId(musicAlbumView.getId());
+        musicVOBeta.setName(musicAlbumView.getName());
+        musicVOBeta.setArtists(MusicUtil.getArtists(musicAlbumView));
+        musicVOBeta.setAudioType(AudioType.getNameByIndex(musicAlbumView.getAudioType()));
+        musicVOBeta.setAudioLength(musicAlbumView.getAudioLength());
+        musicVOBeta.setHasLrc(musicAlbumView.getHasLrc() == 1);
+        musicVOBeta.setHasFile(musicAlbumView.getHasFile() == 1);
 
-        assert album != null;
-        musicVOBeta.setAlbumId(music.getAlbumId());
-        musicVOBeta.setAlbumName(album.getName());
-        musicVOBeta.setCover(QiniuImageUtil.getThumb70Url(album.getImages()));
+        musicVOBeta.setAlbumId(musicAlbumView.getAlbumId());
+        musicVOBeta.setAlbumName(musicAlbumView.getAlbumName());
+        musicVOBeta.setCover(QiniuImageUtil.getThumb70Url(musicAlbumView.getAlbumImages()));
 
-        musicVOBeta.setVisitCount(visitUtil.getVisit(EntityType.MUSIC.getId(), music.getId()));
-        musicVOBeta.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), music.getId()));
+        musicVOBeta.setVisitCount(visitUtil.getVisit(EntityType.MUSIC.getId(), musicAlbumView.getId()));
+        musicVOBeta.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), musicAlbumView.getId()));
 
         return musicVOBeta;
     }
@@ -165,15 +161,15 @@ public interface MusicVOMapper {
     /**
      * 列表转换, 转VO对象，用于存储到搜索引擎
      *
-     * @param musics 列表
+     * @param musicAlbumViews 列表
      * @return List<MusicVOBeta>
      * @author rakbow
      */
-    default List<MusicVOBeta> music2VOBeta(List<Music> musics, List<Album> albums) {
+    default List<MusicVOBeta> music2VOBeta(List<MusicAlbumView> musicAlbumViews) {
         List<MusicVOBeta> musicVOBetas = new ArrayList<>();
 
-        if (!musics.isEmpty()) {
-            musics.forEach(music -> musicVOBetas.add(music2VOBeta(music, albums)));
+        if (!musicAlbumViews.isEmpty()) {
+            musicAlbumViews.forEach(musicAlbumView -> musicVOBetas.add(music2VOBeta(musicAlbumView)));
         }
 
         return musicVOBetas;

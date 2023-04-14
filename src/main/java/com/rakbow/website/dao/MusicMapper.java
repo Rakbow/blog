@@ -1,6 +1,6 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.entity.Music;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -41,7 +41,7 @@ public interface MusicMapper {
     void updateMusicFiles(int id, String files, Timestamp editedTime);
 
     //简单搜索
-    List<Music> simpleSearch(String keyWorld, int limit, int offset);
+    List<MusicAlbumView> simpleSearch(String keyWorld, int limit, int offset);
 
     int simpleSearchCount(String keyWorld);
 

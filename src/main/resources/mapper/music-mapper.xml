@@ -14,6 +14,10 @@
         audio_length, description, remark, added_time, edited_time, status
     </sql>
 
+    <sql id="MusicAlbumViewFields">
+        id, name, artists, album_id, album_name, audio_type, album_images, audio_length, has_file, has_lrc
+    </sql>
+
     <select id="getMusic" resultType="Music">
         select
         <include refid="selectFields"></include>
@@ -110,26 +114,25 @@
         where id = #{id}
     </update>
 
-    <select id="simpleSearch" resultType="Music">
+    <select id="simpleSearch" resultType="MusicAlbumView">
         select
-        <include refid="selectFields"></include>
-        from music
+        <include refid="MusicAlbumViewFields"></include>
+        from music_album_view
         where
         (
         name like concat('%', #{keyWorld}, '%')
         )
-        and status = 1
         order by id desc
         limit #{offset}, #{limit}
     </select>
 
     <select id="simpleSearchCount" resultType="int">
         select count(id)
-        from music
+        from music_album_view
         where
         (
         name like concat('%', #{keyWorld}, '%')
         )
-        and status = 1
     </select>
+
 </mapper>

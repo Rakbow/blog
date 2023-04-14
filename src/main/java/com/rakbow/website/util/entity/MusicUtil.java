@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.music.AudioType;
+import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.util.file.QiniuImageUtil;
@@ -116,6 +117,27 @@ public class MusicUtil {
      * */
     public static String getArtists(Music music) {
         JSONArray artists = JSON.parseArray(music.getArtists());
+        if (artists.size() == 0) {
+            return "N/A";
+        }
+        for (int i = 0; i < artists.size(); i++) {
+            for (String s : VOCAL_LIST) {
+                if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), s)) {
+                    List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
+                    return String.join("/", vocals);
+                }
+            }
+        }
+        return "N/A";
+    }
+
+    /**
+     * 获取音频信息中的演唱者
+     * @author rakbow
+     * @param musicAlbumView 音乐
+     * */
+    public static String getArtists(MusicAlbumView musicAlbumView) {
+        JSONArray artists = JSON.parseArray(musicAlbumView.getArtists());
         if (artists.size() == 0) {
             return "N/A";
         }
