@@ -71,8 +71,7 @@
         isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, franchises = #{book.franchises}, products = #{book.products},
         region = #{book.region}, publish_language = #{book.publishLanguage}, publisher = #{book.publisher},
         publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
-        has_bonus = #{book.hasBonus}, remark = #{book.remark}, added_time = #{book.addedTime},
-        edited_time = #{book.editedTime}
+        has_bonus = #{book.hasBonus}, remark = #{book.remark}, edited_time = #{book.editedTime}
         where id = #{book.id}
     </update>
 

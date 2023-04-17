@@ -37,9 +37,9 @@
         update franchise
         set
         name = #{franchise.name}, name_zh = #{franchise.nameZh}, name_en = #{franchise.nameEn},
-         origin_date = #{franchise.originDate}, added_time = #{franchise.addedTime},
-         edited_time = #{franchise.editedTime}, description = #{franchise.description}, remark = #{franchise.remark},
-          images = #{franchise.images}, meta_info = #{franchise.metaInfo}
+        origin_date = #{franchise.originDate}, edited_time = #{franchise.editedTime},
+        description = #{franchise.description}, remark = #{franchise.remark},
+        images = #{franchise.images}, meta_info = #{franchise.metaInfo}
         where id = #{id}
     </update>
 

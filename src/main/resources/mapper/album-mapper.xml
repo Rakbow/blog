@@ -72,7 +72,7 @@
         media_format = #{album.mediaFormat},label = #{album.label}, publisher = #{album.publisher},
         distributor = #{album.distributor}, copyright =#{album.copyright}, has_bonus = #{album.hasBonus},
         remark = #{album.remark}, franchises = #{album.franchises}, products = #{album.products},
-        added_time = #{album.addedTime}, edited_time = #{album.editedTime}
+        edited_time = #{album.editedTime}
         where id = #{album.id}
     </update>
 

@@ -29,7 +29,7 @@ export class RakbowWebStr {
     static ItemDetailArtistEditTitle = 'Artist Edit';
 
     static ItemDetailPlayListTitle = 'Play List';
-    static ItemDetailArtistInfoTitle = 'Artist Information';
+    static ItemDetailArtistInfoTitle = 'Artists';
 
 
     static ItemDetailArtistEditPos = 'Position';
@@ -61,12 +61,13 @@ export class RakbowWebStr {
     static RelatedProductTitle = 'Related Products';
 
     static AlbumDetailTrackEditTitle = 'Track Information Edit';
-    static AlbumDetailTrackInfoTitle = 'Track Information';
+    static AlbumDetailTrackInfoTitle = 'TrackList';
 
     static ItemDetailNoArtistInfoMessage = 'No Artist Information';
     static ItemDetailNoBonusInfoMessage = 'No Bonus Information';
     static ItemDetailNoAudioInfoMessage = 'No Audio File';
     static AlbumDetailNoTrackInfoTitle = 'No Track Information';
+    static ItemDetailNoRelatedItemMessage = 'No Related Items';
 
     static ItemTaxInclusiveDisplayName = 'Tax-inclusive';
     static LetMusicPlayerBottom = 'Let Music Player Bottom';

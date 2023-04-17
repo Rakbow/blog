@@ -68,8 +68,7 @@
         name = #{game.name}, name_zh = #{game.nameZh}, name_en = #{game.nameEn}, barcode = #{game.barcode},
         franchises = #{game.franchises}, products = #{game.products}, release_date = #{game.releaseDate},
         release_type = #{game.releaseType}, platform = #{game.platform}, region = #{game.region},
-        has_bonus = #{game.hasBonus}, remark = #{game.remark}, added_time = #{game.addedTime},
-        edited_time = #{game.editedTime}
+        has_bonus = #{game.hasBonus}, remark = #{game.remark}, edited_time = #{game.editedTime}
         where id = #{game.id}
     </update>
 

@@ -69,7 +69,7 @@
         franchises = #{merch.franchises}, products = #{merch.products}, category = #{merch.category},
         region = #{merch.region}, release_date = #{merch.releaseDate}, price = #{merch.price},
         currency_unit = #{merch.currencyUnit}, not_for_sale = #{merch.notForSale}, description = #{merch.description},
-        remark = #{merch.remark}, added_time = #{merch.addedTime}, edited_time = #{merch.editedTime}
+        remark = #{merch.remark}, edited_time = #{merch.editedTime}
         where id = #{merch.id}
     </update>
 

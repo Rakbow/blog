@@ -245,8 +245,6 @@
                                 <span class="emptyInfo"><em>暂无Staff相关信息</em></span>
                             </div>
                         </p-fieldset>
-                        <!-- description -->
-                        <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
                         <!-- game -->
                         <p-fieldset :toggleable="true" v-if="games">
                             <template #legend>
@@ -357,6 +355,8 @@
                                 </p-timeline>
                             </div>
                         </p-fieldset>
+                        <!-- description -->
+                        <div th:insert="~{template/item-detail-template :: description_field_set}"></div>
                     </div>
                 </template>
             </p-card>

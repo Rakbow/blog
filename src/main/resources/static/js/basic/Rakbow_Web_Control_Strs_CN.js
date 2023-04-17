@@ -67,6 +67,7 @@ export class RakbowWebStr {
     static ItemDetailNoBonusInfoMessage = '暂无特典信息';
     static ItemDetailNoAudioInfoMessage = '暂无音频文件';
     static AlbumDetailNoTrackInfoTitle = '暂无音轨信息';
+    static ItemDetailNoRelatedItemMessage = '暂无相关条目';
 
     static ItemTaxInclusiveDisplayName = '含税';
     static LetMusicPlayerBottom = '切换播放器至底部';

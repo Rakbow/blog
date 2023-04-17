@@ -77,7 +77,7 @@
         set
         name = #{music.name}, name_en = #{music.nameEn}, audio_type = #{music.audioType},
         disc_serial = #{music.discSerial}, track_serial = #{music.trackSerial}, audio_length = #{music.audioLength},
-        remark = #{music.remark}, added_time = #{music.addedTime}, edited_time = #{music.editedTime}
+        remark = #{music.remark}, edited_time = #{music.editedTime}
         where id = #{music.id}
     </update>
 

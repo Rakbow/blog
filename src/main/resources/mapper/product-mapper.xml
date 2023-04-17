@@ -63,7 +63,7 @@
         set
         name = #{product.name}, name_zh = #{product.nameZh}, name_en = #{product.nameEn},
         release_date = #{product.releaseDate}, franchise = #{product.franchise}, category = #{product.category},
-        remark = #{product.remark}, added_time = #{product.addedTime}, edited_time = #{product.editedTime}
+        remark = #{product.remark}, edited_time = #{product.editedTime}
         where id = #{id}
     </update>
 
