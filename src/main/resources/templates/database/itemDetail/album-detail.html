@@ -101,7 +101,7 @@
 </head>
 <body>
 <div id="app" style="margin-top: 60px">
-    <!-- 头部 -->
+    <!-- header -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
     <div id="main" class="grid mt-2">
@@ -140,7 +140,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-dingdanbianhao"></i>
-                                                    <strong>专辑编号</strong>
+                                                    <strong>{{RakbowWebStr.AlbumCatalogDisplayName}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.catalogNo?album.catalogNo:"N/A"}}
@@ -149,7 +149,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-bar-code"></i>
-                                                    <strong>商品条形码</strong>
+                                                    <strong>{{RakbowWebStr.ItemBarcodeDisplayName}}</strong>
                                                 </td>
                                                 <td>{{album.barcode?album.barcode:"N/A"}}
                                                 </td>
@@ -157,7 +157,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi pi-calendar"></i>
-                                                    <strong>发行时间</strong>
+                                                    <strong>{{RakbowWebStr.ItemReleaseDateDisplayName}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.releaseDate?album.releaseDate:"N/A"}}
@@ -166,30 +166,32 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-wuliaojiage"></i>
-                                                    <strong>发行价格</strong>
+                                                    <strong>{{RakbowWebStr.ItemReleasePriceDisplayName}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.price != 0 ? album.price :"-"}}<span
                                                         v-if="album.currencyUnit == 'JPY'" class="ml-1"
                                                         style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                        v-tooltip.right="{value:'含税', class: 'region-tooltip'}">JPY</span><span
+                                                        v-tooltip.right="{value: RakbowWebStr.ItemTaxInclusiveDisplayName, class: 'region-tooltip'}">JPY</span><span
                                                         v-else>{{album.currencyUnit}}</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-gift"></i>
-                                                    <strong>特典</strong>
+                                                    <strong>{{RakbowWebStr.ItemBonusDisplayName}}</strong>
                                                 </td>
                                                 <td>
-                                                    <a v-if="album.hasBonus" href="#bonus" style="color: #ceffff"
-                                                       class="ml-3">有</a>{{(album.hasBonus)?"":"无"}}
+                                                    <a v-if="album.hasBonus" href="#bonus" class="ml-3">
+                                                        <i class="pi true-icon pi-check-circle"></i>
+                                                    </a>
+                                                    <i v-else class="pi false-icon pi-times-circle"></i>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <i class="pi pi-print"></i>
-                                                    <strong>出版形式</strong>
+                                                    <strong>{{RakbowWebStr.ItemPublishFormatDisplayName}}</strong>
                                                 </td>
                                                 <td v-for="format of album.publishFormat" style="display:inline">
                                                     <a :href="'/db/albums?publishFormat=' + format.value">
@@ -200,7 +202,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-zhuanjiguangpan"></i>
-                                                    <strong>媒体类型</strong>
+                                                    <strong>{{RakbowWebStr.ItemMediaFormatDisplayName}}</strong>
                                                 </td>
                                                 <td v-for="format of album.mediaFormat" style="display:inline">
                                                     <a :href="'/db/albums?mediaFormat=' + format.value">
@@ -211,7 +213,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-musicfill"></i>
-                                                    <strong>专辑类型</strong>
+                                                    <strong>{{RakbowWebStr.AlbumFormatDisplayName}}</strong>
                                                 </td>
                                                 <td v-for="format of album.albumFormat" style="display:inline">
                                                     <a :href="'/db/albums?albumFormat=' + format.value">
@@ -222,14 +224,14 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-tushuyinxiang"></i>
-                                                    <strong>唱片公司</strong>
+                                                    <strong>{{RakbowWebStr.AlbumLabelDisplayName}}</strong>
                                                 </td>
                                                 <td>{{album.label?album.label:"N/A"}}</td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-gongsi"></i>
-                                                    <strong>出版商</strong>
+                                                    <strong>{{RakbowWebStr.AlbumPublisherDisplayName}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.publisher?album.publisher:"N/A"}}
@@ -238,7 +240,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-company"></i>
-                                                    <strong>经销商</strong>
+                                                    <strong>{{RakbowWebStr.AlbumDistributorDisplayName}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.distributor?album.distributor:"N/A"}}
@@ -247,7 +249,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-copyright"></i>
-                                                    <strong>版权方</strong>
+                                                    <strong>{{RakbowWebStr.ItemCopyrightDisplayName}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.copyright?album.copyright:"N/A"}}
@@ -267,11 +269,11 @@
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi iconfont icon-music"></i>
-                                <b>在线播放</b>
+                                <b>{{RakbowWebStr.ItemDetailPlayListTitle}}</b>
                             </template>
                             <p-button v-if="audioInfos!=null" @click="playerOption.fixed=true, createAplayer()"
                                       class="mr-2"
-                                      v-tooltip.bottom="'切换播放器至底部'">
+                                      v-tooltip.bottom="RakbowWebStr.LetMusicPlayerBottom">
                                 <i class="pi pi-arrow-circle-down"></i>
                             </p-button>
                             <div id="aplayer"></div>
@@ -280,7 +282,7 @@
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-users"></i>
-                                <b>创作信息</b>
+                                <b>{{RakbowWebStr.ItemDetailArtistInfoTitle}}</b>
                             </template>
                             <div class="grid ml-4" v-if="album.artists.length != 0">
                                 <table class="table-borderless table-sm">
@@ -295,24 +297,24 @@
                                 </table>
                             </div>
                             <div v-else>
-                                <span class="emptyInfo"><em>暂无创作相关信息</em></span>
+                                <span class="emptyInfo"><em>{{RakbowWebStr.ItemDetailNoArtistInfoMessage}}</em></span>
                             </div>
                         </p-fieldset>
                         <!-- tracks info -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi iconfont icon-playlist"></i>
-                                <b>音轨信息</b>
+                                <b>{{RakbowWebStr.AlbumDetailTrackInfoTitle}}</b>
                             </template>
                             <div v-if="album.trackInfo == null || JSON.stringify(album.trackInfo) == '{}' ">
-                                <span class="emptyInfo"><em>暂无音轨信息</em></span>
+                                <span class="emptyInfo"><em>{{RakbowWebStr.AlbumDetailNoTrackInfoTitle}}</em></span>
                             </div>
                             <div>
                                 <p class="text-start"
                                    v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
-                                    总碟片数: <b>{{album.trackInfo.discList.length}} </b>
-                                    总曲目数: <b>{{album.trackInfo.totalTracks}} </b>
-                                    总时长: <b>{{album.trackInfo.totalLength}}</b>
+                                    {{RakbowWebStr.TotalDiscNum}}: <b>{{album.trackInfo.discList.length}} </b>
+                                    {{RakbowWebStr.TotalTrackNum}}: <b>{{album.trackInfo.totalTracks}} </b>
+                                    {{RakbowWebStr.TotalLength}}: <b>{{album.trackInfo.totalLength}}</b>
                                 </p>
                             </div>
                             <div v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' "
@@ -345,9 +347,9 @@
                                     </tbody>
                                 </table>
                                 <p class="text-end">
-                                    曲目数: <b>{{disc.trackList.length}} </b>
+                                    {{RakbowWebStr.TrackNum}}: <b>{{disc.trackList.length}} </b>
                                     <span v-if="disc.discLength != '00:00'">
-                                            碟片时长: <b>{{disc.discLength}}</b>
+                                            {{RakbowWebStr.DiscLength}}: <b>{{disc.discLength}}</b>
                                         </span>
                                 </p>
                             </div>
@@ -412,7 +414,7 @@
             <p-panel class="mt-2" v-if="!relatedItemLoad">
                 <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-album"></i><span><strong>相关专辑</strong></span>
+                        <i class="pi iconfont icon-album"></i><span><strong>{{RakbowWebStr.RelatedAlbumTitle}}</strong></span>
                     </span>
                 </template>
                 <div class="grid">
@@ -423,7 +425,7 @@
                             <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
                                 <a :href="'/db/album/'+ relatedAlbum.id">
                                     <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.blackUrl"
-                                         v-tooltip.bottom="'收录时间: ' + relatedAlbum.addedTime + '编辑时间: ' + relatedAlbum.editedTime">
+                                         v-tooltip.bottom="RakbowWebStr.AddedTime + ': ' + relatedAlbum.addedTime + RakbowWebStr.EditedTime + ': ' + relatedAlbum.editedTime">
                                 </a>
                             </div>
                             <div class="col p-0" style="height: 80px">
@@ -453,69 +455,69 @@
             <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑专辑基础信息"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :header="RakbowWebStr.ItemDetailBaseInfoEditTitle"
               :style="{width: '800px'}" class="p-fluid">
         <p-blockui :blocked="editBlock">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>专辑名称<span style="color: red">*</span></label>
+                    <label>{{RakbowWebStr.AlbumNameDisplayName}}<span style="color: red">*</span></label>
                     <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>专辑名称(英语)</label>
+                    <label>{{RakbowWebStr.AlbumNameEnDisplayName}}</label>
                     <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>专辑名称(中文)</label>
+                    <label>{{RakbowWebStr.AlbumNameZhDisplayName}}</label>
                     <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>专辑编号</label>
+                    <label>{{RakbowWebStr.AlbumCatalogDisplayName}}</label>
                     <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>商品条形码</label>
+                    <label>{{RakbowWebStr.ItemBarcodeDisplayName}}</label>
                     <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-6">
-                    <label>发行时间<span style="color: red">*</span></label>
+                    <label>{{RakbowWebStr.ItemReleaseDateDisplayName}}<span style="color: red">*</span></label>
                     <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
                                 :show-button-bar="true"
                                 :show-icon="true"></p-calendar>
                 </div>
                 <div class="field col-3">
-                    <label>发行价格</label>
+                    <label>{{RakbowWebStr.ItemReleasePriceDisplayName}}</label>
                     <p-inputnumber id="price" v-model="albumEdit.price"></p-inputnumber>
                 </div>
                 <div class="field col-3">
-                    <label>货币单位</label>
+                    <label>{{RakbowWebStr.ItemCurrencyUnitDisplayName}}</label>
                     <p-dropdown v-model="albumEdit.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" placeholder="单位">
+                                option-label="label" option-value="value" :placeholder="RakbowWebStr.ItemCurrencyUnitPlaceholder">
                     </p-dropdown>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
-                    <label class="mb-3">所属系列<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RakbowWebStr.ItemFranchisesDisplayName}}<span style="color: red">*</span></label>
                     <p-multiselect v-model="albumEdit.franchises" @change="getProducts($event)"
-                                   :options="franchiseSet" placeholder="所属系列"
+                                   :options="franchiseSet" :placeholder="RakbowWebStr.ItemFranchisesPlaceholder"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
                 <div class="field col-6">
-                    <label class="mb-3">所属产品<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RakbowWebStr.ItemProductsDisplayName}}<span style="color: red">*</span></label>
                     <p-multiselect v-model="albumEdit.products" :options="productSet"
-                                   option-label="label" option-value="value" placeholder="选择所属作品"
+                                   option-label="label" option-value="value" :placeholder="RakbowWebStr.ItemProductsPlaceholder"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
                 <div class="field col">
                     <div class="col-12">
-                        <label class="mb-3">特典</label>
+                        <label class="mb-3">{{RakbowWebStr.ItemBonusDisplayName}}</label>
                     </div>
                     <div class="col-12 mt-4">
                         <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
@@ -525,67 +527,67 @@
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
-                    <label class="mb-3">出版形式<span
+                    <label class="mb-3">{{RakbowWebStr.ItemPublishFormatDisplayName}}<span
                             style="color: red">*</span></label>
                     <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat"
                                    :options="publishFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择出版形式"
+                                   option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
-                    <label class="mb-3">专辑分类<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RakbowWebStr.AlbumFormatDisplayName}}<span style="color: red">*</span></label>
                     <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择专辑分类"
+                                   option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
-                    <label class="mb-3">媒体类型<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RakbowWebStr.ItemMediaFormatDisplayName}}<span style="color: red">*</span></label>
                     <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
-                                   option-label="label" option-value="value" placeholder="选择媒体类型"
+                                   option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>唱片公司</label>
+                    <label>{{RakbowWebStr.AlbumLabelDisplayName}}</label>
                     <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>发行商</label>
+                    <label>{{RakbowWebStr.AlbumPublisherDisplayName}}</label>
                     <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>经销商</label>
+                    <label>{{RakbowWebStr.AlbumDistributorDisplayName}}</label>
                     <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>版权方</label>
+                    <label>{{RakbowWebStr.ItemCopyrightDisplayName}}</label>
                     <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
                 </div>
             </div>
             <div class="field">
-                <label>备注</label>
+                <label>{{RakbowWebStr.ItemRemarkDisplayName}}</label>
                 <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-blockui>
         <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+            <p-button :label="RakbowWebStr.Cancel" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog" :disabled="editBlock"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+            <p-button :label="RakbowWebStr.Save" icon="pi pi-check" class="p-button-text"
                       @click="submitEditAlbum" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" header="编辑创作信息"
+    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :header="RakbowWebStr.ItemDetailArtistEditTitle"
               :style="{width: '800px'}">
         <p-blockui :blocked="editBlock">
             <p-panel>
                 <template #header>
                     <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                    <b>新增</b>
+                    <b>{{RakbowWebStr.Add}}</b>
                 </template>
                 <div class="grid">
                     <div class="col-3">
@@ -593,7 +595,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-tag"></i>
                                         </span>
-                            <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
+                            <p-inputtext v-model="artist.pos" :placeholder="RakbowWebStr.ItemDetailArtistEditPos"></p-inputtext>
                         </div>
                     </div>
                     <div class="col-7">
@@ -601,11 +603,11 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-users"></i>
                                         </span>
-                            <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
+                            <p-chips v-model="artist.name" :placeholder="RakbowWebStr.ItemDetailArtistEditName" separator=","></p-chips>
                         </div>
                     </div>
                     <div class="col-2">
-                        <p-button label="新增" icon="pi pi-save"
+                        <p-button :label="RakbowWebStr.Add" icon="pi pi-save"
                                   @click="addArtist"></p-button>
                     </div>
                 </div>
@@ -613,7 +615,7 @@
             <p-panel>
                 <template #header>
                     <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                    <b>编辑</b>
+                    <b>{{RakbowWebStr.Edit}}</b>
                 </template>
                 <div v-if="tmpArtists.length != 0">
                     <p-datatable dataKey="id" :value="tmpArtists" responsive-layout="scroll"
@@ -622,12 +624,12 @@
                                  @row-contextmenu="artistRowMenu" edit-mode="row"
                                  v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                         <p-column :row-reorder="true"></p-column>
-                        <p-column field="pos" header="职位">
+                        <p-column field="pos" :header="RakbowWebStr.ItemDetailArtistEditPos">
                             <template #editor="{ data, field }">
                                 <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                             </template>
                         </p-column>
-                        <p-column field="name" header="人员">
+                        <p-column field="name" :header="RakbowWebStr.ItemDetailArtistEditName">
                             <template #body="slotProps">
                                 {{slotProps.data.name.join(" / ")}}
                             </template>
@@ -641,26 +643,26 @@
                     <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                 </div>
                 <div v-else>
-                    <span class="emptyInfo">暂无创作相关信息</span>
+                    <span class="emptyInfo">{{RakbowWebStr.ItemDetailNoArtistInfoMessage}}</span>
                 </div>
             </p-panel>
         </p-blockui>
         <template #footer>
-            <p-button label="清空" icon="pi pi-trash" class="p-button-danger mr-4"
+            <p-button :label="RakbowWebStr.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
                       @click="clearArtists" :disabled="editBlock"></p-button>
-            <p-button label="取消" icon="pi pi-times" class="mr-4"
+            <p-button :label="RakbowWebStr.Cancel" icon="pi pi-times" class="mr-4"
                       @click="cancelArtistEdit" :disabled="editBlock"></p-button>
-            <p-button label="更新" icon="pi pi-save" class="p-button-success mr-4"
+            <p-button :label="RakbowWebStr.Update" icon="pi pi-save" class="p-button-success mr-4"
                       @click="submitArtist" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayTrackEditDialog" header="编辑音轨信息"
+    <p-dialog :modal="true" v-model:visible="displayTrackEditDialog" :header="RakbowWebStr.AlbumDetailTrackEditTitle"
               :style="{width: '800px'}">
         <p-blockui :blocked="editBlock">
             <p-panel>
                 <template #header>
                     <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                    <b>新增</b>
+                    <b>{{RakbowWebStr.Add}}</b>
                 </template>
                 <div class="grid">
                     <div class="col-10">
@@ -668,7 +670,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-tag"></i>
                                         </span>
-                            <p-chips v-model="tracks.audioNames" placeholder="曲目列表"></p-chips>
+                            <p-chips v-model="tracks.audioNames" :placeholder="RakbowWebStr.AlbumDetailTrackEditAudioNames"></p-chips>
                         </div>
                     </div>
                     <div class="col-10">
@@ -676,7 +678,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-users"></i>
                                         </span>
-                            <p-chips v-model="tracks.audioLengths" placeholder="曲目长度"
+                            <p-chips v-model="tracks.audioLengths" :placeholder="RakbowWebStr.AlbumDetailTrackEditAudioLengths"
                                      separator=","></p-chips>
                         </div>
                     </div>
@@ -687,7 +689,7 @@
                                             <i class="pi pi-tag"></i>
                                         </span>
                             <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="mediaFormatSet"
-                                           option-label="label" option-value="labelEn" placeholder="媒体格式"
+                                           option-label="label" option-value="labelEn" :placeholder="RakbowWebStr.ItemMediaFormatDisplayName"
                                            display="chip">
                             </p-multiselect>
                         </div>
@@ -698,14 +700,14 @@
                                             <i class="pi pi-tag"></i>
                                         </span>
                             <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="albumFormatSet"
-                                           option-label="label" option-value="labelEn" placeholder="专辑分类"
+                                           option-label="label" option-value="labelEn" :placeholder="RakbowWebStr.AlbumFormatDisplayName"
                                            display="chip">
                             </p-multiselect>
                         </div>
                     </div>
 
                     <div class="col-2">
-                        <p-button label="添加碟片" icon="pi pi-save" class="p-button-success"
+                        <p-button :label="RakbowWebStr.AlbumDetailTrackEditDiscAdd" icon="pi pi-save" class="p-button-success"
                                   @click="addDisc"></p-button>
                     </div>
                 </div>
@@ -713,7 +715,7 @@
             <p-panel>
                 <template #header>
                     <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                    <b>编辑</b>
+                    <b>{{RakbowWebStr.Edit}}</b>
                 </template>
                 <div v-if="tmpEditDiscList.length != 0">
                     <p-datatable :value="tmpEditDiscList" class="p-datatable-sm" striped-rows
@@ -724,38 +726,38 @@
                                  v-model:editing-rows="editingRowsDisc" @row-edit-save="onRowEditSaveDisc">
                         <template #header>
                             <div class="table-header-container">
-                                <p-button icon="pi pi-plus" label="全部展开" @click="expandAll"
+                                <p-button icon="pi pi-plus" :label="RakbowWebStr.ExpandAll" @click="expandAll"
                                           class="mr-2"></p-button>
-                                <p-button icon="pi pi-minus" label="全部折叠" @click="collapseAll"></p-button>
+                                <p-button icon="pi pi-minus" :label="RakbowWebStr.CollapseAll" @click="collapseAll"></p-button>
                             </div>
                         </template>
                         <p-column :row-reorder="true"></p-column>
                         <p-column :expander="true" headerStyle="width: 3rem"></p-column>
-                        <p-column header="碟片序号">
+                        <p-column :header="RakbowWebStr.AlbumDetailTrackEditDiscIndex">
                             <template #body="slotProps">
                                 {{slotProps.index+1}}
                             </template>
                         </p-column>
-                        <p-column field="albumFormat" header="专辑分类">
+                        <p-column field="albumFormat" :header="RakbowWebStr.AlbumFormatDisplayName">
                             <template #body="slotProps">
                                 {{slotProps.data.albumFormat.join("/")}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-multiselect v-model="data[field]" :options="albumFormatSet"
                                                option-label="label" option-value="labelEn"
-                                               placeholder="专辑分类"
+                                               :placeholder="RakbowWebStr.AlbumFormatDisplayName"
                                                display="chip">
                                 </p-multiselect>
                             </template>
                         </p-column>
-                        <p-column field="mediaFormat" header="媒体格式">
+                        <p-column field="mediaFormat" :header="RakbowWebStr.ItemMediaFormatDisplayName">
                             <template #body="slotProps">
                                 {{slotProps.data.mediaFormat.join("/")}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-multiselect v-model="data[field]" :options="mediaFormatSet"
                                                option-label="label" option-value="labelEn"
-                                               placeholder="媒体格式"
+                                               :placeholder="RakbowWebStr.ItemMediaFormatDisplayName"
                                                display="chip">
                                 </p-multiselect>
                             </template>
@@ -773,18 +775,18 @@
                                              v-model:editing-rows="editingRowsTrack"
                                              @row-edit-save="onRowEditSaveTrack">
                                     <p-column :row-reorder="true"></p-column>
-                                    <p-column header="曲目序号">
+                                    <p-column :header="RakbowWebStr.AlbumDetailTrackEditTrackIndex">
                                         <template #body="slotProps">
                                             {{slotProps.index+1}}
                                         </template>
                                     </p-column>
-                                    <p-column field="musicId" header="曲目编号" sortable></p-column>
+                                    <p-column field="musicId" :header="RakbowWebStr.AlbumDetailTrackEditTrackID" sortable></p-column>
                                     <p-column field="name" header="曲名">
                                         <template #editor="{ data, field }">
                                             <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                                         </template>
                                     </p-column>
-                                    <p-column field="length" header="音频长度">
+                                    <p-column field="length" :header="RakbowWebStr.AlbumDetailTrackEditTrackLength">
                                         <template #editor="{ data, field }">
                                             <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                                         </template>
@@ -799,22 +801,23 @@
                     </p-datatable>
                 </div>
                 <div v-else>
-                    <span class="emptyInfo">暂无音轨信息</span>
+                    <span class="emptyInfo">{{RakbowWebStr.AlbumDetailNoTrackInfoTitle}}</span>
                 </div>
             </p-panel>
         </p-blockui>
         <template #footer>
-            <p-button label="保存" icon="pi pi-save" class="p-button-success mr-4"
+            <p-button :label="RakbowWebStr.Save" icon="pi pi-save" class="p-button-success mr-4"
                       @click="submitTrackInfo" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
 
     <p-dynamicdialog></p-dynamicdialog>
-    <!-- 尾部 -->
+    <!-- footer -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
 
+    import {RakbowWebStr} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
     import {marked} from '/tool/marked/marked.esm.js';
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
@@ -904,7 +907,7 @@
                 }
                 if ((album.value.bonus == null || album.value.bonus === "") && album.value.hasBonus) {
                     //<![CDATA[
-                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>暂无特典信息</em></span>";
+                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>" + RakbowWebStr.ItemDetailNoBonusInfoMessage + "</em></span>";
                     //]]>
                 }
             };
@@ -960,7 +963,7 @@
                     });
                 } else {
                     //<![CDATA[
-                    document.getElementById('aplayer').innerHTML = "<span class='emptyInfo'>暂无音频文件</span>";
+                    document.getElementById('aplayer').innerHTML = "<span class='emptyInfo'>" + RakbowWebStr.ItemDetailNoAudioInfoMessage + "</span>";
                     //]]>
                 }
             }
@@ -969,35 +972,35 @@
             //region edit
             const edits = ref([
                 {
-                    label: '图片管理',
+                    label: RakbowWebStr.ItemDetailOptionImageEditTitle,
                     icon: 'pi pi-images',
                     command: () => {
                         showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
-                    label: '音乐创作',
+                    label: RakbowWebStr.ItemDetailOptionArtistEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
                         openArtistEditDialog();
                     }
                 },
                 {
-                    label: '音轨信息',
+                    label: RakbowWebStr.ItemDetailOptionTrackInfoEditTitle,
                     icon: 'pi iconfont icon-playlist',
                     command: () => {
                         openTrackEditDialog();
                     }
                 },
                 {
-                    label: '描述信息',
+                    label: RakbowWebStr.ItemDetailOptionDescriptionEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
                         showDescriptionEditDialog(toast, dialog, detailInfo.value, itemImageInfo.value.images);
                     }
                 },
                 {
-                    label: '特典信息',
+                    label: RakbowWebStr.ItemDetailOptionBonusEditTitle,
                     icon: 'pi iconfont icon-gift',
                     command: () => {
                         showBonusEditDialog(toast, dialog, detailInfo.value, album.value.bonus, itemImageInfo.value.images);
@@ -1114,10 +1117,10 @@
             const selectedDisc = ref();
             const selectedTrack = ref();
             const menuModelDisc = ref([
-                {label: '删除', icon: 'pi pi-fw pi-trash', command: () => deleteDisc(selectedDisc)}
+                {label: RakbowWebStr.Delete, icon: 'pi pi-fw pi-trash', command: () => deleteDisc(selectedDisc)}
             ]);
             const menuModelTrack = ref([
-                {label: '删除', icon: 'pi pi-fw pi-trash', command: () => deleteTrack(selectedTrack)}
+                {label: RakbowWebStr.Delete, icon: 'pi pi-fw pi-trash', command: () => deleteTrack(selectedTrack)}
             ]);
             const onRowReorderDisc = (ev) => {
                 tmpEditDiscList.value = ev.value;
@@ -1138,7 +1141,7 @@
             };
             const deleteDisc = (disc) => {
                 tmpEditDiscList.value = tmpEditDiscList.value.filter((d) => d.tmpDiscId !== disc.value.tmpDiscId);
-                toast.add({severity: 'error', summary: '已删除', detail: disc.value.tmpDiscId, life: 3000});
+                toast.add({severity: 'error', summary: RakbowWebStr.Delete, detail: disc.value.tmpDiscId, life: 3000});
                 selectedArtist.value = null;
             };
             const deleteTrack = (track) => {
@@ -1147,7 +1150,7 @@
                         disc.trackList = disc.trackList.filter((t) => t.tmpTrackId !== track.value.tmpTrackId);
                     }
                 }
-                toast.add({severity: 'error', summary: '已删除', detail: track.value.name, life: 3000});
+                toast.add({severity: 'error', summary: RakbowWebStr.Delete, detail: track.value.name, life: 3000});
             };
             const editingRowsDisc = ref([]);
             const editingRowsTrack = ref([]);
@@ -1289,7 +1292,7 @@
             const artists = ref([]);
             const displayArtistEditDialog = ref(false);
             const menuModel = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
+                {label: RakbowWebStr.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
             ]);
             const onRowReorder = (ev) => {
                 tmpArtists.value = ev.value;
@@ -1299,7 +1302,7 @@
             };
             const deleteArtist = (artist) => {
                 tmpArtists.value = tmpArtists.value.filter((a) => a.pos !== artist.value.pos);
-                toast.add({severity: 'error', summary: '已删除', detail: artist.value.pos, life: 3000});
+                toast.add({severity: 'error', summary: RakbowWebStr.Delete, detail: artist.value.pos, life: 3000});
                 selectedArtist.value = null;
             };
             const editingRows = ref([]);
@@ -1364,6 +1367,7 @@
             // }
 
             return {
+                RakbowWebStr,
                 openTingleDescription, openTingleBonus,
 
                 //header

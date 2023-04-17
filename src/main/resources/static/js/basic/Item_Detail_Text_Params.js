@@ -33,24 +33,26 @@ const bonusEditPanel = {
             </div>
             <p-panel>
         <div v-if="images.length != 0">
-            <div class="text-center">
-                图片url模板: https://img.rakbow.com/XXX/?imageMogr2/auto-orient/thumbnail/200x200
-            </div>
             <p-datatable :value="images" class="p-datatable-sm" striped-rows>
+                <template #header>
+                    <div class="flex flex-wrap align-items-center justify-content-between gap-2">
+                        <span class="text-xl text-900 font-bold ml-10">图片列表</span>
+                    </div>
+                </template>
+                <p-column header-style="width: 5%">
+                <template #body="slotProps">
+                    <p-button icon="pi pi-copy" @click="copyImageUrl(slotProps.data.url)"></p-button>
+                </template>
+                </p-column>
                 <p-column header="图片" header-style="width: 8%">
                     <template #body="slotProps">
                         <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
                              class="edit-image"/>
                     </template>
                 </p-column>
-                <p-column field="url" header="URL" header-style="width: 10%">
-                    <template #body="slotProps">
-                        {{slotProps.data.url.substr(22)}}
-                    </template>
-                </p-column>
                 <p-column field="nameZh" header="名(中)" header-style="width: 10%"></p-column>
                 <p-column field="nameEn" header="名(英)" header-style="width: 10%"></p-column>
-                <p-column field="description" header="描述" header-style="width: 15%"></p-column>
+                <p-column field="description" header="描述" header-style="width: 20%"></p-column>
             </p-datatable>
         </div>
         <div v-else>
@@ -79,6 +81,9 @@ const bonusEditPanel = {
 
     },
     methods: {
+        copyImageUrl(url) {
+            copyToClip(url + '?imageMogr2/auto-orient/thumbnail/400x400');
+        },
         closeBonusEditDialog() {
             this.dialogRef.close();
         },
@@ -141,24 +146,26 @@ const descriptionEditPanel = {
     </div>
     <p-panel>
         <div v-if="images.length != 0">
-            <div class="text-center">
-                图片url模板: https://img.rakbow.com/XXX/?imageMogr2/auto-orient/thumbnail/200x200
-            </div>
             <p-datatable :value="images" class="p-datatable-sm" striped-rows>
+                <template #header>
+                    <div class="flex flex-wrap align-items-center justify-content-between gap-2">
+                        <span class="text-xl text-900 font-bold">图片列表</span>
+                    </div>
+                </template>
+                <p-column header-style="width: 5%">
+                <template #body="slotProps">
+                    <p-button icon="pi pi-copy" @click="copyImageUrl(slotProps.data.url)"></p-button>
+                </template>
+                </p-column>
                 <p-column header="图片" header-style="width: 8%">
                     <template #body="slotProps">
                         <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
                              class="edit-image"/>
                     </template>
                 </p-column>
-                <p-column field="url" header="URL" header-style="width: 10%">
-                    <template #body="slotProps">
-                        {{slotProps.data.url.substr(22)}}
-                    </template>
-                </p-column>
                 <p-column field="nameZh" header="名(中)" header-style="width: 10%"></p-column>
                 <p-column field="nameEn" header="名(英)" header-style="width: 10%"></p-column>
-                <p-column field="description" header="描述" header-style="width: 15%"></p-column>
+                <p-column field="description" header="描述" header-style="width: 20%"></p-column>
             </p-datatable>
         </div>
         <div v-else>
@@ -189,6 +196,9 @@ const descriptionEditPanel = {
 
     },
     methods: {
+        copyImageUrl(url) {
+            copyToClip(url + '?imageMogr2/auto-orient/thumbnail/400x400');
+        },
         closeDescriptionEditDialog() {
             this.dialogRef.close();
         },
