@@ -1,4 +1,5 @@
 import {HttpUtil} from '/js/basic/Http_Util.js';
+const { useRoute } = VueRouter;  //1.先在需要跳转的页面引入useRouter
 
 const albumIndex = {
     template: `
@@ -427,7 +428,21 @@ const albumIndex = {
         </div>
     `,
     mounted() {
+        const { query } = useRoute();
+        this.$router.push({
+            name:'Albums',
+            query:{}
+        });
         this.init();
+        if(query.publishFormat !== null && query.publishFormat !== undefined) {
+            this.queryParams.filters.publishFormat.value.push(parseInt(query.publishFormat));
+        }
+        if(query.albumFormat !== null && query.albumFormat !== undefined) {
+            this.queryParams.filters.albumFormat.value.push(parseInt(query.albumFormat));
+        }
+        if(query.mediaFormat !== null && query.mediaFormat !== undefined) {
+            this.queryParams.filters.mediaFormat.value.push(parseInt(query.mediaFormat));
+        }
         this.getAlbums();
     },
     data() {
@@ -446,9 +461,9 @@ const albumIndex = {
                     name: {value: null},
                     catalogNo: {value: null},
                     hasBonus: {value: null},
-                    publishFormat: {value: null},
-                    albumFormat: {value: null},
-                    mediaFormat: {value: null},
+                    publishFormat: {value: []},
+                    albumFormat: {value: []},
+                    mediaFormat: {value: []},
                     franchises: {value: null},
                     products: {value: null},
                 }
@@ -612,8 +627,7 @@ const bookIndex = {
                     <div class="col-6 p-1">
                         <label>图书类型</label>
                         <p-dropdown v-model="queryParams.filters.bookType.value" :options="bookTypeSet"
-                                    placeholder="所有" option-label="label"
-                                    option-value="value">
+                                    placeholder="所有" option-label="label" option-value="value">
                         </p-dropdown>
                     </div>
                     <div class="col-6 p-1">
@@ -1010,7 +1024,18 @@ const bookIndex = {
 </div>
     `,
     mounted() {
+        const { query } = useRoute();
+        this.$router.push({
+            name:'Books',
+            query:{}
+        });
         this.init();
+        if(query.bookType !== null && query.bookType !== undefined) {
+            this.queryParams.filters.bookType.value = parseInt(query.bookType);
+        }
+        if(query.publisher !== null && query.publisher !== undefined) {
+            this.queryParams.filters.publisher.value = query.publisher;
+        }
         this.getBooks();
     },
     data() {
@@ -1602,7 +1627,15 @@ const discIndex = {
             </div>
     `,
     mounted() {
+        const { query } = useRoute();
+        this.$router.push({
+            name:'Discs',
+            query:{}
+        });
         this.init();
+        if(query.mediaFormat !== null && query.mediaFormat !== undefined) {
+            this.queryParams.filters.mediaFormat.value.push(parseInt(query.mediaFormat));
+        }
         this.getDiscs();
     },
     data() {
@@ -1621,7 +1654,7 @@ const discIndex = {
                     name: {value: null},
                     catalogNo: {value: null},
                     region: {value: null},
-                    mediaFormat: {value: null},
+                    mediaFormat: {value: []},
                     franchises: {value: null},
                     products: {value: null},
                     limited: {value: null},
@@ -2168,7 +2201,15 @@ const gameIndex = {
             </div>
     `,
     mounted() {
+        const { query } = useRoute();
+        this.$router.push({
+            name:'Games',
+            query:{}
+        });
         this.init();
+        if(query.platform !== null && query.platform !== undefined) {
+            this.queryParams.filters.platform.value = parseInt(query.platform);
+        }
         this.getGames();
     },
     data() {
@@ -2863,22 +2904,42 @@ const merchIndex = {
 export const DATABASE_INDEX_ROUTER = [
     {
         path: '/db/albums',
-        component: albumIndex
+        name: 'Albums',
+        component: albumIndex,
+        meta: {
+            title: 'Albums'
+        }
     },
     {
         path: '/db/books',
-        component: bookIndex
+        name: 'Books',
+        component: bookIndex,
+        meta: {
+            title: 'Books'
+        }
     },
     {
         path: '/db/discs',
-        component: discIndex
+        name: 'Discs',
+        component: discIndex,
+        meta: {
+            title: 'Discs'
+        }
     },
     {
         path: '/db/games',
-        component: gameIndex
+        name: 'Games',
+        component: gameIndex,
+        meta: {
+            title: 'Games'
+        }
     },
     {
         path: '/db/merchs',
-        component: merchIndex
+        name: 'Merchs',
+        component: merchIndex,
+        meta: {
+            title: 'Merchs'
+        }
     }
 ];

@@ -192,7 +192,9 @@
                                                     <strong>出版形式</strong>
                                                 </td>
                                                 <td v-for="format of album.publishFormat" style="display:inline">
-                                                    <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    <a :href="'/db/albums?publishFormat=' + format.value">
+                                                        <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -201,7 +203,9 @@
                                                     <strong>媒体类型</strong>
                                                 </td>
                                                 <td v-for="format of album.mediaFormat" style="display:inline">
-                                                    <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    <a :href="'/db/albums?mediaFormat=' + format.value">
+                                                        <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -210,7 +214,9 @@
                                                     <strong>专辑类型</strong>
                                                 </td>
                                                 <td v-for="format of album.albumFormat" style="display:inline">
-                                                    <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    <a :href="'/db/albums?albumFormat=' + format.value">
+                                                        <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>

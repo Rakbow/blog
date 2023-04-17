@@ -506,3 +506,14 @@ a {
     -moz-transform: scaleY(0.8);
     transform: scaleY(0.8);
 }
+
+.common-link a:hover {
+    color: #ceffff;
+    border-bottom: 1px solid #ceffff;
+}
+
+.common-link a:visited,
+
+.common-link a:link {
+    color: #ceffff;
+}

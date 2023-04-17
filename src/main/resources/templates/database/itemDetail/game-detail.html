@@ -170,7 +170,9 @@
                                                     <strong>发售平台</strong>
                                                 </td>
                                                 <td>
-                                                    <p-tag class="ml-1" :value="game.platform.nameEn"></p-tag>
+                                                    <a :href="'/db/games?platform=' + game.platform.id">
+                                                        <p-tag class="ml-1" :value="game.platform.nameEn"></p-tag>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>

@@ -159,7 +159,9 @@
                                                     <strong>分类</strong>
                                                 </td>
                                                 <td>
-                                                    <p-tag class="ml-1" :value="book.bookType.nameZh"></p-tag>
+                                                    <a :href="'/db/books?bookType=' + book.bookType.id">
+                                                        <p-tag class="ml-1" :value="book.bookType.nameZh"></p-tag>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -195,8 +197,10 @@
                                                     <i class="pi iconfont icon-gongsi"></i>
                                                     <strong>出版社</strong>
                                                 </td>
-                                                <td>
-                                                    {{book.publisher}}
+                                                <td class="common-link">
+                                                    <a :href="'/db/books?publisher=' + book.publisher">
+                                                        {{book.publisher}}
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -1132,7 +1136,6 @@
         cursor: pointer;
         pointer-events: none;
     }
-
 
 </style>
 </body>

@@ -204,7 +204,9 @@
                                                     <strong>媒体类型</strong>
                                                 </td>
                                                 <td v-for="format of disc.mediaFormat" style="display:inline">
-                                                    <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    <a :href="'/db/discs?mediaFormat=' + format.value">
+                                                        <p-tag class="ml-1" :value="format.label"></p-tag>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             </tbody>
