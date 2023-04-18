@@ -1,57 +1,57 @@
-export class RakbowWebStr {
+export class RKW_Web {
 
     //region database-item-detail
-    static ItemFranchisesPlaceholder = 'Franchises';
-    static ItemProductsPlaceholder = 'Products';
-    static ItemCurrencyUnitPlaceholder = 'Currency Unit';
+    static PlaceholderBelongToFranchises = 'Franchises';
+    static PlaceholderBelongToProducts = 'Products';
+    static PlaceholderCurrencyUnit = 'Currency Unit';
 
-    static ItemBarcodeDisplayName = 'Barcode';
-    static ItemReleaseDateDisplayName = 'Release Date';
-    static ItemReleasePriceDisplayName = 'Release Price';
-    static ItemCurrencyUnitDisplayName = 'Currency Unit';
-    static ItemFranchisesDisplayName = 'Franchises';
-    static ItemProductsDisplayName = 'Products';
-    static ItemRemarkDisplayName = 'Remark';
+    static Barcode = 'Barcode';
+    static ReleaseDate = 'Release Date';
+    static ReleasePrice = 'Release Price';
+    static CurrencyUnit = 'Currency Unit';
+    static BelongToFranchises = 'Franchises';
+    static BelongToProducts = 'Products';
+    static Remark = 'Remark';
 
-    static ItemBonusDisplayName = 'Bonus';
-    static ItemPublishFormatDisplayName = 'Publish Format';
-    static ItemMediaFormatDisplayName = 'Media Format';
-    static ItemCopyrightDisplayName = 'Copyright';
+    static Bonus = 'Bonus';
+    static PublishFormat = 'Publish Format';
+    static MediaFormat = 'Media Format';
+    static Copyright = 'Copyright';
 
 
     static ItemDetailOptionImageEditTitle = 'Images Edit';
-    static ItemDetailOptionArtistEditTitle = 'Artists Edit';
-    static ItemDetailOptionTrackInfoEditTitle = 'Track Edit';
+    static AlbumDetailOptionArtistEditTitle = 'Artists Edit';
+    static AlbumDetailOptionTrackInfoEditTitle = 'Track Edit';
     static ItemDetailOptionDescriptionEditTitle = 'Description Edit';
     static ItemDetailOptionBonusEditTitle = 'Bonus Edit';
 
     static ItemDetailBaseInfoEditTitle = 'Base Edit';
-    static ItemDetailArtistEditTitle = 'Artist Edit';
+    static AlbumDetailArtistEditTitle = 'Artist Edit';
 
     static ItemDetailPlayListTitle = 'Play List';
-    static ItemDetailArtistInfoTitle = 'Artists';
+    static AlbumDetailArtistInfoTitle = 'Artists';
 
 
-    static ItemDetailArtistEditPos = 'Position';
-    static ItemDetailArtistEditName = 'Staff';
+    static AlbumDetailEditArtistPos = 'Position';
+    static AlbumDetailEditArtistName = 'Staff';
 
-    static AlbumDetailTrackEditAudioNames = 'Audio Name List';
-    static AlbumDetailTrackEditAudioLengths = 'Audio Length List';
-    static AlbumDetailTrackEditDiscAdd = 'Add Disc';
-    static AlbumDetailTrackEditDiscIndex = 'Disc Index';
+    static AlbumDetailEditTrackAudioNames = 'Audio Name List';
+    static AlbumDetailEditTrackAudioLengths = 'Audio Length List';
+    static AlbumDetailEditTrackDiscAdd = 'Add Disc';
+    static AlbumDetailEditTrackDiscIndex = 'Disc Index';
 
-    static AlbumDetailTrackEditTrackIndex = 'Track Index';
-    static AlbumDetailTrackEditTrackID = 'Track ID';
-    static AlbumDetailTrackEditTrackLength = 'Track Length';
+    static AlbumDetailEditTrackTrackIndex = 'Track Index';
+    static AlbumDetailEditTrackTrackID = 'Track ID';
+    static AlbumDetailEditTrackTrackLength = 'Track Length';
 
-    static AlbumCatalogDisplayName = 'Album Catalog';
-    static AlbumNameDisplayName = 'Album Name';
-    static AlbumNameEnDisplayName = 'Album English Name';
-    static AlbumNameZhDisplayName = 'Album Chinese Name';
-    static AlbumFormatDisplayName = 'Album Format';
-    static AlbumLabelDisplayName = 'Label';
-    static AlbumPublisherDisplayName = 'Publisher';
-    static AlbumDistributorDisplayName = 'Distributor';
+    static AlbumCatalogNo = 'Album Catalog';
+    static AlbumName = 'Album Name';
+    static AlbumEnglishName = 'Album English Name';
+    static AlbumChineseName = 'Album Chinese Name';
+    static AlbumFormat = 'Album Format';
+    static AlbumLabel = 'Label';
+    static AlbumPublisher = 'Publisher';
+    static Distributor = 'Distributor';
 
     static RelatedAlbumTitle = 'Related Albums';
     static RelatedBookTitle = 'Related Books';
@@ -63,14 +63,14 @@ export class RakbowWebStr {
     static AlbumDetailTrackEditTitle = 'Track Information Edit';
     static AlbumDetailTrackInfoTitle = 'TrackList';
 
-    static ItemDetailNoArtistInfoMessage = 'No Artist Information';
-    static ItemDetailNoBonusInfoMessage = 'No Bonus Information';
-    static ItemDetailNoAudioInfoMessage = 'No Audio File';
-    static AlbumDetailNoTrackInfoTitle = 'No Track Information';
-    static ItemDetailNoRelatedItemMessage = 'No Related Items';
+    static ItemDetailMessageNoArtistInfo = 'No Artist Information';
+    static ItemDetailMessageNoBonusInfo = 'No Bonus Information';
+    static ItemDetailMessageNoAudioInfo = 'No Audio File';
+    static AlbumDetailMessageNoTrackInfo = 'No Track Information';
+    static ItemDetailMessageNoRelatedItem = 'No Related Items';
 
-    static ItemTaxInclusiveDisplayName = 'Tax-inclusive';
-    static LetMusicPlayerBottom = 'Let Music Player Bottom';
+    static TaxInclusive = 'Tax-inclusive';
+    static TooltipMusicPlayerChangeBottom = 'Let Music Player Bottom';
     static TotalDiscNum = 'Total Disc';
     static TotalTrackNum = 'Total Track';
     static DiscLength = 'Disc Length';

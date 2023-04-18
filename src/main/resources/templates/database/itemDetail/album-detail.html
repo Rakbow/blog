@@ -140,7 +140,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-dingdanbianhao"></i>
-                                                    <strong>{{RakbowWebStr.AlbumCatalogDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.AlbumCatalogNo}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.catalogNo?album.catalogNo:"N/A"}}
@@ -149,7 +149,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-bar-code"></i>
-                                                    <strong>{{RakbowWebStr.ItemBarcodeDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.Barcode}}</strong>
                                                 </td>
                                                 <td>{{album.barcode?album.barcode:"N/A"}}
                                                 </td>
@@ -157,7 +157,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi pi-calendar"></i>
-                                                    <strong>{{RakbowWebStr.ItemReleaseDateDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.ReleaseDate}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.releaseDate?album.releaseDate:"N/A"}}
@@ -166,20 +166,20 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-wuliaojiage"></i>
-                                                    <strong>{{RakbowWebStr.ItemReleasePriceDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.ReleasePrice}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.price != 0 ? album.price :"-"}}<span
                                                         v-if="album.currencyUnit == 'JPY'" class="ml-1"
                                                         style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                        v-tooltip.right="{value: RakbowWebStr.ItemTaxInclusiveDisplayName, class: 'region-tooltip'}">JPY</span><span
+                                                        v-tooltip.right="{value: RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span><span
                                                         v-else>{{album.currencyUnit}}</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-gift"></i>
-                                                    <strong>{{RakbowWebStr.ItemBonusDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.Bonus}}</strong>
                                                 </td>
                                                 <td>
                                                     <a v-if="album.hasBonus" href="#bonus" class="ml-3">
@@ -191,7 +191,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi pi-print"></i>
-                                                    <strong>{{RakbowWebStr.ItemPublishFormatDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.PublishFormat}}</strong>
                                                 </td>
                                                 <td v-for="format of album.publishFormat" style="display:inline">
                                                     <a :href="'/db/albums?publishFormat=' + format.value">
@@ -202,7 +202,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-zhuanjiguangpan"></i>
-                                                    <strong>{{RakbowWebStr.ItemMediaFormatDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.MediaFormat}}</strong>
                                                 </td>
                                                 <td v-for="format of album.mediaFormat" style="display:inline">
                                                     <a :href="'/db/albums?mediaFormat=' + format.value">
@@ -213,7 +213,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-musicfill"></i>
-                                                    <strong>{{RakbowWebStr.AlbumFormatDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.AlbumFormat}}</strong>
                                                 </td>
                                                 <td v-for="format of album.albumFormat" style="display:inline">
                                                     <a :href="'/db/albums?albumFormat=' + format.value">
@@ -224,14 +224,14 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-tushuyinxiang"></i>
-                                                    <strong>{{RakbowWebStr.AlbumLabelDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.AlbumLabel}}</strong>
                                                 </td>
                                                 <td>{{album.label?album.label:"N/A"}}</td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-gongsi"></i>
-                                                    <strong>{{RakbowWebStr.AlbumPublisherDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.AlbumPublisher}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.publisher?album.publisher:"N/A"}}
@@ -240,7 +240,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-company"></i>
-                                                    <strong>{{RakbowWebStr.AlbumDistributorDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.Distributor}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.distributor?album.distributor:"N/A"}}
@@ -249,7 +249,7 @@
                                             <tr>
                                                 <td>
                                                     <i class="pi iconfont icon-copyright"></i>
-                                                    <strong>{{RakbowWebStr.ItemCopyrightDisplayName}}</strong>
+                                                    <strong>{{RKW_Web.Copyright}}</strong>
                                                 </td>
                                                 <td>
                                                     {{album.copyright?album.copyright:"N/A"}}
@@ -269,11 +269,11 @@
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi iconfont icon-music"></i>
-                                <b>{{RakbowWebStr.ItemDetailPlayListTitle}}</b>
+                                <b>{{RKW_Web.ItemDetailPlayListTitle}}</b>
                             </template>
                             <p-button v-if="audioInfos!=null" @click="playerOption.fixed=true, createAplayer()"
                                       class="mr-2"
-                                      v-tooltip.bottom="RakbowWebStr.LetMusicPlayerBottom">
+                                      v-tooltip.bottom="RKW_Web.TooltipMusicPlayerChangeBottom">
                                 <i class="pi pi-arrow-circle-down"></i>
                             </p-button>
                             <div id="aplayer"></div>
@@ -282,7 +282,7 @@
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi pi-users"></i>
-                                <b>{{RakbowWebStr.ItemDetailArtistInfoTitle}}</b>
+                                <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>
                             </template>
                             <div class="grid ml-4" v-if="album.artists.length != 0">
                                 <table class="table-borderless table-sm">
@@ -297,24 +297,24 @@
                                 </table>
                             </div>
                             <div v-else>
-                                <span class="emptyInfo"><em>{{RakbowWebStr.ItemDetailNoArtistInfoMessage}}</em></span>
+                                <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>
                             </div>
                         </p-fieldset>
                         <!-- tracks info -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
                                 <i class="pi iconfont icon-playlist"></i>
-                                <b>{{RakbowWebStr.AlbumDetailTrackInfoTitle}}</b>
+                                <b>{{RKW_Web.AlbumDetailTrackInfoTitle}}</b>
                             </template>
                             <div v-if="album.trackInfo == null || JSON.stringify(album.trackInfo) == '{}' ">
-                                <span class="emptyInfo"><em>{{RakbowWebStr.AlbumDetailNoTrackInfoTitle}}</em></span>
+                                <span class="emptyInfo"><em>{{RKW_Web.AlbumDetailMessageNoTrackInfo}}</em></span>
                             </div>
                             <div>
                                 <p class="text-start"
                                    v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' ">
-                                    {{RakbowWebStr.TotalDiscNum}}: <b>{{album.trackInfo.discList.length}} </b>
-                                    {{RakbowWebStr.TotalTrackNum}}: <b>{{album.trackInfo.totalTracks}} </b>
-                                    {{RakbowWebStr.TotalLength}}: <b>{{album.trackInfo.totalLength}}</b>
+                                    {{RKW_Web.TotalDiscNum}}: <b>{{album.trackInfo.discList.length}} </b>
+                                    {{RKW_Web.TotalTrackNum}}: <b>{{album.trackInfo.totalTracks}} </b>
+                                    {{RKW_Web.TotalLength}}: <b>{{album.trackInfo.totalLength}}</b>
                                 </p>
                             </div>
                             <div v-if="album.trackInfo != null && JSON.stringify(album.trackInfo) != '{}' "
@@ -347,9 +347,9 @@
                                     </tbody>
                                 </table>
                                 <p class="text-end">
-                                    {{RakbowWebStr.TrackNum}}: <b>{{disc.trackList.length}} </b>
+                                    {{RKW_Web.TrackNum}}: <b>{{disc.trackList.length}} </b>
                                     <span v-if="disc.discLength != '00:00'">
-                                            {{RakbowWebStr.DiscLength}}: <b>{{disc.discLength}}</b>
+                                            {{RKW_Web.DiscLength}}: <b>{{disc.discLength}}</b>
                                         </span>
                                 </p>
                             </div>
@@ -414,7 +414,7 @@
             <p-panel class="mt-2" v-if="!relatedItemLoad">
                 <template #header>
                     <span class="text-start side-panel-header">
-                        <i class="pi iconfont icon-album"></i><span><strong>{{RakbowWebStr.RelatedAlbumTitle}}</strong></span>
+                        <i class="pi iconfont icon-album"></i><span><strong>{{RKW_Web.RelatedAlbumTitle}}</strong></span>
                     </span>
                 </template>
                 <div class="grid" v-if="relatedAlbums.length != 0">
@@ -425,7 +425,7 @@
                             <div class="sidebar-panel-image-small-div album_info_bit_thumb mt-2">
                                 <a :href="'/db/album/'+ relatedAlbum.id">
                                     <img class="sidebar-panel-image-small" :src="relatedAlbum.cover.blackUrl"
-                                         v-tooltip.bottom="RakbowWebStr.AddedTime + ': ' + relatedAlbum.addedTime + RakbowWebStr.EditedTime + ': ' + relatedAlbum.editedTime">
+                                         v-tooltip.bottom="RKW_Web.AddedTime + ': ' + relatedAlbum.addedTime + RKW_Web.EditedTime + ': ' + relatedAlbum.editedTime">
                                 </a>
                             </div>
                             <div class="col p-0" style="height: 80px">
@@ -452,75 +452,75 @@
                     </span>
                 </div>
                 <div v-else>
-                    <span class="emptyInfo">{{RakbowWebStr.ItemDetailNoRelatedItemMessage}}</span>
+                    <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoRelatedItem}}</em></span>
                 </div>
             </p-panel>
             <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog :modal="true" v-model:visible="displayEditDialog" :header="RakbowWebStr.ItemDetailBaseInfoEditTitle"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :header="RKW_Web.ItemDetailBaseInfoEditTitle"
               :style="{width: '800px'}" class="p-fluid">
         <p-blockui :blocked="editBlock">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumNameDisplayName}}<span style="color: red">*</span></label>
+                    <label>{{RKW_Web.AlbumName}}<span style="color: red">*</span></label>
                     <p-inputtext id="name" v-model.trim="albumEdit.name"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumNameEnDisplayName}}</label>
+                    <label>{{RKW_Web.AlbumEnglishName}}</label>
                     <p-inputtext id="nameEn" v-model.trim="albumEdit.nameEn"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumNameZhDisplayName}}</label>
+                    <label>{{RKW_Web.AlbumChineseName}}</label>
                     <p-inputtext id="nameZh" v-model.trim="albumEdit.nameZh"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumCatalogDisplayName}}</label>
+                    <label>{{RKW_Web.AlbumCatalogNo}}</label>
                     <p-inputtext id="catalogNo" v-model.trim="albumEdit.catalogNo"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>{{RakbowWebStr.ItemBarcodeDisplayName}}</label>
+                    <label>{{RKW_Web.Barcode}}</label>
                     <p-inputtext id="barcode" v-model.trim="albumEdit.barcode"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-6">
-                    <label>{{RakbowWebStr.ItemReleaseDateDisplayName}}<span style="color: red">*</span></label>
+                    <label>{{RKW_Web.ReleaseDate}}<span style="color: red">*</span></label>
                     <p-calendar id="releaseDate" v-model="albumEdit.releaseDate" date-format="yy/mm/dd"
                                 :show-button-bar="true"
                                 :show-icon="true"></p-calendar>
                 </div>
                 <div class="field col-3">
-                    <label>{{RakbowWebStr.ItemReleasePriceDisplayName}}</label>
+                    <label>{{RKW_Web.ReleasePrice}}</label>
                     <p-inputnumber id="price" v-model="albumEdit.price"></p-inputnumber>
                 </div>
                 <div class="field col-3">
-                    <label>{{RakbowWebStr.ItemCurrencyUnitDisplayName}}</label>
+                    <label>{{RKW_Web.CurrencyUnit}}</label>
                     <p-dropdown v-model="albumEdit.currencyUnit" :options="currencyUnitSet"
-                                option-label="label" option-value="value" :placeholder="RakbowWebStr.ItemCurrencyUnitPlaceholder">
+                                option-label="label" option-value="value" :placeholder="RKW_Web.PlaceholderCurrencyUnit">
                     </p-dropdown>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
-                    <label class="mb-3">{{RakbowWebStr.ItemFranchisesDisplayName}}<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RKW_Web.BelongToFranchises}}<span style="color: red">*</span></label>
                     <p-multiselect v-model="albumEdit.franchises" @change="getProducts($event)"
-                                   :options="franchiseSet" :placeholder="RakbowWebStr.ItemFranchisesPlaceholder"
+                                   :options="franchiseSet" :placeholder="RKW_Web.PlaceholderBelongToFranchises"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
                 <div class="field col-6">
-                    <label class="mb-3">{{RakbowWebStr.ItemProductsDisplayName}}<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RKW_Web.BelongToProducts}}<span style="color: red">*</span></label>
                     <p-multiselect v-model="albumEdit.products" :options="productSet"
-                                   option-label="label" option-value="value" :placeholder="RakbowWebStr.ItemProductsPlaceholder"
+                                   option-label="label" option-value="value" :placeholder="RKW_Web.PlaceholderBelongToProducts"
                                    display="chip" :filter="true" :disabled="productSelect">
                     </p-multiselect>
                 </div>
                 <div class="field col">
                     <div class="col-12">
-                        <label class="mb-3">{{RakbowWebStr.ItemBonusDisplayName}}</label>
+                        <label class="mb-3">{{RKW_Web.Bonus}}</label>
                     </div>
                     <div class="col-12 mt-4">
                         <p-inputswitch v-model="albumEdit.hasBonus" :true-value="1"
@@ -530,7 +530,7 @@
             </div>
             <div class="formgrid grid">
                 <div class="field col-4">
-                    <label class="mb-3">{{RakbowWebStr.ItemPublishFormatDisplayName}}<span
+                    <label class="mb-3">{{RKW_Web.PublishFormat}}<span
                             style="color: red">*</span></label>
                     <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat"
                                    :options="publishFormatSet"
@@ -539,14 +539,14 @@
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
-                    <label class="mb-3">{{RakbowWebStr.AlbumFormatDisplayName}}<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RKW_Web.AlbumFormat}}<span style="color: red">*</span></label>
                     <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
                                    option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
-                    <label class="mb-3">{{RakbowWebStr.ItemMediaFormatDisplayName}}<span style="color: red">*</span></label>
+                    <label class="mb-3">{{RKW_Web.MediaFormat}}<span style="color: red">*</span></label>
                     <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
                                    option-label="label" option-value="value"
                                    display="chip">
@@ -555,42 +555,42 @@
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumLabelDisplayName}}</label>
+                    <label>{{RKW_Web.AlbumLabel}}</label>
                     <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumPublisherDisplayName}}</label>
+                    <label>{{RKW_Web.AlbumPublisher}}</label>
                     <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>{{RakbowWebStr.AlbumDistributorDisplayName}}</label>
+                    <label>{{RKW_Web.Distributor}}</label>
                     <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>{{RakbowWebStr.ItemCopyrightDisplayName}}</label>
+                    <label>{{RKW_Web.Copyright}}</label>
                     <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
                 </div>
             </div>
             <div class="field">
-                <label>{{RakbowWebStr.ItemRemarkDisplayName}}</label>
+                <label>{{RKW_Web.Remark}}</label>
                 <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
         </p-blockui>
         <template #footer>
-            <p-button :label="RakbowWebStr.Cancel" icon="pi pi-times" class="p-button-text"
+            <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog" :disabled="editBlock"></p-button>
-            <p-button :label="RakbowWebStr.Save" icon="pi pi-check" class="p-button-text"
+            <p-button :label="RKW_Web.Save" icon="pi pi-check" class="p-button-text"
                       @click="submitEditAlbum" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :header="RakbowWebStr.ItemDetailArtistEditTitle"
+    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :header="RKW_Web.AlbumDetailArtistEditTitle"
               :style="{width: '800px'}">
         <p-blockui :blocked="editBlock">
             <p-panel>
                 <template #header>
                     <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                    <b>{{RakbowWebStr.Add}}</b>
+                    <b>{{RKW_Web.Add}}</b>
                 </template>
                 <div class="grid">
                     <div class="col-3">
@@ -598,7 +598,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-tag"></i>
                                         </span>
-                            <p-inputtext v-model="artist.pos" :placeholder="RakbowWebStr.ItemDetailArtistEditPos"></p-inputtext>
+                            <p-inputtext v-model="artist.pos" :placeholder="RKW_Web.AlbumDetailEditArtistPos"></p-inputtext>
                         </div>
                     </div>
                     <div class="col-7">
@@ -606,11 +606,11 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-users"></i>
                                         </span>
-                            <p-chips v-model="artist.name" :placeholder="RakbowWebStr.ItemDetailArtistEditName" separator=","></p-chips>
+                            <p-chips v-model="artist.name" :placeholder="RKW_Web.AlbumDetailEditArtistName" separator=","></p-chips>
                         </div>
                     </div>
                     <div class="col-2">
-                        <p-button :label="RakbowWebStr.Add" icon="pi pi-save"
+                        <p-button :label="RKW_Web.Add" icon="pi pi-save"
                                   @click="addArtist"></p-button>
                     </div>
                 </div>
@@ -618,7 +618,7 @@
             <p-panel>
                 <template #header>
                     <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                    <b>{{RakbowWebStr.Edit}}</b>
+                    <b>{{RKW_Web.Edit}}</b>
                 </template>
                 <div v-if="tmpArtists.length != 0">
                     <p-datatable dataKey="id" :value="tmpArtists" responsive-layout="scroll"
@@ -627,12 +627,12 @@
                                  @row-contextmenu="artistRowMenu" edit-mode="row"
                                  v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                         <p-column :row-reorder="true"></p-column>
-                        <p-column field="pos" :header="RakbowWebStr.ItemDetailArtistEditPos">
+                        <p-column field="pos" :header="RKW_Web.AlbumDetailEditArtistPos">
                             <template #editor="{ data, field }">
                                 <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                             </template>
                         </p-column>
-                        <p-column field="name" :header="RakbowWebStr.ItemDetailArtistEditName">
+                        <p-column field="name" :header="RKW_Web.AlbumDetailEditArtistName">
                             <template #body="slotProps">
                                 {{slotProps.data.name.join(" / ")}}
                             </template>
@@ -646,26 +646,26 @@
                     <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                 </div>
                 <div v-else>
-                    <span class="emptyInfo">{{RakbowWebStr.ItemDetailNoArtistInfoMessage}}</span>
+                    <span class="emptyInfo">{{RKW_Web.ItemDetailMessageNoArtistInfo}}</span>
                 </div>
             </p-panel>
         </p-blockui>
         <template #footer>
-            <p-button :label="RakbowWebStr.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
+            <p-button :label="RKW_Web.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
                       @click="clearArtists" :disabled="editBlock"></p-button>
-            <p-button :label="RakbowWebStr.Cancel" icon="pi pi-times" class="mr-4"
+            <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="mr-4"
                       @click="cancelArtistEdit" :disabled="editBlock"></p-button>
-            <p-button :label="RakbowWebStr.Update" icon="pi pi-save" class="p-button-success mr-4"
+            <p-button :label="RKW_Web.Update" icon="pi pi-save" class="p-button-success mr-4"
                       @click="submitArtist" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayTrackEditDialog" :header="RakbowWebStr.AlbumDetailTrackEditTitle"
+    <p-dialog :modal="true" v-model:visible="displayTrackEditDialog" :header="RKW_Web.AlbumDetailTrackEditTitle"
               :style="{width: '800px'}">
         <p-blockui :blocked="editBlock">
             <p-panel>
                 <template #header>
                     <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                    <b>{{RakbowWebStr.Add}}</b>
+                    <b>{{RKW_Web.Add}}</b>
                 </template>
                 <div class="grid">
                     <div class="col-10">
@@ -673,7 +673,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-tag"></i>
                                         </span>
-                            <p-chips v-model="tracks.audioNames" :placeholder="RakbowWebStr.AlbumDetailTrackEditAudioNames"></p-chips>
+                            <p-chips v-model="tracks.audioNames" :placeholder="RKW_Web.AlbumDetailEditTrackAudioNames"></p-chips>
                         </div>
                     </div>
                     <div class="col-10">
@@ -681,7 +681,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-users"></i>
                                         </span>
-                            <p-chips v-model="tracks.audioLengths" :placeholder="RakbowWebStr.AlbumDetailTrackEditAudioLengths"
+                            <p-chips v-model="tracks.audioLengths" :placeholder="RKW_Web.AlbumDetailEditTrackAudioLengths"
                                      separator=","></p-chips>
                         </div>
                     </div>
@@ -692,7 +692,7 @@
                                             <i class="pi pi-tag"></i>
                                         </span>
                             <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="mediaFormatSet"
-                                           option-label="label" option-value="labelEn" :placeholder="RakbowWebStr.ItemMediaFormatDisplayName"
+                                           option-label="label" option-value="labelEn" :placeholder="RKW_Web.MediaFormat"
                                            display="chip">
                             </p-multiselect>
                         </div>
@@ -703,14 +703,14 @@
                                             <i class="pi pi-tag"></i>
                                         </span>
                             <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="albumFormatSet"
-                                           option-label="label" option-value="labelEn" :placeholder="RakbowWebStr.AlbumFormatDisplayName"
+                                           option-label="label" option-value="labelEn" :placeholder="RKW_Web.AlbumFormat"
                                            display="chip">
                             </p-multiselect>
                         </div>
                     </div>
 
                     <div class="col-2">
-                        <p-button :label="RakbowWebStr.AlbumDetailTrackEditDiscAdd" icon="pi pi-save" class="p-button-success"
+                        <p-button :label="RKW_Web.AlbumDetailEditTrackDiscAdd" icon="pi pi-save" class="p-button-success"
                                   @click="addDisc"></p-button>
                     </div>
                 </div>
@@ -718,7 +718,7 @@
             <p-panel>
                 <template #header>
                     <i class="pi pi-pencil mr-2" style="font-size: 2rem"></i>
-                    <b>{{RakbowWebStr.Edit}}</b>
+                    <b>{{RKW_Web.Edit}}</b>
                 </template>
                 <div v-if="tmpEditDiscList.length != 0">
                     <p-datatable :value="tmpEditDiscList" class="p-datatable-sm" striped-rows
@@ -729,38 +729,38 @@
                                  v-model:editing-rows="editingRowsDisc" @row-edit-save="onRowEditSaveDisc">
                         <template #header>
                             <div class="table-header-container">
-                                <p-button icon="pi pi-plus" :label="RakbowWebStr.ExpandAll" @click="expandAll"
+                                <p-button icon="pi pi-plus" :label="RKW_Web.ExpandAll" @click="expandAll"
                                           class="mr-2"></p-button>
-                                <p-button icon="pi pi-minus" :label="RakbowWebStr.CollapseAll" @click="collapseAll"></p-button>
+                                <p-button icon="pi pi-minus" :label="RKW_Web.CollapseAll" @click="collapseAll"></p-button>
                             </div>
                         </template>
                         <p-column :row-reorder="true"></p-column>
                         <p-column :expander="true" headerStyle="width: 3rem"></p-column>
-                        <p-column :header="RakbowWebStr.AlbumDetailTrackEditDiscIndex">
+                        <p-column :header="RKW_Web.AlbumDetailEditTrackDiscIndex">
                             <template #body="slotProps">
                                 {{slotProps.index+1}}
                             </template>
                         </p-column>
-                        <p-column field="albumFormat" :header="RakbowWebStr.AlbumFormatDisplayName">
+                        <p-column field="albumFormat" :header="RKW_Web.AlbumFormat">
                             <template #body="slotProps">
                                 {{slotProps.data.albumFormat.join("/")}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-multiselect v-model="data[field]" :options="albumFormatSet"
                                                option-label="label" option-value="labelEn"
-                                               :placeholder="RakbowWebStr.AlbumFormatDisplayName"
+                                               :placeholder="RKW_Web.AlbumFormat"
                                                display="chip">
                                 </p-multiselect>
                             </template>
                         </p-column>
-                        <p-column field="mediaFormat" :header="RakbowWebStr.ItemMediaFormatDisplayName">
+                        <p-column field="mediaFormat" :header="RKW_Web.MediaFormat">
                             <template #body="slotProps">
                                 {{slotProps.data.mediaFormat.join("/")}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-multiselect v-model="data[field]" :options="mediaFormatSet"
                                                option-label="label" option-value="labelEn"
-                                               :placeholder="RakbowWebStr.ItemMediaFormatDisplayName"
+                                               :placeholder="RKW_Web.MediaFormat"
                                                display="chip">
                                 </p-multiselect>
                             </template>
@@ -778,18 +778,18 @@
                                              v-model:editing-rows="editingRowsTrack"
                                              @row-edit-save="onRowEditSaveTrack">
                                     <p-column :row-reorder="true"></p-column>
-                                    <p-column :header="RakbowWebStr.AlbumDetailTrackEditTrackIndex">
+                                    <p-column :header="RKW_Web.AlbumDetailEditTrackTrackIndex">
                                         <template #body="slotProps">
                                             {{slotProps.index+1}}
                                         </template>
                                     </p-column>
-                                    <p-column field="musicId" :header="RakbowWebStr.AlbumDetailTrackEditTrackID" sortable></p-column>
+                                    <p-column field="musicId" :header="RKW_Web.AlbumDetailEditTrackTrackID" sortable></p-column>
                                     <p-column field="name" header="曲名">
                                         <template #editor="{ data, field }">
                                             <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                                         </template>
                                     </p-column>
-                                    <p-column field="length" :header="RakbowWebStr.AlbumDetailTrackEditTrackLength">
+                                    <p-column field="length" :header="RKW_Web.AlbumDetailEditTrackTrackLength">
                                         <template #editor="{ data, field }">
                                             <p-inputtext v-model="data[field]" autofocus></p-inputtext>
                                         </template>
@@ -804,12 +804,12 @@
                     </p-datatable>
                 </div>
                 <div v-else>
-                    <span class="emptyInfo">{{RakbowWebStr.AlbumDetailNoTrackInfoTitle}}</span>
+                    <span class="emptyInfo">{{RKW_Web.AlbumDetailMessageNoTrackInfo}}</span>
                 </div>
             </p-panel>
         </p-blockui>
         <template #footer>
-            <p-button :label="RakbowWebStr.Save" icon="pi pi-save" class="p-button-success mr-4"
+            <p-button :label="RKW_Web.Save" icon="pi pi-save" class="p-button-success mr-4"
                       @click="submitTrackInfo" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
@@ -820,7 +820,7 @@
 </div>
 <script type="module" th:inline="javascript">
 
-    import {RakbowWebStr} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
+    import {RKW_Web} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
     import {marked} from '/tool/marked/marked.esm.js';
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
@@ -910,7 +910,7 @@
                 }
                 if ((album.value.bonus == null || album.value.bonus === "") && album.value.hasBonus) {
                     //<![CDATA[
-                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>" + RakbowWebStr.ItemDetailNoBonusInfoMessage + "</em></span>";
+                    document.getElementById("bonus").innerHTML = "<span class='emptyInfo'><em>" + RKW_Web.ItemDetailMessageNoBonusInfo + "</em></span>";
                     //]]>
                 }
             };
@@ -966,7 +966,7 @@
                     });
                 } else {
                     //<![CDATA[
-                    document.getElementById('aplayer').innerHTML = "<span class='emptyInfo'>" + RakbowWebStr.ItemDetailNoAudioInfoMessage + "</span>";
+                    document.getElementById('aplayer').innerHTML = "<span class='emptyInfo'>" + RKW_Web.ItemDetailMessageNoAudioInfo + "</span>";
                     //]]>
                 }
             }
@@ -975,35 +975,35 @@
             //region edit
             const edits = ref([
                 {
-                    label: RakbowWebStr.ItemDetailOptionImageEditTitle,
+                    label: RKW_Web.ItemDetailOptionImageEditTitle,
                     icon: 'pi pi-images',
                     command: () => {
                         showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
-                    label: RakbowWebStr.ItemDetailOptionArtistEditTitle,
+                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
                         openArtistEditDialog();
                     }
                 },
                 {
-                    label: RakbowWebStr.ItemDetailOptionTrackInfoEditTitle,
+                    label: RKW_Web.AlbumDetailOptionTrackInfoEditTitle,
                     icon: 'pi iconfont icon-playlist',
                     command: () => {
                         openTrackEditDialog();
                     }
                 },
                 {
-                    label: RakbowWebStr.ItemDetailOptionDescriptionEditTitle,
+                    label: RKW_Web.ItemDetailOptionDescriptionEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
                         showDescriptionEditDialog(toast, dialog, detailInfo.value, itemImageInfo.value.images);
                     }
                 },
                 {
-                    label: RakbowWebStr.ItemDetailOptionBonusEditTitle,
+                    label: RKW_Web.ItemDetailOptionBonusEditTitle,
                     icon: 'pi iconfont icon-gift',
                     command: () => {
                         showBonusEditDialog(toast, dialog, detailInfo.value, album.value.bonus, itemImageInfo.value.images);
@@ -1120,10 +1120,10 @@
             const selectedDisc = ref();
             const selectedTrack = ref();
             const menuModelDisc = ref([
-                {label: RakbowWebStr.Delete, icon: 'pi pi-fw pi-trash', command: () => deleteDisc(selectedDisc)}
+                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-trash', command: () => deleteDisc(selectedDisc)}
             ]);
             const menuModelTrack = ref([
-                {label: RakbowWebStr.Delete, icon: 'pi pi-fw pi-trash', command: () => deleteTrack(selectedTrack)}
+                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-trash', command: () => deleteTrack(selectedTrack)}
             ]);
             const onRowReorderDisc = (ev) => {
                 tmpEditDiscList.value = ev.value;
@@ -1144,7 +1144,7 @@
             };
             const deleteDisc = (disc) => {
                 tmpEditDiscList.value = tmpEditDiscList.value.filter((d) => d.tmpDiscId !== disc.value.tmpDiscId);
-                toast.add({severity: 'error', summary: RakbowWebStr.Delete, detail: disc.value.tmpDiscId, life: 3000});
+                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: disc.value.tmpDiscId, life: 3000});
                 selectedArtist.value = null;
             };
             const deleteTrack = (track) => {
@@ -1153,7 +1153,7 @@
                         disc.trackList = disc.trackList.filter((t) => t.tmpTrackId !== track.value.tmpTrackId);
                     }
                 }
-                toast.add({severity: 'error', summary: RakbowWebStr.Delete, detail: track.value.name, life: 3000});
+                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: track.value.name, life: 3000});
             };
             const editingRowsDisc = ref([]);
             const editingRowsTrack = ref([]);
@@ -1295,7 +1295,7 @@
             const artists = ref([]);
             const displayArtistEditDialog = ref(false);
             const menuModel = ref([
-                {label: RakbowWebStr.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
+                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
             ]);
             const onRowReorder = (ev) => {
                 tmpArtists.value = ev.value;
@@ -1305,7 +1305,7 @@
             };
             const deleteArtist = (artist) => {
                 tmpArtists.value = tmpArtists.value.filter((a) => a.pos !== artist.value.pos);
-                toast.add({severity: 'error', summary: RakbowWebStr.Delete, detail: artist.value.pos, life: 3000});
+                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: artist.value.pos, life: 3000});
                 selectedArtist.value = null;
             };
             const editingRows = ref([]);
@@ -1370,7 +1370,7 @@
             // }
 
             return {
-                RakbowWebStr,
+                RKW_Web,
                 openTingleDescription, openTingleBonus,
 
                 //header

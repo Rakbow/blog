@@ -101,7 +101,7 @@
 </head>
 <body>
  <div id="app" style="margin-top: 60px">
-    <!-- 头部 -->
+    <!-- header -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
     <div id="main" class="grid mt-2">
@@ -463,10 +463,11 @@
     </p-dialog>
 
     <p-dynamicdialog></p-dynamicdialog>
-    <!-- 尾部 -->
+    <!-- footer -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+    import {RKW_Web} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
     import {marked} from '/tool/marked/marked.esm.js';
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
@@ -752,6 +753,7 @@
             //endregion
 
             return {
+                RKW_Web,
                 openTingleDescription,
 
                 //header

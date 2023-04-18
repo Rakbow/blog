@@ -1,57 +1,15 @@
-export class RakbowWebStr {
+export class RKW_Web {
 
-    //region database-item-detail
-    static ItemFranchisesPlaceholder = '所属系列';
-    static ItemProductsPlaceholder = '所属作品';
-    static ItemCurrencyUnitPlaceholder = '单位';
-
-    static ItemBarcodeDisplayName = '商品条形码';
-    static ItemReleaseDateDisplayName = '发行时间';
-    static ItemReleasePriceDisplayName = '发行价格';
-    static ItemCurrencyUnitDisplayName = '货币单位';
-    static ItemFranchisesDisplayName = '所属系列';
-    static ItemProductsDisplayName = '所属作品';
-    static ItemRemarkDisplayName = '备注';
-
-    static ItemBonusDisplayName = '特典';
-    static ItemPublishFormatDisplayName = '出版形式';
-    static ItemMediaFormatDisplayName = '媒体格式';
-    static ItemCopyrightDisplayName = '版权方';
-
-
-    static ItemDetailOptionImageEditTitle = '图片管理';
-    static ItemDetailOptionArtistEditTitle = '音乐创作';
-    static ItemDetailOptionTrackInfoEditTitle = '音轨信息';
-    static ItemDetailOptionDescriptionEditTitle = '描述信息';
-    static ItemDetailOptionBonusEditTitle = '特典信息';
-
-    static ItemDetailBaseInfoEditTitle = '基础信息编辑';
-    static ItemDetailArtistEditTitle = '创作信息编辑';
-
+    //item-detail 展示模块标题
     static ItemDetailPlayListTitle = '播放列表';
-    static ItemDetailArtistInfoTitle = '创作信息';
+    static ItemDetailSummaryTitle = '简介';
 
+    static AlbumDetailArtistInfoTitle = '创作信息';
+    static AlbumDetailTrackInfoTitle = '音轨信息';
 
-    static ItemDetailArtistEditPos = '职位';
-    static ItemDetailArtistEditName = '人员';
+    static BookDetailAuthorSpecTitle = '作者/规格';
 
-    static AlbumDetailTrackEditAudioNames = '曲目列表';
-    static AlbumDetailTrackEditAudioLengths = '曲目长度';
-    static AlbumDetailTrackEditDiscAdd = '添加碟片';
-    static AlbumDetailTrackEditDiscIndex = '碟片序号';
-
-    static AlbumDetailTrackEditTrackIndex = '曲目序号';
-    static AlbumDetailTrackEditTrackID = '曲目编号';
-    static AlbumDetailTrackEditTrackLength = '曲目时长';
-
-    static AlbumCatalogDisplayName = '专辑编号';
-    static AlbumNameDisplayName = '专辑名称';
-    static AlbumNameEnDisplayName = '专辑名称(英)';
-    static AlbumNameZhDisplayName = '专辑名称(中)';
-    static AlbumFormatDisplayName = '专辑类型';
-    static AlbumLabelDisplayName = '唱片公司';
-    static AlbumPublisherDisplayName = '出版商';
-    static AlbumDistributorDisplayName = '经销商';
+    static GameDetailStaffInfoTitle = '开发制作人员';
 
     static RelatedAlbumTitle = '相关专辑';
     static RelatedBookTitle = '相关书籍';
@@ -60,33 +18,195 @@ export class RakbowWebStr {
     static RelatedMerchTitle = '相关商品';
     static RelatedProductTitle = '相关作品';
 
-    static AlbumDetailTrackEditTitle = '音轨信息编辑';
-    static AlbumDetailTrackInfoTitle = '音轨信息';
 
-    static ItemDetailNoArtistInfoMessage = '暂无创作信息';
-    static ItemDetailNoBonusInfoMessage = '暂无特典信息';
-    static ItemDetailNoAudioInfoMessage = '暂无音频文件';
-    static AlbumDetailNoTrackInfoTitle = '暂无音轨信息';
-    static ItemDetailNoRelatedItemMessage = '暂无相关条目';
-
-    static ItemTaxInclusiveDisplayName = '含税';
-    static LetMusicPlayerBottom = '切换播放器至底部';
+    //item-detail 展示模块 名词
     static TotalDiscNum = '总碟片数';
     static TotalTrackNum = '总曲目数';
     static DiscLength = '碟片时长';
     static TrackNum = '曲目数';
     static TotalLength = '总时长';
-    static AddedTime = '收录时间';
-    static EditedTime = '编辑时间';
-    static Cancel = '取消';
-    static Save = '保存';
+
+
+    //item-detail 展示模块 提示
+    static ItemDetailMessageNoArtistInfo = '暂无创作信息';
+    static ItemDetailMessageNoBonusInfo = '暂无特典信息';
+    static ItemDetailMessageNoAudioInfo = '暂无音频文件';
+    static ItemDetailMessageNoRelatedItem = '暂无相关条目';
+    static ItemDetailMessageNoSpec = '暂无规格信息';
+    static ItemDetailMessageNoSummary = '暂无简介';
+    static ItemDetailMessageNoOrganization = '暂无关联组织信息';
+
+    static AlbumDetailMessageNoTrackInfo = '暂无音轨信息';
+
+    static BookDetailMessageNoAuthor = '暂无作者信息';
+
+    static GameDetailMessageNoStaffInfo = '暂无开发制作人员信息';
+
+
+    //region 通用操作
     static Add = '新增';
+    static Save = '保存';
     static Edit = '编辑';
-    static Clear = '清空';
-    static Update = '更新';
     static Delete = '删除';
+    static Cancel = '取消';
+    static Update = '更新';
+    static Clear = '清空';
+    static Refresh = '刷新';
     static ExpandAll = '全部展开';
     static CollapseAll = '全部折叠';
     //endregion
+
+
+    //region 名词
+    static IsLimited = '限定版';
+    static TaxInclusive = '含税';
+    static AddedTime = '收录时间';
+    static EditedTime = '编辑时间';
+    static Barcode = '商品条形码';
+    static ReleaseDate = '发行时间';
+    static PublishDate = '出版时间';
+    static ReleasePrice = '发行价格';
+    static PublishPrice = '出版价格';
+    static CurrencyUnit = '货币单位';
+    static BelongToFranchises = '所属系列';
+    static BelongToProducts = '所属作品';
+    static Remark = '备注';
+    static Bonus = '特典';
+    static PublishFormat = '出版形式';
+    static MediaFormat = '媒体格式';
+    static Copyright = '版权方';
+    static Distributor = '经销商';
+    static Region = '地区';
+    static Language = '语言';
+    static Summary = '简介';
+    static Spec = '规格';
+
+    static AlbumCatalogNo = '专辑编号';
+    static AlbumName = '专辑名称';
+    static AlbumEnglishName = '专辑名称(英)';
+    static AlbumChineseName = '专辑名称(中)';
+    static AlbumFormat = '专辑类型';
+    static AlbumLabel = '唱片公司';
+    static AlbumPublisher = '出版商';
+
+    static BookTitle = '书名';
+    static BookChineseTitle = '书名(中)';
+    static BookEnglishTitle = '书名(英)';
+    static BookISBN10 = 'ISBN-10';
+    static BookISBN13 = 'ISBN-13';
+    static BookType = '分类';
+    static BookPublisher = '出版社';
+
+    static DiscCatalogNo = '碟片编号';
+    static DiscName = '商品名';
+    static DiscChineseName = '商品名(中)';
+    static DiscEnglishName = '商品名(英)';
+
+    static GameName = '游戏名';
+    static GameChineseName = '游戏名(中)';
+    static GameEnglishName = '游戏名(英)';
+    static GameReleaseType = '发售类型';
+    static GamePlatform = '登陆平台';
+    //endregion
+
+
+
+    //操作提示信息
+    static MessageDeleted = '已删除';
+
+
+    //文字提示信息tooltip
+    static TooltipMusicPlayerChangeBottom = '切换播放器至底部';
+    static TooltipGenerateBookISBN10 = '生成ISBN-10';
+    static TooltipGenerateBookISBN13 = '生成ISBN-13';
+
+
+    //编辑项默认信息
+    static PlaceholderBelongToFranchises = '所属系列';
+    static PlaceholderBelongToProducts = '选择所属作品';
+    static PlaceholderMediaFormat = '选择媒体格式';
+    static PlaceholderCurrencyUnit = '单位';
+    static PlaceholderRegion = '选择地区';
+
+
+    //item-detail 编辑界面选项名
+    static ItemDetailOptionImageEditTitle = '图片管理';
+    static ItemDetailOptionDescriptionEditTitle = '描述信息';
+    static ItemDetailOptionBonusEditTitle = '特典信息';
+    static ItemDetailOptionSpecEditTitle = '规格信息';
+    static ItemDetailOptionOrganizationEditTitle = '关联组织';
+
+    static AlbumDetailOptionArtistEditTitle = '音乐创作';
+    static AlbumDetailOptionTrackInfoEditTitle = '音轨信息';
+
+    static BookDetailOptionAuthorEditTitle = '作者信息';
+
+    static GameDetailOptionStaffEditTitle = '开发制作人员';
+
+
+    //item-detail 编辑界面 界面标题名
+    static ItemDetailBaseInfoEditTitle = '基础信息编辑';
+    static ItemDetailSpecEditTitle = '规格信息编辑';
+    static ItemDetailOrganizationEditTitle = '关联组织信息编辑';
+
+    static AlbumDetailArtistEditTitle = '创作信息编辑';
+    static AlbumDetailTrackEditTitle = '音轨信息编辑';
+
+    static BookDetailAuthorEditTitle = '作者信息编辑';
+
+    static GameDetailStaffInfoEditTitle = '开发制作人员信息编辑';
+
+
+
+
+
+    //item-detail 编辑界面 名词
+    static ItemDetailEditOrganizationLabel= '组织类型';
+    static ItemDetailEditOrganizationValue= '组织名称';
+
+
+    static AlbumDetailEditArtistPos = '职位';
+    static AlbumDetailEditArtistName = '人员';
+    static AlbumDetailEditTrackAudioNames = '曲目列表';
+    static AlbumDetailEditTrackAudioLengths = '曲目长度';
+    static AlbumDetailEditTrackDiscIndex = '碟片序号';
+    static AlbumDetailEditTrackTrackIndex = '曲目序号';
+    static AlbumDetailEditTrackTrackID = '曲目编号';
+    static AlbumDetailEditTrackTrackLength = '曲目时长';
+
+    static BookDetailEditAuthorPos = '职位';
+    static BookDetailEditAuthorName = '人员';
+    static BookDetailEditSpecLabel = '规格名称';
+    static BookDetailEditSpecValue= '规格数据';
+
+    static GameDetailEditStaffPos= '职位';
+    static GameDetailEditStaffName= '人员';
+
+
+
+
+    //item-detail 编辑界面 操作
+    static AlbumDetailEditTrackDiscAdd = '添加碟片';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
