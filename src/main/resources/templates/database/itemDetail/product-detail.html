@@ -99,7 +99,7 @@
 </head>
 <body>
  <div id="app" style="margin-top: 60px">
-    <!-- 头部 -->
+    <!-- header -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
     <div id="main" class="grid mt-2">
@@ -677,10 +677,11 @@
     </p-dialog>
 
     <p-dynamicdialog></p-dynamicdialog>
-    <!-- 尾部 -->
+    <!-- footer -->
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+    import {RKW_Web} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
     import {marked} from '/tool/marked/marked.esm.js';
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
@@ -765,7 +766,7 @@
             const organizations = ref([]);
             const displayOrganizationEditDialog = ref(false);
             const organizationMenuModel = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteOrganization(selectedOrganization)}
+                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteOrganization(selectedOrganization)}
             ]);
             const organizationOnRowReorder = (ev) => {
                 tmpOrganizations.value = ev.value;
@@ -775,7 +776,7 @@
             };
             const deleteOrganization = (organization) => {
                 tmpOrganizations.value = tmpOrganizations.value.filter((o) => o.label !== organization.value.label);
-                toast.add({severity: 'error', summary: '已删除', detail: organization.value.value, life: 3000});
+                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: organization.value.value, life: 3000});
                 selectedOrganization.value = null;
             };
             const organizationEditingRows = ref([]);
@@ -839,7 +840,7 @@
             const staffs = ref([]);
             const displayStaffEditDialog = ref(false);
             const menuModel = ref([
-                {label: '删除', icon: 'pi pi-fw pi-user-minus', command: () => deleteStaff(selectedStaff)}
+                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteStaff(selectedStaff)}
             ]);
             const onRowReorder = (ev) => {
                 tmpStaffs.value = ev.value;
@@ -849,7 +850,7 @@
             };
             const deleteStaff = (staff) => {
                 tmpStaffs.value = tmpStaffs.value.filter((a) => a.pos !== staff.value.pos);
-                toast.add({severity: 'error', summary: '已删除', detail: staff.value.pos, life: 3000});
+                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: staff.value.pos, life: 3000});
                 selectedStaff.value = null;
             };
             const editingRows = ref([]);
@@ -918,28 +919,28 @@
             const editBlock = ref(false);
             const edits = ref([
                 {
-                    label: '图片管理',
+                    label: RKW_Web.ItemDetailOptionImageEditTitle,
                     icon: 'pi pi-images',
                     command: () => {
                         showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
-                    label: '关联组织',
+                    label: RKW_Web.ItemDetailOptionOrganizationEditTitle,
                     icon: 'pi iconfont icon-gongsi',
                     command: () => {
                         openOrganizationEditDialog();
                     }
                 },
                 {
-                    label: 'staff信息',
+                    label: RKW_Web.ProductDetailOptionStaffEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
                         openStaffEditDialog();
                     }
                 },
                 {
-                    label: '描述信息',
+                    label: RKW_Web.ItemDetailOptionDescriptionEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
                         showDescriptionEditDialog(toast, dialog, detailInfo.value, itemImageInfo.value.images);
@@ -1005,6 +1006,7 @@
             //endregion
 
             return {
+                RKW_Web,
                 openTingleDescription,
 
                 //header

@@ -11,6 +11,8 @@ export class RKW_Web {
 
     static GameDetailStaffInfoTitle = '开发制作人员';
 
+    static FranchiseDetailProductTitle = '作品';
+
     static RelatedAlbumTitle = '相关专辑';
     static RelatedBookTitle = '相关书籍';
     static RelatedDiscTitle = '相关碟片';
@@ -25,6 +27,9 @@ export class RKW_Web {
     static DiscLength = '碟片时长';
     static TrackNum = '曲目数';
     static TotalLength = '总时长';
+
+    static FranchiseDetailReleaseDate = '日&nbsp期';
+    static FranchiseDetailProduct = '作&nbsp品';
 
 
     //item-detail 展示模块 提示
@@ -41,6 +46,9 @@ export class RKW_Web {
     static BookDetailMessageNoAuthor = '暂无作者信息';
 
     static GameDetailMessageNoStaffInfo = '暂无开发制作人员信息';
+
+    static FranchiseDetailMessageNoProduct = '暂无作品';
+    static FranchiseDetailMessageNoChildFranchise = '暂无子系列';
 
 
     //region 通用操作
@@ -107,6 +115,23 @@ export class RKW_Web {
     static GameEnglishName = '游戏名(英)';
     static GameReleaseType = '发售类型';
     static GamePlatform = '登陆平台';
+
+    static MerchCategory = '分类';
+    static MerchNotForSale = '非卖品';
+    static MerchName = '商品名';
+    static MerchChineseName = '商品名(中)';
+    static MerchEnglishName = '商品名(英)';
+
+    static Franchise = '系列';
+    static MetaFranchise = '元系列';
+    static ParentFranchise = '父系列';
+    static ChildFranchise = '子系列';
+
+    static FranchiseName = '名称';
+    static FranchiseChineseName = '名称(中)';
+    static FranchiseEnglishName = '名称(英)';
+
+
     //endregion
 
 
@@ -142,6 +167,8 @@ export class RKW_Web {
     static BookDetailOptionAuthorEditTitle = '作者信息';
 
     static GameDetailOptionStaffEditTitle = '开发制作人员';
+
+    static ProductDetailOptionStaffEditTitle = 'Staff信息';
 
 
     //item-detail 编辑界面 界面标题名
@@ -182,6 +209,8 @@ export class RKW_Web {
     static GameDetailEditStaffPos= '职位';
     static GameDetailEditStaffName= '人员';
 
+    static MerchDetailEditSpecLabel = '规格名称';
+    static MerchDetailEditSpecValue= '规格数据';
 
 
 

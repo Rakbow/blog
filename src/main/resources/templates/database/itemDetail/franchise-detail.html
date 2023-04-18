@@ -100,7 +100,7 @@
 </head>
 <body>
  <div id="app" style="margin-top: 60px">
-    <!-- 头部 -->
+    <!-- header -->
     <header class="sticky-top mb-2" th:insert="~{template/header :: site_header}"></header>
 
     <div id="main" class="grid mt-2">
@@ -112,8 +112,8 @@
                         <div class="col-11 text-start">
                             <h3 class="ml-2 mt-0 mb-0" style="text-align: left">
                                 <b class="detail-item-title">{{franchise.name}}</b>
-                                <span v-if="franchise.metaLabel" style="font-size: 13px" class="label">(元系列)</span>
-                                <span v-else style="font-size: 13px" class="label">(系列)</span>
+                                <span v-if="franchise.metaLabel" style="font-size: 13px" class="label">(RKW_Web.MetaFranchise)</span>
+                                <span v-else style="font-size: 13px" class="label">(RKW_Web.Franchise)</span>
                             </h3>
                         </div>
                         <div th:insert="~{template/item-detail-template :: item_common_edit_button}" v-if="franchise.id != 0"></div>
@@ -130,7 +130,7 @@
                     <div class="detail-item-field">
                         <p-fieldset v-if="franchise.parentFranchise" class="a_with_underline">
                             <template #legend>
-                                <b>父系列</b>
+                                <b>{{RKW_Web.ParentFranchise}}</b>
                             </template>
                             <a :href="'/db/franchise/' + franchise.parentFranchise.id" style="color: #ceffff">
                                 <span>{{franchise.parentFranchise.name}}</span>
@@ -140,14 +140,14 @@
                         <p-fieldset :toggleable="true" v-if="!franchise.metaLabel">
                             <template #legend>
                                 <i class="pi iconfont icon-_classification"></i>
-                                <b>作品</b>
+                                <b>{{RKW_Web.FranchiseDetailProductTitle}}</b>
                             </template>
                             <div class="grid ml-4" v-if="products != 0">
                                 <table class="table product-table table-sm table-borderless a_with_underline">
                                     <thead>
                                     <tr>
-                                        <th scope="col" class="text-start detail-item-table-title">日&nbsp期</th>
-                                        <th scope="col" class="text-start detail-item-table-title">作&nbsp品</th>
+                                        <th scope="col" class="text-start detail-item-table-title">{{RKW_Web.FranchiseDetailReleaseDate}}</th>
+                                        <th scope="col" class="text-start detail-item-table-title">{{RKW_Web.FranchiseDetailProduct}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -165,14 +165,14 @@
                                 </table>
                             </div>
                             <div v-else>
-                                <span class="emptyInfo"><em>暂无作品</em></span>
+                                <span class="emptyInfo"><em>{{RKW_Web.FranchiseDetailMessageNoProduct}}</em></span>
                             </div>
                         </p-fieldset>
                         <!-- child franchises -->
                         <p-fieldset :toggleable="true" v-else>
                             <template #legend>
                                 <i class="pi iconfont icon-_classification"></i>
-                                <b>子系列</b>
+                                <b>{{RKW_Web.ChildFranchise}}</b>
                             </template>
                             <div class="grid ml-4 mt-2" v-if="franchise.childFranchiseInfos.length != 0">
                                 <table class="table product-table table-sm table-borderless a_with_underline">
@@ -188,7 +188,7 @@
                                 </table>
                             </div>
                             <div v-else>
-                                <span class="emptyInfo"><em>暂无子系列</em></span>
+                                <span class="emptyInfo"><em>{{RKW_Web.FranchiseDetailMessageNoChildFranchise}}</em></span>
                             </div>
                         </p-fieldset>
                         <!-- description -->
@@ -202,56 +202,57 @@
             <div th:insert="~{template/item-detail-template :: page_info_card}"></div>
         </div>
     </div>
-    <p-dialog :modal="true" v-model:visible="displayEditDialog" header="编辑基础信息"
+    <p-dialog :modal="true" v-model:visible="displayEditDialog" :header="RKW_Web.ItemDetailBaseInfoEditTitle"
               :style="{width: '600px'}" class="p-fluid">
         <p-blockui :blocked="editBlock">
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>名称<span style="color: red">*</span></label>
+                    <label>{{RKW_Web.FranchiseName}}<span style="color: red">*</span></label>
                     <p-inputtext v-model.trim="franchiseEdit.name"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>名称(中)<span style="color: red">*</span></label>
+                    <label>{{RKW_Web.FranchiseChineseName}}<span style="color: red">*</span></label>
                     <p-inputtext v-model.trim="franchiseEdit.nameZh"></p-inputtext>
                 </div>
             </div>
             <div class="formgrid grid">
                 <div class="field col">
-                    <label>名称(英)</label>
+                    <label>{{RKW_Web.FranchiseEnglishName}}</label>
                     <p-inputtext v-model.trim="franchiseEdit.nameEn"></p-inputtext>
                 </div>
                 <div class="field col">
-                    <label>发售时间<span style="color: red">*</span></label>
+                    <label>{{RKW_Web.ReleaseDate}}<span style="color: red">*</span></label>
                     <p-calendar v-model="franchiseEdit.originDate" date-format="yy/mm/dd"
                                 :show-button-bar="true"
                                 :show-icon="true"></p-calendar>
                 </div>
             </div>
             <div class="field">
-                <label>备注</label>
+                <label>{{RKW_Web.Remark}}</label>
                 <p-textarea v-model="franchiseEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
             </div>
             <div class="field" v-if="franchiseEdit.metaLabel">
-                <label class="mb-3">子系列</label>
-                <p-multiselect v-model="franchiseEdit.childFranchises" :options="franchiseSet" placeholder="子系列"
+                <label class="mb-3">{{RKW_Web.ChildFranchise}}</label>
+                <p-multiselect v-model="franchiseEdit.childFranchises" :options="franchiseSet" :placeholder="RKW_Web.ChildFranchise"
                                option-label="label" option-value="value" display="chip" :filter="true">
                 </p-multiselect>
             </div>
         </p-blockui>
         <template #footer>
-            <p-button label="取消" icon="pi pi-times" class="p-button-text"
+            <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="p-button-text"
                       @click="closeEditDialog" :disabled="editBlock"></p-button>
-            <p-button label="保存" icon="pi pi-check" class="p-button-text"
+            <p-button :label="RKW_Web.Save" icon="pi pi-check" class="p-button-text"
                       @click="submitEditFranchise" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
 
     <p-dynamicdialog></p-dynamicdialog>
-    <!-- 尾部 -->
+    <!-- footer -->
     <footer th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+    import {RKW_Web} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
     import {marked} from '/tool/marked/marked.esm.js';
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
@@ -339,14 +340,14 @@
             };
             const edits = ref([
                 {
-                    label: '图片管理',
+                    label: RKW_Web.ItemDetailOptionImageEditTitle,
                     icon: 'pi pi-images',
                     command: () => {
                         showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
                     }
                 },
                 {
-                    label: '描述信息',
+                    label: RKW_Web.ItemDetailOptionDescriptionEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
                         showDescriptionEditDialog(toast, dialog, detailInfo.value, itemImageInfo.value.images);
@@ -399,6 +400,7 @@
             //endregion
 
             return {
+                RKW_Web,
                 openTingleDescription,
 
                 //header
