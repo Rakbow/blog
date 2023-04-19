@@ -53,6 +53,7 @@
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
+    <script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -595,9 +596,12 @@
                 <div class="grid">
                     <div class="col-3">
                         <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-tag"></i>
-                                        </span>
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-tag"></i>
+                            </span>
+                            <span class="p-inputgroup-addon">
+                                <p-checkbox v-model="artist.main" :true-value="1" :false-value="0"></p-checkbox>
+                            </span>
                             <p-inputtext v-model="artist.pos" :placeholder="RKW_Web.AlbumDetailEditArtistPos"></p-inputtext>
                         </div>
                     </div>
@@ -1429,6 +1433,7 @@
             "p-skeleton": primevue.skeleton,
             "p-scrollpanel": primevue.scrollpanel,
             "p-scrolltop": primevue.scrolltop,
+            "p-checkbox": primevue.checkbox,
 
             "p-dynamicdialog": primevue.dynamicdialog,
         }

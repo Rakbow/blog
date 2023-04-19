@@ -108,6 +108,7 @@ const imageEditPanel = {
                                  @row-reorder="imgRowReorder" edit-mode="row" striped-rows
                                  :resizable-columns="true" column-resize-mode="expand"
                                  v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
+                                 v-model:expanded-rows="expandedRows"
                                  v-model:selection="selectedImage">
                         <template #header>
                             <p-button icon="pi pi-trash" class="p-button-danger"
@@ -115,25 +116,26 @@ const imageEditPanel = {
                         </template>
                         <p-column selection-mode="multiple" header-style="width: 4%"></p-column>
                         <p-column :row-reorder="true" header-style="width: 3%"></p-column>
+                        <p-column :expander="true" headerStyle="width: 3%"></p-column>
                         <p-column header="图片" header-style="width: 8%">
                             <template #body="slotProps">
                                 <img :src="slotProps.data.thumbUrl50" :alt="slotProps.data.nameEn"
                                      class="edit-image"/>
                             </template>
                         </p-column>
-                        <p-column field="url" header="URL" header-style="width: 10%">
-                            <template #body="slotProps">
-                                {{slotProps.data.url.substr(22)}}
+<!--                        <p-column field="url" header="URL" header-style="width: 10%">-->
+<!--                            <template #body="slotProps">-->
+<!--                                {{slotProps.data.url.substr(22)}}-->
+<!--                            </template>-->
+<!--                        </p-column>-->
+                        <p-column field="nameZh" header="名(中)" header-style="width: 25%">
+                            <template #editor="{ data, field }">
+                                <p-inputtext v-model="data[field]" autofocus style="width: 240px"></p-inputtext>
                             </template>
                         </p-column>
-                        <p-column field="nameZh" header="名(中)" header-style="width: 10%">
+                        <p-column field="nameEn" header="名(英)" header-style="width: 25%">
                             <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="nameEn" header="名(英)" header-style="width: 10%">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                <p-inputtext v-model="data[field]" autofocus style="width: 240px"></p-inputtext>
                             </template>
                         </p-column>
                         <p-column field="type" header="类型" header-style="width: 8%">
@@ -147,14 +149,40 @@ const imageEditPanel = {
                                 {{getImageTypeLabel(slotProps.data.type)}}
                             </template>
                         </p-column>
-                        <p-column field="description" header="描述" header-style="width: 15%">
+                        <p-column field="description" header="描述" header-style="width: 17%">
                             <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus style="width: 100px"></p-inputtext>
+                                <p-inputtext v-model="data[field]" autofocus style="width: 180px"></p-inputtext>
                             </template>
                         </p-column>
-                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>
-                        <p-column field="uploadUser" header="上传用户"></p-column>
-                        <p-column :row-editor="true" header-style="width: 15%"></p-column>
+<!--                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>-->
+<!--                        <p-column field="uploadUser" header="上传用户"></p-column>-->
+                        <p-column :row-editor="true" header-style="width: 7%"></p-column>
+                        <template #expansion="slotProps">
+                            <div class="orders-subtable">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr>
+                                        <td width="120px"><strong>上传用户</strong></td>
+                                        <td>
+                                            {{slotProps.data.uploadUser}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="120px"><strong>上传时间</strong></td>
+                                        <td>
+                                            {{slotProps.data.uploadTime}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="120px"><strong>URL</strong></td>
+                                        <td>
+                                            {{slotProps.data.url.substr(22)}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </template>
                     </p-datatable>
                 </div>
                 <div v-else>
@@ -211,6 +239,7 @@ const imageEditPanel = {
             imageInfos: [],
             displayImageEditDialog: false,
             imageHtml: "",
+            expandedRows: []
         }
     },
     mounted() {
