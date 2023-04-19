@@ -241,7 +241,10 @@
                                             <span class="small-font" style="margin: 0 0 .5rem 0;">
                                                         <b class="label">{{result.isbn13}}</b><span class="label">&nbsp{{result.publishDate}}</span>
                                                     </span><br>
-                                            <span class="label" style="font-size: 11px;color: white"><b>{{result.authors}}</b></span>
+                                            <span class="label" style="font-size: 11px;color: white">
+                                                <b v-if="result.authors.length != 0">{{result.authors.join(", ")}}</b>&nbsp;
+                                                <b v-else>N/A</b>&nbsp;
+                                            </span>
                                             &nbsp<span class="label" style="font-size: 7px">{{result.publisher}}</span><br>
                                             <span class="grid">
                                                     <span class="text-start col-6">

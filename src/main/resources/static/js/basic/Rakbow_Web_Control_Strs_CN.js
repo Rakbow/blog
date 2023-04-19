@@ -218,6 +218,12 @@ export class RKW_Web {
     static AlbumDetailEditTrackDiscAdd = '添加碟片';
 
 
+    //item-detail 编辑操作 错误/警告信息
+    static ErrorMessageAlbumDetailArtistsMain = '主要创作人员只能选择一项！';
+    static ErrorMessageMusicDetailArtistsMain = '主要创作人员只能选择一项！';
+    static ErrorMessageBookDetailAuthorsMain = '主要作者只能选择一项！';
+
+
 
 
 

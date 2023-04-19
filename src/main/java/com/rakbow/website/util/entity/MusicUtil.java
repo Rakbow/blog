@@ -28,8 +28,6 @@ public class MusicUtil {
     @Resource
     private static MusicService musicService;
 
-    private static final String[] VOCAL_LIST = new String[] {"vocal", "vocals", "演唱"};
-
     /**
      * 获取音乐分类数组
      * @author rakbow
@@ -121,11 +119,9 @@ public class MusicUtil {
             return "N/A";
         }
         for (int i = 0; i < artists.size(); i++) {
-            for (String s : VOCAL_LIST) {
-                if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), s)) {
-                    List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
-                    return String.join("/", vocals);
-                }
+            if (artists.getJSONObject(i).getIntValue("main") == 1) {
+                List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
+                return String.join("/", vocals);
             }
         }
         return "N/A";
@@ -142,11 +138,9 @@ public class MusicUtil {
             return "N/A";
         }
         for (int i = 0; i < artists.size(); i++) {
-            for (String s : VOCAL_LIST) {
-                if (StringUtils.equals(artists.getJSONObject(i).getString("pos"), s)) {
-                    List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
-                    return String.join("/", vocals);
-                }
+            if (artists.getJSONObject(i).getIntValue("main") == 1) {
+                List<String> vocals = artists.getJSONObject(i).getList("name", String.class);
+                return String.join("/", vocals);
             }
         }
         return "N/A";

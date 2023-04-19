@@ -600,16 +600,16 @@
                                 <i class="pi pi-tag"></i>
                             </span>
                             <span class="p-inputgroup-addon">
-                                <p-checkbox v-model="artist.main" :true-value="1" :false-value="0"></p-checkbox>
+                                <p-checkbox v-model="artist.main" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
                             </span>
                             <p-inputtext v-model="artist.pos" :placeholder="RKW_Web.AlbumDetailEditArtistPos"></p-inputtext>
                         </div>
                     </div>
                     <div class="col-7">
                         <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-users"></i>
-                                        </span>
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-users"></i>
+                            </span>
                             <p-chips v-model="artist.name" :placeholder="RKW_Web.AlbumDetailEditArtistName" separator=","></p-chips>
                         </div>
                     </div>
@@ -630,7 +630,15 @@
                                  context-menu v-model:context-menu-selection="selectedArtist"
                                  @row-contextmenu="artistRowMenu" edit-mode="row"
                                  v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
-                        <p-column :row-reorder="true"></p-column>
+                        <p-column :row-reorder="true" header-style="width: 4%"></p-column>
+                        <p-column field="main" header-style="width: 3%">
+                            <template #body="slotProps">
+                                <i v-if="slotProps.data.main == 1" class="pi false-icon pi-star-fill"></i>
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-checkbox v-model="data[field]" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                            </template>
+                        </p-column>
                         <p-column field="pos" :header="RKW_Web.AlbumDetailEditArtistPos">
                             <template #editor="{ data, field }">
                                 <p-inputtext v-model="data[field]" autofocus></p-inputtext>
@@ -1337,6 +1345,17 @@
             };
             const submitArtist = () => {
                 editBlock.value = true;
+                let mainCount = 0;
+                tmpArtists.value.forEach(artist => {
+                    if(artist.main === 1) {
+                        mainCount++;
+                    }
+                });
+                if(mainCount > 1) {
+                    toast.add({severity: 'error', summary: RKW_Web.ErrorMessageAlbumDetailArtistsMain, life: 3000});
+                    editBlock.value = false;
+                    return;
+                }
                 let json = {
                     id: album.value.id,
                     artists: tmpArtists.value

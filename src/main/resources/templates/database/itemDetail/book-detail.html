@@ -50,6 +50,7 @@
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
     <script th:src="@{/js/primevue/components/card.min.js}"></script>
     <script th:src="@{/js/primevue/components/tag.min.js}"></script>
+    <script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -491,17 +492,20 @@
             <div class="grid">
                 <div class="col-3">
                     <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-tag"></i>
-                                    </span>
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-tag"></i>
+                        </span>
+                        <span class="p-inputgroup-addon">
+                            <p-checkbox v-model="author.main" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                        </span>
                         <p-inputtext v-model="author.pos" :placeholder="RKW_Web.BookDetailEditAuthorPos"></p-inputtext>
                     </div>
                 </div>
                 <div class="col-7">
                     <div class="p-inputgroup">
-                                    <span class="p-inputgroup-addon">
-                                        <i class="pi pi-users"></i>
-                                    </span>
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-users"></i>
+                        </span>
                         <p-chips v-model="author.name" :placeholder="RKW_Web.BookDetailEditAuthorName" separator=","></p-chips>
                     </div>
                 </div>
@@ -523,6 +527,14 @@
                              @row-contextmenu="authorRowMenu" edit-mode="row"
                              v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                     <p-column :row-reorder="true"></p-column>
+                    <p-column field="main" header-style="width: 3%">
+                        <template #body="slotProps">
+                            <i v-if="slotProps.data.main == 1" class="pi false-icon pi-star-fill"></i>
+                        </template>
+                        <template #editor="{ data, field }">
+                            <p-checkbox v-model="data[field]" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                        </template>
+                    </p-column>
                     <p-column field="pos" :header="RKW_Web.BookDetailEditAuthorPos">
                         <template #editor="{ data, field }">
                             <p-inputtext v-model="data[field]" autofocus></p-inputtext>
@@ -926,6 +938,17 @@
             };
             const submitAuthor = () => {
                 editBlock.value = true;
+                let mainCount = 0;
+                tmpAuthors.value.forEach(author => {
+                    if(author.main === 1) {
+                        mainCount++;
+                    }
+                });
+                if(mainCount > 1) {
+                    toast.add({severity: 'error', summary: RKW_Web.ErrorMessageBookDetailAuthorsMain, life: 3000});
+                    editBlock.value = false;
+                    return;
+                }
                 let json = {
                     id: book.value.id,
                     authors: tmpAuthors.value
@@ -1103,6 +1126,7 @@
             "p-blockui": primevue.blockui,
             "p-card": primevue.card,
             "p-tag": primevue.tag,
+            "p-checkbox": primevue.checkbox,
 
             "p-scrollpanel": primevue.scrollpanel,
             "p-scrolltop": primevue.scrolltop,

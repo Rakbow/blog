@@ -1,5 +1,8 @@
 package com.rakbow.website;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.SimpleSearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -217,6 +220,23 @@ class WebSiteApplicationTests {
         SimpleSearchResult result = entityService.simpleSearch("i believe", 9, 0, 10);
         long t2 = new Date().getTime();
         System.out.println(t2 - t1);
+    }
+
+    @Test
+    public void test999() {
+        List<Book> books = bookMapper.getAll();
+
+        books.forEach(book -> {
+            JSONArray authors = JSON.parseArray(book.getAuthors());
+            if(authors.size() != 0) {
+                for (int i = 0; i < authors.size(); i++) {
+                    JSONObject author = authors.getJSONObject(i);
+                    author.put("main", 0);
+                }
+                bookMapper.updateBookAuthors(book.getId(), authors.toJSONString(), book.getEditedTime());
+            }
+        });
+
     }
 
 }

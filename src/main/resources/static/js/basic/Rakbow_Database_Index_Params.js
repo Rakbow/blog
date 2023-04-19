@@ -867,13 +867,16 @@ const bookIndex = {
                                 </template>
                                 <template #title>
                             <span class="text-truncate-2">
-                                <a :href="'/db/merch/'+ slotProps.data.id">{{slotProps.data.title}}</a>
+                                <a :href="'/db/book/'+ slotProps.data.id">{{slotProps.data.title}}</a>
                             </span>
                                 </template>
                                 <template #subtitle>
                                     <span :class="'fi fi-' + slotProps.data.region.code" class="ml-1"
                                         v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>&nbsp;
-                                    <span class="label" style="font-size: 11px;color: white"><b>{{slotProps.data.authors}}</b></span>
+                                    <span class="label" style="font-size: 11px;color: white">
+                                        <b v-if="slotProps.data.authors.length != 0">{{slotProps.data.authors.join(", ")}}</b>&nbsp;
+                                        <b v-else>N/A</b>&nbsp;
+                                    </span>
                                 </template>
                                 <template #content>
                                     <div class="grid">
@@ -902,10 +905,13 @@ const bookIndex = {
                                 <span class="small-font" style="margin: 0 0 .5rem 0;">
                                     <b class="label">{{slotProps.data.isbn13}}</b><span class="label">&nbsp{{slotProps.data.publishDate}}</span>
                                 </span><br>
-                                <span class="label" style="font-size: 11px;color: white"><b>{{slotProps.data.authors}}</b></span>
+                                <span class="label" style="font-size: 11px;color: white">
+                                    <b v-if="slotProps.data.authors.length != 0">{{slotProps.data.authors.join(", ")}}</b>&nbsp;
+                                    <b v-else>N/A</b>&nbsp;
+                                </span>
                                 &nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
                                 <span>
-                                    <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
+                                    <span :class="'fi fi-' + slotProps.data.region.code"
                                         v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
                                     <span class="p-1">
                                         <p-tag :value="slotProps.data.bookType.nameZh"></p-tag>

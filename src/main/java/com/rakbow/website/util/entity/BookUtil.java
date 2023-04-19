@@ -2,10 +2,12 @@ package com.rakbow.website.util.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.book.BookType;
 import com.rakbow.website.entity.Book;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,9 +17,6 @@ import java.util.List;
  * @Description:
  */
 public class BookUtil {
-
-    private static final String[] AUTHOR_LIST = new String[] {"原著", "原作", "作者"};
-    private static final String[] COMIC_AUTHOR_LIST = new String[] {"作画", "作者"};
 
     /**
      * ISBN-10转ISBN-13
@@ -90,34 +89,24 @@ public class BookUtil {
      * @author rakbow
      * @param book 图书
      * */
-    public static String getAuthors(Book book) {
-        JSONArray authorJson = JSON.parseArray(book.getAuthors());
-        if (authorJson.size() == 0) {
-            return "N/A";
-        }
-        for (int i = 0; i < authorJson.size(); i++) {
-            if(book.getBookType() == BookType.COMIC.getIndex()) {
-                for (String s : COMIC_AUTHOR_LIST) {
-                    if (StringUtils.equals(authorJson.getJSONObject(i).getString("pos"), s)) {
-                        List<String> authors = authorJson.getJSONObject(i).getList("name", String.class);
-                        if(authors.size() > 0 && authors.size() <= 2) {
-                            return String.join("/", authors);
-                        }
-                        if(authors.size() > 2) {
-                            return authors.get(0) + " etc.";
-                        }
+    public static List<String> getAuthors(Book book) {
+        List<String> res = new ArrayList<>();
+        JSONArray authors = JSON.parseArray(book.getAuthors());
+        if (authors.size() != 0) {
+            for (int i = 0; i < authors.size(); i++) {
+                JSONObject author = authors.getJSONObject(i);
+                if(author.getIntValue("main") == 1) {
+                    List<String> authorNames = author.getList("name", String.class);
+                    if(authorNames.size() > 0 && authorNames.size() <= 2) {
+                        res.addAll(authorNames);
                     }
-                }
-            }else {
-                for (String s : AUTHOR_LIST) {
-                    if (StringUtils.equals(authorJson.getJSONObject(i).getString("pos"), s)) {
-                        List<String> vocals = authorJson.getJSONObject(i).getList("name", String.class);
-                        return String.join("/", vocals);
+                    if(authorNames.size() > 2) {
+                        res.addAll(authorNames.subList(0, 2));
                     }
                 }
             }
         }
-        return "N/A";
+        return res;
     }
 
 }

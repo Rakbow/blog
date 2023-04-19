@@ -54,6 +54,7 @@
     <script th:src="@{/js/primevue/components/fileupload.min.js}"></script>
     <script th:src="@{/js/primevue/components/blockui.min.js}"></script>
     <script th:src="@{/js/primevue/components/progressbar.min.js}"></script>
+    <script th:src="@{/js/primevue/components/checkbox.min.js}"></script>
 
     <script th:src="@{/js/primevue/components/scrolltop.min.js}"></script>
     <script th:src="@{/js/primevue/components/scrollpanel.min.js}"></script>
@@ -447,17 +448,20 @@
                 <div class="grid">
                     <div class="col-3">
                         <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-tag"></i>
-                                        </span>
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-tag"></i>
+                            </span>
+                            <span class="p-inputgroup-addon">
+                                <p-checkbox v-model="artist.main" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                            </span>
                             <p-inputtext v-model="artist.pos" placeholder="职位名称"></p-inputtext>
                         </div>
                     </div>
                     <div class="col-7">
                         <div class="p-inputgroup">
-                                        <span class="p-inputgroup-addon">
-                                            <i class="pi pi-users"></i>
-                                        </span>
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-users"></i>
+                            </span>
                             <p-chips v-model="artist.name" placeholder="人员信息" separator=","></p-chips>
                         </div>
                     </div>
@@ -479,6 +483,14 @@
                                  @row-contextmenu="artistRowMenu" edit-mode="row"
                                  v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                         <p-column :row-reorder="true"></p-column>
+                        <p-column field="main" header-style="width: 3%">
+                            <template #body="slotProps">
+                                <i v-if="slotProps.data.main == 1" class="pi false-icon pi-star-fill"></i>
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-checkbox v-model="data[field]" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                            </template>
+                        </p-column>
                         <p-column field="pos" header="职位">
                             <template #editor="{ data, field }">
                                 <p-inputtext v-model="data[field]" autofocus></p-inputtext>
@@ -528,6 +540,7 @@
     <footer class="mt-2" th:insert="~{template/footer :: site_footer}"></footer>
 </div>
 <script type="module" th:inline="javascript">
+    import {RKW_Web} from '/js/basic/Rakbow_Web_Control_Strs_CN.js';
     import {marked} from '/tool/marked/marked.esm.js';
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
@@ -833,6 +846,17 @@
             };
             const submitArtist = () => {
                 editBlock.value = true;
+                let mainCount = 0;
+                music.value.artists.forEach(artist => {
+                    if(artist.main === 1) {
+                        mainCount++;
+                    }
+                });
+                if(mainCount > 1) {
+                    toast.add({severity: 'error', summary: RKW_Web.ErrorMessageMusicDetailArtistsMain, life: 3000});
+                    editBlock.value = false;
+                    return;
+                }
                 let json = {
                     id: music.value.id,
                     artists: music.value.artists
@@ -903,6 +927,7 @@
             //endregion
 
             return {
+                RKW_Web,
                 openTingleDescription,
 
                 //header
@@ -954,6 +979,7 @@
             "p-progressbar": primevue.progressbar,
             "p-inplace": primevue.inplace,
             "p-fileupload": primevue.fileupload,
+            "p-checkbox": primevue.checkbox,
 
             "p-scrollpanel": primevue.scrollpanel,
             "p-scrolltop": primevue.scrolltop,

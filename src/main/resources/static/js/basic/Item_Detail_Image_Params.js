@@ -142,7 +142,6 @@ const imageEditPanel = {
                             <template #editor="{ data, field }">
                                 <p-dropdown v-model="data[field]" :options="imageTypes" option-label="label"
                                             option-value="value" placeholder="图片类型">
-
                                 </p-dropdown>
                             </template>
                             <template #body="slotProps">

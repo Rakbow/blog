@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -20,7 +22,7 @@ public class BookVOAlpha {
     private String titleZh;//标题（中文）
     private String isbn10;//国际标准书号（10位）
     private String isbn13;//国际标准书号（13位）
-    private String authors;//作者需不需
+    private List<String> authors;//作者需不需
     private JSONObject bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
     private JSONObject region;//地区
