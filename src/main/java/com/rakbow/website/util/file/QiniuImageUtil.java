@@ -46,39 +46,48 @@ public class QiniuImageUtil {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public JSONArray commonAddImages(int entityId, String entityName, MultipartFile[] images,
+    public ActionResult commonAddImages(int entityId, String entityName, MultipartFile[] images,
                                      JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
-        //最终保存到数据库的json信息
-        JSONArray finalImageJson = new JSONArray();
+        ActionResult res = new ActionResult();
+        try{
+            //最终保存到数据库的json信息
+            JSONArray finalImageJson = new JSONArray();
 
-        //新增图片信息json
-        JSONArray addImageJson = new JSONArray();
+            //新增图片信息json
+            JSONArray addImageJson = new JSONArray();
 
-        //创建存储链接前缀
-        String filePath = entityName + "/" + entityId + "/";
+            //创建存储链接前缀
+            String filePath = entityName + "/" + entityId + "/";
 
-        for (int i = 0; i < images.length; i++) {
-            //上传图片
-            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
-            if (ar.state) {
-                ImageInfo imageInfo = new ImageInfo();
-                imageInfo.setUrl(ar.data.toString());
-                imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
-                imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
-                imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
-                if(!imageInfos.getJSONObject(i).getString("description").isEmpty()) {
-                    imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
+            for (int i = 0; i < images.length; i++) {
+                //上传图片
+                ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
+                if (ar.state) {
+                    ImageInfo imageInfo = new ImageInfo();
+                    imageInfo.setUrl(ar.data.toString());
+                    imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
+                    imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
+                    imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
+                    if(!imageInfos.getJSONObject(i).getString("description").isEmpty()) {
+                        imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
+                    }
+                    imageInfo.setUploadUser(user.getUsername());
+                    addImageJson.add(JSON.toJSON(imageInfo));
+                }else {
+                    res.setErrorMessage(ar.message);
+                    return res;
                 }
-                imageInfo.setUploadUser(user.getUsername());
-                addImageJson.add(JSON.toJSON(imageInfo));
             }
+
+            //汇总
+            finalImageJson.addAll(originalImagesJson);
+            finalImageJson.addAll(addImageJson);
+
+            res.data = finalImageJson;
+        }catch(Exception ex) {
+            res.setErrorMessage(ex.getMessage());
         }
-
-        //汇总
-        finalImageJson.addAll(originalImagesJson);
-        finalImageJson.addAll(addImageJson);
-
-        return finalImageJson;
+        return res;
     }
 
     /**

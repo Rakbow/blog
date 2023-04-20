@@ -4,9 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.SimpleSearchResult;
+import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.MediaFormat;
 import com.rakbow.website.data.emun.album.AlbumFormat;
 import com.rakbow.website.data.emun.album.PublishFormat;
@@ -18,7 +16,6 @@ import com.rakbow.website.data.emun.game.GamePlatform;
 import com.rakbow.website.data.emun.game.ReleaseType;
 import com.rakbow.website.data.emun.merch.MerchCategory;
 import com.rakbow.website.data.emun.product.ProductCategory;
-import com.rakbow.website.data.pageInfo;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -429,15 +426,23 @@ public class EntityService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addItemImages(String entityName, int entityId, MultipartFile[] images, JSONArray originalImagesJson,
+    public ActionResult addItemImages(String entityName, int entityId, MultipartFile[] images, JSONArray originalImagesJson,
                                 JSONArray imageInfos, User user) throws IOException {
-
-        JSONArray finalImageJson = qiniuImageUtil.commonAddImages
-                (entityId, entityName, images, originalImagesJson, imageInfos, user);
-
-        entityMapper.updateItemImages(entityName, entityId, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
-
-        return ApiInfo.INSERT_IMAGES_SUCCESS;
+        ActionResult res = new ActionResult();
+        try{
+            ActionResult ar = qiniuImageUtil.commonAddImages(entityId, entityName, images, originalImagesJson, imageInfos, user);
+            if(ar.state) {
+                JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
+                entityMapper.updateItemImages(entityName, entityId, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+                res.message = ApiInfo.INSERT_IMAGES_SUCCESS;
+            }else {
+                res.setErrorMessage(ar.message);
+                return res;
+            }
+        }catch(Exception ex) {
+            res.setErrorMessage(ex.getMessage());
+        }
+        return res;
     }
 
     /**

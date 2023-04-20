@@ -149,7 +149,6 @@ export class HttpUtil {
             },
         }).then(res => {
             if(res.data.state === 0) {
-                editBlock.value = false;
                 if(res.data.message !== '') {
                     toast.add({severity: 'error', summary: 'Error', detail: res.data.message, life: 3000});
                 }

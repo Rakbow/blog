@@ -106,7 +106,6 @@ const imageEditPanel = {
                 <div v-if="itemImageInfo.images.length != 0">
                     <p-datatable :value="itemImageInfo.images" class="p-datatable-sm"
                                  @row-reorder="imgRowReorder" edit-mode="row" striped-rows
-                                 :resizable-columns="true" column-resize-mode="expand"
                                  v-model:editing-rows="editingImages" @row-edit-save="imgRowEditSave"
                                  v-model:expanded-rows="expandedRows"
                                  v-model:selection="selectedImage">
@@ -390,6 +389,8 @@ const imageEditPanel = {
                     if (res.state === 1) {
                         this.closeImageEditDialog();
                         location.reload(true);
+                    }else {
+                        this.editBlock = false;
                     }
                 }).catch(err => {
                 console.error(err);

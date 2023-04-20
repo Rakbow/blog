@@ -3,6 +3,7 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.RedisCacheConstant;
@@ -328,7 +329,12 @@ public class EntityController {
                 return JSON.toJSONString(res);
             }
 
-            res.message = entityService.addItemImages(entityName, entityId, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+            ActionResult ar = entityService.addItemImages(entityName, entityId, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
+            if(ar.state) {
+                res.message = ar.message;
+            }else {
+                res.setErrorMessage(ar.message);
+            }
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
