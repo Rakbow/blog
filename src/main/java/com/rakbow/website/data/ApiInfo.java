@@ -135,7 +135,7 @@ public class ApiInfo {
 
     //region system
 
-    public static final String UPDATE_ITEM_STATUS = "%s状态更改成功!";
+    public static final String UPDATE_ITEM_STATUS_URL = "%s状态更改成功!";
 
     //endregion
 

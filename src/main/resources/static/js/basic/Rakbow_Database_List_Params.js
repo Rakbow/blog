@@ -567,7 +567,7 @@ const albumDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -653,7 +653,7 @@ const albumDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -1386,7 +1386,7 @@ const bookDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -1472,7 +1472,7 @@ const bookDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -1598,7 +1598,7 @@ const bookDbList = {
                 label: label,
                 isbn: isbn
             };
-            HttpUtil.commonVueSubmit(this.toast, BOOK_ISBN_INTERCONVERT, json)
+            HttpUtil.commonVueSubmit(this.toast, BOOK_GENERATE_ISBN_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         if(method === 'add') {
@@ -2195,7 +2195,7 @@ const discDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -2280,7 +2280,7 @@ const discDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -2917,7 +2917,7 @@ const gameDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -3003,7 +3003,7 @@ const gameDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -3650,7 +3650,7 @@ const merchDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -3735,7 +3735,7 @@ const merchDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4169,7 +4169,7 @@ const productDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4249,7 +4249,7 @@ const productDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4604,7 +4604,7 @@ const franchiseDbList = {
                 items: this.selectedItems,
                 status: value
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEMS_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();
@@ -4683,7 +4683,7 @@ const franchiseDbList = {
                 entityId: id,
                 status: !status
             };
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ITEM_STATUS_URL, json)
                 .then(res => {
                     if(res.state === 1) {
                         this.init();

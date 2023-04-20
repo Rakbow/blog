@@ -1,7 +1,7 @@
 //region entity common
 
-const UPDATE_ITEM_STATUS = "/db/update-item-status";
-const UPDATE_ITEMS_STATUS = "/db/update-items-status";
+const UPDATE_ITEM_STATUS_URL = "/db/update-item-status";
+const UPDATE_ITEMS_STATUS_URL = "/db/update-items-status";
 const LIKE_ITEM_URL = "/db/like";
 const UPDATE_DESCRIPTION_URL = "/db/update-description";
 const UPDATE_BONUS_URL = "/db/update-bonus";
@@ -17,7 +17,7 @@ const DATABASE_LIST_URL = "/db/list";
 
 const INDEX_SEARCH_URL = "/db/simple-search";
 
-const GET_ENTITY_AMOUNT_INFO = "/db/get-entity-amount-info";
+const GET_ENTITY_AMOUNT_INFO_URL = "/db/get-entity-amount-info";
 
 const APP_INDEX_URL = "/app";
 const BLOG_INDEX_URL = "/blog";
@@ -89,7 +89,6 @@ const UPDATE_DISC_URL = "/db/disc/update";
 const INSERT_DISC_URL = "/db/disc/add";
 const GET_DISCS_URL = "/db/disc/get-discs";
 const GET_RELATED_DISCS_URL = "/db/disc/get-related-discs";
-const UPDATE_DISC_SPEC_URL = "/db/disc/update-spec";
 //endregion
 
 //region book
@@ -100,10 +99,9 @@ const INSERT_BOOK_URL = "/db/book/add";
 const GET_BOOKS_URL = "/db/book/get-books";
 const GET_RELATED_BOOKS_URL = "/db/book/get-related-books";
 
-const BOOK_ISBN_INTERCONVERT = "/db/book/get-isbn";
+const BOOK_GENERATE_ISBN_URL = "/db/book/get-isbn";
 
 const UPDATE_BOOK_AUTHORS_URL = "/db/book/update-authors";
-const UPDATE_BOOK_SPEC_URL = "/db/book/update-spec";
 //endregion
 
 //region merch
@@ -113,7 +111,6 @@ const UPDATE_MERCH_URL = "/db/merch/update";
 const INSERT_MERCH_URL = "/db/merch/add";
 const GET_MERCHS_URL = "/db/merch/get-merchs";
 const GET_RELATED_MERCHS_URL = "/db/merch/get-related-merchs";
-const UPDATE_MERCH_SPEC_URL = "/db/merch/update-spec";
 //endregion
 
 //region game

@@ -188,7 +188,7 @@ public class EntityController {
 
             entityService.updateItemStatus(entityName, entityId, status?1:0);
 
-            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityType));
+            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS_URL, EntityType.getItemNameZhByIndex(entityType));
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -213,7 +213,7 @@ public class EntityController {
             }
 
             entityService.updateItemsStatus(entityName, ids, status?1:0);
-            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS, EntityType.getItemNameZhByIndex(entityType));
+            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS_URL, EntityType.getItemNameZhByIndex(entityType));
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

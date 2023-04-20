@@ -611,7 +611,7 @@
             };
 
             const getEntityAmountInfo = () => {
-                HttpUtil.get(null, GET_ENTITY_AMOUNT_INFO)
+                HttpUtil.get(null, GET_ENTITY_AMOUNT_INFO_URL)
                     .then(res => {
                         if (res.state === 1) {
                             entityAmountInfo.value = res.data;
