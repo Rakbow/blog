@@ -42,9 +42,6 @@ public interface DiscMapper {
     //删除单个disc
     void deleteDisc(int id);
 
-    //更新规格信息
-    void updateDiscSpec(int id, String spec, Timestamp editedTime);
-
     //获取最新添加Disc, limit
     List<Disc> getDiscsOrderByAddedTime(int limit);
 

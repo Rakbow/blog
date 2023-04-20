@@ -180,19 +180,6 @@ public class DiscService {
 
     //region ------更新数据------
 
-    /**
-     * 更新碟片规格信息
-     *
-     * @param id          碟片id
-     * @param spec 碟片的规格信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateDiscSpec(int id, String spec) {
-        discMapper.updateDiscSpec(id, spec, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_DISC_SPEC_SUCCESS;
-    }
-
     //endregion
 
     //region ------特殊查询------

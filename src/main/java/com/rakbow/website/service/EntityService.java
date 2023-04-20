@@ -381,13 +381,26 @@ public class EntityService {
      * 更新特典信息
      *
      * @param entityName,entityId 实体表名,实体id
-     * @param bonus 描述json数据
+     * @param bonus 特典json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemBonus(String entityName, int entityId, String bonus) {
         entityMapper.updateItemBonus(entityName, entityId, bonus, new Timestamp(System.currentTimeMillis()));
         return ApiInfo.UPDATE_BONUS_SUCCESS;
+    }
+
+    /**
+     * 更新规格信息
+     *
+     * @param entityName,entityId 实体表名,实体id
+     * @param spec 规格json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String updateItemSpec(String entityName, int entityId, String spec) {
+        entityMapper.updateItemSpec(entityName, entityId, spec, new Timestamp(System.currentTimeMillis()));
+        return ApiInfo.UPDATE_SPEC_SUCCESS;
     }
 
     //endregion

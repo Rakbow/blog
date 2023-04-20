@@ -205,19 +205,6 @@ public class BookService {
         return ApiInfo.UPDATE_BOOK_AUTHOR_SUCCESS;
     }
 
-    /**
-     * 更新图书规格信息
-     *
-     * @param id   图书id
-     * @param spec 图书的规格信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateBookSpec(int id, String spec) {
-        bookMapper.updateBookSpec(id, spec, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_BOOK_SPEC_SUCCESS;
-    }
-
     //endregion
 
     //region ------特殊查询------

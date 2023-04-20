@@ -80,13 +80,6 @@
         where id = #{id}
     </delete>
 
-    <update id="updateDiscSpec" keyProperty="id">
-        update disc
-        set
-        spec = #{spec}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <select id="getDiscsByFilter" resultType="Disc">
         select
         <include refid="selectFields"></include>

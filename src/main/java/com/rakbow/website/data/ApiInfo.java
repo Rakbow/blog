@@ -34,6 +34,7 @@ public class ApiInfo {
     public static final String PRODUCTS_EMPTY = "未选择所属作品！";
     public static final String UPDATE_DESCRIPTION_SUCCESS = "描述更新成功！";
     public static final String UPDATE_BONUS_SUCCESS = "特典信息更新成功！";
+    public static final String UPDATE_SPEC_SUCCESS = "规格信息更新成功！";
 
     //endregion
 
@@ -87,7 +88,6 @@ public class ApiInfo {
     //endregion
 
     //region disc相关
-    public static final String UPDATE_DISC_SPEC_SUCCESS = "碟片规格信息更新成功！";
     public static final String DISC_NAME_EMPTY = "未填写专辑名称！";
     public static final String DISC_RELEASE_DATE_EMPTY = "未填写发行日期！";
     public static final String DISC_MEDIA_FORMAT_EMPTY = "未选择媒体格式！";
@@ -96,7 +96,6 @@ public class ApiInfo {
 
     //region book相关
     public static final String UPDATE_BOOK_AUTHOR_SUCCESS = "图书作者信息更新成功！";
-    public static final String UPDATE_BOOK_SPEC_SUCCESS = "图书规格信息更新成功！";
     public static final String BOOK_TITLE_EMPTY = "未填写图书名称！";
     public static final String BOOK_ISBN10_LENGTH_EXCEPTION = "ISBN-10无效！";
     public static final String BOOK_ISBN13_LENGTH_EXCEPTION = "ISBN-13无效！";
@@ -106,7 +105,6 @@ public class ApiInfo {
     //endregion
 
     //region merch相关
-    public static final String UPDATE_MERCH_SPEC_SUCCESS = "周边规格信息更新成功！";
     public static final String MERCH_NAME_EMPTY = "未填写周边名称！";
     public static final String MERCH_CATEGORY_EMPTY = "未选择图书所属分类！";
     public static final String MERCH_RELEASE_DATE_EMPTY = "未填写发售日期！";

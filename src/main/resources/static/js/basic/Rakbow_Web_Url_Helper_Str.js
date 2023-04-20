@@ -5,6 +5,7 @@ const UPDATE_ITEMS_STATUS = "/db/update-items-status";
 const LIKE_ITEM_URL = "/db/like";
 const UPDATE_DESCRIPTION_URL = "/db/update-description";
 const UPDATE_BONUS_URL = "/db/update-bonus";
+const UPDATE_SPEC_URL = "/db/update-spec";
 const INSERT_IMAGES_URL = "/db/add-images";
 const UPDATE_IMAGES_URL = "/db/update-images";
 

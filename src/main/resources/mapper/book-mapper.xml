@@ -88,13 +88,6 @@
         where id = #{id}
     </update>
 
-    <update id="updateBookSpec" keyProperty="id">
-        update book
-        set
-        spec = #{spec}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <select id="getBooksByFilter" resultType="Book">
         select
         <include refid="selectFields"></include>

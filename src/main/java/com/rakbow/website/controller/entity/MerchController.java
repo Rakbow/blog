@@ -189,22 +189,6 @@ public class MerchController {
         return JSON.toJSONString(result);
     }
 
-    //更新周边规格信息
-    @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateMerchSpec(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String spec = JSON.parseObject(json).getJSONArray("spec").toString();
-
-            res.message = merchService.updateMerchSpec(id, spec);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     @RequestMapping(value = "/get-related-merchs", method = RequestMethod.POST)
     @ResponseBody
     public String getRelatedMerchs(@RequestBody String json) {

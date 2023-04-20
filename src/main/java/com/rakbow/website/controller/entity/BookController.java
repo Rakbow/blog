@@ -209,26 +209,6 @@ public class BookController {
         return JSON.toJSONString(res);
     }
 
-    //更新图书规格信息
-    @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateBookSpec(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String spec = JSON.parseObject(json).getJSONArray("spec").toString();
-            if (StringUtils.isBlank(spec)) {
-                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            res.message = bookService.updateBookSpec(id, spec);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     //endregion
 
     //region other

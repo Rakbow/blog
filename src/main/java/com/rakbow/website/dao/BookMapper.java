@@ -45,9 +45,6 @@ public interface BookMapper {
     //更新作者信息
     int updateBookAuthors(int id, String authors, Timestamp editedTime);
 
-    //更新规格信息
-    int updateBookSpec(int id, String spec, Timestamp editedTime);
-
     //获取最新添加Book, limit
     List<Book> getBooksOrderByAddedTime(int limit);
 

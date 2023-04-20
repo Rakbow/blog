@@ -26,6 +26,9 @@ public interface EntityMapper {
     //通用更新特典信息
     void updateItemBonus(String entityName, int entityId, String bonus, Timestamp editedTime);
 
+    //通用更新规格信息
+    void updateItemSpec(String entityName, int entityId, String spec, Timestamp editedTime);
+
     String getItemImages(String entityName, int entityId);
 
     //更新图片

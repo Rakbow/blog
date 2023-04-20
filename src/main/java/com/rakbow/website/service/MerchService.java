@@ -174,19 +174,6 @@ public class MerchService {
 
     //region ------更新merch数据------
 
-    /**
-     * 更新周边规格信息
-     *
-     * @param id   周边id
-     * @param spec 周边的规格信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateMerchSpec(int id, String spec) {
-        merchMapper.updateMerchSpec(id, spec, new Timestamp(System.currentTimeMillis()));
-        return ApiInfo.UPDATE_MERCH_SPEC_SUCCESS;
-    }
-
     //endregion
 
     //region ------特殊查询------

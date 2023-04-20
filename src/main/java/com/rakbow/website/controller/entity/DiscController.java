@@ -193,26 +193,6 @@ public class DiscController {
 
     //region ------进阶信息增删改查------
 
-    //更新专辑规格信息
-    @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateDiscSpec(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String spec = JSON.parseObject(json).get("spec").toString();
-            if (StringUtils.isBlank(spec)) {
-                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                return JSON.toJSONString(res);
-            }
-
-            res.message = discService.updateDiscSpec(id, spec);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
     @RequestMapping(value = "/get-related-discs", method = RequestMethod.POST)
     @ResponseBody
     public String getRelatedDiscs(@RequestBody String json) {

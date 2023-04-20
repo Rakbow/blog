@@ -424,80 +424,6 @@
                       @click="submitEditDisc" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displaySpecEditDialog" :header="RKW_Web.ItemDetailSpecEditTitle"
-              :style="{width: '800px'}">
-        <p-blockui :blocked="editBlock">
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-plus-circle mr-2" style="font-size: 2rem"></i>
-                    <b>{{RKW_Web.Add}}</b>
-                </template>
-                <div class="grid">
-                    <div class="col-3">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-tag"></i>
-                            </span>
-                            <p-inputtext v-model="specItem.label" :placeholder="RKW_Web.BookDetailEditSpecLabel"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-info-circle"></i>
-                            </span>
-                            <p-chips v-model="specItem.value" :placeholder="RKW_Web.BookDetailEditSpecValue" separator=","></p-chips>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <p-button :label="RKW_Web.Add" icon="pi pi-save" @click="addSpecItem"></p-button>
-                    </div>
-                </div>
-            </p-panel>
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-file-edit mr-2" style="font-size: 2rem"></i>
-                    <b>{{RKW_Web.Edit}}</b>
-                </template>
-                <div v-if="tmpSpec.length != 0">
-                    <p-datatable dataKey="id" :value="tmpSpec" responsive-layout="scroll"
-                                 class="p-datatable-sm" striped-rows @row-reorder="specOnRowReorder"
-                                 context-menu v-model:context-menu-selection="selectedSpecItem"
-                                 @row-contextmenu="specRowMenu" edit-mode="row"
-                                 v-model:editing-rows="specEditingRows" @row-edit-save="specOnRowEditSave">
-                        <p-column :row-reorder="true"></p-column>
-                        <p-column field="label" :header="RKW_Web.BookDetailEditSpecLabel">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="value" :header="RKW_Web.BookDetailEditSpecValue">
-                            <template #body="slotProps">
-                                {{slotProps.data.value.join("/")}}
-                            </template>
-                            <template #editor="{ data, field }">
-                                <p-chips v-model="data[field]"></p-chips>
-                            </template>
-                        </p-column>
-                        <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                  bodyStyle="text-align:center"></p-column>
-                    </p-datatable>
-                    <p-contextmenu :model="specMenuModel" ref="specCm"></p-contextmenu>
-                </div>
-                <div v-else>
-                    <span class="emptyInfo">{{RKW_Web.ItemDetailMessageNoSpec}}</span>
-                </div>
-            </p-panel>
-        </p-blockui>
-        <template #footer>
-            <p-button :label="RKW_Web.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
-                      @click="clearSpec" :disabled="editBlock"></p-button>
-            <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="mr-4"
-                      @click="cancelSpecEdit" :disabled="editBlock"></p-button>
-            <p-button :label="RKW_Web.Update" icon="pi pi-save" class="p-button-success mr-4"
-                      @click="submitSpec" :disabled="editBlock"></p-button>
-        </template>
-    </p-dialog>
 
     <p-dynamicdialog></p-dynamicdialog>
     <!-- footer -->
@@ -509,7 +435,7 @@
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
-    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog, showSpecEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -621,7 +547,7 @@
                     label: RKW_Web.ItemDetailOptionSpecEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        openSpecEditDialog();
+                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, disc.value.spec);
                     }
                 },
                 {
@@ -715,67 +641,6 @@
             };
             //endregion
 
-            //region spec
-            const tmpSpec = ref();
-            const specCm = ref();
-            const selectedSpecItem = ref();
-            const specItem = ref({});
-            const spec = ref([]);
-            const displaySpecEditDialog = ref(false);
-            const specMenuModel = ref([
-                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteSpecItem(selectedSpecItem)}
-            ]);
-            const specOnRowReorder = (ev) => {
-                tmpSpec.value = ev.value;
-            };
-            const specRowMenu = (ev) => {
-                specCm.value.show(ev.originalEvent);
-            };
-            const deleteSpecItem = (SpecItem) => {
-                tmpSpec.value = tmpSpec.value.filter((s) => s.label !== SpecItem.value.label);
-                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: SpecItem.value.value, life: 3000});
-                selectedSpecItem.value = null;
-            };
-            const specEditingRows = ref([]);
-            const specOnRowEditSave = (ev) => {
-                let {newData, index} = ev;
-
-                tmpSpec.value[index] = newData;
-            };
-
-            const openSpecEditDialog = () => {
-                tmpSpec.value = JSON.parse(JSON.stringify(disc.value.spec));
-                specItem.value = {};
-                displaySpecEditDialog.value = true;
-            };
-            const clearSpec = () => {
-                tmpSpec.value = [];
-            };
-            const addSpecItem = () => {
-                tmpSpec.value.push(specItem.value);
-                specItem.value = {};
-            }
-            const cancelSpecEdit = () => {
-                specItem.value = {};
-                displaySpecEditDialog.value = false;
-            };
-            const submitSpec = () => {
-                editBlock.value = true;
-                let json = {
-                    id: disc.value.id,
-                    spec: tmpSpec.value
-                }
-                HttpUtil.commonSubmit(toast, editBlock, UPDATE_DISC_SPEC_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            displaySpecEditDialog.value = false;
-                            specItem.value = {};
-                            location.reload(true);
-                        }
-                    })
-            };
-            //endregion
-
             //region init
             const init = () => {
                 text2marked();
@@ -828,11 +693,6 @@
 
                 //edit
                 editBlock, discEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditDisc,
-
-                //spec
-                displaySpecEditDialog, tmpSpec, specCm, specItem, spec, specMenuModel, specEditingRows,
-                selectedSpecItem, addSpecItem, clearSpec, submitSpec, deleteSpecItem, cancelSpecEdit, specRowMenu,
-                specOnRowEditSave, specOnRowReorder,
             }
         },
         components: {

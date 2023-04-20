@@ -220,7 +220,7 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
-    //更新专辑描述信息
+    //更新描述信息
     @RequestMapping(path = "/update-description", method = RequestMethod.POST)
     @ResponseBody
     public String updateItemsDescription(@RequestBody String json) {
@@ -237,7 +237,7 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
-    //更新专辑特典信息
+    //更新特典信息
     @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
     @ResponseBody
     public String updateItemBonus(@RequestBody String json) {
@@ -248,6 +248,23 @@ public class EntityController {
             String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
             String bonus = JSON.parseObject(json).get("bonus").toString();
             res.message = entityService.updateItemBonus(entityName, entityId, bonus);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //更新规格信息
+    @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemSpec(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityId = JSON.parseObject(json).getInteger("entityId");
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            String spec = JSON.parseObject(json).get("spec").toString();
+            res.message = entityService.updateItemSpec(entityName, entityId, spec);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

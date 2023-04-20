@@ -79,13 +79,6 @@
         where id = #{id}
     </delete>
 
-    <update id="updateMerchSpec" keyProperty="id">
-        update merch
-        set
-        spec = #{spec}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
     <select id="getMerchsByFilter" resultType="Merch">
         select
         <include refid="selectFields"></include>
