@@ -2,6 +2,7 @@ package com.rakbow.website.entity;
 
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -81,8 +82,8 @@ public class Album {
         this.artists = "[]";
         this.images = "[]";
         this.trackInfo = "{}";
-        this.addedTime = new Timestamp(System.currentTimeMillis());
-        this.editedTime = new Timestamp(System.currentTimeMillis());
+        this.addedTime = DateUtil.NOW_TIMESTAMP;
+        this.editedTime = DateUtil.NOW_TIMESTAMP;
         this.status = 1;
 
     }

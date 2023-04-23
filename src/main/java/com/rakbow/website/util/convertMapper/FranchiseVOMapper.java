@@ -7,6 +7,7 @@ import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.data.vo.franchise.ParentFranchiseVO;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +43,7 @@ public interface FranchiseVOMapper {
         franchiseVO.setName(franchise.getName());
         franchiseVO.setNameZh(franchise.getNameZh());
         franchiseVO.setNameEn(franchise.getNameEn());
-        franchiseVO.setOriginDate(CommonUtil.dateToString(franchise.getOriginDate()));
+        franchiseVO.setOriginDate(DateUtil.dateToString(franchise.getOriginDate()));
         franchiseVO.setRemark(franchise.getRemark());
 
         MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
@@ -75,13 +76,13 @@ public interface FranchiseVOMapper {
         franchiseVOAlpha.setName(franchise.getName());
         franchiseVOAlpha.setNameZh(franchise.getNameZh());
         franchiseVOAlpha.setNameEn(franchise.getNameEn());
-        franchiseVOAlpha.setOriginDate(CommonUtil.dateToString(franchise.getOriginDate()));
+        franchiseVOAlpha.setOriginDate(DateUtil.dateToString(franchise.getOriginDate()));
         franchiseVOAlpha.setRemark(franchise.getRemark());
 
         franchiseVOAlpha.setCover(CommonImageUtil.generateCover(franchise.getImages(), EntityType.FRANCHISE));
 
-        franchiseVOAlpha.setAddedTime(CommonUtil.timestampToString(franchise.getAddedTime()));
-        franchiseVOAlpha.setEditedTime(CommonUtil.timestampToString(franchise.getEditedTime()));
+        franchiseVOAlpha.setAddedTime(DateUtil.timestampToString(franchise.getAddedTime()));
+        franchiseVOAlpha.setEditedTime(DateUtil.timestampToString(franchise.getEditedTime()));
 
         MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
 

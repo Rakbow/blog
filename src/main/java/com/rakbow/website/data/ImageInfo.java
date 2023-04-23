@@ -1,6 +1,7 @@
 package com.rakbow.website.data;
 
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 
 /**
@@ -26,7 +27,7 @@ public class ImageInfo {
         this.nameZh = "";
         this.type = "0";
         this.description = "";
-        this.uploadTime = CommonUtil.getCurrentTime();
+        this.uploadTime = DateUtil.getCurrentTime();
         this.uploadUser = "";
     }
 

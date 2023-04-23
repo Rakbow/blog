@@ -8,6 +8,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.data.ApiInfo;
@@ -100,7 +101,7 @@ public class MusicController {
             }
 
             //修改编辑时间
-            music.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            music.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = musicService.updateMusic(music.getId(), music);
         } catch (Exception ex) {

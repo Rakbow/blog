@@ -14,6 +14,7 @@ import com.rakbow.website.entity.Merch;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.MerchVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -148,7 +149,7 @@ public class MerchController {
             Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
 
             //修改编辑时间
-            merch.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            merch.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = merchService.updateMerch(merch.getId(), merch);
         } catch (Exception ex) {

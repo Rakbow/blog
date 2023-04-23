@@ -1,5 +1,6 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -33,8 +34,8 @@ public class Franchise {
         this.nameZh = "";
         this.nameEn = "";
         this.originDate = null;
-        this.addedTime = new Timestamp(System.currentTimeMillis());
-        this.editedTime = new Timestamp(System.currentTimeMillis());
+        this.addedTime = DateUtil.NOW_TIMESTAMP;
+        this.editedTime = DateUtil.NOW_TIMESTAMP;
         this.description = "";
         this.remark = "";
         this.images = "[]";

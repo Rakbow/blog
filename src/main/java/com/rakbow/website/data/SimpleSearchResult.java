@@ -2,6 +2,7 @@ package com.rakbow.website.data;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -32,6 +33,6 @@ public class SimpleSearchResult {
         this.entityName = entityName;
         this.offset = offset;
         this.limit = limit;
-        this.searchTime = CommonUtil.timestampToString(new Timestamp(System.currentTimeMillis()));
+        this.searchTime = DateUtil.timestampToString(DateUtil.NOW_TIMESTAMP);
     }
 }

@@ -15,6 +15,7 @@ import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.ProductVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -156,7 +157,7 @@ public class ProductController {
             Product product = entityService.json2Entity(param, Product.class);
 
             //修改编辑时间
-            product.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            product.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = productService.updateProduct(product.getId(), product);
 

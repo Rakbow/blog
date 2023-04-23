@@ -10,10 +10,7 @@ import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.data.vo.game.GameVOGamma;
 import com.rakbow.website.entity.Game;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.LikeUtil;
-import com.rakbow.website.util.common.SpringUtil;
-import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -59,7 +56,7 @@ public interface GameVOMapper {
         gameVO.setNameZh(game.getNameZh());
         gameVO.setNameEn(game.getNameEn());
         gameVO.setBarcode(game.getBarcode());
-        gameVO.setReleaseDate(CommonUtil.dateToString(game.getReleaseDate()));
+        gameVO.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
         gameVO.setHasBonus(game.getHasBonus() == 1);
         gameVO.setRemark(game.getRemark());
 
@@ -94,7 +91,7 @@ public interface GameVOMapper {
         gameVOAlpha.setNameZh(game.getNameZh());
         gameVOAlpha.setNameEn(game.getNameEn());
         gameVOAlpha.setBarcode(game.getBarcode());
-        gameVOAlpha.setReleaseDate(CommonUtil.dateToString(game.getReleaseDate()));
+        gameVOAlpha.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
         gameVOAlpha.setHasBonus(game.getHasBonus() == 1);
         gameVOAlpha.setRemark(game.getRemark());
 
@@ -111,8 +108,8 @@ public interface GameVOMapper {
         gameVOAlpha.setCover(CommonImageUtil.generateCover(game.getImages(), EntityType.GAME));
 
         //审计字段
-        gameVOAlpha.setAddedTime(CommonUtil.timestampToString(game.getAddedTime()));
-        gameVOAlpha.setEditedTime(CommonUtil.timestampToString(game.getEditedTime()));
+        gameVOAlpha.setAddedTime(DateUtil.timestampToString(game.getAddedTime()));
+        gameVOAlpha.setEditedTime(DateUtil.timestampToString(game.getEditedTime()));
         gameVOAlpha.setStatus(game.getStatus() == 1);
 
         return gameVOAlpha;
@@ -154,7 +151,7 @@ public interface GameVOMapper {
         gameVOBeta.setName(game.getName());
         gameVOBeta.setNameZh(game.getNameZh());
         gameVOBeta.setNameEn(game.getNameEn());
-        gameVOBeta.setReleaseDate(CommonUtil.dateToString(game.getReleaseDate()));
+        gameVOBeta.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
 
         //复杂字段
         gameVOBeta.setRegion(Region.getRegionJson(game.getRegion()));
@@ -165,8 +162,8 @@ public interface GameVOMapper {
         gameVOBeta.setCover(CommonImageUtil.generateThumbCover(game.getImages(), EntityType.GAME, 50));
 
         //审计字段
-        gameVOBeta.setAddedTime(CommonUtil.timestampToString(game.getAddedTime()));
-        gameVOBeta.setEditedTime(CommonUtil.timestampToString(game.getEditedTime()));
+        gameVOBeta.setAddedTime(DateUtil.timestampToString(game.getAddedTime()));
+        gameVOBeta.setEditedTime(DateUtil.timestampToString(game.getEditedTime()));
 
         return gameVOBeta;
     }
@@ -209,7 +206,7 @@ public interface GameVOMapper {
         gameVOGamma.setName(game.getName());
         gameVOGamma.setNameZh(game.getNameZh());
         gameVOGamma.setNameEn(game.getNameEn());
-        gameVOGamma.setReleaseDate(CommonUtil.dateToString(game.getReleaseDate()));
+        gameVOGamma.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
         gameVOGamma.setHasBonus(game.getHasBonus() == 1);
 
         //关联信息

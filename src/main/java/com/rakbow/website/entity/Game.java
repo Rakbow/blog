@@ -1,5 +1,6 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -55,8 +56,8 @@ public class Game {
         this.description = "";
         this.bonus = "";
         this.remark = "";
-        this.addedTime = new Timestamp(System.currentTimeMillis());;
-        this.editedTime = new Timestamp(System.currentTimeMillis());;
+        this.addedTime = DateUtil.NOW_TIMESTAMP;;
+        this.editedTime = DateUtil.NOW_TIMESTAMP;;
         this.status = 1;
     }
 

@@ -9,10 +9,7 @@ import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOGamma;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.LikeUtil;
-import com.rakbow.website.util.common.SpringUtil;
-import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.entity.AlbumUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -55,7 +52,7 @@ public interface DiscVOMapper {
         discVO.setNameZh(disc.getNameZh());
         discVO.setNameEn(disc.getNameEn());
         discVO.setBarcode(disc.getBarcode());
-        discVO.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
+        discVO.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
         discVO.setPrice(disc.getPrice());
         discVO.setCurrencyUnit(disc.getCurrencyUnit());
         discVO.setLimited(disc.getLimited() == 1);
@@ -94,7 +91,7 @@ public interface DiscVOMapper {
         discVOAlpha.setNameZh(disc.getNameZh());
         discVOAlpha.setNameEn(disc.getNameEn());
         discVOAlpha.setBarcode(disc.getBarcode());
-        discVOAlpha.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
+        discVOAlpha.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
         discVOAlpha.setPrice(disc.getPrice());
         discVOAlpha.setCurrencyUnit(disc.getCurrencyUnit());
         discVOAlpha.setLimited(disc.getLimited() == 1);
@@ -114,8 +111,8 @@ public interface DiscVOMapper {
         //将图片分割处理
         discVOAlpha.setCover(CommonImageUtil.generateCover(disc.getImages(), EntityType.DISC));
 
-        discVOAlpha.setAddedTime(CommonUtil.timestampToString(disc.getAddedTime()));
-        discVOAlpha.setEditedTime(CommonUtil.timestampToString(disc.getEditedTime()));
+        discVOAlpha.setAddedTime(DateUtil.timestampToString(disc.getAddedTime()));
+        discVOAlpha.setEditedTime(DateUtil.timestampToString(disc.getEditedTime()));
         discVOAlpha.setStatus(disc.getStatus() == 1);
 
         return discVOAlpha;
@@ -158,14 +155,14 @@ public interface DiscVOMapper {
         discVOBeta.setName(disc.getName());
         discVOBeta.setNameZh(disc.getNameZh());
         discVOBeta.setNameEn(disc.getNameEn());
-        discVOBeta.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
+        discVOBeta.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
 
         discVOBeta.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
 
         discVOBeta.setCover(CommonImageUtil.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
 
-        discVOBeta.setAddedTime(CommonUtil.timestampToString(disc.getAddedTime()));
-        discVOBeta.setEditedTime(CommonUtil.timestampToString(disc.getEditedTime()));
+        discVOBeta.setAddedTime(DateUtil.timestampToString(disc.getAddedTime()));
+        discVOBeta.setEditedTime(DateUtil.timestampToString(disc.getEditedTime()));
 
         return discVOBeta;
     }
@@ -208,7 +205,7 @@ public interface DiscVOMapper {
         discVOGamma.setName(disc.getName());
         discVOGamma.setNameZh(disc.getNameZh());
         discVOGamma.setNameEn(disc.getNameEn());
-        discVOGamma.setReleaseDate(CommonUtil.dateToString(disc.getReleaseDate()));
+        discVOGamma.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
         discVOGamma.setLimited(disc.getLimited() == 1);
         discVOGamma.setHasBonus(disc.getHasBonus() == 1);
 

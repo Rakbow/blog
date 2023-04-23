@@ -49,11 +49,11 @@ export const showSpecEditDialog = (toast, dialog, entityId, entityType, entitySp
         props: {
             header: '规格信息编辑',
             style: {
-                width: '80vw',
+                width: '60vw',
             },
             breakpoints: {
-                '960px': '75vw',
-                '640px': '90vw'
+                '960px': '55vw',
+                '640px': '70vw'
             },
             modal: true
         },

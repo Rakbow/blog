@@ -177,7 +177,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductOrganizations(int id, String organizations) {
-        productMapper.updateProductOrganizations(id, organizations, new Timestamp(System.currentTimeMillis()));
+        productMapper.updateProductOrganizations(id, organizations, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
     }
 
@@ -190,7 +190,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductStaffs(int id, String staffs) {
-        productMapper.updateProductStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
+        productMapper.updateProductStaffs(id, staffs, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
     }
 

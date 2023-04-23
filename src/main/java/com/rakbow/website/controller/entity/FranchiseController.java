@@ -16,6 +16,7 @@ import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.FranchiseVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -148,7 +149,7 @@ public class FranchiseController {
             Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
 
             //修改编辑时间
-            franchise.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            franchise.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
         } catch (Exception ex) {

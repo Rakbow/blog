@@ -16,6 +16,7 @@ import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.DiscVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -180,7 +181,7 @@ public class DiscController {
             Disc disc = entityService.json2Entity(discService.handleDiscJson(param), Disc.class);
 
             //修改编辑时间
-            disc.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            disc.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = discService.updateDisc(disc.getId(), disc);
         } catch (Exception ex) {

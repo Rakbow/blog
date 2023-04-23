@@ -9,6 +9,7 @@ import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.data.vo.product.ProductVOBeta;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import com.rakbow.website.data.CommonConstant;
@@ -46,7 +47,7 @@ public interface ProductVOMapper {
         productVO.setName(product.getName());
         productVO.setNameEn(product.getNameEn());
         productVO.setNameZh(product.getNameZh());
-        productVO.setReleaseDate(CommonUtil.dateToString(product.getReleaseDate()));
+        productVO.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
         productVO.setCategory(ProductCategory.getProductCategory(product.getCategory()));
         productVO.setRemark(product.getRemark());
 
@@ -75,7 +76,7 @@ public interface ProductVOMapper {
         productVOAlpha.setName(product.getName());
         productVOAlpha.setNameEn(product.getNameEn());
         productVOAlpha.setNameZh(product.getNameZh());
-        productVOAlpha.setReleaseDate(CommonUtil.dateToString(product.getReleaseDate()));
+        productVOAlpha.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
         productVOAlpha.setCategory(ProductCategory.getProductCategory(product.getCategory()));
         productVOAlpha.setRemark(product.getRemark());
 
@@ -100,8 +101,8 @@ public interface ProductVOMapper {
         }
         productVOAlpha.setCover(cover);
 
-        productVOAlpha.setAddedTime(CommonUtil.timestampToString(product.getAddedTime()));
-        productVOAlpha.setEditedTime(CommonUtil.timestampToString(product.getEditedTime()));
+        productVOAlpha.setAddedTime(DateUtil.timestampToString(product.getAddedTime()));
+        productVOAlpha.setEditedTime(DateUtil.timestampToString(product.getEditedTime()));
         productVOAlpha.setStatus(product.getStatus() == 1);
 
         return productVOAlpha;
@@ -144,7 +145,7 @@ public interface ProductVOMapper {
         productVOBeta.setName(product.getName());
         productVOBeta.setNameEn(product.getNameEn());
         productVOBeta.setNameZh(product.getNameZh());
-        productVOBeta.setReleaseDate(CommonUtil.dateToString(product.getReleaseDate()));
+        productVOBeta.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
         productVOBeta.setCategory(ProductCategory.getProductCategory(product.getCategory()));
 
         //关联信息

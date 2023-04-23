@@ -16,10 +16,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.RelatedInfoUtil;
-import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -184,7 +181,7 @@ public class AlbumService {
         String[] mediaFormat = CommonUtil.str2SortedArray(albumJson.getString("mediaFormat"));
 
         //处理时间
-        // String releaseDate = CommonUtil.dateToString(albumJson.getDate("releaseDate"));
+        // String releaseDate = DateUtil.dateToString(albumJson.getDate("releaseDate"));
 
         albumJson.put("releaseDate", albumJson.getDate("releaseDate"));
         albumJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
@@ -209,7 +206,7 @@ public class AlbumService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateAlbumArtists(int id, String artists) {
-        albumMapper.updateAlbumArtists(id, artists, new Timestamp(System.currentTimeMillis()));
+        albumMapper.updateAlbumArtists(id, artists, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
     }
 
@@ -295,7 +292,7 @@ public class AlbumService {
         if(discList.size() != 0) {
             trackInfo.put("discList", discList);
         }
-        albumMapper.updateAlbumTrackInfo(id, trackInfo.toJSONString(), new Timestamp(System.currentTimeMillis()));
+        albumMapper.updateAlbumTrackInfo(id, trackInfo.toJSONString(), DateUtil.NOW_TIMESTAMP);
 
         //删除对应music
         if (musics.size() != 0) {

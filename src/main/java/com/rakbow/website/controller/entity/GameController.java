@@ -14,6 +14,7 @@ import com.rakbow.website.entity.Game;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtils;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -149,7 +150,7 @@ public class GameController {
             Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
 
             //修改编辑时间
-            game.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            game.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = gameService.updateGame(game.getId(), game);
         } catch (Exception ex) {

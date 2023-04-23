@@ -1,5 +1,6 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -59,8 +60,8 @@ public class Disc {
         images = "[]";
         description = "";
         remark = "";
-        addedTime = new Timestamp(System.currentTimeMillis());
-        editedTime = new Timestamp(System.currentTimeMillis());
+        addedTime = DateUtil.NOW_TIMESTAMP;
+        editedTime = DateUtil.NOW_TIMESTAMP;
         status = 1;
     }
 

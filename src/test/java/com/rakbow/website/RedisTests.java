@@ -6,10 +6,7 @@ import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.EntityStatistic;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.common.LikeUtil;
-import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.common.RelatedInfoUtil;
-import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.common.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,11 +114,11 @@ public class RedisTests {
         // List<String> keys = redisUtil.keys("entity_related_item:*");
         // keys.forEach(key -> redisUtil.delete(key));
 
-        long t1 = new Timestamp(System.currentTimeMillis()).getTime();
+        long t1 = DateUtil.NOW_TIMESTAMP.getTime();
 
 
 
-        long t2 = new Timestamp(System.currentTimeMillis()).getTime();
+        long t2 = DateUtil.NOW_TIMESTAMP.getTime();
 
         System.out.println(t2 - t1);
 

@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.User;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.MusicVOMapper;
 import com.rakbow.website.data.ApiInfo;
@@ -153,8 +154,8 @@ public class MusicService {
                 music.setDiscSerial(disc.getInteger("serial"));
                 music.setTrackSerial(track.getString("serial"));
                 music.setAudioLength(track.getString("audioLength"));
-                music.setAddedTime(CommonUtil.stringToTimestamp(albumJson.getString("addedTime")));
-                music.setEditedTime(CommonUtil.stringToTimestamp(albumJson.getString("editedTime")));
+                music.setAddedTime(DateUtil.stringToTimestamp(albumJson.getString("addedTime")));
+                music.setEditedTime(DateUtil.stringToTimestamp(albumJson.getString("editedTime")));
                 addMusic(music);
             }
         }
@@ -277,7 +278,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicArtists(int id, String artists) {
-        musicMapper.updateMusicArtists(id, artists, new Timestamp(System.currentTimeMillis()));
+        musicMapper.updateMusicArtists(id, artists, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
     }
 
@@ -289,7 +290,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicLyricsText(int id, String lrcText) {
-        musicMapper.updateMusicLyricsText(id, lrcText, new Timestamp(System.currentTimeMillis()));
+        musicMapper.updateMusicLyricsText(id, lrcText, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
     }
 
@@ -330,7 +331,7 @@ public class MusicService {
                 jo.put("name", fileInfos.getJSONObject(i).getString("name"));
                 jo.put("size", fileInfos.getJSONObject(i).getIntValue("size"));
                 jo.put("type", fileInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", CommonUtil.getCurrentTime());
+                jo.put("uploadTime", DateUtil.getCurrentTime());
                 jo.put("uploadUser", user.getUsername());
                 addFiles.add(jo);
             }
@@ -338,7 +339,7 @@ public class MusicService {
 
         originalFiles.addAll(addFiles);
 
-        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), new Timestamp(System.currentTimeMillis()));
+        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), DateUtil.NOW_TIMESTAMP);
 
     }
 
@@ -356,7 +357,7 @@ public class MusicService {
 
         JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
 
-        musicMapper.updateMusicFiles(id, finalFileJson.toString(), new Timestamp(System.currentTimeMillis()));
+        musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateUtil.NOW_TIMESTAMP);
         return ApiInfo.DELETE_FILES_SUCCESS;
     }
 

@@ -59,7 +59,7 @@ public interface AlbumVOMapper {
         albumVo.setPrice(album.getPrice());
         albumVo.setCurrencyUnit(album.getCurrencyUnit());
         albumVo.setRemark(album.getRemark());
-        albumVo.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
+        albumVo.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
         albumVo.setHasBonus(album.getHasBonus() == 1);
 
         //厂商
@@ -111,7 +111,7 @@ public interface AlbumVOMapper {
         albumVOAlpha.setPrice(album.getPrice());
         albumVOAlpha.setCurrencyUnit(album.getCurrencyUnit());
         albumVOAlpha.setRemark(album.getRemark());
-        albumVOAlpha.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
+        albumVOAlpha.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
         albumVOAlpha.setHasBonus(album.getHasBonus() == 1);
 
         //图片相关
@@ -133,8 +133,8 @@ public interface AlbumVOMapper {
         albumVOAlpha.setMediaFormat(AlbumUtil.getMediaFormat(album.getMediaFormat()));
 
         //审计字段
-        albumVOAlpha.setAddedTime(CommonUtil.timestampToString(album.getAddedTime()));
-        albumVOAlpha.setEditedTime(CommonUtil.timestampToString(album.getEditedTime()));
+        albumVOAlpha.setAddedTime(DateUtil.timestampToString(album.getAddedTime()));
+        albumVOAlpha.setEditedTime(DateUtil.timestampToString(album.getEditedTime()));
         albumVOAlpha.setStatus(album.getStatus() == 1);
 
         return albumVOAlpha;
@@ -178,11 +178,11 @@ public interface AlbumVOMapper {
         albumVOBeta.setName(album.getName());
         albumVOBeta.setNameEn(album.getNameEn());
         albumVOBeta.setNameZh(album.getNameZh());
-        albumVOBeta.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
+        albumVOBeta.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
         albumVOBeta.setCover(CommonImageUtil.generateThumbCover(album.getImages(), EntityType.ALBUM, 50));
         albumVOBeta.setAlbumFormat(AlbumUtil.getAlbumFormat(album.getAlbumFormat()));
-        albumVOBeta.setAddedTime(CommonUtil.timestampToString(album.getAddedTime()));
-        albumVOBeta.setEditedTime(CommonUtil.timestampToString(album.getEditedTime()));
+        albumVOBeta.setAddedTime(DateUtil.timestampToString(album.getAddedTime()));
+        albumVOBeta.setEditedTime(DateUtil.timestampToString(album.getEditedTime()));
 
         return albumVOBeta;
     }
@@ -227,7 +227,7 @@ public interface AlbumVOMapper {
         albumVOGamma.setName(album.getName());
         albumVOGamma.setNameEn(album.getNameEn());
         albumVOGamma.setNameZh(album.getNameZh());
-        albumVOGamma.setReleaseDate(CommonUtil.dateToString(album.getReleaseDate()));
+        albumVOGamma.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
         albumVOGamma.setHasBonus(album.getHasBonus() == 1);
 
         //关联信息

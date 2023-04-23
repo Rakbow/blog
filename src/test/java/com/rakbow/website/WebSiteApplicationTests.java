@@ -12,6 +12,7 @@ import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.AlbumVOMapper;
@@ -139,22 +140,22 @@ class WebSiteApplicationTests {
 
         Album album = albumService.getAlbum(11);
 
-        Timestamp t1 = new Timestamp(System.currentTimeMillis());
+        Timestamp t1 = DateUtil.NOW_TIMESTAMP;
 
 
 
 //        List<JSONObject> albumJsons = albumService.album2JsonList(albums);
 
-        Timestamp t2 = new Timestamp(System.currentTimeMillis());
+        Timestamp t2 = DateUtil.NOW_TIMESTAMP;
         System.out.println(t2.getTime() - t1.getTime());
 
-        Timestamp t3 = new Timestamp(System.currentTimeMillis());
+        Timestamp t3 = DateUtil.NOW_TIMESTAMP;
 
         AlbumVO albumVo = AlbumVOMapper.INSTANCES.album2VO(album);
 
 //        List<AlbumVoList> albumVoLists = AlbumVoMapper.INSTANCES.album2VoLists(albums);
 
-        Timestamp t4 = new Timestamp(System.currentTimeMillis());
+        Timestamp t4 = DateUtil.NOW_TIMESTAMP;
 
         System.out.println(t4.getTime() - t3.getTime());
     }

@@ -196,7 +196,7 @@ public class AlbumController {
             Album album = entityService.json2Entity(albumService.handleAlbumJson(param), Album.class);
 
             //修改编辑时间
-            album.setEditedTime(new Timestamp(System.currentTimeMillis()));
+            album.setEditedTime(DateUtil.NOW_TIMESTAMP);
             res.message =  albumService.updateAlbum(album.getId(), album);
 
         } catch (Exception ex) {

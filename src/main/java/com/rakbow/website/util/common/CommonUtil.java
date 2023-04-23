@@ -70,15 +70,10 @@ public class CommonUtil {
             if(totalSecond >= 60){
                 totalSecond = totalSecond%60;
                 totalMin++;
-                if(totalMin >= 60){
-                    totalMin = totalMin%60;
-                    totalHour++;
-                }
-            }else {
-                if(totalMin >= 60){
-                    totalMin = totalMin%60;
-                    totalHour++;
-                }
+            }
+            if(totalMin >= 60){
+                totalMin = totalMin%60;
+                totalHour++;
             }
         }
         hour = (totalHour < 10)? "0" + totalHour:Integer.toString(totalHour);
@@ -104,47 +99,6 @@ public class CommonUtil {
         return DigestUtils.md5DigestAsHex(key.getBytes());
     }
 
-
-    //日期转为字符串(自定义格式)，例如：yyyy/MM/dd
-    public static String dateToString(Date date) {
-        if (date != null) {
-            SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
-            return ft.format(date);
-        } else {
-            return null;
-        }
-    }
-
-    //时间转为字符串(自定义格式)，例如：yyyy/MM/dd
-    public static String timestampToString(Timestamp ts){
-        if (ts != null) {
-            LocalDateTime localDateTime = LocalDateTime.ofInstant(ts.toInstant(), ZoneId.systemDefault());
-            return localDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
-        }else {
-            return null;
-        }
-    }
-
-    //时间转为字符串(自定义格式)，例如：yyyy/MM/dd
-    public static Timestamp stringToTimestamp(String ts){
-        if (ts != null) {
-            return Timestamp.valueOf(ts.replaceAll("/", "-"));
-        }else {
-            return null;
-        }
-    }
-
-    public static String getCurrentTime(){
-        DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        return sdf.format(new Timestamp(System.currentTimeMillis()));
-    }
-
-    //字符串转为时间(自定义格式)，例如：yyyy/MM/dd
-    public static Date stringToDate(String dateString, String dateFormat) throws ParseException {
-        SimpleDateFormat ft = new SimpleDateFormat(dateFormat);
-        return ft.parse(dateString);
-    }
-
     //获取JSON字符串
     public static String getJSONString(int code, String msg, Map<String, Object> map) {
         JSONObject json = new JSONObject();
@@ -160,27 +114,27 @@ public class CommonUtil {
 
     //递归获取jsonObject的所有value
     public static String getAllContentFromJson(Object object) {
-        StringBuffer mStringBuffer = new StringBuffer();
+        StringBuilder mStringBuffer = new StringBuilder();
         if(object instanceof JSONObject) {
             JSONObject jsonObject = (JSONObject) object;
             for (Map.Entry<String, Object> entry: jsonObject.entrySet()) {
                 Object o = entry.getValue();
                 if(o instanceof Integer){
-                    mStringBuffer.append(" "+entry.getValue());
+                    mStringBuffer.append(" ").append(entry.getValue());
                 }else if(o instanceof Double){
-                    mStringBuffer.append(" "+entry.getValue());
+                    mStringBuffer.append(" ").append(entry.getValue());
                 }else if(o instanceof Float){
-                    mStringBuffer.append(" "+entry.getValue());
+                    mStringBuffer.append(" ").append(entry.getValue());
                 }else if(o instanceof Byte){
-                    mStringBuffer.append(" "+entry.getValue());
+                    mStringBuffer.append(" ").append(entry.getValue());
                 }else if(o instanceof Long){
-                    mStringBuffer.append(" "+entry.getValue());
+                    mStringBuffer.append(" ").append(entry.getValue());
                 }else if(o instanceof String) {
                     try{
                         object= JSONObject.parseObject((String)o);
                         getAllContentFromJson(object);
                     }catch (Exception e){
-                        mStringBuffer.append(" "+entry.getValue());
+                        mStringBuffer.append(" ").append(entry.getValue());
                     }
                 }
                 else {
@@ -190,8 +144,8 @@ public class CommonUtil {
         }
         if(object instanceof JSONArray) {
             JSONArray jsonArray = (JSONArray) object;
-            for(int i = 0; i < jsonArray.size(); i ++) {
-                getAllContentFromJson(jsonArray.get(i));
+            for (Object o : jsonArray) {
+                getAllContentFromJson(o);
             }
         }
         return mStringBuffer.toString();

@@ -134,8 +134,8 @@ public class EntityService {
         // 从cookie中获取访问token
         String visitToken = CookieUtil.getValue(request, "visit_token");
 
-        pageInfo.setAddedTime(CommonUtil.timestampToString(addedTime));
-        pageInfo.setEditedTime(CommonUtil.timestampToString(editedTime));
+        pageInfo.setAddedTime(DateUtil.timestampToString(addedTime));
+        pageInfo.setEditedTime(DateUtil.timestampToString(editedTime));
         pageInfo.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
         pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
 
@@ -370,7 +370,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemDescription(String entityName, int entityId, String description) {
-        entityMapper.updateItemDescription(entityName, entityId, description, new Timestamp(System.currentTimeMillis()));
+        entityMapper.updateItemDescription(entityName, entityId, description, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
     }
 
@@ -383,7 +383,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemBonus(String entityName, int entityId, String bonus) {
-        entityMapper.updateItemBonus(entityName, entityId, bonus, new Timestamp(System.currentTimeMillis()));
+        entityMapper.updateItemBonus(entityName, entityId, bonus, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_BONUS_SUCCESS;
     }
 
@@ -396,7 +396,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemSpec(String entityName, int entityId, String spec) {
-        entityMapper.updateItemSpec(entityName, entityId, spec, new Timestamp(System.currentTimeMillis()));
+        entityMapper.updateItemSpec(entityName, entityId, spec, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_SPEC_SUCCESS;
     }
 
@@ -433,7 +433,7 @@ public class EntityService {
             ActionResult ar = qiniuImageUtil.commonAddImages(entityId, entityName, images, originalImagesJson, imageInfos, user);
             if(ar.state) {
                 JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
-                entityMapper.updateItemImages(entityName, entityId, finalImageJson.toJSONString(), new Timestamp(System.currentTimeMillis()));
+                entityMapper.updateItemImages(entityName, entityId, finalImageJson.toJSONString(), DateUtil.NOW_TIMESTAMP);
                 res.message = ApiInfo.INSERT_IMAGES_SUCCESS;
             }else {
                 res.setErrorMessage(ar.message);
@@ -454,7 +454,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemImages(String entityName, int entityId, String images) {
-        entityMapper.updateItemImages(entityName, entityId, images, new Timestamp(System.currentTimeMillis()));
+        entityMapper.updateItemImages(entityName, entityId, images, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_IMAGES_SUCCESS;
     }
 
@@ -472,7 +472,7 @@ public class EntityService {
 
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
-        entityMapper.updateItemImages(entityName, entityId, finalImageJson.toString(), new Timestamp(System.currentTimeMillis()));
+        entityMapper.updateItemImages(entityName, entityId, finalImageJson.toString(), DateUtil.NOW_TIMESTAMP);
         return ApiInfo.DELETE_IMAGES_SUCCESS;
     }
 

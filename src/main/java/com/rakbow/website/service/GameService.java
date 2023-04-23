@@ -12,6 +12,7 @@ import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.GameVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
@@ -188,7 +189,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameOrganizations(int id, String organizations) {
-        gameMapper.updateGameOrganizations(id, organizations, new Timestamp(System.currentTimeMillis()));
+        gameMapper.updateGameOrganizations(id, organizations, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
     }
 
@@ -201,7 +202,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameStaffs(int id, String staffs) {
-        gameMapper.updateGameStaffs(id, staffs, new Timestamp(System.currentTimeMillis()));
+        gameMapper.updateGameStaffs(id, staffs, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
     }
 
