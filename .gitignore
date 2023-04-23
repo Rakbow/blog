@@ -5,6 +5,11 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+/src/main/resource/static/js/index/webfont.js
+/src/main/resource/static/js/index/screen.js
+/src/main/resource/static/js/index/navigation.js
+/src/main/resource/static/js/index/gsap.js
+
 /src/main/resources/templates/tmp.html
 /src/main/resources/static/css/bootstrap/bootstrap.min.css
 /src/main/resources/static/css/flag-icons
