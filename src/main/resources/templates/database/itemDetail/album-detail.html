@@ -8,7 +8,7 @@
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
+    <script th:src="@{/tool/bootstrap/bootstrap.bundle.min.js}"></script>
 
     <!-- marked -->
     <link th:href="@{/css/github-markdown/github-markdown.css}" rel="stylesheet"/>
@@ -170,11 +170,26 @@
                                                     <strong>{{RKW_Web.ReleasePrice}}</strong>
                                                 </td>
                                                 <td>
-                                                    {{album.price != 0 ? album.price :"-"}}<span
-                                                        v-if="album.currencyUnit == 'JPY'" class="ml-1"
-                                                        style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                        v-tooltip.right="{value: RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span><span
-                                                        v-else>{{album.currencyUnit}}</span>
+                                                    {{album.price != 0 ? album.price :"&nbsp;&nbsp;-"}}
+                                                    <span v-if="album.price != 0">
+                                                        <span v-if="album.currencyUnit == 'JPY'" class="ml-1"
+                                                            style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                            v-tooltip.right="{value: RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span>
+                                                        <span v-else>{{album.currencyUnit}}</span>
+                                                        <span class="ml-2 dropdown">
+                                                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">其他货币</a>
+                                                            <div class="dropdown-menu">
+                                                                <a :href="'https://www.bing.com/search?q='+album.price+'+'+album.currencyUnit+'+'+'IN'+'+CNY'"
+                                                                   class="dropdown-item">CNY</a>
+                                                                <a :href="'https://www.bing.com/search?q='+album.price+'+'+album.currencyUnit+'+'+'IN'+'+USD'"
+                                                                   class="dropdown-item">USD</a>
+                                                                <a :href="'https://www.bing.com/search?q='+album.price+'+'+album.currencyUnit+'+'+'IN'+'+EUR'"
+                                                                   class="dropdown-item">EUR</a>
+                                                                <a :href="'https://www.bing.com/search?q='+album.price+'+'+album.currencyUnit+'+'+'IN'+'+TWD'"
+                                                                   class="dropdown-item">TWD</a>
+                                                            </div>
+                                                        </span>
+                                                    </span>
                                                 </td>
                                             </tr>
                                             <tr>
