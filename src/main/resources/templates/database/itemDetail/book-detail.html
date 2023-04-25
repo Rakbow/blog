@@ -8,7 +8,7 @@
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
+    <script th:src="@{/tool/bootstrap/bootstrap.bundle.min.js}"></script>
 
     <link href="https://img.rakbow.com/common/logo/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <link th:href="@{/css/iconfont/iconfont.css}" rel="stylesheet" />
@@ -210,11 +210,26 @@
                                                     <strong>{{RKW_Web.PublishPrice}}</strong>
                                                 </td>
                                                 <td>
-                                                    {{book.price != 0?book.price:" - "}} <span
-                                                        v-if="book.currencyUnit == 'JPY'"
-                                                        style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                        v-tooltip.right="{value:RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span><span
-                                                        v-else>{{book.currencyUnit}}</span>
+                                                    {{book.price != 0 ? book.price :"&nbsp;&nbsp;-"}}
+                                                    <span v-if="book.price != 0">
+                                                        <span v-if="book.currencyUnit == 'JPY'" class="ml-1"
+                                                              style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                              v-tooltip.right="{value: RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span>
+                                                        <span v-else>{{book.currencyUnit}}</span>
+                                                        <span class="ml-2 dropdown">
+                                                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">其他货币</a>
+                                                            <div class="dropdown-menu">
+                                                                <a :href="'https://www.bing.com/search?q='+book.price+'+'+book.currencyUnit+'+'+'IN'+'+CNY'"
+                                                                   class="dropdown-item">CNY</a>
+                                                                <a :href="'https://www.bing.com/search?q='+book.price+'+'+book.currencyUnit+'+'+'IN'+'+USD'"
+                                                                   class="dropdown-item">USD</a>
+                                                                <a :href="'https://www.bing.com/search?q='+book.price+'+'+book.currencyUnit+'+'+'IN'+'+EUR'"
+                                                                   class="dropdown-item">EUR</a>
+                                                                <a :href="'https://www.bing.com/search?q='+book.price+'+'+book.currencyUnit+'+'+'IN'+'+TWD'"
+                                                                   class="dropdown-item">TWD</a>
+                                                            </div>
+                                                        </span>
+                                                    </span>
                                                 </td>
                                             </tr>
                                             <tr>
