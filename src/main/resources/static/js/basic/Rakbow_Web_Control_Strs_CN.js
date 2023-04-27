@@ -66,6 +66,7 @@ export class RKW_Web {
 
 
     //region 名词
+    static OtherCurrencyUnit = "其他货币";
     static IsLimited = '限定版';
     static TaxInclusive = '含税';
     static AddedTime = '收录时间';
@@ -82,12 +83,16 @@ export class RKW_Web {
     static Bonus = '特典';
     static PublishFormat = '出版形式';
     static MediaFormat = '媒体格式';
-    static Copyright = '版权方';
-    static Distributor = '经销商';
     static Region = '地区';
     static Language = '语言';
     static Summary = '简介';
     static Spec = '规格';
+
+    static Copyright = '版权方';
+    static Distributor = '经销商';
+    static Manufacturer = '制造商';
+
+
 
     static AlbumCatalogNo = '专辑编号';
     static AlbumName = '专辑名称';

@@ -8,7 +8,7 @@
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap/myBootstrap.min.css}">
-    <script th:src="@{/tool/bootstrap/bootstrap.min.js}"></script>
+    <script th:src="@{/tool/bootstrap/bootstrap.bundle.min.js}"></script>
 
     <!--other css -->
     <link href="https://img.rakbow.com/common/logo/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
@@ -172,11 +172,26 @@
                                                     <strong>{{RKW_Web.ReleasePrice}}</strong>
                                                 </td>
                                                 <td>
-                                                    {{disc.price != 0?disc.price:" - "}} <span
-                                                        v-if="disc.currencyUnit == 'JPY'"
-                                                        style="text-decoration-line: underline;text-decoration-style: dashed;"
-                                                        v-tooltip.right="{value:RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span><span
-                                                        v-else>{{disc.currencyUnit}}</span>
+                                                    {{disc.price != 0 ? disc.price :"&nbsp;&nbsp;-"}}
+                                                    <span v-if="disc.price != 0">
+                                                        <span v-if="disc.currencyUnit == 'JPY'" class="ml-1"
+                                                              style="text-decoration-line: underline;text-decoration-style: dashed;"
+                                                              v-tooltip.right="{value: RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span>
+                                                        <span v-else>{{disc.currencyUnit}}</span>
+                                                        <span class="ml-2 dropdown">
+                                                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">{{RKW_Web.OtherCurrencyUnit}}</a>
+                                                            <div class="dropdown-menu">
+                                                                <a :href="'https://www.bing.com/search?q='+disc.price+'+'+disc.currencyUnit+'+'+'IN'+'+CNY'"
+                                                                   class="dropdown-item">CNY</a>
+                                                                <a :href="'https://www.bing.com/search?q='+disc.price+'+'+disc.currencyUnit+'+'+'IN'+'+USD'"
+                                                                   class="dropdown-item">USD</a>
+                                                                <a :href="'https://www.bing.com/search?q='+disc.price+'+'+disc.currencyUnit+'+'+'IN'+'+EUR'"
+                                                                   class="dropdown-item">EUR</a>
+                                                                <a :href="'https://www.bing.com/search?q='+disc.price+'+'+disc.currencyUnit+'+'+'IN'+'+TWD'"
+                                                                   class="dropdown-item">TWD</a>
+                                                            </div>
+                                                        </span>
+                                                    </span>
                                                 </td>
                                             </tr>
                                             <tr>

@@ -177,7 +177,7 @@
                                                             v-tooltip.right="{value: RKW_Web.TaxInclusive, class: 'region-tooltip'}">JPY</span>
                                                         <span v-else>{{album.currencyUnit}}</span>
                                                         <span class="ml-2 dropdown">
-                                                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">其他货币</a>
+                                                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">{{RKW_Web.OtherCurrencyUnit}}</a>
                                                             <div class="dropdown-menu">
                                                                 <a :href="'https://www.bing.com/search?q='+album.price+'+'+album.currencyUnit+'+'+'IN'+'+CNY'"
                                                                    class="dropdown-item">CNY</a>
