@@ -1,13 +1,12 @@
 package com.rakbow.website.entity;
 
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -17,43 +16,29 @@ import java.util.Date;
  * @Description: 专辑实体类
  */
 @Data
-public class Album {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Album extends MetaEntity {
 
-    @Id
     private int id;//表主键
     private String catalogNo;//专辑编号
     private String name;//专辑名称（日语）
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
-    @DateTimeFormat(pattern="yyyy/MM/dd")//存到数据库
-    @JSONField(format = "yyyy/MM/dd") //从数据库读出
     private Date releaseDate;//发行日期
     private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     private String mediaFormat;//媒体类型
     private int price;//发行价格（含税）
     private String currencyUnit;
-    private String label;//唱片公司
-    private String publisher;//发行商
-    private String distributor;//经销商
-    private String copyright;//版权方
+    private String companies;//相关企业
     private int hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
     private String franchises;//所属系列
     private String products;//所属产品id 在mysql中以数组字符串形式存储
-    private String description;//描述
-    private String remark;//备注
     private String artists;//staff
-    private String images;//图片列表（JSON字符串）
     private String trackInfo;//曲目列表（JSON字符串）
-    @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
-    @JSONField(format="yyyy/MM/dd HH:mm:ss")
-    private Timestamp addedTime;//数据新增时间
-    @DateTimeFormat(pattern="yyyy/MM/dd HH:mm:ss")//存到数据库
-    @JSONField(format="yyyy/MM/dd HH:mm:ss")
-    private Timestamp editedTime;//数据更新时间
-    private int status;//激活状态
 
     public Album() {
 
@@ -69,22 +54,19 @@ public class Album {
         this.mediaFormat = "{\"ids\":[]}";
         this.price = 0;
         this.currencyUnit = "";
-        this.label = "";
-        this.publisher = "";
-        this.distributor = "";
-        this.copyright = "";
+        this.companies = "[]";
         this.hasBonus = 0;
         this.bonus = "";
         this.franchises = "{\"ids\":[]}";
         this.products = "{\"ids\":[]}";
-        this.description = "";
-        this.remark = "";
+        this.setDescription("");
+        this.setRemark("");
         this.artists = "[]";
-        this.images = "[]";
+        this.setImages("[]");
         this.trackInfo = "{}";
-        this.addedTime = DateUtil.NOW_TIMESTAMP;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;
-        this.status = 1;
+        this.setAddedTime(DateUtil.NOW_TIMESTAMP);
+        this.setEditedTime(DateUtil.NOW_TIMESTAMP);
+        this.setStatus(1);
 
     }
 

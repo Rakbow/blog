@@ -1,38 +1,31 @@
 package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.convertMapper.AlbumVOMapper;
+import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -47,7 +40,7 @@ public class AlbumController {
 
     //region ------引入实例------
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AlbumController .class);
 
     @Resource
     private AlbumService albumService;
@@ -56,7 +49,7 @@ public class AlbumController {
     @Resource
     private UserService userService;
     @Resource
-    private EntityUtils entityUtils;
+    private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
 
@@ -74,19 +67,20 @@ public class AlbumController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
+
         String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
         model.addAttribute("album", albumVOMapper.album2VO(album));
         if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
         //前端选项数据
-        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.ALBUM.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.ALBUM.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(album, EntityType.ALBUM.getId()));
+        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album, request));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 250, EntityType.ALBUM, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, EntityType.ALBUM, false));
 
         return "/database/itemDetail/album-detail";
     }

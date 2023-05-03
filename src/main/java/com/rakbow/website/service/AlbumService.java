@@ -10,14 +10,14 @@ import com.rakbow.website.data.bo.AlbumDiscBO;
 import com.rakbow.website.data.dto.AlbumDiscDTO;
 import com.rakbow.website.data.dto.AlbumTrackDTO;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.MediaFormat;
-import com.rakbow.website.data.emun.album.AlbumFormat;
+import com.rakbow.website.data.emun.common.MediaFormat;
+import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.convertMapper.AlbumVOMapper;
+import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -282,8 +281,8 @@ public class AlbumService {
             }
 
             albumDiscBO.setSerial(discSerial);
-            albumDiscBO.setMediaFormat(MediaFormat.nameEn2IndexArray(albumDiscDTO.getMediaFormat()));
-            albumDiscBO.setAlbumFormat(AlbumFormat.nameEn2IndexArray(albumDiscDTO.getAlbumFormat()));
+            albumDiscBO.setMediaFormat(MediaFormat.getIdsByNames(albumDiscDTO.getMediaFormat()));
+            albumDiscBO.setAlbumFormat(AlbumFormat.getIdsByNames(albumDiscDTO.getAlbumFormat()));
             albumDiscBO.setTrackList(trackList);
 
             discSerial++;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:text="${album.name}"></title>
     <meta charset="utf-8"/>
@@ -127,7 +127,7 @@
                 </template>
                 <template #content>
                     <div class="grid">
-                        <div class="col-4" style="width: 260px">
+                        <div class="col-4" style="width: 205px">
                             <div class="album-detail-cover">
                                 <img :src="itemImageInfo.cover.url" :alt="itemImageInfo.cover.name"/>
                             </div>
@@ -166,7 +166,7 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <i class="pi iconfont icon-wuliaojiage"></i>
+                                                    <i class="pi pi-tag"></i>
                                                     <strong>{{RKW_Web.ReleasePrice}}</strong>
                                                 </td>
                                                 <td>
@@ -237,40 +237,6 @@
                                                     </a>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>
-                                                    <i class="pi iconfont icon-tushuyinxiang"></i>
-                                                    <strong>{{RKW_Web.AlbumLabel}}</strong>
-                                                </td>
-                                                <td>{{album.label?album.label:"N/A"}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <i class="pi iconfont icon-gongsi"></i>
-                                                    <strong>{{RKW_Web.AlbumPublisher}}</strong>
-                                                </td>
-                                                <td>
-                                                    {{album.publisher?album.publisher:"N/A"}}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <i class="pi iconfont icon-company"></i>
-                                                    <strong>{{RKW_Web.Distributor}}</strong>
-                                                </td>
-                                                <td>
-                                                    {{album.distributor?album.distributor:"N/A"}}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <i class="pi iconfont icon-copyright"></i>
-                                                    <strong>{{RKW_Web.Copyright}}</strong>
-                                                </td>
-                                                <td>
-                                                    {{album.copyright?album.copyright:"N/A"}}
-                                                </td>
-                                            </tr>
                                             </tbody>
                                         </table>
                                         <div th:insert="~{template/item-detail-template :: item_status_edit}" th:if="${loginUser != null}"></div>
@@ -293,6 +259,30 @@
                                 <i class="pi pi-arrow-circle-down"></i>
                             </p-button>
                             <div id="aplayer"></div>
+                        </p-fieldset>
+                        <!-- companies -->
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi pi-building"></i>
+                                <b>{{RKW_Web.ItemDetailCompaniesTitle}}</b>
+                            </template>
+                            <div class="grid ml-4" v-if="album.companies.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr v-for="company in album.companies">
+                                        <td width="80px"><strong>{{company.role.label}}</strong></td>
+                                        <td v-for="member of company.members" class="a_with_underline">
+                                            <a :href="'/entry/' + member.value" style="display:inline">
+                                                {{member.label}}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoCompanies}}</em></span>
+                            </div>
                         </p-fieldset>
                         <!-- artists -->
                         <p-fieldset :toggleable="true">
@@ -569,24 +559,6 @@
                     </p-multiselect>
                 </div>
             </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>{{RKW_Web.AlbumLabel}}</label>
-                    <p-inputtext id="label" v-model.trim="albumEdit.label"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>{{RKW_Web.AlbumPublisher}}</label>
-                    <p-inputtext id="publisher" v-model.trim="albumEdit.publisher"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>{{RKW_Web.Distributor}}</label>
-                    <p-inputtext id="distributor" v-model.trim="albumEdit.distributor"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>{{RKW_Web.Copyright}}</label>
-                    <p-inputtext id="copyright" v-model.trim="albumEdit.copyright"></p-inputtext>
-                </div>
-            </div>
             <div class="field">
                 <label>{{RKW_Web.Remark}}</label>
                 <p-textarea id="remark" v-model="albumEdit.remark" rows="3" cols="20"
@@ -719,7 +691,7 @@
                                             <i class="pi pi-tag"></i>
                                         </span>
                             <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="mediaFormatSet"
-                                           option-label="label" option-value="labelEn" :placeholder="RKW_Web.MediaFormat"
+                                           option-label="label" option-value="label" :placeholder="RKW_Web.MediaFormat"
                                            display="chip">
                             </p-multiselect>
                         </div>
@@ -730,7 +702,7 @@
                                             <i class="pi pi-tag"></i>
                                         </span>
                             <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="albumFormatSet"
-                                           option-label="label" option-value="labelEn" :placeholder="RKW_Web.AlbumFormat"
+                                           option-label="label" option-value="label" :placeholder="RKW_Web.AlbumFormat"
                                            display="chip">
                             </p-multiselect>
                         </div>
@@ -774,7 +746,7 @@
                             </template>
                             <template #editor="{ data, field }">
                                 <p-multiselect v-model="data[field]" :options="albumFormatSet"
-                                               option-label="label" option-value="labelEn"
+                                               option-label="label" option-value="label"
                                                :placeholder="RKW_Web.AlbumFormat"
                                                display="chip">
                                 </p-multiselect>
@@ -786,7 +758,7 @@
                             </template>
                             <template #editor="{ data, field }">
                                 <p-multiselect v-model="data[field]" :options="mediaFormatSet"
-                                               option-label="label" option-value="labelEn"
+                                               option-label="label" option-value="label"
                                                :placeholder="RKW_Web.MediaFormat"
                                                display="chip">
                                 </p-multiselect>
@@ -852,7 +824,7 @@
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
-    import {showBonusEditDialog, showDescriptionEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog, showCompaniesEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useDialog} = primevue.usedialog;
@@ -918,6 +890,8 @@
             const mediaFormatSet = ref([[${options.mediaFormatSet}]]);
             const albumFormatSet = ref([[${options.albumFormatSet}]]);
             const publishFormatSet = ref([[${options.publishFormatSet}]]);
+            const companySet = ref([[${options.companySet}]]);
+            const companyRoleSet = ref([[${options.companyRoleSet}]]);
             //endregion
 
             //region init
@@ -1006,6 +980,13 @@
                     icon: 'pi pi-images',
                     command: () => {
                         showImageEditDialog(toast, dialog, itemImageInfo.value, detailInfo.value);
+                    }
+                },
+                {
+                    label: RKW_Web.ItemDetailOptionCompaniesEditTitle,
+                    icon: 'pi pi-building',
+                    command: () => {
+                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editCompanies, companyRoleSet.value, companySet.value);
                     }
                 },
                 {
@@ -1504,9 +1485,9 @@
     }
 
     .album-detail-cover {
-        transform: translateY(7px);
-        width: 250px;
-        height: 250px;
+        transform: translateY(0);
+        /*width: 170px;*/
+        height: 185px;
     }
 
 </style>
