@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public enum FileType {
-    UNCLASSIFIED(0,"未分类", "unclassified"),
+    UNCATEGORIZED(0,"未分类", "Uncategorized"),
     IMAGE(1, "图片", "Image"),
     AUDIO(2, "音频", "Audio"),
     VIDEO(3, "视频", "Video"),

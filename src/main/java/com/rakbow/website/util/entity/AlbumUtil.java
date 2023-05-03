@@ -2,14 +2,11 @@ package com.rakbow.website.util.entity;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.emun.MediaFormat;
-import com.rakbow.website.data.emun.album.AlbumFormat;
+import com.rakbow.website.data.emun.common.MediaFormat;
+import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.SpringUtil;
-import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -63,12 +60,12 @@ public class AlbumUtil {
 
                 JSONArray tmpAlbumFormatList = new JSONArray();
                 String[] tmpAlbumFormat = StringUtils.split(
-                        AlbumFormat.index2NameEnArray(disc.getJSONArray("albumFormat")), ",");
+                        AlbumFormat.getNamesByIds(disc.getJSONArray("albumFormat")), ",");
                 tmpAlbumFormatList.addAll(Arrays.asList(tmpAlbumFormat));
 
                 JSONArray tmpMediaFormatList = new JSONArray();
                 String[] tmpMediaFormat = StringUtils.split(
-                        MediaFormat.index2NameEnArrayString(disc.getJSONArray("mediaFormat")), ",");
+                        MediaFormat.getNamesByIds(disc.getJSONArray("mediaFormat")), ",");
                 tmpMediaFormatList.addAll(Arrays.asList(tmpMediaFormat));
 
                 disc.put("tmpDiscId", tmpDiscId);
@@ -128,8 +125,8 @@ public class AlbumUtil {
                 }
                 times.addAll(_times);
                 disc.put("trackList", newTrackList);
-                disc.put("albumFormat", AlbumFormat.index2NameEnArray(disc.getJSONArray("albumFormat")));
-                disc.put("mediaFormat", MediaFormat.index2NameEnArrayString(disc.getJSONArray("mediaFormat")));
+                disc.put("albumFormat", AlbumFormat.getNamesByIds(disc.getJSONArray("albumFormat")));
+                disc.put("mediaFormat", MediaFormat.getNamesByIds(disc.getJSONArray("mediaFormat")));
                 disc.put("discLength", CommonUtil.countTotalTime(_times));
                 newDiscList.add(disc);
             }
@@ -139,87 +136,6 @@ public class AlbumUtil {
         }
 
         return trackInfo;
-    }
-
-    /**
-     * 将数据库实体类albumFormat的json字符串转为JSONArray
-     *
-     * @param albumFormatJson albumFormat的json字符串
-     * @return JSONArray
-     * @author rakbow
-     */
-    @SuppressWarnings("unchecked")
-    public static JSONArray getAlbumFormat(String albumFormatJson) {
-
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-
-        List<JSONObject> albumFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.ALBUM_FORMAT_SET);
-
-        JSONArray albumFormat = new JSONArray();
-
-        CommonUtil.ids2List(albumFormatJson)
-                .forEach(id -> {
-                    JSONObject format = DataFinder.findJsonByIdInSet(id, albumFormats);
-                    if (format != null) {
-                        albumFormat.add(format);
-                    }
-                });
-
-        return albumFormat;
-    }
-
-    /**
-     * 将数据库实体类publishFormat的json字符串转为JSONArray
-     *
-     * @param publishFormatJson publishFormat的json字符串
-     * @return JSONArray
-     * @author rakbow
-     */
-    @SuppressWarnings("unchecked")
-    public static JSONArray getPublishFormat(String publishFormatJson) {
-
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-
-        List<JSONObject> publishFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.PUBLISH_FORMAT_SET);
-
-        JSONArray publishFormat = new JSONArray();
-
-        CommonUtil.ids2List(publishFormatJson)
-                .forEach(id -> {
-                    JSONObject format = DataFinder.findJsonByIdInSet(id, publishFormats);
-                    if (format != null) {
-                        publishFormat.add(format);
-                    }
-                });
-
-        return publishFormat;
-    }
-
-    /**
-     * 将数据库实体类mediaFormat的json字符串转为JSONArray
-     *
-     * @param mediaFormatJson mediaFormat的json字符串
-     * @return JSONArray
-     * @author rakbow
-     */
-    @SuppressWarnings("unchecked")
-    public static JSONArray getMediaFormat(String mediaFormatJson) {
-
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-
-        List<JSONObject> mediaFormats = (List<JSONObject>) redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET);
-
-        JSONArray mediaFormat = new JSONArray();
-
-        CommonUtil.ids2List(mediaFormatJson)
-                .forEach(id -> {
-                    JSONObject format = DataFinder.findJsonByIdInSet(id, mediaFormats);
-                    if (format != null) {
-                        mediaFormat.add(format);
-                    }
-                });
-
-        return mediaFormat;
     }
 
 }

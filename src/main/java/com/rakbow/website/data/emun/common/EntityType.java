@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public enum EntityType {
 
-    UNCLASSIFIED(0,"未分类", "Unclassified"),
+    UNCATEGORIZED(0,"未分类", "Uncategorized"),
     ALBUM(1,"专辑", "Album"),
     DISC(2,"碟片", "Disc"),
     BOOK(3,"书籍", "Book"),
@@ -24,7 +24,8 @@ public enum EntityType {
     FRANCHISE(6,"系列", "Franchise"),
     PRODUCT(7,"作品", "Product"),
     ARTICLE(8,"文章", "Article"),
-    MUSIC(9,"音乐", "Music");
+    MUSIC(9,"音乐", "Music"),
+    ENTRY(10,"Entry", "Entry");
 
     public static final EntityType[] ENTITY_TYPES = {ALBUM, DISC, BOOK, MERCH, GAME, FRANCHISE, PRODUCT, MUSIC};
 
@@ -50,7 +51,7 @@ public enum EntityType {
                 return itemType.nameEn;
             }
         }
-        return "Unclassified";
+        return null;
     }
 
     public static int getItemIndexByNameZh(String nameZh){

@@ -2,12 +2,11 @@ package com.rakbow.website.data.emun.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * @Project_name: website
@@ -34,7 +33,7 @@ public enum Region {
     private final String currency;
 
     //根据地区代码获取货币符号
-    public static String regionCode2Currency(String code){
+    public static String getCurrencyByCode(String code){
         String currency = JAPAN.currency;
         for (Region region : Region.values()) {
             if (StringUtils.equals(region.code, code)) {
@@ -44,15 +43,18 @@ public enum Region {
         return currency;
     }
 
-    //根据地区代码获取地区名称(中文)
-    public static String regionCode2NameZh(String code){
-        String nameZh = JAPAN.nameZh;
+    //根据地区代码获取地区名称
+    public static String getNameByCode(String code, String lang){
         for (Region region : Region.values()) {
             if (StringUtils.equals(region.code, code)) {
-                nameZh = region.nameZh;
+                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                    return region.nameEn;
+                }else {
+                    return region.nameZh;
+                }
             }
         }
-        return nameZh;
+        return null;
     }
 
     /**
@@ -61,23 +63,34 @@ public enum Region {
      * @return list
      * @author rakbow
      */
-    public static JSONArray getRegionSet () {
-        JSONArray list = new JSONArray();
-        for (Region region : Region.values()) {
-            JSONObject jo = new JSONObject();
-            jo.put("nameZh", region.nameZh);
-            jo.put("nameEn", region.nameEn);
-            jo.put("code", region.code);
-            jo.put("currency", region.currency);
-            list.add(jo);
+    public static JSONArray getAttributeSet(String lang) {
+        JSONArray set = new JSONArray();
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            for (Region region : Region.values()) {
+                JSONObject jo = new JSONObject();
+                jo.put("name", region.nameEn);
+                jo.put("code", region.code);
+                jo.put("currency", region.currency);
+                set.add(jo);
+            }
         }
-        return list;
+        else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+            for (Region region : Region.values()) {
+                JSONObject jo = new JSONObject();
+                jo.put("name", region.nameZh);
+                jo.put("code", region.code);
+                jo.put("currency", region.currency);
+                set.add(jo);
+            }
+        }
+        return set;
     }
 
-    public static JSONObject getRegionJson(String code) {
+    public static JSONObject getRegion(String code) {
+        String lang = LocaleContextHolder.getLocale().getLanguage();
         JSONObject region = new JSONObject();
         region.put("code", code);
-        region.put("nameZh", Region.regionCode2NameZh(code));
+        region.put("name", Region.getNameByCode(code, lang));
         return region;
     }
 

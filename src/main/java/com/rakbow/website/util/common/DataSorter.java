@@ -1,6 +1,7 @@
 package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -24,7 +25,7 @@ public class DataSorter {
     public static MusicSortByTrackSerial musicSortByTrackSerial = new MusicSortByTrackSerial();
     public static JsonSortById jsonSortById = new JsonSortById();
     public static JsonSetSortByValue jsonSetSortByValue = new JsonSetSortByValue();
-    // public static VisitSortByEntityId visitSortByEntityId = new VisitSortByEntityId();
+    public static AttributesSortByValue attributesSortByValue = new AttributesSortByValue();
 
 }
 
@@ -68,10 +69,11 @@ class JsonSetSortByValue implements Comparator<JSONObject> {
     }
 }
 
-// class VisitSortByEntityId implements Comparator<EntityInfo> {
-//     @Override
-//     public int compare(EntityInfo a, EntityInfo b) {
-//         return Integer.compare(a.getEntityId(), b.getEntityId());
-//     }
-// }
+class AttributesSortByValue implements Comparator<Attribute> {
+
+    @Override
+    public int compare(Attribute a, Attribute b) {
+        return Integer.compare(a.getValue(), b.getValue());
+    }
+}
 

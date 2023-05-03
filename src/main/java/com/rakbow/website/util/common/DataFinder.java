@@ -1,6 +1,7 @@
 package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.Product;
@@ -125,6 +126,24 @@ public class DataFinder {
         int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSetSortByValue);
         if (idx >= 0) {
             return jsons.get(idx);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 根据Value从指定attributes列表中查找
+     *
+     * @param value,attributes 查找id和json列表
+     * @return json
+     * @author rakbow
+     */
+    public static Attribute findAttributeByValue(int value, List<Attribute> attributes) {
+        Attribute finder = new Attribute();
+        finder.setValue(value);
+        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);
+        if (idx >= 0) {
+            return attributes.get(idx);
         } else {
             return null;
         }

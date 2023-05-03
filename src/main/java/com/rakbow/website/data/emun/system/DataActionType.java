@@ -1,4 +1,4 @@
-package com.rakbow.website.data.emun.common;
+package com.rakbow.website.data.emun.system;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

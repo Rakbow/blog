@@ -1,12 +1,12 @@
-package com.rakbow.website.data.emun.merch;
+package com.rakbow.website.data.emun.entity.merch;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * @Project_name: website
@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public enum MerchCategory {
 
-    UNCLASSIFIED(0,"未分类", "Unclassified"),
+    UNCATEGORIZED(0,"未分类", "Uncategorized"),
     CARD(1,"收藏卡片", "Card"),
     CLOTHING(2,"衣物", "Clothing"),
     ACCESSORY(3,"小物", "Accessory"),
@@ -42,20 +42,23 @@ public enum MerchCategory {
     MISC(99,"杂物", "Misc");
 
     @Getter
-    private final int index;
+    private final int id;
     @Getter
     private final String nameZh;
     @Getter
     private final String nameEn;
 
-    public static String index2NameZh (int index) {
-        String nameZh = UNCLASSIFIED.nameZh;
+    public static String getNameById(int id, String lang) {
         for (MerchCategory merchCategory : MerchCategory.values()) {
-            if (merchCategory.index == index) {
-                nameZh = merchCategory.nameZh;
+            if (merchCategory.id == id) {
+                if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+                    return merchCategory.nameZh;
+                }else if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                    return merchCategory.nameEn;
+                }
             }
         }
-        return nameZh;
+        return null;
     }
 
     /**
@@ -64,23 +67,23 @@ public enum MerchCategory {
      * @return list 周边商品分类数组
      * @author rakbow
      */
-    public static JSONArray getMerchCategorySet() {
-        JSONArray list = new JSONArray();
-        for (MerchCategory merchCategory : MerchCategory.values()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("label", merchCategory.getNameZh());
-            jsonObject.put("labelEn", merchCategory.getNameEn());
-            jsonObject.put("value", merchCategory.getIndex());
-            list.add(jsonObject);
+    public static JSONArray getAttributeSet(String lang) {
+        JSONArray set = new JSONArray();
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            for (MerchCategory item : MerchCategory.values()) {
+                set.add(new Attribute(item.id, item.nameEn));
+            }
+        }else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+            for (MerchCategory item : MerchCategory.values()) {
+                set.add(new Attribute(item.id, item.nameZh));
+            }
         }
-        return list;
+        return set;
     }
 
-    public static JSONObject getMerchCategoryJson(int merchCategoryId) {
-        JSONObject category = new JSONObject();
-        category.put("id", merchCategoryId);
-        category.put("nameZh", MerchCategory.index2NameZh(merchCategoryId));
-        return category;
+    public static Attribute getAttribute(int id) {
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        return new Attribute(id, MerchCategory.getNameById(id, lang));
     }
 
 }
