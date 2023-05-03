@@ -1,24 +1,16 @@
 package com.rakbow.website.task;
 
-import com.rakbow.website.dao.StatisticMapper;
-import com.rakbow.website.data.common.Like;
 import com.rakbow.website.data.common.Visit;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.service.EntityService;
-import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.VisitUtil;
-import com.rakbow.website.util.convertMapper.StatisticPOMapper;
+import com.rakbow.website.util.convertMapper.entity.StatisticPOMapper;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @Project_name: website

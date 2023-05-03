@@ -3,6 +3,422 @@ import {HttpUtil} from '/js/basic/Http_Util.js';
 const {useToast} = primevue.usetoast;
 const Tooltip = primevue.tooltip;
 
+const entryDbList = {
+    template: `
+        <p-toast></p-toast>
+<p-datatable ref="dt" :value="items" class="p-datatable-sm" :always-show-paginator="items != 0"
+                :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
+                :resizable-columns="true" column-resize-mode="expand"
+                @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
+                filter-display="row" 
+                :global-filter-fields="['name','nameZh','nameEn']"
+                :paginator="true" :rows="10" striped-rows
+                v-model:selection="selectedItems" dataKey="id"
+                :scrollable="true" scroll-height="flex" :rows-per-page-options="[10,25,50]" show-gridlines
+                paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink
+                            LastPageLink CurrentPageReport RowsPerPageDropdown"
+                current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
+                responsive-layout="scroll">
+    <template #header>
+        <p-blockui :blocked="editBlock" class="grid">
+            <div class="col-9" v-if="editAuth > 1">
+                <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+                            @click="openNewDialog" style="width: 6em"></p-button>
+                <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
+                            :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
+                <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
+                            @click="exportCSV($event)" style="width: 8em"></p-button>
+            </div>
+            <div class="col-3">
+                <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
+                            @update:model-value="onToggle" class=" text-end"
+                            placeholder="可选显示列" style="width: 20em"></p-multiselect>
+            </div>
+        </p-blockui>
+    </template>
+    <template #empty>
+                <span class="emptyInfo">
+                    未检索到符合条件的数据
+                </span>
+    </template>
+    <template #loading>
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <span>加载中，别急~</span>
+    </template>
+    <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
+    <p-column header="序号" field="id" exportHeader="Entry Id" :sortable="true" style="flex: 0 0 5rem">
+        <template #body="slotProps" v-if="editAuth > 1">
+            <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
+                {{slotProps.data.id}}
+            </p-button>
+        </template>
+    </p-column>
+    <p-column header="原名" field="name" :show-filter-menu="false"
+                style="flex: 0 0 10rem">
+        <template #body="slotProps">
+            <a :href="'/db/entry/' + slotProps.data.id">
+                {{slotProps.data.name}}
+            </a>
+        </template>
+        <template #filter="{filterModel,filterCallback}">
+            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+        </template>
+    </p-column>
+    <p-column header="名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 10rem">
+        <template #filter="{filterModel,filterCallback}">
+            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+        </template>
+    </p-column>
+    <p-column header="名称(英)" field="nameEn" :show-filter-menu="false" style="flex: 0 0 10rem">
+        <template #filter="{filterModel,filterCallback}">
+            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+        </template>
+    </p-column>
+    <p-column header="别名" field="alias" style="flex: 0 0 10rem">
+        <template #body="slotProps">
+            <ul class="px-4">
+                <li v-for="item in slotProps.data.alias">
+                    {{item}}
+                </li>
+            </ul>
+        </template>
+    </p-column>
+    <p-column header="分类" field="category" :show-filter-menu="false" style="flex: 0 0 7rem">
+        <template #body="slotProps">
+            {{slotProps.data.category.label}}
+        </template>
+        <template #filter="{filterModel,filterCallback}">
+            <p-dropdown v-model="filterModel.value" @change="filterCallback()" 
+            :options="entryCategorySet" option-label="label" option-value="value" style="width: 5rem" >
+            </p-dropdown>
+        </template>
+    </p-column>
+    <p-column v-for="(col, index) of selectedColumns" :field="col.field"
+                :header="col.header" :key="col.field + '_' + index" :sortable="true">
+    </p-column>
+</p-datatable>
+<p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据"
+            class="p-fluid">
+    <p-blockui :blocked="editBlock">
+        <p-panel header="基础信息">
+            <div class="field">
+                <label>原名<span style="color: red">*</span></label>
+                <p-inputtext v-model="item.name"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>名称(中)<span style="color: red">*</span></label>
+                <p-inputtext v-model="item.nameZh"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>名称(英)<span style="color: red">*</span></label>
+                <p-inputtext v-model="item.nameEn"></p-inputtext>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-9">
+                    <label>别名</label>
+                    <p-chips v-model="item.alias" separator=","></p-chips>
+                </div>
+                <div class="field col-3">
+                    <label>分类<span style="color: red">*</span></label>
+                    <p-dropdown v-model="item.category" :options="entryCategorySet"
+                        option-label="label" option-value="value">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="field">
+                <label>链接</label>
+                <p-chips v-model="item.links" separator=",">
+                    <template #chip="slotProps">
+                        <div>
+                            <i class="pi pi-link" style="font-size: 14px"></i>
+                            <span>&nbsp&nbsp{{slotProps.value}}</span>
+                        </div>
+                    </template>
+                </p-chips>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea id="remark" v-model="item.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+    </p-blockui>
+    <template #footer>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem" :disabled="editBlock"></p-button>
+    </template>
+</p-dialog>
+<p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据"
+            class="p-fluid">
+    <p-blockui :blocked="editBlock">
+        <p-panel header="基础信息">
+            <div class="field">
+                <label>原名<span style="color: red">*</span></label>
+                <p-inputtext v-model="itemEdit.name"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>名称(中)<span style="color: red">*</span></label>
+                <p-inputtext v-model="itemEdit.nameZh"></p-inputtext>
+            </div>
+            <div class="field">
+                <label>名称(英)<span style="color: red">*</span></label>
+                <p-inputtext v-model="itemEdit.nameEn"></p-inputtext>
+            </div>
+            <div class="formgrid grid">
+                <div class="field col-9">
+                    <label>别名</label>
+                    <p-chips v-model="itemEdit.alias" separator=","></p-chips>
+                </div>
+                <div class="field col-3">
+                    <label>分类<span style="color: red">*</span></label>
+                    <p-dropdown v-model="itemEdit.category" :options="entryCategorySet"
+                        option-label="label" option-value="value">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="field">
+                <label>链接</label>
+                <p-chips v-model="itemEdit.links" separator=",">
+                    <template #chip="slotProps">
+                        <div>
+                            <i class="pi pi-link" style="font-size: 14px"></i>
+                            <span>&nbsp&nbsp{{slotProps.value}}</span>
+                        </div>
+                    </template>
+                </p-chips>
+            </div>
+            <div class="field">
+                <label>备注</label>
+                <p-textarea id="remark" v-model="itemEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+            </div>
+        </p-panel>
+    </p-blockui>
+    <template #footer>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                    @click="closeEditDialog" :disabled="editBlock"></p-button>
+        <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                    @click="submitEditItem" :disabled="editBlock"></p-button>
+    </template>
+</p-dialog>
+<p-dialog :modal="true" v-model:visible="deleteDialog" :style="{width: '450px'}" header="删除数据">
+    <p-blockui :blocked="editBlock">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span v-if="item">确定删除所选的数据？</span>
+        </div>
+    </p-blockui>
+    <template #footer>
+        <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                    @click="deleteDialog = false" :disabled="editBlock"></p-button>
+        <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                    @click="deleteSelectedItems" :disabled="editBlock"></p-button>
+    </template>
+</p-dialog>
+    `,
+    mounted() {
+        this.initData();
+        this.init();
+    },
+    data() {
+        return {
+            //region common
+            toast: useToast(),
+            loading: false,
+            dt: null,
+            totalLoading: false,
+            editAuth: null,
+            //endregion
+
+            //region search param
+            totalRecords: 0,
+            queryParams: {},
+            filters: {
+                'name': {value: ''},
+                'nameZh': {value: ''},
+                'nameEn': {value: ''},
+                'category': {value: null}
+            },
+            //endregion
+
+            //region basic
+            item: {},
+            items: [],
+
+            entryCategorySet: [],
+            columns: [
+                {field: 'remark', header: '备注'},
+                {field: 'addedTime', header: '收录时间'},
+                {field: 'editedTime', header: '编辑时间'},
+            ],
+            //endregion
+
+            //region edit
+            itemEdit: {},
+            editBlock: false,
+            selectedItems: null,
+            selectedColumns: null,
+            displayNewDialog: false,
+            displayEditDialog: false,
+            deleteDialog: false,
+            //endregion
+
+        }
+    },
+    methods: {
+        //region common
+        exportCSV() {
+            HttpUtil.get(null, CHECK_USER_AUTHORITY_URL)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.$refs.dt.exportCSV();
+                    }
+                })
+        },
+        //初始化
+        initData() {
+            this.loading = true;
+            let json = {
+                entityType: ENTITY.ENTRY
+            };
+            this.totalLoading = true;
+            HttpUtil.post(null, GET_LIST_INIT_DATA_URL, json)
+                .then(res => {
+                    this.editAuth = res.editAuth;
+                    this.entryCategorySet = res.entryCategorySet;
+                    this.loading = false;
+                    this.totalLoading = false;
+                })
+        },
+        init() {
+            this.loading = true;
+            this.queryParams = {
+                first: (this.queryParams !== {}?this.queryParams.first:0),
+                rows: this.$refs.dt.rows,
+                sortField: null,
+                sortOrder: null,
+                filters: this.filters
+            };
+            this.getItems();
+            this.loading = false;
+        },
+        //endregion
+
+        //region search
+        onToggle(val) {
+            this.selectedColumns = this.columns.filter(col => val.includes(col));
+        },
+        onPage(ev) {
+            this.queryParams = ev;
+            this.getItems();
+        },
+        onSort(ev) {
+            this.queryParams = ev;
+            this.getItems();
+        },
+        onFilter() {
+            this.queryParams.filters = this.filters;
+            this.queryParams.first = 0;
+            this.getItems();
+        },
+        getItems() {
+            let json = {
+                pageLabel: "list",
+                queryParams: this.queryParams
+            }
+            HttpUtil.post(null, GET_ENTRIES_URL, json)
+                .then(res => {
+                    this.items = res.data;
+                    this.totalRecords = res.total;
+                })
+        },
+        //endregion
+
+        //region edit
+        getNameByCode,
+        //打开删除确认面板
+        confirmDeleteSelected() {
+            this.deleteDialog = true;
+        },
+        deleteSelectedItems() {
+            this.editBlock = true;
+            HttpUtil.deleteRequest(this.toast, DELETE_ENTRY_URL, this.selectedItems)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.deleteDialog = false;
+                        this.selectedItems = null;
+                        this.init();
+                    }
+                    this.editBlock = false;
+                });
+        },
+        //打开编辑数据面板
+        openEditDialog(data) {
+            let dataTmp = JSON.parse(JSON.stringify(data));
+            this.itemEdit = dataTmp;
+            this.itemEdit.category = dataTmp.category.value;
+            this.displayEditDialog = true;
+        },
+        //关闭编辑数据面板
+        closeEditDialog() {
+            this.displayEditDialog = false;
+            this.itemEdit = {};
+        },
+        //保存编辑数据
+        submitEditItem() {
+            this.editBlock = true;
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_ENTRY_URL, this.itemEdit)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.itemEdit = {};
+                        this.closeEditDialog();
+                        this.init();
+                    }
+                    this.editBlock = false;
+                }).catch(e => {
+                console.error(e);
+            });
+        },
+        //打开新增数据面板
+        openNewDialog() {
+            this.item = {};
+            this.displayNewDialog = true;
+        },
+        //关闭新增数据面板
+        closeNewDialog() {
+            this.item = {};
+            this.displayNewDialog = false;
+        },
+        //提交新增数据
+        submitNewItem() {
+            HttpUtil.commonVueSubmit(this.toast, INSERT_ENTRY_URL, this.item)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.item = {};
+                        this.closeNewDialog();
+                        this.init();
+                    }
+                    this.editBlock = false;
+                });
+        }
+        //endregion
+
+    },
+    components: {
+        "p-datatable": primevue.datatable,
+        "p-column": primevue.column,
+        "p-dialog": primevue.dialog,
+        "p-textarea": primevue.textarea,
+        "p-toolbar": primevue.toolbar,
+        "p-toast": primevue.toast,
+        "p-panel": primevue.panel,
+        "p-inputtext": primevue.inputtext,
+        "p-button": primevue.button,
+        "p-dropdown": primevue.dropdown,
+        "p-blockui": primevue.blockui,
+        "p-chips": primevue.chips,
+        "p-multiselect": primevue.multiselect,
+    }
+}
+
 const albumDbList = {
     template: `
         <p-toast></p-toast>
@@ -278,49 +694,9 @@ const albumDbList = {
                     </p-multiselect>
                 </div>
             </div>
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label>唱片公司</label>
-                    <p-inputtext id="label" v-model.trim="album.label"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>发行商</label>
-                    <p-inputtext id="publisher" v-model.trim="album.publisher"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>经销商</label>
-                    <p-inputtext id="distributor" v-model.trim="album.distributor"></p-inputtext>
-                </div>
-                <div class="field col">
-                    <label>版权方</label>
-                    <p-inputtext id="copyright" v-model.trim="album.copyright"></p-inputtext>
-                </div>
-            </div>
             <div class="field">
                 <label>备注</label>
                 <p-textarea id="remark" v-model="album.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
-            <p-panel header="其他信息">
-            <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加曲目，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加图片，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需图片描述信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需图片特典信息，请到专辑详情页面进行</em></span>
             </div>
         </p-panel>
         </p-blockui>
@@ -423,52 +799,12 @@ const albumDbList = {
                         </p-multiselect>
                     </div>
                 </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label>唱片公司</label>
-                        <p-inputtext id="label" v-model.trim="itemEdit.label"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label>发行商</label>
-                        <p-inputtext id="publisher" v-model.trim="itemEdit.publisher"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label>经销商</label>
-                        <p-inputtext id="distributor" v-model.trim="itemEdit.distributor"></p-inputtext>
-                    </div>
-                    <div class="field col">
-                        <label>版权方</label>
-                        <p-inputtext id="copyright" v-model.trim="itemEdit.copyright"></p-inputtext>
-                    </div>
-                </div>
                 <div class="field">
                     <label>备注</label>
                     <p-textarea id="remark" v-model="itemEdit.remark" rows="3" cols="20"
                                 :auto-resize="true"></p-textarea>
                 </div>
             </p-panel>
-            <p-panel header="其他信息">
-            <p-divider align="center" type="dashed"><b>曲目</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑曲目等操作，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>创作者</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加创作者信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片等操作，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需编辑描述信息，请到专辑详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需编辑特典信息，请到专辑详情页面进行</em></span>
-            </div>
-        </p-panel>
         </p-blockui>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -537,10 +873,6 @@ const albumDbList = {
                 {field: 'nameZh', header: '专辑名称(中文)'},
                 {field: 'nameEn', header: '专辑名称(英文)'},
                 {field: 'remark', header: '备注'},
-                {field: 'label', header: '唱片公司'},
-                {field: 'publisher', header: '发行商'},
-                {field: 'distributor', header: '经销商'},
-                {field: 'copyright', header: '版权方'},
             ],
             //endregion
 
@@ -970,7 +1302,7 @@ const bookDbList = {
                 <template #value="slotProps">
                     <div class="country-item" v-if="slotProps.value">
                         <span :class="'fi fi-' + slotProps.value"></span>
-                        <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                        <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                     </div>
                     <span v-else>选择地区</span>
                 </template>
@@ -1049,7 +1381,7 @@ const bookDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -1120,28 +1452,6 @@ const bookDbList = {
                         :auto-resize="true"></p-textarea>
         </div>
     </p-panel>
-    <p-panel header="进阶信息">
-        <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
-        </div>
-    </p-panel>
     </p-blockui>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
@@ -1198,7 +1508,7 @@ const bookDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -1267,28 +1577,6 @@ const bookDbList = {
             <label>备注</label>
             <p-textarea v-model="itemEdit.remark" rows="3" cols="20"
                         :auto-resize="true"></p-textarea>
-        </div>
-    </p-panel>
-    <p-panel header="进阶信息">
-        <p-divider align="center" type="dashed"><b>作者信息</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑作者信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑规格信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑描述信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑特典信息，请到图书详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑图片信息，请到图书详情页面进行</em></span>
         </div>
     </p-panel>
     </p-blockui>
@@ -1479,7 +1767,7 @@ const bookDbList = {
                     }
                 })
         },
-        regionCode2NameZh,
+        getNameByCode,
         //打开删除确认面板
         confirmDeleteSelected() {
             this.deleteDialog = true;
@@ -1779,7 +2067,7 @@ const discDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -1867,7 +2155,7 @@ const discDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -1945,24 +2233,6 @@ const discDbList = {
                         :auto-resize="true"></p-textarea>
         </div>
     </p-panel>
-    <p-panel header="进阶信息">
-        <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑规格信息，请到碟片详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑描述信息，请到碟片详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑特典信息，请到碟片详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
-        </div>
-    </p-panel>
     </p-blockui>
     <template #footer>
         <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
@@ -2005,7 +2275,7 @@ const discDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -2081,24 +2351,6 @@ const discDbList = {
             <label>备注</label>
             <p-textarea v-model="itemEdit.remark" rows="3" cols="20"
                         :auto-resize="true"></p-textarea>
-        </div>
-    </p-panel>
-    <p-panel header="进阶信息">
-        <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑规格信息，请到碟片详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑描述信息，请到碟片详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑特典信息，请到碟片详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑图片信息，请到碟片详情页面进行</em></span>
         </div>
     </p-panel>
     </p-blockui>
@@ -2287,7 +2539,7 @@ const discDbList = {
                     }
                 })
         },
-        regionCode2NameZh,
+        getNameByCode,
         //打开删除确认面板
         confirmDeleteSelected() {
             this.deleteDialog = true;
@@ -2563,7 +2815,7 @@ const gameDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -2647,7 +2899,7 @@ const gameDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -2680,28 +2932,6 @@ const gameDbList = {
             <label>备注</label>
             <p-textarea v-model="game.remark" rows="3" cols="20"
                         :auto-resize="true"></p-textarea>
-        </div>
-    </p-panel>
-    <p-panel header="进阶信息">
-        <p-divider align="center" type="dashed"><b>关联组织信息</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑关联组织信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>开发制作人员信息</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑开发制作人员信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑描述信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑特典信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
         </div>
     </p-panel>
     </p-blockui>
@@ -2769,7 +2999,7 @@ const gameDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -2802,28 +3032,6 @@ const gameDbList = {
             <label>备注</label>
             <p-textarea v-model="itemEdit.remark" rows="3" cols="20"
                         :auto-resize="true"></p-textarea>
-        </div>
-    </p-panel>
-    <p-panel header="进阶信息">
-        <p-divider align="center" type="dashed"><b>关联组织信息</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑关联组织信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>开发制作人员信息</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑开发制作人员信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑描述信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>特典</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑特典信息，请到游戏详情页面进行</em></span>
-        </div>
-        <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-        <div class="field">
-            <span style="text-align: center"><em>添加和编辑图片信息，请到游戏详情页面进行</em></span>
         </div>
     </p-panel>
     </p-blockui>
@@ -3010,7 +3218,7 @@ const gameDbList = {
                     }
                 })
         },
-        regionCode2NameZh,
+        getNameByCode,
         //打开删除确认面板
         confirmDeleteSelected() {
             this.deleteDialog = true;
@@ -3251,7 +3459,7 @@ const merchDbList = {
                     <template #value="slotProps">
                         <div class="country-item" v-if="slotProps.value">
                             <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
@@ -3316,7 +3524,6 @@ const merchDbList = {
                                :disabled="productSelect" style="width: 15rem" >
                 </p-multiselect>
             </template>
-
         </p-column>
         <p-column v-for="(col, index) of selectedColumns" :field="col.field"
                   :header="col.header" :key="col.field + '_' + index" :sortable="true">
@@ -3360,7 +3567,7 @@ const merchDbList = {
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                             </div>
                             <span v-else>选择地区</span>
                         </template>
@@ -3422,20 +3629,6 @@ const merchDbList = {
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑规格信息，请到周边商品详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑描述信息，请到周边商品详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片信息，请到周边商品详情页面进行</em></span>
-            </div>
-        </p-panel>
         </p-blockui>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -3482,7 +3675,7 @@ const merchDbList = {
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                             </div>
                             <span v-else>选择地区</span>
                         </template>
@@ -3542,20 +3735,6 @@ const merchDbList = {
                 <label>备注</label>
                 <p-textarea v-model="itemEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
-        <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>规格</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑规格信息，请到周边商品详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑描述信息，请到周边商品详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>添加和编辑图片信息，请到周边商品详情页面进行</em></span>
             </div>
         </p-panel>
         </p-blockui>
@@ -3742,7 +3921,7 @@ const merchDbList = {
                     }
                 })
         },
-        regionCode2NameZh,
+        getNameByCode,
         //打开删除确认面板
         confirmDeleteSelected() {
             this.deleteDialog = true;
@@ -4027,16 +4206,6 @@ const productDbList = {
                     <p-textarea v-model="product.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
                 </div>
             </p-panel>
-            <p-panel header="其他信息">
-                <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                <div class="field">
-                    <span style="text-align: center"><em>如需添加图片，请到作品详情页面进行</em></span>
-                </div>
-                <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-                <div class="field">
-                    <span style="text-align: center"><em>如需图片描述信息，请到作品详情页面进行</em></span>
-                </div>
-            </p-panel>
         </p-blockui>
         <template #footer>
             <p-button label="取消" icon="pi pi-times" class="p-button-text"
@@ -4088,16 +4257,6 @@ const productDbList = {
                 <div class="field">
                     <label>备注</label>
                     <p-textarea v-model="itemEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-                </div>
-            </p-panel>
-            <p-panel header="其他信息">
-                <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-                <div class="field">
-                    <span style="text-align: center"><em>如需添加图片，请到作品详情页面进行</em></span>
-                </div>
-                <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-                <div class="field">
-                    <span style="text-align: center"><em>如需图片描述信息，请到作品详情页面进行</em></span>
                 </div>
             </p-panel>
         </p-blockui>
@@ -4451,16 +4610,6 @@ const franchiseDbList = {
                             :auto-resize="true"></p-textarea>
             </div>
         </p-panel>
-        <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
-            </div>
-        </p-panel>
         <p-panel header="子系列">
             <div class="formgrid grid">
                 <div class="field col-3">
@@ -4517,16 +4666,6 @@ const franchiseDbList = {
                 <label>备注</label>
                 <p-textarea v-model="itemEdit.remark" rows="3" cols="20"
                             :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
-        <p-panel header="进阶信息">
-            <p-divider align="center" type="dashed"><b>图片</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需添加图片，请到详情页面进行</em></span>
-            </div>
-            <p-divider align="center" type="dashed"><b>描述</b></p-divider>
-            <div class="field">
-                <span style="text-align: center"><em>如需图片描述信息，请到详情页面进行</em></span>
             </div>
         </p-panel>
         <p-panel header="子系列" v-if="itemEdit.metaLabel">
@@ -4768,7 +4907,11 @@ const franchiseDbList = {
 export const DATABASE_LIST_ROUTER = [
     {
         path: '/db/list',
-        component: albumDbList
+        component: entryDbList
+    },
+    {
+        path: '/db/list/entry',
+        component: entryDbList
     },
     {
         path: '/db/list/album',

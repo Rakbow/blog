@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.ImageInfo;
+import com.rakbow.website.data.Image;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.image.ImageProperty;
 import com.rakbow.website.data.emun.image.ImageType;
@@ -32,42 +32,32 @@ public class CommonImageUtil {
     /**
      * 对新增图片信息合法性进行检测，图片类型
      *
-     * @param imageInfos,images 新增图片信息，专辑原图片集合
+     * @param newImages,originalImages 新增图片信息，专辑原图片集合
      * @return boolean
      * @author rakbow
      */
-    public static String checkAddImages(JSONArray imageInfos, JSONArray images) {
+    public static void checkAddImages(List<Image> newImages, List<Image> originalImages) throws Exception {
 
         int coverCount = 0;
 
-        if (images.size() != 0) {
+        if (!originalImages.isEmpty()) {
 
-            for (int i = 0; i < images.size(); i++) {
-                if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+            for (Image originalImage : originalImages) {
+                if (originalImage.getType() == ImageType.COVER.getId()) {
                     coverCount++;
                 }
             }
-            for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
-                    coverCount++;
-                }
+        }
+        for (Image newImage : newImages) {
+            if (newImage.getType() == ImageType.COVER.getId()) {
+                coverCount++;
             }
-        } else {
-
-            for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
-                    coverCount++;
-                }
-            }
-
         }
 
         //检测图片类型为封面的个数是否大于1
         if (coverCount > 1) {
-            return ApiInfo.COVER_COUNT_EXCEPTION;
+            throw new Exception(ApiInfo.COVER_COUNT_EXCEPTION);
         }
-
-        return "";
     }
 
     /**
@@ -81,7 +71,7 @@ public class CommonImageUtil {
         //封面类型的图片个数
         int coverCount = 0;
         for (int i = 0; i < images.size(); i++) {
-            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
                 coverCount++;
             }
         }
@@ -122,9 +112,9 @@ public class CommonImageUtil {
      */
     public static String getCoverUrl (String imageString) {
         JSONArray imageJson = JSON.parseArray(imageString);
-        List<ImageInfo> images = imageJson.toJavaList(ImageInfo.class);
-        for (ImageInfo image : images) {
-            if (Integer.parseInt(image.getType()) == ImageType.COVER.getIndex()) {
+        List<Image> images = imageJson.toJavaList(Image.class);
+        for (Image image : images) {
+            if (image.getType() == ImageType.COVER.getId()) {
                 return image.getUrl();
             }
         }
@@ -163,7 +153,7 @@ public class CommonImageUtil {
         cover.put("name", "404");
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                if (Integer.parseInt(imageVO.getType()) == ImageType.COVER.getIndex()) {
+                if (imageVO.getType() == ImageType.COVER.getId()) {
 
                     if (isWidth) {
                         cover.put("url", QiniuImageUtil.getThumbUrlWidth(imageVO.getUrl(), coverSize));
@@ -179,8 +169,8 @@ public class CommonImageUtil {
         JSONArray displayImages = new JSONArray();
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                if (Integer.parseInt(imageVO.getType()) == ImageType.DISPLAY.getIndex()
-                        || Integer.parseInt(imageVO.getType()) == ImageType.COVER.getIndex()) {
+                if (imageVO.getType() == ImageType.DISPLAY.getId()
+                        || imageVO.getType() == ImageType.COVER.getId()) {
                     displayImages.add(imageVO);
                 }
             }
@@ -190,7 +180,7 @@ public class CommonImageUtil {
         JSONArray otherImages = new JSONArray();
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                if (Integer.parseInt(imageVO.getType()) == ImageType.OTHER.getIndex()) {
+                if (imageVO.getType() == ImageType.OTHER.getId()) {
                     otherImages.add(imageVO);
                 }
             }

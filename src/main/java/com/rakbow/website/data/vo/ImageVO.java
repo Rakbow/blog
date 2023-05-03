@@ -16,9 +16,8 @@ public class ImageVO {
     private String thumbUrl50;//缩略图url(50px)
     private String nameEn;//图片名(英)
     private String nameZh;//图片名(中)
-    private String type;//图片类型
+    private int type;//图片类型
     private String description;//图片描述
     private String uploadTime;//图片上传时间
-    private String uploadUser;//图片上传用户
 
 }

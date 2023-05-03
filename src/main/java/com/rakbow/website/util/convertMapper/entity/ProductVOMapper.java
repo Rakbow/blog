@@ -1,14 +1,13 @@
-package com.rakbow.website.util.convertMapper;
+package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.data.vo.product.ProductVOBeta;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
@@ -48,7 +47,7 @@ public interface ProductVOMapper {
         productVO.setNameEn(product.getNameEn());
         productVO.setNameZh(product.getNameZh());
         productVO.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
-        productVO.setCategory(ProductCategory.getProductCategory(product.getCategory()));
+        productVO.setCategory(ProductCategory.getAttribute(product.getCategory()));
         productVO.setRemark(product.getRemark());
 
         //关联信息
@@ -77,11 +76,10 @@ public interface ProductVOMapper {
         productVOAlpha.setNameEn(product.getNameEn());
         productVOAlpha.setNameZh(product.getNameZh());
         productVOAlpha.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
-        productVOAlpha.setCategory(ProductCategory.getProductCategory(product.getCategory()));
         productVOAlpha.setRemark(product.getRemark());
 
         //关联信息
-        productVOAlpha.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
+        productVOAlpha.setCategory(ProductCategory.getAttribute(product.getCategory()));
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
@@ -146,7 +144,7 @@ public interface ProductVOMapper {
         productVOBeta.setNameEn(product.getNameEn());
         productVOBeta.setNameZh(product.getNameZh());
         productVOBeta.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
-        productVOBeta.setCategory(ProductCategory.getProductCategory(product.getCategory()));
+        productVOBeta.setCategory(ProductCategory.getAttribute(product.getCategory()));
 
         //关联信息
         productVOBeta.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));

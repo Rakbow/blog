@@ -2,6 +2,7 @@ package com.rakbow.website.data.vo.game;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
 /**
@@ -21,8 +22,8 @@ public class GameVOBeta {
     private String releaseDate;//发售日期
 
     //复杂字段
-    private JSONObject releaseType;//发售类型
-    private JSONObject platform;//平台
+    private Attribute releaseType;//发售类型
+    private Attribute platform;//平台
     private JSONObject region;//地区
 
     //图片相关

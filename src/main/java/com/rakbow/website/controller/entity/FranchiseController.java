@@ -1,14 +1,12 @@
 package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
@@ -17,19 +15,18 @@ import com.rakbow.website.service.FranchiseService;
 import com.rakbow.website.service.ProductService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.convertMapper.FranchiseVOMapper;
+import com.rakbow.website.util.common.EntityUtil;
+import com.rakbow.website.util.convertMapper.entity.FranchiseVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -42,6 +39,8 @@ import java.util.List;
 @RequestMapping("/db/franchise")
 public class FranchiseController {
 
+    private static final Logger logger = LoggerFactory.getLogger(FranchiseController.class);
+
     //region ------注入依赖------
 
     @Resource
@@ -51,7 +50,7 @@ public class FranchiseController {
     @Resource
     private UserService userService;
     @Resource
-    private EntityUtils entityUtils;
+    private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
 
@@ -70,14 +69,15 @@ public class FranchiseController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.FRANCHISE.getNameZh()));
             return "/error/404";
         }
+
         model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
         model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
         //前端选项数据
-        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.FRANCHISE.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.FRANCHISE.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise, request));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
+        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(franchise.getImages(), 200, EntityType.FRANCHISE, false));
         return "/database/itemDetail/franchise-detail";

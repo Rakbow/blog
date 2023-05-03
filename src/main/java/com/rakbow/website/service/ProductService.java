@@ -9,26 +9,21 @@ import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.emun.entity.product.ProductCategory;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.entity.User;
 import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.convertMapper.ProductVOMapper;
+import com.rakbow.website.util.convertMapper.entity.ProductVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
-import com.rakbow.website.util.file.QiniuImageUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -81,12 +76,6 @@ public class ProductService {
         return productMapper.getProduct(id, false);
     }
 
-    //获取所有作品
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Product> getAllProduct() {
-        return productMapper.getAll();
-    }
-
     //更新作品信息
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProduct(int id, Product product) {
@@ -102,37 +91,25 @@ public class ProductService {
     }
 
     //通过系列Id获取所有作品的数组，供前端选项用
-    public List<JSONObject> getProductSet(int franchiseId, int entityType) {
-
-        List<Integer> franchises = new ArrayList<>();
-        franchises.add(franchiseId);
-
-        List<Integer> categories = ProductUtil.getCategoriesByEntityType(entityType);
-
-        List<JSONObject> productSet = new ArrayList<>();
-        productMapper.getProductsByFilter(null, null, franchises, categories, false,
-                null, -1, 0, 0).forEach(product -> {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("label", product.getNameZh() + "(" + ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
-            jsonObject.put("value", product.getId());
-            productSet.add(jsonObject);
-        });
-        return productSet;
-    }
-
-    //通过系列Id获取所有作品的数组，供前端选项用
-    public JSONArray getProductSet(List<Integer> franchises, int entityType) {
+    public JSONArray getProductSet(List<Integer> franchises, int entityType, String lang) {
 
         JSONArray productSet = new JSONArray();
 
         if (franchises.size() != 0) {
             List<Integer> categories = ProductUtil.getCategoriesByEntityType(entityType);
-            productMapper.getProductsByFilter(null, null, franchises, categories, false,
-                    null, -1, 0, 0).forEach(product -> {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("value", product.getId());
-                jsonObject.put("label", product.getNameZh() + "(" + ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
-                productSet.add(jsonObject);
+            List<Product> products = productMapper.getProductsByFilter(null, null, franchises, categories,
+                    false, null, -1, 0, 0);
+            products.forEach(product -> {
+                JSONObject jo = new JSONObject();
+                jo.put("value", product.getId());
+                if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+                    jo.put("label", product.getNameZh() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
+                }
+                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                    jo.put("label", product.getNameEn() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
+                }
+
+                productSet.add(jo);
             });
         }
         return productSet;
@@ -271,16 +248,28 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public void refreshRedisProducts() {
 
-        JSONArray products = new JSONArray();
-        getAllProduct().forEach(product -> {
+        List<Product> products = productMapper.getAll();
+
+        JSONArray productsZh = new JSONArray();
+        products.forEach(product -> {
             JSONObject item = new JSONObject();
             item.put("value", product.getId());
             item.put("label", product.getNameZh() + "(" +
-                    ProductCategory.getNameZhByIndex(product.getCategory()) + ")");
-            products.add(item);
+                    ProductCategory.getNameById(product.getCategory(), SystemLanguage.CHINESE.getCode()) + ")");
+            productsZh.add(item);
         });
 
-        redisUtil.set(RedisCacheConstant.PRODUCT_SET, products);
+        JSONArray productsEn = new JSONArray();
+        products.forEach(product -> {
+            JSONObject item = new JSONObject();
+            item.put("value", product.getId());
+            item.put("label", product.getNameEn() + "(" +
+                    ProductCategory.getNameById(product.getCategory(), SystemLanguage.ENGLISH.getCode()) + ")");
+            productsEn.add(item);
+        });
+
+        redisUtil.set(RedisCacheConstant.PRODUCT_SET_ZH, productsZh);
+        redisUtil.set(RedisCacheConstant.PRODUCT_SET_EN, productsEn);
         //缓存时间1个月
 //        redisUtil.expire(RedisCacheConstant.PRODUCT_SET, 2592000);
 

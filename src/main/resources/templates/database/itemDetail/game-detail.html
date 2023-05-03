@@ -357,7 +357,7 @@
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                             </div>
                             <span v-else>{{RKW_Web.PlaceholderRegion}}</span>
                         </template>
@@ -946,7 +946,7 @@
                 //basic
                 game, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
                 gamePlatformSet, regionSet, releaseTypeSet, productSet, relatedGames, responsiveOptions, relatedItemLoad, tmpList5,
-                regionCode2NameZh,
+                getNameByCode,
 
                 //edit
                 editBlock, gameEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditGame,

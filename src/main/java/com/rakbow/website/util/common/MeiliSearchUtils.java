@@ -1,8 +1,6 @@
 package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.meilisearch.sdk.Client;
 import com.meilisearch.sdk.Config;
 import com.meilisearch.sdk.Index;
@@ -11,14 +9,11 @@ import com.meilisearch.sdk.exceptions.MeilisearchException;
 import com.meilisearch.sdk.model.SearchResult;
 import com.rakbow.website.data.MeiliSearchResult;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.entity.*;
-import com.rakbow.website.util.convertMapper.*;
+import com.rakbow.website.util.convertMapper.entity.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,86 +47,86 @@ public class MeiliSearchUtils {
         add(EntityType.MERCH.getId());
     }};
 
-    /**
-     * 存储单个数据到搜索引擎
-     *
-     * @param object,entityType 数据,实体类型
-     * @author rakbow
-     */
-    public void saveSingleData(Object object, EntityType entityType) throws MeilisearchException {
+    // /**
+    //  * 存储单个数据到搜索引擎
+    //  *
+    //  * @param object,entityType 数据,实体类型
+    //  * @author rakbow
+    //  */
+    // public void saveSingleData(Object object, EntityType entityType) throws MeilisearchException {
+    //
+    //     Client client = new Client(new Config(hostUrl + ":" + port, apiKey));
+    //
+    //     Index index = client.index(entityType.getNameEn().toLowerCase());
+    //
+    //     if (entityType == EntityType.ALBUM) {
+    //         Album album = (Album) object;
+    //         index.addDocuments(JSON.toJSONString(albumVOMapper.album2VOGamma(album)));
+    //     }
+    //     if (entityType == EntityType.BOOK) {
+    //         Book book = (Book) object;
+    //         index.addDocuments(JSON.toJSONString(bookVOMapper.book2VOGamma(book)));
+    //     }
+    //     if (entityType == EntityType.DISC) {
+    //         Disc disc = (Disc) object;
+    //         index.addDocuments(JSON.toJSONString(discVOMapper.disc2VOGamma(disc)));
+    //     }
+    //     if (entityType == EntityType.GAME) {
+    //         Game game = (Game) object;
+    //         index.addDocuments(JSON.toJSONString(gameVOMapper.game2VOGamma(game)));
+    //     }
+    //     if (entityType == EntityType.MERCH) {
+    //         Merch merch = (Merch) object;
+    //         index.addDocuments(JSON.toJSONString(merchVOMapper.merch2VOGamma(merch)));
+    //     }
+    //     if (entityType == EntityType.PRODUCT) {
+    //         Product product = (Product) object;
+    //         index.addDocuments(JSON.toJSONString(productVOMapper.product2VOBeta(product)));
+    //     }
+    // }
 
-        Client client = new Client(new Config(hostUrl + ":" + port, apiKey));
-
-        Index index = client.index(entityType.getNameEn().toLowerCase());
-
-        if (entityType == EntityType.ALBUM) {
-            Album album = (Album) object;
-            index.addDocuments(JSON.toJSONString(albumVOMapper.album2VOGamma(album)));
-        }
-        if (entityType == EntityType.BOOK) {
-            Book book = (Book) object;
-            index.addDocuments(JSON.toJSONString(bookVOMapper.book2VOGamma(book)));
-        }
-        if (entityType == EntityType.DISC) {
-            Disc disc = (Disc) object;
-            index.addDocuments(JSON.toJSONString(discVOMapper.disc2VOGamma(disc)));
-        }
-        if (entityType == EntityType.GAME) {
-            Game game = (Game) object;
-            index.addDocuments(JSON.toJSONString(gameVOMapper.game2VOGamma(game)));
-        }
-        if (entityType == EntityType.MERCH) {
-            Merch merch = (Merch) object;
-            index.addDocuments(JSON.toJSONString(merchVOMapper.merch2VOGamma(merch)));
-        }
-        if (entityType == EntityType.PRODUCT) {
-            Product product = (Product) object;
-            index.addDocuments(JSON.toJSONString(productVOMapper.product2VOBeta(product)));
-        }
-    }
-
-    /**
-     * 存储批量数据到搜索引擎
-     *
-     * @param object,entityType 数据,实体类型
-     * @author rakbow
-     */
-    public void saveMultiData(Object object, EntityType entityType) throws MeilisearchException {
-
-        Client client = new Client(new Config(hostUrl + ":" + port, apiKey));
-
-        Index index = client.index(entityType.getNameEn().toLowerCase());
-
-        JSONArray data = new JSONArray();
-
-        if (entityType == EntityType.ALBUM) {
-            List<Album> albums = (List<Album>) object;
-            albums.forEach(album -> data.add(albumVOMapper.album2VOGamma(album)));
-        }
-        if (entityType == EntityType.BOOK) {
-            List<Book> books = (List<Book>) object;
-            books.forEach(book -> data.add(bookVOMapper.book2VOGamma(book)));
-        }
-        if (entityType == EntityType.DISC) {
-            List<Disc> discs = (List<Disc>) object;
-            discs.forEach(disc -> data.add(discVOMapper.disc2VOGamma(disc)));
-        }
-        if (entityType == EntityType.GAME) {
-            List<Game> games = (List<Game>) object;
-            games.forEach(game -> data.add(gameVOMapper.game2VOGamma(game)));
-        }
-        if (entityType == EntityType.MERCH) {
-            List<Merch> merchs = (List<Merch>) object;
-            merchs.forEach(merch -> data.add(merchVOMapper.merch2VOGamma(merch)));
-        }
-        if (entityType == EntityType.PRODUCT) {
-            List<Product> products = (List<Product>) object;
-            products.forEach(product -> data.add(productVOMapper.product2VOBeta(product)));
-
-        }
-
-        index.addDocuments(data.toJSONString());
-    }
+    // /**
+    //  * 存储批量数据到搜索引擎
+    //  *
+    //  * @param object,entityType 数据,实体类型
+    //  * @author rakbow
+    //  */
+    // public void saveMultiData(Object object, EntityType entityType) throws MeilisearchException {
+    //
+    //     Client client = new Client(new Config(hostUrl + ":" + port, apiKey));
+    //
+    //     Index index = client.index(entityType.getNameEn().toLowerCase());
+    //
+    //     JSONArray data = new JSONArray();
+    //
+    //     if (entityType == EntityType.ALBUM) {
+    //         List<Album> albums = (List<Album>) object;
+    //         albums.forEach(album -> data.add(albumVOMapper.album2VOGamma(album)));
+    //     }
+    //     if (entityType == EntityType.BOOK) {
+    //         List<Book> books = (List<Book>) object;
+    //         books.forEach(book -> data.add(bookVOMapper.book2VOGamma(book)));
+    //     }
+    //     if (entityType == EntityType.DISC) {
+    //         List<Disc> discs = (List<Disc>) object;
+    //         discs.forEach(disc -> data.add(discVOMapper.disc2VOGamma(disc)));
+    //     }
+    //     if (entityType == EntityType.GAME) {
+    //         List<Game> games = (List<Game>) object;
+    //         games.forEach(game -> data.add(gameVOMapper.game2VOGamma(game)));
+    //     }
+    //     if (entityType == EntityType.MERCH) {
+    //         List<Merch> merchs = (List<Merch>) object;
+    //         merchs.forEach(merch -> data.add(merchVOMapper.merch2VOGamma(merch)));
+    //     }
+    //     if (entityType == EntityType.PRODUCT) {
+    //         List<Product> products = (List<Product>) object;
+    //         products.forEach(product -> data.add(productVOMapper.product2VOBeta(product)));
+    //
+    //     }
+    //
+    //     index.addDocuments(data.toJSONString());
+    // }
 
     /**
      * 删除数据

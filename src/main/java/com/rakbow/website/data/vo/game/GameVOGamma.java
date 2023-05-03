@@ -2,6 +2,7 @@ package com.rakbow.website.data.vo.game;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
 /**
@@ -25,7 +26,7 @@ public class GameVOGamma {
     private JSONArray franchises;//所属系列
     private JSONArray products;//所属产品
 
-    private JSONObject platform;//平台
+    private Attribute platform;//平台
     private JSONObject region;//地区
 
     private String cover;

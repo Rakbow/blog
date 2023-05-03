@@ -1,9 +1,11 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -13,7 +15,9 @@ import java.util.Date;
  * @Description: 周边实体类
  */
 @Data
-public class Merch {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Merch extends MetaEntity {
 
     private int id;//主键编号
     private String name;//商品名（原文）
@@ -29,12 +33,6 @@ public class Merch {
     private String currencyUnit;//价格单位
     private int notForSale;//是否非卖品
     private String spec;//规格
-    private String description;//描述
-    private String images;//图片（json）
-    private String remark;//备注
-    private Timestamp addedTime;//收录时间
-    private Timestamp editedTime;//编辑时间
-    private int status;//状态
 
     public Merch() {
         this.id = 0;
@@ -51,12 +49,12 @@ public class Merch {
         this.region = "";
         this.notForSale = 0;
         this.spec = "[]";
-        this.description = "";
-        this.images = "[]";
-        this.remark = "";
-        this.addedTime = DateUtil.NOW_TIMESTAMP;;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;;
-        this.status = 1;
+        this.setDescription("");
+        this.setImages("[]");
+        this.setRemark("");
+        this.setAddedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setEditedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setStatus(1);
     }
 
 }

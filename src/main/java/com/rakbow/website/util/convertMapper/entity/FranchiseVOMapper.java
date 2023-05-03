@@ -1,4 +1,4 @@
-package com.rakbow.website.util.convertMapper;
+package com.rakbow.website.util.convertMapper.entity;
 
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
@@ -6,7 +6,6 @@ import com.rakbow.website.data.vo.franchise.FranchiseVO;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.data.vo.franchise.ParentFranchiseVO;
 import com.rakbow.website.entity.Franchise;
-import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.file.CommonImageUtil;

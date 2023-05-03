@@ -5,8 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.data.ImageInfo;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.Image;
 import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.entity.User;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,21 +40,18 @@ public class QiniuImageUtil {
      * @param entityName               实体表名
      * @param images             新增图片文件数组
      * @param originalImagesJson 数据库中现存的图片json数据
-     * @param imageInfos         新增图片json数据
-     * @param user         上传用户
+     * @param newImageInfos         新增图片json数据
      * @return finalImageJson 最终保存到数据库的json信息
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public ActionResult commonAddImages(int entityId, String entityName, MultipartFile[] images,
-                                     JSONArray originalImagesJson, JSONArray imageInfos, User user) throws IOException {
+                                        List<Image> originalImagesJson, List<Image> newImageInfos) {
         ActionResult res = new ActionResult();
         try{
-            //最终保存到数据库的json信息
-            JSONArray finalImageJson = new JSONArray();
 
             //新增图片信息json
-            JSONArray addImageJson = new JSONArray();
+            List<Image> addImageJson = new ArrayList<>();
 
             //创建存储链接前缀
             String filePath = entityName + "/" + entityId + "/";
@@ -62,28 +59,16 @@ public class QiniuImageUtil {
             for (int i = 0; i < images.length; i++) {
                 //上传图片
                 ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
-                if (ar.state) {
-                    ImageInfo imageInfo = new ImageInfo();
-                    imageInfo.setUrl(ar.data.toString());
-                    imageInfo.setNameEn(imageInfos.getJSONObject(i).getString("nameEn"));
-                    imageInfo.setNameZh(imageInfos.getJSONObject(i).getString("nameZh"));
-                    imageInfo.setType(imageInfos.getJSONObject(i).getString("type"));
-                    if(!imageInfos.getJSONObject(i).getString("description").isEmpty()) {
-                        imageInfo.setDescription(imageInfos.getJSONObject(i).getString("description"));
-                    }
-                    imageInfo.setUploadUser(user.getUsername());
-                    addImageJson.add(JSON.toJSON(imageInfo));
-                }else {
-                    res.setErrorMessage(ar.message);
-                    return res;
-                }
+                if (!ar.state) throw new Exception(ar.message);
+                Image image = newImageInfos.get(i);
+                image.setUrl(ar.data.toString());
+                addImageJson.add(image);
             }
 
             //汇总
-            finalImageJson.addAll(originalImagesJson);
-            finalImageJson.addAll(addImageJson);
+            originalImagesJson.addAll(addImageJson);
 
-            res.data = finalImageJson;
+            res.data = originalImagesJson;
         }catch(Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

@@ -1,10 +1,10 @@
-package com.rakbow.website.util.convertMapper;
+package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Region;
-import com.rakbow.website.data.emun.game.GamePlatform;
-import com.rakbow.website.data.emun.game.ReleaseType;
+import com.rakbow.website.data.emun.entity.game.GamePlatform;
+import com.rakbow.website.data.emun.entity.game.ReleaseType;
 import com.rakbow.website.data.vo.game.GameVO;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
@@ -61,9 +61,9 @@ public interface GameVOMapper {
         gameVO.setRemark(game.getRemark());
 
         //复杂字段
-        gameVO.setRegion(Region.getRegionJson(game.getRegion()));
-        gameVO.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
-        gameVO.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
+        gameVO.setRegion(Region.getRegion(game.getRegion()));
+        gameVO.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        gameVO.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
         gameVO.setOrganizations(JSON.parseArray(game.getOrganizations()));
         gameVO.setStaffs(JSON.parseArray(game.getStaffs()));
         gameVO.setBonus(game.getBonus());
@@ -100,9 +100,9 @@ public interface GameVOMapper {
         gameVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(game.getFranchises()));
 
         //复杂字段
-        gameVOAlpha.setRegion(Region.getRegionJson(game.getRegion()));
-        gameVOAlpha.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
-        gameVOAlpha.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
+        gameVOAlpha.setRegion(Region.getRegion(game.getRegion()));
+        gameVOAlpha.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        gameVOAlpha.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
 
         //将图片分割处理
         gameVOAlpha.setCover(CommonImageUtil.generateCover(game.getImages(), EntityType.GAME));
@@ -154,9 +154,9 @@ public interface GameVOMapper {
         gameVOBeta.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
 
         //复杂字段
-        gameVOBeta.setRegion(Region.getRegionJson(game.getRegion()));
-        gameVOBeta.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
-        gameVOBeta.setReleaseType(ReleaseType.getReleaseTypeJson(game.getReleaseType()));
+        gameVOBeta.setRegion(Region.getRegion(game.getRegion()));
+        gameVOBeta.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        gameVOBeta.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
 
         //图片
         gameVOBeta.setCover(CommonImageUtil.generateThumbCover(game.getImages(), EntityType.GAME, 50));
@@ -214,8 +214,8 @@ public interface GameVOMapper {
         gameVOGamma.setFranchises(FranchiseUtil.getFranchiseList(game.getFranchises()));
 
         //复杂字段
-        gameVOGamma.setRegion(Region.getRegionJson(game.getRegion()));
-        gameVOGamma.setPlatform(GamePlatform.getGamePlatformJson(game.getPlatform()));
+        gameVOGamma.setRegion(Region.getRegion(game.getRegion()));
+        gameVOGamma.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
 
         gameVOGamma.setCover(QiniuImageUtil.getThumb70Url(game.getImages()));
 

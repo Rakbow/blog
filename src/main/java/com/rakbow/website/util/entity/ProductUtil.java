@@ -6,13 +6,16 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.image.ImageType;
-import com.rakbow.website.data.emun.product.ProductCategory;
+import com.rakbow.website.data.emun.entity.product.ProductCategory;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +44,7 @@ public class ProductUtil {
 
         for (int i = 0; i < images.size(); i++) {
             JSONObject image = images.getJSONObject(i);
-            if (image.getIntValue("type") == ImageType.COVER.getIndex()) {
+            if (image.getIntValue("type") == ImageType.COVER.getId()) {
                 coverUrl = image.getString("url");
             }
         }
@@ -51,26 +54,32 @@ public class ProductUtil {
     /**
      * 将数据库实体类product的json字符串转为JSONArray
      *
-     * @param productJson product的json字符串
+     * @param json product的json字符串
      * @return JSONArray
      * @author rakbow
      */
     @SuppressWarnings("unchecked")
-    public static JSONArray getProductList (String productJson) {
-
+    public static JSONArray getProductList (String json) {
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-
-        List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get(RedisCacheConstant.PRODUCT_SET);
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        String key = null;
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            key = RedisCacheConstant.PRODUCT_SET_EN;
+        }else {
+            key = RedisCacheConstant.PRODUCT_SET_ZH;
+        }
+        List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get(key);
 
         JSONArray products = new JSONArray();
 
-        CommonUtil.ids2List(productJson)
-                .forEach(id -> {
-                    JSONObject product = DataFinder.findJsonByIdInSet(id, allProducts);
-                    if (product != null) {
-                        products.add(product);
-                    }
-                });
+        List<Integer> ids = CommonUtil.ids2List(json);
+
+        ids.forEach(id -> {
+            JSONObject product = DataFinder.findJsonByIdInSet(id, allProducts);
+            if (product != null) {
+                products.add(product);
+            }
+        });
 
         return products;
     }
@@ -86,47 +95,47 @@ public class ProductUtil {
 
         List<Integer> categories = new ArrayList<>();
         if (entityType == EntityType.PRODUCT.getId()) {
-            categories.add(ProductCategory.UNCLASSIFIED.getIndex());
-            categories.add(ProductCategory.GAME.getIndex());
-            categories.add(ProductCategory.ANIMATION.getIndex());
-            categories.add(ProductCategory.OVA_OAD.getIndex());
-            categories.add(ProductCategory.TV_SERIES.getIndex());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
-            categories.add(ProductCategory.NOVEL.getIndex());
-            categories.add(ProductCategory.MANGA.getIndex());
-            categories.add(ProductCategory.PUBLICATION.getIndex());
-            categories.add(ProductCategory.MISC.getIndex());
+            categories.add(ProductCategory.UNCATEGORIZED.getId());
+            categories.add(ProductCategory.GAME.getId());
+            categories.add(ProductCategory.ANIMATION.getId());
+            categories.add(ProductCategory.OVA_OAD.getId());
+            categories.add(ProductCategory.TV_SERIES.getId());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+            categories.add(ProductCategory.NOVEL.getId());
+            categories.add(ProductCategory.MANGA.getId());
+            categories.add(ProductCategory.PUBLICATION.getId());
+            categories.add(ProductCategory.MISC.getId());
         }
         if (entityType == EntityType.ALBUM.getId()) {
-            categories.add(ProductCategory.GAME.getIndex());
-            categories.add(ProductCategory.ANIMATION.getIndex());
-            categories.add(ProductCategory.OVA_OAD.getIndex());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
-            categories.add(ProductCategory.TV_SERIES.getIndex());
+            categories.add(ProductCategory.GAME.getId());
+            categories.add(ProductCategory.ANIMATION.getId());
+            categories.add(ProductCategory.OVA_OAD.getId());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+            categories.add(ProductCategory.TV_SERIES.getId());
         }
         if (entityType == EntityType.BOOK.getId()) {
-            categories.add(ProductCategory.NOVEL.getIndex());
-            categories.add(ProductCategory.MANGA.getIndex());
-            categories.add(ProductCategory.PUBLICATION.getIndex());
+            categories.add(ProductCategory.NOVEL.getId());
+            categories.add(ProductCategory.MANGA.getId());
+            categories.add(ProductCategory.PUBLICATION.getId());
         }
         if (entityType == EntityType.DISC.getId()) {
-            categories.add(ProductCategory.ANIMATION.getIndex());
-            categories.add(ProductCategory.OVA_OAD.getIndex());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
-            categories.add(ProductCategory.TV_SERIES.getIndex());
+            categories.add(ProductCategory.ANIMATION.getId());
+            categories.add(ProductCategory.OVA_OAD.getId());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+            categories.add(ProductCategory.TV_SERIES.getId());
         }
         if (entityType == EntityType.GAME.getId()) {
-            categories.add(ProductCategory.GAME.getIndex());
+            categories.add(ProductCategory.GAME.getId());
         }
         if (entityType == EntityType.MERCH.getId()) {
-            categories.add(ProductCategory.GAME.getIndex());
-            categories.add(ProductCategory.ANIMATION.getIndex());
-            categories.add(ProductCategory.OVA_OAD.getIndex());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getIndex());
-            categories.add(ProductCategory.TV_SERIES.getIndex());
-            categories.add(ProductCategory.NOVEL.getIndex());
-            categories.add(ProductCategory.MANGA.getIndex());
-            categories.add(ProductCategory.PUBLICATION.getIndex());
+            categories.add(ProductCategory.GAME.getId());
+            categories.add(ProductCategory.ANIMATION.getId());
+            categories.add(ProductCategory.OVA_OAD.getId());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+            categories.add(ProductCategory.TV_SERIES.getId());
+            categories.add(ProductCategory.NOVEL.getId());
+            categories.add(ProductCategory.MANGA.getId());
+            categories.add(ProductCategory.PUBLICATION.getId());
         }
         return categories;
     }

@@ -1,4 +1,4 @@
-package com.rakbow.website.util.convertMapper;
+package com.rakbow.website.util.convertMapper.entity;
 
 import com.rakbow.website.data.common.Like;
 import com.rakbow.website.data.common.Visit;
@@ -9,11 +9,9 @@ import com.rakbow.website.util.common.VisitUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Project_name: website

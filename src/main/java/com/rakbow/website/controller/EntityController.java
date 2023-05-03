@@ -3,17 +3,14 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.ActionResult;
-import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.emun.common.DataActionType;
+import com.rakbow.website.data.*;
+import com.rakbow.website.data.emun.system.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
-import com.rakbow.website.util.common.EntityUtils;
+import com.rakbow.website.util.common.EntityUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +45,7 @@ public class EntityController {
     @Value("${server.servlet.context-path}")
     private String contextPath;
     @Resource
-    private EntityUtils entityUtils;
+    private EntityUtil entityUtil;
     @Resource
     private UserService userService;
     @Resource
@@ -93,6 +90,10 @@ public class EntityController {
     public String getDatabaseListPage() {
         return "/database/database-list";
     }
+    @RequestMapping(path = "/list/entry", method = RequestMethod.GET)
+    public String getEntryListPage() {
+        return "/database/database-list";
+    }
     @RequestMapping(path = "/list/album", method = RequestMethod.GET)
     public String getAlbumListPage() {
         return "/database/database-list";
@@ -126,10 +127,9 @@ public class EntityController {
     //region 获取index初始数据
     @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
     @ResponseBody
-    public String getIndexInitData(@RequestBody String json) {
+    public String getIndexInitData(@RequestBody String json, HttpServletRequest request) {
         int entityType = JSON.parseObject(json).getIntValue("entityType");
-
-        JSONObject initData = entityUtils.getDetailOptions(entityType);
+        JSONObject initData = entityUtil.getDetailOptions(entityType);
         initData.put("justAddedItems", entityService.getJustAddedItems(entityType, 5));
         initData.put("popularItems", entityService.getPopularItems(entityType, 9));
 
@@ -141,7 +141,7 @@ public class EntityController {
     @ResponseBody
     public String getListInitData(@RequestBody String json, HttpServletRequest request) {
         int entityType = JSON.parseObject(json).getIntValue("entityType");
-        JSONObject initData = entityUtils.getDetailOptions(entityType);
+        JSONObject initData = entityUtil.getDetailOptions(entityType);
         initData.put("editAuth", userService.getUserOperationAuthority(userService.getUserByRequest(request)));
         return initData.toJSONString();
     }
@@ -272,6 +272,23 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
+    //更新关联企业信息
+    @RequestMapping(path = "/update-companies", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemCompanies(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityId = JSON.parseObject(json).getInteger("entityId");
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            String companies = JSON.parseObject(json).get("companies").toString();
+            res.message = entityService.updateItemCompanies(entityName, entityId, companies);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
     //点赞
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
@@ -310,31 +327,21 @@ public class EntityController {
     public String addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (images == null || images.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
-            }
+            if (images == null || images.length == 0) throw new Exception(ApiInfo.INPUT_FILE_EMPTY);
 
             String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
 
             //原始图片信息json数组
-            JSONArray imagesJson = entityService.getItemImages(entityName, entityId);
+            List<Image> originalImages = entityService.getItemImages(entityName, entityId);
             //新增图片的信息
-            JSONArray imageInfosJson = JSON.parseArray(imageInfos);
+            List<Image> newImageInfos = JSON.parseArray(imageInfos).toJavaList(Image.class);
 
             //检测数据合法性
-            String errorMsg = CommonImageUtil.checkAddImages(imageInfosJson, imagesJson);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
+            CommonImageUtil.checkAddImages(newImageInfos, originalImages);
 
-            ActionResult ar = entityService.addItemImages(entityName, entityId, images, imagesJson, imageInfosJson, userService.getUserByRequest(request));
-            if(ar.state) {
-                res.message = ar.message;
-            }else {
-                res.setErrorMessage(ar.message);
-            }
+            ActionResult ar = entityService.addItemImages(entityName, entityId, images, originalImages, newImageInfos);
+            if(!ar.state) throw new Exception(ar.message);
+            res.message = ar.message;
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

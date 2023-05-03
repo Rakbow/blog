@@ -2,6 +2,7 @@ package com.rakbow.website.data.vo.album;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
 /**
@@ -27,10 +28,9 @@ public class AlbumVO {
     private String remark;//备注
 
     //厂商信息
-    private String label;//唱片公司
-    private String publisher;//发行商
-    private String distributor;//经销商
-    private String copyright;//版权方
+    private JSONArray companies;
+    //可供编辑的企业信息
+    private JSONArray editCompanies;
 
     //规格信息
     private JSONArray publishFormat;//出版形式 在mysql中以数组字符串形式存储

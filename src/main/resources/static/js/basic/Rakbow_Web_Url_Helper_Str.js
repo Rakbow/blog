@@ -6,6 +6,7 @@ const LIKE_ITEM_URL = "/db/like";
 const UPDATE_DESCRIPTION_URL = "/db/update-description";
 const UPDATE_BONUS_URL = "/db/update-bonus";
 const UPDATE_SPEC_URL = "/db/update-spec";
+const UPDATE_COMPANIES_URL = "/db/update-companies";
 const INSERT_IMAGES_URL = "/db/add-images";
 const UPDATE_IMAGES_URL = "/db/update-images";
 
@@ -43,6 +44,14 @@ const MERCH_LIST_URL = "/db/merch/list";
 const GAME_INDEX_URL = "/db/games";
 const GAME_LIST_URL = "/db/game/list";
 
+//endregion
+
+//region entry
+const ENTRY_DETAIL_URL = "/db/entry/";
+const GET_ENTRIES_URL = "/db/entry/get-entries";
+const DELETE_ENTRY_URL = "/db/entry/delete";
+const UPDATE_ENTRY_URL = "/db/entry/update";
+const INSERT_ENTRY_URL = "/db/entry/add";
 //endregion
 
 //region album
@@ -145,6 +154,7 @@ const ENTITY = {
     FRANCHISE: 6,
     PRODUCT: 7,
     MUSIC: 9,
+    ENTRY: 10
 };
 
 const ENTITY_TYPE = [

@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.service.FranchiseService;
@@ -12,6 +13,7 @@ import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 
@@ -26,26 +28,31 @@ public class FranchiseUtil {
     /**
      * 将数据库实体类franchise的json字符串转为JSONArray
      *
-     * @param franchisesJson franchise的json字符串
+     * @param json franchise的json字符串
      * @return JSONArray
      * @author rakbow
      */
     @SuppressWarnings("unchecked")
-    public static JSONArray getFranchiseList (String franchisesJson) {
-
+    public static JSONArray getFranchiseList (String json) {
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        String key = null;
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            key = RedisCacheConstant.FRANCHISE_SET_EN;
+        }else {
+            key = RedisCacheConstant.FRANCHISE_SET_ZH;
+        }
 
-        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get(RedisCacheConstant.FRANCHISE_SET);
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get(key);
 
         JSONArray franchises = new JSONArray();
-
-        CommonUtil.ids2List(franchisesJson)
-                .forEach(id -> {
-                    JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
-                    if (franchise != null) {
-                        franchises.add(franchise);
-                    }
-                });
+        List<Integer> ids = CommonUtil.ids2List(json);
+        ids.forEach(id -> {
+            JSONObject franchise = DataFinder.findJsonByIdInSet(id, allFranchises);
+            if (franchise != null) {
+                franchises.add(franchise);
+            }
+        });
 
         return franchises;
     }
@@ -59,9 +66,15 @@ public class FranchiseUtil {
      */
     @SuppressWarnings("unchecked")
     public static JSONObject getFranchise(int franchiseId) {
-
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get(RedisCacheConstant.FRANCHISE_SET);
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        String key = null;
+        if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+            key = RedisCacheConstant.FRANCHISE_SET_ZH;
+        }else if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            key = RedisCacheConstant.FRANCHISE_SET_EN;
+        }
+        List<JSONObject> allFranchises = (List<JSONObject>) redisUtil.get(key);
 
         return DataFinder.findJsonByIdInSet(franchiseId, allFranchises);
     }

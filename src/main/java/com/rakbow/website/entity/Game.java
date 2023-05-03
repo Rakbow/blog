@@ -1,9 +1,11 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -13,7 +15,9 @@ import java.util.Date;
  * @Description:
  */
 @Data
-public class Game {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Game extends MetaEntity {
 
     private int id;//主键编号
     private String name;//游戏名（原文）
@@ -29,13 +33,7 @@ public class Game {
     private int hasBonus;//是否包含特典
     private String organizations;//相关组织
     private String staffs;//开发制作人员
-    private String images;//图片（json）
-    private String description;//描述
     private String bonus;//特典信息
-    private String remark;//备注
-    private Timestamp addedTime;//收录时间
-    private Timestamp editedTime;//编辑时间
-    private int status;//状态
 
     public Game () {
         this.id = 0;
@@ -52,13 +50,13 @@ public class Game {
         this.hasBonus = 0;
         this.organizations = "[]";
         this.staffs = "[]";
-        this.images = "[]";
-        this.description = "";
         this.bonus = "";
-        this.remark = "";
-        this.addedTime = DateUtil.NOW_TIMESTAMP;;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;;
-        this.status = 1;
+        this.setImages("[]");
+        this.setDescription("");
+        this.setRemark("");
+        this.setAddedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setEditedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setStatus(1);
     }
 
 }

@@ -3,6 +3,7 @@ export class RKW_Web {
     //item-detail 展示模块标题
     static ItemDetailPlayListTitle = '播放列表';
     static ItemDetailSummaryTitle = '简介';
+    static ItemDetailCompaniesTitle = '相关企业';
 
     static AlbumDetailArtistInfoTitle = '创作信息';
     static AlbumDetailTrackInfoTitle = '音轨信息';
@@ -38,6 +39,7 @@ export class RKW_Web {
     static ItemDetailMessageNoAudioInfo = '暂无音频文件';
     static ItemDetailMessageNoRelatedItem = '暂无相关条目';
     static ItemDetailMessageNoSpec = '暂无规格信息';
+    static ItemDetailMessageNoCompanies = '暂无相关企业信息';
     static ItemDetailMessageNoSummary = '暂无简介';
     static ItemDetailMessageNoOrganization = '暂无关联组织信息';
 
@@ -161,6 +163,7 @@ export class RKW_Web {
 
     //item-detail 编辑界面选项名
     static ItemDetailOptionImageEditTitle = '图片管理';
+    static ItemDetailOptionCompaniesEditTitle = '相关企业';
     static ItemDetailOptionDescriptionEditTitle = '描述信息';
     static ItemDetailOptionBonusEditTitle = '特典信息';
     static ItemDetailOptionSpecEditTitle = '规格信息';
@@ -229,7 +232,12 @@ export class RKW_Web {
     static ErrorMessageBookDetailAuthorsMain = '主要作者只能选择一项！';
 
 
+    //exception
 
+    //common-company
+
+    static companyRoleEmpty = '未选择企业类型！';
+    static companyMemberEmpty = '未填写相关企业！';
 
 
 

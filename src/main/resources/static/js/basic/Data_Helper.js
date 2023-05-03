@@ -250,19 +250,19 @@ const isNotForSaleSet = [
 ];
 
 const imageTypes = [
-    {label: '展示', value: '0'},
-    {label: '封面', value: '1'},
-    {label: '其他', value: '2'}
+    {label: '展示', value: 0},
+    {label: '主要', value: 1},
+    {label: '其他', value: 2}
 ];
 
 const getImageTypeLabel = (type) => {
     return value2Label(type, imageTypes);
 };
 
-const regionCode2NameZh = (code, regionSet) => {
+const getNameByCode = (code, regionSet) => {
     for (let region of regionSet) {
         if (region.code === code) {
-            return region.nameZh;
+            return region.name;
         }
     }
 }
@@ -397,4 +397,16 @@ function copyToClip(content) {
     aux.select();
     document.execCommand("copy");
     document.body.removeChild(aux);
+}
+
+const commonValuesToLabels = (values, set) => {
+    let labels = [];
+    for (let value of values) {
+        for(let item of set) {
+            if(value === item.value) {
+                labels.push(item.label);
+            }
+        }
+    }
+    return labels;
 }

@@ -670,7 +670,7 @@ const bookIndex = {
                             <template #value="slotProps">
                                 <div class="country-item" v-if="slotProps.value">
                                     <span :class="'fi fi-' + slotProps.value"></span>
-                                    <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                    <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                                 </div>
                                 <span v-else>选择地区</span>
                             </template>
@@ -1194,7 +1194,7 @@ const bookIndex = {
                 this.getBooks();
             }
         },
-        regionCode2NameZh,
+        getNameByCode,
     },
     components: {
         "p-dataview": primevue.dataview,
@@ -1246,7 +1246,7 @@ const discIndex = {
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
-                                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                                         </div>
                                         <span v-else>选择地区</span>
                                     </template>
@@ -1789,7 +1789,7 @@ const discIndex = {
                 this.getDiscs();
             }
         },
-        regionCode2NameZh,
+        getNameByCode,
     },
     components: {
         "p-dataview": primevue.dataview,
@@ -1859,7 +1859,7 @@ const gameIndex = {
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
-                                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                                         </div>
                                         <span v-else>选择地区</span>
                                     </template>
@@ -2357,7 +2357,7 @@ const gameIndex = {
                 this.getGames();
             }
         },
-        regionCode2NameZh,
+        getNameByCode,
     },
     components: {
         "p-dataview": primevue.dataview,
@@ -2398,7 +2398,7 @@ const merchIndex = {
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
-                                            <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                                         </div>
                                         <span v-else>选择地区</span>
                                     </template>
@@ -2888,7 +2888,7 @@ const merchIndex = {
                 this.getMerchs();
             }
         },
-        regionCode2NameZh,
+        getNameByCode,
     },
     components: {
         "p-dataview": primevue.dataview,

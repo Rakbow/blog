@@ -9,15 +9,16 @@ import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.EntityUtils;
+import com.rakbow.website.util.common.EntityUtil;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.util.convertMapper.AlbumVOMapper;
-import com.rakbow.website.util.convertMapper.MusicVOMapper;
+import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
+import com.rakbow.website.util.convertMapper.entity.MusicVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
 
 /**
  * @Project_name: website
@@ -37,6 +37,8 @@ import java.sql.Timestamp;
 @RequestMapping("/db/music")
 public class MusicController {
 
+    private static final Logger logger = LoggerFactory.getLogger(MusicController.class);
+
     //region ------引入实例------
     @Resource
     private MusicService musicService;
@@ -45,7 +47,7 @@ public class MusicController {
     @Resource
     private UserService userService;
     @Resource
-    private EntityUtils entityUtils;
+    private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
 
@@ -70,11 +72,11 @@ public class MusicController {
             model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
         }
         //前端选项数据
-        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.MUSIC.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.MUSIC.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music, request));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtils.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
+        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(music, coverUrl));
         //获取所属专辑的信息

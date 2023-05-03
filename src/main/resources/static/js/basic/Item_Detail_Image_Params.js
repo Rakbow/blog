@@ -152,19 +152,11 @@ const imageEditPanel = {
                                 <p-inputtext v-model="data[field]" autofocus style="width: 180px"></p-inputtext>
                             </template>
                         </p-column>
-<!--                        <p-column field="uploadTime" header="上传时间" header-style="width: 10%"></p-column>-->
-<!--                        <p-column field="uploadUser" header="上传用户"></p-column>-->
                         <p-column :row-editor="true" header-style="width: 7%"></p-column>
                         <template #expansion="slotProps">
                             <div class="orders-subtable">
                                 <table class="table-borderless table-sm">
                                     <tbody class="detail-item-artists-table">
-                                    <tr>
-                                        <td width="120px"><strong>上传用户</strong></td>
-                                        <td>
-                                            {{slotProps.data.uploadUser}}
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td width="120px"><strong>上传时间</strong></td>
                                         <td>

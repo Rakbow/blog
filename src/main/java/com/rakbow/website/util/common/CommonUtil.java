@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
@@ -15,12 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -198,6 +193,19 @@ public class CommonUtil {
         return keys;
     }
 
+    public static String getLangByCookie(HttpServletRequest request) {
+        // 从cookie中获取语言
+        String lang = CookieUtil.getValue(request, "locale");
+
+        if (lang != null) {
+            if(StringUtils.equals(lang,  SystemLanguage.CHINESE.getCode())
+                    || StringUtils.equals(lang,  SystemLanguage.ENGLISH.getCode())) {
+                return lang;
+            }
+        }
+        return SystemLanguage.CHINESE.getCode();
+    }
+
     //region ------暂时废弃------
 
     /**
@@ -277,7 +285,7 @@ public class CommonUtil {
         //封面类型的图片个数
         int coverCount = 0;
         for (int i = 0; i < images.size(); i++) {
-            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
                 coverCount++;
             }
         }
@@ -325,12 +333,12 @@ public class CommonUtil {
             }
 
             for (int i = 0; i < images.size(); i++) {
-                if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
                     coverCount++;
                 }
             }
             for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
                     coverCount++;
                 }
             }
@@ -342,7 +350,7 @@ public class CommonUtil {
             }
 
             for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getIndex()) {
+                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
                     coverCount++;
                 }
             }

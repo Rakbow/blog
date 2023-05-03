@@ -160,8 +160,8 @@
                                                     <strong>{{RKW_Web.BookType}}</strong>
                                                 </td>
                                                 <td>
-                                                    <a :href="'/db/books?bookType=' + book.bookType.id">
-                                                        <p-tag class="ml-1" :value="book.bookType.nameZh"></p-tag>
+                                                    <a :href="'/db/books?bookType=' + book.bookType.value">
+                                                        <p-tag class="ml-1" :value="book.bookType.label"></p-tag>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -172,7 +172,7 @@
                                                 </td>
                                                 <td>
                                                 <span :class="'fi fi-' + book.region.code" style="margin-left: 0.5rem"
-                                                      v-tooltip.bottom="{value: book.region.nameZh, class: 'region-tooltip'}"></span>
+                                                      v-tooltip.bottom="{value: book.region.name, class: 'region-tooltip'}"></span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -181,7 +181,7 @@
                                                     <strong>{{RKW_Web.Language}}</strong>
                                                 </td>
                                                 <td>
-                                                    {{book.publishLanguage.nameZh}}
+                                                    {{book.publishLanguage.name}}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -414,18 +414,18 @@
                 <div class="field col">
                     <label class="mb-3">{{RKW_Web.Region}}<span style="color: red">*</span></label>
                     <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
-                                :show-clear="true" option-label="nameZh" option-value="code">
+                                :show-clear="true" option-label="name" option-value="code">
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                             </div>
                             <span v-else>{{RKW_Web.PlaceholderRegion}}</span>
                         </template>
                         <template #option="slotProps">
                             <div class="country-item">
                                 <span :class="'fi fi-' + slotProps.option.code"></span>
-                                <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                <div class="ml-2">{{slotProps.option.name}}</div>
                             </div>
                         </template>
                     </p-dropdown>
@@ -433,7 +433,7 @@
                 <div class="field col">
                     <label class="mb-3">{{RKW_Web.Language}}<span style="color: red">*</span></label>
                     <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
-                                option-label="nameZh" option-value="code">
+                                option-label="name" option-value="code">
                     </p-dropdown>
                 </div>
             </div>
@@ -718,7 +718,7 @@
                 let dataTmp = JSON.parse(JSON.stringify(book.value));
                 dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
                 bookEdit.value = dataTmp;
-                bookEdit.value.bookType = dataTmp.bookType.id;
+                bookEdit.value.bookType = dataTmp.bookType.value;
                 bookEdit.value.region = dataTmp.region.code;
                 bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
                 bookEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
@@ -962,7 +962,7 @@
 
                 //basic
                 book, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                bookTypeSet, regionSet, languageSet, productSet, relatedBooks, responsiveOptions, regionCode2NameZh, relatedItemLoad, tmpList5,
+                bookTypeSet, regionSet, languageSet, productSet, relatedBooks, responsiveOptions, getNameByCode, relatedItemLoad, tmpList5,
 
                 //edit
                 editBlock, bookEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditBook,

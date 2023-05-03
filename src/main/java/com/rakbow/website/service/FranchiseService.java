@@ -195,18 +195,30 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public void refreshRedisFranchises () {
 
-        JSONArray franchiseSet = new JSONArray();
         List<Franchise> franchises = franchiseMapper.getAll();
+
+        JSONArray franchiseSetZh = new JSONArray();
         for (Franchise franchise : franchises) {
             if(!FranchiseUtil.isMetaFranchise(franchise)) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("value", franchise.getId());
                 jsonObject.put("label", franchise.getNameZh());
-                franchiseSet.add(jsonObject);
+                franchiseSetZh.add(jsonObject);
             }
         }
 
-        redisUtil.set(RedisCacheConstant.FRANCHISE_SET, franchiseSet);
+        JSONArray franchiseSetEn = new JSONArray();
+        for (Franchise franchise : franchises) {
+            if(!FranchiseUtil.isMetaFranchise(franchise)) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("value", franchise.getId());
+                jsonObject.put("label", franchise.getNameEn());
+                franchiseSetEn.add(jsonObject);
+            }
+        }
+
+        redisUtil.set(RedisCacheConstant.FRANCHISE_SET_ZH, franchiseSetZh);
+        redisUtil.set(RedisCacheConstant.FRANCHISE_SET_EN, franchiseSetEn);
         //缓存时间1个月
 //        redisUtil.expire(RedisCacheConstant.FRANCHISE_SET, 2592000);
 

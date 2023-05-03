@@ -1,13 +1,11 @@
 package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.entity.Book;
@@ -15,21 +13,18 @@ import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.EntityUtils;
-import com.rakbow.website.util.convertMapper.BookVOMapper;
+import com.rakbow.website.util.common.EntityUtil;
+import com.rakbow.website.util.convertMapper.entity.BookVOMapper;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,14 +41,14 @@ public class BookController {
 
     //region ------引入实例------
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @Resource
     private BookService bookService;
     @Resource
     private UserService userService;
     @Resource
-    private EntityUtils entityUtils;
+    private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
 
@@ -74,9 +69,9 @@ public class BookController {
         }
         model.addAttribute("book", bookVOMapper.book2VO(book));
         //前端选项数据
-        model.addAttribute("options", entityUtils.getDetailOptions(EntityType.BOOK.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.BOOK.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", entityUtils.getItemDetailInfo(book, EntityType.BOOK.getId()));
+        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
         model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book, request));
         //图片相关
@@ -167,27 +162,27 @@ public class BookController {
     @RequestMapping(value = "/get-books", method = RequestMethod.POST)
      @ResponseBody
      public String getBooksByFilterList(@RequestBody String json, HttpServletRequest request) {
-         JSONObject param = JSON.parseObject(json);
+        JSONObject param = JSON.parseObject(json);
         QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
-         String pageLabel = param.getString("pageLabel");
+        String pageLabel = param.getString("pageLabel");
 
-         List<BookVOAlpha> books = new ArrayList<>();
+        List<BookVOAlpha> books = new ArrayList<>();
 
-         SearchResult searchResult = bookService.getBooksByFilter(queryParam,
+        SearchResult searchResult = bookService.getBooksByFilter(queryParam,
                  userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
-         if (StringUtils.equals(pageLabel, "list")) {
-             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
-         }
-         if (StringUtils.equals(pageLabel, "index")) {
-             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
-         }
+        if (StringUtils.equals(pageLabel, "list")) {
+            books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
+        }
+        if (StringUtils.equals(pageLabel, "index")) {
+            books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
+        }
 
-         JSONObject result = new JSONObject();
-         result.put("data", books);
-         result.put("total", searchResult.total);
+        JSONObject result = new JSONObject();
+        result.put("data", books);
+        result.put("total", searchResult.total);
 
-         return JSON.toJSONString(result);
+        return JSON.toJSONString(result);
      }
 
     //更新图书作者信息

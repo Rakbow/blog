@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -28,10 +29,10 @@ import java.util.Date;
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
-    @Autowired
+    @Resource
     private HostHolder hostHolder;
 
     @Override

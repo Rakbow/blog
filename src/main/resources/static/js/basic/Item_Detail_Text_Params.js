@@ -66,6 +66,30 @@ export const showSpecEditDialog = (toast, dialog, entityId, entityType, entitySp
     });
 };
 
+export const showCompaniesEditDialog = (toast, dialog, entityId, entityType, companies, companyRoleSet, companySet) => {
+    const dialogRef = dialog.open(companiesEditPanel, {
+        props: {
+            header: '关联企业编辑',
+            style: {
+                width: '60vw',
+            },
+            breakpoints: {
+                '960px': '55vw',
+                '640px': '70vw'
+            },
+            modal: true
+        },
+        data: {
+            entityId: entityId,
+            entityType: entityType,
+            companies: companies,
+            companyRoleSet: companyRoleSet,
+            companySet: companySet,
+            toast: toast,
+        },
+    });
+};
+
 const bonusEditPanel = {
     template: `
         <p-blockui :blocked="editBlock">
@@ -346,6 +370,7 @@ const specEditPanel = {
         }
     },
     mounted() {
+        this.init();
         this.entityId = this.dialogRef.data.entityId;
         this.entityType = this.dialogRef.data.entityType;
         this.entitySpec = this.dialogRef.data.entitySpec;
@@ -357,6 +382,9 @@ const specEditPanel = {
 
     },
     methods: {
+        init() {
+
+        },
         specOnRowReorder(ev) {
             this.tmpSpec.value = ev.value;
         },
@@ -411,6 +439,193 @@ const specEditPanel = {
         "p-panel": primevue.panel,
         "p-chips": primevue.chips,
         "p-inputtext": primevue.inputtext,
+        "p-contextmenu": primevue.contextmenu,
+    }
+};
+
+const companiesEditPanel = {
+    template: `
+        <p-blockui :blocked="editBlock">
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-building mr-2" style="font-size: 2rem"></i>
+                    <b>{{RKW_Web.Add}}</b>
+                </template>
+                <div class="grid">
+                    <div class="col-3">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-building"></i>
+                            </span>
+                            <p-dropdown v-model="company.role" :options="companyRoleSet" option-label="label" 
+                            option-value="value" placeholder="企业类型"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-building"></i>
+                            </span>
+                            <p-multiselect v-model="company.members" :options="companySet"
+                                    option-label="label" option-value="value" placeholder="企业"
+                                    display="chip" :filter="true">
+                            </p-multiselect>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p-button :label="RKW_Web.Add" icon="pi pi-save"
+                                    @click="add"></p-button>
+                    </div>
+                </div>
+            </p-panel>
+            <p-panel>
+                <template #header>
+                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                    <b>{{RKW_Web.Edit}}</b>
+                </template>
+                <div v-if="tmpCompanies.length != 0">
+                    <p-datatable dataKey="id" :value="tmpCompanies" responsive-layout="scroll"
+                                    class="p-datatable-sm" striped-rows @row-reorder="companyOnRowReorder"
+                                    context-menu v-model:context-menu-selection="selectedCompany"
+                                    @row-contextmenu="companyRowMenu" edit-mode="row"
+                                    v-model:editing-rows="companyEditingRows" @row-edit-save="companyOnRowEditSave">
+                        <p-column :row-reorder="true"></p-column>
+                        <p-column field="role" header="类型">
+                            <template #body="slotProps">
+                                {{value2Label(slotProps.data.role, companyRoleSet)}}
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-dropdown v-model="data[field]" :options="companyRoleSet" option-label="label" 
+                                            option-value="value" placeholder="企业类型"></p-dropdown>
+                            </template>
+                        </p-column>
+                        <p-column field="members" header="关联企业">
+                            <template #body="slotProps">
+                                {{commonValuesToLabels(slotProps.data.members, companySet).join(", ")}}
+                            </template>
+                            <template #editor="{ data, field }">
+                                <p-multiselect v-model="data[field]" :options="companySet"
+                                    option-label="label" option-value="value" placeholder="企业"
+                                    display="chip" :filter="true">
+                                </p-multiselect>
+                            </template>
+                        </p-column>
+                        <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                                    bodyStyle="text-align:center"></p-column>
+                    </p-datatable>
+                    <p-contextmenu :model="companyMenuModel" ref="companyCm"></p-contextmenu>
+                </div>
+                <div v-else>
+                    <span class="emptyInfo">暂无关联企业</span>
+                </div>
+            </p-panel>
+            <div class="text-end mt-3 mb-2">
+                <p-button :label="RKW_Web.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
+                            @click="clear" :disabled="editBlock"></p-button>
+                <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="mr-4"
+                            @click="cancelEdit" :disabled="editBlock"></p-button>
+                <p-button :label="RKW_Web.Update" icon="pi pi-save" class="p-button-success mr-4"
+                            @click="submit" :disabled="editBlock"></p-button>
+            </div>
+        </p-blockui>
+    `,
+    inject: ['dialogRef'],
+    data() {
+        return {
+            toast: null,
+            entityId: null,
+            entityType: null,
+            companies: [],
+            editBlock: false,
+
+            companySet: [],
+            companyRoleSet: [],
+
+            selectedCompany: null,
+            company: {},
+            tmpCompanies: [],
+            companyMenuModel: [{label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => this.deleteCompany(this.selectedCompany)}],
+            companyEditingRows: [],
+            RKW_Web,
+        }
+    },
+    mounted() {
+        this.entityId = this.dialogRef.data.entityId;
+        this.entityType = this.dialogRef.data.entityType;
+        this.companies = this.dialogRef.data.companies;
+        this.companyRoleSet = this.dialogRef.data.companyRoleSet;
+        this.companySet = this.dialogRef.data.companySet;
+        this.toast = this.dialogRef.data.toast;
+
+        this.tmpCompanies = JSON.parse(JSON.stringify(this.companies));
+    },
+    watch: {
+
+    },
+    methods: {
+        companyOnRowReorder(ev) {
+            this.tmpCompanies.value = ev.value;
+        },
+        companyRowMenu(ev) {
+            this.$refs.companyCm.show(ev.originalEvent);
+        },
+        deleteCompany(company) {
+            this.tmpCompanies = this.tmpCompanies.filter((c) => c.role !== company.role);
+            this.toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: company.role, life: 3000});
+            this.selectedCompany = null;
+        },
+        companyOnRowEditSave(ev) {
+            let {newData, index} = ev;
+            this.tmpCompanies[index] = newData;
+        },
+        clear() {
+            this.tmpCompanies = [];
+        },
+        add() {
+            if(this.company.role === undefined || this.company.role === null) {
+                this.toast.add({severity: 'error', summary: '', detail: RKW_Web.companyRoleEmpty, life: 3000});
+                return;
+            }else if (this.company.members === undefined || this.company.members === null || this.company.members.length === 0) {
+                this.toast.add({severity: 'error', summary: '', detail: RKW_Web.companyMemberEmpty, life: 3000});
+                return;
+            }
+            this.tmpCompanies.push(this.company);
+            this.company = {};
+        },
+        cancelEdit() {
+            this.company = {};
+            this.dialogRef.close();
+        },
+
+        submit() {
+            this.editBlock = true;
+            let json = {
+                entityType: this.entityType,
+                entityId: this.entityId,
+                companies: this.tmpCompanies
+            }
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_COMPANIES_URL, json)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.dialogRef.close();
+                        this.company = {};
+                        location.reload(true);
+                    }else {
+                        this.editBlock = false;
+                    }
+                });
+        },
+        commonValuesToLabels,
+        value2Label
+    },
+    components: {
+        "p-button": primevue.button,
+        "p-blockui": primevue.blockui,
+        "p-datatable": primevue.datatable,
+        "p-column": primevue.column,
+        "p-panel": primevue.panel,
+        "p-dropdown": primevue.dropdown,
+        "p-multiselect": primevue.multiselect,
         "p-contextmenu": primevue.contextmenu,
     }
 };

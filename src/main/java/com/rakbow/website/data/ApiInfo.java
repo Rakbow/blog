@@ -9,6 +9,9 @@ package com.rakbow.website.data;
 public class ApiInfo {
 
     //region entity common
+    public static final String NAME_EMPTY = "未填写名称(原)！";
+    public static final String NAME_ZH_EMPTY = "未填写名称(中)！";
+    public static final String NAME_EN_EMPTY = "未填写名称(英)！";
     public static final String LIKE_SUCCESS = "点赞成功!";
     public static final String LIKE_FAILED = "已点过赞!";
     public static final String NOT_ACTION = "未进行任何操作！";
@@ -35,6 +38,7 @@ public class ApiInfo {
     public static final String UPDATE_DESCRIPTION_SUCCESS = "描述更新成功！";
     public static final String UPDATE_BONUS_SUCCESS = "特典信息更新成功！";
     public static final String UPDATE_SPEC_SUCCESS = "规格信息更新成功！";
+    public static final String UPDATE_COMPANIES_SUCCESS = "关联企业信息更新成功！";
 
     //endregion
 
@@ -119,6 +123,12 @@ public class ApiInfo {
     public static final String GAME_RELEASE_TYPE_EMPTY = "未选择游戏发售类型！";
     public static final String GAME_PLATFORM_EMPTY = "未选择游戏所属平台！";
     public static final String GAME_REGION_EMPTY = "未选择发售地区！";
+
+    //endregion
+
+    //region entry
+
+    public static final String ENTRY_CATEGORY_EMPTY = "未选择分类！";
 
     //endregion
 

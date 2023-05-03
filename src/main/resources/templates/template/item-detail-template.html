@@ -140,7 +140,7 @@
                     </div>
                     <div class="col-6 text-end">
                         <span v-if="itemImageInfo.displayImages">
-                            <span>上传于 {{item.uploadTime}},提交者 {{item.uploadUser}}</span>
+                            <span>上传于 {{item.uploadTime}}</span>
                         </span>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                         <img class="sidebar-panel-image-middle" :src="image.thumbUrl"
                              draggable="false"
                              oncontextmenu="return false"
-                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime + ' 提交者 ' + image.uploadUser, class: 'image-tooltip'}"
+                             v-tooltip.bottom="{value: '上传于 ' + image.uploadTime, class: 'image-tooltip'}"
                              @click="imageClick(index)"/>
                     </div>
             </div>
@@ -201,7 +201,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-image"></i>
                                         </span>
-                            <p-inputtext v-model="imageInfo.nameZh" placeholder="图片名(中)"></p-inputtext>
+                            <p-inputtext v-model="image.nameZh" placeholder="图片名(中)"></p-inputtext>
                         </div>
                     </div>
                     <div class="field col">
@@ -209,16 +209,16 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-image"></i>
                                         </span>
-                            <p-inputtext v-model="imageInfo.nameEn" placeholder="图片名(英)"></p-inputtext>
+                            <p-inputtext v-model="image.nameEn" placeholder="图片名(英)"></p-inputtext>
                         </div>
                     </div>
                     <div class="field col">
-                        <p-dropdown v-model="imageInfo.type" :options="imageTypes" option-label="label"
+                        <p-dropdown v-model="image.type" :options="imageTypes" option-label="label"
                                     option-value="value" placeholder="选择图片类型"
                                     style="width: 280px"></p-dropdown>
                     </div>
                     <div class="field col">
-                        <p-textarea v-model="imageInfo.description" rows="1" cols="20"
+                        <p-textarea v-model="image.description" rows="1" cols="20"
                                     :auto-resize="true" placeholder="图片描述"
                                     style="width: 280px"></p-textarea>
                     </div>

@@ -1,9 +1,11 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -13,20 +15,16 @@ import java.util.Date;
  * @Description: 系列实体类
  */
 @Data
-public class Franchise {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Franchise extends MetaEntity {
 
     private int id;//主键
     private String name;//系列名
     private String nameZh;//系列名（中文）
     private String nameEn;//系列名（英语）
     private Date originDate;//发行日期
-    private Timestamp addedTime;//创建时间
-    private Timestamp editedTime;//更新时间
-    private String description;//描述
-    private String remark;//备注
-    private String images;//图片
     private String metaInfo;//meta相关信息
-    private int status;//状态
 
     public Franchise() {
         this.id = 0;
@@ -34,13 +32,13 @@ public class Franchise {
         this.nameZh = "";
         this.nameEn = "";
         this.originDate = null;
-        this.addedTime = DateUtil.NOW_TIMESTAMP;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;
-        this.description = "";
-        this.remark = "";
-        this.images = "[]";
         this.metaInfo = "{\"isMeta\": 0, \"ids\": []}";
-        this.status = 1;
+        this.setAddedTime(DateUtil.NOW_TIMESTAMP);
+        this.setEditedTime(DateUtil.NOW_TIMESTAMP);
+        this.setDescription("");
+        this.setRemark("");
+        this.setImages("[]");
+        this.setStatus(1);
     }
 
 }

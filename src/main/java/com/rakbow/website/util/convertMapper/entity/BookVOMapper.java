@@ -1,8 +1,7 @@
-package com.rakbow.website.util.convertMapper;
+package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.emun.book.BookType;
+import com.rakbow.website.data.emun.entity.book.BookType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Language;
 import com.rakbow.website.data.emun.common.Region;
@@ -11,7 +10,10 @@ import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.book.BookVOGamma;
 import com.rakbow.website.entity.Book;
-import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.BookUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -56,26 +58,17 @@ public interface BookVOMapper {
         bookVO.setIsbn13(book.getIsbn13());
         bookVO.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
         bookVO.setPrice(book.getPrice());
-        bookVO.setCurrencyUnit(Region.regionCode2Currency(book.getRegion()));
+        bookVO.setCurrencyUnit(Region.getCurrencyByCode(book.getRegion()));
         bookVO.setPublisher(book.getPublisher());
         bookVO.setSummary(book.getSummary());
         bookVO.setHasBonus(book.getHasBonus() == 1);
         bookVO.setRemark(book.getRemark());
 
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-        bookVO.setBookType(bookType);
+        bookVO.setBookType(BookType.getAttribute(book.getBookType()));
 
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-        bookVO.setRegion(region);
+        bookVO.setRegion(Region.getRegion(book.getRegion()));
 
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-        bookVO.setPublishLanguage(publishLanguage);
+        bookVO.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
 
         //大文本信息
         bookVO.setAuthors(JSON.parseArray(book.getAuthors()));
@@ -108,26 +101,17 @@ public interface BookVOMapper {
         bookVOAlpha.setAuthors(BookUtil.getAuthors(book));
         bookVOAlpha.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
         bookVOAlpha.setPrice(book.getPrice());
-        bookVOAlpha.setCurrencyUnit(Region.regionCode2Currency(book.getRegion()));
+        bookVOAlpha.setCurrencyUnit(Region.getCurrencyByCode(book.getRegion()));
         bookVOAlpha.setPublisher(book.getPublisher());
         bookVOAlpha.setSummary(book.getSummary());
         bookVOAlpha.setHasBonus(book.getHasBonus() == 1);
         bookVOAlpha.setRemark(book.getRemark());
 
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-        bookVOAlpha.setBookType(bookType);
+        bookVOAlpha.setBookType(BookType.getAttribute(book.getBookType()));
 
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-        bookVOAlpha.setRegion(region);
+        bookVOAlpha.setRegion(Region.getRegion(book.getRegion()));
 
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-        bookVOAlpha.setPublishLanguage(publishLanguage);
+        bookVOAlpha.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
 
         //关联信息
         bookVOAlpha.setProducts(ProductUtil.getProductList(book.getProducts()));
@@ -183,20 +167,11 @@ public interface BookVOMapper {
         bookVOBeta.setIsbn13(book.getIsbn13());
         bookVOBeta.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
 
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-        bookVOBeta.setBookType(bookType);
+        bookVOBeta.setBookType(BookType.getAttribute(book.getBookType()));
 
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-        bookVOBeta.setRegion(region);
+        bookVOBeta.setRegion(Region.getRegion(book.getRegion()));
 
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-        bookVOBeta.setPublishLanguage(publishLanguage);
+        bookVOBeta.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
 
         //将图片分割处理
         bookVOBeta.setCover(CommonImageUtil.generateThumbCover(book.getImages(), EntityType.BOOK, 50));
@@ -255,20 +230,11 @@ public interface BookVOMapper {
         bookVOGamma.setSummary(book.getSummary());
         bookVOGamma.setHasBonus(book.getHasBonus() == 1);
 
-        JSONObject bookType = new JSONObject();
-        bookType.put("id", book.getBookType());
-        bookType.put("nameZh", BookType.index2NameZh(book.getBookType()));
-        bookVOGamma.setBookType(bookType);
+        bookVOGamma.setBookType(BookType.getAttribute(book.getBookType()));
 
-        JSONObject region = new JSONObject();
-        region.put("code", book.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(book.getRegion()));
-        bookVOGamma.setRegion(region);
+        bookVOGamma.setRegion(Region.getRegion(book.getRegion()));
 
-        JSONObject publishLanguage = new JSONObject();
-        publishLanguage.put("code", book.getPublishLanguage());
-        publishLanguage.put("nameZh", Language.languageCode2NameZh(book.getPublishLanguage()));
-        bookVOGamma.setPublishLanguage(publishLanguage);
+        bookVOGamma.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
 
         //关联信息
         bookVOGamma.setProducts(ProductUtil.getProductList(book.getProducts()));

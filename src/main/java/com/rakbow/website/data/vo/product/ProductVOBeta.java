@@ -1,6 +1,7 @@
 package com.rakbow.website.data.vo.product;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
 /**
@@ -18,7 +19,7 @@ public class ProductVOBeta {
     private String nameZh;//中文译名
     private String nameEn;//英文译名
     private String releaseDate;//发售日期
-    private JSONObject category;//作品分类
+    private Attribute category;//作品分类
 
     //关联信息
     private JSONObject franchise;//所属系列id

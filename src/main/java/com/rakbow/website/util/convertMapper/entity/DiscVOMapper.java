@@ -1,8 +1,8 @@
-package com.rakbow.website.util.convertMapper;
+package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
@@ -10,7 +10,6 @@ import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOGamma;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.entity.AlbumUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -59,12 +58,9 @@ public interface DiscVOMapper {
         discVO.setHasBonus(disc.getHasBonus() == 1);
         discVO.setRemark(disc.getRemark());
 
-        JSONObject region = new JSONObject();
-        region.put("code", disc.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
-        discVO.setRegion(region);
+        discVO.setRegion(Region.getRegion(disc.getRegion()));
 
-        discVO.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
+        discVO.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
         discVO.setSpec(JSON.parseArray(disc.getSpec()));
         discVO.setBonus(disc.getBonus());
 
@@ -98,15 +94,12 @@ public interface DiscVOMapper {
         discVOAlpha.setHasBonus(disc.getHasBonus() == 1);
         discVOAlpha.setRemark(disc.getRemark());
 
-        JSONObject region = new JSONObject();
-        region.put("code", disc.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
-        discVOAlpha.setRegion(region);
+        discVOAlpha.setRegion(Region.getRegion(disc.getRegion()));
 
         discVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(disc.getFranchises()));
         discVOAlpha.setProducts(ProductUtil.getProductList(disc.getProducts()));
 
-        discVOAlpha.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
+        discVOAlpha.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
 
         //将图片分割处理
         discVOAlpha.setCover(CommonImageUtil.generateCover(disc.getImages(), EntityType.DISC));
@@ -157,7 +150,7 @@ public interface DiscVOMapper {
         discVOBeta.setNameEn(disc.getNameEn());
         discVOBeta.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
 
-        discVOBeta.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
+        discVOBeta.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
 
         discVOBeta.setCover(CommonImageUtil.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
 
@@ -209,15 +202,12 @@ public interface DiscVOMapper {
         discVOGamma.setLimited(disc.getLimited() == 1);
         discVOGamma.setHasBonus(disc.getHasBonus() == 1);
 
-        JSONObject region = new JSONObject();
-        region.put("code", disc.getRegion());
-        region.put("nameZh", Region.regionCode2NameZh(disc.getRegion()));
-        discVOGamma.setRegion(region);
+        discVOGamma.setRegion(Region.getRegion(disc.getRegion()));
 
         discVOGamma.setFranchises(FranchiseUtil.getFranchiseList(disc.getFranchises()));
         discVOGamma.setProducts(ProductUtil.getProductList(disc.getProducts()));
 
-        discVOGamma.setMediaFormat(AlbumUtil.getMediaFormat(disc.getMediaFormat()));
+        discVOGamma.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
 
         discVOGamma.setCover(QiniuImageUtil.getThumb70Url(disc.getImages()));
 

@@ -492,6 +492,10 @@ a {
     background: transparent url("https://img.rakbow.com/common/entity-border/product_border_thumb.png") 0 0 no-repeat;
 }
 
+.a_with_underline a:visited, a:link {
+    color: #ceffff;
+}
+
 .a_with_underline a:hover {
     border-bottom: 1px solid #ceffff;
 }

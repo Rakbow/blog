@@ -503,7 +503,7 @@
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                             </div>
                             <span v-else>选择地区</span>
                         </template>
@@ -521,7 +521,7 @@
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{regionCode2NameZh(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
                             </div>
                             <span v-else>选择地区</span>
                         </template>
@@ -1018,7 +1018,7 @@
                 //basic
                 albums, books, discs, games,
                 product, updateStatus, like, pageInfo, detailInfo, itemImageInfo, franchiseSet,
-                platformSet, regionSet, productCategorySet, relatedProducts, responsiveOptions, regionCode2NameZh,
+                platformSet, regionSet, productCategorySet, relatedProducts, responsiveOptions, getNameByCode,
                 relatedItemLoad, tmpList5, PRODUCT_ORGANIZATION_FORMAT,
 
                 //edit

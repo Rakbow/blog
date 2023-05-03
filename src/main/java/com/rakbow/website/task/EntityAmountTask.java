@@ -1,20 +1,13 @@
 package com.rakbow.website.task;
 
 import com.rakbow.website.dao.EntityMapper;
-import com.rakbow.website.data.common.Like;
-import com.rakbow.website.data.common.Visit;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.common.VisitUtil;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * @Project_name: website

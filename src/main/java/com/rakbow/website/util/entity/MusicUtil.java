@@ -4,7 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.data.emun.music.AudioType;
+import com.rakbow.website.data.emun.entity.music.AudioType;
+import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
@@ -27,23 +28,6 @@ public class MusicUtil {
 
     @Resource
     private static MusicService musicService;
-
-    /**
-     * 获取音乐分类数组
-     * @author rakbow
-     * @return list
-     * */
-    public static JSONArray getAudioTypeSet(){
-        JSONArray audioTypeSet = new JSONArray();
-        for(AudioType audioType : AudioType.values()){
-            JSONObject audioTypeJson = new JSONObject();
-            audioTypeJson.put("label",audioType.getName());
-            audioTypeJson.put("labelEn",audioType.getNameEn());
-            audioTypeJson.put("value",audioType.getIndex());
-            audioTypeSet.add(audioTypeJson);
-        }
-        return audioTypeSet;
-    }
 
     /**
      * 根据专辑id删除该专辑对应所有音乐

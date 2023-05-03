@@ -1,9 +1,11 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -13,7 +15,9 @@ import java.util.Date;
  * @Description:
  */
 @Data
-public class Disc {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Disc extends MetaEntity {
 
     private int id;//主键
     private String catalogNo;//商品型番
@@ -32,37 +36,31 @@ public class Disc {
     private String spec;//商品规格
     private int hasBonus;//是否包含特典
     private String bonus;//特典信息
-    private String images;//图片 json格式
-    private String description;//描述
-    private String remark;//备注
-    private Timestamp addedTime;//收录时间
-    private Timestamp editedTime;//编辑时间
-    private int status;//状态
 
     public Disc () {
-        id = 0;
-        catalogNo = "";
-        name = "";
-        nameZh = "";
-        nameEn = "";
-        barcode = "";
-        region = "";
-        franchises = "{\"ids\":[]}";
-        products = "{\"ids\":[]}";
-        releaseDate = null;
-        price = 0;
-        currencyUnit = "";
-        mediaFormat = "{\"ids\":[]}";
-        limited = 0;
-        spec = "[]";
-        hasBonus = 0;
-        bonus = "";
-        images = "[]";
-        description = "";
-        remark = "";
-        addedTime = DateUtil.NOW_TIMESTAMP;
-        editedTime = DateUtil.NOW_TIMESTAMP;
-        status = 1;
+        this.id = 0;
+        this.catalogNo = "";
+        this.name = "";
+        this.nameZh = "";
+        this.nameEn = "";
+        this.barcode = "";
+        this.region = "";
+        this.franchises = "{\"ids\":[]}";
+        this.products = "{\"ids\":[]}";
+        this.releaseDate = null;
+        this.price = 0;
+        this.currencyUnit = "";
+        this.mediaFormat = "{\"ids\":[]}";
+        this.limited = 0;
+        this.spec = "[]";
+        this.hasBonus = 0;
+        this.bonus = "";
+        this.setImages("[]");
+        this.setDescription("");
+        this.setRemark("");
+        this.setAddedTime(DateUtil.NOW_TIMESTAMP);
+        this.setEditedTime(DateUtil.NOW_TIMESTAMP);
+        this.setStatus(1);
     }
 
 

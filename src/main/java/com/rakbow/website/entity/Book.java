@@ -1,9 +1,11 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -13,7 +15,9 @@ import java.util.Date;
  * @Description: 书籍实体类
  */
 @Data
-public class Book {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Book extends MetaEntity {
     private int id;//主键编号
     private String title;//标题（原文）
     private String titleEn;//标题（英文）
@@ -26,6 +30,7 @@ public class Book {
     private String region;//地区
     private String publishLanguage;//语言
     private String authors;//作者（译者，插画，原作者等，json）
+    private String companies;//相关企业
     private String publisher;//出版社
     private Date publishDate;//出版日期
     private int price;//出版价格
@@ -33,12 +38,6 @@ public class Book {
     private String spec;//规格
     private int hasBonus;//是否包含特典
     private String bonus;//特典信息
-    private String description;//描述
-    private String images;//图片（json）
-    private String remark;//备注
-    private Timestamp addedTime;//收录时间
-    private Timestamp editedTime;//编辑时间
-    private int status;//状态
 
     public Book() {
         this.id = 0;
@@ -53,6 +52,7 @@ public class Book {
         this.region = "";
         this.publishLanguage = "";
         this.authors = "[]";
+        this.companies = "[]";
         this.publisher = "";
         this.publishDate = null;
         this.price = 0;
@@ -60,11 +60,11 @@ public class Book {
         this.spec = "[]";
         this.hasBonus = 0;
         this.bonus = "";
-        this.description = "";
-        this.images = "[]";
-        this.remark = "";
-        this.addedTime = DateUtil.NOW_TIMESTAMP;;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;;
-        this.status = 1;
+        this.setDescription("");
+        this.setImages("[]");
+        this.setRemark("");
+        this.setAddedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setEditedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setStatus(1);
     }
 }

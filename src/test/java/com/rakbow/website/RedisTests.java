@@ -1,23 +1,18 @@
 package com.rakbow.website;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.entity.Album;
+import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.entity.EntityStatistic;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -64,9 +59,10 @@ public class RedisTests {
 
     @Test
     public void refreshData() {
-        productService.refreshRedisProducts();
-        franchiseService.refreshRedisFranchises();
-//        entityService.refreshRedisEmunData();
+        // entityService.refreshRedisEntries(EntryCategory.COMPANY);
+        // productService.refreshRedisProducts();
+        // franchiseService.refreshRedisFranchises();
+        entityService.refreshRedisEmunData();
     }
 
     @Test
