@@ -339,8 +339,14 @@ const entryDbList = {
             this.deleteDialog = true;
         },
         deleteSelectedItems() {
+            let deleteItemIds = [];
+            this.selectedItems.forEach(
+                item => {
+                    deleteItemIds.push(item.id);
+                }
+            );
             this.editBlock = true;
-            HttpUtil.deleteRequest(this.toast, DELETE_ENTRY_URL, this.selectedItems)
+            HttpUtil.deleteRequest(this.toast, DELETE_ENTRY_URL, deleteItemIds)
                 .then(res => {
                     if (res.state === 1) {
                         this.deleteDialog = false;

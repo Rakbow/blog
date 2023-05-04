@@ -102,8 +102,8 @@ public class EntryController {
     public String deleteEntry(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            List<Entry> entries = JSON.parseArray(json).toJavaList(Entry.class);
-
+            List<Integer> ids = JSON.parseArray(json).toJavaList(Integer.class);
+            List<Entry> entries = entryService.getEntries(ids);
             for (Entry entry : entries) {
                 //从数据库中删除专辑
                 entryService.deleteEntry(entry);

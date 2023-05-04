@@ -59,6 +59,18 @@ public class EntryService {
     }
 
     /**
+     * 根据Id获取
+     *
+     * @param ids ids
+     * @return Entry
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public List<Entry> getEntries(List<Integer> ids) {
+        return entryMapper.getEntries(ids);
+    }
+
+    /**
      * 根据Id删除
      *
      * @param entry Entry
