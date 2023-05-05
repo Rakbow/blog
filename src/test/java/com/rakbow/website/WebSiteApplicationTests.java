@@ -6,12 +6,15 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.Image;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
+import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -57,6 +60,12 @@ class WebSiteApplicationTests {
     private VisitUtil visitUtil;
     @Resource
     private StatisticMapper statisticMapper;
+    @Resource
+    private EntryMapper entryMapper;
+
+    private final EntryConvertMapper entryConvertMapper = EntryConvertMapper.INSTANCES;
+
+    private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
 
     @Test
     public void itemImageCovert() {
@@ -80,6 +89,19 @@ class WebSiteApplicationTests {
             }
         });
 
+    }
+
+    @Test
+    public void mapStructTest() {
+
+        List<Album> albums = albumMapper.getAll();
+
+        long t1 = System.currentTimeMillis();
+
+        List<AlbumVOAlpha> VOs = albumVOMapper.toVOAlpha(albums);
+
+        long t2 = System.currentTimeMillis();
+        System.out.println(t2 - t1);
     }
 
 }

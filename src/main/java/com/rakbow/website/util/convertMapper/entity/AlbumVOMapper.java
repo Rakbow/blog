@@ -11,7 +11,6 @@ import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Entry;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.util.common.DateUtil;
@@ -24,11 +23,17 @@ import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -102,44 +107,19 @@ public interface AlbumVOMapper {
      * @return AlbumVOAlpha
      * @author rakbow
      */
-    default AlbumVOAlpha album2VOAlpha(Album album) {
-        if (album == null) {
-            return null;
-        }
-        AlbumVOAlpha albumVOAlpha = new AlbumVOAlpha();
-
-        //基础信息
-        albumVOAlpha.setId(album.getId());
-        albumVOAlpha.setCatalogNo(album.getCatalogNo());
-        albumVOAlpha.setName(album.getName());
-        albumVOAlpha.setNameEn(album.getNameEn());
-        albumVOAlpha.setNameZh(album.getNameZh());
-        albumVOAlpha.setBarcode(album.getBarcode());
-        albumVOAlpha.setPrice(album.getPrice());
-        albumVOAlpha.setCurrencyUnit(album.getCurrencyUnit());
-        albumVOAlpha.setRemark(album.getRemark());
-        albumVOAlpha.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
-        albumVOAlpha.setHasBonus(album.getHasBonus() == 1);
-
-        //图片相关
-        albumVOAlpha.setCover(CommonImageUtil.generateCover(album.getImages(), EntityType.ALBUM));
-
-        //关联信息
-        albumVOAlpha.setProducts(ProductUtil.getProductList(album.getProducts()));
-        albumVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(album.getFranchises()));
-
-        //规格信息
-        albumVOAlpha.setPublishFormat(PublishFormat.getAttribute(album.getPublishFormat()));
-        albumVOAlpha.setAlbumFormat(AlbumFormat.getAttributes(album.getAlbumFormat()));
-        albumVOAlpha.setMediaFormat(MediaFormat.getAttributes(album.getMediaFormat()));
-
-        //审计字段
-        albumVOAlpha.setAddedTime(DateUtil.timestampToString(album.getAddedTime()));
-        albumVOAlpha.setEditedTime(DateUtil.timestampToString(album.getEditedTime()));
-        albumVOAlpha.setStatus(album.getStatus() == 1);
-
-        return albumVOAlpha;
-    }
+    @Mapping(target = "releaseDate", source = "releaseDate", qualifiedByName = "getReleaseDate")
+    @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
+    @Mapping(target = "cover", source = "images", qualifiedByName = "getCover")
+    @Mapping(target = "products", source = "products", qualifiedByName = "getProducts")
+    @Mapping(target = "franchises", source = "franchises", qualifiedByName = "getFranchises")
+    @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
+    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
+    @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "status", source = "status", qualifiedByName = "getBool")
+    @Named("toVOAlpha")
+    AlbumVOAlpha toVOAlpha(Album album);
 
     /**
      * 列表转换, Album转VO对象，供album-list和album-index界面使用，信息量较少
@@ -148,16 +128,52 @@ public interface AlbumVOMapper {
      * @return List<AlbumVOAlpha>
      * @author rakbow
      */
-    default List<AlbumVOAlpha> album2VOAlpha(List<Album> albums) {
-        List<AlbumVOAlpha> albumVOAlphas = new ArrayList<>();
+    @IterableMapping(qualifiedByName = "toVOAlpha")
+    List<AlbumVOAlpha> toVOAlpha(List<Album> albums);
 
-        if (!albums.isEmpty()) {
-            albums.forEach(album -> {
-                albumVOAlphas.add(album2VOAlpha(album));
-            });
-        }
+    @Named("getReleaseDate")
+    default String getReleaseDate(Date date) {
+        return DateUtil.dateToString(date);
+    }
 
-        return albumVOAlphas;
+    @Named("getCover")
+    default JSONObject getCover(String images) {
+        return CommonImageUtil.generateCover(images, EntityType.ALBUM);
+    }
+
+    @Named("getProducts")
+    default JSONArray getProducts(String products) {
+        return ProductUtil.getProductList(products);
+    }
+
+    @Named("getFranchises")
+    default JSONArray getFranchises(String franchises) {
+        return FranchiseUtil.getFranchiseList(franchises);
+    }
+
+    @Named("getPublishFormat")
+    default JSONArray getPublishFormat(String formats) {
+        return PublishFormat.getAttribute(formats);
+    }
+
+    @Named("getAlbumFormat")
+    default JSONArray getAlbumFormat(String formats) {
+        return AlbumFormat.getAttributes(formats);
+    }
+
+    @Named("getMediaFormat")
+    default JSONArray getMediaFormat(String formats) {
+        return MediaFormat.getAttributes(formats);
+    }
+
+    @Named("getVOTime")
+    default String getVOTime(Timestamp timestamp) {
+        return DateUtil.timestampToString(timestamp);
+    }
+
+    @Named("getBool")
+    default boolean getBool(int bool) {
+        return bool == 1;
     }
 
     /**

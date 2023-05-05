@@ -37,7 +37,7 @@ public class Entry {
         this.links = "[]";
         this.alias = "[]";
         this.images = "[]";
-        this.detail = "[]";
+        this.detail = "{}";
         this.description = "";
         this.addedTime = DateUtil.NOW_TIMESTAMP;
         this.editedTime = DateUtil.NOW_TIMESTAMP;

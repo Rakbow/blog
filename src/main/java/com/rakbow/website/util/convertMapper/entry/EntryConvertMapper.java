@@ -1,6 +1,8 @@
 package com.rakbow.website.util.convertMapper.entry;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.vo.entry.EntryVOAlpha;
@@ -10,11 +12,17 @@ import com.rakbow.website.entity.common.Merchandise;
 import com.rakbow.website.entity.common.Personnel;
 import com.rakbow.website.entity.common.Role;
 import com.rakbow.website.util.common.DateUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -27,147 +35,89 @@ public interface EntryConvertMapper {
 
     EntryConvertMapper INSTANCES = Mappers.getMapper(EntryConvertMapper.class);
 
-    default EntryVOAlpha toEntryVOAlpha(Entry entry) {
-        if(entry == null) {
-            return null;
-        }
-        EntryVOAlpha VO = new EntryVOAlpha();
+    @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
+    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Named("toEntryVOAlpha")
+    EntryVOAlpha toEntryVOAlpha(Entry entry);
 
-        VO.setId(entry.getId());
-        VO.setName(entry.getName());
-        VO.setNameZh(entry.getNameZh());
-        VO.setNameEn(entry.getNameEn());
-        VO.setCategory(EntryCategory.getAttribute(entry.getCategory()));
-        VO.setAlias(JSON.parseArray(entry.getAlias()).toJavaList(String.class));
-        VO.setLinks(JSON.parseArray(entry.getLinks()).toJavaList(String.class));
-        VO.setAddedTime(DateUtil.timestampToString(entry.getAddedTime()));
-        VO.setEditedTime(DateUtil.timestampToString(entry.getEditedTime()));
-        VO.setRemark(entry.getRemark());
-        return VO;
+    @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
+    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "region", source = "detail", qualifiedByName = "getRegion")
+    @Named("toCompany")
+    Company toCompany(Entry entry);
+
+    @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
+    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Named("toPersonnel")
+    Personnel toPersonnel(Entry entry);
+
+    @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
+    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Named("toRole")
+    Role toRole(Entry entry);
+
+    @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
+    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Named("toMerchandise")
+    Merchandise toMerchandise(Entry entry);
+
+    @IterableMapping(qualifiedByName = "toEntryVOAlpha")
+    List<EntryVOAlpha> toEntryVOAlpha(List<Entry> entries);
+
+    @IterableMapping(qualifiedByName = "toCompany")
+    List<Company> toCompany(List<Entry> entries);
+
+    @IterableMapping(qualifiedByName = "toPersonnel")
+    List<Personnel> toPersonnel(List<Entry> entries);
+
+    @IterableMapping(qualifiedByName = "toRole")
+    List<Role> toRole(List<Entry> entries);
+
+    @IterableMapping(qualifiedByName = "toMerchandise")
+    List<Merchandise> toMerchandise(List<Entry> entries);
+
+    //region get property method
+
+    @Named("getCategory")
+    default Attribute getVOCategory(int category) {
+        return EntryCategory.getAttribute(category);
     }
 
-    default List<EntryVOAlpha> toEntryVOAlpha(List<Entry> entries) {
-        List<EntryVOAlpha> entryVOAlphas = new ArrayList<>();
-        if(!entries.isEmpty()) {
-            entries.forEach(entry -> {
-                entryVOAlphas.add(toEntryVOAlpha(entry));
-            });
-        }
-        return entryVOAlphas;
+    @Named("getStringList")
+    default List<String> getVOStringList(String json) {
+        return JSON.parseArray(json).toJavaList(String.class);
     }
 
-    default Company toCompany(Entry entry) {
-        if(entry == null) {
-            return null;
-        }
-        Company company = new Company();
-
-        company.setId(entry.getId());
-        company.setName(entry.getName());
-        company.setNameZh(entry.getNameZh());
-        company.setNameEn(entry.getNameEn());
-        company.setLinks(JSON.parseArray(entry.getLinks()).toJavaList(String.class));
-        company.setAlias(JSON.parseArray(entry.getLinks()).toJavaList(String.class));
-        company.setDescription(entry.getDescription());
-        company.setAddedTime(DateUtil.timestampToString(entry.getAddedTime()));
-        company.setEditedTime(DateUtil.timestampToString(entry.getEditedTime()));
-        company.setRemark(entry.getRemark());
-        company.setRegion(Region.getRegion(JSON.parseObject(entry.getDetail()).getString("region")));
-        return company;
+    @Named("getVOTime")
+    default String getVOTime(Timestamp timestamp) {
+        return DateUtil.timestampToString(timestamp);
     }
 
-    default List<Company> toCompany(List<Entry> entries) {
-        List<Company> companies = new ArrayList<>();
-        if(!entries.isEmpty()) {
-            entries.forEach(entry -> {
-                companies.add(toCompany(entry));
-            });
+    @Named("getRegion")
+    default JSONObject getVORegion(String detail) {
+        String code = StringUtils.isBlank(detail)
+                ? Region.GLOBAL.getCode()
+                : JSON.parseObject(detail).getString("region");
+        if(StringUtils.isBlank(code)) {
+            code = Region.GLOBAL.getCode();
         }
-        return companies;
+        return Region.getRegion(code);
     }
 
-    default Personnel toPersonnel(Entry entry) {
-        if(entry == null) {
-            return null;
-        }
-        Personnel personnel = new Personnel();
-
-        personnel.setId(entry.getId());
-        personnel.setName(entry.getName());
-        personnel.setNameZh(entry.getNameZh());
-        personnel.setNameEn(entry.getNameEn());
-        personnel.setLinks(JSON.parseArray(entry.getLinks()).toJavaList(String.class));
-        personnel.setDescription(entry.getDescription());
-        personnel.setAddedTime(DateUtil.timestampToString(entry.getAddedTime()));
-        personnel.setEditedTime(DateUtil.timestampToString(entry.getEditedTime()));
-        personnel.setRemark(entry.getRemark());
-        return personnel;
-    }
-
-    default List<Personnel> toPersonnel(List<Entry> entries) {
-        List<Personnel> personnel = new ArrayList<>();
-        if(!entries.isEmpty()) {
-            entries.forEach(entry -> {
-                personnel.add(toPersonnel(entry));
-            });
-        }
-        return personnel;
-    }
-
-    default Role toRole(Entry entry) {
-        if(entry == null) {
-            return null;
-        }
-        Role role = new Role();
-
-        role.setId(entry.getId());
-        role.setName(entry.getName());
-        role.setNameZh(entry.getNameZh());
-        role.setNameEn(entry.getNameEn());
-        role.setLinks(JSON.parseArray(entry.getLinks()).toJavaList(String.class));
-        role.setDescription(entry.getDescription());
-        role.setAddedTime(DateUtil.timestampToString(entry.getAddedTime()));
-        role.setEditedTime(DateUtil.timestampToString(entry.getEditedTime()));
-        role.setRemark(entry.getRemark());
-        return role;
-    }
-
-    default List<Role> toRole(List<Entry> entries) {
-        List<Role> roles = new ArrayList<>();
-        if(!entries.isEmpty()) {
-            entries.forEach(entry -> {
-                roles.add(toRole(entry));
-            });
-        }
-        return roles;
-    }
-
-    default Merchandise toMerchandise(Entry entry) {
-        if(entry == null) {
-            return null;
-        }
-        Merchandise merchandise = new Merchandise();
-
-        merchandise.setId(entry.getId());
-        merchandise.setName(entry.getName());
-        merchandise.setNameZh(entry.getNameZh());
-        merchandise.setNameEn(entry.getNameEn());
-        merchandise.setLinks(JSON.parseArray(entry.getLinks()).toJavaList(String.class));
-        merchandise.setDescription(entry.getDescription());
-        merchandise.setAddedTime(DateUtil.timestampToString(entry.getAddedTime()));
-        merchandise.setEditedTime(DateUtil.timestampToString(entry.getEditedTime()));
-        merchandise.setRemark(entry.getRemark());
-        return merchandise;
-    }
-
-    default List<Merchandise> toMerchandise(List<Entry> entries) {
-        List<Merchandise> merchandises = new ArrayList<>();
-        if(!entries.isEmpty()) {
-            entries.forEach(entry -> {
-                merchandises.add(toMerchandise(entry));
-            });
-        }
-        return merchandises;
-    }
-
+    //endregion
 }

@@ -3,7 +3,6 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
@@ -107,10 +106,10 @@ public class AlbumController {
                 userService.getUserOperationAuthority(userService.getUserByRequest(request)));
 
         if (StringUtils.equals(pageLabel, "list")) {
-            albums = albumVOMapper.album2VOAlpha((List<Album>) searchResult.data);
+            albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            albums = albumVOMapper.album2VOAlpha((List<Album>) searchResult.data);
+            albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();

@@ -186,7 +186,7 @@ public class EntityService {
 
         if(!ids.isEmpty()) {
             if(entityType == EntityType.ALBUM.getId()) {
-                List<AlbumVOAlpha> items = albumVOMapper.album2VOAlpha(albumMapper.getAlbums(ids));
+                List<AlbumVOAlpha> items = albumVOMapper.toVOAlpha(albumMapper.getAlbums(ids));
 
                 for (AlbumVOAlpha item : items) {
                     item.setVisitNum(visits.get(item.getId()));

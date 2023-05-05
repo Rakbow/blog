@@ -73,7 +73,7 @@ public class EntityUtil {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             if(entityType == EntityType.ENTRY.getId()) {
-                options.put("entryCategorySet", redisUtil.get(RedisCacheConstant.ENTRY_CATEGORY_SET_ZH));
+                options.put("entryCategorySet", redisUtil.get(RedisCacheConstant.ENTRY_CATEGORY_SET_EN));
             }
             if(entityType == EntityType.ALBUM.getId()) {
                 options.put("mediaFormatSet", redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET_EN));
