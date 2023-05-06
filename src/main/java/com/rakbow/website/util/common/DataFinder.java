@@ -48,11 +48,7 @@ public class DataFinder {
         Music musicFinder = new Music();
         musicFinder.setId(id);
         int idx = Collections.binarySearch(musics, musicFinder, DataSorter.musicSortById);
-        if (idx >= 0) {
-            return musics.get(idx);
-        } else {
-            return null;
-        }
+        return idx >= 0 ? musics.get(idx) : null;
     }
 
     public static List<Music> findMusicByDiscSerial(int discSerial, List<Music> musics) {
@@ -106,11 +102,7 @@ public class DataFinder {
         JSONObject json = new JSONObject();
         json.put("id", id);
         int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSortById);
-        if (idx >= 0) {
-            return jsons.get(idx);
-        } else {
-            return null;
-        }
+        return idx >= 0 ? jsons.get(idx) : null;
     }
 
     /**
@@ -124,11 +116,7 @@ public class DataFinder {
         JSONObject json = new JSONObject();
         json.put("value", id);
         int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSetSortByValue);
-        if (idx >= 0) {
-            return jsons.get(idx);
-        } else {
-            return null;
-        }
+        return idx >= 0 ? jsons.get(idx) : null;
     }
 
     /**
@@ -142,11 +130,7 @@ public class DataFinder {
         Attribute finder = new Attribute();
         finder.setValue(value);
         int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);
-        if (idx >= 0) {
-            return attributes.get(idx);
-        } else {
-            return null;
-        }
+        return idx >= 0 ? attributes.get(idx) : null;
     }
 
     //endregion

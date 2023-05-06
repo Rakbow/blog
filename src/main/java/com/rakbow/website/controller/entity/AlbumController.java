@@ -3,11 +3,13 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
+import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
@@ -51,6 +53,8 @@ public class AlbumController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private HostHolder hostHolder;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -60,16 +64,18 @@ public class AlbumController {
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     @UniqueVisitor
-    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request, HttpServletResponse response) {
-        Album album = albumService.getAlbumWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
+        Album album = albumService.getAlbumWithAuth(id, userService.getUserOperationAuthority(hostHolder.getUser()));
         if (album == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
         }
 
+        List<Music> musics = musicService.getMusicsByAlbumId(id);
+
         String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
-        model.addAttribute("album", albumVOMapper.album2VO(album));
-        if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
+        model.addAttribute("album", albumService.buildVO(album, musics));
+        if(userService.getUserOperationAuthority(hostHolder.getUser()) > 0) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
         //前端选项数据
@@ -77,7 +83,7 @@ public class AlbumController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, EntityType.ALBUM, false));
 

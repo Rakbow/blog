@@ -73,7 +73,7 @@ public class MerchController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(merch, EntityType.MERCH.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MERCH.getId(), id, merch, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MERCH.getId(), id, merch));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(merch.getImages(), 200, EntityType.MERCH, false));
         //获取相关周边

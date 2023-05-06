@@ -73,7 +73,7 @@ public class BookController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
         //获取相关图书

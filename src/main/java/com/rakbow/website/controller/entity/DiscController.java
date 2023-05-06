@@ -74,7 +74,7 @@ public class DiscController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(disc, EntityType.DISC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.DISC.getId(), id, disc, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.DISC.getId(), id, disc));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
         //获取相关碟片

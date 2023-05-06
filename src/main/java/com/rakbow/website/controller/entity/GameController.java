@@ -73,7 +73,7 @@ public class GameController {
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(game, EntityType.GAME.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.GAME.getId(), id, game, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.GAME.getId(), id, game));
         //图片相关
         model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, EntityType.GAME, false));
         //获取相关游戏

@@ -13,11 +13,13 @@ import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
+import com.rakbow.website.util.entity.AlbumUtil;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,8 @@ public class AlbumService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -126,6 +130,20 @@ public class AlbumService {
     //endregion
 
     //region ------数据处理------
+
+    public AlbumVO buildVO(Album album, List<Music> musics) {
+        AlbumVO VO = albumVOMapper.toVO(album);
+
+        //可供编辑的editDiscList
+        JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
+        //音轨信息
+        JSONObject trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
+
+        VO.setEditDiscList(editDiscList);
+        VO.setTrackInfo(trackInfo);
+
+        return VO;
+    }
 
     /**
      * 检测数据合法性
@@ -395,7 +413,7 @@ public class AlbumService {
             }
         }
 
-        return albumVOMapper.album2VOBeta(CommonUtil.removeDuplicateList(result));
+        return albumVOMapper.toVOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     /**
@@ -415,7 +433,7 @@ public class AlbumService {
                 null, null, null, null, false, "releaseDate",
                 -1,  0, 0);
 
-        return albumVOMapper.album2VOBeta(albums);
+        return albumVOMapper.toVOBeta(albums);
     }
 
     //endregion

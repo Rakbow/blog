@@ -98,7 +98,7 @@ public class ProductController {
         }
 
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.PRODUCT.getId(), id, product, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.PRODUCT.getId(), id, product));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
         //图片相关

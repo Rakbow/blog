@@ -1,6 +1,7 @@
 package com.rakbow.website.config;
 
 import com.rakbow.website.controller.interceptor.LoginTicketInterceptor;
+import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -21,10 +22,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Resource
     private LoginTicketInterceptor loginTicketInterceptor;
+    @Resource
+    private TokenInterceptor tokenInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(tokenInterceptor);
         registry.addInterceptor(loginTicketInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.ico", "/**/*.cur");
     }

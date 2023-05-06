@@ -101,6 +101,7 @@ class WebSiteApplicationTests {
         List<AlbumVOAlpha> VOs = albumVOMapper.toVOAlpha(albums);
 
         long t2 = System.currentTimeMillis();
+        
         System.out.println(t2 - t1);
     }
 

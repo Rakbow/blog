@@ -53,6 +53,26 @@ public interface AlbumVOMapper {
      * @return AlbumVO
      * @author rakbow
      */
+    @Mapping(target = "releaseDate", source = "releaseDate", qualifiedByName = "getReleaseDate")
+    @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
+    @Mapping(target = "companies", source = "companies", qualifiedByName = "getCompanies")
+    @Mapping(target = "editCompanies", source = "companies", qualifiedByName = "getEditCompanies")
+    @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
+    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
+    @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
+    @Mapping(target = "artists", source = "artists", qualifiedByName = "getArtists")
+    @Mapping(target = "trackInfo", ignore = true)
+    @Mapping(target = "editDiscList", ignore = true)
+    AlbumVO toVO(Album album);
+
+
+    /**
+     * Album转VO对象，用于详情页面，转换量最大的
+     *
+     * @param album 专辑
+     * @return AlbumVO
+     * @author rakbow
+     */
     default AlbumVO album2VO(Album album) {
         if (album == null) {
             return null;
@@ -118,8 +138,41 @@ public interface AlbumVOMapper {
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "status", source = "status", qualifiedByName = "getBool")
+    @Mapping(target = "visitNum", ignore = true)
     @Named("toVOAlpha")
     AlbumVOAlpha toVOAlpha(Album album);
+
+    /**
+     * Album转VO对象，信息量最少
+     *
+     * @param album 专辑
+     * @return AlbumVOBeta
+     * @author rakbow
+     */
+    @Mapping(target = "releaseDate", source = "releaseDate", qualifiedByName = "getReleaseDate")
+    @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
+    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
+    @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Named("toVOBeta")
+    AlbumVOBeta toVOBeta(Album album);
+
+    /**
+     * Album转VO对象，用于存储到搜索引擎
+     *
+     * @param album 专辑
+     * @return AlbumVOGamma
+     * @author rakbow
+     */
+    @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
+    @Mapping(target = "products", source = "products", qualifiedByName = "getProducts")
+    @Mapping(target = "franchises", source = "franchises", qualifiedByName = "getFranchises")
+    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
+    @Mapping(target = "cover", source = "images", qualifiedByName = "getThumb70CoverUrl")
+    @Mapping(target = "visitCount", source = "id", qualifiedByName = "getVisitCount")
+    @Mapping(target = "likeCount", source = "id", qualifiedByName = "getLikeCount")
+    @Named("toVOGamma")
+    AlbumVOGamma toVOGamma(Album album);
 
     /**
      * 列表转换, Album转VO对象，供album-list和album-index界面使用，信息量较少
@@ -131,14 +184,31 @@ public interface AlbumVOMapper {
     @IterableMapping(qualifiedByName = "toVOAlpha")
     List<AlbumVOAlpha> toVOAlpha(List<Album> albums);
 
+    /**
+     * 列表转换, Album转VO对象，信息量最少
+     *
+     * @param albums 专辑列表
+     * @return List<AlbumVOBeta>
+     * @author rakbow
+     */
+    @IterableMapping(qualifiedByName = "toVOBeta")
+    List<AlbumVOBeta> toVOBeta(List<Album> albums);
+
+    /**
+     * 列表转换, Album转VO对象，用于存储到搜索引擎
+     *
+     * @param albums 专辑列表
+     * @return List<AlbumVOGamma>
+     * @author rakbow
+     */
+    @IterableMapping(qualifiedByName = "toVOGamma")
+    List<AlbumVOGamma> toVOGamma(List<Album> albums);
+
+    //region get property method
+
     @Named("getReleaseDate")
     default String getReleaseDate(Date date) {
         return DateUtil.dateToString(date);
-    }
-
-    @Named("getCover")
-    default JSONObject getCover(String images) {
-        return CommonImageUtil.generateCover(images, EntityType.ALBUM);
     }
 
     @Named("getProducts")
@@ -176,107 +246,48 @@ public interface AlbumVOMapper {
         return bool == 1;
     }
 
-    /**
-     * Album转VO对象，信息量最少
-     *
-     * @param album 专辑
-     * @return AlbumVOBeta
-     * @author rakbow
-     */
-    default AlbumVOBeta album2VOBeta(Album album) {
-        if (album == null) {
-            return null;
-        }
-        AlbumVOBeta albumVOBeta = new AlbumVOBeta();
-
-        //基础信息
-        albumVOBeta.setId(album.getId());
-        albumVOBeta.setCatalogNo(album.getCatalogNo());
-        albumVOBeta.setName(album.getName());
-        albumVOBeta.setNameEn(album.getNameEn());
-        albumVOBeta.setNameZh(album.getNameZh());
-        albumVOBeta.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
-        albumVOBeta.setCover(CommonImageUtil.generateThumbCover(album.getImages(), EntityType.ALBUM, 50));
-        albumVOBeta.setAlbumFormat(AlbumFormat.getAttributes(album.getAlbumFormat()));
-        albumVOBeta.setAddedTime(DateUtil.timestampToString(album.getAddedTime()));
-        albumVOBeta.setEditedTime(DateUtil.timestampToString(album.getEditedTime()));
-
-        return albumVOBeta;
+    @Named("getCover")
+    default JSONObject getCover(String images) {
+        return CommonImageUtil.generateCover(images, EntityType.ALBUM);
     }
 
-    /**
-     * 列表转换, Album转VO对象，信息量最少
-     *
-     * @param albums 专辑列表
-     * @return List<AlbumVOBeta>
-     * @author rakbow
-     */
-    default List<AlbumVOBeta> album2VOBeta(List<Album> albums) {
-        List<AlbumVOBeta> albumVOBetas = new ArrayList<>();
-
-        if (!albums.isEmpty()) {
-            albums.forEach(album -> {
-                albumVOBetas.add(album2VOBeta(album));
-            });
-        }
-
-        return albumVOBetas;
+    @Named("getThumbCover")
+    default JSONObject getThumbCover(String images) {
+        return CommonImageUtil.generateThumbCover(images, EntityType.ALBUM, 50);
     }
 
-    /**
-     * Album转VO对象，用于存储到搜索引擎
-     *
-     * @param album 专辑
-     * @return AlbumVOGamma
-     * @author rakbow
-     */
-    default AlbumVOGamma album2VOGamma(Album album) {
-        if (album == null) {
-            return null;
-        }
+    @Named("getThumb70CoverUrl")
+    default String getThumb70Cover(String images) {
+        return QiniuImageUtil.getThumb70Url(images);
+    }
 
+    @Named("getVisitCount")
+    default long getVisitCount(int id) {
         VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
+        return visitUtil.getVisit(EntityType.ALBUM.getId(), id);
+    }
+
+    @Named("getLikeCount")
+    default long getLikeCount(int id) {
         LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
-
-        AlbumVOGamma albumVOGamma = new AlbumVOGamma();
-        albumVOGamma.setId(album.getId());
-        albumVOGamma.setCatalogNo(album.getCatalogNo());
-        albumVOGamma.setName(album.getName());
-        albumVOGamma.setNameEn(album.getNameEn());
-        albumVOGamma.setNameZh(album.getNameZh());
-        albumVOGamma.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
-        albumVOGamma.setHasBonus(album.getHasBonus() == 1);
-
-        //关联信息
-        albumVOGamma.setProducts(ProductUtil.getProductList(album.getProducts()));
-        albumVOGamma.setFranchises(FranchiseUtil.getFranchiseList(album.getFranchises()));
-        albumVOGamma.setAlbumFormat(AlbumFormat.getAttributes(album.getAlbumFormat()));
-
-        albumVOGamma.setCover(QiniuImageUtil.getThumb70Url(album.getImages()));
-
-        albumVOGamma.setVisitCount(visitUtil.getVisit(EntityType.ALBUM.getId(), album.getId()));
-        albumVOGamma.setLikeCount(likeUtil.getLike(EntityType.ALBUM.getId(), album.getId()));
-
-        return albumVOGamma;
+        return likeUtil.getLike(EntityType.ALBUM.getId(), id);
     }
 
-    /**
-     * 列表转换, Album转VO对象，用于存储到搜索引擎
-     *
-     * @param albums 专辑列表
-     * @return List<AlbumVOGamma>
-     * @author rakbow
-     */
-    default List<AlbumVOGamma> album2VOGamma(List<Album> albums) {
-        List<AlbumVOGamma> albumVOGammas = new ArrayList<>();
-
-        if (!albums.isEmpty()) {
-            albums.forEach(album -> {
-                albumVOGammas.add(album2VOGamma(album));
-            });
-        }
-
-        return albumVOGammas;
+    @Named("getCompanies")
+    default JSONArray getCompanies(String companies) {
+        return EntryUtil.getCompanies(companies);
     }
+
+    @Named("getEditCompanies")
+    default JSONArray getEditCompanies(String companies) {
+        return JSONArray.parseArray(companies);
+    }
+
+    @Named("getArtists")
+    default JSONArray getArtists(String artists) {
+        return JSONArray.parseArray(artists);
+    }
+
+    //endregion
 
 }

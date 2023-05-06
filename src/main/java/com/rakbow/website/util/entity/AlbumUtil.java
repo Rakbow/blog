@@ -33,7 +33,7 @@ public class AlbumUtil {
     public static JSONArray getEditDiscList(String trackInfoJson, List<Music> allMusics) {
         JSONArray editDiscList = new JSONArray();
         if (JSONObject.parseObject(trackInfoJson) != null
-                && !Objects.equals(JSONObject.parseObject(trackInfoJson).toJSONString(), "{}")) {
+                && !StringUtils.equals(JSONObject.parseObject(trackInfoJson).toJSONString(), "{}")) {
             JSONArray tmpEditDiscList = JSONObject.parseObject(trackInfoJson).getJSONArray("discList");
             //临时ID，用于前端分辨碟片
             int tmpDiscId = 0;
@@ -42,19 +42,19 @@ public class AlbumUtil {
                 JSONArray trackList = disc.getJSONArray("trackList");
                 JSONArray editTrackList = new JSONArray();
                 //临时ID，用于前端分辨曲目
-                int tmpTracId = 0;
+                int tmpTrackId = 0;
                 for (int j = 0; j < trackList.size(); j++) {
                     int musicId = trackList.getInteger(j);
                     Music music = DataFinder.findMusicById(musicId, allMusics);
                     if (music != null) {
                         JSONObject track = new JSONObject();
                         track.put("tmpDiscId", tmpDiscId);
-                        track.put("tmpTrackId", tmpTracId);
+                        track.put("tmpTrackId", tmpTrackId);
                         track.put("musicId", musicId);
                         track.put("name", music.getName());
                         track.put("length", music.getAudioLength());
                         editTrackList.add(track);
-                        tmpTracId++;
+                        tmpTrackId++;
                     }
                 }
 
@@ -79,7 +79,6 @@ public class AlbumUtil {
                 tmpDiscId++;
             }
         }
-
         return editDiscList;
     }
 

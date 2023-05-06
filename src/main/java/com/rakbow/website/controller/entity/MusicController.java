@@ -74,13 +74,13 @@ public class MusicController {
         //前端选项数据
         model.addAttribute("options", entityUtil.getDetailOptions(EntityType.MUSIC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(music, coverUrl));
         //获取所属专辑的信息
-        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.album2VOBeta(album));
+        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.toVOBeta(album));
 
         return "/database/itemDetail/music-detail";
 

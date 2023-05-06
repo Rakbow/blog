@@ -3,6 +3,7 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
@@ -82,6 +83,9 @@ public class EntityService {
     @Resource
     private EntryUtil entryUtil;
 
+    @Resource
+    private HostHolder hostHolder;
+
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
@@ -118,7 +122,7 @@ public class EntityService {
      * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
      * @Author Rakbow
      */
-    public pageInfo getPageInfo(int entityType, int entityId, Object entity, HttpServletRequest request) {
+    public pageInfo getPageInfo(int entityType, int entityId, Object entity) {
 
         JSONObject json = JSON.parseObject(JSON.toJSONString(entity));
 
@@ -128,7 +132,7 @@ public class EntityService {
         pageInfo pageInfo = new pageInfo();
 
         // 从cookie中获取点赞token
-        String likeToken = CookieUtil.getValue(request, "like_token");
+        String likeToken = TokenInterceptor.getLikeToken();
         if(likeToken == null) {
             pageInfo.setLiked(false);
         }else {
@@ -136,7 +140,7 @@ public class EntityService {
         }
 
         // 从cookie中获取访问token
-        String visitToken = CookieUtil.getValue(request, "visit_token");
+        String visitToken = TokenInterceptor.getVisitToken();
 
         pageInfo.setAddedTime(DateUtil.timestampToString(addedTime));
         pageInfo.setEditedTime(DateUtil.timestampToString(editedTime));
@@ -240,7 +244,7 @@ public class EntityService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public JSONArray getJustAddedItems(int entityType, int limit) {
         if(entityType == EntityType.ALBUM.getId()) {
-            return JSON.parseArray(JSON.toJSONString(albumVOMapper.album2VOBeta(albumMapper.getAlbumOrderByAddedTime(limit))));
+            return JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOBeta(albumMapper.getAlbumOrderByAddedTime(limit))));
         }
         if(entityType == EntityType.BOOK.getId()) {
             return JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByAddedTime(limit))));
@@ -606,7 +610,7 @@ public class EntityService {
         if(entityType == EntityType.ALBUM.getId()) {
             List<Album> albums = albumMapper.simpleSearch(keyword, limit, offset);
             if(!albums.isEmpty()) {
-                res.setData(JSON.parseArray(JSON.toJSONString(albumVOMapper.album2VOGamma(albums))));
+                res.setData(JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOGamma(albums))));
                 res.setTotal(albumMapper.simpleSearchCount(keyword));
             }
         }

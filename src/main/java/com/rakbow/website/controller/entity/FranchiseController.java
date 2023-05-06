@@ -75,7 +75,7 @@ public class FranchiseController {
         //前端选项数据
         model.addAttribute("options", entityUtil.getDetailOptions(EntityType.FRANCHISE.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise, request));
+        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise));
         //实体类通用信息
         model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
         //图片相关
