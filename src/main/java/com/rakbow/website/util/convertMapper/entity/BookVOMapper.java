@@ -1,6 +1,8 @@
 package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.entity.book.BookType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Language;
@@ -20,9 +22,12 @@ import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,6 +41,8 @@ public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
 
+    //region single convert interface
+
     /**
      * Book转VO对象，用于详情页面，转换量最大的
      *
@@ -43,40 +50,81 @@ public interface BookVOMapper {
      * @return BookVO
      * @author rakbow
      */
-    default BookVO book2VO(Book book) {
-        if (book == null) {
-            return null;
-        }
+    @Mapping(target = "publishDate", source = "publishDate", qualifiedByName = "getPublishDate")
+    @Mapping(target = "currencyUnit", source = "region", qualifiedByName = "getCurrencyUnit")
+    @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
+    @Mapping(target = "bookType", source = "bookType", qualifiedByName = "getBookType")
+    @Mapping(target = "region", source = "region", qualifiedByName = "getRegion")
+    @Mapping(target = "publishLanguage", source = "publishLanguage", qualifiedByName = "getPublishLanguage")
+    @Mapping(target = "authors", source = "authors", qualifiedByName = "getJSONArray")
+    @Mapping(target = "spec", source = "spec", qualifiedByName = "getJSONArray")
+    @Named("toVO")
+    BookVO toVO(Book book);
 
-        BookVO bookVO = new BookVO();
+    // /**
+    //  * Book转VO对象，用于list和index页面，转换量较少
+    //  *
+    //  * @param book 图书
+    //  * @return BookVOAlpha
+    //  * @author rakbow
+    //  */
+    // @Mapping(target = "publishDate", source = "publishDate", qualifiedByName = "getPublishDate")
+    // @Mapping(target = "currencyUnit", source = "region", qualifiedByName = "getCurrencyUnit")
+    // @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
+    // @Mapping(target = "bookType", source = "bookType", qualifiedByName = "getBookType")
+    // @Mapping(target = "region", source = "region", qualifiedByName = "getRegion")
+    // @Mapping(target = "publishLanguage", source = "publishLanguage", qualifiedByName = "getPublishLanguage")
+    // @Mapping(target = "authors", source = "authors", qualifiedByName = "getJSONArray")
+    // @Mapping(target = "spec", source = "spec", qualifiedByName = "getJSONArray")
+    // @Named("toVOAlpha")
+    // BookVOAlpha toVOAlpha(Book book);
 
-        bookVO.setId(book.getId());
-        bookVO.setTitle(book.getTitle());
-        bookVO.setTitleZh(book.getTitleZh());
-        bookVO.setTitleEn(book.getTitleEn());
-        bookVO.setIsbn10(book.getIsbn10());
-        bookVO.setIsbn13(book.getIsbn13());
-        bookVO.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
-        bookVO.setPrice(book.getPrice());
-        bookVO.setCurrencyUnit(Region.getCurrencyByCode(book.getRegion()));
-        bookVO.setPublisher(book.getPublisher());
-        bookVO.setSummary(book.getSummary());
-        bookVO.setHasBonus(book.getHasBonus() == 1);
-        bookVO.setRemark(book.getRemark());
+    //endregion
 
-        bookVO.setBookType(BookType.getAttribute(book.getBookType()));
 
-        bookVO.setRegion(Region.getRegion(book.getRegion()));
+    //region multi convert interface
 
-        bookVO.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
+    //endregion
 
-        //大文本信息
-        bookVO.setAuthors(JSON.parseArray(book.getAuthors()));
-        bookVO.setSpec(JSON.parseArray(book.getSpec()));
-        bookVO.setBonus(book.getBonus());
 
-        return bookVO;
+    //region get property method
+
+    @Named("getPublishDate")
+    default String getPublishDate(Date date) {
+        return DateUtil.dateToString(date);
     }
+
+    @Named("getCurrencyUnit")
+    default String getCurrencyUnit(String region) {
+        return Region.getCurrencyByCode(region);
+    }
+
+    @Named("getBool")
+    default boolean getBool(int bool) {
+        return bool == 1;
+    }
+
+    @Named("getBookType")
+    default JSONObject getBookType(int bookType) {
+        return BookType.getAttribute(bookType);
+    }
+
+    @Named("getRegion")
+    default JSONObject getRegion(String region) {
+        return Region.getRegion(region);
+    }
+
+    @Named("getPublishLanguage")
+    default JSONObject getPublishLanguage(String publishLanguage) {
+        return Language.getLanguage(publishLanguage);
+    }
+
+    @Named("getJSONArray")
+    default JSONArray getJSONArray(String json) {
+        return JSON.parseArray(json);
+    }
+
+    //endregion
 
     /**
      * Book转VO对象，用于list和index页面，转换量较少

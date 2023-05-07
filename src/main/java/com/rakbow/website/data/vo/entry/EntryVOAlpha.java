@@ -1,5 +1,6 @@
 package com.rakbow.website.data.vo.entry;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
@@ -21,8 +22,8 @@ public class EntryVOAlpha {
     private String nameZh;//名称(中文)
     private String nameEn;//名称(英语)
     private Attribute category;//分类
-    private List<String> links;//相关链接
     private List<String> alias;//别名
+    private JSONObject detail;
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
     private String remark;//备注

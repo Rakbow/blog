@@ -19,7 +19,6 @@ public class Entry {
     private String nameZh;//名称(中文)
     private String nameEn;//名称(英语)
     private int category;//分类
-    private String links;//相关链接
     private String alias;//别名
     private String images;//图片
     private String detail;//额外信息
@@ -34,7 +33,6 @@ public class Entry {
         this.nameZh = "";
         this.nameEn = "";
         this.category = 0;
-        this.links = "[]";
         this.alias = "[]";
         this.images = "[]";
         this.detail = "{}";

@@ -13,6 +13,7 @@ import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
@@ -93,8 +94,8 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Album getAlbumWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Album getAlbumWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return albumMapper.getAlbum(id, true);
         }
         return albumMapper.getAlbum(id, false);
@@ -134,12 +135,13 @@ public class AlbumService {
     public AlbumVO buildVO(Album album, List<Music> musics) {
         AlbumVO VO = albumVOMapper.toVO(album);
 
-        //可供编辑的editDiscList
-        JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
+        if(UserAuthority.isJunior(hostHolder.getUser())) {
+            //可供编辑的editDiscList
+            JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
+            VO.setEditDiscList(editDiscList);
+        }
         //音轨信息
         JSONObject trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
-
-        VO.setEditDiscList(editDiscList);
         VO.setTrackInfo(trackInfo);
 
         return VO;
@@ -324,7 +326,7 @@ public class AlbumService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getAlbumsByFilter(QueryParams param, int userAuthority) {
+    public SearchResult getAlbumsByFilter(QueryParams param) {
 
         JSONObject filter = param.getFilters();
 
@@ -346,10 +348,10 @@ public class AlbumService {
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, userAuthority > 2, param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+                albumFormat, mediaFormat, hasBonus, UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = albumMapper.getAlbumRowsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, userAuthority > 2);
+                albumFormat, mediaFormat, hasBonus, UserAuthority.isSenior(hostHolder.getUser()));
 
         return new SearchResult(total, albums);
     }

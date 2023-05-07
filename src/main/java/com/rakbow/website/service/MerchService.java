@@ -7,9 +7,11 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.MerchVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
@@ -40,6 +42,8 @@ public class MerchService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
 
@@ -79,8 +83,8 @@ public class MerchService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Merch getMerchWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Merch getMerchWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return merchMapper.getMerch(id, true);
         }
         return merchMapper.getMerch(id, false);
@@ -172,7 +176,7 @@ public class MerchService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getMerchsByFilterList(QueryParams param, int userAuthority) {
+    public SearchResult getMerchsByFilterList(QueryParams param) {
 
         JSONObject filter = param.getFilters();
 
@@ -197,9 +201,9 @@ public class MerchService {
         }
 
         List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
-                notForSale, userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+                notForSale, UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
-        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, userAuthority > 2);
+        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, UserAuthority.isSenior(hostHolder.getUser()));
 
         return new SearchResult(total, merchs);
     }

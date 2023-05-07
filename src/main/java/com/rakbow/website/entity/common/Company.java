@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 @ToString(callSuper = true)
 public class Company extends MetaEntry {
 
+    private List<String> links;//链接 json数组
     private JSONObject region;//国家或地区编码
 
     public Company() {

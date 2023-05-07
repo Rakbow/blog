@@ -259,24 +259,4 @@ public class UserService{
         return null;
     }
 
-    //获取用户编辑权限
-    public int getUserOperationAuthority(User user) {
-        if(user != null) {
-            switch (user.getType()) {
-                case 0:
-                    return 4;
-                case 1:
-                    return 1;
-                case 2:
-                    return 2;
-                case 3:
-                    return 3;
-            }
-        }
-        return 0;
-    }
-
-    //region ------图片操作------
-    //endregion
-
 }

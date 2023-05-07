@@ -5,11 +5,11 @@
 <mapper namespace="com.rakbow.website.dao.EntryMapper">
 
     <sql id="selectFields">
-        id, name, name_zh, name_en, category, links, alias, images, detail, description, added_time, edited_time, remark
+        id, name, name_zh, name_en, category, alias, images, detail, description, added_time, edited_time, remark
     </sql>
 
     <sql id="insertFields">
-        name, name_zh, name_en, category, links, alias, images, detail, description, added_time, edited_time, remark
+        name, name_zh, name_en, category, alias, images, detail, description, added_time, edited_time, remark
     </sql>
 
     <select id="getEntry" resultType="Entry">
@@ -42,7 +42,7 @@
 
     <insert id="addEntry" useGeneratedKeys="true" keyProperty="id">
         insert into entry (<include refid="insertFields"></include>)
-        values (#{name}, #{nameZh}, #{nameEn}, #{category}, #{links}, #{alias},
+        values (#{name}, #{nameZh}, #{nameEn}, #{category}, #{alias},
         #{images}, #{detail}, #{description}, #{addedTime}, #{editedTime}, #{remark})
     </insert>
 
@@ -50,7 +50,7 @@
         update entry
         set
         name = #{entry.name}, name_zh = #{entry.nameZh}, name_en = #{entry.nameEn}, category = #{entry.category},
-        links = #{entry.links}, alias = #{entry.alias}, edited_time = #{entry.editedTime}, remark = #{entry.remark}
+        alias = #{entry.alias}, detail = #{entry.detail}, edited_time = #{entry.editedTime}, remark = #{entry.remark}
         where id = #{entry.id}
     </update>
 

@@ -1,6 +1,7 @@
 package com.rakbow.website.util.convertMapper.entry;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.Region;
@@ -36,16 +37,16 @@ public interface EntryConvertMapper {
     EntryConvertMapper INSTANCES = Mappers.getMapper(EntryConvertMapper.class);
 
     @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
-    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
-    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getAlias")
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
+    @Mapping(target = "detail", source = "detail", qualifiedByName = "getDetail")
     @Named("toEntryVOAlpha")
     EntryVOAlpha toEntryVOAlpha(Entry entry);
 
     @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
-    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
-    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "links", source = "detail", qualifiedByName = "getLinks")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getAlias")
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "region", source = "detail", qualifiedByName = "getRegion")
@@ -53,24 +54,22 @@ public interface EntryConvertMapper {
     Company toCompany(Entry entry);
 
     @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
-    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
-    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "links", source = "detail", qualifiedByName = "getLinks")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getAlias")
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
     @Named("toPersonnel")
     Personnel toPersonnel(Entry entry);
 
     @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
-    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
-    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getAlias")
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
     @Named("toRole")
     Role toRole(Entry entry);
 
     @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
-    @Mapping(target = "links", source = "links", qualifiedByName = "getStringList")
-    @Mapping(target = "alias", source = "alias", qualifiedByName = "getStringList")
+    @Mapping(target = "alias", source = "alias", qualifiedByName = "getAlias")
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
     @Named("toMerchandise")
@@ -93,14 +92,25 @@ public interface EntryConvertMapper {
 
     //region get property method
 
+    @Named("getDetail")
+    default JSONObject getDetail(String json) {
+        return JSONObject.parseObject(json);
+    }
+
     @Named("getCategory")
     default Attribute getVOCategory(int category) {
         return EntryCategory.getAttribute(category);
     }
 
-    @Named("getStringList")
-    default List<String> getVOStringList(String json) {
+    @Named("getAlias")
+    default List<String> getAlias(String json) {
         return JSON.parseArray(json).toJavaList(String.class);
+    }
+
+    @Named("getLinks")
+    default List<String> getLinks(String json) {
+        JSONObject detail = JSON.parseObject("detail");
+        return detail.getList("links", String.class);
     }
 
     @Named("getVOTime")

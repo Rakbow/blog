@@ -6,12 +6,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.system.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.UserService;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.CookieUtil;
-import com.rakbow.website.util.common.EntityUtil;
-import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.common.*;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +50,8 @@ public class EntityController {
     private EntityService entityService;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     //endregion
 
@@ -142,7 +142,7 @@ public class EntityController {
     public String getListInitData(@RequestBody String json, HttpServletRequest request) {
         int entityType = JSON.parseObject(json).getIntValue("entityType");
         JSONObject initData = entityUtil.getDetailOptions(entityType);
-        initData.put("editAuth", userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        initData.put("editAuth", UserAuthority.getUserOperationAuthority(hostHolder.getUser()));
         return initData.toJSONString();
     }
     //endregion

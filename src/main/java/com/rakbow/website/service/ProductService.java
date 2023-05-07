@@ -11,6 +11,7 @@ import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.emun.system.SystemLanguage;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.entity.ProductUtil;
@@ -42,6 +43,8 @@ public class ProductService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -69,8 +72,8 @@ public class ProductService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Product getProductWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Product getProductWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return productMapper.getProduct(id, true);
         }
         return productMapper.getProduct(id, false);
@@ -224,7 +227,7 @@ public class ProductService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getProductsByFilter(QueryParams param, int userAuthority) {
+    public SearchResult getProductsByFilter(QueryParams param) {
 
         JSONObject filter = param.getFilters();
 
@@ -233,9 +236,9 @@ public class ProductService {
         List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
         List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
 
-        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, userAuthority > 2,
+        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, UserAuthority.isSenior(hostHolder.getUser()),
                 param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, userAuthority > 2);
+        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, UserAuthority.isSenior(hostHolder.getUser()));
 
         return new SearchResult(total, products);
     }

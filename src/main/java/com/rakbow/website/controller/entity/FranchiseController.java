@@ -63,8 +63,8 @@ public class FranchiseController {
     //获取单个系列详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getFranchiseDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        Franchise franchise = franchiseService.getFranchiseWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getFranchiseDetail(@PathVariable("id") int id, Model model) {
+        Franchise franchise = franchiseService.getFranchiseWithAuth(id);
         if (franchise == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.FRANCHISE.getNameZh()));
             return "/error/404";
@@ -96,8 +96,7 @@ public class FranchiseController {
         JSONObject param = JSON.parseObject(json);
         QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
 
-        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParam,
-                 userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParam);
 
         List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
 

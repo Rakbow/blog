@@ -5,11 +5,13 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtil;
+import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
@@ -50,6 +52,8 @@ public class MusicController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private HostHolder hostHolder;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -57,8 +61,8 @@ public class MusicController {
     //获取单个音频详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMusicDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        Music music = musicService.getMusicWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getMusicDetail(@PathVariable("id") int id, Model model) {
+        Music music = musicService.getMusicWithAuth(id);
         if (music == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getNameZh()));
             return "/error/404";
@@ -68,7 +72,7 @@ public class MusicController {
 
         model.addAttribute("music", musicVOMapper.music2VO(music, coverUrl));
 
-        if(userService.getUserOperationAuthority(userService.getUserByRequest(request)) > 0) {
+        if(UserAuthority.isUser(hostHolder.getUser())) {
             model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
         }
         //前端选项数据

@@ -68,8 +68,8 @@ public class ProductController {
     //获取单个产品详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getProductDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        Product product = productService.getProductWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getProductDetail(@PathVariable("id") int id, Model model) {
+        Product product = productService.getProductWithAuth(id);
         if (product == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.PRODUCT.getNameZh()));
             return "/error/404";
@@ -230,8 +230,7 @@ public class ProductController {
         JSONObject param = JSON.parseObject(json);
         QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
 
-        SearchResult searchResult = productService.getProductsByFilter(queryParam,
-                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult searchResult = productService.getProductsByFilter(queryParam);
 
         List<ProductVOAlpha> products = productVOMapper.product2VOAlpha((List<Product>) searchResult.data);
 

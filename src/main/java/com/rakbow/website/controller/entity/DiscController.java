@@ -62,8 +62,8 @@ public class DiscController {
     //获取单个专辑详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        Disc disc = discService.getDiscWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+        Disc disc = discService.getDiscWithAuth(id);
         if (discService.getDisc(id) == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.DISC.getNameZh()));
             return "/error/404";
@@ -97,8 +97,7 @@ public class DiscController {
 
         List<DiscVOAlpha> discs = new ArrayList<>();
 
-        SearchResult searchResult = discService.getDiscsByFilterList(queryParam,
-                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult searchResult = discService.getDiscsByFilterList(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
             discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);

@@ -7,6 +7,7 @@ import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
@@ -64,8 +65,8 @@ public class AlbumController {
     //获取单个专辑详细信息页面
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     @UniqueVisitor
-    public String getAlbumDetail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        Album album = albumService.getAlbumWithAuth(id, userService.getUserOperationAuthority(hostHolder.getUser()));
+    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+        Album album = albumService.getAlbumWithAuth(id);
         if (album == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
             return "/error/404";
@@ -75,7 +76,7 @@ public class AlbumController {
 
         String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
         model.addAttribute("album", albumService.buildVO(album, musics));
-        if(userService.getUserOperationAuthority(hostHolder.getUser()) > 0) {
+        if(UserAuthority.isUser(hostHolder.getUser())) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
         //前端选项数据
@@ -98,7 +99,7 @@ public class AlbumController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilter(@RequestBody String json, HttpServletRequest request) {
+    public String getAlbumsByFilter(@RequestBody String json) {
 
         JSONObject param = JSON.parseObject(json);
 
@@ -108,8 +109,7 @@ public class AlbumController {
 
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
-        SearchResult searchResult = albumService.getAlbumsByFilter(queryParam,
-                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult searchResult = albumService.getAlbumsByFilter(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
             albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);

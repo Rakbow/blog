@@ -7,9 +7,11 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.DiscVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
@@ -40,6 +42,8 @@ public class DiscService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -79,8 +83,8 @@ public class DiscService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Disc getDiscWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Disc getDiscWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return discMapper.getDisc(id, true);
         }
         return discMapper.getDisc(id, false);
@@ -178,7 +182,7 @@ public class DiscService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getDiscsByFilterList (QueryParams param, int userAuthority) {
+    public SearchResult getDiscsByFilterList (QueryParams param) {
 
         JSONObject filter = param.getFilters();
 
@@ -207,10 +211,10 @@ public class DiscService {
         }
 
         List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, userAuthority > 2, param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+                mediaFormat, limited, hasBonus, UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, userAuthority > 2);
+                mediaFormat, limited, hasBonus, UserAuthority.isSenior(hostHolder.getUser()));
 
         return new SearchResult(total, discs);
     }

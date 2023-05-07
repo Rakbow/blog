@@ -46,6 +46,8 @@ public interface AlbumVOMapper {
 
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
 
+    //region single convert interface
+
     /**
      * Album转VO对象，用于详情页面，转换量最大的
      *
@@ -64,61 +66,6 @@ public interface AlbumVOMapper {
     @Mapping(target = "trackInfo", ignore = true)
     @Mapping(target = "editDiscList", ignore = true)
     AlbumVO toVO(Album album);
-
-
-    /**
-     * Album转VO对象，用于详情页面，转换量最大的
-     *
-     * @param album 专辑
-     * @return AlbumVO
-     * @author rakbow
-     */
-    default AlbumVO album2VO(Album album) {
-        if (album == null) {
-            return null;
-        }
-        AlbumVO albumVo = new AlbumVO();
-
-        MusicService musicService = SpringUtil.getBean("musicService");
-        List<Music> musics = musicService.getMusicsByAlbumId(album.getId());
-
-        //基础信息
-        albumVo.setId(album.getId());
-        albumVo.setCatalogNo(album.getCatalogNo());
-        albumVo.setName(album.getName());
-        albumVo.setNameEn(album.getNameEn());
-        albumVo.setNameZh(album.getNameZh());
-        albumVo.setBarcode(album.getBarcode());
-        albumVo.setPrice(album.getPrice());
-        albumVo.setCurrencyUnit(album.getCurrencyUnit());
-        albumVo.setRemark(album.getRemark());
-        albumVo.setReleaseDate(DateUtil.dateToString(album.getReleaseDate()));
-        albumVo.setHasBonus(album.getHasBonus() == 1);
-
-        //企业信息
-        albumVo.setCompanies(EntryUtil.getCompanies(album.getCompanies()));
-        //可供编辑的企业信息
-        albumVo.setEditCompanies(JSONArray.parseArray(album.getCompanies()));
-
-        //规格信息
-        albumVo.setPublishFormat(PublishFormat.getAttribute(album.getPublishFormat()));
-        albumVo.setAlbumFormat(AlbumFormat.getAttributes(album.getAlbumFormat()));
-        albumVo.setMediaFormat(MediaFormat.getAttributes(album.getMediaFormat()));
-
-        //大文本字段
-        albumVo.setBonus(album.getBonus());
-        albumVo.setArtists(JSONArray.parseArray(album.getArtists()));
-
-        //可供编辑的editDiscList
-        JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
-        //音轨信息
-        JSONObject trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
-
-        albumVo.setEditDiscList(editDiscList);
-        albumVo.setTrackInfo(trackInfo);
-
-        return albumVo;
-    }
 
     /**
      * Album转VO，供album-list和album-index界面使用，信息量较少
@@ -174,6 +121,10 @@ public interface AlbumVOMapper {
     @Named("toVOGamma")
     AlbumVOGamma toVOGamma(Album album);
 
+    //endregion
+
+    //region multi convert interface
+
     /**
      * 列表转换, Album转VO对象，供album-list和album-index界面使用，信息量较少
      *
@@ -203,6 +154,8 @@ public interface AlbumVOMapper {
      */
     @IterableMapping(qualifiedByName = "toVOGamma")
     List<AlbumVOGamma> toVOGamma(List<Album> albums);
+
+    //endregion
 
     //region get property method
 

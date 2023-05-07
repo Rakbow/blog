@@ -61,8 +61,8 @@ public class MerchController {
     //获取单个周边商品详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMerchDetail(@PathVariable int id, Model model, HttpServletRequest request) {
-        Merch merch = merchService.getMerchWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getMerchDetail(@PathVariable int id, Model model) {
+        Merch merch = merchService.getMerchWithAuth(id);
         if (merch == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MERCH.getNameZh()));
             return "/error/404";
@@ -168,8 +168,7 @@ public class MerchController {
 
         List<MerchVOAlpha> merchs = new ArrayList<>();
 
-        SearchResult searchResult = merchService.getMerchsByFilterList(queryParam,
-                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult searchResult = merchService.getMerchsByFilterList(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
             merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);

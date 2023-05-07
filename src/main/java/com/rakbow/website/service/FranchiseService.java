@@ -9,9 +9,11 @@ import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.entity.User;
+import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
@@ -44,6 +46,8 @@ public class FranchiseService {
     private FranchiseMapper franchiseMapper;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     //endregion
 
@@ -73,8 +77,8 @@ public class FranchiseService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Franchise getFranchiseWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Franchise getFranchiseWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return franchiseMapper.getFranchise(id, true);
         }
         return franchiseMapper.getFranchise(id, false);
@@ -229,7 +233,7 @@ public class FranchiseService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getFranchisesByFilter(QueryParams param, int userAuthority) {
+    public SearchResult getFranchisesByFilter(QueryParams param) {
 
         JSONObject filter = param.getFilters();
 
@@ -244,9 +248,9 @@ public class FranchiseService {
         }
 
         List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
-                userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+                UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
-        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, userAuthority > 2);
+        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, UserAuthority.isSenior(hostHolder.getUser()));
 
         return new SearchResult(total, franchises);
     }

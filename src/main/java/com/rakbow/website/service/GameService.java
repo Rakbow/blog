@@ -7,10 +7,12 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.GameVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
@@ -41,6 +43,8 @@ public class GameService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -80,8 +84,8 @@ public class GameService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Game getGameWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Game getGameWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return gameMapper.getGame(id, true);
         }
         return gameMapper.getGame(id, false);
@@ -204,7 +208,7 @@ public class GameService {
     //region ------特殊查询------
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getGamesByFilter(QueryParams param, int userAuthority) {
+    public SearchResult getGamesByFilter(QueryParams param) {
 
         JSONObject filter = param.getFilters();
 
@@ -231,9 +235,9 @@ public class GameService {
 
 
         List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
-                userAuthority > 2, param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+                UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
-        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, userAuthority > 2);
+        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, UserAuthority.isSenior(hostHolder.getUser()));
 
         return new SearchResult(total, games);
     }

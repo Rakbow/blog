@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.Image;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.service.AlbumService;
@@ -103,6 +104,11 @@ class WebSiteApplicationTests {
         long t2 = System.currentTimeMillis();
         
         System.out.println(t2 - t1);
+    }
+
+    @Test
+    public void entryTests() {
+        List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.PERSONNEL.getId());
     }
 
 }

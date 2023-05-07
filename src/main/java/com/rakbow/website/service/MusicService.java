@@ -7,10 +7,12 @@ import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.FileType;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.MusicVOMapper;
 import com.rakbow.website.data.ApiInfo;
@@ -46,6 +48,8 @@ public class MusicService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -71,8 +75,8 @@ public class MusicService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Music getMusicWithAuth(int id, int userAuthority) {
-        if(userAuthority > 2) {
+    public Music getMusicWithAuth(int id) {
+        if(UserAuthority.isSenior(hostHolder.getUser())) {
             return musicMapper.getMusic(id, true);
         }
         return musicMapper.getMusic(id, false);

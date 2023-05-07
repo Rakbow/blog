@@ -3,7 +3,6 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -61,13 +60,13 @@ public class BookController {
     //获取单个图书详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getBookDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
-        Book book = bookService.getBookWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getBookDetail(@PathVariable("id") Integer id, Model model) {
+        Book book = bookService.getBookWithAuth(id);
         if (book == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
         }
-        model.addAttribute("book", bookVOMapper.book2VO(book));
+        model.addAttribute("book", bookVOMapper.toVO(book));
         //前端选项数据
         model.addAttribute("options", entityUtil.getDetailOptions(EntityType.BOOK.getId()));
         //实体类通用信息
@@ -168,8 +167,7 @@ public class BookController {
 
         List<BookVOAlpha> books = new ArrayList<>();
 
-        SearchResult searchResult = bookService.getBooksByFilter(queryParam,
-                 userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult searchResult = bookService.getBooksByFilter(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
             books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);

@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Personnel extends MetaEntry {
+
+    private List<String> links;//链接 json数组
 
     public Personnel() {
         this.setId(0);

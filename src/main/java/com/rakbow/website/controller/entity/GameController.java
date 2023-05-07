@@ -61,8 +61,8 @@ public class GameController {
     //获取单个游戏详细信息页面
     @UniqueVisitor
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getGameDetail(@PathVariable("id") Integer id, Model model, HttpServletRequest request) {
-        Game game = gameService.getGameWithAuth(id, userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+    public String getGameDetail(@PathVariable("id") Integer id, Model model) {
+        Game game = gameService.getGameWithAuth(id);
         if (game == null) {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.GAME.getNameZh()));
             return "/error/404";
@@ -168,8 +168,7 @@ public class GameController {
 
         List<GameVOAlpha> games = new ArrayList<>();
 
-        SearchResult serchResult = gameService.getGamesByFilter(queryParam,
-                userService.getUserOperationAuthority(userService.getUserByRequest(request)));
+        SearchResult serchResult = gameService.getGamesByFilter(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
             games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);

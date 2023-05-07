@@ -21,7 +21,6 @@ public class MetaEntry {
     private String nameZh;//中文名
     private String nameEn;//英文名
     private List<String> alias;//别名 json数组
-    private List<String> links;//链接 json数组
     private String description;//描述
     private String remark;//备注
     private String addedTime;//数据新增时间

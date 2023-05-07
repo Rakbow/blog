@@ -26,7 +26,6 @@ public class Role extends MetaEntry {
         this.setNameEn("");
         this.setNameZh("");
         this.setAlias(new ArrayList<>());
-        this.setLinks(new ArrayList<>());
         this.setDescription("");
         this.setRemark("");
         this.setAddedTime(DateUtil.getCurrentTime());

@@ -125,9 +125,9 @@ const entryDbList = {
                     </p-dropdown>
                 </div>
             </div>
-            <div class="field">
+            <div class="field" v-if="linksEdit">
                 <label>链接</label>
-                <p-chips v-model="item.links" separator=",">
+                <p-chips v-model="item.detail.links" separator=",">
                     <template #chip="slotProps">
                         <div>
                             <i class="pi pi-link" style="font-size: 14px"></i>
@@ -171,13 +171,13 @@ const entryDbList = {
                 <div class="field col-3">
                     <label>分类<span style="color: red">*</span></label>
                     <p-dropdown v-model="itemEdit.category" :options="entryCategorySet"
-                        option-label="label" option-value="value">
+                        option-label="label" option-value="value" disabled>
                     </p-dropdown>
                 </div>
             </div>
-            <div class="field">
+            <div class="field" v-if="itemEdit.category === 1 || itemEdit.category === 2">
                 <label>链接</label>
-                <p-chips v-model="itemEdit.links" separator=",">
+                <p-chips v-model="itemEdit.detail.links" separator=",">
                     <template #chip="slotProps">
                         <div>
                             <i class="pi pi-link" style="font-size: 14px"></i>
@@ -218,8 +218,22 @@ const entryDbList = {
         this.initData();
         this.init();
     },
+    watch: {
+        'item.category':function(newValue) {
+            if(newValue === 1 || newValue === 2) {
+                this.item.detail = {};
+                this.item.detail.links = [];
+                this.linksEdit = true;
+            }else {
+                this.linksEdit = false;
+                delete this.item.detail.links;
+            }
+        }
+    },
     data() {
         return {
+            linksEdit: false,
+
             //region common
             toast: useToast(),
             loading: false,
