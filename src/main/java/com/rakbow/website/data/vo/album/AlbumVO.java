@@ -32,6 +32,9 @@ public class AlbumVO {
     //可供编辑的企业信息
     private JSONArray editCompanies;
 
+    private JSONArray personnel;
+    private JSONArray editPersonnel;
+
     //规格信息
     private JSONArray publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private JSONArray albumFormat;//专辑分类 在mysql中以数组字符串形式存储

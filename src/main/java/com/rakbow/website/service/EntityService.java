@@ -315,42 +315,6 @@ public class EntityService {
     }
 
     /**
-     * 刷新Redis缓存中的Companies数据
-     *
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void refreshRedisEntries(EntryCategory category) {
-
-        List<Entry> entries = entryMapper.getEntryByCategory(category.getId());
-
-        JSONArray entriesZh = new JSONArray();
-        entries.forEach(entry -> {
-            entriesZh.add(new Attribute(entry.getId(), entry.getNameZh()));
-        });
-        JSONArray entriesEn = new JSONArray();
-        entries.forEach(entry -> {
-            entriesZh.add(new Attribute(entry.getId(), entry.getNameEn()));
-        });
-
-        if(category == EntryCategory.COMPANY) {
-            redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.COMPANY_SET_EN, entriesEn);
-        } else if (category == EntryCategory.PERSONNEL) {
-            redisUtil.set(RedisCacheConstant.PERSONNEL_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.PERSONNEL_SET_EN, entriesEn);
-        } else if (category == EntryCategory.ROLE) {
-            redisUtil.set(RedisCacheConstant.ROLE_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.ROLE_SET_EN, entriesEn);
-        } else if (category == EntryCategory.MERCHANDISE) {
-            redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_EN, entriesEn);
-        }
-
-
-    }
-
-    /**
      * 刷新Redis缓存中的Personnel数据
      *
      * @author rakbow

@@ -36,10 +36,12 @@ import java.util.List;
  * @Create: 2023-01-11 16:13
  * @Description: book VO转换接口
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = EntityConverter.class)
 public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
+    EntityType entityType = EntityType.BOOK;
+    int entityTypeId = EntityType.BOOK.getId();
 
     //region single convert interface
 

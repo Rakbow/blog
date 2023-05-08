@@ -832,6 +832,7 @@
     const App = {
         setup() {
             onMounted(() => {
+                initOption();
                 init();
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
@@ -877,6 +878,19 @@
             //endregion
 
             //region basic
+            const initOption = () => {
+                const option = ref([[${options}]]);
+                if(option.value !== null) {
+                    franchiseSet.value = option.value.franchiseSet;
+                    mediaFormatSet.value = option.value.mediaFormatSet;
+                    albumFormatSet.value = option.value.albumFormatSet;
+                    publishFormatSet.value = option.value.publishFormatSet;
+                    companySet.value = option.value.companySet;
+                    companyRoleSet.value = option.value.companyRoleSet;
+                }
+            }
+
+
             const toast = useToast();
             const album = ref([[${album}]]);
             const pageInfo = ref([[${pageInfo}]]);
@@ -884,14 +898,14 @@
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const relatedItemLoad = ref(true);
             const relatedAlbums = ref([]);
-            const franchiseSet = ref([[${options.franchiseSet}]]);
+            const franchiseSet = ref([]);
             const productSet = ref([]);
             const productSelect = ref(true);
-            const mediaFormatSet = ref([[${options.mediaFormatSet}]]);
-            const albumFormatSet = ref([[${options.albumFormatSet}]]);
-            const publishFormatSet = ref([[${options.publishFormatSet}]]);
-            const companySet = ref([[${options.companySet}]]);
-            const companyRoleSet = ref([[${options.companyRoleSet}]]);
+            const mediaFormatSet = ref([]);
+            const albumFormatSet = ref([]);
+            const publishFormatSet = ref([]);
+            const companySet = ref([]);
+            const companyRoleSet = ref([]);
             //endregion
 
             //region init

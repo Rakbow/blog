@@ -6,12 +6,15 @@ import com.rakbow.website.data.ItemDetailInfo;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.SystemLanguage;
+import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @Project_name: website
@@ -22,12 +25,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class EntityUtil {
 
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
-    @Autowired
+    @Resource
     private VisitUtil visitUtil;
-    @Autowired
+    @Resource
     private LikeUtil likeUtil;
+    @Resource
+    private HostHolder hostHolder;
 
     public ItemDetailInfo getItemDetailInfo(Object o, int entityType) {
         ItemDetailInfo detailInfo = new ItemDetailInfo();
@@ -81,6 +86,9 @@ public class EntityUtil {
                 options.put("publishFormatSet", redisUtil.get(RedisCacheConstant.PUBLISH_FORMAT_SET_EN));
                 options.put("companySet", redisUtil.get(RedisCacheConstant.COMPANY_SET_EN));
                 options.put("companyRoleSet", redisUtil.get(RedisCacheConstant.COMPANY_ROLE_SET_EN));
+
+                options.put("roleSet", redisUtil.get(RedisCacheConstant.ROLE_SET_EN));
+                options.put("personnelSet", redisUtil.get(RedisCacheConstant.PERSONNEL_SET_EN));
             }
             if(entityType == EntityType.BOOK.getId()) {
                 options.put("bookTypeSet", redisUtil.get(RedisCacheConstant.BOOK_TYPE_SET_EN));
@@ -119,6 +127,9 @@ public class EntityUtil {
                 options.put("publishFormatSet", redisUtil.get(RedisCacheConstant.PUBLISH_FORMAT_SET_ZH));
                 options.put("companySet", redisUtil.get(RedisCacheConstant.COMPANY_SET_ZH));
                 options.put("companyRoleSet", redisUtil.get(RedisCacheConstant.COMPANY_ROLE_SET_ZH));
+
+                options.put("roleSet", redisUtil.get(RedisCacheConstant.ROLE_SET_ZH));
+                options.put("personnelSet", redisUtil.get(RedisCacheConstant.PERSONNEL_SET_ZH));
             }
             if(entityType == EntityType.BOOK.getId()) {
                 options.put("bookTypeSet", redisUtil.get(RedisCacheConstant.BOOK_TYPE_SET_ZH));

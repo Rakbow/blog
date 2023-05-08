@@ -79,8 +79,10 @@ public class AlbumController {
         if(UserAuthority.isUser(hostHolder.getUser())) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.ALBUM.getId()));
+        if(UserAuthority.isUser(hostHolder.getUser())) {
+            //前端选项数据
+            model.addAttribute("options", entityUtil.getDetailOptions(EntityType.ALBUM.getId()));
+        }
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, EntityType.ALBUM.getId()));
         //获取页面数据

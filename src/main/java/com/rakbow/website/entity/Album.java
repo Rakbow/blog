@@ -37,6 +37,7 @@ public class Album extends MetaEntity {
     private String bonus;//特典信息
     private String franchises;//所属系列
     private String products;//所属产品id 在mysql中以数组字符串形式存储
+    private String personnel;
     private String artists;//staff
     private String trackInfo;//曲目列表（JSON字符串）
 
@@ -61,6 +62,7 @@ public class Album extends MetaEntity {
         this.products = "{\"ids\":[]}";
         this.setDescription("");
         this.setRemark("");
+        this.personnel = "[]";
         this.artists = "[]";
         this.setImages("[]");
         this.trackInfo = "{}";

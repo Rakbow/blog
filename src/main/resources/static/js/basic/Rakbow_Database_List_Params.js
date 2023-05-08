@@ -219,14 +219,16 @@ const entryDbList = {
         this.init();
     },
     watch: {
-        'item.category':function(newValue) {
+        'item.category':function(newValue, oldValue) {
             if(newValue === 1 || newValue === 2) {
                 this.item.detail = {};
                 this.item.detail.links = [];
                 this.linksEdit = true;
             }else {
-                this.linksEdit = false;
-                delete this.item.detail.links;
+                if(oldValue === 1 || oldValue === 2) {
+                    this.linksEdit = false;
+                    delete this.item.detail.links;
+                }
             }
         }
     },

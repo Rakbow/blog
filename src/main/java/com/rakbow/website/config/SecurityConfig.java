@@ -58,6 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         //region 需要初级编辑权限
                         "/db/update-description",
                         "/db/update-bonus",
+                        "/db/update-companies",
 
                         "/db/album/add",
                         "/db/album/update",

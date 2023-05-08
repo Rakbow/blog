@@ -90,6 +90,30 @@ export const showCompaniesEditDialog = (toast, dialog, entityId, entityType, com
     });
 };
 
+export const showPersonnelEditDialog = (toast, dialog, entityId, entityType, personnel, roleSet, personnelSet) => {
+    const dialogRef = dialog.open(personnelEditPanel, {
+        props: {
+            header: '关联人员编辑',
+            style: {
+                width: '60vw',
+            },
+            breakpoints: {
+                '960px': '55vw',
+                '640px': '70vw'
+            },
+            modal: true
+        },
+        data: {
+            entityId: entityId,
+            entityType: entityType,
+            personnel: personnel,
+            roleSet: roleSet,
+            personnelSet: personnelSet,
+            toast: toast,
+        },
+    });
+};
+
 const bonusEditPanel = {
     template: `
         <p-blockui :blocked="editBlock">

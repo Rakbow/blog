@@ -1,13 +1,18 @@
 package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.EntryMapper;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.entity.Entry;
+import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +38,10 @@ public class EntryService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private RedisUtil redisUtil;
+
+    //region CURD
 
     /**
      * 新增
@@ -146,5 +155,35 @@ public class EntryService {
     }
 
     //endregion
+
+    /**
+     * 刷新Redis缓存中的Companies数据
+     *
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public void refreshRedisEntries(EntryCategory category) {
+
+        List<Entry> entries = entryMapper.getEntryByCategory(category.getId());
+
+        JSONArray entriesZh = new JSONArray();
+        entries.forEach(entry -> entriesZh.add(new Attribute(entry.getId(), entry.getNameZh())));
+        JSONArray entriesEn = new JSONArray();
+        entries.forEach(entry -> entriesZh.add(new Attribute(entry.getId(), entry.getNameEn())));
+
+        if(category == EntryCategory.COMPANY) {
+            redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.COMPANY_SET_EN, entriesEn);
+        } else if (category == EntryCategory.PERSONNEL) {
+            redisUtil.set(RedisCacheConstant.PERSONNEL_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.PERSONNEL_SET_EN, entriesEn);
+        } else if (category == EntryCategory.ROLE) {
+            redisUtil.set(RedisCacheConstant.ROLE_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.ROLE_SET_EN, entriesEn);
+        } else if (category == EntryCategory.MERCHANDISE) {
+            redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_EN, entriesEn);
+        }
+    }
 
 }

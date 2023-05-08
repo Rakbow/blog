@@ -139,6 +139,8 @@ public class AlbumService {
             //可供编辑的editDiscList
             JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
             VO.setEditDiscList(editDiscList);
+            //可供编辑的editCompanies
+            VO.setEditCompanies(JSON.parseArray(album.getCompanies()));
         }
         //音轨信息
         JSONObject trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
