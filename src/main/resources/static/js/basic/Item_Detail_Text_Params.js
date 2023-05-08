@@ -90,7 +90,7 @@ export const showCompaniesEditDialog = (toast, dialog, entityId, entityType, com
     });
 };
 
-export const showPersonnelEditDialog = (toast, dialog, entityId, entityType, personnel, roleSet, personnelSet) => {
+export const showPersonnelEditDialog = (toast, dialog, entityId, entityType, items, roleSet, personnelSet) => {
     const dialogRef = dialog.open(personnelEditPanel, {
         props: {
             header: '关联人员编辑',
@@ -106,7 +106,7 @@ export const showPersonnelEditDialog = (toast, dialog, entityId, entityType, per
         data: {
             entityId: entityId,
             entityType: entityType,
-            personnel: personnel,
+            items: items,
             roleSet: roleSet,
             personnelSet: personnelSet,
             toast: toast,
@@ -651,5 +651,215 @@ const companiesEditPanel = {
         "p-dropdown": primevue.dropdown,
         "p-multiselect": primevue.multiselect,
         "p-contextmenu": primevue.contextmenu,
+    }
+};
+
+const personnelEditPanel = {
+    template: `
+        <p-blockui :blocked="editBlock">
+    <p-panel>
+        <template #header>
+            <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+            <b>{{RKW_Web.Add}}</b>
+        </template>
+        <div class="grid">
+            <div class="col-3">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-tag"></i>
+                    </span>
+                    <span class="p-inputgroup-addon">
+                        <p-checkbox v-model="item.main" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                    </span>
+                    <p-dropdown v-model="item.role" :options="roleSet" option-label="label" filter 
+                    option-value="value" placeholder="角色"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-users"></i>
+                    </span>
+                    <p-multiselect v-model="item.members" :options="personnelSet"
+                            option-label="label" option-value="value" placeholder="成员"
+                            display="chip" :filter="true">
+                    </p-multiselect>
+                </div>
+            </div>
+            <div class="col-2">
+                <p-button :label="RKW_Web.Add" icon="pi pi-save"
+                            @click="add"></p-button>
+            </div>
+        </div>
+    </p-panel>
+    <p-panel>
+        <template #header>
+            <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+            <b>{{RKW_Web.Edit}}</b>
+        </template>
+        <div v-if="tmpItems.length != 0">
+            <p-datatable dataKey="id" :value="tmpItems" responsive-layout="scroll"
+                            class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                            context-menu v-model:context-menu-selection="selectedItem"
+                            @row-contextmenu="rowMenu" edit-mode="row"
+                            v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
+                <p-column :row-reorder="true"></p-column>
+                <p-column field="main" header-style="width: 3%">
+                    <template #body="slotProps">
+                        <i v-if="slotProps.data.main == 1" class="pi false-icon pi-star-fill"></i>
+                    </template>
+                    <template #editor="{ data, field }">
+                        <p-checkbox v-model="data[field]" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
+                    </template>
+                </p-column>
+                <p-column field="role" header="角色">
+                    <template #body="slotProps">
+                        {{value2Label(slotProps.data.role, roleSet)}}
+                    </template>
+                    <template #editor="{ data, field }">
+                        <p-dropdown v-model="data[field]" :options="roleSet" option-label="label" filter 
+                                    option-value="value" placeholder="角色"></p-dropdown>
+                    </template>
+                </p-column>
+                <p-column field="members" header="成员">
+                    <template #body="slotProps">
+                        {{commonValuesToLabels(slotProps.data.members, personnelSet).join(", ")}}
+                    </template>
+                    <template #editor="{ data, field }">
+                        <p-multiselect v-model="data[field]" :options="personnelSet"
+                            option-label="label" option-value="value" placeholder="成员"
+                            display="chip" :filter="true">
+                        </p-multiselect>
+                    </template>
+                </p-column>
+                <p-column :row-editor="true" style="width:10%; min-width:8rem"
+                            bodyStyle="text-align:center"></p-column>
+            </p-datatable>
+            <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
+        </div>
+        <div v-else>
+            <span class="emptyInfo">暂无关联人员信息</span>
+        </div>
+    </p-panel>
+    <div class="text-end mt-3 mb-2">
+        <p-button :label="RKW_Web.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
+                    @click="clear" :disabled="editBlock"></p-button>
+        <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="mr-4"
+                    @click="cancelEdit" :disabled="editBlock"></p-button>
+        <p-button :label="RKW_Web.Update" icon="pi pi-save" class="p-button-success mr-4"
+                    @click="submit" :disabled="editBlock"></p-button>
+    </div>
+</p-blockui>
+    `,
+    inject: ['dialogRef'],
+    data() {
+        return {
+            toast: null,
+            entityId: null,
+            entityType: null,
+            items: [],
+            editBlock: false,
+
+            personnelSet: [],
+            roleSet: [],
+
+            selectedItem: null,
+            item: {},
+            tmpItems: [],
+            menuModel: [{label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => this.deleteItem(this.selectedItem)}],
+            editingRows: [],
+            RKW_Web,
+        }
+    },
+    mounted() {
+        this.entityId = this.dialogRef.data.entityId;
+        this.entityType = this.dialogRef.data.entityType;
+        this.items = this.dialogRef.data.items;
+        this.roleSet = this.dialogRef.data.roleSet;
+        this.personnelSet = this.dialogRef.data.personnelSet;
+        this.toast = this.dialogRef.data.toast;
+
+        this.tmpItems = JSON.parse(JSON.stringify(this.items));
+    },
+    watch: {
+
+    },
+    methods: {
+        onRowReorder(ev) {
+            this.tmpItems.value = ev.value;
+        },
+        rowMenu(ev) {
+            this.$refs.cm.show(ev.originalEvent);
+        },
+        deleteItem(item) {
+            this.tmpItems = this.tmpItems.filter((i) => i.role !== item.role);
+            this.toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: item.role, life: 3000});
+            this.selectedItem = null;
+        },
+        onRowEditSave(ev) {
+            let {newData, index} = ev;
+            this.tmpItems[index] = newData;
+        },
+        clear() {
+            this.tmpItems = [];
+        },
+        add() {
+            if(this.item.role === undefined || this.item.role === null) {
+                this.toast.add({severity: 'error', summary: '', detail: RKW_Web.personnelRoleEmpty, life: 3000});
+                return;
+            }else if (this.item.members === undefined || this.item.members === null || this.item.members.length === 0) {
+                this.toast.add({severity: 'error', summary: '', detail: RKW_Web.personnelMemberEmpty, life: 3000});
+                return;
+            }
+            this.tmpItems.push(this.item);
+            this.item = {};
+        },
+        cancelEdit() {
+            this.item = {};
+            this.dialogRef.close();
+        },
+
+        submit() {
+            this.editBlock = true;
+            let mainCount = 0;
+            this.tmpItems.forEach(item => {
+                if(item.main === 1) {
+                    mainCount++;
+                }
+            });
+            if(mainCount > 1) {
+                this.toast.add({severity: 'error', summary: RKW_Web.ErrorMessageItemDetailPersonnelMain, life: 3000});
+                editBlock.value = false;
+                return;
+            }
+            let json = {
+                entityType: this.entityType,
+                entityId: this.entityId,
+                personnel: this.tmpItems
+            }
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_PERSONNEL_URL, json)
+                .then(res => {
+                    if (res.state === 1) {
+                        this.dialogRef.close();
+                        this.item = {};
+                        location.reload(true);
+                    }else {
+                        this.editBlock = false;
+                    }
+                });
+        },
+        commonValuesToLabels,
+        value2Label
+    },
+    components: {
+        "p-button": primevue.button,
+        "p-blockui": primevue.blockui,
+        "p-datatable": primevue.datatable,
+        "p-column": primevue.column,
+        "p-panel": primevue.panel,
+        "p-dropdown": primevue.dropdown,
+        "p-multiselect": primevue.multiselect,
+        "p-contextmenu": primevue.contextmenu,
+        "p-checkbox": primevue.checkbox,
     }
 };

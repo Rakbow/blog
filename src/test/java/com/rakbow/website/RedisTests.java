@@ -56,13 +56,17 @@ public class RedisTests {
     private RedisUtil redisUtil;
     @Resource
     private RelatedInfoUtil relatedInfoUtil;
+    @Resource
+    private EntryService entryService;
 
     @Test
     public void refreshData() {
         // entityService.refreshRedisEntries(EntryCategory.COMPANY);
         // productService.refreshRedisProducts();
         // franchiseService.refreshRedisFranchises();
-        entityService.refreshRedisEmunData();
+        // entityService.refreshRedisEmunData();
+        entryService.refreshRedisEntries(EntryCategory.ROLE);
+        entryService.refreshRedisEntries(EntryCategory.PERSONNEL);
     }
 
     @Test

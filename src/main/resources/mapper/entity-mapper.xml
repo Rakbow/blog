@@ -54,6 +54,13 @@
         where id = #{entityId}
     </update>
 
+    <update id="updateItemPersonnel" keyProperty="id">
+        update ${param1}
+        set
+        ${param2} = #{personnel}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
     <select id="getItemImages" resultType="string">
         select
         images

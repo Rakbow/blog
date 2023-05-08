@@ -77,6 +77,50 @@ public class EntryUtil {
         return companies;
     }
 
+    public static JSONArray getPersonnel(String json) {
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
+        String personnelKey;
+        String roleKey;
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            personnelKey = RedisCacheConstant.PERSONNEL_SET_EN;
+            roleKey = RedisCacheConstant.ROLE_SET_EN;
+        }else {
+            personnelKey = RedisCacheConstant.PERSONNEL_SET_ZH;
+            roleKey = RedisCacheConstant.ROLE_SET_ZH;
+        }
+        List<Attribute> allPersonnel = JSON.parseArray(JSON.toJSONString(redisUtil.get(personnelKey))).toJavaList(Attribute.class);
+        List<Attribute> allRole = JSON.parseArray(JSON.toJSONString(redisUtil.get(roleKey))).toJavaList(Attribute.class);
+
+        JSONArray personnel = new JSONArray();
+
+        JSONArray orgPersonnel = JSON.parseArray(json);
+        for (int i = 0; i < orgPersonnel.size(); i++) {
+            JSONObject orgItem = orgPersonnel.getJSONObject(i);
+            JSONObject newItem = new JSONObject();
+
+            if(orgItem.getIntValue("main") == 1) {
+                newItem.put("main", 1);
+            }
+
+            newItem.put("role", DataFinder.findAttributeByValue(orgItem.getIntValue("role"), allRole));
+
+            List<Attribute> members = new ArrayList<>();
+            List<Integer> memberIds = orgItem.getList("members", Integer.class);
+            memberIds.forEach(id -> {
+                Attribute attribute = DataFinder.findAttributeByValue(id, allPersonnel);
+                if (attribute != null) {
+                    members.add(attribute);
+                }
+            });
+
+            newItem.put("members", members);
+            personnel.add(newItem);
+        }
+
+        return personnel;
+    }
+
     public List<Company> getAllCompanies() {
         List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.COMPANY.getId());
         return convertMapper.toCompany(entries);

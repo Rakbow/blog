@@ -271,10 +271,11 @@
                                     <tbody class="detail-item-artists-table">
                                     <tr v-for="company in album.companies">
                                         <td width="80px"><strong>{{company.role.label}}</strong></td>
-                                        <td v-for="member of company.members" class="a_with_underline">
-                                            <a :href="'/entry/' + member.value" style="display:inline">
+                                        <td v-for="(member, index) of company.members" class="a_with_underline">
+                                            <a :href="'/db/entry/' + member.value" style="display:inline">
                                                 {{member.label}}
                                             </a>
+                                            <span v-if="index < company.members.length - 1">, </span>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -290,13 +291,16 @@
                                 <i class="pi pi-users"></i>
                                 <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>
                             </template>
-                            <div class="grid ml-4" v-if="album.artists.length != 0">
+                            <div class="grid ml-4" v-if="album.personnel.length != 0">
                                 <table class="table-borderless table-sm">
                                     <tbody class="detail-item-artists-table">
-                                    <tr v-for="item in album.artists">
-                                        <td width="120px"><strong>{{item.pos}}</strong></td>
-                                        <td>
-                                            {{item.name.join(", ")}}
+                                    <tr v-for="item in album.personnel">
+                                        <td width="120px"><strong>{{item.role.label}}</strong></td>
+                                        <td v-for="(member, index) in item.members" style="display:inline" class="a_with_underline">
+                                            <a :href="'/db/entry/' + member.value">
+                                                {{member.label}}
+                                            </a>
+                                            <span v-if="index < item.members.length - 1">, </span>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -306,6 +310,27 @@
                                 <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>
                             </div>
                         </p-fieldset>
+<!--                        <p-fieldset :toggleable="true">-->
+<!--                            <template #legend>-->
+<!--                                <i class="pi pi-users"></i>-->
+<!--                                <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>-->
+<!--                            </template>-->
+<!--                            <div class="grid ml-4" v-if="album.artists.length != 0">-->
+<!--                                <table class="table-borderless table-sm">-->
+<!--                                    <tbody class="detail-item-artists-table">-->
+<!--                                    <tr v-for="item in album.artists">-->
+<!--                                        <td width="120px"><strong>{{item.pos}}</strong></td>-->
+<!--                                        <td>-->
+<!--                                            {{item.name.join(", ")}}-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                            <div v-else>-->
+<!--                                <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>-->
+<!--                            </div>-->
+<!--                        </p-fieldset>-->
                         <!-- tracks info -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
@@ -824,7 +849,7 @@
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
-    import {showBonusEditDialog, showDescriptionEditDialog, showCompaniesEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog, showCompaniesEditDialog, showPersonnelEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const {useDialog} = primevue.usedialog;
@@ -887,6 +912,8 @@
                     publishFormatSet.value = option.value.publishFormatSet;
                     companySet.value = option.value.companySet;
                     companyRoleSet.value = option.value.companyRoleSet;
+                    roleSet.value = option.value.roleSet;
+                    personnelSet.value = option.value.personnelSet;
                 }
             }
 
@@ -906,6 +933,8 @@
             const publishFormatSet = ref([]);
             const companySet = ref([]);
             const companyRoleSet = ref([]);
+            const roleSet = ref([]);
+            const personnelSet = ref([]);
             //endregion
 
             //region init
@@ -1003,13 +1032,13 @@
                         showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editCompanies, companyRoleSet.value, companySet.value);
                     }
                 },
-                {
-                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
-                    icon: 'pi pi-users',
-                    command: () => {
-                        openArtistEditDialog();
-                    }
-                },
+                // {
+                //     label: RKW_Web.AlbumDetailOptionArtistEditTitle,
+                //     icon: 'pi pi-users',
+                //     command: () => {
+                //         openArtistEditDialog();
+                //     }
+                // },
                 {
                     label: RKW_Web.AlbumDetailOptionTrackInfoEditTitle,
                     icon: 'pi iconfont icon-playlist',
@@ -1029,6 +1058,13 @@
                     icon: 'pi iconfont icon-gift',
                     command: () => {
                         showBonusEditDialog(toast, dialog, detailInfo.value, album.value.bonus, itemImageInfo.value.images);
+                    }
+                },
+                {
+                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
+                    icon: 'pi pi-users',
+                    command: () => {
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editPersonnel, roleSet.value, personnelSet.value);
                     }
                 }
             ]);
@@ -1362,7 +1398,7 @@
                     }
                 });
                 if(mainCount > 1) {
-                    toast.add({severity: 'error', summary: RKW_Web.ErrorMessageAlbumDetailArtistsMain, life: 3000});
+                    toast.add({severity: 'error', summary: RKW_Web.ErrorMessageItemDetailPersonnelMain, life: 3000});
                     editBlock.value = false;
                     return;
                 }

@@ -473,6 +473,19 @@ public class EntityService {
         return ApiInfo.UPDATE_COMPANIES_SUCCESS;
     }
 
+    /**
+     * 更新相关人员信息
+     *
+     * @param entityName,entityId 实体表名,实体id
+     * @param personnel 相关人员json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String updateItemPersonnel(String entityName, String fieldName, int entityId, String personnel) {
+        entityMapper.updateItemPersonnel(entityName, fieldName, entityId, personnel, DateUtil.NOW_TIMESTAMP);
+        return ApiInfo.UPDATE_PERSONNEL_SUCCESS;
+    }
+
     //endregion
 
     //region image operation

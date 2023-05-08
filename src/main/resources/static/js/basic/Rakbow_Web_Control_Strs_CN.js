@@ -227,8 +227,8 @@ export class RKW_Web {
 
 
     //item-detail 编辑操作 错误/警告信息
-    static ErrorMessageAlbumDetailArtistsMain = '主要创作人员只能选择一项！';
-    static ErrorMessageMusicDetailArtistsMain = '主要创作人员只能选择一项！';
+    static ErrorMessageItemDetailPersonnelMain = '主要人员只能选择一项！';
+    static ErrorMessageMusicDetailArtistsMain = '主要人员只能选择一项！';
     static ErrorMessageBookDetailAuthorsMain = '主要作者只能选择一项！';
 
 
@@ -238,6 +238,10 @@ export class RKW_Web {
 
     static companyRoleEmpty = '未选择企业类型！';
     static companyMemberEmpty = '未填写相关企业！';
+
+    //common-personnel
+    static personnelRoleEmpty = '未选择角色！';
+    static personnelMemberEmpty = '未填写相关人员信息！';
 
 
 

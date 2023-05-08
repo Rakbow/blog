@@ -56,8 +56,12 @@ public class EntityConverter {
         return QiniuImageUtil.getThumb70Url(images);
     }
 
-    static JSONArray getCompanies(String companies) {
-        return EntryUtil.getCompanies(companies);
+    static JSONArray getCompanies(String json) {
+        return EntryUtil.getCompanies(json);
+    }
+
+    static JSONArray getPersonnel(String json) {
+        return EntryUtil.getPersonnel(json);
     }
 
     static JSONArray getArtists(String artists) {

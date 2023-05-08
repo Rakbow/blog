@@ -289,6 +289,27 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
+    //更新相关人员信息
+    @RequestMapping(path = "/update-personnel", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemPersonnel(@RequestBody String json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityId = JSON.parseObject(json).getInteger("entityId");
+            int entityType = JSON.parseObject(json).getIntValue("entityType");
+            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            String fieldName = "";
+            if(entityType == EntityType.ALBUM.getId()) {
+                fieldName = "personnel";
+            }
+            String personnel = JSON.parseObject(json).get("personnel").toString();
+            res.message = entityService.updateItemPersonnel(entityName, fieldName, entityId, personnel);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
     //点赞
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody

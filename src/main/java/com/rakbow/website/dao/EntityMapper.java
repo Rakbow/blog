@@ -26,6 +26,8 @@ public interface EntityMapper {
     void updateItemSpec(String entityName, int entityId, String spec, Timestamp editedTime);
     //通用更新关联企业信息
     void updateItemCompanies(String entityName, int entityId, String companies, Timestamp editedTime);
+    //通用相关人员信息
+    void updateItemPersonnel(String entityName, String fieldName, int entityId, String personnel, Timestamp editedTime);
     String getItemImages(String entityName, int entityId);
     //更新图片
     void updateItemImages(String entityName, int entityId, String images, Timestamp editedTime);

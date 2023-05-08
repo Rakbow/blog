@@ -169,7 +169,7 @@ public class EntryService {
         JSONArray entriesZh = new JSONArray();
         entries.forEach(entry -> entriesZh.add(new Attribute(entry.getId(), entry.getNameZh())));
         JSONArray entriesEn = new JSONArray();
-        entries.forEach(entry -> entriesZh.add(new Attribute(entry.getId(), entry.getNameEn())));
+        entries.forEach(entry -> entriesEn.add(new Attribute(entry.getId(), entry.getNameEn())));
 
         if(category == EntryCategory.COMPANY) {
             redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, entriesZh);

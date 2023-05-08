@@ -39,6 +39,7 @@ public class ApiInfo {
     public static final String UPDATE_BONUS_SUCCESS = "特典信息更新成功！";
     public static final String UPDATE_SPEC_SUCCESS = "规格信息更新成功！";
     public static final String UPDATE_COMPANIES_SUCCESS = "关联企业信息更新成功！";
+    public static final String UPDATE_PERSONNEL_SUCCESS = "相关人员信息更新成功！";
 
     //endregion
 
