@@ -298,7 +298,7 @@
                                         <td width="120px"><strong>{{item.role.label}}</strong></td>
                                         <td v-for="(member, index) in item.members" style="display:inline" class="a_with_underline">
                                             <a :href="'/db/entry/' + member.value">
-                                                {{member.label}}
+                                                <span style="white-space: nowrap;">{{member.label}}</span>
                                             </a>
                                             <span v-if="index < item.members.length - 1">, </span>
                                         </td>
@@ -310,27 +310,27 @@
                                 <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>
                             </div>
                         </p-fieldset>
-<!--                        <p-fieldset :toggleable="true">-->
-<!--                            <template #legend>-->
-<!--                                <i class="pi pi-users"></i>-->
-<!--                                <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>-->
-<!--                            </template>-->
-<!--                            <div class="grid ml-4" v-if="album.artists.length != 0">-->
-<!--                                <table class="table-borderless table-sm">-->
-<!--                                    <tbody class="detail-item-artists-table">-->
-<!--                                    <tr v-for="item in album.artists">-->
-<!--                                        <td width="120px"><strong>{{item.pos}}</strong></td>-->
-<!--                                        <td>-->
-<!--                                            {{item.name.join(", ")}}-->
-<!--                                        </td>-->
-<!--                                    </tr>-->
-<!--                                    </tbody>-->
-<!--                                </table>-->
-<!--                            </div>-->
-<!--                            <div v-else>-->
-<!--                                <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>-->
-<!--                            </div>-->
-<!--                        </p-fieldset>-->
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi pi-users"></i>
+                                <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>
+                            </template>
+                            <div class="grid ml-4" v-if="album.artists.length != 0">
+                                <table class="table-borderless table-sm">
+                                    <tbody class="detail-item-artists-table">
+                                    <tr v-for="item in album.artists">
+                                        <td width="120px"><strong>{{item.pos}}</strong></td>
+                                        <td>
+                                            {{item.name.join(", ")}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div v-else>
+                                <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>
+                            </div>
+                        </p-fieldset>
                         <!-- tracks info -->
                         <p-fieldset :toggleable="true">
                             <template #legend>

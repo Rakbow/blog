@@ -2,6 +2,9 @@ package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.data.dto.QueryParams;
@@ -58,6 +61,7 @@ public class AlbumController {
     private HostHolder hostHolder;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
+    private final ObjectMapper jsonMapper = new ObjectMapper();
     //endregion
 
     //region ------获取页面------
@@ -101,13 +105,17 @@ public class AlbumController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilter(@RequestBody String json) {
+    public String getAlbumsByFilter(@RequestBody String json) throws JsonProcessingException {
 
-        JSONObject param = JSON.parseObject(json);
+        // JSONObject param = JSON.parseObject(json);
+        //
+        // QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
+        //
+        // String pageLabel = param.getString("pageLabel");
 
-        QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
-
-        String pageLabel = param.getString("pageLabel");
+        Map<String, Object> map = jsonMapper.readValue(json, Map.class);
+        QueryParams queryParam = jsonMapper.convertValue(map.get("queryParams"), QueryParams.class);
+        String pageLabel = (String) map.get("pageLabel");
 
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
@@ -120,11 +128,11 @@ public class AlbumController {
             albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);
         }
 
-        JSONObject result = new JSONObject();
+        Map<String, Object> result = new HashMap<>();
         result.put("data", albums);
         result.put("total", searchResult.total);
 
-        return JSON.toJSONString(result);
+        return jsonMapper.writeValueAsString(result);
     }
 
     //新增专辑

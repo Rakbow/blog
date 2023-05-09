@@ -219,13 +219,13 @@ const entryDbList = {
         this.init();
     },
     watch: {
-        'item.category':function(newValue, oldValue) {
+        'item.category':function(newValue) {
             if(newValue === 1 || newValue === 2) {
                 this.item.detail = {};
                 this.item.detail.links = [];
                 this.linksEdit = true;
             }else {
-                if(oldValue === 1 || oldValue === 2) {
+                if(newValue !== undefined && newValue !== null) {
                     this.linksEdit = false;
                     delete this.item.detail.links;
                 }
@@ -401,7 +401,9 @@ const entryDbList = {
         },
         //打开新增数据面板
         openNewDialog() {
-            this.item = {};
+            this.item = {
+                category: 2
+            };
             this.displayNewDialog = true;
         },
         //关闭新增数据面板
