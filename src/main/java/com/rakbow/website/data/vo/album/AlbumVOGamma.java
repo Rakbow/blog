@@ -2,6 +2,7 @@ package com.rakbow.website.data.vo.album;
 
 import com.alibaba.fastjson2.JSONArray;
 import lombok.Data;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  * @Project_name: website
@@ -10,6 +11,7 @@ import lombok.Data;
  * @Description: VO 存储到搜索引擎数据库
  */
 @Data
+@RedisHash("albumGamma")
 public class AlbumVOGamma {
 
     //基础信息
