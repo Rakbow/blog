@@ -8,16 +8,19 @@ import com.rakbow.website.data.Image;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
+import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.MusicService;
+import com.rakbow.website.service.SearchService;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import redis.clients.jedis.search.Schema;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -63,6 +66,8 @@ class WebSiteApplicationTests {
     private StatisticMapper statisticMapper;
     @Resource
     private EntryMapper entryMapper;
+    @Resource
+    private SearchService searchService;
 
     private final EntryConvertMapper entryConvertMapper = EntryConvertMapper.INSTANCES;
 
@@ -109,6 +114,33 @@ class WebSiteApplicationTests {
     @Test
     public void entryTests() {
         List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.PERSONNEL.getId());
+        AlbumVOGamma albumVOGamma = new AlbumVOGamma();
+    }
+
+    @Test
+    public void redisSearchTest() {
+        AlbumVOGamma album = albumVOMapper.toVOGamma(albumService.getAlbum(11));
+        Schema SCHEMA = new Schema()
+                .addTextField("catalogNo", 1.0)  //专辑编号，权重为1
+                .addTextField("name", 1.0)  //专辑名称（日语），权重为1
+                .addTextField("nameEn", 0.5)  //专辑英文名称，权重为0.5
+                .addTextField("nameZh", 0.5)  //专辑中文名称，权重为0.5
+                .addTextField("franchises", 0.2)  //所属系列，权重为0.2
+                .addTextField("albumFormat", 0.3)  //专辑分类，权重为0.3
+                .addNumericField("id")  //表主键
+                .addNumericField("hasBonus")  //是否包含特典内容
+                .addTagField("products")  //所属产品id，在mysql中以JSON格式存储
+                .addTextField("releaseDate", 0)  //发行日期，权重为0.4
+                .addTextField("cover", 0)  //封面，权重为0.3
+                .addNumericField("visitCount")  //浏览数
+                .addNumericField("likeCount");  //点赞数
+
+        //创建索引
+        searchService.createIndex("Album", "album:", SCHEMA);
+
+        searchService.addAlbum("album:", album);
+
+        // searchService.search("Album", "ひぐらしのなく頃に");
     }
 
 }

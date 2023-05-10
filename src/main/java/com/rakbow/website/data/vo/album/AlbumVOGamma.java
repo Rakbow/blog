@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
  * @Description: VO 存储到搜索引擎数据库
  */
 @Data
-@RedisHash("albumGamma")
+@RedisHash("album")
 public class AlbumVOGamma {
 
     //基础信息

@@ -59,6 +59,11 @@
             <version>3.12.0</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.11.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
@@ -75,7 +80,7 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.9.1</version>
+            <version>1.9.19</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -164,11 +169,11 @@
             <artifactId>jedis</artifactId>
             <version>4.4.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.redislabs</groupId>
-            <artifactId>spring-redisearch</artifactId>
-            <version>3.1.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.redislabs</groupId>-->
+<!--            <artifactId>spring-redisearch</artifactId>-->
+<!--            <version>3.1.2</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

@@ -5,6 +5,9 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.support.config.FastJsonConfig;
 import com.alibaba.fastjson2.support.spring.data.redis.FastJsonRedisSerializer;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
@@ -18,6 +21,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPooled;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.time.Duration;
 
@@ -33,9 +39,39 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfig {
 
+    @Value("${spring.redis.host}")
+    private String host;
+    @Value("${spring.redis.port}")
+    private int port;
+    @Value("${spring.redis.password}")
+    private String password;
+    @Value("${spring.redis.database}")
+    private int database;
+    @Value("${spring.redis.timeout}")
+    private int timeout;
+
     private final ApplicationContext mApplicationContext;
     private final RedisProperty mRedisProperty;
     private final RedisConnectionFactory mRedisConnectionFactory;
+
+    @Bean
+    public GenericObjectPoolConfig<Jedis> jedisPoolConfig() {
+        GenericObjectPoolConfig<Jedis> config = new GenericObjectPoolConfig<>();
+        config.setMaxTotal(10);
+        config.setMaxIdle(5);
+        return config;
+    }
+
+    @Bean
+    public UnifiedJedis unifiedJedis(GenericObjectPoolConfig jedisPoolConfig) {
+        UnifiedJedis client;
+        if (StringUtils.isNotEmpty(password)) {
+            client = new JedisPooled(jedisPoolConfig, host, port, timeout, password, database);
+        } else {
+            client = new JedisPooled(jedisPoolConfig, host, port, timeout, null, database);
+        }
+        return client;
+    }
 
     FastJsonConfig getRedisFastJson(){
         FastJsonConfig config = new FastJsonConfig();
