@@ -59,7 +59,7 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{price}, #{currencyUnit}, #{albumFormat}, #{mediaFormat}, #{companies},
-        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{artists}, #{images},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{personnel}, #{artists}, #{images},
         #{trackInfo}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 

@@ -1,13 +1,17 @@
 package com.rakbow.website.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.jackson.DateDeserializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -26,6 +30,7 @@ public class Album extends MetaEntity {
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
+    @JsonDeserialize(using = DateDeserializer.class)
     private Date releaseDate;//发行日期
     private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
@@ -72,6 +77,36 @@ public class Album extends MetaEntity {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Album album = (Album) o;
+        return id == album.id &&
+                price == album.price &&
+                hasBonus == album.hasBonus &&
+                Objects.equals(catalogNo, album.catalogNo) &&
+                Objects.equals(name, album.name) &&
+                Objects.equals(nameZh, album.nameZh) &&
+                Objects.equals(nameEn, album.nameEn) &&
+                Objects.equals(barcode, album.barcode) &&
+                Objects.equals(releaseDate, album.releaseDate) &&
+                Objects.equals(publishFormat, album.publishFormat) &&
+                Objects.equals(albumFormat, album.albumFormat) &&
+                Objects.equals(mediaFormat, album.mediaFormat) &&
+                Objects.equals(currencyUnit, album.currencyUnit) &&
+                Objects.equals(companies, album.companies) &&
+                Objects.equals(bonus, album.bonus) &&
+                Objects.equals(franchises, album.franchises) &&
+                Objects.equals(products, album.products) &&
+                Objects.equals(personnel, album.personnel) &&
+                Objects.equals(artists, album.artists) &&
+                Objects.equals(trackInfo, album.trackInfo);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, catalogNo, name, nameZh, nameEn, barcode, releaseDate, publishFormat, albumFormat, mediaFormat, price, currencyUnit, companies, hasBonus, bonus, franchises, products, personnel, artists, trackInfo);
+    }
 }

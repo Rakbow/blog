@@ -1,12 +1,10 @@
 package com.rakbow.website.controller.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.SearchResult;
@@ -29,8 +27,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -107,15 +103,9 @@ public class AlbumController {
     @ResponseBody
     public String getAlbumsByFilter(@RequestBody String json) throws JsonProcessingException {
 
-        // JSONObject param = JSON.parseObject(json);
-        //
-        // QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
-        //
-        // String pageLabel = param.getString("pageLabel");
-
-        Map<String, Object> map = jsonMapper.readValue(json, Map.class);
-        QueryParams queryParam = jsonMapper.convertValue(map.get("queryParams"), QueryParams.class);
-        String pageLabel = (String) map.get("pageLabel");
+        JsonNode param = JsonUtil.toNode(json);
+        QueryParams queryParam = JsonUtil.to(param.get("queryParams"), QueryParams.class);
+        String pageLabel = param.get("pageLabel").asText();
 
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
@@ -128,11 +118,11 @@ public class AlbumController {
             albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("data", albums);
+        ObjectNode result = JsonUtil.emptyObjectNode();
+        result.set("data", JsonUtil.toNode(albums));
         result.put("total", searchResult.total);
 
-        return jsonMapper.writeValueAsString(result);
+        return JsonUtil.toJson(result);
     }
 
     //新增专辑
@@ -141,15 +131,14 @@ public class AlbumController {
     public String addAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            JSONObject param = JSON.parseObject(json);
+            ObjectNode param = JsonUtil.toObjectNode(json);
             //检测数据
             String checkMsg = albumService.checkAlbumJson(param);
             if(!StringUtils.isBlank(checkMsg)) {
-                res.setErrorMessage(checkMsg);
-                return JSON.toJSONString(res);
+                throw new Exception(checkMsg);
             }
 
-            Album album = entityService.json2Entity(albumService.handleAlbumJson(param), Album.class);
+            Album album = JsonUtil.to(albumService.handleAlbumJson(param), Album.class);
 
             //保存新增专辑
             res.message = albumService.addAlbum(album);
@@ -160,7 +149,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return JsonUtil.toJson(res);
     }
 
     //删除专辑(单个/多个)
@@ -169,7 +158,7 @@ public class AlbumController {
     public String deleteAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            List<Album> albums = JSON.parseArray(json).toJavaList(Album.class);
+            List<Album> albums = JsonUtil.toList(json, Album.class);
 
             for (Album album : albums) {
                 //从数据库中删除专辑
@@ -186,7 +175,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return JsonUtil.toJson(res);
     }
 
     //更新专辑基础信息
@@ -195,14 +184,13 @@ public class AlbumController {
     public String updateAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            JSONObject param = JSON.parseObject(json);
+            ObjectNode param = JsonUtil.toObjectNode(json);
             String checkMsg = albumService.checkAlbumJson(param);
             if(!StringUtils.isBlank(checkMsg)) {
-                res.setErrorMessage(checkMsg);
-                return JSON.toJSONString(res);
+                throw new Exception(checkMsg);
             }
 
-            Album album = entityService.json2Entity(albumService.handleAlbumJson(param), Album.class);
+            Album album = JsonUtil.to(albumService.handleAlbumJson(param), Album.class);
 
             //修改编辑时间
             album.setEditedTime(DateUtil.NOW_TIMESTAMP);
@@ -211,7 +199,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return JsonUtil.toJson(res);
     }
 
     //endregion
@@ -224,17 +212,17 @@ public class AlbumController {
     public String updateAlbumArtists(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            int id = JSON.parseObject(json).getInteger("id");
-            String artists = JSON.parseObject(json).getJSONArray("artists").toString();
+            JsonNode param = JsonUtil.toNode(json);
+            int id = param.get("id").asInt();
+            String artists = param.get("artists").asText();
             if (StringUtils.isBlank(artists)) {
-                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                return JSON.toJSONString(res);
+                throw new Exception(ApiInfo.INPUT_TEXT_EMPTY);
             }
             res.message = albumService.updateAlbumArtists(id, artists);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return JsonUtil.toJson(res);
     }
 
     //更新专辑音轨信息TrackInfo
@@ -243,15 +231,10 @@ public class AlbumController {
     public String updateAlbumTrackInfo(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            int id = JSON.parseObject(json).getInteger("id");
+            JsonNode param = JsonUtil.toNode(json);
+            int id = param.get("id").asInt();
 
-            String discList = JSON.parseObject(json).get("discList").toString();
-
-//            //若discList为空
-//            if (Objects.equals(discList, "[]")) {
-//                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-//                return JSON.toJSONString(res);
-//            }
+            String discList = param.get("discList").asText();
 
             albumService.updateAlbumTrackInfo(id, discList);
 
@@ -259,7 +242,7 @@ public class AlbumController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return JsonUtil.toJson(res);
     }
 
     @RequestMapping(value = "/get-related-albums", method = RequestMethod.POST)
@@ -267,15 +250,14 @@ public class AlbumController {
     public String getRelatedAlbums(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-
-            JSONObject param = JSON.parseObject(json);
-            int id = param.getInteger("id");
+            JsonNode param = JsonUtil.toNode(json);
+            int id = param.get("id").asInt();
             res.data = albumService.getRelatedAlbums(id);
 
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return JsonUtil.toJson(res);
     }
 
     //endregion

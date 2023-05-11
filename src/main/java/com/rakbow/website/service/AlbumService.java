@@ -3,6 +3,9 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
@@ -158,31 +161,26 @@ public class AlbumService {
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
-    public String checkAlbumJson(JSONObject albumJson) {
-        if (StringUtils.isBlank(albumJson.getString("name"))) {
+    public String checkAlbumJson(JsonNode albumJson) {
+        if (StringUtils.isBlank(albumJson.get("name").asText())) {
             return ApiInfo.ALBUM_NAME_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.getString("releaseDate"))) {
+        if (StringUtils.isBlank(albumJson.get("releaseDate").asText())) {
             return ApiInfo.ALBUM_RELEASE_DATE_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.getString("franchises"))
-                || StringUtils.equals(albumJson.getString("franchises"), "[]")) {
+        if (albumJson.get("franchises").isEmpty()) {
             return ApiInfo.FRANCHISES_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.getString("products"))
-                || StringUtils.equals(albumJson.getString("products"), "[]")) {
+        if (albumJson.get("products").isEmpty()) {
             return ApiInfo.PRODUCTS_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.getString("publishFormat"))
-                || StringUtils.equals(albumJson.getString("publishFormat"), "[]")) {
+        if (albumJson.get("publishFormat").isEmpty()) {
             return ApiInfo.ALBUM_PUBLISH_FORMAT_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.getString("albumFormat"))
-                || StringUtils.equals(albumJson.getString("albumFormat"), "[]")) {
+        if (albumJson.get("albumFormat").isEmpty()) {
             return ApiInfo.ALBUM_ALBUM_FORMAT_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.getString("mediaFormat"))
-                || StringUtils.equals(albumJson.getString("mediaFormat"), "[]")) {
+        if (albumJson.get("mediaFormat").isEmpty()) {
             return ApiInfo.ALBUM_MEDIA_FORMAT_EMPTY;
         }
         return "";
@@ -191,29 +189,29 @@ public class AlbumService {
     /**
      * 处理前端传送专辑数据
      *
-     * @param albumJson 专辑json
+     * @param json 专辑json
      * @return 处理后的album json格式数据
      * @author rakbow
      */
-    public JSONObject handleAlbumJson(JSONObject albumJson) {
+    public ObjectNode handleAlbumJson(ObjectNode json) {
 
-        String[] products = CommonUtil.str2SortedArray(albumJson.getString("products"));
-        String[] franchises = CommonUtil.str2SortedArray(albumJson.getString("franchises"));
-        String[] publishFormat = CommonUtil.str2SortedArray(albumJson.getString("publishFormat"));
-        String[] albumFormat = CommonUtil.str2SortedArray(albumJson.getString("albumFormat"));
-        String[] mediaFormat = CommonUtil.str2SortedArray(albumJson.getString("mediaFormat"));
+        String[] products = JsonUtil.toStringArray(json.get("products"));
+        String[] franchises = JsonUtil.toStringArray(json.get("franchises"));
+        String[] publishFormat = JsonUtil.toStringArray(json.get("publishFormat"));
+        String[] albumFormat = JsonUtil.toStringArray(json.get("albumFormat"));
+        String[] mediaFormat = JsonUtil.toStringArray(json.get("mediaFormat"));
 
         //处理时间
         // String releaseDate = DateUtil.dateToString(albumJson.getDate("releaseDate"));
 
-        albumJson.put("releaseDate", albumJson.getDate("releaseDate"));
-        albumJson.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
-        albumJson.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
-        albumJson.put("publishFormat", "{\"ids\":[" + StringUtils.join(publishFormat, ",") + "]}");
-        albumJson.put("albumFormat", "{\"ids\":[" + StringUtils.join(albumFormat, ",") + "]}");
-        albumJson.put("mediaFormat", "{\"ids\":[" + StringUtils.join(mediaFormat, ",") + "]}");
+        json.put("releaseDate", json.get("releaseDate").asText());
+        json.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
+        json.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
+        json.put("publishFormat", "{\"ids\":[" + StringUtils.join(publishFormat, ",") + "]}");
+        json.put("albumFormat", "{\"ids\":[" + StringUtils.join(albumFormat, ",") + "]}");
+        json.put("mediaFormat", "{\"ids\":[" + StringUtils.join(mediaFormat, ",") + "]}");
 
-        return albumJson;
+        return json;
     }
 
     //endregion
