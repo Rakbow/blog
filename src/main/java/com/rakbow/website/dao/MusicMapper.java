@@ -24,6 +24,8 @@ public interface MusicMapper {
 
     List<Music> getMusicsByAlbumId(int albumId);
 
+    List<Music> getMusicsByAlbumIds(List<Integer> ids);
+
     int getMusicRows();
 
     int addMusic(Music music);

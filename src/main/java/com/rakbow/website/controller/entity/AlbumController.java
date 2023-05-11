@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.dto.QueryParams;
@@ -158,19 +159,18 @@ public class AlbumController {
     public String deleteAlbum(@RequestBody String json) {
         ApiResult res = new ApiResult();
         try {
-            List<Album> albums = JsonUtil.toList(json, Album.class);
+            List<Integer> ids = new ArrayList<>();
+            ArrayNode arrayNode = JsonUtil.toArrayNode(json);
+            arrayNode.forEach(node -> {
+                ids.add(node.get("id").asInt());
+            });
 
-            for (Album album : albums) {
-                //从数据库中删除专辑
-                albumService.deleteAlbumById(album);
+            //从数据库中删除专辑
+            albumService.deleteAlbums(ids);
 
-                //删除专辑对应的music
-                try {
-                    musicService.deleteMusicByAlbumId(album.getId());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            //删除专辑对应的music
+            musicService.deleteMusicsByAlbumIds(ids);
+
             res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());

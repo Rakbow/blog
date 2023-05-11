@@ -211,6 +211,33 @@ public class MusicService {
         }
     }
 
+    /**
+     * 根据专辑id删除对应的music
+     * @author rakbow
+     * @param ids 专辑ids
+     * */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void deleteMusicsByAlbumIds(List<Integer> ids) throws Exception {
+        try {
+            List<Music> musics = musicMapper.getMusicsByAlbumIds(ids);
+
+            if(musics.isEmpty()) {
+                return;
+            }
+
+            musics.forEach(music -> {
+                //删除对应music的音频文件
+                deleteMusicAllFiles(music);
+                //删除浏览量数据
+                visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId());
+                //删除对应music
+                musicMapper.deleteMusicById(music.getId());
+            });
+        }catch (Exception ex) {
+            throw new Exception(ex);
+        }
+    }
+
     //endregion
 
     //region ------处理数据------

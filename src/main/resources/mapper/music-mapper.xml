@@ -63,6 +63,28 @@
         where album_id = #{albumId} and status = 1
     </select>
 
+    <select id="getMusicsByAlbumIds" resultType="Music">
+        select
+        <include refid="selectFields"></include>
+        from music
+        <where>
+            album_id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by
+        <if test="ids != null and ids.size() != 0">
+            <foreach item="item" index="index" collection="ids" open="FIELD(id,"
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
     <insert id="addMusic" parameterType="Music" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()

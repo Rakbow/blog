@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.ApiInfo;
@@ -107,16 +106,24 @@ public class AlbumService {
     /**
      * 根据Id删除专辑
      *
-     * @param album 专辑
+     * @param ids 专辑ids
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAlbumById(Album album) {
-        //删除前先把服务器上对应图片全部删除
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
-        //删除专辑
-        albumMapper.deleteAlbumById(album.getId());
-        visitUtil.deleteVisit(EntityType.ALBUM.getId(), album.getId());
+    public void deleteAlbums(List<Integer> ids) {
+        try {
+
+            List<Album> albums = albumMapper.getAlbums(ids);
+            for(Album album : albums) {
+                //删除前先把服务器上对应图片全部删除
+                qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
+                //删除专辑
+                albumMapper.deleteAlbumById(album.getId());
+                visitUtil.deleteVisit(EntityType.ALBUM.getId(), album.getId());
+            }
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
