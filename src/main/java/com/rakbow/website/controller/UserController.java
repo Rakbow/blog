@@ -1,17 +1,16 @@
 package com.rakbow.website.controller;
 
-import com.rakbow.website.entity.LoginTicket;
-import com.rakbow.website.util.common.CookieUtil;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.HostHolder;
+import com.rakbow.website.util.common.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,9 +53,6 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private HostHolder hostHolder;
-
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getUserSettingPage() {
         return "/site/setting";
@@ -91,7 +87,7 @@ public class UserController {
 
         // 更新当前用户的头像的路径(web访问路径)
         // http://localhost:8080/blog/user/header/xxx.png
-        User user = hostHolder.getUser();
+        User user = AuthorityInterceptor.getCurrentUser();
         String headerUrl = domain + contextPath + "/user/header/" + fileName;
         userService.updateHeader(user.getId(), headerUrl);
 

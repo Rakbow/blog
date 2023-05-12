@@ -1,22 +1,25 @@
 package com.rakbow.website.controller.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.annotation.UniqueVisitor;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.SearchResult;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
-import com.rakbow.website.service.*;
-import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.util.common.*;
+import com.rakbow.website.service.AlbumService;
+import com.rakbow.website.service.EntityService;
+import com.rakbow.website.service.MusicService;
+import com.rakbow.website.service.UserService;
+import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.EntityUtil;
+import com.rakbow.website.util.common.JsonUtil;
 import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -28,7 +31,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -54,11 +58,8 @@ public class AlbumController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private HostHolder hostHolder;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
-    private final ObjectMapper jsonMapper = new ObjectMapper();
     //endregion
 
     //region ------获取页面------
@@ -77,10 +78,10 @@ public class AlbumController {
 
         String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
         model.addAttribute("album", albumService.buildVO(album, musics));
-        if(UserAuthority.isUser(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isUser()) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
-        if(UserAuthority.isUser(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isUser()) {
             //前端选项数据
             model.addAttribute("options", entityUtil.getDetailOptions(EntityType.ALBUM.getId()));
         }
@@ -102,9 +103,8 @@ public class AlbumController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilter(@RequestBody String json) throws JsonProcessingException {
+    public String getAlbumsByFilter(@RequestBody JsonNode param) {
 
-        JsonNode param = JsonUtil.toNode(json);
         QueryParams queryParam = JsonUtil.to(param.get("queryParams"), QueryParams.class);
         String pageLabel = param.get("pageLabel").asText();
 
@@ -129,10 +129,9 @@ public class AlbumController {
     //新增专辑
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addAlbum(@RequestBody String json) {
+    public String addAlbum(@RequestBody ObjectNode param) {
         ApiResult res = new ApiResult();
         try {
-            ObjectNode param = JsonUtil.toObjectNode(json);
             //检测数据
             String checkMsg = albumService.checkAlbumJson(param);
             if(!StringUtils.isBlank(checkMsg)) {
@@ -161,9 +160,7 @@ public class AlbumController {
         try {
             List<Integer> ids = new ArrayList<>();
             ArrayNode arrayNode = JsonUtil.toArrayNode(json);
-            arrayNode.forEach(node -> {
-                ids.add(node.get("id").asInt());
-            });
+            arrayNode.forEach(node -> ids.add(node.get("id").asInt()));
 
             //从数据库中删除专辑
             albumService.deleteAlbums(ids);
@@ -181,10 +178,9 @@ public class AlbumController {
     //更新专辑基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbum(@RequestBody String json) {
+    public String updateAlbum(@RequestBody ObjectNode param) {
         ApiResult res = new ApiResult();
         try {
-            ObjectNode param = JsonUtil.toObjectNode(json);
             String checkMsg = albumService.checkAlbumJson(param);
             if(!StringUtils.isBlank(checkMsg)) {
                 throw new Exception(checkMsg);
@@ -205,25 +201,6 @@ public class AlbumController {
     //endregion
 
     //region ------进阶增删改------
-
-    //更新专辑音乐创作相关Artists
-    @RequestMapping(path = "/update-artists", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateAlbumArtists(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            JsonNode param = JsonUtil.toNode(json);
-            int id = param.get("id").asInt();
-            String artists = param.get("artists").asText();
-            if (StringUtils.isBlank(artists)) {
-                throw new Exception(ApiInfo.INPUT_TEXT_EMPTY);
-            }
-            res.message = albumService.updateAlbumArtists(id, artists);
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JsonUtil.toJson(res);
-    }
 
     //更新专辑音轨信息TrackInfo
     @RequestMapping(path = "/update-trackInfo", method = RequestMethod.POST)

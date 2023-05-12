@@ -46,9 +46,6 @@ public interface AlbumMapper {
     //更新专辑图片
     void updateAlbumImages(int id, String images, Timestamp editedTime);
 
-    //更新专辑Artists
-    void updateAlbumArtists(int id, String artists, Timestamp editedTime);
-
     //更新音轨信息
     void updateAlbumTrackInfo(int id, String trackInfo, Timestamp editedTime);
 

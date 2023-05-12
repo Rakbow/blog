@@ -4,9 +4,7 @@ import com.rakbow.website.entity.LoginTicket;
 import com.rakbow.website.entity.User;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.CookieUtil;
-import com.rakbow.website.util.common.HostHolder;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,9 +30,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     @Resource
     private UserService userService;
 
-    @Resource
-    private HostHolder hostHolder;
-
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
 
@@ -50,7 +45,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 // 根据凭证查询用户
                 User user = userService.findUserById(loginTicket.getUserId());
                 // 在本次请求中持有用户
-                hostHolder.setUser(user);
+                AuthorityInterceptor.setCurrentUser(user);
                 // // 构建用户认证的结果，并存入securityContext，以便security进行授权
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         user, user.getPassword(), userService.getAuthorities(user.getId()));
@@ -59,7 +54,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
             } else if (loginTicket != null) {
                 if(loginTicket.getStatus() == 1 || loginTicket.getExpired().before(new Date())){
                     //凭证失效
-                    hostHolder.clear();
+                    AuthorityInterceptor.clearCurrentUser();
                 }
             }
         }
@@ -68,7 +63,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, ModelAndView modelAndView) {
-        User user = hostHolder.getUser();
+        User user = AuthorityInterceptor.getCurrentUser();
         if (user != null && modelAndView != null) {
             modelAndView.addObject("loginUser", user);
         }
@@ -76,7 +71,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, Exception ex) {
-        hostHolder.clear();
+        AuthorityInterceptor.clearCurrentUser();
     }
 
 }

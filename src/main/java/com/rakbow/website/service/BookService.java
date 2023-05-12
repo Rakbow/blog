@@ -2,17 +2,16 @@ package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.BookMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.BookVOMapper;
 import com.rakbow.website.util.entity.BookUtil;
@@ -44,8 +43,6 @@ public class BookService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -86,7 +83,7 @@ public class BookService {
       */
      @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
      public Book getBookWithAuth(int id) {
-         if(UserAuthority.isSenior(hostHolder.getUser())) {
+         if(AuthorityInterceptor.isSenior()) {
              return bookMapper.getBook(id, true);
          }
          return bookMapper.getBook(id, false);
@@ -236,10 +233,10 @@ public class BookService {
         }
 
         List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, franchises, products, hasBonus, UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+                bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
-                bookType, franchises, products, hasBonus, UserAuthority.isSenior(hostHolder.getUser()));
+                bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, books);
     }

@@ -1,32 +1,20 @@
 package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.entity.album.PublishFormat;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.data.vo.album.AlbumVOGamma;
 import com.rakbow.website.entity.Album;
-import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.LikeUtil;
-import com.rakbow.website.util.common.SpringUtil;
-import com.rakbow.website.util.common.VisitUtil;
-import com.rakbow.website.util.entity.FranchiseUtil;
-import com.rakbow.website.util.entity.ProductUtil;
-import com.rakbow.website.util.entry.EntryUtil;
-import com.rakbow.website.util.file.CommonImageUtil;
-import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -54,15 +42,14 @@ public interface AlbumVOMapper {
     @Mapping(target = "releaseDate", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getDate(album.getReleaseDate()))")
     @Mapping(target = "hasBonus", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getBool(album.getHasBonus()))")
     @Mapping(target = "companies", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCompanies(album.getCompanies()))")
-    @Mapping(target = "personnel", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getPersonnel(album.getPersonnel()))")
+    @Mapping(target = "artists", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getPersonnel(album.getArtists()))")
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "mediaFormat", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getMediaFormat(album.getMediaFormat()))")
-    @Mapping(target = "artists", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getArtists(album.getArtists()))")
     @Mapping(target = "trackInfo", ignore = true)
     @Mapping(target = "editDiscList", ignore = true)
     @Mapping(target = "editCompanies", ignore = true)
-    @Mapping(target = "editPersonnel", ignore = true)
+    @Mapping(target = "editArtists", ignore = true)
     AlbumVO toVO(Album album);
 
     /**

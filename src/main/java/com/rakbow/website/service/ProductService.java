@@ -3,6 +3,7 @@ package com.rakbow.website.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.RedisCacheConstant;
@@ -43,8 +44,6 @@ public class ProductService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private RedisUtil redisUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -73,7 +72,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Product getProductWithAuth(int id) {
-        if(UserAuthority.isSenior(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isSenior()) {
             return productMapper.getProduct(id, true);
         }
         return productMapper.getProduct(id, false);
@@ -236,9 +235,9 @@ public class ProductService {
         List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
         List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
 
-        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, UserAuthority.isSenior(hostHolder.getUser()),
+        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior(),
                 param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, UserAuthority.isSenior(hostHolder.getUser()));
+        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, products);
     }

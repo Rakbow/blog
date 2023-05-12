@@ -31,8 +31,6 @@ public class EntityUtil {
     private VisitUtil visitUtil;
     @Resource
     private LikeUtil likeUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     public ItemDetailInfo getItemDetailInfo(Object o, int entityType) {
         ItemDetailInfo detailInfo = new ItemDetailInfo();

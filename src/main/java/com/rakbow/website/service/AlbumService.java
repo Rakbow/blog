@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
@@ -52,8 +53,6 @@ public class AlbumService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -97,7 +96,7 @@ public class AlbumService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Album getAlbumWithAuth(int id) {
-        if(UserAuthority.isSenior(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isSenior()) {
             return albumMapper.getAlbum(id, true);
         }
         return albumMapper.getAlbum(id, false);
@@ -145,14 +144,14 @@ public class AlbumService {
     public AlbumVO buildVO(Album album, List<Music> musics) {
         AlbumVO VO = albumVOMapper.toVO(album);
 
-        if(UserAuthority.isJunior(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isJunior()) {
             //可供编辑的editDiscList
             JSONArray editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
             VO.setEditDiscList(editDiscList);
             //可供编辑的editCompanies
             VO.setEditCompanies(JSON.parseArray(album.getCompanies()));
             //可供编辑的editPersonnel
-            VO.setEditPersonnel(JSON.parseArray(album.getPersonnel()));
+            VO.setEditArtists(JSON.parseArray(album.getArtists()));
         }
         //音轨信息
         JSONObject trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
@@ -224,19 +223,6 @@ public class AlbumService {
     //endregion
 
     //region ------更新复杂数据------
-
-    /**
-     * 更新专辑Artists
-     *
-     * @param id      专辑id
-     * @param artists 专辑的创作相关信息json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateAlbumArtists(int id, String artists) {
-        albumMapper.updateAlbumArtists(id, artists, DateUtil.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_ALBUM_ARTISTS_SUCCESS;
-    }
 
     /**
      * 更新音轨信息
@@ -357,10 +343,10 @@ public class AlbumService {
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+                albumFormat, mediaFormat, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = albumMapper.getAlbumRowsByFilter(catalogNo, name, franchises, products, publishFormat,
-                albumFormat, mediaFormat, hasBonus, UserAuthority.isSenior(hostHolder.getUser()));
+                albumFormat, mediaFormat, hasBonus, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, albums);
     }

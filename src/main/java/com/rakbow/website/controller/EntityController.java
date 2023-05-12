@@ -3,6 +3,7 @@ package com.rakbow.website.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.system.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -50,8 +51,6 @@ public class EntityController {
     private EntityService entityService;
     @Resource
     private RedisUtil redisUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     //endregion
 
@@ -142,7 +141,7 @@ public class EntityController {
     public String getListInitData(@RequestBody String json, HttpServletRequest request) {
         int entityType = JSON.parseObject(json).getIntValue("entityType");
         JSONObject initData = entityUtil.getDetailOptions(entityType);
-        initData.put("editAuth", UserAuthority.getUserOperationAuthority(hostHolder.getUser()));
+        initData.put("editAuth", UserAuthority.getUserOperationAuthority(AuthorityInterceptor.getCurrentUser()));
         return initData.toJSONString();
     }
     //endregion
@@ -300,7 +299,7 @@ public class EntityController {
             String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
             String fieldName = "";
             if(entityType == EntityType.ALBUM.getId()) {
-                fieldName = "personnel";
+                fieldName = "artists";
             }
             String personnel = JSON.parseObject(json).get("personnel").toString();
             res.message = entityService.updateItemPersonnel(entityName, fieldName, entityId, personnel);

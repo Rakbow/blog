@@ -786,7 +786,7 @@ const personnelEditPanel = {
     },
     methods: {
         onRowReorder(ev) {
-            this.tmpItems.value = ev.value;
+            this.tmpItems = ev.value;
         },
         rowMenu(ev) {
             this.$refs.cm.show(ev.originalEvent);

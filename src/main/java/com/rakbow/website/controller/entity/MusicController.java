@@ -4,19 +4,21 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.system.UserAuthority;
-import com.rakbow.website.entity.Album;
-import com.rakbow.website.entity.Music;
-import com.rakbow.website.service.*;
-import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.EntityUtil;
-import com.rakbow.website.util.common.HostHolder;
-import com.rakbow.website.util.entity.MusicUtil;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Music;
+import com.rakbow.website.service.AlbumService;
+import com.rakbow.website.service.EntityService;
+import com.rakbow.website.service.MusicService;
+import com.rakbow.website.service.UserService;
+import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.EntityUtil;
 import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.convertMapper.entity.MusicVOMapper;
+import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -52,8 +54,6 @@ public class MusicController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private HostHolder hostHolder;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -72,7 +72,7 @@ public class MusicController {
 
         model.addAttribute("music", musicVOMapper.music2VO(music, coverUrl));
 
-        if(UserAuthority.isUser(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isUser()) {
             model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
         }
         //前端选项数据

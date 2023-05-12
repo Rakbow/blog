@@ -270,7 +270,7 @@
                                 <table class="table-borderless table-sm">
                                     <tbody class="detail-item-artists-table">
                                     <tr v-for="company in album.companies">
-                                        <td width="80px"><strong>{{company.role.label}}</strong></td>
+                                        <td width="150px"><strong>{{company.role.label}}</strong></td>
                                         <td v-for="(member, index) of company.members" class="a_with_underline">
                                             <a :href="'/db/entry/' + member.value" style="display:inline">
                                                 {{member.label}}
@@ -291,37 +291,16 @@
                                 <i class="pi pi-users"></i>
                                 <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>
                             </template>
-                            <div class="grid ml-4" v-if="album.personnel.length != 0">
-                                <table class="table-borderless table-sm">
-                                    <tbody class="detail-item-artists-table">
-                                    <tr v-for="item in album.personnel">
-                                        <td width="120px"><strong>{{item.role.label}}</strong></td>
-                                        <td v-for="(member, index) in item.members" style="display:inline" class="a_with_underline">
-                                            <a :href="'/db/entry/' + member.value">
-                                                <span style="white-space: nowrap;">{{member.label}}</span>
-                                            </a>
-                                            <span v-if="index < item.members.length - 1">, </span>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div v-else>
-                                <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoArtistInfo}}</em></span>
-                            </div>
-                        </p-fieldset>
-                        <p-fieldset :toggleable="true">
-                            <template #legend>
-                                <i class="pi pi-users"></i>
-                                <b>{{RKW_Web.AlbumDetailArtistInfoTitle}}</b>
-                            </template>
                             <div class="grid ml-4" v-if="album.artists.length != 0">
                                 <table class="table-borderless table-sm">
                                     <tbody class="detail-item-artists-table">
                                     <tr v-for="item in album.artists">
-                                        <td width="120px"><strong>{{item.pos}}</strong></td>
-                                        <td>
-                                            {{item.name.join(", ")}}
+                                        <td width="150px"><strong>{{item.role.label}}</strong></td>
+                                        <td v-for="(member, index) in item.members" style="display:inline" class="a_with_underline">
+                                            <a :href="'/db/entry/' + member.value">
+                                                <span style="white-space: nowrap;">{{member.label}}</span>
+                                            </a>
+                                            <span v-if="index < item.members.length - 1">,</span>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -595,92 +574,6 @@
                       @click="closeEditDialog" :disabled="editBlock"></p-button>
             <p-button :label="RKW_Web.Save" icon="pi pi-check" class="p-button-text"
                       @click="submitEditAlbum" :disabled="editBlock"></p-button>
-        </template>
-    </p-dialog>
-    <p-dialog :modal="true" v-model:visible="displayArtistEditDialog" :header="RKW_Web.AlbumDetailArtistEditTitle"
-              :style="{width: '800px'}">
-        <p-blockui :blocked="editBlock">
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
-                    <b>{{RKW_Web.Add}}</b>
-                </template>
-                <div class="grid">
-                    <div class="col-3">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-tag"></i>
-                            </span>
-                            <span class="p-inputgroup-addon">
-                                <p-checkbox v-model="artist.main" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
-                            </span>
-                            <p-inputtext v-model="artist.pos" :placeholder="RKW_Web.AlbumDetailEditArtistPos"></p-inputtext>
-                        </div>
-                    </div>
-                    <div class="col-7">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-users"></i>
-                            </span>
-                            <p-chips v-model="artist.name" :placeholder="RKW_Web.AlbumDetailEditArtistName" separator=","></p-chips>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <p-button :label="RKW_Web.Add" icon="pi pi-save"
-                                  @click="addArtist"></p-button>
-                    </div>
-                </div>
-            </p-panel>
-            <p-panel>
-                <template #header>
-                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
-                    <b>{{RKW_Web.Edit}}</b>
-                </template>
-                <div v-if="tmpArtists.length != 0">
-                    <p-datatable dataKey="id" :value="tmpArtists" responsive-layout="scroll"
-                                 class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
-                                 context-menu v-model:context-menu-selection="selectedArtist"
-                                 @row-contextmenu="artistRowMenu" edit-mode="row"
-                                 v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
-                        <p-column :row-reorder="true" header-style="width: 4%"></p-column>
-                        <p-column field="main" header-style="width: 3%">
-                            <template #body="slotProps">
-                                <i v-if="slotProps.data.main == 1" class="pi false-icon pi-star-fill"></i>
-                            </template>
-                            <template #editor="{ data, field }">
-                                <p-checkbox v-model="data[field]" :binary="true" :true-value="1" :false-value="0"></p-checkbox>
-                            </template>
-                        </p-column>
-                        <p-column field="pos" :header="RKW_Web.AlbumDetailEditArtistPos">
-                            <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus></p-inputtext>
-                            </template>
-                        </p-column>
-                        <p-column field="name" :header="RKW_Web.AlbumDetailEditArtistName">
-                            <template #body="slotProps">
-                                {{slotProps.data.name.join(" / ")}}
-                            </template>
-                            <template #editor="{ data, field }">
-                                <p-chips v-model="data[field]"></p-chips>
-                            </template>
-                        </p-column>
-                        <p-column :row-editor="true" style="width:10%; min-width:8rem"
-                                  bodyStyle="text-align:center"></p-column>
-                    </p-datatable>
-                    <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
-                </div>
-                <div v-else>
-                    <span class="emptyInfo">{{RKW_Web.ItemDetailMessageNoArtistInfo}}</span>
-                </div>
-            </p-panel>
-        </p-blockui>
-        <template #footer>
-            <p-button :label="RKW_Web.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
-                      @click="clearArtists" :disabled="editBlock"></p-button>
-            <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="mr-4"
-                      @click="cancelArtistEdit" :disabled="editBlock"></p-button>
-            <p-button :label="RKW_Web.Update" icon="pi pi-save" class="p-button-success mr-4"
-                      @click="submitArtist" :disabled="editBlock"></p-button>
         </template>
     </p-dialog>
     <p-dialog :modal="true" v-model:visible="displayTrackEditDialog" :header="RKW_Web.AlbumDetailTrackEditTitle"
@@ -958,6 +851,19 @@
                     //]]>
                 }
             };
+            const getRelatedAlbums = () => {
+                relatedItemLoad.value = true;
+                let json = {
+                    id: detailInfo.value.id
+                }
+                HttpUtil.post(null, GET_RELATED_ALBUMS_URL, json)
+                    .then(res => {
+                        if (res.state === 1) {
+                            relatedAlbums.value = res.data;
+                        }
+                        relatedItemLoad.value = false;
+                    });
+            };
             //endregion
 
             //region image
@@ -1032,13 +938,13 @@
                         showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editCompanies, companyRoleSet.value, companySet.value);
                     }
                 },
-                // {
-                //     label: RKW_Web.AlbumDetailOptionArtistEditTitle,
-                //     icon: 'pi pi-users',
-                //     command: () => {
-                //         openArtistEditDialog();
-                //     }
-                // },
+                {
+                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
+                    icon: 'pi pi-users',
+                    command: () => {
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editArtists, roleSet.value, personnelSet.value);
+                    }
+                },
                 {
                     label: RKW_Web.AlbumDetailOptionTrackInfoEditTitle,
                     icon: 'pi iconfont icon-playlist',
@@ -1058,13 +964,6 @@
                     icon: 'pi iconfont icon-gift',
                     command: () => {
                         showBonusEditDialog(toast, dialog, detailInfo.value, album.value.bonus, itemImageInfo.value.images);
-                    }
-                },
-                {
-                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
-                    icon: 'pi pi-users',
-                    command: () => {
-                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editPersonnel, roleSet.value, personnelSet.value);
                     }
                 }
             ]);
@@ -1345,91 +1244,6 @@
             };
             //endregion
 
-            //region artists
-            const tmpArtists = ref();
-            const cm = ref();
-            const selectedArtist = ref();
-            const artist = ref({});
-            const artists = ref([]);
-            const displayArtistEditDialog = ref(false);
-            const menuModel = ref([
-                {label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => deleteArtist(selectedArtist)}
-            ]);
-            const onRowReorder = (ev) => {
-                tmpArtists.value = ev.value;
-            };
-            const artistRowMenu = (ev) => {
-                cm.value.show(ev.originalEvent);
-            };
-            const deleteArtist = (artist) => {
-                tmpArtists.value = tmpArtists.value.filter((a) => a.pos !== artist.value.pos);
-                toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: artist.value.pos, life: 3000});
-                selectedArtist.value = null;
-            };
-            const editingRows = ref([]);
-            const onRowEditSave = (ev) => {
-                let {newData, index} = ev;
-
-                tmpArtists.value[index] = newData;
-            };
-
-            const openArtistEditDialog = () => {
-                tmpArtists.value = JSON.parse(JSON.stringify(album.value.artists));
-                artist.value = {};
-                displayArtistEditDialog.value = true;
-            };
-            const clearArtists = () => {
-                tmpArtists.value = [];
-            };
-            const addArtist = () => {
-                tmpArtists.value.push(artist.value);
-                artist.value = {};
-            }
-            const cancelArtistEdit = () => {
-                artist.value = {};
-                displayArtistEditDialog.value = false;
-            };
-            const submitArtist = () => {
-                editBlock.value = true;
-                let mainCount = 0;
-                tmpArtists.value.forEach(artist => {
-                    if(artist.main === 1) {
-                        mainCount++;
-                    }
-                });
-                if(mainCount > 1) {
-                    toast.add({severity: 'error', summary: RKW_Web.ErrorMessageItemDetailPersonnelMain, life: 3000});
-                    editBlock.value = false;
-                    return;
-                }
-                let json = {
-                    id: album.value.id,
-                    artists: tmpArtists.value
-                }
-                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ALBUM_ARTISTS_URL, json)
-                    .then(res => {
-                        if (res !== undefined) {
-                            displayArtistEditDialog.value = false;
-                            artist.value = {};
-                            location.reload(true);
-                        }
-                    })
-            };
-            const getRelatedAlbums = () => {
-                relatedItemLoad.value = true;
-                let json = {
-                    id: detailInfo.value.id
-                }
-                HttpUtil.post(null, GET_RELATED_ALBUMS_URL, json)
-                    .then(res => {
-                        if (res.state === 1) {
-                            relatedAlbums.value = res.data;
-                        }
-                        relatedItemLoad.value = false;
-                    });
-            };
-            //endregion
-
             // const initImageClass = (url) => {
             //     const image = new Image();
             //     image.src = url;
@@ -1458,15 +1272,10 @@
                 //audio player
                 audioInfos, createAplayer, playerOption,
 
-                //artists
-                tmpEditDiscList, tmpArtists, cm, artist, artists, menuModel, editingRows, selectedArtist, addArtist,
-                clearArtists, submitArtist, deleteArtist, cancelArtistEdit, artistRowMenu, onRowEditSave,
-                displayArtistEditDialog,
-
                 //tracks info
                 cmDisc, selectedDisc, menuModelDisc, onRowReorderDisc, discRowMenu, editingRowsDisc, onRowEditSaveDisc,
                 cmTrack, selectedTrack, menuModelTrack, onRowReorderTrack, trackRowMenu, editingRowsTrack,
-                onRowEditSaveTrack, tracks, disc, addDisc, submitTrackInfo, onRowReorder, expandedRows, expandAll,
+                onRowEditSaveTrack, tracks, disc, addDisc, submitTrackInfo, expandedRows, expandAll,
                 collapseAll, displayTrackEditDialog,
             }
         },

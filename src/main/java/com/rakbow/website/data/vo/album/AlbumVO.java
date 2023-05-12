@@ -32,8 +32,8 @@ public class AlbumVO {
     //可供编辑的企业信息
     private JSONArray editCompanies;
 
-    private JSONArray personnel;
-    private JSONArray editPersonnel;
+    private JSONArray artists;
+    private JSONArray editArtists;
 
     //规格信息
     private JSONArray publishFormat;//出版形式 在mysql中以数组字符串形式存储
@@ -41,7 +41,6 @@ public class AlbumVO {
     private JSONArray mediaFormat;//媒体类型
 
     //大文本字段
-    private JSONArray artists;//staff
     private String bonus;//特典信息
 
     //音轨相关

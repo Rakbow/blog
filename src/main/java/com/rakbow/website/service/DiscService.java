@@ -2,16 +2,15 @@ package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.DiscVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
@@ -42,8 +41,6 @@ public class DiscService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -84,7 +81,7 @@ public class DiscService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Disc getDiscWithAuth(int id) {
-        if(UserAuthority.isSenior(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isSenior()) {
             return discMapper.getDisc(id, true);
         }
         return discMapper.getDisc(id, false);
@@ -211,10 +208,10 @@ public class DiscService {
         }
 
         List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+                mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, UserAuthority.isSenior(hostHolder.getUser()));
+                mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, discs);
     }

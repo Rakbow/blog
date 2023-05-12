@@ -42,7 +42,6 @@ public class Album extends MetaEntity {
     private String bonus;//特典信息
     private String franchises;//所属系列
     private String products;//所属产品id 在mysql中以数组字符串形式存储
-    private String personnel;
     private String artists;//staff
     private String trackInfo;//曲目列表（JSON字符串）
 
@@ -67,7 +66,6 @@ public class Album extends MetaEntity {
         this.products = "{\"ids\":[]}";
         this.setDescription("");
         this.setRemark("");
-        this.personnel = "[]";
         this.artists = "[]";
         this.setImages("[]");
         this.trackInfo = "{}";
@@ -100,13 +98,12 @@ public class Album extends MetaEntity {
                 Objects.equals(bonus, album.bonus) &&
                 Objects.equals(franchises, album.franchises) &&
                 Objects.equals(products, album.products) &&
-                Objects.equals(personnel, album.personnel) &&
                 Objects.equals(artists, album.artists) &&
                 Objects.equals(trackInfo, album.trackInfo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, catalogNo, name, nameZh, nameEn, barcode, releaseDate, publishFormat, albumFormat, mediaFormat, price, currencyUnit, companies, hasBonus, bonus, franchises, products, personnel, artists, trackInfo);
+        return Objects.hash(super.hashCode(), id, catalogNo, name, nameZh, nameEn, barcode, releaseDate, publishFormat, albumFormat, mediaFormat, price, currencyUnit, companies, hasBonus, bonus, franchises, products, artists, trackInfo);
     }
 }

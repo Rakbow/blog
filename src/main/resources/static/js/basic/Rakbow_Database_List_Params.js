@@ -402,13 +402,17 @@ const entryDbList = {
         //打开新增数据面板
         openNewDialog() {
             this.item = {
-                category: 2
+                category: 2,
+                detail: {}
             };
             this.displayNewDialog = true;
         },
         //关闭新增数据面板
         closeNewDialog() {
-            this.item = {};
+            this.item = {
+                category: 2,
+                detail: {}
+            };
             this.displayNewDialog = false;
         },
         //提交新增数据

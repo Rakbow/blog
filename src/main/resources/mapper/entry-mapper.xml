@@ -73,16 +73,16 @@
         from entry
         <where>
             <if test="name != null and name != '' ">
-                and name like concat('%', #{name}, '%')
+                or name like concat('%', #{name}, '%')
             </if>
             <if test="nameZh != null and nameZh != '' ">
-                and name_zh like concat('%', #{name_zh}, '%')
+                or name_zh like concat('%', #{nameZh}, '%')
             </if>
             <if test="nameEn != null and nameEn != '' ">
-                and name_en like concat('%', #{name_en}, '%')
+                or name_en like concat('%', #{nameEn}, '%')
             </if>
             <if test="category != 100 ">
-                and category = #{category}
+                or category = #{category}
             </if>
         </where>
         <if test="sortField == 'id'">
@@ -106,16 +106,16 @@
         from entry
         <where>
             <if test="name != null and name != '' ">
-                and name like concat('%', #{name}, '%')
+                or name like concat('%', #{name}, '%')
             </if>
             <if test="nameZh != null and nameZh != '' ">
-                and name_zh like concat('%', #{name_zh}, '%')
+                or name_zh like concat('%', #{nameZh}, '%')
             </if>
             <if test="nameEn != null and nameEn != '' ">
-                and name_en like concat('%', #{name_en}, '%')
+                or name_en like concat('%', #{nameEn}, '%')
             </if>
             <if test="category != 100 ">
-                and category = #{category}
+                or category = #{category}
             </if>
         </where>
     </select>

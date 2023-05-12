@@ -64,10 +64,6 @@ public class EntityConverter {
         return EntryUtil.getPersonnel(json);
     }
 
-    static JSONArray getArtists(String artists) {
-        return JSONArray.parseArray(artists);
-    }
-
     static JSONObject getCover(String images, EntityType entityType) {
         return CommonImageUtil.generateCover(images, entityType);
     }

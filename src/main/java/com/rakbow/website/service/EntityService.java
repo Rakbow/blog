@@ -83,9 +83,6 @@ public class EntityService {
     @Resource
     private EntryUtil entryUtil;
 
-    @Resource
-    private HostHolder hostHolder;
-
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;

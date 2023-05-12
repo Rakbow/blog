@@ -7,14 +7,14 @@
     <sql id="selectFields">
         id, catalog_no, name, name_zh, name_en, barcode, release_date, publish_format,
         price, currency_unit, album_format, media_format, companies,
-        has_bonus, bonus, description, remark, franchises, products, personnel, artists, images, track_info,
+        has_bonus, bonus, description, remark, franchises, products, artists, images, track_info,
         added_time, edited_time, status
     </sql>
 
     <sql id="insertFields">
         catalog_no, name, name_zh, name_en, barcode, release_date, publish_format, price, currency_unit,
         album_format, media_format, companies, has_bonus, bonus, description,
-        remark, franchises, products, personnel, artists, images, track_info, added_time, edited_time, status
+        remark, franchises, products, artists, images, track_info, added_time, edited_time, status
     </sql>
 
     <select id="getAlbum" resultType="Album">
@@ -59,7 +59,7 @@
         insert into album (<include refid="insertFields"></include>)
         values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
         #{price}, #{currencyUnit}, #{albumFormat}, #{mediaFormat}, #{companies},
-        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{personnel}, #{artists}, #{images},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{artists}, #{images},
         #{trackInfo}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
@@ -85,13 +85,6 @@
         update album
         set
         images = #{images}, edited_time = #{editedTime}
-        where id = #{id}
-    </update>
-
-    <update id="updateAlbumArtists" keyProperty="id">
-        update album
-        set
-        artists = #{artists}, edited_time = #{editedTime}
         where id = #{id}
     </update>
 

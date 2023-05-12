@@ -2,6 +2,7 @@ package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.GameMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
@@ -12,7 +13,6 @@ import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.common.HostHolder;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.GameVOMapper;
 import com.rakbow.website.util.file.QiniuFileUtil;
@@ -43,8 +43,6 @@ public class GameService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private HostHolder hostHolder;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -85,7 +83,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Game getGameWithAuth(int id) {
-        if(UserAuthority.isSenior(hostHolder.getUser())) {
+        if(AuthorityInterceptor.isSenior()) {
             return gameMapper.getGame(id, true);
         }
         return gameMapper.getGame(id, false);
@@ -235,9 +233,9 @@ public class GameService {
 
 
         List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
-                UserAuthority.isSenior(hostHolder.getUser()), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+                AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
-        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, UserAuthority.isSenior(hostHolder.getUser()));
+        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, games);
     }
