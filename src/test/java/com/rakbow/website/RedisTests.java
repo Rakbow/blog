@@ -64,7 +64,7 @@ public class RedisTests {
         // entityService.refreshRedisEntries(EntryCategory.COMPANY);
         // productService.refreshRedisProducts();
         // franchiseService.refreshRedisFranchises();
-        // entityService.refreshRedisEmunData();
+        entityService.refreshRedisEmunData();
         entryService.refreshRedisEntries(EntryCategory.ROLE);
         entryService.refreshRedisEntries(EntryCategory.PERSONNEL);
     }

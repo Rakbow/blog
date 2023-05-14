@@ -1,11 +1,11 @@
 package com.rakbow.website.util.convertMapper.entity;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.MediaFormat;
-import com.rakbow.website.data.emun.entity.album.AlbumFormat;
-import com.rakbow.website.data.emun.entity.album.PublishFormat;
+import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.SpringUtil;
@@ -80,6 +80,18 @@ public class EntityConverter {
     static long getLikeCount(int entityTypeId, int id) {
         LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
         return likeUtil.getLike(entityTypeId, id);
+    }
+
+    static String getCurrencyUnitByCode(String region) {
+        return Region.getCurrencyUnitByCode(region);
+    }
+
+    static JSONObject getRegion(String region) {
+        return Region.getRegion(region);
+    }
+
+    static JSONArray getJSONArray(String json) {
+        return JSON.parseArray(json);
     }
 
 }

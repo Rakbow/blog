@@ -36,7 +36,7 @@ import java.util.List;
  * @Create: 2023-01-11 16:13
  * @Description: book VO转换接口
  */
-@Mapper(componentModel = "spring", uses = EntityConverter.class)
+@Mapper(componentModel = "spring")
 public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
@@ -52,15 +52,18 @@ public interface BookVOMapper {
      * @return BookVO
      * @author rakbow
      */
-    @Mapping(target = "publishDate", source = "publishDate", qualifiedByName = "getPublishDate")
-    @Mapping(target = "currencyUnit", source = "region", qualifiedByName = "getCurrencyUnit")
-    @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
+    @Mapping(target = "publishDate", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getDate(book.getPublishDate()))")
+    @Mapping(target = "currencyUnit", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCurrencyUnitByCode(book.getRegion()))")
+    @Mapping(target = "hasBonus", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getBool(book.getHasBonus()))")
     @Mapping(target = "bookType", source = "bookType", qualifiedByName = "getBookType")
-    @Mapping(target = "region", source = "region", qualifiedByName = "getRegion")
+    @Mapping(target = "region", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getRegion(book.getRegion()))")
     @Mapping(target = "publishLanguage", source = "publishLanguage", qualifiedByName = "getPublishLanguage")
-    @Mapping(target = "authors", source = "authors", qualifiedByName = "getJSONArray")
-    @Mapping(target = "spec", source = "spec", qualifiedByName = "getJSONArray")
-    @Named("toVO")
+    @Mapping(target = "authors", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getJSONArray(book.getAuthors()))")
+    @Mapping(target = "spec", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getJSONArray(book.getSpec()))")
+    @Mapping(target = "companies", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCompanies(book.getCompanies()))")
+    @Mapping(target = "personnel", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getPersonnel(book.getPersonnel()))")
+    @Mapping(target = "editCompanies", ignore = true)
+    @Mapping(target = "editPersonnel", ignore = true)
     BookVO toVO(Book book);
 
     // /**
@@ -91,39 +94,14 @@ public interface BookVOMapper {
 
     //region get property method
 
-    @Named("getPublishDate")
-    default String getPublishDate(Date date) {
-        return DateUtil.dateToString(date);
-    }
-
-    @Named("getCurrencyUnit")
-    default String getCurrencyUnit(String region) {
-        return Region.getCurrencyByCode(region);
-    }
-
-    @Named("getBool")
-    default boolean getBool(int bool) {
-        return bool == 1;
-    }
-
     @Named("getBookType")
     default JSONObject getBookType(int bookType) {
         return BookType.getAttribute(bookType);
     }
 
-    @Named("getRegion")
-    default JSONObject getRegion(String region) {
-        return Region.getRegion(region);
-    }
-
     @Named("getPublishLanguage")
     default JSONObject getPublishLanguage(String publishLanguage) {
         return Language.getLanguage(publishLanguage);
-    }
-
-    @Named("getJSONArray")
-    default JSONArray getJSONArray(String json) {
-        return JSON.parseArray(json);
     }
 
     //endregion
@@ -151,7 +129,7 @@ public interface BookVOMapper {
         bookVOAlpha.setAuthors(BookUtil.getAuthors(book));
         bookVOAlpha.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
         bookVOAlpha.setPrice(book.getPrice());
-        bookVOAlpha.setCurrencyUnit(Region.getCurrencyByCode(book.getRegion()));
+        bookVOAlpha.setCurrencyUnit(Region.getCurrencyUnitByCode(book.getRegion()));
         bookVOAlpha.setPublisher(book.getPublisher());
         bookVOAlpha.setSummary(book.getSummary());
         bookVOAlpha.setHasBonus(book.getHasBonus() == 1);

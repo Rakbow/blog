@@ -78,7 +78,7 @@ public class AlbumController {
         if(AuthorityInterceptor.isUser()) {
             model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
         }
-        if(AuthorityInterceptor.isUser()) {
+        if(AuthorityInterceptor.isJunior()) {
             //前端选项数据
             model.addAttribute("options", entityUtil.getDetailOptions(EntityType.ALBUM.getId()));
         }

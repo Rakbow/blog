@@ -33,7 +33,7 @@ public enum Region {
     private final String currency;
 
     //根据地区代码获取货币符号
-    public static String getCurrencyByCode(String code){
+    public static String getCurrencyUnitByCode(String code){
         String currency = JAPAN.currency;
         for (Region region : Region.values()) {
             if (StringUtils.equals(region.code, code)) {

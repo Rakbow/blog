@@ -29,6 +29,7 @@ public class Book extends MetaEntity {
     private String products;//所属产品
     private String region;//地区
     private String publishLanguage;//语言
+    private String personnel;
     private String authors;//作者（译者，插画，原作者等，json）
     private String companies;//相关企业
     private String publisher;//出版社
@@ -51,6 +52,7 @@ public class Book extends MetaEntity {
         this.products = "{\"ids\": []}";
         this.region = "";
         this.publishLanguage = "";
+        this.personnel = "[]";
         this.authors = "[]";
         this.companies = "[]";
         this.publisher = "";

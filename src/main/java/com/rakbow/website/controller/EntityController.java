@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
+import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.system.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -300,6 +301,8 @@ public class EntityController {
             String fieldName = "";
             if(entityType == EntityType.ALBUM.getId()) {
                 fieldName = "artists";
+            }else if(entityType == EntityType.BOOK.getId()) {
+                fieldName = "authors";
             }
             String personnel = JSON.parseObject(json).get("personnel").toString();
             res.message = entityService.updateItemPersonnel(entityName, fieldName, entityId, personnel);
@@ -319,7 +322,7 @@ public class EntityController {
             int entityId = JSON.parseObject(json).getIntValue("entityId");
 
             // 从cookie中获取点赞token
-            String likeToken = CookieUtil.getValue(request, "like_token");
+            String likeToken = TokenInterceptor.getLikeToken();
             if(likeToken == null) {
                 //生成likeToken,并返回
                 likeToken = CommonUtil.generateUUID();

@@ -35,6 +35,12 @@ public class BookVO {
     private boolean hasBonus;//是否包含特典
     private String remark;//备注
 
+    private JSONArray companies;
+    private JSONArray editCompanies;
+
+    private JSONArray personnel;
+    private JSONArray editPersonnel;
+
     //复杂字段
     private JSONArray authors;//作者（译者，插画，原作者等，json）
     private JSONArray spec;//规格

@@ -92,6 +92,11 @@ public class EntityUtil {
                 options.put("bookTypeSet", redisUtil.get(RedisCacheConstant.BOOK_TYPE_SET_EN));
                 options.put("regionSet", redisUtil.get(RedisCacheConstant.REGION_SET_EN));
                 options.put("languageSet", redisUtil.get(RedisCacheConstant.LANGUAGE_SET_EN));
+                options.put("companySet", redisUtil.get(RedisCacheConstant.COMPANY_SET_EN));
+                options.put("companyRoleSet", redisUtil.get(RedisCacheConstant.COMPANY_ROLE_SET_EN));
+
+                options.put("roleSet", redisUtil.get(RedisCacheConstant.ROLE_SET_EN));
+                options.put("personnelSet", redisUtil.get(RedisCacheConstant.PERSONNEL_SET_EN));
             }
             if(entityType == EntityType.DISC.getId()) {
                 options.put("mediaFormatSet", redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET_EN));

@@ -593,7 +593,7 @@
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
-    import {showBonusEditDialog, showDescriptionEditDialog, showSpecEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog, showCompaniesEditDialog, showPersonnelEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -656,6 +656,19 @@
             //endregion
 
             //region basic
+            const initOption = () => {
+                const option = ref([[${options}]]);
+                if(option.value !== null) {
+                    franchiseSet.value = option.value.franchiseSet;
+                    bookTypeSet.value = option.value.bookTypeSet;
+                    regionSet.value = option.value.regionSet;
+                    languageSet.value = option.value.languageSet;
+                    companySet.value = option.value.companySet;
+                    companyRoleSet.value = option.value.companyRoleSet;
+                    roleSet.value = option.value.roleSet;
+                    personnelSet.value = option.value.personnelSet;
+                }
+            }
             const book = ref([[${book}]]);
             const toast = useToast();
             const pageInfo = ref([[${pageInfo}]]);
@@ -663,12 +676,16 @@
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const franchiseSet = ref([[${options.franchiseSet}]]);
             const productSet = ref([]);
-            // const relatedBooks = ref([[${relatedBooks}]]);
             const relatedItemLoad = ref(true);
             const relatedBooks = ref([]);
-            const bookTypeSet = ref([[${options.bookTypeSet}]]);
-            const regionSet = ref([[${options.regionSet}]]);
-            const languageSet = ref([[${options.languageSet}]]);
+
+            const bookTypeSet = ref([]);
+            const regionSet = ref([]);
+            const languageSet = ref([]);
+            const companySet = ref([]);
+            const companyRoleSet = ref([]);
+            const roleSet = ref([]);
+            const personnelSet = ref([]);
             //endregion
 
             //region edit basic info
@@ -707,7 +724,21 @@
                     command: () => {
                         showBonusEditDialog(toast, dialog, detailInfo.value, book.value.bonus, itemImageInfo.value.images);
                     }
-                }
+                },
+                {
+                    label: RKW_Web.ItemDetailOptionCompaniesEditTitle,
+                    icon: 'pi pi-building',
+                    command: () => {
+                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editCompanies, companyRoleSet.value, companySet.value);
+                    }
+                },
+                {
+                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
+                    icon: 'pi pi-users',
+                    command: () => {
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editPersonnel, roleSet.value, personnelSet.value);
+                    }
+                },
             ]);
             const productSelect = ref(true);
             const editBlock = ref(false);

@@ -24,7 +24,9 @@ public enum EntryCategory {
     ROLE(4, "职位", "Role"),
     CHARACTER(5, "角色", "Character"),
     MATERIAL(6, "原料", "Material"),
-    EVENT(7, "活动/展会", "Event");
+    EVENT(7, "活动/展会", "Event"),
+    SPEC_PARAMETER(8, "规格参数", "Spec Parameter"),
+    PUBLICATION(9, "书刊", "Publication");
 
     @Getter
     private final int id;

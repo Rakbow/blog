@@ -3,6 +3,7 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
+import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -45,8 +46,6 @@ public class BookController {
     @Resource
     private BookService bookService;
     @Resource
-    private UserService userService;
-    @Resource
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
@@ -66,9 +65,11 @@ public class BookController {
             model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
             return "/error/404";
         }
-        model.addAttribute("book", bookVOMapper.toVO(book));
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.BOOK.getId()));
+        model.addAttribute("book", bookService.buildVO(book));
+        if(AuthorityInterceptor.isJunior()) {
+            //前端选项数据
+            model.addAttribute("options", entityUtil.getDetailOptions(EntityType.BOOK.getId()));
+        }
         //实体类通用信息
         model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, EntityType.BOOK.getId()));
         //获取页面数据
