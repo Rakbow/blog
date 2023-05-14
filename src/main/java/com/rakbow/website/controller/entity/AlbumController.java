@@ -16,7 +16,6 @@ import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.MusicService;
-import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtil;
 import com.rakbow.website.util.common.JsonUtil;
@@ -52,8 +51,6 @@ public class AlbumController {
     private AlbumService albumService;
     @Resource
     private MusicService musicService;
-    @Resource
-    private UserService userService;
     @Resource
     private EntityUtil entityUtil;
     @Resource
@@ -143,7 +140,7 @@ public class AlbumController {
             //保存新增专辑
             res.message = albumService.addAlbum(album);
 
-            // //将新增的专辑保存到meilisearch服务器索引中
+            //将新增的专辑保存到meilisearch服务器索引中
             // meiliSearchUtils.saveSingleData(album, EntityType.ALBUM);
 
         } catch (Exception ex) {

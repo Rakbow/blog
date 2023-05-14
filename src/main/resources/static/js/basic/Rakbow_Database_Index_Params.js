@@ -666,7 +666,7 @@ const bookIndex = {
                     <div class="col-6 p-1">
                         <label>区域</label>
                         <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
-                                    :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
+                                    :filter="true" :show-clear="true" option-label="name" option-value="code">
                             <template #value="slotProps">
                                 <div class="country-item" v-if="slotProps.value">
                                     <span :class="'fi fi-' + slotProps.value"></span>
@@ -677,7 +677,7 @@ const bookIndex = {
                             <template #option="slotProps">
                                 <div class="country-item">
                                     <span :class="'fi fi-' + slotProps.option.code"></span>
-                                    <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                    <div class="ml-2">{{slotProps.option.name}}</div>
                                 </div>
                             </template>
                         </p-dropdown>
@@ -685,7 +685,7 @@ const bookIndex = {
                     <div class="col-6 p-1">
                         <label>语言</label>
                         <p-dropdown v-model="queryParams.filters.publishLanguage.value" :options="languageSet"
-                                    placeholder="所有" option-label="nameZh"
+                                    placeholder="所有" option-label="name"
                                     option-value="code">
                         </p-dropdown>
                     </div>
@@ -872,7 +872,7 @@ const bookIndex = {
                                 </template>
                                 <template #subtitle>
                                     <span :class="'fi fi-' + slotProps.data.region.code" class="ml-1"
-                                        v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>&nbsp;
+                                        v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}"></span>&nbsp;
                                     <span class="label" style="font-size: 11px;color: white">
                                         <b v-if="slotProps.data.authors.length != 0">{{slotProps.data.authors.join(", ")}}</b>&nbsp;
                                         <b v-else>N/A</b>&nbsp;
@@ -881,7 +881,7 @@ const bookIndex = {
                                 <template #content>
                                     <div class="grid">
                                         <span class="p-1">
-                                            <p-tag class="ml-1" :value="slotProps.data.bookType.nameZh"></p-tag>
+                                            <p-tag class="ml-1" :value="slotProps.data.bookType.label"></p-tag>
                                         </span>
                                         <span class="p-1 has-bonus-tag" v-if="slotProps.data.hasBonus">
                                             <p-tag style="background: #2f364f" class="ml-1" value="特典"></p-tag>
@@ -912,9 +912,9 @@ const bookIndex = {
                                 &nbsp<span class="label" style="font-size: 7px">{{slotProps.data.publisher}}</span><br>
                                 <span>
                                     <span :class="'fi fi-' + slotProps.data.region.code"
-                                        v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}"></span>
+                                        v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}"></span>
                                     <span class="p-1">
-                                        <p-tag :value="slotProps.data.bookType.nameZh"></p-tag>
+                                        <p-tag :value="slotProps.data.bookType.label"></p-tag>
                                     </span>
                                     <span class="has-bonus-tag" v-if="slotProps.data.hasBonus">
                                         <p-tag style="background: #001122" class="ml-1" value="特典"></p-tag>
@@ -1242,7 +1242,7 @@ const discIndex = {
                             <div class="col-6 p-1">
                                 <label>区域</label>
                                 <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
-                                            :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
+                                            :filter="true" :show-clear="true" option-label="name" option-value="code">
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
@@ -1253,7 +1253,7 @@ const discIndex = {
                                     <template #option="slotProps">
                                         <div class="country-item">
                                             <span :class="'fi fi-' + slotProps.option.code"></span>
-                                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                            <div class="ml-2">{{slotProps.option.name}}</div>
                                         </div>
                                     </template>
                                 </p-dropdown>
@@ -1475,7 +1475,7 @@ const discIndex = {
                                             <div class="grid">
                                                 <div class="col text-start m-0 p-0">
                                                     <span :class="'fi fi-' + slotProps.data.region.code" style="margin: 0 0.25rem"
-                                                          v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                                          v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}">
                                                     </span>
                                                     <span v-for="format of slotProps.data.mediaFormat" style="display:inline">
                                                         <p-tag class="mr-1" :value="format.label"></p-tag>
@@ -1509,7 +1509,7 @@ const discIndex = {
                                         <b class="label">{{slotProps.data.catalogNo}}</b><span class="label">&nbsp{{slotProps.data.releaseDate}}</span>
                                     </span><br>
                                         <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
-                                              v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                              v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}">
                                     </span>
                                         <span>
                                         <span v-for="format of slotProps.data.mediaFormat" style="display:inline">
@@ -1848,14 +1848,14 @@ const gameIndex = {
                             <div class="col-6 p-1">
                                 <label>平台</label>
                                 <p-dropdown v-model="queryParams.filters.platform.value" :options="gamePlatformSet"
-                                            placeholder="所有" option-label="labelEn"
+                                            placeholder="所有" option-label="label"
                                             option-value="value">
                                 </p-dropdown>
                             </div>
                             <div class="col-6 p-1">
                                 <label>区域</label>
                                 <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
-                                            :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
+                                            :filter="true" :show-clear="true" option-label="name" option-value="code">
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
@@ -1866,7 +1866,7 @@ const gameIndex = {
                                     <template #option="slotProps">
                                         <div class="country-item">
                                             <span :class="'fi fi-' + slotProps.option.code"></span>
-                                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                            <div class="ml-2">{{slotProps.option.name}}</div>
                                         </div>
                                     </template>
                                 </p-dropdown>
@@ -2057,7 +2057,7 @@ const gameIndex = {
                                             <div class="grid">
                                                 <div class="col text-start m-0 p-0">
                                                     <span :class="'fi fi-' + slotProps.data.region.code" style="margin: 0 0.25rem"
-                                                          v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                                          v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}">
                                                     </span>
                                                     <span><p-tag class="ml-1" :value="slotProps.data.platform.nameEn"></p-tag></span>
                                                 </div>
@@ -2086,7 +2086,7 @@ const gameIndex = {
                                         <span class="label">&nbsp{{slotProps.data.releaseDate}}</span>
                                     </span><br>
                                         <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
-                                              v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                              v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}">
                                     </span>
                                         <span>
                                         <span>
@@ -2394,7 +2394,7 @@ const merchIndex = {
                             <div class="col-6 p-1">
                                 <label>区域</label>
                                 <p-dropdown v-model="queryParams.filters.region.value" :options="regionSet"
-                                            :filter="true" :show-clear="true" option-label="nameZh" option-value="code">
+                                            :filter="true" :show-clear="true" option-label="name" option-value="code">
                                     <template #value="slotProps">
                                         <div class="country-item" v-if="slotProps.value">
                                             <span :class="'fi fi-' + slotProps.value"></span>
@@ -2405,7 +2405,7 @@ const merchIndex = {
                                     <template #option="slotProps">
                                         <div class="country-item">
                                             <span :class="'fi fi-' + slotProps.option.code"></span>
-                                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                                            <div class="ml-2">{{slotProps.option.name}}</div>
                                         </div>
                                     </template>
                                 </p-dropdown>
@@ -2635,7 +2635,7 @@ const merchIndex = {
                                     <span class="label">{{slotProps.data.releaseDate}}</span>
                                 </span>
                                         <span :class="'fi fi-' + slotProps.data.region.code" style="margin-left: 0.5rem"
-                                              v-tooltip.bottom="{value: slotProps.data.region.nameZh, class: 'region-tooltip'}">
+                                              v-tooltip.bottom="{value: slotProps.data.region.name, class: 'region-tooltip'}">
                                 </span>
                                     </div>
                                 </div>
