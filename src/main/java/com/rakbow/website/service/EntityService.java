@@ -312,31 +312,6 @@ public class EntityService {
     }
 
     /**
-     * 刷新Redis缓存中的Personnel数据
-     *
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void refreshRedisPersonnel() {
-
-        List<Company> companies = entryUtil.getAllCompanies();
-
-        JSONArray companiesZh = new JSONArray();
-        companies.forEach(company -> {
-            companiesZh.add(new Attribute(company.getId(), company.getNameZh()));
-        });
-
-        JSONArray companiesEn = new JSONArray();
-        companies.forEach(company -> {
-            companiesZh.add(new Attribute(company.getId(), company.getNameEn()));
-        });
-
-        redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, companiesZh);
-        redisUtil.set(RedisCacheConstant.COMPANY_SET_EN, companiesEn);
-
-    }
-
-    /**
      * 刷新Redis缓存中的搜索页首页图片连接地址
      *
      * @author rakbow
@@ -448,12 +423,12 @@ public class EntityService {
      * 更新规格信息
      *
      * @param entityName,entityId 实体表名,实体id
-     * @param spec 规格json数据
+     * @param specs 规格json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemSpec(String entityName, int entityId, String spec) {
-        entityMapper.updateItemSpec(entityName, entityId, spec, DateUtil.NOW_TIMESTAMP);
+    public String updateItemSpecs(String entityName, int entityId, String specs) {
+        entityMapper.updateItemSpecs(entityName, entityId, specs, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_SPEC_SUCCESS;
     }
 

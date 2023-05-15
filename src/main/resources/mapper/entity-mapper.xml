@@ -40,10 +40,10 @@
         where id = #{entityId}
     </update>
 
-    <update id="updateItemSpec" keyProperty="id">
+    <update id="updateItemSpecs" keyProperty="id">
         update ${param1}
         set
-        spec = #{spec}, edited_time = #{editedTime}
+        specs = #{specs}, edited_time = #{editedTime}
         where id = #{entityId}
     </update>
 

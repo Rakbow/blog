@@ -14,7 +14,6 @@ import com.rakbow.website.entity.common.Company;
 import com.rakbow.website.entity.common.Merchandise;
 import com.rakbow.website.entity.common.Personnel;
 import com.rakbow.website.entity.common.Role;
-import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.SpringUtil;
@@ -42,6 +41,9 @@ public class EntryUtil {
     private final EntryConvertMapper convertMapper = EntryConvertMapper.INSTANCES;
 
     public static JSONArray getCompanies(String json) {
+        JSONArray orgCompanies = JSON.parseArray(json);
+        if(orgCompanies.isEmpty()) return new JSONArray();
+
         String lang = LocaleContextHolder.getLocale().getLanguage();
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
         String key;
@@ -53,8 +55,6 @@ public class EntryUtil {
         List<Attribute> allCompanies = JSON.parseArray(JSON.toJSONString(redisUtil.get(key))).toJavaList(Attribute.class);
 
         JSONArray companies = new JSONArray();
-
-        JSONArray orgCompanies = JSON.parseArray(json);
         for (int i = 0; i < orgCompanies.size(); i++) {
             JSONObject orgCompany = orgCompanies.getJSONObject(i);
             JSONObject company = new JSONObject();
@@ -78,6 +78,9 @@ public class EntryUtil {
     }
 
     public static JSONArray getPersonnel(String json) {
+        JSONArray orgPersonnel = JSON.parseArray(json);
+        if(orgPersonnel.isEmpty()) return new JSONArray();
+
         String lang = LocaleContextHolder.getLocale().getLanguage();
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
         String personnelKey;
@@ -93,8 +96,6 @@ public class EntryUtil {
         List<Attribute> allRole = JSON.parseArray(JSON.toJSONString(redisUtil.get(roleKey))).toJavaList(Attribute.class);
 
         JSONArray personnel = new JSONArray();
-
-        JSONArray orgPersonnel = JSON.parseArray(json);
         for (int i = 0; i < orgPersonnel.size(); i++) {
             JSONObject orgItem = orgPersonnel.getJSONObject(i);
             JSONObject newItem = new JSONObject();
@@ -119,6 +120,28 @@ public class EntryUtil {
         }
 
         return personnel;
+    }
+
+    public static JSONArray getSpecs(String json) {
+        JSONArray specs = JSON.parseArray(json);
+        if(specs.isEmpty()) return new JSONArray();
+
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
+        String specKey;
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            specKey = RedisCacheConstant.SPEC_PARAMETER_SET_EN;
+        }else {
+            specKey = RedisCacheConstant.SPEC_PARAMETER_SET_ZH;
+        }
+        List<Attribute> allSpecParameter = JSON.parseArray(JSON.toJSONString(redisUtil.get(specKey))).toJavaList(Attribute.class);
+        for (int i = 0; i < specs.size(); i++) {
+            JSONObject item = specs.getJSONObject(i);
+
+            item.put("label", DataFinder.findAttributeByValue(item.getIntValue("label"), allSpecParameter));
+        }
+
+        return specs;
     }
 
     public List<Company> getAllCompanies() {

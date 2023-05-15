@@ -256,7 +256,7 @@ public class EntityController {
     }
 
     //更新规格信息
-    @RequestMapping(path = "/update-spec", method = RequestMethod.POST)
+    @RequestMapping(path = "/update-specs", method = RequestMethod.POST)
     @ResponseBody
     public String updateItemSpec(@RequestBody String json) {
         ApiResult res = new ApiResult();
@@ -265,7 +265,7 @@ public class EntityController {
             int entityType = JSON.parseObject(json).getIntValue("entityType");
             String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
             String spec = JSON.parseObject(json).get("spec").toString();
-            res.message = entityService.updateItemSpec(entityName, entityId, spec);
+            res.message = entityService.updateItemSpecs(entityName, entityId, spec);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -302,7 +302,7 @@ public class EntityController {
             if(entityType == EntityType.ALBUM.getId()) {
                 fieldName = "artists";
             }else if(entityType == EntityType.BOOK.getId()) {
-                fieldName = "authors";
+                fieldName = "personnel";
             }
             String personnel = JSON.parseObject(json).get("personnel").toString();
             res.message = entityService.updateItemPersonnel(entityName, fieldName, entityId, personnel);

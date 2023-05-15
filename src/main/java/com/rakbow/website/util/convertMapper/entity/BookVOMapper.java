@@ -62,8 +62,10 @@ public interface BookVOMapper {
     @Mapping(target = "spec", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getJSONArray(book.getSpec()))")
     @Mapping(target = "companies", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCompanies(book.getCompanies()))")
     @Mapping(target = "personnel", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getPersonnel(book.getPersonnel()))")
+    @Mapping(target = "specs", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getSpecs(book.getSpecs()))")
     @Mapping(target = "editCompanies", ignore = true)
     @Mapping(target = "editPersonnel", ignore = true)
+    @Mapping(target = "editSpecs", ignore = true)
     BookVO toVO(Book book);
 
     // /**

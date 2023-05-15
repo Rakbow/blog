@@ -67,6 +67,8 @@ public class RedisTests {
         entityService.refreshRedisEmunData();
         entryService.refreshRedisEntries(EntryCategory.ROLE);
         entryService.refreshRedisEntries(EntryCategory.PERSONNEL);
+        entryService.refreshRedisEntries(EntryCategory.SPEC_PARAMETER);
+        entryService.refreshRedisEntries(EntryCategory.PUBLICATION);
     }
 
     @Test

@@ -132,6 +132,8 @@ public class BookService {
             VO.setEditCompanies(JSON.parseArray(book.getCompanies()));
             //可供编辑的editPersonnel
             VO.setEditPersonnel(JSON.parseArray(book.getPersonnel()));
+            //可供编辑的editSpecs
+            VO.setEditSpecs(JSON.parseArray(book.getSpecs()));
         }
         return VO;
     }

@@ -64,6 +64,10 @@ public class EntityConverter {
         return EntryUtil.getPersonnel(json);
     }
 
+    static JSONArray getSpecs(String json) {
+        return EntryUtil.getSpecs(json);
+    }
+
     static JSONObject getCover(String images, EntityType entityType) {
         return CommonImageUtil.generateCover(images, entityType);
     }

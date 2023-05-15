@@ -36,6 +36,7 @@ public class Book extends MetaEntity {
     private Date publishDate;//出版日期
     private int price;//出版价格
     private String summary;//简介
+    private String specs;
     private String spec;//规格
     private int hasBonus;//是否包含特典
     private String bonus;//特典信息
@@ -59,6 +60,7 @@ public class Book extends MetaEntity {
         this.publishDate = null;
         this.price = 0;
         this.summary = "";
+        this.specs = "[]";
         this.spec = "[]";
         this.hasBonus = 0;
         this.bonus = "";

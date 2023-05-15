@@ -44,7 +44,7 @@ export const showDescriptionEditDialog = (toast, dialog, detailInfo, images) => 
     });
 };
 
-export const showSpecEditDialog = (toast, dialog, entityId, entityType, entitySpec) => {
+export const showSpecEditDialog = (toast, dialog, entityId, entityType, items, itemSet) => {
     const dialogRef = dialog.open(specEditPanel, {
         props: {
             header: '规格信息编辑',
@@ -60,7 +60,8 @@ export const showSpecEditDialog = (toast, dialog, entityId, entityType, entitySp
         data: {
             entityId: entityId,
             entityType: entityType,
-            entitySpec: entitySpec,
+            items: items,
+            itemSet: itemSet,
             toast: toast,
         },
     });
@@ -305,52 +306,57 @@ const specEditPanel = {
         <p-blockui :blocked="editBlock">
             <p-panel>
                 <template #header>
-                    <i class="pi pi-user-plus mr-2" style="font-size: 2rem"></i>
+                    <i class="pi pi-cog mr-2" style="font-size: 2rem"></i>
                     <b>{{RKW_Web.Add}}</b>
                 </template>
                 <div class="grid">
                     <div class="col-3">
                         <div class="p-inputgroup">
                             <span class="p-inputgroup-addon">
-                                <i class="pi pi-tag"></i>
+                                <i class="pi pi-wrench"></i>
                             </span>
-                            <p-inputtext v-model="specItem.label" :placeholder="RKW_Web.BookDetailEditSpecLabel"></p-inputtext>
+                            <p-dropdown v-model="item.label" :options="itemSet" option-label="label" 
+                            option-value="value" placeholder="规格"></p-dropdown>
                         </div>
                     </div>
                     <div class="col-7">
                         <div class="p-inputgroup">
                             <span class="p-inputgroup-addon">
-                                <i class="pi pi-users"></i>
+                                <i class="pi pi-info"></i>
                             </span>
-                            <p-chips v-model="specItem.value" :placeholder="RKW_Web.BookDetailEditSpecValue" separator=","></p-chips>
+                            <p-chips v-model="item.value" :placeholder="RKW_Web.BookDetailEditSpecValue" separator=","></p-chips>
                         </div>
                     </div>
                     <div class="col-2">
                         <p-button :label="RKW_Web.Add" icon="pi pi-save"
-                                  @click="addSpecItem"></p-button>
+                                  @click="addItem"></p-button>
                     </div>
                 </div>
             </p-panel>
             <p-panel>
                 <template #header>
-                    <i class="pi pi-user-edit mr-2" style="font-size: 2rem"></i>
+                    <i class="pi pi-cog mr-2" style="font-size: 2rem"></i>
                     <b>{{RKW_Web.Edit}}</b>
                 </template>
-                <div v-if="tmpSpec.length != 0">
-                    <p-datatable dataKey="id" :value="tmpSpec" responsive-layout="scroll"
-                                 class="p-datatable-sm" striped-rows @row-reorder="specOnRowReorder"
-                                 context-menu v-model:context-menu-selection="selectedSpecItem"
-                                 @row-contextmenu="specRowMenu" edit-mode="row"
-                                 v-model:editing-rows="specEditingRows" @row-edit-save="specOnRowEditSave">
+                <div v-if="tmpItems.length != 0">
+                    <p-datatable dataKey="id" :value="tmpItems" responsive-layout="scroll"
+                                 class="p-datatable-sm" striped-rows @row-reorder="onRowReorder"
+                                 context-menu v-model:context-menu-selection="selectedItem"
+                                 @row-contextmenu="rowMenu" edit-mode="row"
+                                 v-model:editing-rows="editingRows" @row-edit-save="onRowEditSave">
                         <p-column :row-reorder="true"></p-column>
                         <p-column field="label" :header="RKW_Web.BookDetailEditSpecLabel">
+                            <template #body="slotProps">
+                                {{value2Label(slotProps.data.label, itemSet)}}
+                            </template>
                             <template #editor="{ data, field }">
-                                <p-inputtext v-model="data[field]" autofocus></p-inputtext>
+                                <p-dropdown v-model="data[field]" :options="itemSet" option-label="label" 
+                                            option-value="value" :placeholder="RKW_Web.BookDetailEditSpecLabel"></p-dropdown>
                             </template>
                         </p-column>
                         <p-column field="value" :header="RKW_Web.BookDetailEditSpecValue">
                             <template #body="slotProps">
-                                {{slotProps.data.value.join("/")}}
+                                {{slotProps.data.value.join(", ")}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-chips v-model="data[field]"></p-chips>
@@ -359,7 +365,7 @@ const specEditPanel = {
                         <p-column :row-editor="true" style="width:10%; min-width:8rem"
                                   bodyStyle="text-align:center"></p-column>
                     </p-datatable>
-                    <p-contextmenu :model="specMenuModel" ref="specCm"></p-contextmenu>
+                    <p-contextmenu :model="menuModel" ref="cm"></p-contextmenu>
                 </div>
                 <div v-else>
                     <span class="emptyInfo">{{RKW_Web.ItemDetailMessageNoSpec}}</span>
@@ -367,11 +373,11 @@ const specEditPanel = {
             </p-panel>
             <div class="text-end mt-3 mb-2">
                 <p-button :label="RKW_Web.Clear" icon="pi pi-trash" class="p-button-danger mr-4"
-                          @click="clearSpec" :disabled="editBlock"></p-button>
+                          @click="clear" :disabled="editBlock"></p-button>
                 <p-button :label="RKW_Web.Cancel" icon="pi pi-times" class="mr-4"
-                          @click="cancelSpecEdit" :disabled="editBlock"></p-button>
+                          @click="cancelEdit" :disabled="editBlock"></p-button>
                 <p-button :label="RKW_Web.Update" icon="pi pi-save" class="p-button-success mr-4"
-                          @click="submitSpec" :disabled="editBlock"></p-button>
+                          @click="submit" :disabled="editBlock"></p-button>
             </div>
         </p-blockui>
     `,
@@ -381,15 +387,15 @@ const specEditPanel = {
             toast: null,
             entityId: null,
             entityType: null,
-            entitySpec: [],
             editBlock: false,
+            itemSet: [],
 
-            tmpSpec: [],
-            selectedSpecItem: null,
-            specItem: {},
-            spec: [],
-            specMenuModel: [{label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => this.deleteSpecItem(this.selectedSpecItem)}],
-            specEditingRows: [],
+            tmpItems: [],
+            selectedItem: null,
+            item: {},
+            items: [],
+            menuModel: [{label: RKW_Web.Delete, icon: 'pi pi-fw pi-trash', command: () => this.deleteItem(this.selectedItem)}],
+            editingRows: [],
             RKW_Web,
         }
     },
@@ -397,10 +403,10 @@ const specEditPanel = {
         this.init();
         this.entityId = this.dialogRef.data.entityId;
         this.entityType = this.dialogRef.data.entityType;
-        this.entitySpec = this.dialogRef.data.entitySpec;
         this.toast = this.dialogRef.data.toast;
+        this.itemSet = this.dialogRef.data.itemSet;
 
-        this.tmpSpec = JSON.parse(JSON.stringify(this.entitySpec));
+        this.tmpItems = JSON.parse(JSON.stringify(this.dialogRef.data.items));
     },
     watch: {
 
@@ -409,51 +415,52 @@ const specEditPanel = {
         init() {
 
         },
-        specOnRowReorder(ev) {
-            this.tmpSpec.value = ev.value;
+        onRowReorder(ev) {
+            this.tmpItems.value = ev.value;
         },
-        specRowMenu(ev) {
-            this.$refs.specCm.show(ev.originalEvent);
+        rowMenu(ev) {
+            this.$refs.cm.show(ev.originalEvent);
         },
-        deleteSpecItem(SpecItem) {
-            this.tmpSpec = this.tmpSpec.filter((s) => s.label !== SpecItem.label);
-            this.toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: SpecItem.value, life: 3000});
-            this.selectedSpecItem = null;
+        deleteItem(item) {
+            this.tmpItems = this.tmpItems.filter((i) => i.label !== item.label);
+            this.toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: item.value, life: 3000});
+            this.selectedItem = null;
         },
-        specOnRowEditSave(ev) {
+        onRowEditSave(ev) {
             let {newData, index} = ev;
-            this.tmpSpec[index] = newData;
+            this.tmpItems[index] = newData;
         },
-        clearSpec() {
-            this.tmpSpec = [];
+        clear() {
+            this.tmpItems = [];
         },
-        addSpecItem() {
-            this.tmpSpec.push(this.specItem);
-            this.specItem = {};
+        addItem() {
+            this.tmpItems.push(this.item);
+            this.item = {};
         },
-        cancelSpecEdit() {
-            this.specItem = {};
+        cancelEdit() {
+            this.item = {};
             this.dialogRef.close();
         },
 
-        submitSpec() {
+        submit() {
             this.editBlock = true;
             let json = {
                 entityType: this.entityType,
                 entityId: this.entityId,
-                spec: this.tmpSpec
+                spec: this.tmpItems
             }
-            HttpUtil.commonVueSubmit(this.toast, UPDATE_SPEC_URL, json)
+            HttpUtil.commonVueSubmit(this.toast, UPDATE_SPECS_URL, json)
                 .then(res => {
                     if (res.state === 1) {
                         this.dialogRef.close();
-                        this.specItem = {};
+                        this.item = {};
                         location.reload(true);
                     }else {
                         this.editBlock = false;
                     }
                 });
-        }
+        },
+        value2Label
     },
     components: {
         "p-button": primevue.button,
@@ -464,6 +471,7 @@ const specEditPanel = {
         "p-chips": primevue.chips,
         "p-inputtext": primevue.inputtext,
         "p-contextmenu": primevue.contextmenu,
+        "p-dropdown": primevue.dropdown,
     }
 };
 

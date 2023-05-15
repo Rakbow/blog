@@ -23,7 +23,7 @@ public interface EntityMapper {
     //通用更新特典信息
     void updateItemBonus(String entityName, int entityId, String bonus, Timestamp editedTime);
     //通用更新规格信息
-    void updateItemSpec(String entityName, int entityId, String spec, Timestamp editedTime);
+    void updateItemSpecs(String entityName, int entityId, String specs, Timestamp editedTime);
     //通用更新关联企业信息
     void updateItemCompanies(String entityName, int entityId, String companies, Timestamp editedTime);
     //通用相关人员信息

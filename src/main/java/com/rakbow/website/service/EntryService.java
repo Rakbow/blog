@@ -183,6 +183,12 @@ public class EntryService {
         } else if (category == EntryCategory.MERCHANDISE) {
             redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_EN, entriesEn);
+        } else if (category == EntryCategory.SPEC_PARAMETER) {
+            redisUtil.set(RedisCacheConstant.SPEC_PARAMETER_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.SPEC_PARAMETER_SET_EN, entriesEn);
+        } else if (category == EntryCategory.PUBLICATION) {
+            redisUtil.set(RedisCacheConstant.PUBLICATION_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.PUBLICATION_SET_EN, entriesEn);
         }
     }
 

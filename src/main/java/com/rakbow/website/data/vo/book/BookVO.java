@@ -41,6 +41,9 @@ public class BookVO {
     private JSONArray personnel;
     private JSONArray editPersonnel;
 
+    private JSONArray specs;
+    private JSONArray editSpecs;
+
     //复杂字段
     private JSONArray authors;//作者（译者，插画，原作者等，json）
     private JSONArray spec;//规格

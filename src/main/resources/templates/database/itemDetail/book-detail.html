@@ -193,16 +193,25 @@
                                                     {{book.publishDate}}
                                                 </td>
                                             </tr>
-                                            <tr>
+                                            <tr v-if="book.companies.length != 0">
                                                 <td>
                                                     <i class="pi iconfont icon-gongsi"></i>
                                                     <strong>{{RKW_Web.BookPublisher}}</strong>
                                                 </td>
-                                                <td class="common-link">
-                                                    <a :href="'/db/books?publisher=' + book.publisher">
-                                                        {{book.publisher}}
-                                                    </a>
+                                                <td v-for="company of book.companies" style="display:inline">
+                                                    <span v-for="(member, index) of company.members" class="a_with_underline">
+                                                        <a :href="'/db/entry/' + member.value" style="display:inline">
+                                                            {{member.label}}
+                                                        </a>
+                                                        <span v-if="index < company.members.length - 1">, </span>
+                                                    </span>&nbsp;
+                                                    <span class="label">({{company.role.label}})</span>
                                                 </td>
+<!--                                                <td class="common-link">-->
+<!--                                                    <a :href="'/db/books?publisher=' + book.publisher">-->
+<!--                                                        {{book.publisher}}-->
+<!--                                                    </a>-->
+<!--                                                </td>-->
                                             </tr>
                                             <tr>
                                                 <td>
@@ -254,6 +263,57 @@
                         </div>
                     </div>
                     <div class="detail-item-field">
+                        <!-- authors/spec -->
+                        <p-fieldset :toggleable="true">
+                            <template #legend>
+                                <i class="pi pi-users"></i>
+                                <b>{{RKW_Web.BookDetailAuthorSpecTitle}}</b>
+                            </template>
+                            <div class="grid">
+                                <div class="col-5 flex align-items-start justify-content-start">
+                                    <div class="grid ml-4" v-if="book.personnel.length != 0">
+                                        <table class="table-borderless table-sm">
+                                            <tbody class="detail-item-artists-table">
+                                            <tr v-for="item in book.personnel">
+                                                <td width="100px"><strong>{{item.role.label}}</strong></td>
+                                                <td v-for="(member, index) in item.members" style="display:inline" class="a_with_underline">
+                                                    <a :href="'/db/entry/' + member.value">
+                                                        <span style="white-space: nowrap;">{{member.label}}</span>
+                                                    </a>
+                                                    <span v-if="index < item.members.length - 1">,</span>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>{{RKW_Web.BookDetailMessageNoAuthor}}</em></span>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <p-divider layout="vertical"></p-divider>
+                                </div>
+                                <div class="col-5 flex align-items-start justify-content-start">
+                                    <div class="grid ml-4" v-if="book.specs.length != 0">
+                                        <table class="table-borderless table-sm">
+                                            <tbody class="detail-item-artists-table">
+                                            <tr v-for="spec in book.specs">
+                                                <td width="80px"><strong>{{spec.label.label}}</strong></td>
+                                                <td>
+                                                    {{spec.value.join(", ")}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else>
+                                        <span class="emptyInfo"><em>{{RKW_Web.ItemDetailMessageNoSpec}}</em></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-fieldset>
+
+
                         <!-- authors/spec -->
                         <p-fieldset :toggleable="true">
                             <template #legend>
@@ -378,7 +438,7 @@
                     <div class="p-inputgroup">
                         <p-inputtext v-model.trim="bookEdit.isbn10"></p-inputtext>
                         <p-button icon="pi pi-sync" class="p-button-warning"
-                                  @click="ISBNInterconvert('isbn10', bookEdit.isbn13)"
+                                  @click="ISBNInterConvert('isbn10', bookEdit.isbn13)"
                                   v-tooltip.bottom="{value:RKW_Web.TooltipGenerateBookISBN10, class: 'common-tooltip'}"></p-button>
                     </div>
                 </div>
@@ -387,7 +447,7 @@
                     <div class="p-inputgroup">
                         <p-inputtext v-model.trim="bookEdit.isbn13"></p-inputtext>
                         <p-button icon="pi pi-sync" class="p-button-warning"
-                                  @click="ISBNInterconvert('isbn13', bookEdit.isbn10)"
+                                  @click="ISBNInterConvert('isbn13', bookEdit.isbn10)"
                                   v-tooltip.bottom="{value:RKW_Web.TooltipGenerateBookISBN13, class: 'common-tooltip'}"></p-button>
                     </div>
                 </div>
@@ -593,7 +653,7 @@
     import {HttpUtil} from '/js/basic/Http_Util.js';
     import {showSearchPanel} from '/js/basic/Rakbow_Web_Search_Params.js';
     import {showImageEditDialog} from '/js/basic/Item_Detail_Image_Params.js';
-    import {showBonusEditDialog, showDescriptionEditDialog, showCompaniesEditDialog, showPersonnelEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
+    import {showBonusEditDialog, showDescriptionEditDialog, showCompaniesEditDialog, showPersonnelEditDialog, showSpecEditDialog} from '/js/basic/Item_Detail_Text_Params.js';
     const {createApp, onMounted, ref} = Vue;
     const Tooltip = primevue.tooltip;
     const { useDialog } = primevue.usedialog;
@@ -603,6 +663,7 @@
         setup() {
             onMounted(() => {
                 init();
+                initOption();
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 });
@@ -667,6 +728,8 @@
                     companyRoleSet.value = option.value.companyRoleSet;
                     roleSet.value = option.value.roleSet;
                     personnelSet.value = option.value.personnelSet;
+                    specParameterSet.value = option.value.specParameterSet;
+                    publicationSet.value = option.value.publicationSet;
                 }
             }
             const book = ref([[${book}]]);
@@ -686,6 +749,8 @@
             const companyRoleSet = ref([]);
             const roleSet = ref([]);
             const personnelSet = ref([]);
+            const specParameterSet = ref([]);
+            const publicationSet = ref([]);
             //endregion
 
             //region edit basic info
@@ -708,7 +773,7 @@
                     label: RKW_Web.ItemDetailOptionSpecEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.spec);
+                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.specs, specParameterSet.value);
                     }
                 },
                 {
@@ -738,7 +803,7 @@
                     command: () => {
                         showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editPersonnel, roleSet.value, personnelSet.value);
                     }
-                },
+                }
             ]);
             const productSelect = ref(true);
             const editBlock = ref(false);
@@ -819,7 +884,7 @@
 
             };
 
-            const ISBNInterconvert = (label, isbn) => {
+            const ISBNInterConvert = (label, isbn) => {
                 editBlock.value = true;
                 let json = {
                     label: label,
@@ -997,7 +1062,7 @@
 
                 //edit
                 editBlock, bookEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditBook,
-                ISBNInterconvert,
+                ISBNInterConvert,
 
                 //authors
                 displayAuthorEditDialog, tmpAuthors, cm, author, authors, menuModel, editingRows, selectedAuthor,

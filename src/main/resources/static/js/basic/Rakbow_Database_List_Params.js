@@ -6,7 +6,7 @@ const Tooltip = primevue.tooltip;
 const entryDbList = {
     template: `
         <p-toast></p-toast>
-<p-datatable ref="dt" :value="items" class="p-datatable-sm" :always-show-paginator="items != 0"
+        <p-datatable ref="dt" :value="items" class="p-datatable-sm" :always-show-paginator="items != 0"
                 :lazy="true" v-model:filters="filters" :total-records="totalRecords" :loading="loading"
                 :resizable-columns="true" column-resize-mode="expand"
                 @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
@@ -19,200 +19,200 @@ const entryDbList = {
                             LastPageLink CurrentPageReport RowsPerPageDropdown"
                 current-page-report-template="当前显示第【{first}】至【{last}】条数据，总【{totalRecords}】条数据"
                 responsive-layout="scroll">
-    <template #header>
-        <p-blockui :blocked="editBlock" class="grid">
-            <div class="col-9" v-if="editAuth > 1">
-                <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
-                            @click="openNewDialog" style="width: 6em"></p-button>
-                <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
-                            :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
-                <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
-                            @click="exportCSV($event)" style="width: 8em"></p-button>
-            </div>
-            <div class="col-3">
-                <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
-                            @update:model-value="onToggle" class=" text-end"
-                            placeholder="可选显示列" style="width: 20em"></p-multiselect>
-            </div>
-        </p-blockui>
-    </template>
-    <template #empty>
-                <span class="emptyInfo">
-                    未检索到符合条件的数据
-                </span>
-    </template>
-    <template #loading>
-        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <span>加载中，别急~</span>
-    </template>
-    <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
-    <p-column header="序号" field="id" exportHeader="Entry Id" :sortable="true" style="flex: 0 0 5rem">
-        <template #body="slotProps" v-if="editAuth > 1">
-            <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
-                {{slotProps.data.id}}
-            </p-button>
-        </template>
-    </p-column>
-    <p-column header="原名" field="name" :show-filter-menu="false"
-                style="flex: 0 0 10rem">
-        <template #body="slotProps">
-            <a :href="'/db/entry/' + slotProps.data.id">
-                {{slotProps.data.name}}
-            </a>
-        </template>
-        <template #filter="{filterModel,filterCallback}">
-            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
-        </template>
-    </p-column>
-    <p-column header="名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 10rem">
-        <template #filter="{filterModel,filterCallback}">
-            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
-        </template>
-    </p-column>
-    <p-column header="名称(英)" field="nameEn" :show-filter-menu="false" style="flex: 0 0 10rem">
-        <template #filter="{filterModel,filterCallback}">
-            <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
-        </template>
-    </p-column>
-    <p-column header="别名" field="alias" style="flex: 0 0 10rem">
-        <template #body="slotProps">
-            <ul class="px-4">
-                <li v-for="item in slotProps.data.alias">
-                    {{item}}
-                </li>
-            </ul>
-        </template>
-    </p-column>
-    <p-column header="分类" field="category" :show-filter-menu="false" style="flex: 0 0 7rem">
-        <template #body="slotProps">
-            {{slotProps.data.category.label}}
-        </template>
-        <template #filter="{filterModel,filterCallback}">
-            <p-dropdown v-model="filterModel.value" @change="filterCallback()" 
-            :options="entryCategorySet" option-label="label" option-value="value" style="width: 5rem" >
-            </p-dropdown>
-        </template>
-    </p-column>
-    <p-column v-for="(col, index) of selectedColumns" :field="col.field"
-                :header="col.header" :key="col.field + '_' + index" :sortable="true">
-    </p-column>
-</p-datatable>
-<p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据"
-            class="p-fluid">
-    <p-blockui :blocked="editBlock">
-        <p-panel header="基础信息">
-            <div class="field">
-                <label>原名<span style="color: red">*</span></label>
-                <p-inputtext v-model="item.name"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>名称(中)<span style="color: red">*</span></label>
-                <p-inputtext v-model="item.nameZh"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>名称(英)<span style="color: red">*</span></label>
-                <p-inputtext v-model="item.nameEn"></p-inputtext>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-9">
-                    <label>别名</label>
-                    <p-chips v-model="item.alias" separator=","></p-chips>
-                </div>
-                <div class="field col-3">
-                    <label>分类<span style="color: red">*</span></label>
-                    <p-dropdown v-model="item.category" :options="entryCategorySet"
-                        option-label="label" option-value="value">
+            <template #header>
+                <p-blockui :blocked="editBlock" class="grid">
+                    <div class="col-9" v-if="editAuth > 1">
+                        <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
+                                    @click="openNewDialog" style="width: 6em"></p-button>
+                        <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
+                                    :disabled="!selectedItems || !selectedItems.length" style="width: 6em"></p-button>
+                        <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
+                                    @click="exportCSV($event)" style="width: 8em"></p-button>
+                    </div>
+                    <div class="col-3">
+                        <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
+                                    @update:model-value="onToggle" class=" text-end"
+                                    placeholder="可选显示列" style="width: 20em"></p-multiselect>
+                    </div>
+                </p-blockui>
+            </template>
+            <template #empty>
+                        <span class="emptyInfo">
+                            未检索到符合条件的数据
+                        </span>
+            </template>
+            <template #loading>
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                <span>加载中，别急~</span>
+            </template>
+            <p-column selection-mode="multiple" style="flex: 0 0 3rem" :exportable="false" v-if="editAuth > 1"></p-column>
+            <p-column header="序号" field="id" exportHeader="Entry Id" :sortable="true" style="flex: 0 0 5rem">
+                <template #body="slotProps" v-if="editAuth > 1">
+                    <p-button class="p-button-link" @click="openEditDialog(slotProps.data)">
+                        {{slotProps.data.id}}
+                    </p-button>
+                </template>
+            </p-column>
+            <p-column header="原名" field="name" :show-filter-menu="false"
+                        style="flex: 0 0 10rem">
+                <template #body="slotProps">
+                    <a :href="'/db/entry/' + slotProps.data.id">
+                        {{slotProps.data.name}}
+                    </a>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+                </template>
+            </p-column>
+            <p-column header="名称(中)" field="nameZh" :show-filter-menu="false" style="flex: 0 0 10rem">
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+                </template>
+            </p-column>
+            <p-column header="名称(英)" field="nameEn" :show-filter-menu="false" style="flex: 0 0 10rem">
+                <template #filter="{filterModel,filterCallback}">
+                    <p-inputtext type="text" v-model="filterModel.value" @keydown.enter="filterCallback()"></p-inputtext>
+                </template>
+            </p-column>
+            <p-column header="别名" field="alias" style="flex: 0 0 10rem">
+                <template #body="slotProps">
+                    <ul class="px-4">
+                        <li v-for="item in slotProps.data.alias">
+                            {{item}}
+                        </li>
+                    </ul>
+                </template>
+            </p-column>
+            <p-column header="分类" field="category" :show-filter-menu="false" style="flex: 0 0 7rem">
+                <template #body="slotProps">
+                    {{slotProps.data.category.label}}
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <p-dropdown v-model="filterModel.value" @change="filterCallback()" 
+                    :options="entryCategorySet" option-label="label" option-value="value" style="width: 5rem" >
                     </p-dropdown>
-                </div>
-            </div>
-            <div class="field" v-if="linksEdit">
-                <label>链接</label>
-                <p-chips v-model="item.detail.links" separator=",">
-                    <template #chip="slotProps">
-                        <div>
-                            <i class="pi pi-link" style="font-size: 14px"></i>
-                            <span>&nbsp&nbsp{{slotProps.value}}</span>
+                </template>
+            </p-column>
+            <p-column v-for="(col, index) of selectedColumns" :field="col.field"
+                        :header="col.header" :key="col.field + '_' + index" :sortable="true">
+            </p-column>
+        </p-datatable>
+        <p-dialog :modal="true" v-model:visible="displayNewDialog" :style="{width: '600px'}" header="新增数据"
+                    class="p-fluid">
+            <p-blockui :blocked="editBlock">
+                <p-panel header="基础信息">
+                    <div class="field">
+                        <label>原名<span style="color: red">*</span></label>
+                        <p-inputtext v-model="item.name"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label>名称(中)<span style="color: red">*</span></label>
+                        <p-inputtext v-model="item.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label>名称(英)<span style="color: red">*</span></label>
+                        <p-inputtext v-model="item.nameEn"></p-inputtext>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col-9">
+                            <label>别名</label>
+                            <p-chips v-model="item.alias" separator=","></p-chips>
                         </div>
-                    </template>
-                </p-chips>
-            </div>
-            <div class="field">
-                <label>备注</label>
-                <p-textarea id="remark" v-model="item.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
-    </p-blockui>
-    <template #footer>
-        <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
-        <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem" :disabled="editBlock"></p-button>
-    </template>
-</p-dialog>
-<p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据"
-            class="p-fluid">
-    <p-blockui :blocked="editBlock">
-        <p-panel header="基础信息">
-            <div class="field">
-                <label>原名<span style="color: red">*</span></label>
-                <p-inputtext v-model="itemEdit.name"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>名称(中)<span style="color: red">*</span></label>
-                <p-inputtext v-model="itemEdit.nameZh"></p-inputtext>
-            </div>
-            <div class="field">
-                <label>名称(英)<span style="color: red">*</span></label>
-                <p-inputtext v-model="itemEdit.nameEn"></p-inputtext>
-            </div>
-            <div class="formgrid grid">
-                <div class="field col-9">
-                    <label>别名</label>
-                    <p-chips v-model="itemEdit.alias" separator=","></p-chips>
-                </div>
-                <div class="field col-3">
-                    <label>分类<span style="color: red">*</span></label>
-                    <p-dropdown v-model="itemEdit.category" :options="entryCategorySet"
-                        option-label="label" option-value="value" disabled>
-                    </p-dropdown>
-                </div>
-            </div>
-            <div class="field" v-if="itemEdit.category === 1 || itemEdit.category === 2">
-                <label>链接</label>
-                <p-chips v-model="itemEdit.detail.links" separator=",">
-                    <template #chip="slotProps">
-                        <div>
-                            <i class="pi pi-link" style="font-size: 14px"></i>
-                            <span>&nbsp&nbsp{{slotProps.value}}</span>
+                        <div class="field col-3">
+                            <label>分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="item.category" :options="entryCategorySet"
+                                option-label="label" option-value="value">
+                            </p-dropdown>
                         </div>
-                    </template>
-                </p-chips>
-            </div>
-            <div class="field">
-                <label>备注</label>
-                <p-textarea id="remark" v-model="itemEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
-            </div>
-        </p-panel>
-    </p-blockui>
-    <template #footer>
-        <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                    @click="closeEditDialog" :disabled="editBlock"></p-button>
-        <p-button label="保存" icon="pi pi-check" class="p-button-text"
-                    @click="submitEditItem" :disabled="editBlock"></p-button>
-    </template>
-</p-dialog>
-<p-dialog :modal="true" v-model:visible="deleteDialog" :style="{width: '450px'}" header="删除数据">
-    <p-blockui :blocked="editBlock">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-            <span v-if="item">确定删除所选的数据？</span>
-        </div>
-    </p-blockui>
-    <template #footer>
-        <p-button label="取消" icon="pi pi-times" class="p-button-text"
-                    @click="deleteDialog = false" :disabled="editBlock"></p-button>
-        <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
-                    @click="deleteSelectedItems" :disabled="editBlock"></p-button>
-    </template>
-</p-dialog>
+                    </div>
+                    <div class="field" v-if="linksEdit">
+                        <label>链接</label>
+                        <p-chips v-model="item.detail.links" separator=",">
+                            <template #chip="slotProps">
+                                <div>
+                                    <i class="pi pi-link" style="font-size: 14px"></i>
+                                    <span>&nbsp&nbsp{{slotProps.value}}</span>
+                                </div>
+                            </template>
+                        </p-chips>
+                    </div>
+                    <div class="field">
+                        <label>备注</label>
+                        <p-textarea id="remark" v-model="item.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+            </p-blockui>
+            <template #footer>
+                <p-button label="取消" icon="pi pi-times" class="p-button-text" @click="closeNewDialog" :disabled="editBlock"></p-button>
+                <p-button label="保存" icon="pi pi-check" class="p-button-text" @click="submitNewItem" :disabled="editBlock"></p-button>
+            </template>
+        </p-dialog>
+        <p-dialog :modal="true" v-model:visible="displayEditDialog" :style="{width: '600px'}" header="编辑数据"
+                    class="p-fluid">
+            <p-blockui :blocked="editBlock">
+                <p-panel header="基础信息">
+                    <div class="field">
+                        <label>原名<span style="color: red">*</span></label>
+                        <p-inputtext v-model="itemEdit.name"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label>名称(中)<span style="color: red">*</span></label>
+                        <p-inputtext v-model="itemEdit.nameZh"></p-inputtext>
+                    </div>
+                    <div class="field">
+                        <label>名称(英)<span style="color: red">*</span></label>
+                        <p-inputtext v-model="itemEdit.nameEn"></p-inputtext>
+                    </div>
+                    <div class="formgrid grid">
+                        <div class="field col-9">
+                            <label>别名</label>
+                            <p-chips v-model="itemEdit.alias" separator=","></p-chips>
+                        </div>
+                        <div class="field col-3">
+                            <label>分类<span style="color: red">*</span></label>
+                            <p-dropdown v-model="itemEdit.category" :options="entryCategorySet"
+                                option-label="label" option-value="value" disabled>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="field" v-if="itemEdit.category === 1 || itemEdit.category === 2 || itemEdit.category === 9">
+                        <label>链接</label>
+                        <p-chips v-model="itemEdit.detail.links" separator=",">
+                            <template #chip="slotProps">
+                                <div>
+                                    <i class="pi pi-link" style="font-size: 14px"></i>
+                                    <span>&nbsp&nbsp{{slotProps.value}}</span>
+                                </div>
+                            </template>
+                        </p-chips>
+                    </div>
+                    <div class="field">
+                        <label>备注</label>
+                        <p-textarea id="remark" v-model="itemEdit.remark" rows="3" cols="20" :auto-resize="true"></p-textarea>
+                    </div>
+                </p-panel>
+            </p-blockui>
+            <template #footer>
+                <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                            @click="closeEditDialog" :disabled="editBlock"></p-button>
+                <p-button label="保存" icon="pi pi-check" class="p-button-text"
+                            @click="submitEditItem" :disabled="editBlock"></p-button>
+            </template>
+        </p-dialog>
+        <p-dialog :modal="true" v-model:visible="deleteDialog" :style="{width: '450px'}" header="删除数据">
+            <p-blockui :blocked="editBlock">
+                <div class="confirmation-content">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span v-if="item">确定删除所选的数据？</span>
+                </div>
+            </p-blockui>
+            <template #footer>
+                <p-button label="取消" icon="pi pi-times" class="p-button-text"
+                            @click="deleteDialog = false" :disabled="editBlock"></p-button>
+                <p-button label="确认删除" icon="pi pi-check" class="p-button-text"
+                            @click="deleteSelectedItems" :disabled="editBlock"></p-button>
+            </template>
+        </p-dialog>
     `,
     mounted() {
         this.initData();
@@ -220,7 +220,7 @@ const entryDbList = {
     },
     watch: {
         'item.category':function(newValue) {
-            if(newValue === 1 || newValue === 2) {
+            if(newValue === 1 || newValue === 2 || newValue === 9) {
                 this.item.detail = {};
                 this.item.detail.links = [];
                 this.linksEdit = true;
@@ -1248,7 +1248,7 @@ const bookDbList = {
     </p-column>
     <p-column header="分类" field="bookType" :show-filter-menu="false" style="flex: 0 0 6rem">
         <template #body="slotProps">
-            {{slotProps.data.bookType.nameZh}}
+            {{slotProps.data.bookType.label}}
         </template>
         <template #filter="{filterModel,filterCallback}">
             <p-dropdown v-model="filterModel.value" @change="filterCallback()"
@@ -1321,23 +1321,23 @@ const bookDbList = {
     </p-column>
     <p-column header="地区" field="region" :show-filter-menu="false" style="flex: 0 0 9rem">
         <template #body="slotProps">
-            <span :class="'fi fi-' + slotProps.data.region.code"></span> ({{slotProps.data.region.nameZh}})
+            <span :class="'fi fi-' + slotProps.data.region.code"></span> ({{slotProps.data.region.name}})
         </template>
         <template #filter="{filterModel,filterCallback}">
             <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                        :options="regionSet" option-label="nameZh" option-value="code"
+                        :options="regionSet" option-label="name" option-value="code"
                         style="width: 8rem" >
                 <template #value="slotProps">
-                    <div class="country-item" v-if="slotProps.value">
-                        <span :class="'fi fi-' + slotProps.value"></span>
-                        <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
+                    <div class="country-item" v-if="slotProps.code">
+                        <span :class="'fi fi-' + slotProps.code"></span>
+                        <div class="ml-2">{{getNameByCode(slotProps.code, regionSet)}}</div>
                     </div>
                     <span v-else>选择地区</span>
                 </template>
                 <template #option="slotProps">
                     <div class="country-item">
                         <span :class="'fi fi-' + slotProps.option.code"></span>
-                        <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                        <div class="ml-2">{{slotProps.option.name}}</div>
                     </div>
                 </template>
             </p-dropdown>
@@ -1345,11 +1345,11 @@ const bookDbList = {
     </p-column>
     <p-column header="语言" field="publishLanguage" :show-filter-menu="false" style="flex: 0 0 7rem">
         <template #body="slotProps">
-            {{slotProps.data.publishLanguage.nameZh}}
+            {{slotProps.data.publishLanguage.name}}
         </template>
         <template #filter="{filterModel,filterCallback}">
             <p-dropdown v-model="filterModel.value" @change="filterCallback()"
-                        :options="languageSet" option-label="nameZh" option-value="code"
+                        :options="languageSet" option-label="name" option-value="code"
                         style="width: 6rem" >
             </p-dropdown>
         </template>
@@ -1532,18 +1532,18 @@ const bookDbList = {
             <div class="field col">
                 <label class="mb-3">地区<span style="color: red">*</span></label>
                 <p-dropdown v-model="itemEdit.region" :options="regionSet" :filter="true"
-                            :show-clear="true" option-label="nameZh" option-value="code">
+                            :show-clear="true" option-label="name" option-value="code">
                     <template #value="slotProps">
-                        <div class="country-item" v-if="slotProps.value">
-                            <span :class="'fi fi-' + slotProps.value"></span>
-                            <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
+                        <div class="country-item" v-if="slotProps.code">
+                            <span :class="'fi fi-' + slotProps.code"></span>
+                            <div class="ml-2">{{getNameByCode(slotProps.code, regionSet)}}</div>
                         </div>
                         <span v-else>选择地区</span>
                     </template>
                     <template #option="slotProps">
                         <div class="country-item">
                             <span :class="'fi fi-' + slotProps.option.code"></span>
-                            <div class="ml-2">{{slotProps.option.nameZh}}</div>
+                            <div class="ml-2">{{slotProps.option.name}}</div>
                         </div>
                     </template>
                 </p-dropdown>
@@ -1551,7 +1551,7 @@ const bookDbList = {
             <div class="field col">
                 <label class="mb-3">语言<span style="color: red">*</span></label>
                 <p-dropdown v-model="itemEdit.publishLanguage" :options="languageSet"
-                            option-label="nameZh" option-value="code">
+                            option-label="name" option-value="code">
                 </p-dropdown>
             </div>
         </div>
