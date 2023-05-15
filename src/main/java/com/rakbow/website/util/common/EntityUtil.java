@@ -141,6 +141,9 @@ public class EntityUtil {
                 options.put("regionSet", redisUtil.get(RedisCacheConstant.REGION_SET_ZH));
                 options.put("languageSet", redisUtil.get(RedisCacheConstant.LANGUAGE_SET_ZH));
 
+                options.put("companySet", redisUtil.get(RedisCacheConstant.COMPANY_SET_ZH));
+                options.put("companyRoleSet", redisUtil.get(RedisCacheConstant.COMPANY_ROLE_SET_ZH));
+
                 options.put("roleSet", redisUtil.get(RedisCacheConstant.ROLE_SET_ZH));
                 options.put("personnelSet", redisUtil.get(RedisCacheConstant.PERSONNEL_SET_ZH));
                 options.put("specParameterSet", redisUtil.get(RedisCacheConstant.SPEC_PARAMETER_SET_ZH));

@@ -59,7 +59,7 @@ public class RedisCacheConstant {
     public static final String MERCHANDISE_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "merchandise";
     public static final String ROLE_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "role";
     public static final String PUBLICATION_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "publication";
-    public static final String SPEC_PARAMETER_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "specParameter";
+    public static final String SPEC_PARAMETER_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "specParameter";
 
     //album
     public static final String ALBUM_FORMAT_SET_ZH = OPTIONS + SPLIT + ALBUM + SPLIT + ZH + SPLIT + "albumFormatSet";

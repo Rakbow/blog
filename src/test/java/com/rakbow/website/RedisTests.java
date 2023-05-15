@@ -64,11 +64,12 @@ public class RedisTests {
         // entityService.refreshRedisEntries(EntryCategory.COMPANY);
         // productService.refreshRedisProducts();
         // franchiseService.refreshRedisFranchises();
-        entityService.refreshRedisEmunData();
-        entryService.refreshRedisEntries(EntryCategory.ROLE);
+        // entityService.refreshRedisEmunData();
+        // entryService.refreshRedisEntries(EntryCategory.ROLE);
         entryService.refreshRedisEntries(EntryCategory.PERSONNEL);
-        entryService.refreshRedisEntries(EntryCategory.SPEC_PARAMETER);
-        entryService.refreshRedisEntries(EntryCategory.PUBLICATION);
+        // entryService.refreshRedisEntries(EntryCategory.SPEC_PARAMETER);
+        // entryService.refreshRedisEntries(EntryCategory.PUBLICATION);
+        // entryService.refreshRedisEntries(EntryCategory.COMPANY);
     }
 
     @Test

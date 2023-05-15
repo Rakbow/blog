@@ -68,6 +68,7 @@ export class RKW_Web {
 
 
     //region 名词
+    static Companies = "相关企业";
     static OtherCurrencyUnit = "其他货币";
     static IsLimited = '限定版';
     static TaxInclusive = '含税';
@@ -89,10 +90,6 @@ export class RKW_Web {
     static Language = '语言';
     static Summary = '简介';
     static Spec = '规格';
-
-    static Copyright = '版权方';
-    static Distributor = '经销商';
-    static Manufacturer = '制造商';
 
 
 
