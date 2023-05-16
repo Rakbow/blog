@@ -182,15 +182,15 @@ public class MerchService {
         String region = filter.getJSONObject("region").getString("value");
 
         int category = 100;
-        if (filter.getJSONObject("category").getInteger("value") != null) {
+        if (filter.getJSONObject("category").get("value") != null) {
             category = filter.getJSONObject("category").getIntValue("value");
         }
 
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
         List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
-
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        
         String notForSale;
-        if (filter.getJSONObject("notForSale").getBoolean("value") == null) {
+        if (filter.getJSONObject("notForSale").get("value") == null) {
             notForSale = null;
         } else {
             notForSale = filter.getJSONObject("notForSale").getBoolean("value")

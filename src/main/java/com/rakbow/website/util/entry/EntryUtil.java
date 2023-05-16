@@ -9,13 +9,7 @@ import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.CompanyRole;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.emun.system.SystemLanguage;
-import com.rakbow.website.entity.Entry;
-import com.rakbow.website.entity.common.Company;
-import com.rakbow.website.entity.common.Merchandise;
-import com.rakbow.website.entity.common.Personnel;
-import com.rakbow.website.entity.common.Role;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.JsonUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
@@ -133,7 +127,7 @@ public class EntryUtil {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-        List<Attribute> attributes = new ArrayList<>();
+        JSONArray attributes = new JSONArray();
         String key;
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             key = EntryCategory.categoryMapEn.get(category);
@@ -141,9 +135,9 @@ public class EntryUtil {
             key = EntryCategory.categoryMapZH.get(category);
         }
 
-        attributes = JsonUtil.toList(redisUtil.get(key).toString(), Attribute.class);
+        attributes.addAll(JSON.parseArray(JSON.toJSONString(redisUtil.get(key))));
 
-        return attributes;
+        return attributes.toJavaList(Attribute.class);
     }
 
 }

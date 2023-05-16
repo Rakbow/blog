@@ -2,22 +2,15 @@ package com.rakbow.website.util.entity;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.JsonUtil;
-import net.minidev.json.JSONUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -35,24 +28,24 @@ public class AlbumUtil {
      * @return editDiscList
      * @author rakbow
      */
-    public static ArrayNode getEditDiscList(String trackInfoJson, List<Music> allMusics) {
-        ArrayNode editDiscList = JsonUtil.emptyArrayNode();
-        ObjectNode trackInfo = JsonUtil.toObjectNode(trackInfoJson);
+    public static JSONArray getEditDiscList(String trackInfoJson, List<Music> allMusics) {
+        JSONArray editDiscList = new JSONArray();
+        JSONObject trackInfo = JSONObject.parseObject(trackInfoJson);
         if (trackInfo != null && !StringUtils.equals(trackInfoJson, "{}")) {
-            ArrayNode tmpEditDiscList = (ArrayNode) trackInfo.get("discList");
+            JSONArray tmpEditDiscList = trackInfo.getJSONArray("discList");
             //临时ID，用于前端分辨碟片
             int tmpDiscId = 0;
             for (int i = 0; i < tmpEditDiscList.size(); i++) {
-                ObjectNode disc = (ObjectNode)tmpEditDiscList.get(i);
-                JsonNode trackList = disc.get("trackList");
-                ArrayNode editTrackList = JsonUtil.emptyArrayNode();
+                JSONObject disc = tmpEditDiscList.getJSONObject(i);
+                JSONArray trackList = disc.getJSONArray("trackList");
+                JSONArray editTrackList = new JSONArray();
                 //临时ID，用于前端分辨曲目
                 int tmpTrackId = 0;
                 for (int j = 0; j < trackList.size(); j++) {
-                    int musicId = trackList.get(j).asInt();
+                    int musicId = trackList.getIntValue(j);
                     Music music = DataFinder.findMusicById(musicId, allMusics);
                     if (music != null) {
-                        ObjectNode track = JsonUtil.emptyObjectNode();
+                        JSONObject track = new JSONObject();
                         track.put("tmpDiscId", tmpDiscId);
                         track.put("tmpTrackId", tmpTrackId);
                         track.put("musicId", musicId);
@@ -63,20 +56,10 @@ public class AlbumUtil {
                     }
                 }
 
-                ArrayNode tmpAlbumFormatList = JsonUtil.emptyArrayNode();
-                String[] tmpAlbumFormat = StringUtils.split(
-                        AlbumFormat.getNamesByIds(JsonUtil.toList(disc.get("albumFormat"), Integer.class)), ",");
-                tmpAlbumFormatList.addAll(JsonUtil.toArrayNode(tmpAlbumFormat));
-
-                ArrayNode tmpMediaFormatList = JsonUtil.emptyArrayNode();
-                String[] tmpMediaFormat = StringUtils.split(
-                        MediaFormat.getNamesByIds(JsonUtil.toList(disc.get("mediaFormat"), Integer.class)), ",");
-                tmpMediaFormatList.addAll(JsonUtil.toArrayNode(tmpMediaFormat));
-
                 disc.put("tmpDiscId", tmpDiscId);
-                disc.set("trackList", editTrackList);
-                disc.set("albumFormat", tmpAlbumFormatList);
-                disc.set("mediaFormat", tmpMediaFormatList);
+                disc.put("trackList", editTrackList);
+                disc.put("albumFormat", AlbumFormat.getNamesByIds(disc.getList("albumFormat", Integer.class)));
+                disc.put("mediaFormat", AlbumFormat.getNamesByIds(disc.getList("mediaFormat", Integer.class)));
                 disc.remove("serial");
                 disc.remove("catalogNo");
                 disc.remove("discLength");
@@ -95,30 +78,30 @@ public class AlbumUtil {
      * @return finalTrackInfo
      * @author rakbow
      */
-    public static ObjectNode getFinalTrackInfo(String trackInfoJson, List<Music> allMusics) {
-        ObjectNode trackInfo = JsonUtil.toObjectNode(trackInfoJson);
+    public static JSONObject getFinalTrackInfo(String trackInfoJson, List<Music> allMusics) {
+        JSONObject trackInfo = JSONObject.parseObject(trackInfoJson);
         List<String> times = new ArrayList<>();
         int totalTrack = 0;
         if (trackInfo != null && !StringUtils.equals(trackInfoJson, "{}")) {
-            JsonNode discList = trackInfo.get("discList");
-            ArrayNode newDiscList = JsonUtil.emptyArrayNode();
+            JSONArray discList = trackInfo.getJSONArray("discList");
+            JSONArray newDiscList = new JSONArray();
             for (int i = 0; i < discList.size(); i++) {
                 List<String> _times = new ArrayList<>();
-                ObjectNode disc = (ObjectNode) discList.get(i);
-                ArrayNode trackList = (ArrayNode) disc.get("trackList");
-                ArrayNode newTrackList = JsonUtil.emptyArrayNode();
+                JSONObject disc = discList.getJSONObject(i);
+                JSONArray trackList = disc.getJSONArray("trackList");
+                JSONArray newTrackList = new JSONArray();
                 totalTrack += trackList.size();
                 for (int j = 0; j < trackList.size(); j++) {
-                    int musicId = trackList.get(j).asInt();
+                    int musicId = trackList.getIntValue(j);
                     Music music = DataFinder.findMusicById(musicId, allMusics);
                     if (music != null) {
-                        ObjectNode track = JsonUtil.emptyObjectNode();
+                        JSONObject track = new JSONObject();
                         track.put("serial", music.getTrackSerial());
                         track.put("musicId", musicId);
                         track.put("name", music.getName());
                         track.put("nameEn", music.getNameEn());
                         track.put("length", music.getAudioLength());
-                        String _time = track.get("length").toString();
+                        String _time = track.getString("length");
                         if (_time.contains("\t")) {
                             _times.add(_time.replace("\t", ""));
                         } else {
@@ -128,13 +111,13 @@ public class AlbumUtil {
                     }
                 }
                 times.addAll(_times);
-                disc.set("trackList", newTrackList);
-                disc.put("albumFormat", AlbumFormat.getNamesByIds(JsonUtil.toList(disc.get("albumFormat"), Integer.class)));
-                disc.put("mediaFormat", MediaFormat.getNamesByIds(JsonUtil.toList(disc.get("mediaFormat"), Integer.class)));
+                disc.put("trackList", newTrackList);
+                disc.put("albumFormat", AlbumFormat.getNamesByIds(disc.getList("albumFormat", Integer.class)));
+                disc.put("mediaFormat", MediaFormat.getNamesByIds(disc.getList("mediaFormat", Integer.class)));
                 disc.put("discLength", CommonUtil.countTotalTime(_times));
                 newDiscList.add(disc);
             }
-            trackInfo.set("discList", newDiscList);
+            trackInfo.put("discList", newDiscList);
             trackInfo.put("totalLength", CommonUtil.countTotalTime(times));
             trackInfo.put("totalTracks", totalTrack);
         }

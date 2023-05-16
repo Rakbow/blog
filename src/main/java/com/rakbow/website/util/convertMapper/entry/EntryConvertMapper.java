@@ -1,11 +1,11 @@
 package com.rakbow.website.util.convertMapper.entry;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.vo.RegionVO;
 import com.rakbow.website.data.vo.entry.EntryVOAlpha;
 import com.rakbow.website.entity.Entry;
 import com.rakbow.website.entity.common.Company;
@@ -21,9 +21,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -119,7 +117,7 @@ public interface EntryConvertMapper {
     }
 
     @Named("getRegion")
-    default JSONObject getVORegion(String detail) {
+    default RegionVO getVORegion(String detail) {
         String code = StringUtils.isBlank(detail)
                 ? Region.GLOBAL.getCode()
                 : JSON.parseObject(detail).getString("region");

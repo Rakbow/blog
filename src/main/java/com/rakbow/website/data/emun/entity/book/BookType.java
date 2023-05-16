@@ -1,15 +1,14 @@
 package com.rakbow.website.data.emun.entity.book;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.entity.album.PublishFormat;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -54,8 +53,8 @@ public enum BookType {
      * @return list 图书分类数组
      * @author rakbow
      */
-    public static JSONArray getAttributeSet(String lang) {
-        JSONArray set = new JSONArray();
+    public static List<Attribute> getAttributeSet(String lang) {
+        List<Attribute> set = new ArrayList<>();
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             for (BookType item : BookType.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
@@ -68,9 +67,9 @@ public enum BookType {
         return set;
     }
 
-    public static JSONObject getAttribute(int id) {
+    public static Attribute getAttribute(int id) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        return (JSONObject) JSON.toJSON(new Attribute(id, BookType.getNameById(id, lang)));
+        return new Attribute(id, BookType.getNameById(id, lang));
     }
 
 }

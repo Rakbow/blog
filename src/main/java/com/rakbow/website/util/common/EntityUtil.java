@@ -2,15 +2,13 @@ package com.rakbow.website.util.common;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.ItemDetailInfo;
+import com.rakbow.website.data.image.ItemDetailInfo;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.SystemLanguage;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -41,8 +39,8 @@ public class EntityUtil {
         detailInfo.setId(json.getInteger("id"));
 
         detailInfo.setDescription(json.getString("description"));
-        detailInfo.setProducts(ProductUtil.getProductList(json.getString("products")));
-        detailInfo.setFranchises(FranchiseUtil.getFranchiseList(json.getString("franchises")));
+        detailInfo.setProducts(ProductUtil.getProducts(json.getString("products")));
+        detailInfo.setFranchises(FranchiseUtil.getFranchises(json.getString("franchises")));
 
         detailInfo.setEntityType(entityType);
         detailInfo.setStatus(json.getIntValue("status") == 1);

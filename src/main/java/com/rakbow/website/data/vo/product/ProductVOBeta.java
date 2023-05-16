@@ -1,6 +1,5 @@
 package com.rakbow.website.data.vo.product;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
@@ -22,7 +21,7 @@ public class ProductVOBeta {
     private Attribute category;//作品分类
 
     //关联信息
-    private JSONObject franchise;//所属系列id
+    private Attribute franchise;//所属系列
 
     private String cover;
 

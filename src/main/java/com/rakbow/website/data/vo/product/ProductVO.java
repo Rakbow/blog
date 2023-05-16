@@ -1,8 +1,6 @@
 package com.rakbow.website.data.vo.product;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
@@ -25,7 +23,7 @@ public class ProductVO {
     private String remark;//备注
 
     //关联信息
-    private JSONObject franchise;//所属系列id
+    private Attribute franchise;//所属系列
 
     //其他
     private JSONArray organizations;//相关组织

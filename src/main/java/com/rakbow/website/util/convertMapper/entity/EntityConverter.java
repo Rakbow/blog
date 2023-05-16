@@ -3,9 +3,11 @@ package com.rakbow.website.util.convertMapper.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.common.Region;
+import com.rakbow.website.data.vo.RegionVO;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.SpringUtil;
@@ -15,10 +17,10 @@ import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
-import org.mapstruct.Named;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -32,15 +34,15 @@ public class EntityConverter {
         return DateUtil.dateToString(date);
     }
 
-    static JSONArray getProducts(String products) {
-        return ProductUtil.getProductList(products);
+    static List<Attribute> getProducts(String products) {
+        return ProductUtil.getProducts(products);
     }
 
-    static JSONArray getFranchises(String franchises) {
-        return FranchiseUtil.getFranchiseList(franchises);
+    static List<Attribute> getFranchises(String franchises) {
+        return FranchiseUtil.getFranchises(franchises);
     }
 
-    static JSONArray getMediaFormat(String formats) {
+    static List<Attribute> getMediaFormat(String formats) {
         return MediaFormat.getAttributes(formats);
     }
 
@@ -90,7 +92,7 @@ public class EntityConverter {
         return Region.getCurrencyUnitByCode(region);
     }
 
-    static JSONObject getRegion(String region) {
+    static RegionVO getRegion(String region) {
         return Region.getRegion(region);
     }
 

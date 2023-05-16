@@ -7,26 +7,27 @@ import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.emun.system.SystemLanguage;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
-import com.rakbow.website.util.entity.ProductUtil;
-import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.convertMapper.entity.ProductVOMapper;
-import com.rakbow.website.util.file.QiniuFileUtil;
+import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.convertMapper.entity.ProductVOMapper;
+import com.rakbow.website.util.entity.ProductUtil;
+import com.rakbow.website.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -182,8 +183,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteAllProductImages(int id) {
         Product product = getProduct(id);
-        JSONArray images = JSON.parseArray(product.getImages());
-        qiniuFileUtil.commonDeleteAllFiles(images);
+        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(product.getImages()));
 
     }
 

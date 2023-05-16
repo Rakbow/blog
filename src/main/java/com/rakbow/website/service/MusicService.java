@@ -392,9 +392,8 @@ public class MusicService {
      * @author rakbow
      */
     public void deleteMusicAllFiles(Music music) {
-        JSONArray files = JSON.parseArray(music.getFiles());
         //删除七牛云上的图片
-        qiniuFileUtil.commonDeleteAllFiles(files);
+        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(music.getFiles()));
     }
 
     //endregion

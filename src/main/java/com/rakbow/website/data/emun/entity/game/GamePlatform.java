@@ -1,13 +1,14 @@
 package com.rakbow.website.data.emun.entity.game;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 public enum GamePlatform {
@@ -62,8 +63,8 @@ public enum GamePlatform {
         return null;
     }
 
-    public static JSONArray getAttributeSet(String lang) {
-        JSONArray set = new JSONArray();
+    public static List<Attribute> getAttributeSet(String lang) {
+        List<Attribute> set = new ArrayList<>();
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             for (GamePlatform item : GamePlatform.values()) {
                 set.add(new Attribute(item.id, item.nameEn));

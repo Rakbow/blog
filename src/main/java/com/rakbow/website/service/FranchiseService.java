@@ -1,16 +1,15 @@
 package com.rakbow.website.service;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.RedisUtil;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -191,31 +191,22 @@ public class FranchiseService {
 
         List<Franchise> franchises = franchiseMapper.getAll();
 
-        JSONArray franchiseSetZh = new JSONArray();
+        List<Attribute> franchiseSetZh = new ArrayList<>();
         for (Franchise franchise : franchises) {
             if(!FranchiseUtil.isMetaFranchise(franchise)) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("value", franchise.getId());
-                jsonObject.put("label", franchise.getNameZh());
-                franchiseSetZh.add(jsonObject);
+                franchiseSetZh.add(new Attribute(franchise.getId(), franchise.getNameZh()));
             }
         }
 
-        JSONArray franchiseSetEn = new JSONArray();
+        List<Attribute> franchiseSetEn = new ArrayList<>();
         for (Franchise franchise : franchises) {
             if(!FranchiseUtil.isMetaFranchise(franchise)) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("value", franchise.getId());
-                jsonObject.put("label", franchise.getNameEn());
-                franchiseSetEn.add(jsonObject);
+                franchiseSetEn.add(new Attribute(franchise.getId(), franchise.getNameEn()));
             }
         }
 
         redisUtil.set(RedisCacheConstant.FRANCHISE_SET_ZH, franchiseSetZh);
         redisUtil.set(RedisCacheConstant.FRANCHISE_SET_EN, franchiseSetEn);
-        //缓存时间1个月
-//        redisUtil.expire(RedisCacheConstant.FRANCHISE_SET, 2592000);
-
     }
 
     //endregion

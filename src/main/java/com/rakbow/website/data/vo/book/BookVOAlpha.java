@@ -1,7 +1,9 @@
 package com.rakbow.website.data.vo.book;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.vo.LanguageVO;
+import com.rakbow.website.data.vo.RegionVO;
 import lombok.Data;
 
 import java.util.List;
@@ -23,10 +25,10 @@ public class BookVOAlpha {
     private String isbn10;//国际标准书号（10位）
     private String isbn13;//国际标准书号（13位）
     private List<String> authors;//作者
-    private JSONObject bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
+    private Attribute bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
-    private JSONObject region;//地区
-    private JSONObject publishLanguage;//语言
+    private RegionVO region;//地区
+    private LanguageVO publishLanguage;//语言
     private int price;//出版价格
     private String currencyUnit;//货币单位
     private String summary;//简介
@@ -34,8 +36,8 @@ public class BookVOAlpha {
     private String remark;//备注
 
     //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品
+    private List<Attribute> franchises;//所属系列
+    private List<Attribute> products;//所属产品
 
     //图片相关
     private JSONObject cover;//图片（json）

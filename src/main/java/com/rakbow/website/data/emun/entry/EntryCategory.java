@@ -1,6 +1,5 @@
 package com.rakbow.website.data.emun.entry;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.system.SystemLanguage;
@@ -9,7 +8,8 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,8 +75,8 @@ public enum EntryCategory {
         return new Attribute(id, getNameById(id, lang));
     }
 
-    public static JSONArray getAttributeSet(String lang) {
-        JSONArray set = new JSONArray();
+    public static List<Attribute> getAttributeSet(String lang) {
+        List<Attribute> set = new ArrayList<>();
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             for (EntryCategory item : EntryCategory.values()) {
                 set.add(new Attribute(item.id, item.nameEn));

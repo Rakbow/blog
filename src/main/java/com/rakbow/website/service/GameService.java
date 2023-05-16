@@ -8,7 +8,6 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.util.common.CommonUtil;
@@ -214,7 +213,7 @@ public class GameService {
         String region = filter.getJSONObject("region").getString("value");
 
         String hasBonus;
-        if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
+        if (filter.getJSONObject("hasBonus").get("value") == null) {
             hasBonus = null;
         } else {
             hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
@@ -223,13 +222,12 @@ public class GameService {
 
 
         int platform = 100;
-        if (filter.getJSONObject("platform").getInteger("value") != null) {
+        if (filter.getJSONObject("platform").get("value") != null) {
             platform = filter.getJSONObject("platform").getIntValue("value");
         }
 
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
         List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
-
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
 
 
         List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,

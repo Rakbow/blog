@@ -1,8 +1,8 @@
 package com.rakbow.website.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.AlbumMapper;
 import com.rakbow.website.data.ApiInfo;
@@ -11,9 +11,9 @@ import com.rakbow.website.data.bo.AlbumDiscBO;
 import com.rakbow.website.data.dto.AlbumDiscDTO;
 import com.rakbow.website.data.dto.AlbumTrackDTO;
 import com.rakbow.website.data.dto.QueryParams;
+import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
-import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
 import com.rakbow.website.entity.Album;
@@ -112,7 +112,7 @@ public class AlbumService {
             List<Album> albums = albumMapper.getAlbums(ids);
             for(Album album : albums) {
                 //删除前先把服务器上对应图片全部删除
-                qiniuFileUtil.commonDeleteAllFiles(JsonUtil.toArrayNode(album.getImages()));
+                qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
                 //删除专辑
                 albumMapper.deleteAlbumById(album.getId());
                 visitUtil.deleteVisit(EntityType.ALBUM.getId(), album.getId());
@@ -143,16 +143,14 @@ public class AlbumService {
 
         if(AuthorityInterceptor.isJunior()) {
             //可供编辑的editDiscList
-            ArrayNode editDiscList = AlbumUtil.getEditDiscList(album.getTrackInfo(), musics);
-            VO.setEditDiscList(editDiscList);
+            VO.setEditDiscList(AlbumUtil.getEditDiscList(album.getTrackInfo(), musics));
             //可供编辑的editCompanies
-            VO.setEditCompanies(JsonUtil.toNode(album.getCompanies()));
+            VO.setEditCompanies(JSON.parseArray(album.getCompanies()));
             //可供编辑的editPersonnel
-            VO.setEditArtists(JsonUtil.toNode(album.getArtists()));
+            VO.setEditArtists(JSON.parseArray(album.getArtists()));
         }
         //音轨信息
-        JsonNode trackInfo = AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics);
-        VO.setTrackInfo(trackInfo);
+        VO.setTrackInfo(AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics));
 
         return VO;
     }
@@ -164,26 +162,26 @@ public class AlbumService {
      * @return string类型错误消息，若为空则数据检测通过
      * @author rakbow
      */
-    public String checkAlbumJson(JsonNode albumJson) {
-        if (StringUtils.isBlank(albumJson.get("name").asText())) {
+    public String checkAlbumJson(JSONObject albumJson) {
+        if (StringUtils.isBlank(albumJson.getString("name"))) {
             return ApiInfo.ALBUM_NAME_EMPTY;
         }
-        if (StringUtils.isBlank(albumJson.get("releaseDate").asText())) {
+        if (StringUtils.isBlank(albumJson.getString("releaseDate"))) {
             return ApiInfo.ALBUM_RELEASE_DATE_EMPTY;
         }
-        if (albumJson.get("franchises").isEmpty()) {
+        if (albumJson.getJSONArray("franchises").isEmpty()) {
             return ApiInfo.FRANCHISES_EMPTY;
         }
-        if (albumJson.get("products").isEmpty()) {
+        if (albumJson.getJSONArray("products").isEmpty()) {
             return ApiInfo.PRODUCTS_EMPTY;
         }
-        if (albumJson.get("publishFormat").isEmpty()) {
+        if (albumJson.getJSONArray("publishFormat").isEmpty()) {
             return ApiInfo.ALBUM_PUBLISH_FORMAT_EMPTY;
         }
-        if (albumJson.get("albumFormat").isEmpty()) {
+        if (albumJson.getJSONArray("albumFormat").isEmpty()) {
             return ApiInfo.ALBUM_ALBUM_FORMAT_EMPTY;
         }
-        if (albumJson.get("mediaFormat").isEmpty()) {
+        if (albumJson.getJSONArray("mediaFormat").isEmpty()) {
             return ApiInfo.ALBUM_MEDIA_FORMAT_EMPTY;
         }
         return "";
@@ -196,23 +194,14 @@ public class AlbumService {
      * @return 处理后的album json格式数据
      * @author rakbow
      */
-    public ObjectNode handleAlbumJson(ObjectNode json) {
+    public JSONObject handleAlbumJson(JSONObject json) {
 
-        String[] products = JsonUtil.toStringArray(json.get("products"));
-        String[] franchises = JsonUtil.toStringArray(json.get("franchises"));
-        String[] publishFormat = JsonUtil.toStringArray(json.get("publishFormat"));
-        String[] albumFormat = JsonUtil.toStringArray(json.get("albumFormat"));
-        String[] mediaFormat = JsonUtil.toStringArray(json.get("mediaFormat"));
-
-        //处理时间
-        // String releaseDate = DateUtil.dateToString(albumJson.getDate("releaseDate"));
-
-        json.put("releaseDate", json.get("releaseDate").asText());
-        json.put("franchises", "{\"ids\":[" + StringUtils.join(franchises, ",") + "]}");
-        json.put("products", "{\"ids\":[" + StringUtils.join(products, ",") + "]}");
-        json.put("publishFormat", "{\"ids\":[" + StringUtils.join(publishFormat, ",") + "]}");
-        json.put("albumFormat", "{\"ids\":[" + StringUtils.join(albumFormat, ",") + "]}");
-        json.put("mediaFormat", "{\"ids\":[" + StringUtils.join(mediaFormat, ",") + "]}");
+        json.put("releaseDate", json.getDate("releaseDate"));
+        json.put("franchises", "{\"ids\":" + json.getString("franchises") + "}");
+        json.put("products", "{\"ids\":" + json.getString("products") + "}");
+        json.put("publishFormat", "{\"ids\":" + json.getString("publishFormat") + "}");
+        json.put("albumFormat", "{\"ids\":" + json.getString("albumFormat") + "}");
+        json.put("mediaFormat", "{\"ids\":" + json.getString("mediaFormat") + "}");
 
         return json;
     }
@@ -231,12 +220,12 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbumTrackInfo(int id, String _discList) throws Exception {
 
-        List<AlbumDiscDTO> albumDiscDTOs = JsonUtil.toList(_discList, AlbumDiscDTO.class);
+        List<AlbumDiscDTO> albumDiscDTOs = JSON.parseArray(_discList).toJavaList(AlbumDiscDTO.class);
 
         //获取该专辑对应的音乐合集
         List<Music> musics = musicService.getMusicsByAlbumId(id);
 
-        ObjectNode trackInfo = JsonUtil.emptyObjectNode();
+        JSONObject trackInfo = new JSONObject();
 
         List<AlbumDiscBO> discList = new ArrayList<>();
 
@@ -246,7 +235,7 @@ public class AlbumService {
 
         for (AlbumDiscDTO albumDiscDTO : albumDiscDTOs) {
             AlbumDiscBO albumDiscBO = new AlbumDiscBO();
-            ArrayNode trackList = JsonUtil.emptyArrayNode();
+            JSONArray trackList = new JSONArray();
             int i = 1;
             for (AlbumTrackDTO _track : albumDiscDTO.getTrackList()) {
                 if (i < 10) {
@@ -301,9 +290,9 @@ public class AlbumService {
             discList.add(albumDiscBO);
         }
         if(discList.size() != 0) {
-            trackInfo.set("discList", JsonUtil.toNode(discList));
+            trackInfo.put("discList", discList);
         }
-        albumMapper.updateAlbumTrackInfo(id, JsonUtil.toJson(trackInfo), DateUtil.NOW_TIMESTAMP);
+        albumMapper.updateAlbumTrackInfo(id, JSON.toJSONString(trackInfo), DateUtil.NOW_TIMESTAMP);
 
         //删除对应music
         if (musics.size() != 0) {
@@ -320,24 +309,24 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getAlbumsByFilter(QueryParams param) {
 
-        JsonNode filter = param.getFilters();
+        JSONObject filter = param.getFilters();
 
-        String catalogNo = filter.get("catalogNo").get("value").asText();
-        String name = filter.get("name").get("value").asText();
+        String catalogNo = filter.getJSONObject("catalogNo").getString("value");
+        String name = filter.getJSONObject("name").getString("value");
 
         String hasBonus;
-        if (filter.get("hasBonus").get("value") == null) {
+        if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
             hasBonus = null;
         }else {
-            hasBonus = filter.get("hasBonus").get("value").asBoolean()
+            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
                     ?Integer.toString(1):Integer.toString(0);
         }
 
-        List<Integer> products = JsonUtil.toList(filter.get("products").get("value"), Integer.class);
-        List<Integer> franchises = JsonUtil.toList(filter.get("franchises").get("value"), Integer.class);
-        List<Integer> publishFormat = JsonUtil.toList(filter.get("publishFormat").get("value"), Integer.class);
-        List<Integer> albumFormat = JsonUtil.toList(filter.get("albumFormat").get("value"), Integer.class);
-        List<Integer> mediaFormat = JsonUtil.toList(filter.get("mediaFormat").get("value"), Integer.class);
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        List<Integer> publishFormat = filter.getJSONObject("publishFormat").getList("value", Integer.class);
+        List<Integer> albumFormat = filter.getJSONObject("albumFormat").getList("value", Integer.class);
+        List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         List<Album> albums = albumMapper.getAlbumsByFilter(catalogNo, name, franchises, products, publishFormat,
                 albumFormat, mediaFormat, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
@@ -363,7 +352,7 @@ public class AlbumService {
         Album album = getAlbum(id);
 
         //该专辑包含的作品id
-        List<Integer> productIds = JsonUtil.getList(album.getProducts(), Integer.class);
+        List<Integer> productIds = JSON.parseArray(album.getProducts()).toJavaList(Integer.class);
 
         //该系列所有专辑
         List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtil.ids2List(album.getFranchises()),
@@ -382,7 +371,7 @@ public class AlbumService {
 
             if (productIds.size() > 1) {
                 List<Album> tmpQueryResult = allAlbums.stream().filter(tmpAlbum ->
-                        JsonUtil.getList(tmpAlbum.getProducts(), Integer.class)
+                        JSON.parseArray(tmpAlbum.getProducts()).toJavaList(Integer.class)
                                 .contains(productIds.get(1))).collect(Collectors.toList());
 
                 if (tmpQueryResult.size() >= 5 - queryResult.size()) {
@@ -397,7 +386,7 @@ public class AlbumService {
             for (int productId : productIds) {
                 tmp.addAll(
                         allAlbums.stream().filter(tmpAlbum ->
-                                JsonUtil.getList(tmpAlbum.getProducts(), Integer.class)
+                                JSON.parseArray(tmpAlbum.getProducts()).toJavaList(Integer.class)
                                         .contains(productId)).collect(Collectors.toList())
                 );
             }

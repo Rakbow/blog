@@ -1,18 +1,16 @@
 package com.rakbow.website.data.emun.common;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: website
@@ -42,26 +40,15 @@ public enum MediaFormat {
      * @return String
      * @author rakbow
      */
-    public static String getNamesByIds(List<Integer> ids) {
+    public static List<String> getNamesByIds(List<Integer> ids) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        String[] names = new String[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            names[i] = getNameById(ids.get(i), lang);
-        }
-        return StringUtils.join(names, ",");
+        return ids.stream().map(id -> getNameById(id, lang)).collect(Collectors.toList());
     }
 
-    public static ArrayNode getIdsByNames(ArrayNode names) {
+    public static List<Integer> getIdsByNames(List<String> names) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        if (!names.isEmpty()) {
-            ArrayNode ids = JsonUtil.emptyArrayNode();
-            for (int i = 0; i < names.size(); i++) {
-                ids.add(getIdByName(names.get(i).asText(), lang));
-            }
-            return ids;
-        }else {
-            return JsonUtil.emptyArrayNode();
-        }
+        if (names.isEmpty()) return new ArrayList<>();
+        return names.stream().map(name -> getIdByName(name, lang)).collect(Collectors.toList());
     }
 
     public static String getNameById(int id, String lang) {
@@ -94,8 +81,8 @@ public enum MediaFormat {
         return 0;
     }
 
-    public static JSONArray getAttributeSet(String lang) {
-        JSONArray set = new JSONArray();
+    public static List<Attribute> getAttributeSet(String lang) {
+        List<Attribute> set = new ArrayList<>();
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             for (MediaFormat item : MediaFormat.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
@@ -108,11 +95,11 @@ public enum MediaFormat {
         return set;
     }
 
-    public static JSONArray getAttributes(String json) {
+    public static List<Attribute> getAttributes(String json) {
 
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
-        JSONArray res = new JSONArray();
+        List<Attribute> res = new ArrayList<>();
 
         List<Integer> ids = CommonUtil.ids2List(json);
 

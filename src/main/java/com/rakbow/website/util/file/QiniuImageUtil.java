@@ -5,15 +5,13 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.data.Image;
+import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.emun.system.FileType;
-import com.rakbow.website.entity.User;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -119,7 +119,7 @@ public class EntryService {
         String nameZh = filter.getJSONObject("nameZh").getString("value");
         String nameEn = filter.getJSONObject("nameEn").getString("value");
         int category = 100;
-        if (filter.getJSONObject("category").getInteger("value") != null) {
+        if (filter.getJSONObject("category").get("value") != null) {
             category = filter.getJSONObject("category").getIntValue("value");
         }
 

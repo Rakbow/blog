@@ -1,9 +1,11 @@
 package com.rakbow.website.data.vo.merch;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.vo.RegionVO;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -27,12 +29,12 @@ public class MerchVOAlpha {
     private String remark;//备注
 
     //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品
+    private List<Attribute> franchises;//所属系列
+    private List<Attribute> products;//所属产品
 
     //复杂字段
     private Attribute category;//商品分类
-    private JSONObject region;//地区
+    private RegionVO region;//地区
 
     //图片
     private JSONObject cover;

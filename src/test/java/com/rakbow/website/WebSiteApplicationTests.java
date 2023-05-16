@@ -4,17 +4,17 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.Image;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
-import com.rakbow.website.entity.*;
+import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Entry;
+import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.AlbumService;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.MusicService;
-import com.rakbow.website.util.common.JsonUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
@@ -114,13 +114,13 @@ class WebSiteApplicationTests {
 
 //        List<Album> albums = albumMapper.getAll();
 
-        Album album = albumService.getAlbum(11);
-//        String json = JsonUtil.toJson(album);
-        JsonNode imagesJson = JsonUtil.toNode(album.getImages());
-        System.out.println(imagesJson);
-
-        List<Image> images = JsonUtil.toList(imagesJson, Image.class);
-        images.forEach(System.out::println);
+//         Album album = albumService.getAlbum(11);
+// //        String json = JsonUtil.toJson(album);
+//         JsonNode imagesJson = JsonUtil.toNode(album.getImages());
+//         System.out.println(imagesJson);
+//
+//         List<Image> images = JsonUtil.toList(imagesJson, Image.class);
+//         images.forEach(System.out::println);
     }
 
     @Test

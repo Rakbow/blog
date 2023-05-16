@@ -1,7 +1,9 @@
-package com.rakbow.website.data;
+package com.rakbow.website.data.image;
 
-import com.alibaba.fastjson2.JSONArray;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -16,8 +18,8 @@ public class ItemDetailInfo {
     private int entityType;//实体类型
 
     //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品id 在mysql中以数组字符串形式存储
+    private List<Attribute> franchises;//所属系列
+    private List<Attribute> products;//所属产品id 在mysql中以数组字符串形式存储
 
     private String description;//描述信息
 

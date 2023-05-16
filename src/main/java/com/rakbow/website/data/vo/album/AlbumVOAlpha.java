@@ -1,9 +1,10 @@
 package com.rakbow.website.data.vo.album;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -31,13 +32,13 @@ public class AlbumVOAlpha {
     private JSONObject cover;//封面
 
     //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品id 在mysql中以数组字符串形式存储
+    private List<Attribute> franchises;//所属系列
+    private List<Attribute> products;//所属产品id 在mysql中以数组字符串形式存储
 
     //规格信息
-    private JSONArray publishFormat;//出版形式 在mysql中以数组字符串形式存储
-    private JSONArray albumFormat;//专辑分类 在mysql中以数组字符串形式存储
-    private JSONArray mediaFormat;//媒体类型
+    private List<Attribute> publishFormat;//出版形式 在mysql中以数组字符串形式存储
+    private List<Attribute> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    private List<Attribute> mediaFormat;//媒体类型
 
     //审计字段
     private String addedTime;//数据新增时间

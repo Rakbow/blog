@@ -1,6 +1,6 @@
 package com.rakbow.website.util.convertMapper.entity;
 
-import com.alibaba.fastjson2.JSONArray;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.entity.album.PublishFormat;
@@ -145,13 +145,13 @@ public interface AlbumVOMapper {
     //region get property method
 
     @Named("getAlbumFormat")
-    default JSONArray getAlbumFormat(String formats) {
+    default List<Attribute> getAlbumFormat(String formats) {
         return AlbumFormat.getAttributes(formats);
     }
 
     @Named("getPublishFormat")
-    default JSONArray getPublishFormat(String formats) {
-        return PublishFormat.getAttribute(formats);
+    default List<Attribute> getPublishFormat(String formats) {
+        return PublishFormat.getAttributes(formats);
     }
 
     //endregion

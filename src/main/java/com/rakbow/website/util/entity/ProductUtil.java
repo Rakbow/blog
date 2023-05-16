@@ -3,6 +3,7 @@ package com.rakbow.website.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.image.ImageType;
@@ -10,10 +11,7 @@ import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.SpringUtil;
-import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -58,24 +56,23 @@ public class ProductUtil {
      * @return JSONArray
      * @author rakbow
      */
-    @SuppressWarnings("unchecked")
-    public static JSONArray getProductList (String json) {
+    public static List<Attribute> getProducts(String json) {
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        String key = null;
+        String key;
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             key = RedisCacheConstant.PRODUCT_SET_EN;
         }else {
             key = RedisCacheConstant.PRODUCT_SET_ZH;
         }
-        List<JSONObject> allProducts = (List<JSONObject>) redisUtil.get(key);
+        List<Attribute> allProducts = JSON.parseArray(JSON.toJSONString(redisUtil.get(key))).toJavaList(Attribute.class);
 
-        JSONArray products = new JSONArray();
+        List<Attribute> products = new ArrayList<>();
 
         List<Integer> ids = CommonUtil.ids2List(json);
 
         ids.forEach(id -> {
-            JSONObject product = DataFinder.findJsonByIdInSet(id, allProducts);
+            Attribute product = DataFinder.findAttributeByValue(id, allProducts);
             if (product != null) {
                 products.add(product);
             }

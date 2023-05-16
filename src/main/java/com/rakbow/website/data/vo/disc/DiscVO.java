@@ -1,7 +1,7 @@
 package com.rakbow.website.data.vo.disc;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.vo.RegionVO;
 import lombok.Data;
 
 /**
@@ -20,7 +20,7 @@ public class DiscVO {
     private String nameZh;//商品译名(中)
     private String nameEn;//商品译名(英)
     private String barcode;//商品条形码
-    private JSONObject region;//地区
+    private RegionVO region;//地区
     private String releaseDate;//发行日期
     private int price;//发行价格
     private String currencyUnit;//货币单位

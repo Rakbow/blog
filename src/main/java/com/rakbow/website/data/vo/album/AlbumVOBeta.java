@@ -1,8 +1,10 @@
 package com.rakbow.website.data.vo.album;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -23,7 +25,7 @@ public class AlbumVOBeta {
 
     private JSONObject cover;//封面
 
-    private JSONArray albumFormat;//专辑分类
+    private List<Attribute> albumFormat;//专辑分类
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
 

@@ -4,12 +4,12 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.Image;
+import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.image.ImageProperty;
 import com.rakbow.website.data.emun.image.ImageType;
+import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.segmentImagesResult;
-import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.vo.ImageVO;
 
 import javax.imageio.ImageIO;
@@ -17,7 +17,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -204,7 +205,7 @@ public class CommonImageUtil {
      */
     public static JSONObject generateCover(String imagesJson, EntityType entityType) {
 
-        JSONArray images = JSONArray.parseArray(imagesJson);
+        List<Image> images = JSON.parseArray(imagesJson).toJavaList(Image.class);
 
         String defaultImageUrl = getDefaultImageUrl(entityType);
 
@@ -216,14 +217,13 @@ public class CommonImageUtil {
         cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 50));
         cover.put("name", "404");
         if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 200));
-                    cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 70));
-                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 50));
-                    cover.put("name", image.getString("nameEn"));
+            for (Image image : images) {
+                if (image.getType() == ImageType.COVER.getId()) {
+                    cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 200));
+                    cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getUrl(), 50));
+                    cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 70));
+                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 50));
+                    cover.put("name", image.getNameEn());
                 }
             }
         }

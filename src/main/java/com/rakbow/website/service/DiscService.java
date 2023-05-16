@@ -187,12 +187,12 @@ public class DiscService {
         String name = filter.getJSONObject("name").getString("value");
         String region = filter.getJSONObject("region").getString("value");
 
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
         List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
         List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
 
         String limited;
-        if (filter.getJSONObject("limited").getBoolean("value") == null) {
+        if (filter.getJSONObject("limited").get("value") == null) {
             limited = null;
         }else {
             limited = filter.getJSONObject("limited").getBoolean("value")
@@ -200,7 +200,7 @@ public class DiscService {
         }
 
         String hasBonus;
-        if (filter.getJSONObject("hasBonus").getBoolean("value") == null) {
+        if (filter.getJSONObject("hasBonus").get("value") == null) {
             hasBonus = null;
         }else {
             hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")

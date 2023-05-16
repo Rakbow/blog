@@ -1,8 +1,8 @@
 package com.rakbow.website.data.vo.merch;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.vo.RegionVO;
 import lombok.Data;
 
 /**
@@ -28,7 +28,7 @@ public class MerchVO {
 
     //复杂字段
     private Attribute category;//商品分类
-    private JSONObject region;//地区
+    private RegionVO region;//地区
     private JSONArray spec;//规格
 
 }

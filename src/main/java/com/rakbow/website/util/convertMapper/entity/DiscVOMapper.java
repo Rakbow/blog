@@ -1,19 +1,13 @@
 package com.rakbow.website.util.convertMapper.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.common.MediaFormat;
-import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.vo.disc.DiscVO;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOGamma;
 import com.rakbow.website.entity.Disc;
-import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.entity.FranchiseUtil;
-import com.rakbow.website.util.entity.ProductUtil;
-import com.rakbow.website.util.file.CommonImageUtil;
-import com.rakbow.website.util.file.QiniuImageUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -45,24 +39,24 @@ public interface DiscVOMapper {
 
         DiscVO discVO = new DiscVO();
 
-        discVO.setId(disc.getId());
-        discVO.setCatalogNo(disc.getCatalogNo());
-        discVO.setName(disc.getName());
-        discVO.setNameZh(disc.getNameZh());
-        discVO.setNameEn(disc.getNameEn());
-        discVO.setBarcode(disc.getBarcode());
-        discVO.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
-        discVO.setPrice(disc.getPrice());
-        discVO.setCurrencyUnit(disc.getCurrencyUnit());
-        discVO.setLimited(disc.getLimited() == 1);
-        discVO.setHasBonus(disc.getHasBonus() == 1);
-        discVO.setRemark(disc.getRemark());
-
-        discVO.setRegion(Region.getRegion(disc.getRegion()));
-
-        discVO.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
-        discVO.setSpec(JSON.parseArray(disc.getSpec()));
-        discVO.setBonus(disc.getBonus());
+        // discVO.setId(disc.getId());
+        // discVO.setCatalogNo(disc.getCatalogNo());
+        // discVO.setName(disc.getName());
+        // discVO.setNameZh(disc.getNameZh());
+        // discVO.setNameEn(disc.getNameEn());
+        // discVO.setBarcode(disc.getBarcode());
+        // discVO.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
+        // discVO.setPrice(disc.getPrice());
+        // discVO.setCurrencyUnit(disc.getCurrencyUnit());
+        // discVO.setLimited(disc.getLimited() == 1);
+        // discVO.setHasBonus(disc.getHasBonus() == 1);
+        // discVO.setRemark(disc.getRemark());
+        //
+        // discVO.setRegion(Region.getRegion(disc.getRegion()));
+        //
+        // discVO.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
+        // discVO.setSpec(JSON.parseArray(disc.getSpec()));
+        // discVO.setBonus(disc.getBonus());
 
         return discVO;
     }
@@ -81,32 +75,32 @@ public interface DiscVOMapper {
 
         DiscVOAlpha discVOAlpha = new DiscVOAlpha();
 
-        discVOAlpha.setId(disc.getId());
-        discVOAlpha.setCatalogNo(disc.getCatalogNo());
-        discVOAlpha.setName(disc.getName());
-        discVOAlpha.setNameZh(disc.getNameZh());
-        discVOAlpha.setNameEn(disc.getNameEn());
-        discVOAlpha.setBarcode(disc.getBarcode());
-        discVOAlpha.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
-        discVOAlpha.setPrice(disc.getPrice());
-        discVOAlpha.setCurrencyUnit(disc.getCurrencyUnit());
-        discVOAlpha.setLimited(disc.getLimited() == 1);
-        discVOAlpha.setHasBonus(disc.getHasBonus() == 1);
-        discVOAlpha.setRemark(disc.getRemark());
-
-        discVOAlpha.setRegion(Region.getRegion(disc.getRegion()));
-
-        discVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(disc.getFranchises()));
-        discVOAlpha.setProducts(ProductUtil.getProductList(disc.getProducts()));
-
-        discVOAlpha.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
-
-        //将图片分割处理
-        discVOAlpha.setCover(CommonImageUtil.generateCover(disc.getImages(), EntityType.DISC));
-
-        discVOAlpha.setAddedTime(DateUtil.timestampToString(disc.getAddedTime()));
-        discVOAlpha.setEditedTime(DateUtil.timestampToString(disc.getEditedTime()));
-        discVOAlpha.setStatus(disc.getStatus() == 1);
+        // discVOAlpha.setId(disc.getId());
+        // discVOAlpha.setCatalogNo(disc.getCatalogNo());
+        // discVOAlpha.setName(disc.getName());
+        // discVOAlpha.setNameZh(disc.getNameZh());
+        // discVOAlpha.setNameEn(disc.getNameEn());
+        // discVOAlpha.setBarcode(disc.getBarcode());
+        // discVOAlpha.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
+        // discVOAlpha.setPrice(disc.getPrice());
+        // discVOAlpha.setCurrencyUnit(disc.getCurrencyUnit());
+        // discVOAlpha.setLimited(disc.getLimited() == 1);
+        // discVOAlpha.setHasBonus(disc.getHasBonus() == 1);
+        // discVOAlpha.setRemark(disc.getRemark());
+        //
+        // discVOAlpha.setRegion(Region.getRegion(disc.getRegion()));
+        //
+        // discVOAlpha.setFranchises(FranchiseUtil.getFranchises(disc.getFranchises()));
+        // discVOAlpha.setProducts(ProductUtil.getProducts(disc.getProducts()));
+        //
+        // discVOAlpha.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
+        //
+        // //将图片分割处理
+        // discVOAlpha.setCover(CommonImageUtil.generateCover(disc.getImages(), EntityType.DISC));
+        //
+        // discVOAlpha.setAddedTime(DateUtil.timestampToString(disc.getAddedTime()));
+        // discVOAlpha.setEditedTime(DateUtil.timestampToString(disc.getEditedTime()));
+        // discVOAlpha.setStatus(disc.getStatus() == 1);
 
         return discVOAlpha;
     }
@@ -143,19 +137,19 @@ public interface DiscVOMapper {
 
         DiscVOBeta discVOBeta = new DiscVOBeta();
 
-        discVOBeta.setId(disc.getId());
-        discVOBeta.setCatalogNo(disc.getCatalogNo());
-        discVOBeta.setName(disc.getName());
-        discVOBeta.setNameZh(disc.getNameZh());
-        discVOBeta.setNameEn(disc.getNameEn());
-        discVOBeta.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
-
-        discVOBeta.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
-
-        discVOBeta.setCover(CommonImageUtil.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
-
-        discVOBeta.setAddedTime(DateUtil.timestampToString(disc.getAddedTime()));
-        discVOBeta.setEditedTime(DateUtil.timestampToString(disc.getEditedTime()));
+        // discVOBeta.setId(disc.getId());
+        // discVOBeta.setCatalogNo(disc.getCatalogNo());
+        // discVOBeta.setName(disc.getName());
+        // discVOBeta.setNameZh(disc.getNameZh());
+        // discVOBeta.setNameEn(disc.getNameEn());
+        // discVOBeta.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
+        //
+        // discVOBeta.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
+        //
+        // discVOBeta.setCover(CommonImageUtil.generateThumbCover(disc.getImages(), EntityType.DISC, 50));
+        //
+        // discVOBeta.setAddedTime(DateUtil.timestampToString(disc.getAddedTime()));
+        // discVOBeta.setEditedTime(DateUtil.timestampToString(disc.getEditedTime()));
 
         return discVOBeta;
     }
@@ -193,26 +187,26 @@ public interface DiscVOMapper {
 
         DiscVOGamma discVOGamma = new DiscVOGamma();
 
-        discVOGamma.setId(disc.getId());
-        discVOGamma.setCatalogNo(disc.getCatalogNo());
-        discVOGamma.setName(disc.getName());
-        discVOGamma.setNameZh(disc.getNameZh());
-        discVOGamma.setNameEn(disc.getNameEn());
-        discVOGamma.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
-        discVOGamma.setLimited(disc.getLimited() == 1);
-        discVOGamma.setHasBonus(disc.getHasBonus() == 1);
-
-        discVOGamma.setRegion(Region.getRegion(disc.getRegion()));
-
-        discVOGamma.setFranchises(FranchiseUtil.getFranchiseList(disc.getFranchises()));
-        discVOGamma.setProducts(ProductUtil.getProductList(disc.getProducts()));
-
-        discVOGamma.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
-
-        discVOGamma.setCover(QiniuImageUtil.getThumb70Url(disc.getImages()));
-
-        discVOGamma.setVisitCount(visitUtil.getVisit(EntityType.DISC.getId(), disc.getId()));
-        discVOGamma.setLikeCount(likeUtil.getLike(EntityType.DISC.getId(), disc.getId()));
+        // discVOGamma.setId(disc.getId());
+        // discVOGamma.setCatalogNo(disc.getCatalogNo());
+        // discVOGamma.setName(disc.getName());
+        // discVOGamma.setNameZh(disc.getNameZh());
+        // discVOGamma.setNameEn(disc.getNameEn());
+        // discVOGamma.setReleaseDate(DateUtil.dateToString(disc.getReleaseDate()));
+        // discVOGamma.setLimited(disc.getLimited() == 1);
+        // discVOGamma.setHasBonus(disc.getHasBonus() == 1);
+        //
+        // discVOGamma.setRegion(Region.getRegion(disc.getRegion()));
+        //
+        // discVOGamma.setFranchises(FranchiseUtil.getFranchises(disc.getFranchises()));
+        // discVOGamma.setProducts(ProductUtil.getProducts(disc.getProducts()));
+        //
+        // discVOGamma.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
+        //
+        // discVOGamma.setCover(QiniuImageUtil.getThumb70Url(disc.getImages()));
+        //
+        // discVOGamma.setVisitCount(visitUtil.getVisit(EntityType.DISC.getId(), disc.getId()));
+        // discVOGamma.setLikeCount(likeUtil.getLike(EntityType.DISC.getId(), disc.getId()));
 
         return discVOGamma;
     }

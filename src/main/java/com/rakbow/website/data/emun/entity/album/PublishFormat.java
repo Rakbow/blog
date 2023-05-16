@@ -1,9 +1,6 @@
 package com.rakbow.website.data.emun.entity.album;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.util.common.CommonUtil;
 import lombok.AllArgsConstructor;
@@ -11,6 +8,7 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,8 +46,8 @@ public enum PublishFormat {
         return null;
     }
 
-    public static JSONArray getAttributeSet(String lang) {
-        JSONArray set = new JSONArray();
+    public static List<Attribute> getAttributeSet(String lang) {
+        List<Attribute> set = new ArrayList<>();
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
             for (PublishFormat item : PublishFormat.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
@@ -62,11 +60,11 @@ public enum PublishFormat {
         return set;
     }
 
-    public static JSONArray getAttribute(String json) {
+    public static List<Attribute> getAttributes(String json) {
 
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
-        JSONArray res = new JSONArray();
+        List<Attribute> res = new ArrayList<>();
 
         List<Integer> ids = CommonUtil.ids2List(json);
 

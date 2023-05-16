@@ -3,6 +3,7 @@ package com.rakbow.website.data.emun.common;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.system.SystemLanguage;
+import com.rakbow.website.data.vo.LanguageVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -69,12 +70,9 @@ public enum Language {
         return set;
     }
 
-    public static JSONObject getLanguage(String code) {
-        JSONObject language = new JSONObject();
+    public static LanguageVO getLanguage(String code) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        language.put("code", code);
-        language.put("name", Language.getNameByCode(code, lang));
-        return language;
+        return new LanguageVO(code, Language.getNameByCode(code, lang));
     }
 
 }

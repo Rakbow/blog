@@ -986,7 +986,7 @@
             //保存编辑数据
             const submitEditAlbum = () => {
                 editBlock.value = true;
-                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ALBUM_URL, albumEdit.value)
+                HttpUtil.commonSubmit(toast, editBlock, UPDATE_ALBUM_URL, JSON.parse(albumEdit.value))
                     .then(res => {
                         if (res !== undefined) {
                             albumEdit.value = {};

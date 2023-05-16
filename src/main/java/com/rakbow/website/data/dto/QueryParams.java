@@ -1,8 +1,6 @@
 package com.rakbow.website.data.dto;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.rakbow.website.util.common.JsonUtil;
 import lombok.Data;
 
 /**
@@ -18,14 +16,14 @@ public class QueryParams {
     private int rows;
     private String sortField;
     private int sortOrder;
-    private JsonNode filters;
+    private JSONObject filters;
 
     public QueryParams() {
         first = 0;
         rows = 0;
         sortField = "";
         sortOrder = 0;
-        filters = JsonUtil.emptyObjectNode();
+        filters = new JSONObject();
     }
 
 }

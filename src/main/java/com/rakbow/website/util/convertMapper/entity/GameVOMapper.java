@@ -1,20 +1,13 @@
 package com.rakbow.website.util.convertMapper.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.emun.common.Region;
-import com.rakbow.website.data.emun.entity.game.GamePlatform;
-import com.rakbow.website.data.emun.entity.game.ReleaseType;
 import com.rakbow.website.data.vo.game.GameVO;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.data.vo.game.GameVOGamma;
 import com.rakbow.website.entity.Game;
-import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.entity.FranchiseUtil;
-import com.rakbow.website.util.file.CommonImageUtil;
-import com.rakbow.website.util.entity.ProductUtil;
-import com.rakbow.website.util.file.QiniuImageUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -50,23 +43,23 @@ public interface GameVOMapper {
 
         GameVO gameVO = new GameVO();
 
-        //基础信息
-        gameVO.setId(game.getId());
-        gameVO.setName(game.getName());
-        gameVO.setNameZh(game.getNameZh());
-        gameVO.setNameEn(game.getNameEn());
-        gameVO.setBarcode(game.getBarcode());
-        gameVO.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
-        gameVO.setHasBonus(game.getHasBonus() == 1);
-        gameVO.setRemark(game.getRemark());
-
-        //复杂字段
-        gameVO.setRegion(Region.getRegion(game.getRegion()));
-        gameVO.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
-        gameVO.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
-        gameVO.setOrganizations(JSON.parseArray(game.getOrganizations()));
-        gameVO.setStaffs(JSON.parseArray(game.getStaffs()));
-        gameVO.setBonus(game.getBonus());
+        // //基础信息
+        // gameVO.setId(game.getId());
+        // gameVO.setName(game.getName());
+        // gameVO.setNameZh(game.getNameZh());
+        // gameVO.setNameEn(game.getNameEn());
+        // gameVO.setBarcode(game.getBarcode());
+        // gameVO.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
+        // gameVO.setHasBonus(game.getHasBonus() == 1);
+        // gameVO.setRemark(game.getRemark());
+        //
+        // //复杂字段
+        // gameVO.setRegion(Region.getRegion(game.getRegion()));
+        // gameVO.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        // gameVO.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
+        // gameVO.setOrganizations(JSON.parseArray(game.getOrganizations()));
+        // gameVO.setStaffs(JSON.parseArray(game.getStaffs()));
+        // gameVO.setBonus(game.getBonus());
 
         return gameVO;
     }
@@ -85,32 +78,32 @@ public interface GameVOMapper {
 
         GameVOAlpha gameVOAlpha = new GameVOAlpha();
 
-        //基础信息
-        gameVOAlpha.setId(game.getId());
-        gameVOAlpha.setName(game.getName());
-        gameVOAlpha.setNameZh(game.getNameZh());
-        gameVOAlpha.setNameEn(game.getNameEn());
-        gameVOAlpha.setBarcode(game.getBarcode());
-        gameVOAlpha.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
-        gameVOAlpha.setHasBonus(game.getHasBonus() == 1);
-        gameVOAlpha.setRemark(game.getRemark());
-
-        //关联信息
-        gameVOAlpha.setProducts(ProductUtil.getProductList(game.getProducts()));
-        gameVOAlpha.setFranchises(FranchiseUtil.getFranchiseList(game.getFranchises()));
-
-        //复杂字段
-        gameVOAlpha.setRegion(Region.getRegion(game.getRegion()));
-        gameVOAlpha.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
-        gameVOAlpha.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
-
-        //将图片分割处理
-        gameVOAlpha.setCover(CommonImageUtil.generateCover(game.getImages(), EntityType.GAME));
-
-        //审计字段
-        gameVOAlpha.setAddedTime(DateUtil.timestampToString(game.getAddedTime()));
-        gameVOAlpha.setEditedTime(DateUtil.timestampToString(game.getEditedTime()));
-        gameVOAlpha.setStatus(game.getStatus() == 1);
+        // //基础信息
+        // gameVOAlpha.setId(game.getId());
+        // gameVOAlpha.setName(game.getName());
+        // gameVOAlpha.setNameZh(game.getNameZh());
+        // gameVOAlpha.setNameEn(game.getNameEn());
+        // gameVOAlpha.setBarcode(game.getBarcode());
+        // gameVOAlpha.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
+        // gameVOAlpha.setHasBonus(game.getHasBonus() == 1);
+        // gameVOAlpha.setRemark(game.getRemark());
+        //
+        // //关联信息
+        // gameVOAlpha.setProducts(ProductUtil.getProducts(game.getProducts()));
+        // gameVOAlpha.setFranchises(FranchiseUtil.getFranchises(game.getFranchises()));
+        //
+        // //复杂字段
+        // gameVOAlpha.setRegion(Region.getRegion(game.getRegion()));
+        // gameVOAlpha.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        // gameVOAlpha.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
+        //
+        // //将图片分割处理
+        // gameVOAlpha.setCover(CommonImageUtil.generateCover(game.getImages(), EntityType.GAME));
+        //
+        // //审计字段
+        // gameVOAlpha.setAddedTime(DateUtil.timestampToString(game.getAddedTime()));
+        // gameVOAlpha.setEditedTime(DateUtil.timestampToString(game.getEditedTime()));
+        // gameVOAlpha.setStatus(game.getStatus() == 1);
 
         return gameVOAlpha;
     }
@@ -146,24 +139,24 @@ public interface GameVOMapper {
 
         GameVOBeta gameVOBeta = new GameVOBeta();
 
-        //基础信息
-        gameVOBeta.setId(game.getId());
-        gameVOBeta.setName(game.getName());
-        gameVOBeta.setNameZh(game.getNameZh());
-        gameVOBeta.setNameEn(game.getNameEn());
-        gameVOBeta.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
-
-        //复杂字段
-        gameVOBeta.setRegion(Region.getRegion(game.getRegion()));
-        gameVOBeta.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
-        gameVOBeta.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
-
-        //图片
-        gameVOBeta.setCover(CommonImageUtil.generateThumbCover(game.getImages(), EntityType.GAME, 50));
-
-        //审计字段
-        gameVOBeta.setAddedTime(DateUtil.timestampToString(game.getAddedTime()));
-        gameVOBeta.setEditedTime(DateUtil.timestampToString(game.getEditedTime()));
+        // //基础信息
+        // gameVOBeta.setId(game.getId());
+        // gameVOBeta.setName(game.getName());
+        // gameVOBeta.setNameZh(game.getNameZh());
+        // gameVOBeta.setNameEn(game.getNameEn());
+        // gameVOBeta.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
+        //
+        // //复杂字段
+        // gameVOBeta.setRegion(Region.getRegion(game.getRegion()));
+        // gameVOBeta.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        // gameVOBeta.setReleaseType(ReleaseType.getAttribute(game.getReleaseType()));
+        //
+        // //图片
+        // gameVOBeta.setCover(CommonImageUtil.generateThumbCover(game.getImages(), EntityType.GAME, 50));
+        //
+        // //审计字段
+        // gameVOBeta.setAddedTime(DateUtil.timestampToString(game.getAddedTime()));
+        // gameVOBeta.setEditedTime(DateUtil.timestampToString(game.getEditedTime()));
 
         return gameVOBeta;
     }
@@ -201,26 +194,26 @@ public interface GameVOMapper {
 
         GameVOGamma gameVOGamma = new GameVOGamma();
 
-        //基础信息
-        gameVOGamma.setId(game.getId());
-        gameVOGamma.setName(game.getName());
-        gameVOGamma.setNameZh(game.getNameZh());
-        gameVOGamma.setNameEn(game.getNameEn());
-        gameVOGamma.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
-        gameVOGamma.setHasBonus(game.getHasBonus() == 1);
-
-        //关联信息
-        gameVOGamma.setProducts(ProductUtil.getProductList(game.getProducts()));
-        gameVOGamma.setFranchises(FranchiseUtil.getFranchiseList(game.getFranchises()));
-
-        //复杂字段
-        gameVOGamma.setRegion(Region.getRegion(game.getRegion()));
-        gameVOGamma.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
-
-        gameVOGamma.setCover(QiniuImageUtil.getThumb70Url(game.getImages()));
-
-        gameVOGamma.setVisitCount(visitUtil.getVisit(EntityType.GAME.getId(), game.getId()));
-        gameVOGamma.setLikeCount(likeUtil.getLike(EntityType.GAME.getId(), game.getId()));
+        // //基础信息
+        // gameVOGamma.setId(game.getId());
+        // gameVOGamma.setName(game.getName());
+        // gameVOGamma.setNameZh(game.getNameZh());
+        // gameVOGamma.setNameEn(game.getNameEn());
+        // gameVOGamma.setReleaseDate(DateUtil.dateToString(game.getReleaseDate()));
+        // gameVOGamma.setHasBonus(game.getHasBonus() == 1);
+        //
+        // //关联信息
+        // gameVOGamma.setProducts(ProductUtil.getProducts(game.getProducts()));
+        // gameVOGamma.setFranchises(FranchiseUtil.getFranchises(game.getFranchises()));
+        //
+        // //复杂字段
+        // gameVOGamma.setRegion(Region.getRegion(game.getRegion()));
+        // gameVOGamma.setPlatform(GamePlatform.getAttribute(game.getPlatform()));
+        //
+        // gameVOGamma.setCover(QiniuImageUtil.getThumb70Url(game.getImages()));
+        //
+        // gameVOGamma.setVisitCount(visitUtil.getVisit(EntityType.GAME.getId(), game.getId()));
+        // gameVOGamma.setLikeCount(likeUtil.getLike(EntityType.GAME.getId(), game.getId()));
 
         return gameVOGamma;
     }

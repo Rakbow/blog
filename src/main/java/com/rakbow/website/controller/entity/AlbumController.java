@@ -1,8 +1,8 @@
 package com.rakbow.website.controller.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.ApiInfo;
@@ -18,7 +18,6 @@ import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.MusicService;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtil;
-import com.rakbow.website.util.common.JsonUtil;
 import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.entity.MusicUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -100,10 +99,10 @@ public class AlbumController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilter(@RequestBody JsonNode param) {
+    public String getAlbumsByFilter(@RequestBody JSONObject param) {
 
-        QueryParams queryParam = JsonUtil.to(param.get("queryParams"), QueryParams.class);
-        String pageLabel = param.get("pageLabel").asText();
+        QueryParams queryParam = JSON.to(QueryParams.class, param.get("queryParams"));
+        String pageLabel = param.getString("pageLabel");
 
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
@@ -116,26 +115,26 @@ public class AlbumController {
             albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);
         }
 
-        ObjectNode result = JsonUtil.emptyObjectNode();
-        result.set("data", JsonUtil.toNode(albums));
+        JSONObject result = new JSONObject();
+        result.put("data", albums);
         result.put("total", searchResult.total);
 
-        return JsonUtil.toJson(result);
+        return JSON.toJSONString(result);
     }
 
     //新增专辑
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addAlbum(@RequestBody ObjectNode param) {
+    public String addAlbum(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
             //检测数据
-            String checkMsg = albumService.checkAlbumJson(param);
+            String checkMsg = albumService.checkAlbumJson(json);
             if(!StringUtils.isBlank(checkMsg)) {
                 throw new Exception(checkMsg);
             }
 
-            Album album = JsonUtil.to(albumService.handleAlbumJson(param), Album.class);
+            Album album = JSON.to(Album.class, albumService.handleAlbumJson(json));
 
             //保存新增专辑
             res.message = albumService.addAlbum(album);
@@ -146,44 +145,45 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JsonUtil.toJson(res);
+        return JSON.toJSONString(res);
     }
 
     //删除专辑(单个/多个)
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deleteAlbum(@RequestBody String json) {
+    public String deleteAlbum(@RequestBody JSONArray json) {
         ApiResult res = new ApiResult();
         try {
             List<Integer> ids = new ArrayList<>();
-            ArrayNode arrayNode = JsonUtil.toArrayNode(json);
-            arrayNode.forEach(node -> ids.add(node.get("id").asInt()));
+            for (int i = 0; i < json.size(); i++) {
+                ids.add(json.getJSONObject(i).getIntValue("id"));
+            }
+            if(!ids.isEmpty()) {
+                //从数据库中删除专辑
+                albumService.deleteAlbums(ids);
 
-            //从数据库中删除专辑
-            albumService.deleteAlbums(ids);
-
-            //删除专辑对应的music
-            musicService.deleteMusicsByAlbumIds(ids);
-
+                //删除专辑对应的music
+                musicService.deleteMusicsByAlbumIds(ids);
+            }
             res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JsonUtil.toJson(res);
+        return JSON.toJSONString(res);
     }
 
     //更新专辑基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbum(@RequestBody ObjectNode param) {
+    public String updateAlbum(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            String checkMsg = albumService.checkAlbumJson(param);
+            String checkMsg = albumService.checkAlbumJson(json);
             if(!StringUtils.isBlank(checkMsg)) {
                 throw new Exception(checkMsg);
             }
 
-            Album album = JsonUtil.to(albumService.handleAlbumJson(param), Album.class);
+            Album album = JSON.to(Album.class, albumService.handleAlbumJson(json));
 
             //修改编辑时间
             album.setEditedTime(DateUtil.NOW_TIMESTAMP);
@@ -192,7 +192,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JsonUtil.toJson(res);
+        return JSON.toJSONString(res);
     }
 
     //endregion
@@ -202,13 +202,11 @@ public class AlbumController {
     //更新专辑音轨信息TrackInfo
     @RequestMapping(path = "/update-trackInfo", method = RequestMethod.POST)
     @ResponseBody
-    public String updateAlbumTrackInfo(@RequestBody String json) {
+    public String updateAlbumTrackInfo(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            JsonNode param = JsonUtil.toNode(json);
-            int id = param.get("id").asInt();
-
-            String discList = param.get("discList").asText();
+            int id = json.getIntValue("id");
+            String discList = json.getString("discList");
 
             albumService.updateAlbumTrackInfo(id, discList);
 
@@ -216,22 +214,21 @@ public class AlbumController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JsonUtil.toJson(res);
+        return JSON.toJSONString(res);
     }
 
     @RequestMapping(value = "/get-related-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getRelatedAlbums(@RequestBody String json) {
+    public String getRelatedAlbums(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            JsonNode param = JsonUtil.toNode(json);
-            int id = param.get("id").asInt();
+            int id = json.getIntValue("id");
             res.data = albumService.getRelatedAlbums(id);
 
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JsonUtil.toJson(res);
+        return JSON.toJSONString(res);
     }
 
     //endregion

@@ -9,6 +9,7 @@ import com.rakbow.website.data.*;
 import com.rakbow.website.data.emun.system.DataActionType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.UserAuthority;
+import com.rakbow.website.data.image.Image;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.UserService;
 import com.rakbow.website.util.common.*;

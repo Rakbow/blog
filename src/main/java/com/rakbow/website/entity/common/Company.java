@@ -1,8 +1,8 @@
 package com.rakbow.website.entity.common;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.vo.RegionVO;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ import java.util.List;
 public class Company extends MetaEntry {
 
     private List<String> links;//链接 json数组
-    private JSONObject region;//国家或地区编码
+    private RegionVO region;//国家或地区编码
 
     public Company() {
         this.setId(0);

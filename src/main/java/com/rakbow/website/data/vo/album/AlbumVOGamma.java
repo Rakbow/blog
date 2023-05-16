@@ -1,8 +1,10 @@
 package com.rakbow.website.data.vo.album;
 
-import com.alibaba.fastjson2.JSONArray;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisHash;
+
+import java.util.List;
 
 /**
  * @Project_name: website
@@ -24,10 +26,10 @@ public class AlbumVOGamma {
     private boolean hasBonus;//是否包含特典内容
 
     //关联信息
-    private JSONArray franchises;//所属系列
-    private JSONArray products;//所属产品id 在mysql中以数组字符串形式存储
+    private List<Attribute> franchises;//所属系列
+    private List<Attribute> products;//所属产品id 在mysql中以数组字符串形式存储
 
-    private JSONArray albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    private List<Attribute> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
 
     //图片相关
     private String cover;

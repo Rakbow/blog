@@ -1,11 +1,8 @@
 package com.rakbow.website.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.jackson.DateDeserializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -30,7 +27,7 @@ public class Album extends MetaEntity {
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
-    @JsonDeserialize(using = DateDeserializer.class)
+    // @JsonDeserialize(using = DateDeserializer.class)
     private Date releaseDate;//发行日期
     private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储

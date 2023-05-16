@@ -1,4 +1,4 @@
-package com.rakbow.website.data;
+package com.rakbow.website.data.image;
 
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
