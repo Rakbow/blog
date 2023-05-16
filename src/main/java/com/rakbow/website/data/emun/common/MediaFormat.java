@@ -2,9 +2,11 @@ package com.rakbow.website.data.emun.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.util.common.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -40,25 +42,25 @@ public enum MediaFormat {
      * @return String
      * @author rakbow
      */
-    public static String getNamesByIds(JSONArray ids) {
+    public static String getNamesByIds(List<Integer> ids) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         String[] names = new String[ids.size()];
         for (int i = 0; i < ids.size(); i++) {
-            names[i] = getNameById(ids.getIntValue(i), lang);
+            names[i] = getNameById(ids.get(i), lang);
         }
         return StringUtils.join(names, ",");
     }
 
-    public static JSONArray getIdsByNames(JSONArray names) {
+    public static ArrayNode getIdsByNames(ArrayNode names) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         if (!names.isEmpty()) {
-            JSONArray ids = new JSONArray();
+            ArrayNode ids = JsonUtil.emptyArrayNode();
             for (int i = 0; i < names.size(); i++) {
-                ids.add(getIdByName(names.getString(i), lang));
+                ids.add(getIdByName(names.get(i).asText(), lang));
             }
             return ids;
         }else {
-            return new JSONArray();
+            return JsonUtil.emptyArrayNode();
         }
     }
 

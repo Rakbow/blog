@@ -1,6 +1,8 @@
 package com.rakbow.website.data.dto;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.rakbow.website.util.common.JsonUtil;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -16,13 +18,13 @@ import java.util.List;
 public class AlbumDiscDTO {
 
     private List<AlbumTrackDTO> trackList;
-    private JSONArray mediaFormat;
-    private JSONArray albumFormat;
+    private ArrayNode mediaFormat;
+    private ArrayNode albumFormat;
 
     public AlbumDiscDTO() {
         trackList = new ArrayList<>();
-        mediaFormat = new JSONArray();
-        albumFormat = new JSONArray();
+        mediaFormat = JsonUtil.emptyArrayNode();
+        albumFormat = JsonUtil.emptyArrayNode();
     }
 
 }

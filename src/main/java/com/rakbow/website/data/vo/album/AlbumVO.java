@@ -2,6 +2,7 @@ package com.rakbow.website.data.vo.album;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
@@ -28,23 +29,23 @@ public class AlbumVO {
     private String remark;//备注
 
     //厂商信息
-    private JSONArray companies;
+    private JsonNode companies;
     //可供编辑的企业信息
-    private JSONArray editCompanies;
+    private JsonNode editCompanies;
 
-    private JSONArray artists;
-    private JSONArray editArtists;
+    private JsonNode artists;
+    private JsonNode editArtists;
 
     //规格信息
-    private JSONArray publishFormat;//出版形式 在mysql中以数组字符串形式存储
-    private JSONArray albumFormat;//专辑分类 在mysql中以数组字符串形式存储
-    private JSONArray mediaFormat;//媒体类型
+    private JsonNode publishFormat;//出版形式 在mysql中以数组字符串形式存储
+    private JsonNode albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    private JsonNode mediaFormat;//媒体类型
 
     //大文本字段
     private String bonus;//特典信息
 
     //音轨相关
-    private JSONArray editDiscList;
-    private JSONObject trackInfo;
+    private JsonNode editDiscList;
+    private JsonNode trackInfo;
 
 }

@@ -2,6 +2,9 @@ package com.rakbow.website.util.file;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rakbow.website.data.ActionResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -81,14 +84,14 @@ public class QiniuFileUtil {
      * @param files 删除文件合集
      * @author rakbow
      */
-    public void commonDeleteAllFiles(JSONArray files) {
+    public void commonDeleteAllFiles(ArrayNode files) {
 
         String[] deleteFileKeyList = new String[files.size()];
         //文件名
         String deleteFileUrl;
         for (int i = 0; i < files.size(); i++) {
-            JSONObject file = files.getJSONObject(i);
-            deleteFileUrl = file.getString("url");
+            JsonNode file = files.get(i);
+            deleteFileUrl = file.get("url").asText();
             //删除七牛服务器上对应图片文件
             deleteFileKeyList[i] = deleteFileUrl;
         }

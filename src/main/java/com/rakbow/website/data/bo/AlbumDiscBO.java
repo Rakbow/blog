@@ -1,6 +1,8 @@
 package com.rakbow.website.data.bo;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.rakbow.website.util.common.JsonUtil;
 import lombok.Data;
 
 /**
@@ -14,15 +16,15 @@ import lombok.Data;
 public class AlbumDiscBO {
 
     private int serial;
-    private JSONArray trackList;
-    private JSONArray mediaFormat;
-    private JSONArray albumFormat;
+    private ArrayNode trackList;
+    private ArrayNode mediaFormat;
+    private ArrayNode albumFormat;
 
     public AlbumDiscBO() {
         serial = 0;
-        trackList = new JSONArray();
-        mediaFormat = new JSONArray();
-        albumFormat = new JSONArray();
+        trackList = JsonUtil.emptyArrayNode();
+        mediaFormat = JsonUtil.emptyArrayNode();
+        albumFormat = JsonUtil.emptyArrayNode();
     }
 
 }

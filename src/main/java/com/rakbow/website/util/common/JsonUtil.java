@@ -135,16 +135,20 @@ public class JsonUtil {
         }
     }
 
-    public static <T> List<T> toList(JsonNode jsonList, Class<T> clazz) throws JsonProcessingException {
-        if (!jsonList.isArray()) {
-            throw new IllegalArgumentException("Input JsonNode is not a JSON array");
+    public static <T> List<T> toList(JsonNode jsonList, Class<T> clazz) {
+        try {
+            if (!jsonList.isArray()) {
+                throw new IllegalArgumentException("Input JsonNode is not a JSON array");
+            }
+            List<T> res = new ArrayList<>();
+            for(JsonNode node : jsonList) {
+                T t = objectMapper.treeToValue(node, clazz);
+                res.add(t);
+            }
+            return res;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        List<T> res = new ArrayList<>();
-        for(JsonNode node : jsonList) {
-            T t = objectMapper.treeToValue(node, clazz);
-            res.add(t);
-        }
-        return res;
     }
 
     public static JsonNode toNode(String json) {
@@ -190,12 +194,12 @@ public class JsonUtil {
         }
     }
 
+    public static <T> ArrayNode toArrayNode(String[] array) {
+        return objectMapper.valueToTree(array);
+    }
+
     public static <T> List<T> toList(String json, Class<T> clazz) {
-        try {
-            return toList(toNode(json), clazz);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return toList(toNode(json), clazz);
     }
 
     public static String[] toStringArray(JsonNode node) {
@@ -213,6 +217,26 @@ public class JsonUtil {
         }
         Arrays.sort(result);
         return result;
+    }
+
+    public static <T> List<T> getList(String json, Class<T> clazz) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(json, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> List<T> getList(Object obj, Class<T> clazz) {
+        try {
+            String json = objectMapper.writeValueAsString(obj);
+            return objectMapper.readValue(json, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
