@@ -2,6 +2,7 @@ package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
@@ -13,6 +14,7 @@ import com.rakbow.website.entity.Entry;
 import com.rakbow.website.service.EntityService;
 import com.rakbow.website.service.EntryService;
 import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.JsonUtil;
 import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -139,6 +141,22 @@ public class EntryController {
         return JSON.toJSONString(res);
     }
 
+    //endregion
+
+    //region other
+    @RequestMapping(value = "/refresh-redis-data", method = RequestMethod.POST)
+    @ResponseBody
+    public String refreshRedisEntryData(@RequestBody JsonNode json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entryCategory = json.get("entryCategory").asInt();
+            entryService.refreshRedisEntries(entryCategory);
+            res.message = ApiInfo.REFRESH_REDIS_DATA_SUCCESS;
+        } catch (Exception ex) {
+            res.setErrorMessage(ex.getMessage());
+        }
+        return JsonUtil.toJson(res);
+    }
     //endregion
 
 }

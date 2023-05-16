@@ -2,11 +2,15 @@ package com.rakbow.website.data.emun.entry;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Project_name: website
@@ -27,6 +31,24 @@ public enum EntryCategory {
     EVENT(7, "活动/展会", "Event"),
     SPEC_PARAMETER(8, "规格参数", "Spec Parameter"),
     PUBLICATION(9, "书刊", "Publication");
+
+    public static final Map<Integer, String> categoryMapZH = Map.ofEntries(
+            Map.entry(COMPANY.id, RedisCacheConstant.COMPANY_SET_ZH),
+            Map.entry(PERSONNEL.id, RedisCacheConstant.PERSONNEL_SET_ZH),
+            Map.entry(MERCHANDISE.id, RedisCacheConstant.MERCHANDISE_SET_ZH),
+            Map.entry(ROLE.id, RedisCacheConstant.ROLE_SET_ZH),
+            Map.entry(SPEC_PARAMETER.id, RedisCacheConstant.SPEC_PARAMETER_SET_ZH),
+            Map.entry(PUBLICATION.id, RedisCacheConstant.PUBLICATION_SET_ZH)
+    );
+
+    public static final Map<Integer, String> categoryMapEn = Map.ofEntries(
+            Map.entry(COMPANY.id, RedisCacheConstant.COMPANY_SET_EN),
+            Map.entry(PERSONNEL.id, RedisCacheConstant.PERSONNEL_SET_EN),
+            Map.entry(MERCHANDISE.id, RedisCacheConstant.MERCHANDISE_SET_EN),
+            Map.entry(ROLE.id, RedisCacheConstant.ROLE_SET_EN),
+            Map.entry(SPEC_PARAMETER.id, RedisCacheConstant.SPEC_PARAMETER_SET_EN),
+            Map.entry(PUBLICATION.id, RedisCacheConstant.PUBLICATION_SET_EN)
+    );
 
     @Getter
     private final int id;

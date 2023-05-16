@@ -107,7 +107,7 @@ export class RKW_Web {
     static BookISBN10 = 'ISBN-10';
     static BookISBN13 = 'ISBN-13';
     static BookType = '分类';
-    static BookPublisher = '出版社';
+    static BookSerial = '连载';
 
     static DiscCatalogNo = '碟片编号';
     static DiscName = '商品名';
@@ -165,8 +165,8 @@ export class RKW_Web {
     static ItemDetailOptionBonusEditTitle = '特典信息';
     static ItemDetailOptionSpecEditTitle = '规格信息';
     static ItemDetailOptionOrganizationEditTitle = '关联组织';
+    static ItemDetailOptionPersonnelEditTitle = '相关人员';
 
-    static AlbumDetailOptionArtistEditTitle = '音乐创作';
     static AlbumDetailOptionTrackInfoEditTitle = '音轨信息';
 
     static BookDetailOptionAuthorEditTitle = '作者信息';

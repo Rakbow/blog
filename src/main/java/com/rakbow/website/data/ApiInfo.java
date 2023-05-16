@@ -9,6 +9,7 @@ package com.rakbow.website.data;
 public class ApiInfo {
 
     //region entity common
+    public static final String REFRESH_REDIS_DATA_SUCCESS = "Redis缓存数据刷新成功！";
     public static final String NAME_EMPTY = "未填写名称(原)！";
     public static final String NAME_ZH_EMPTY = "未填写名称(中)！";
     public static final String NAME_EN_EMPTY = "未填写名称(英)！";

@@ -98,7 +98,7 @@ public class EntityUtil {
                 options.put("roleSet", redisUtil.get(RedisCacheConstant.ROLE_SET_EN));
                 options.put("personnelSet", redisUtil.get(RedisCacheConstant.PERSONNEL_SET_EN));
                 options.put("specParameterSet", redisUtil.get(RedisCacheConstant.SPEC_PARAMETER_SET_EN));
-                options.put("publicationSet", redisUtil.get(RedisCacheConstant.PUBLISH_FORMAT_SET_EN));
+                options.put("publicationSet", redisUtil.get(RedisCacheConstant.PUBLICATION_SET_EN));
             }
             if(entityType == EntityType.DISC.getId()) {
                 options.put("mediaFormatSet", redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET_EN));
@@ -147,7 +147,7 @@ public class EntityUtil {
                 options.put("roleSet", redisUtil.get(RedisCacheConstant.ROLE_SET_ZH));
                 options.put("personnelSet", redisUtil.get(RedisCacheConstant.PERSONNEL_SET_ZH));
                 options.put("specParameterSet", redisUtil.get(RedisCacheConstant.SPEC_PARAMETER_SET_ZH));
-                options.put("publicationSet", redisUtil.get(RedisCacheConstant.PUBLISH_FORMAT_SET_ZH));
+                options.put("publicationSet", redisUtil.get(RedisCacheConstant.PUBLICATION_SET_ZH));
             }
             if(entityType == EntityType.DISC.getId()) {
                 options.put("mediaFormatSet", redisUtil.get(RedisCacheConstant.MEDIA_FORMAT_SET_ZH));

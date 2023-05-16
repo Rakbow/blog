@@ -20,7 +20,7 @@ export class RKW_Web {
 
 
     static ItemDetailOptionImageEditTitle = 'Images Edit';
-    static AlbumDetailOptionArtistEditTitle = 'Artists Edit';
+    static ItemDetailOptionPersonnelEditTitle = 'Artists Edit';
     static AlbumDetailOptionTrackInfoEditTitle = 'Track Edit';
     static ItemDetailOptionDescriptionEditTitle = 'Description Edit';
     static ItemDetailOptionBonusEditTitle = 'Bonus Edit';

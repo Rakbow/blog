@@ -53,6 +53,7 @@ const GET_ENTRIES_URL = "/db/entry/get-entries";
 const DELETE_ENTRY_URL = "/db/entry/delete";
 const UPDATE_ENTRY_URL = "/db/entry/update";
 const INSERT_ENTRY_URL = "/db/entry/add";
+const ENTRY_REFRESH_REDIS_DATA_URL = "/db/entry/refresh-redis-data";
 //endregion
 
 //region album

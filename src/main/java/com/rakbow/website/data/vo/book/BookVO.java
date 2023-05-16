@@ -2,6 +2,7 @@ package com.rakbow.website.data.vo.book;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -30,7 +31,7 @@ public class BookVO {
     private JSONObject publishLanguage;//语言
     private int price;//出版价格
     private String currencyUnit;//货币单位
-    private String publisher;//出版社
+    private Attribute serial;//连载信息
     private String summary;//简介
     private boolean hasBonus;//是否包含特典
     private String remark;//备注

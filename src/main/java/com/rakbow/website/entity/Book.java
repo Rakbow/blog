@@ -1,5 +1,6 @@
 package com.rakbow.website.entity;
 
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class Book extends MetaEntity {
     private String personnel;
     private String authors;//作者（译者，插画，原作者等，json）
     private String companies;//相关企业
-    private String publisher;//出版社
+    private int serial;//出版社
     private Date publishDate;//出版日期
     private int price;//出版价格
     private String summary;//简介
@@ -56,7 +57,7 @@ public class Book extends MetaEntity {
         this.personnel = "[]";
         this.authors = "[]";
         this.companies = "[]";
-        this.publisher = "";
+        this.serial = 0;
         this.publishDate = null;
         this.price = 0;
         this.summary = "";

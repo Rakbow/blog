@@ -25,7 +25,6 @@ public class BookVOGamma {
     private List<String> authors;//作者信息
     private JSONObject bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
-    private String publisher;//出版社
     private JSONObject region;//地区
     private JSONObject publishLanguage;//语言
     private String summary;//简介

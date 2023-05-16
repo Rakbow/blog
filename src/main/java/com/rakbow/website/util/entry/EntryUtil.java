@@ -15,6 +15,7 @@ import com.rakbow.website.entity.common.Merchandise;
 import com.rakbow.website.entity.common.Personnel;
 import com.rakbow.website.entity.common.Role;
 import com.rakbow.website.util.common.DataFinder;
+import com.rakbow.website.util.common.JsonUtil;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
@@ -80,20 +81,8 @@ public class EntryUtil {
     public static JSONArray getPersonnel(String json) {
         JSONArray orgPersonnel = JSON.parseArray(json);
         if(orgPersonnel.isEmpty()) return new JSONArray();
-
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-        String personnelKey;
-        String roleKey;
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
-            personnelKey = RedisCacheConstant.PERSONNEL_SET_EN;
-            roleKey = RedisCacheConstant.ROLE_SET_EN;
-        }else {
-            personnelKey = RedisCacheConstant.PERSONNEL_SET_ZH;
-            roleKey = RedisCacheConstant.ROLE_SET_ZH;
-        }
-        List<Attribute> allPersonnel = JSON.parseArray(JSON.toJSONString(redisUtil.get(personnelKey))).toJavaList(Attribute.class);
-        List<Attribute> allRole = JSON.parseArray(JSON.toJSONString(redisUtil.get(roleKey))).toJavaList(Attribute.class);
+        List<Attribute> allPersonnel = getAttributesForRedis(EntryCategory.PERSONNEL.getId());
+        List<Attribute> allRole = getAttributesForRedis(EntryCategory.ROLE.getId());
 
         JSONArray personnel = new JSONArray();
         for (int i = 0; i < orgPersonnel.size(); i++) {
@@ -125,16 +114,7 @@ public class EntryUtil {
     public static JSONArray getSpecs(String json) {
         JSONArray specs = JSON.parseArray(json);
         if(specs.isEmpty()) return new JSONArray();
-
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-        String specKey;
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
-            specKey = RedisCacheConstant.SPEC_PARAMETER_SET_EN;
-        }else {
-            specKey = RedisCacheConstant.SPEC_PARAMETER_SET_ZH;
-        }
-        List<Attribute> allSpecParameter = JSON.parseArray(JSON.toJSONString(redisUtil.get(specKey))).toJavaList(Attribute.class);
+        List<Attribute> allSpecParameter = getAttributesForRedis(EntryCategory.SPEC_PARAMETER.getId());
         for (int i = 0; i < specs.size(); i++) {
             JSONObject item = specs.getJSONObject(i);
 
@@ -144,24 +124,26 @@ public class EntryUtil {
         return specs;
     }
 
-    public List<Company> getAllCompanies() {
-        List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.COMPANY.getId());
-        return convertMapper.toCompany(entries);
+    public static Attribute getSerial(int serial) {
+        List<Attribute> allPublications = getAttributesForRedis(EntryCategory.PUBLICATION.getId());
+        return DataFinder.findAttributeByValue(serial, allPublications);
     }
 
-    public List<Personnel> getAllPersonnel() {
-        List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.PERSONNEL.getId());
-        return convertMapper.toPersonnel(entries);
-    }
+    public static List<Attribute> getAttributesForRedis(int category) {
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-    public List<Merchandise> getAllMerchandises() {
-        List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.MERCHANDISE.getId());
-        return convertMapper.toMerchandise(entries);
-    }
+        List<Attribute> attributes = new ArrayList<>();
+        String key;
+        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+            key = EntryCategory.categoryMapEn.get(category);
+        }else {
+            key = EntryCategory.categoryMapZH.get(category);
+        }
 
-    public List<Role> getAllRoles() {
-        List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.ROLE.getId());
-        return convertMapper.toRole(entries);
+        attributes = JsonUtil.toList(redisUtil.get(key).toString(), Attribute.class);
+
+        return attributes;
     }
 
 }

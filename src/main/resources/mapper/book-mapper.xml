@@ -6,13 +6,13 @@
 
     <sql id="selectFields">
         id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, personnel, authors,
-        companies, publisher, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
+        companies, serial, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 
     <sql id="insertFields">
         title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, personnel, authors,
-        companies, publisher, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
+        companies, serial, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 
@@ -60,7 +60,7 @@
         </selectKey>
         insert into book (<include refid="insertFields"></include>)
         values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{franchises}, #{products}, #{region},
-        #{publishLanguage}, #{personnel}, #{authors}, #{companies}, #{publisher}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
+        #{publishLanguage}, #{personnel}, #{authors}, #{companies}, #{serial}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
         #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
@@ -69,7 +69,7 @@
         set
         title = #{book.title}, title_en = #{book.titleEn}, title_zh = #{book.titleZh}, isbn_10 = #{book.isbn10},
         isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, franchises = #{book.franchises}, products = #{book.products},
-        region = #{book.region}, publish_language = #{book.publishLanguage}, publisher = #{book.publisher},
+        region = #{book.region}, publish_language = #{book.publishLanguage}, serial = #{book.serial},
         publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
         has_bonus = #{book.hasBonus}, remark = #{book.remark}, edited_time = #{book.editedTime}
         where id = #{book.id}
@@ -102,8 +102,8 @@
             <if test="isbn13 != null and isbn13 != '' ">
                 and isbn_13 like concat('%', #{isbn13}, '%')
             </if>
-            <if test="publisher != null and publisher != '' ">
-                and publisher like concat('%', #{publisher}, '%')
+            <if test="serial != null and serial != 0 ">
+                and serial = #{serial}
             </if>
             <if test="region != null and region != '' ">
                 and region = #{region}
@@ -186,8 +186,8 @@
             <if test="isbn13 != null and isbn13 != '' ">
                 and isbn_13 like concat('%', #{isbn13}, '%')
             </if>
-            <if test="publisher != null and publisher != '' ">
-                and publisher like concat('%', #{publisher}, '%')
+            <if test="serial != null and serial != 0 ">
+                and serial = #{serial}
             </if>
             <if test="region != null and region != '' ">
                 and region = #{region}
@@ -230,7 +230,6 @@
         or title like concat('%', #{keyWorld}, '%')
         or title_zh like concat('%', #{keyWorld}, '%')
         or title_en like concat('%', #{keyWorld}, '%')
-        or publisher like concat('%', #{keyWorld}, '%')
         )
         and status = 1
         order by publish_date desc
@@ -247,7 +246,6 @@
         or title like concat('%', #{keyWorld}, '%')
         or title_zh like concat('%', #{keyWorld}, '%')
         or title_en like concat('%', #{keyWorld}, '%')
-        or publisher like concat('%', #{keyWorld}, '%')
         )
         and status = 1
     </select>

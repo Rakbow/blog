@@ -21,7 +21,7 @@ const entryDbList = {
                 responsive-layout="scroll">
             <template #header>
                 <p-blockui :blocked="editBlock" class="grid">
-                    <div class="col-9" v-if="editAuth > 1">
+                    <div class="col-6" v-if="editAuth > 1">
                         <p-button label="新增" icon="pi pi-plus" class="p-button-success p-button-sm mr-2"
                                     @click="openNewDialog" style="width: 6em"></p-button>
                         <p-button label="删除" icon="pi pi-trash" class="p-button-danger p-button-sm mr-2" @click="confirmDeleteSelected"
@@ -29,6 +29,12 @@ const entryDbList = {
                         <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                                     @click="exportCSV($event)" style="width: 8em"></p-button>
                     </div>
+                    <div class="col-3 p-inputgroup flex-1">
+                            <p-dropdown v-model="refreshParam.entryCategory" :options="entryCategorySet"
+                                option-label="label" option-value="value"></p-dropdown>
+                            <p-button icon="pi pi-refresh" class="ml-2 p-button-sm"
+                                @click="refreshEntryRedis" style="width: 8em"></p-button> 
+                        </div>
                     <div class="col-3">
                         <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
                                     @update:model-value="onToggle" class=" text-end"
@@ -277,6 +283,10 @@ const entryDbList = {
             deleteDialog: false,
             //endregion
 
+            refreshParam: {
+                entryCategory: 0
+            }
+
         }
     },
     methods: {
@@ -349,6 +359,15 @@ const entryDbList = {
         //endregion
 
         //region edit
+        refreshEntryRedis() {
+            this.editBlock = true;
+            HttpUtil.commonVueSubmit(this.toast, ENTRY_REFRESH_REDIS_DATA_URL, this.refreshParam)
+                .then(res => {
+                    this.editBlock = false;
+                }).catch(e => {
+                console.error(e);
+            });
+        },
         getNameByCode,
         //打开删除确认面板
         confirmDeleteSelected() {

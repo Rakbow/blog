@@ -126,7 +126,7 @@
                 </template>
                 <template #content>
                     <div class="grid">
-                        <div class="col-4" style="width: 190px">
+                        <div class="col-4" style="width: 210px">
                             <div class="book-detail-cover">
                                 <img :src="itemImageInfo.cover.url" :alt="itemImageInfo.cover.name"/>
                             </div>
@@ -193,9 +193,21 @@
                                                     {{book.publishDate}}
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>
+                                                    <i class="pi pi-book"></i>
+                                                    <strong>{{RKW_Web.BookSerial}}</strong>
+                                                </td>
+                                                <td class="common-link">
+                                                    <a v-if="book.serial" :href="'/db/entry/' + book.serial.value">
+                                                        {{book.serial.label}}
+                                                    </a>
+                                                    <span v-else> - </span>
+                                                </td>
+                                            </tr>
                                             <tr v-if="book.companies.length != 0">
                                                 <td>
-                                                    <i class="pi iconfont icon-gongsi"></i>
+                                                    <i class="pi pi-building"></i>
                                                     <strong>{{RKW_Web.Companies}}</strong>
                                                 </td>
                                                 <td v-for="company of book.companies" style="display:inline">
@@ -207,15 +219,10 @@
                                                     </span>&nbsp;
                                                     <span class="label">({{company.role.label}})</span>
                                                 </td>
-<!--                                                <td class="common-link">-->
-<!--                                                    <a :href="'/db/books?publisher=' + book.publisher">-->
-<!--                                                        {{book.publisher}}-->
-<!--                                                    </a>-->
-<!--                                                </td>-->
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <i class="pi iconfont icon-wuliaojiage"></i>
+                                                    <i class="pi pi-tag"></i>
                                                     <strong>{{RKW_Web.PublishPrice}}</strong>
                                                 </td>
                                                 <td>
@@ -467,18 +474,18 @@
             <div class="formgrid grid">
                 <div class="field col">
                     <label class="mb-3">{{RKW_Web.BookType}}<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.bookType" :options="bookTypeSet"
+                    <p-dropdown v-model="bookEdit.bookType" :options="option.bookTypeSet"
                                 option-label="label" option-value="value">
                     </p-dropdown>
                 </div>
                 <div class="field col">
                     <label class="mb-3">{{RKW_Web.Region}}<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.region" :options="regionSet" :filter="true"
+                    <p-dropdown v-model="bookEdit.region" :options="option.regionSet" :filter="true"
                                 :show-clear="true" option-label="name" option-value="code">
                         <template #value="slotProps">
                             <div class="country-item" v-if="slotProps.value">
                                 <span :class="'fi fi-' + slotProps.value"></span>
-                                <div class="ml-2">{{getNameByCode(slotProps.value, regionSet)}}</div>
+                                <div class="ml-2">{{getNameByCode(slotProps.value, option.regionSet)}}</div>
                             </div>
                             <span v-else>{{RKW_Web.PlaceholderRegion}}</span>
                         </template>
@@ -492,7 +499,7 @@
                 </div>
                 <div class="field col">
                     <label class="mb-3">{{RKW_Web.Language}}<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.publishLanguage" :options="languageSet"
+                    <p-dropdown v-model="bookEdit.publishLanguage" :options="option.languageSet"
                                 option-label="name" option-value="code">
                     </p-dropdown>
                 </div>
@@ -501,7 +508,7 @@
                 <div class="field col-4">
                     <label class="mb-3">{{RKW_Web.BelongToFranchises}}<span style="color: red">*</span></label>
                     <p-multiselect v-model="bookEdit.franchises" @change="getProducts($event)"
-                                   :options="franchiseSet" :placeholder="RKW_Web.PlaceholderBelongToFranchises"
+                                   :options="option.franchiseSet" :placeholder="RKW_Web.PlaceholderBelongToFranchises"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
@@ -534,8 +541,10 @@
                     <p-inputnumber v-model="bookEdit.price"></p-inputnumber>
                 </div>
                 <div class="field col">
-                    <label>{{RKW_Web.BookPublisher}}</label>
-                    <p-inputtext v-model.trim="bookEdit.publisher"></p-inputtext>
+                    <label>{{RKW_Web.BookSerial}}</label>
+                    <p-dropdown v-model="bookEdit.serial" :options="option.publicationSet"
+                                option-label="label" option-value="value">
+                    </p-dropdown>
                 </div>
             </div>
             <div class="field">
@@ -577,7 +586,6 @@
         setup() {
             onMounted(() => {
                 init();
-                initOption();
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
                 });
@@ -631,41 +639,16 @@
             //endregion
 
             //region basic
-            const initOption = () => {
-                const option = ref([[${options}]]);
-                if(option.value !== null && option.value !== undefined) {
-                    console.log(option.value)
-                    franchiseSet.value = option.value.franchiseSet;
-                    bookTypeSet.value = option.value.bookTypeSet;
-                    regionSet.value = option.value.regionSet;
-                    languageSet.value = option.value.languageSet;
-                    companySet.value = option.value.companySet;
-                    companyRoleSet.value = option.value.companyRoleSet;
-                    roleSet.value = option.value.roleSet;
-                    personnelSet.value = option.value.personnelSet;
-                    specParameterSet.value = option.value.specParameterSet;
-                    publicationSet.value = option.value.publicationSet;
-                }
-            }
             const book = ref([[${book}]]);
             const toast = useToast();
             const pageInfo = ref([[${pageInfo}]]);
             const detailInfo = ref([[${detailInfo}]]);
             const itemImageInfo = ref([[${itemImageInfo}]]);
-            const franchiseSet = ref([]);
             const productSet = ref([]);
             const relatedItemLoad = ref(true);
             const relatedBooks = ref([]);
 
-            const bookTypeSet = ref([]);
-            const regionSet = ref([]);
-            const languageSet = ref([]);
-            const companySet = ref([]);
-            const companyRoleSet = ref([]);
-            const roleSet = ref([]);
-            const personnelSet = ref([]);
-            const specParameterSet = ref([]);
-            const publicationSet = ref([]);
+            const option = ref([[${options}]]);
             //endregion
 
             //region edit basic info
@@ -681,7 +664,7 @@
                     label: RKW_Web.ItemDetailOptionSpecEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.specs, specParameterSet.value);
+                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editSpecs, option.value.specParameterSet);
                     }
                 },
                 {
@@ -702,14 +685,14 @@
                     label: RKW_Web.ItemDetailOptionCompaniesEditTitle,
                     icon: 'pi pi-building',
                     command: () => {
-                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editCompanies, companyRoleSet.value, companySet.value);
+                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editCompanies, option.value.companyRoleSet, option.value.companySet);
                     }
                 },
                 {
-                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
+                    label: RKW_Web.ItemDetailOptionPersonnelEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
-                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editPersonnel, roleSet.value, personnelSet.value);
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editPersonnel, option.value.roleSet, option.value.personnelSet);
                     }
                 }
             ]);
@@ -723,9 +706,12 @@
                 dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
                 bookEdit.value = dataTmp;
                 bookEdit.value.bookType = dataTmp.bookType.value;
+                if(dataTmp.serial !== null) {
+                    bookEdit.value.serial = dataTmp.serial.value;
+                }
                 bookEdit.value.region = dataTmp.region.code;
                 bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
-                bookEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                bookEdit.value.franchises = label2value(detailInfo.value.franchises, option.value.franchiseSet).concat();
                 let json = {
                     franchises: bookEdit.value.franchises,
                     entityType: ENTITY.BOOK
@@ -893,8 +879,8 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                book, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                bookTypeSet, regionSet, languageSet, productSet, relatedBooks, responsiveOptions, getNameByCode, relatedItemLoad, tmpList5,
+                book, updateStatus, like, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect,
+                option, productSet, relatedBooks, responsiveOptions, getNameByCode, relatedItemLoad, tmpList5,
 
                 //edit
                 editBlock, bookEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditBook,
@@ -954,9 +940,9 @@
 </script>
 <style>
     .book-detail-cover {
-        transform: translateY(7px);
-        width: 180px;
-        height: 180px;
+        transform: translateY(10px);
+        width: 200px;
+        height: 200px;
     }
 
     .book-detail-cover img {

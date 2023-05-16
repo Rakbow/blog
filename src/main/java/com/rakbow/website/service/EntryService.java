@@ -162,31 +162,31 @@ public class EntryService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void refreshRedisEntries(EntryCategory category) {
+    public void refreshRedisEntries(int category) {
 
-        List<Entry> entries = entryMapper.getEntryByCategory(category.getId());
+        List<Entry> entries = entryMapper.getEntryByCategory(category);
 
         JSONArray entriesZh = new JSONArray();
         entries.forEach(entry -> entriesZh.add(new Attribute(entry.getId(), entry.getNameZh())));
         JSONArray entriesEn = new JSONArray();
         entries.forEach(entry -> entriesEn.add(new Attribute(entry.getId(), entry.getNameEn())));
 
-        if(category == EntryCategory.COMPANY) {
+        if(category == EntryCategory.COMPANY.getId()) {
             redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.COMPANY_SET_EN, entriesEn);
-        } else if (category == EntryCategory.PERSONNEL) {
+        } else if (category == EntryCategory.PERSONNEL.getId()) {
             redisUtil.set(RedisCacheConstant.PERSONNEL_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.PERSONNEL_SET_EN, entriesEn);
-        } else if (category == EntryCategory.ROLE) {
+        } else if (category == EntryCategory.ROLE.getId()) {
             redisUtil.set(RedisCacheConstant.ROLE_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.ROLE_SET_EN, entriesEn);
-        } else if (category == EntryCategory.MERCHANDISE) {
+        } else if (category == EntryCategory.MERCHANDISE.getId()) {
             redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_EN, entriesEn);
-        } else if (category == EntryCategory.SPEC_PARAMETER) {
+        } else if (category == EntryCategory.SPEC_PARAMETER.getId()) {
             redisUtil.set(RedisCacheConstant.SPEC_PARAMETER_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.SPEC_PARAMETER_SET_EN, entriesEn);
-        } else if (category == EntryCategory.PUBLICATION) {
+        } else if (category == EntryCategory.PUBLICATION.getId()) {
             redisUtil.set(RedisCacheConstant.PUBLICATION_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.PUBLICATION_SET_EN, entriesEn);
         }

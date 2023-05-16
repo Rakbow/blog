@@ -29,7 +29,6 @@ public class BookVOAlpha {
     private JSONObject publishLanguage;//语言
     private int price;//出版价格
     private String currencyUnit;//货币单位
-    private String publisher;//出版社
     private String summary;//简介
     private boolean hasBonus;//是否包含特典
     private String remark;//备注

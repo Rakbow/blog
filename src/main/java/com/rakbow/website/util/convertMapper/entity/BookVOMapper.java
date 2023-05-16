@@ -3,6 +3,7 @@ package com.rakbow.website.util.convertMapper.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.entity.book.BookType;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.common.Language;
@@ -19,6 +20,7 @@ import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.entity.BookUtil;
 import com.rakbow.website.util.entity.FranchiseUtil;
 import com.rakbow.website.util.entity.ProductUtil;
+import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
@@ -56,6 +58,7 @@ public interface BookVOMapper {
     @Mapping(target = "currencyUnit", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCurrencyUnitByCode(book.getRegion()))")
     @Mapping(target = "hasBonus", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getBool(book.getHasBonus()))")
     @Mapping(target = "bookType", source = "bookType", qualifiedByName = "getBookType")
+    @Mapping(target = "serial", source = "serial", qualifiedByName = "getSerial")
     @Mapping(target = "region", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getRegion(book.getRegion()))")
     @Mapping(target = "publishLanguage", source = "publishLanguage", qualifiedByName = "getPublishLanguage")
     @Mapping(target = "authors", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getJSONArray(book.getAuthors()))")
@@ -106,6 +109,10 @@ public interface BookVOMapper {
         return Language.getLanguage(publishLanguage);
     }
 
+    @Named("getSerial")
+    default Attribute getSerial(int serial) {
+        return EntryUtil.getSerial(serial);
+    }
     //endregion
 
     /**
@@ -132,7 +139,6 @@ public interface BookVOMapper {
         bookVOAlpha.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
         bookVOAlpha.setPrice(book.getPrice());
         bookVOAlpha.setCurrencyUnit(Region.getCurrencyUnitByCode(book.getRegion()));
-        bookVOAlpha.setPublisher(book.getPublisher());
         bookVOAlpha.setSummary(book.getSummary());
         bookVOAlpha.setHasBonus(book.getHasBonus() == 1);
         bookVOAlpha.setRemark(book.getRemark());
@@ -256,7 +262,6 @@ public interface BookVOMapper {
         bookVOGamma.setIsbn13(book.getIsbn13());
         bookVOGamma.setAuthors(BookUtil.getAuthors(book));
         bookVOGamma.setPublishDate(DateUtil.dateToString(book.getPublishDate()));
-        bookVOGamma.setPublisher(book.getPublisher());
         bookVOGamma.setSummary(book.getSummary());
         bookVOGamma.setHasBonus(book.getHasBonus() == 1);
 

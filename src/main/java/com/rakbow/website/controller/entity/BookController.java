@@ -75,7 +75,7 @@ public class BookController {
         //获取页面数据
         model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 180, EntityType.BOOK, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 200, EntityType.BOOK, false));
         //获取相关图书
         // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/database/itemDetail/book-detail";

@@ -517,7 +517,7 @@
                 <div class="field col-4">
                     <label class="mb-3">{{RKW_Web.BelongToFranchises}}<span style="color: red">*</span></label>
                     <p-multiselect v-model="albumEdit.franchises" @change="getProducts($event)"
-                                   :options="franchiseSet" :placeholder="RKW_Web.PlaceholderBelongToFranchises"
+                                   :options="option.franchiseSet" :placeholder="RKW_Web.PlaceholderBelongToFranchises"
                                    option-label="label" option-value="value" display="chip" :filter="true">
                     </p-multiselect>
                 </div>
@@ -543,21 +543,21 @@
                     <label class="mb-3">{{RKW_Web.PublishFormat}}<span
                             style="color: red">*</span></label>
                     <p-multiselect id="publishFormat" v-model="albumEdit.publishFormat"
-                                   :options="publishFormatSet"
+                                   :options="option.publishFormatSet"
                                    option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
                     <label class="mb-3">{{RKW_Web.AlbumFormat}}<span style="color: red">*</span></label>
-                    <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="albumFormatSet"
+                    <p-multiselect id="albumFormat" v-model="albumEdit.albumFormat" :options="option.albumFormatSet"
                                    option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
                 </div>
                 <div class="field col-4">
                     <label class="mb-3">{{RKW_Web.MediaFormat}}<span style="color: red">*</span></label>
-                    <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="mediaFormatSet"
+                    <p-multiselect id="mediaFormat" v-model="albumEdit.mediaFormat" :options="option.mediaFormatSet"
                                    option-label="label" option-value="value"
                                    display="chip">
                     </p-multiselect>
@@ -608,7 +608,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-tag"></i>
                                         </span>
-                            <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="mediaFormatSet"
+                            <p-multiselect id="mediaFormat" v-model="disc.mediaFormat" :options="option.mediaFormatSet"
                                            option-label="label" option-value="label" :placeholder="RKW_Web.MediaFormat"
                                            display="chip">
                             </p-multiselect>
@@ -619,7 +619,7 @@
                                         <span class="p-inputgroup-addon">
                                             <i class="pi pi-tag"></i>
                                         </span>
-                            <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="albumFormatSet"
+                            <p-multiselect id="albumFormat" v-model="disc.albumFormat" :options="option.albumFormatSet"
                                            option-label="label" option-value="label" :placeholder="RKW_Web.AlbumFormat"
                                            display="chip">
                             </p-multiselect>
@@ -663,7 +663,7 @@
                                 {{slotProps.data.albumFormat.join("/")}}
                             </template>
                             <template #editor="{ data, field }">
-                                <p-multiselect v-model="data[field]" :options="albumFormatSet"
+                                <p-multiselect v-model="data[field]" :options="option.albumFormatSet"
                                                option-label="label" option-value="label"
                                                :placeholder="RKW_Web.AlbumFormat"
                                                display="chip">
@@ -675,7 +675,7 @@
                                 {{slotProps.data.mediaFormat.join("/")}}
                             </template>
                             <template #editor="{ data, field }">
-                                <p-multiselect v-model="data[field]" :options="mediaFormatSet"
+                                <p-multiselect v-model="data[field]" :options="option.mediaFormatSet"
                                                option-label="label" option-value="label"
                                                :placeholder="RKW_Web.MediaFormat"
                                                display="chip">
@@ -750,7 +750,6 @@
     const App = {
         setup() {
             onMounted(() => {
-                initOption();
                 init();
                 $(window).resize(function () {
                     $("#main").attr("style", "min-height:" + ($(window).height() - 350) + 'px');
@@ -796,21 +795,6 @@
             //endregion
 
             //region basic
-            const initOption = () => {
-                const option = ref([[${options}]]);
-                if(option.value !== null && option.value !== undefined) {
-                    franchiseSet.value = option.value.franchiseSet;
-                    mediaFormatSet.value = option.value.mediaFormatSet;
-                    albumFormatSet.value = option.value.albumFormatSet;
-                    publishFormatSet.value = option.value.publishFormatSet;
-                    companySet.value = option.value.companySet;
-                    companyRoleSet.value = option.value.companyRoleSet;
-                    roleSet.value = option.value.roleSet;
-                    personnelSet.value = option.value.personnelSet;
-                }
-            }
-
-
             const toast = useToast();
             const album = ref([[${album}]]);
             const pageInfo = ref([[${pageInfo}]]);
@@ -818,16 +802,10 @@
             const itemImageInfo = ref([[${itemImageInfo}]]);
             const relatedItemLoad = ref(true);
             const relatedAlbums = ref([]);
-            const franchiseSet = ref([]);
             const productSet = ref([]);
             const productSelect = ref(true);
-            const mediaFormatSet = ref([]);
-            const albumFormatSet = ref([]);
-            const publishFormatSet = ref([]);
-            const companySet = ref([]);
-            const companyRoleSet = ref([]);
-            const roleSet = ref([]);
-            const personnelSet = ref([]);
+
+            const option = ref([[${options}]]);
             //endregion
 
             //region init
@@ -935,14 +913,14 @@
                     label: RKW_Web.ItemDetailOptionCompaniesEditTitle,
                     icon: 'pi pi-building',
                     command: () => {
-                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editCompanies, companyRoleSet.value, companySet.value);
+                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editCompanies, option.value.companyRoleSet, option.value.companySet);
                     }
                 },
                 {
-                    label: RKW_Web.AlbumDetailOptionArtistEditTitle,
+                    label: RKW_Web.ItemDetailOptionPersonnelEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
-                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editArtists, roleSet.value, personnelSet.value);
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editArtists, option.value.roleSet, option.value.personnelSet);
                     }
                 },
                 {
@@ -978,10 +956,10 @@
                 let dataTmp = JSON.parse(JSON.stringify(album.value));
                 dataTmp.hasBonus = album.value.hasBonus ? 1 : 0;
                 albumEdit.value = dataTmp;
-                albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, albumFormatSet.value).concat();
-                albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, publishFormatSet.value).concat();
-                albumEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, option.value.mediaFormatSet).concat();
+                albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, option.value.albumFormatSet).concat();
+                albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, option.value.publishFormatSet).concat();
+                albumEdit.value.franchises = label2value(detailInfo.value.franchises, option.value.franchiseSet).concat();
                 let json = {
                     franchises: albumEdit.value.franchises,
                     entityType: ENTITY.ALBUM
@@ -1102,7 +1080,7 @@
             const deleteDisc = (disc) => {
                 tmpEditDiscList.value = tmpEditDiscList.value.filter((d) => d.tmpDiscId !== disc.value.tmpDiscId);
                 toast.add({severity: 'error', summary: RKW_Web.MessageDeleted, detail: disc.value.tmpDiscId, life: 3000});
-                selectedArtist.value = null;
+                selectedDisc.value = null;
             };
             const deleteTrack = (track) => {
                 for (let disc of tmpEditDiscList.value) {
@@ -1263,8 +1241,8 @@
                 activeIndex, displayCustom, imageClick, initGalleriaImageClass,
 
                 //basic
-                album, like, updateStatus, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect, franchiseSet,
-                mediaFormatSet, albumFormatSet, publishFormatSet, productSet, relatedAlbums, responsiveOptions, relatedItemLoad, tmpList5,
+                album, like, updateStatus, pageInfo, detailInfo, itemImageInfo, currencyUnitSet, getProducts, productSelect,
+                productSet, relatedAlbums, responsiveOptions, relatedItemLoad, tmpList5, option,
 
                 //edit
                 editBlock, albumEdit, edits, displayEditDialog, openEditDialog, closeEditDialog, submitEditAlbum,
@@ -1274,7 +1252,7 @@
 
                 //tracks info
                 cmDisc, selectedDisc, menuModelDisc, onRowReorderDisc, discRowMenu, editingRowsDisc, onRowEditSaveDisc,
-                cmTrack, selectedTrack, menuModelTrack, onRowReorderTrack, trackRowMenu, editingRowsTrack,
+                cmTrack, selectedTrack, menuModelTrack, onRowReorderTrack, trackRowMenu, editingRowsTrack, tmpEditDiscList,
                 onRowEditSaveTrack, tracks, disc, addDisc, submitTrackInfo, expandedRows, expandAll,
                 collapseAll, displayTrackEditDialog,
             }

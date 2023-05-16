@@ -233,7 +233,7 @@ public class BookService {
         String isbn13 = filter.getJSONObject("isbn13").getString("value");
         String region = filter.getJSONObject("region").getString("value");
         String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
-        String publisher = filter.getJSONObject("publisher").getString("value");
+        int serial = filter.getJSONObject("serial").getIntValue("value");
 
         int bookType = 100;
         if (filter.getJSONObject("bookType").getInteger("value") != null) {
@@ -251,10 +251,10 @@ public class BookService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
+        List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serial, region, publishLanguage,
                 bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
-        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, publisher, region, publishLanguage,
+        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, serial, region, publishLanguage,
                 bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, books);
@@ -272,7 +272,7 @@ public class BookService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Book> books = bookMapper.getBooksByFilter(null, null, null, null,
+        List<Book> books = bookMapper.getBooksByFilter(null, null, null, 0,
                 null, null, 100, null, products, null, false, "publishDate",
                 -1,  0, 0);
 
@@ -291,54 +291,54 @@ public class BookService {
 
         List<Book> result = new ArrayList<>();
 
-        Book book = getBook(id);
-
-        //该Book包含的作品id
-        List<Integer> productIds = JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class);
-
-        //该系列所有Book
-        List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, null,
-                        null, null, 100, CommonUtil.ids2List(book.getFranchises()),
-                        null, null, false, "publishDate", 1, 0, 0)
-                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
-
-        List<Book> queryResult = allBooks.stream().filter(tmpBook ->
-                StringUtils.equals(tmpBook.getProducts(), book.getProducts())
-                        && StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).collect(Collectors.toList());
-
-        if (queryResult.size() > 5) {//结果大于5
-            result.addAll(queryResult.subList(0, 5));
-        } else if (queryResult.size() == 5) {//结果等于5
-            result.addAll(queryResult);
-        } else if (queryResult.size() > 0) {//结果小于5不为空
-            List<Book> tmp = new ArrayList<>(queryResult);
-
-            if (productIds.size() > 1) {
-                List<Book> tmpQueryResult = allBooks.stream().filter(tmpBook ->
-                        JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
-                                .contains(productIds.get(1))).collect(Collectors.toList());
-
-                if (tmpQueryResult.size() >= 5 - queryResult.size()) {
-                    tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
-                } else if (tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5 - queryResult.size()) {
-                    tmp.addAll(tmpQueryResult);
-                }
-            }
-            result.addAll(tmp);
-        } else {
-            List<Book> tmp = new ArrayList<>(queryResult);
-            for (int productId : productIds) {
-                tmp.addAll(
-                        allBooks.stream().filter(tmpBook ->
-                                JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
-                                        .contains(productId)).collect(Collectors.toList())
-                );
-            }
-            result = CommonUtil.removeDuplicateList(tmp);
-            if (result.size() >= 5) {
-                result = result.subList(0, 5);
-            }
-        }
+//        Book book = getBook(id);
+//
+//        //该Book包含的作品id
+//        List<Integer> productIds = JSONObject.parseObject(book.getProducts()).getList("ids", Integer.class);
+//
+//        //该系列所有Book
+//        List<Book> allBooks = bookMapper.getBooksByFilter(null, null, null, 0,
+//                        null, null, 100, CommonUtil.ids2List(book.getFranchises()),
+//                        null, null, false, "publishDate", 1, 0, 0)
+//                .stream().filter(tmpBook -> tmpBook.getId() != book.getId()).collect(Collectors.toList());
+//
+//        List<Book> queryResult = allBooks.stream().filter(tmpBook ->
+//                StringUtils.equals(tmpBook.getProducts(), book.getProducts())
+//                        && StringUtils.equals(tmpBook.getPublisher(), book.getPublisher())).collect(Collectors.toList());
+//
+//        if (queryResult.size() > 5) {//结果大于5
+//            result.addAll(queryResult.subList(0, 5));
+//        } else if (queryResult.size() == 5) {//结果等于5
+//            result.addAll(queryResult);
+//        } else if (queryResult.size() > 0) {//结果小于5不为空
+//            List<Book> tmp = new ArrayList<>(queryResult);
+//
+//            if (productIds.size() > 1) {
+//                List<Book> tmpQueryResult = allBooks.stream().filter(tmpBook ->
+//                        JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
+//                                .contains(productIds.get(1))).collect(Collectors.toList());
+//
+//                if (tmpQueryResult.size() >= 5 - queryResult.size()) {
+//                    tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
+//                } else if (tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5 - queryResult.size()) {
+//                    tmp.addAll(tmpQueryResult);
+//                }
+//            }
+//            result.addAll(tmp);
+//        } else {
+//            List<Book> tmp = new ArrayList<>(queryResult);
+//            for (int productId : productIds) {
+//                tmp.addAll(
+//                        allBooks.stream().filter(tmpBook ->
+//                                JSONObject.parseObject(tmpBook.getProducts()).getList("ids", Integer.class)
+//                                        .contains(productId)).collect(Collectors.toList())
+//                );
+//            }
+//            result = CommonUtil.removeDuplicateList(tmp);
+//            if (result.size() >= 5) {
+//                result = result.subList(0, 5);
+//            }
+//        }
 
         return bookVOMapper.book2VOBeta(CommonUtil.removeDuplicateList(result));
     }
