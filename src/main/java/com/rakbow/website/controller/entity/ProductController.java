@@ -3,16 +3,15 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.UserController;
+import com.rakbow.website.data.ApiInfo;
+import com.rakbow.website.data.ApiResult;
+import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
-import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.*;
-import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtil;
@@ -128,9 +127,6 @@ public class ProductController {
 
             //保存新增专辑
             res.message = productService.addProduct(product);
-
-            //刷新redis缓存
-            productService.refreshRedisProducts();
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -157,9 +153,6 @@ public class ProductController {
             product.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
             res.message = productService.updateProduct(product.getId(), product);
-
-            //刷新redis缓存
-            productService.refreshRedisProducts();
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

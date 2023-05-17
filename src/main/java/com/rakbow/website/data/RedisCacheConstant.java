@@ -1,10 +1,5 @@
 package com.rakbow.website.data;
 
-import com.rakbow.website.data.emun.common.EntityType;
-import io.netty.handler.ssl.SslHandshakeTimeoutException;
-
-import java.io.File;
-
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -37,7 +32,7 @@ public class RedisCacheConstant {
     public static final String REGION_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "region";
     public static final String MEDIA_FORMAT_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "mediaFormat";
     public static final String FRANCHISE_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "franchise";
-    public static final String PRODUCT_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "product";
+    public static final String ORIGIN_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "origin";
     public static final String COMPANY_ROLE_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "companyRole";
     public static final String ENTRY_CATEGORY_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "entryCategory";
     public static final String COMPANY_SET_ZH = OPTIONS + SPLIT + COMMON + SPLIT + ZH + SPLIT + "company";
@@ -51,7 +46,7 @@ public class RedisCacheConstant {
     public static final String REGION_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "region";
     public static final String MEDIA_FORMAT_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "mediaFormat";
     public static final String FRANCHISE_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "franchise";
-    public static final String PRODUCT_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "product";
+    public static final String ORIGIN_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "origin";
     public static final String COMPANY_ROLE_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "companyRole";
     public static final String ENTRY_CATEGORY_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "entryCategory";
     public static final String COMPANY_SET_EN = OPTIONS + SPLIT + COMMON + SPLIT + EN + SPLIT + "company";
