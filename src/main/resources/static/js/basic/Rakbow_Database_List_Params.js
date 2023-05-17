@@ -30,11 +30,11 @@ const entryDbList = {
                                     @click="exportCSV($event)" style="width: 8em"></p-button>
                     </div>
                     <div class="col-3 p-inputgroup flex-1">
-                            <p-dropdown v-model="refreshParam.entryCategory" :options="entryCategorySet"
-                                option-label="label" option-value="value"></p-dropdown>
-                            <p-button icon="pi pi-refresh" class="ml-2 p-button-sm"
-                                @click="refreshEntryRedis" style="width: 8em"></p-button> 
-                        </div>
+                        <p-dropdown v-model="refreshParam.entryCategory" :options="entryCategorySet"
+                            option-label="label" option-value="value"></p-dropdown>
+                        <p-button icon="pi pi-refresh" class="ml-2 p-button-sm"
+                            @click="refreshEntryRedis" style="width: 8em"></p-button> 
+                    </div>
                     <div class="col-3">
                         <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
                                     @update:model-value="onToggle" class=" text-end"
@@ -4129,6 +4129,8 @@ const productDbList = {
                                   :disabled="!selectedItems || !selectedItems.length" v-if="editAuth > 2"></p-selectbutton>
                     <p-button label="导出(CSV)" icon="pi pi-external-link" class="ml-2 p-button-help p-button-sm"
                               @click="exportCSV($event)" style="width: 8em"></p-button>
+                    <p-button icon="pi pi-refresh" class="ml-2 p-button-sm"
+                              @click="refreshRedis" style="width: 8em"></p-button> 
                 </div>
                 <div class="col-3">
                     <p-multiselect :model-value="selectedColumns" :options="columns" option-label="header"
@@ -4181,7 +4183,7 @@ const productDbList = {
         <p-column header="发行时间" field="releaseDate" :sortable="true" style="flex: 0 0 7rem"></p-column>
         <p-column header="作品分类" field="category" :show-filter-menu="false" style="flex: 0 0 9rem">
             <template #body="slotProps">
-                {{slotProps.data.category.nameZh}}
+                {{slotProps.data.category.label}}
             </template>
             <template #filter="{filterModel,filterCallback}">
                 <p-multiselect v-model="filterModel.value" @change="filterCallback()"
@@ -4367,6 +4369,16 @@ const productDbList = {
         }
     },
     methods: {
+        refreshRedis() {
+            this.editBlock = true;
+            HttpUtil.get(this.toast, PRODUCT_REFRESH_REDIS_DATA_URL)
+                .then(res => {
+                    this.editBlock = false;
+                }).catch(e => {
+                console.error(e);
+            });
+        },
+
         //region common
         updateItemsStatus(value) {
             this.editBlock = true;

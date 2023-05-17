@@ -91,6 +91,7 @@ const UPDATE_PRODUCT_URL = "/db/product/update";
 const UPDATE_PRODUCT_ORGANIZATIONS_URL = "/db/product/update-organizations";
 const UPDATE_PRODUCT_STAFF_URL = "/db/product/update-staffs";
 const GET_RELATED_PRODUCTS_URL = "/db/product/get-related-products";
+const PRODUCT_REFRESH_REDIS_DATA_URL = "/db/product/refresh-redis-data";
 //endregion
 
 //region disc

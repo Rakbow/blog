@@ -23,7 +23,7 @@ public class ProductVOAlpha {
     private String remark;//备注
 
     //关联信息
-    private JSONObject franchise;//所属系列id
+    private Attribute franchise;//所属系列id
 
     //图片
     private JSONObject cover;
