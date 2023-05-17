@@ -258,19 +258,4 @@ public class ProductController {
     }
 
     //endregion
-
-    //region other
-    @RequestMapping(value = "/refresh-redis-data", method = RequestMethod.GET)
-    @ResponseBody
-    public String refreshRedisEntryData() {
-        ApiResult res = new ApiResult();
-        try {
-            productService.refreshRedisProducts();
-            res.message = ApiInfo.REFRESH_REDIS_DATA_SUCCESS;
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return JSON.toJSONString(res);
-    }
-    //endregion
 }

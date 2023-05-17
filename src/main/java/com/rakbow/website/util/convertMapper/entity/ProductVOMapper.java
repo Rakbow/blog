@@ -78,8 +78,6 @@ public interface ProductVOMapper {
         productVOAlpha.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
         productVOAlpha.setRemark(product.getRemark());
 
-        productVOAlpha.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
-
         //关联信息
         productVOAlpha.setCategory(ProductCategory.getAttribute(product.getCategory()));
 
