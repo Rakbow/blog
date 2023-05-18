@@ -2,12 +2,9 @@ package com.rakbow.website.data.emun.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.data.Attribute;
+import com.rakbow.website.util.common.LocaleUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -38,12 +35,12 @@ public enum CompanyRole {
     @Getter
     private final String nameEn;
 
-    public static String getNameById(int id, String lang) {
+    public static String getNameById(int id) {
         for (CompanyRole item : CompanyRole.values()) {
             if (item.getId() == id) {
-                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
+                if (LocaleUtil.isEn()) {
                     return item.nameEn;
-                }else {
+                } else if (LocaleUtil.isZh()) {
                     return item.nameZh;
                 }
             }
@@ -52,17 +49,16 @@ public enum CompanyRole {
     }
 
     public static Attribute getAttribute(int id) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        return new Attribute(id, getNameById(id, lang));
+        return new Attribute(id, getNameById(id));
     }
 
     public static JSONArray getAttributeSet(String lang) {
         JSONArray set = new JSONArray();
-        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
+        if (LocaleUtil.isEn(lang)) {
             for (CompanyRole item : CompanyRole.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
             }
-        }else if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
+        } else if (LocaleUtil.isZh(lang)) {
             for (CompanyRole item : CompanyRole.values()) {
                 set.add(new Attribute(item.id, item.nameZh));
             }
