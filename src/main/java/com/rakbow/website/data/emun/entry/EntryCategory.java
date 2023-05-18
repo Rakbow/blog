@@ -21,16 +21,17 @@ import java.util.Map;
 @AllArgsConstructor
 public enum EntryCategory {
 
-    MISC(0, "杂项", "Misc"),
-    COMPANY(1, "企业/组织", "Company"),
-    PERSONNEL(2, "相关人员", "Personnel"),
-    MERCHANDISE(3, "商品类型", "Merchandise"),
-    ROLE(4, "职位", "Role"),
-    CHARACTER(5, "角色", "Character"),
-    MATERIAL(6, "原料", "Material"),
-    EVENT(7, "活动/展会", "Event"),
-    SPEC_PARAMETER(8, "规格参数", "Spec Parameter"),
-    PUBLICATION(9, "书刊", "Publication");
+    FRANCHISE(0, "系列", "Franchise"),
+    ORIGIN(1, "分类", "Origin"),
+    COMPANY(2, "企业/组织", "Company"),
+    PERSONNEL(3, "相关人员", "Personnel"),
+    MERCHANDISE(4, "商品类型", "Merchandise"),
+    ROLE(5, "职位", "Role"),
+    CHARACTER(6, "角色", "Character"),
+    MATERIAL(7, "原料", "Material"),
+    EVENT(8, "活动/展会", "Event"),
+    SPEC_PARAMETER(9, "规格参数", "Spec Parameter"),
+    PUBLICATION(10, "书刊", "Publication");
 
     public static final Map<Integer, String> categoryMapZH = Map.ofEntries(
             Map.entry(COMPANY.id, RedisCacheConstant.COMPANY_SET_ZH),

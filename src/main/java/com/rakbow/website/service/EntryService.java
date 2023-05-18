@@ -171,7 +171,13 @@ public class EntryService {
         JSONArray entriesEn = new JSONArray();
         entries.forEach(entry -> entriesEn.add(new Attribute(entry.getId(), entry.getNameEn())));
 
-        if(category == EntryCategory.COMPANY.getId()) {
+        if(category == EntryCategory.FRANCHISE.getId()) {
+            redisUtil.set(RedisCacheConstant.FRANCHISE_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.FRANCHISE_SET_EN, entriesEn);
+        } else if(category == EntryCategory.ORIGIN.getId()) {
+            redisUtil.set(RedisCacheConstant.ORIGIN_SET_ZH, entriesZh);
+            redisUtil.set(RedisCacheConstant.ORIGIN_SET_EN, entriesEn);
+        } else if(category == EntryCategory.COMPANY.getId()) {
             redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, entriesZh);
             redisUtil.set(RedisCacheConstant.COMPANY_SET_EN, entriesEn);
         } else if (category == EntryCategory.PERSONNEL.getId()) {

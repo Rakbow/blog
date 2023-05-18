@@ -10,6 +10,7 @@ import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Book;
 import com.rakbow.website.entity.Entry;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.AlbumService;
@@ -126,6 +127,74 @@ class WebSiteApplicationTests {
     @Test
     public void entryTests() {
         List<Entry> entries = entryMapper.getEntryByCategory(EntryCategory.PERSONNEL.getId());
+    }
+
+    @Test
+    public void entryTest1() {
+        List<Book> books = bookMapper.getAll();
+        int k = 134;
+        books.forEach(book -> {
+            //update companies
+            JSONArray companies = JSON.parseArray(book.getCompanies());
+            if(!companies.isEmpty()) {
+                JSONArray newCompanies = new JSONArray();
+                for (int i = 0; i < companies.size(); i++) {
+                    JSONObject company = companies.getJSONObject(i);
+                    List<Integer> members = company.getJSONArray("members").toJavaList(Integer.class);
+                    members.replaceAll(integer -> integer + k);
+                    company.put("members", members);
+                    newCompanies.add(company);
+                }
+                entityMapper.updateItemCompanies("book", book.getId(), newCompanies.toJSONString(), book.getEditedTime());
+            }
+
+            //update artists
+            JSONArray allPersonnel = JSON.parseArray(book.getPersonnel());
+            if(!allPersonnel.isEmpty()) {
+                JSONArray newPersonnel = new JSONArray();
+                for (int i = 0; i < allPersonnel.size(); i++) {
+                    JSONObject personnel = allPersonnel.getJSONObject(i);
+
+                    int role = personnel.getIntValue("role");
+                    role += k;
+                    personnel.put("role", role);
+
+                    List<Integer> members = personnel.getJSONArray("members").toJavaList(Integer.class);
+                    members.replaceAll(integer -> integer + k);
+                    personnel.put("members", members);
+
+                    newPersonnel.add(personnel);
+                }
+                entityMapper.updateItemPersonnel("book", "personnel", book.getId(), newPersonnel.toJSONString(), book.getEditedTime());
+            }
+
+            //update spec
+            JSONArray specs = JSON.parseArray(book.getSpecs());
+            if(!specs.isEmpty()) {
+                JSONArray newSpecs = new JSONArray();
+                for (int i = 0; i < specs.size(); i++) {
+                    JSONObject spec = specs.getJSONObject(i);
+
+                    int label = spec.getIntValue("label");
+                    label += k;
+                    spec.put("label", label);
+
+                    newSpecs.add(spec);
+                }
+                entityMapper.updateItemSpecs("book", book.getId(), newSpecs.toJSONString(), book.getEditedTime());
+            }
+
+            //update products
+            JSONObject products = JSONObject.parseObject(book.getProducts());
+            if(!products.isEmpty()) {
+                List<Integer> ids = products.getJSONArray("ids").toJavaList(Integer.class);
+                ids.replaceAll(integer -> integer + 15);
+                products.put("ids", ids);
+                book.setProducts(products.toJSONString());
+                bookMapper.updateBook(book.getId(), book);
+            }
+
+        });
     }
 
 }

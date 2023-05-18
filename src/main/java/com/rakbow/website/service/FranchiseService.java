@@ -5,22 +5,18 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.entity.FranchiseUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,9 +43,6 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addFranchise(Franchise franchise){
         int id = franchiseMapper.addFranchise(franchise);
-        if(!FranchiseUtil.isMetaFranchise(franchise)) {
-            refreshRedisFranchises();
-        }
         return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
     }
 
@@ -78,9 +71,6 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateFranchise(int id, Franchise franchise){
         franchiseMapper.updateFranchise(id, franchise);
-        if(!FranchiseUtil.isMetaFranchise(franchise)) {
-            refreshRedisFranchises();
-        }
         return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
     }
 
@@ -175,38 +165,6 @@ public class FranchiseService {
         updateParentFranchise(franchiseJson.getIntValue("id"), childFranchiseIds);
 
         return franchiseJson;
-    }
-
-    //endregion
-
-    //region ------其他操作------
-
-    /**
-     * 刷新Redis缓存中的franchises数据
-     *
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void refreshRedisFranchises () {
-
-        List<Franchise> franchises = franchiseMapper.getAll();
-
-        List<Attribute> franchiseSetZh = new ArrayList<>();
-        for (Franchise franchise : franchises) {
-            if(!FranchiseUtil.isMetaFranchise(franchise)) {
-                franchiseSetZh.add(new Attribute(franchise.getId(), franchise.getNameZh()));
-            }
-        }
-
-        List<Attribute> franchiseSetEn = new ArrayList<>();
-        for (Franchise franchise : franchises) {
-            if(!FranchiseUtil.isMetaFranchise(franchise)) {
-                franchiseSetEn.add(new Attribute(franchise.getId(), franchise.getNameEn()));
-            }
-        }
-
-        redisUtil.set(RedisCacheConstant.FRANCHISE_SET_ZH, franchiseSetZh);
-        redisUtil.set(RedisCacheConstant.FRANCHISE_SET_EN, franchiseSetEn);
     }
 
     //endregion

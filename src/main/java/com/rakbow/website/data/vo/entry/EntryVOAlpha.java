@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import lombok.Data;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -27,5 +26,6 @@ public class EntryVOAlpha {
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
     private String remark;//备注
+    private int status;//状态
 
 }

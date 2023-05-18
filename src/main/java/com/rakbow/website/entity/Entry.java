@@ -26,6 +26,7 @@ public class Entry {
     private Timestamp addedTime;//收录时间
     private Timestamp editedTime;//编辑时间
     private String remark;//备注
+    private int status;//状态
 
     public Entry() {
         this.id = 0;
@@ -40,6 +41,7 @@ public class Entry {
         this.addedTime = DateUtil.NOW_TIMESTAMP;
         this.editedTime = DateUtil.NOW_TIMESTAMP;
         this.remark = "";
+        this.status = 1;
     }
 
 }

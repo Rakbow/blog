@@ -6,7 +6,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.EntityType;
@@ -240,41 +239,6 @@ public class ProductService {
         int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, products);
-    }
-
-    /**
-     * 刷新Redis缓存中的products数据
-     *
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public void refreshRedisProducts() {
-
-        List<Product> products = productMapper.getAll();
-
-        JSONArray productsZh = new JSONArray();
-        products.forEach(product -> {
-            JSONObject item = new JSONObject();
-            item.put("value", product.getId());
-            item.put("label", product.getNameZh() + "(" +
-                    ProductCategory.getNameById(product.getCategory(), SystemLanguage.CHINESE.getCode()) + ")");
-            productsZh.add(item);
-        });
-
-        JSONArray productsEn = new JSONArray();
-        products.forEach(product -> {
-            JSONObject item = new JSONObject();
-            item.put("value", product.getId());
-            item.put("label", product.getNameEn() + "(" +
-                    ProductCategory.getNameById(product.getCategory(), SystemLanguage.ENGLISH.getCode()) + ")");
-            productsEn.add(item);
-        });
-
-        redisUtil.set(RedisCacheConstant.PRODUCT_SET_ZH, productsZh);
-        redisUtil.set(RedisCacheConstant.PRODUCT_SET_EN, productsEn);
-        //缓存时间1个月
-//        redisUtil.expire(RedisCacheConstant.PRODUCT_SET, 2592000);
-
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)

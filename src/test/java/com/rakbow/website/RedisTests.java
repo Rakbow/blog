@@ -2,7 +2,6 @@ package com.rakbow.website;
 
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.entity.EntityStatistic;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.*;
@@ -64,9 +63,9 @@ public class RedisTests {
         // entityService.refreshRedisEntries(EntryCategory.COMPANY);
         // productService.refreshRedisProducts();
         // franchiseService.refreshRedisFranchises();
-        // entityService.refreshRedisEmunData();
+        entityService.refreshRedisEmunData();
         // entryService.refreshRedisEntries(EntryCategory.ROLE);
-        entryService.refreshRedisEntries(EntryCategory.PERSONNEL.getId());
+        // entryService.refreshRedisEntries(EntryCategory.PERSONNEL.getId());
         // entryService.refreshRedisEntries(EntryCategory.SPEC_PARAMETER);
         // entryService.refreshRedisEntries(EntryCategory.PUBLICATION);
         // entryService.refreshRedisEntries(EntryCategory.COMPANY);

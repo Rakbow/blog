@@ -61,9 +61,9 @@ public class ProductUtil {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         String key;
         if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
-            key = RedisCacheConstant.PRODUCT_SET_EN;
+            key = RedisCacheConstant.ORIGIN_SET_EN;
         }else {
-            key = RedisCacheConstant.PRODUCT_SET_ZH;
+            key = RedisCacheConstant.ORIGIN_SET_ZH;
         }
         List<Attribute> allProducts = JSON.parseArray(JSON.toJSONString(redisUtil.get(key))).toJavaList(Attribute.class);
 
