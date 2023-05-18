@@ -2,12 +2,13 @@ package com.rakbow.website.data.emun.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.data.vo.LanguageVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -33,7 +34,7 @@ public enum Language {
     public static String getNameByCode(String code, String lang) {
         for (Language language : Language.values()) {
             if (StringUtils.equals(language.code, code)) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     return language.nameEn;
                 }else {
                     return language.nameZh;
@@ -51,7 +52,7 @@ public enum Language {
     * */
     public static JSONArray getAttributeSet(String lang) {
         JSONArray set = new JSONArray();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (Language item : Language.values()) {
                 JSONObject jo = new JSONObject();
                 jo.put("name", item.nameEn);
@@ -59,7 +60,7 @@ public enum Language {
                 set.add(jo);
             }
         }
-        else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+        else if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
             for (Language item : Language.values()) {
                 JSONObject jo = new JSONObject();
                 jo.put("name", item.nameZh);

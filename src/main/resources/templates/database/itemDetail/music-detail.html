@@ -723,7 +723,7 @@
             //region edit
             const like = () => {
                 let json = {
-                    entityType: ENTITY.MUSIC,
+                    entity: ENTITY.MUSIC,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -737,7 +737,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.MUSIC,
+                    entity: ENTITY.MUSIC,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };

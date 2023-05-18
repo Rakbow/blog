@@ -913,14 +913,14 @@
                     label: RKW_Web.ItemDetailOptionCompaniesEditTitle,
                     icon: 'pi pi-building',
                     command: () => {
-                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editCompanies, option.value.companyRoleSet, option.value.companySet);
+                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entity, album.value.editCompanies, option.value.companyRoleSet, option.value.companySet);
                     }
                 },
                 {
                     label: RKW_Web.ItemDetailOptionPersonnelEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
-                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, album.value.editArtists, option.value.roleSet, option.value.personnelSet);
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entity, album.value.editArtists, option.value.roleSet, option.value.personnelSet);
                     }
                 },
                 {
@@ -962,7 +962,7 @@
                 albumEdit.value.franchises = label2value(detailInfo.value.franchises, option.value.franchiseSet).concat();
                 let json = {
                     franchises: albumEdit.value.franchises,
-                    entityType: ENTITY.ALBUM
+                    entity: ENTITY.ALBUM
                 };
                 HttpUtil.post(toast, GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -1003,7 +1003,7 @@
                 if(ev.value.length !== 0) {
                     let json = {
                         franchises: ev.value,
-                        entityType: ENTITY.ALBUM
+                        entity: ENTITY.ALBUM
                     };
                     HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
@@ -1024,7 +1024,7 @@
             };
             const like = () => {
                 let json = {
-                    entityType: ENTITY.ALBUM,
+                    entity: ENTITY.ALBUM,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -1038,7 +1038,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.ALBUM,
+                    entity: ENTITY.ALBUM,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };

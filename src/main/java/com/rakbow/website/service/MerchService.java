@@ -7,7 +7,7 @@ import com.rakbow.website.dao.MerchMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.entity.Merch;
 import com.rakbow.website.util.common.CommonUtil;
@@ -48,17 +48,17 @@ public class MerchService {
 
     //region ------更删改查------
 
-    /**
-     * 新增周边
-     *
-     * @param merch 新增的周边
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addMerch(Merch merch) {
-        int id = merchMapper.addMerch(merch);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.MERCH.getNameZh());
-    }
+//    /**
+//     * 新增周边
+//     *
+//     * @param merch 新增的周边
+//     * @author rakbow
+//     */
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public String addMerch(Merch merch) {
+//        int id = merchMapper.addMerch(merch);
+//        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.MERCH.getNameZh());
+//    }
 
     /**
      * 根据Id获取周边
@@ -87,31 +87,31 @@ public class MerchService {
         return merchMapper.getMerch(id, false);
     }
 
-    /**
-     * 根据Id删除周边
-     *
-     * @param merch 周边
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteMerch(Merch merch) {
-        //删除前先把服务器上对应图片全部删除
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(merch.getImages()));
-        merchMapper.deleteMerch(merch.getId());
-        visitUtil.deleteVisit(EntityType.MERCH.getId(), merch.getId());
-    }
+//    /**
+//     * 根据Id删除周边
+//     *
+//     * @param merch 周边
+//     * @author rakbow
+//     */
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public void deleteMerch(Merch merch) {
+//        //删除前先把服务器上对应图片全部删除
+//        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(merch.getImages()));
+//        merchMapper.deleteMerch(merch.getId());
+//        visitUtil.deleteVisit(Entity.MERCH.getId(), merch.getId());
+//    }
 
-    /**
-     * 更新周边基础信息
-     *
-     * @param id 周边id
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateMerch(int id, Merch merch) {
-        merchMapper.updateMerch(id, merch);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
-    }
+//    /**
+//     * 更新周边基础信息
+//     *
+//     * @param id 周边id
+//     * @author rakbow
+//     */
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public String updateMerch(int id, Merch merch) {
+//        merchMapper.updateMerch(id, merch);
+//        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.MERCH.getNameZh());
+//    }
 
     //endregion
 

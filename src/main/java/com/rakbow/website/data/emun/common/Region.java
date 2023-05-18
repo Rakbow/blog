@@ -2,12 +2,13 @@ package com.rakbow.website.data.emun.common;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.data.vo.RegionVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -48,7 +49,7 @@ public enum Region {
     public static String getNameByCode(String code, String lang){
         for (Region region : Region.values()) {
             if (StringUtils.equals(region.code, code)) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     return region.nameEn;
                 }else {
                     return region.nameZh;
@@ -66,7 +67,7 @@ public enum Region {
      */
     public static JSONArray getAttributeSet(String lang) {
         JSONArray set = new JSONArray();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (Region region : Region.values()) {
                 JSONObject jo = new JSONObject();
                 jo.put("name", region.nameEn);
@@ -75,7 +76,7 @@ public enum Region {
                 set.add(jo);
             }
         }
-        else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+        else if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
             for (Region region : Region.values()) {
                 JSONObject jo = new JSONObject();
                 jo.put("name", region.nameZh);

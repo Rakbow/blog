@@ -6,7 +6,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.entry.EntryVOAlpha;
 import com.rakbow.website.entity.Entry;
 import com.rakbow.website.service.EntityService;
@@ -107,7 +107,7 @@ public class EntryController {
                 //从数据库中删除专辑
                 entryService.deleteEntry(entry);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ENTRY.getNameZh());
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.ENTRY.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

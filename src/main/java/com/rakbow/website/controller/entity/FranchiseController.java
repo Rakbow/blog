@@ -7,7 +7,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.service.EntityService;
@@ -61,27 +61,27 @@ public class FranchiseController {
     //region ------获取页面------
 
     //获取单个系列详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getFranchiseDetail(@PathVariable("id") int id, Model model) {
-        Franchise franchise = franchiseService.getFranchiseWithAuth(id);
-        if (franchise == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.FRANCHISE.getNameZh()));
-            return "/error/404";
-        }
-
-        model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
-        model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.FRANCHISE.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.FRANCHISE.getId(), id, franchise));
-        //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(franchise, EntityType.FRANCHISE.getId()));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(franchise.getImages(), 200, EntityType.FRANCHISE, false));
-        return "/database/itemDetail/franchise-detail";
-    }
+//    @UniqueVisitor
+//    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+//    public String getFranchiseDetail(@PathVariable("id") int id, Model model) {
+//        Franchise franchise = franchiseService.getFranchiseWithAuth(id);
+//        if (franchise == null) {
+//            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.FRANCHISE.getNameZh()));
+//            return "/error/404";
+//        }
+//
+//        model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
+//        model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
+//        //前端选项数据
+//        model.addAttribute("options", entityUtil.getDetailOptions(Entity.FRANCHISE.getId()));
+//        //获取页面数据
+//        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.FRANCHISE.getId(), id, franchise));
+//        //实体类通用信息
+//        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(franchise, Entity.FRANCHISE.getId()));
+//        //图片相关
+//        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(franchise.getImages(), 200, Entity.FRANCHISE, false));
+//        return "/database/itemDetail/franchise-detail";
+//    }
 
     //endregion
 
@@ -124,7 +124,7 @@ public class FranchiseController {
             Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
 
             //保存新增
-            res.message = franchiseService.addFranchise(franchise);
+//            res.message = franchiseService.addFranchise(franchise);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -150,7 +150,7 @@ public class FranchiseController {
             //修改编辑时间
             franchise.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
-            res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
+//            res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

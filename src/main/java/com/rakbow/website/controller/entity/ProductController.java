@@ -7,7 +7,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
@@ -65,99 +65,99 @@ public class ProductController {
     //region ------获取页面------
 
     //获取单个产品详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getProductDetail(@PathVariable("id") int id, Model model) {
-        Product product = productService.getProductWithAuth(id);
-        if (product == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.PRODUCT.getNameZh()));
-            return "/error/404";
-        }
+//    @UniqueVisitor
+//    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+//    public String getProductDetail(@PathVariable("id") int id, Model model) {
+//        Product product = productService.getProductWithAuth(id);
+//        if (product == null) {
+//            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.PRODUCT.getNameZh()));
+//            return "/error/404";
+//        }
+//
+//        model.addAttribute("product", productVOMapper.product2VO(product));
+//        //前端选项数据
+//        model.addAttribute("options", entityUtil.getDetailOptions(Entity.PRODUCT.getId()));
+//        // model.addAttribute("relatedProducts", productService.getRelatedProducts(id));
+//
+//        if (product.getCategory() == ProductCategory.ANIMATION.getId()
+//                || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getId()
+//                || product.getCategory() == ProductCategory.OVA_OAD.getId()
+//                || product.getCategory() == ProductCategory.TV_SERIES.getId()) {
+//            model.addAttribute("albums", albumService.getAlbumsByProductId(id));
+//            model.addAttribute("discs", discService.getDiscsByProductId(id));
+//        }
+//        if (product.getCategory() == ProductCategory.NOVEL.getId()
+//                || product.getCategory() == ProductCategory.MANGA.getId()
+//                || product.getCategory() == ProductCategory.PUBLICATION.getId()) {
+//            model.addAttribute("books", bookService.getBooksByProductId(id));
+//        }
+//        if (product.getCategory() == ProductCategory.GAME.getId()) {
+//            model.addAttribute("albums", albumService.getAlbumsByProductId(id));
+//            model.addAttribute("games", gameService.getGamesByProductId(id));
+//        }
 
-        model.addAttribute("product", productVOMapper.product2VO(product));
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.PRODUCT.getId()));
-        // model.addAttribute("relatedProducts", productService.getRelatedProducts(id));
-
-        if (product.getCategory() == ProductCategory.ANIMATION.getId()
-                || product.getCategory() == ProductCategory.LIVE_ACTION_MOVIE.getId()
-                || product.getCategory() == ProductCategory.OVA_OAD.getId()
-                || product.getCategory() == ProductCategory.TV_SERIES.getId()) {
-            model.addAttribute("albums", albumService.getAlbumsByProductId(id));
-            model.addAttribute("discs", discService.getDiscsByProductId(id));
-        }
-        if (product.getCategory() == ProductCategory.NOVEL.getId()
-                || product.getCategory() == ProductCategory.MANGA.getId()
-                || product.getCategory() == ProductCategory.PUBLICATION.getId()) {
-            model.addAttribute("books", bookService.getBooksByProductId(id));
-        }
-        if (product.getCategory() == ProductCategory.GAME.getId()) {
-            model.addAttribute("albums", albumService.getAlbumsByProductId(id));
-            model.addAttribute("games", gameService.getGamesByProductId(id));
-        }
-
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.PRODUCT.getId(), id, product));
-        //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(product, EntityType.PRODUCT.getId()));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(product.getImages(), 100, EntityType.PRODUCT, true));
-
-        return "/database/itemDetail/product-detail";
-    }
+//        //获取页面数据
+//        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.PRODUCT.getId(), id, product));
+//        //实体类通用信息
+//        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(product, Entity.PRODUCT.getId()));
+//        //图片相关
+//        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(product.getImages(), 100, Entity.PRODUCT, true));
+//
+//        return "/database/itemDetail/product-detail";
+//    }
     //endregion
 
     //region ------基础增删改查------
 
     //新增作品
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    @ResponseBody
-    public String addProduct(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
-        try {
-            //检测数据
-            String errorMsg = productService.checkProductJson(param);
-            if(!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            Product product = entityService.json2Entity(param, Product.class);
-
-            //保存新增专辑
-            res.message = productService.addProduct(product);
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return JSON.toJSONString(res);
-    }
+//    @RequestMapping(value = "/add", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String addProduct(@RequestBody String json) {
+//        ApiResult res = new ApiResult();
+//        JSONObject param = JSON.parseObject(json);
+//        try {
+//            //检测数据
+//            String errorMsg = productService.checkProductJson(param);
+//            if(!StringUtils.isBlank(errorMsg)) {
+//                res.setErrorMessage(errorMsg);
+//                return JSON.toJSONString(res);
+//            }
+//
+//            Product product = entityService.json2Entity(param, Product.class);
+//
+//            //保存新增专辑
+//            res.message = productService.addProduct(product);
+//        } catch (Exception ex) {
+//            res.setErrorMessage(ex.getMessage());
+//        }
+//        return JSON.toJSONString(res);
+//    }
 
     //更新作品基础信息
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateProduct(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
-        try {
-            //检测数据
-            String errorMsg = productService.checkProductJson(param);
-            if(!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
-            }
-
-            Product product = entityService.json2Entity(param, Product.class);
-
-            //修改编辑时间
-            product.setEditedTime(DateUtil.NOW_TIMESTAMP);
-
-            res.message = productService.updateProduct(product.getId(), product);
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return JSON.toJSONString(res);
-    }
+//    @RequestMapping(value = "/update", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String updateProduct(@RequestBody String json) {
+//        ApiResult res = new ApiResult();
+//        JSONObject param = JSON.parseObject(json);
+//        try {
+//            //检测数据
+//            String errorMsg = productService.checkProductJson(param);
+//            if(!StringUtils.isBlank(errorMsg)) {
+//                res.setErrorMessage(errorMsg);
+//                return JSON.toJSONString(res);
+//            }
+//
+//            Product product = entityService.json2Entity(param, Product.class);
+//
+//            //修改编辑时间
+//            product.setEditedTime(DateUtil.NOW_TIMESTAMP);
+//
+//            res.message = productService.updateProduct(product.getId(), product);
+//        } catch (Exception ex) {
+//            res.setErrorMessage(ex.getMessage());
+//        }
+//        return JSON.toJSONString(res);
+//    }
 
     //更新游戏作者信息
     @RequestMapping(path = "/update-organizations", method = RequestMethod.POST)

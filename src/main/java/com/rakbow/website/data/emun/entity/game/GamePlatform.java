@@ -1,7 +1,6 @@
 package com.rakbow.website.data.emun.entity.game;
 
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +8,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @AllArgsConstructor
 public enum GamePlatform {
@@ -53,7 +53,7 @@ public enum GamePlatform {
     public static String getNameById(int id, String lang) {
         for (GamePlatform item : GamePlatform.values()) {
             if (item.getId() == id) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     return item.getNameEn();
                 }else {
                     return item.getNameZh();
@@ -65,11 +65,11 @@ public enum GamePlatform {
 
     public static List<Attribute> getAttributeSet(String lang) {
         List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (GamePlatform item : GamePlatform.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
             }
-        }else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+        }else if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
             for (GamePlatform item : GamePlatform.values()) {
                 set.add(new Attribute(item.id, item.nameZh));
             }

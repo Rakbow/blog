@@ -1,7 +1,6 @@
 package com.rakbow.website.data.emun.entity.album;
 
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.util.common.CommonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +9,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -44,20 +44,18 @@ public enum AlbumFormat {
     private final String nameEn;
 
     public static List<String> getNamesByIds(List<Integer> ids) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        return ids.stream().map(id -> getNameById(id, lang)).collect(Collectors.toList());
+        return ids.stream().map(AlbumFormat::getNameById).collect(Collectors.toList());
     }
 
     public static List<Integer> getIdsByNames(List<String> names) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
         if (names.isEmpty()) return new ArrayList<>();
-        return names.stream().map(name -> getIdByName(name, lang)).collect(Collectors.toList());
+        return names.stream().map(AlbumFormat::getIdByName).collect(Collectors.toList());
     }
 
-    public static String getNameById(int id, String lang) {
+    public static String getNameById(int id) {
         for (AlbumFormat format : AlbumFormat.values()) {
             if (format.getId() == id) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(LocaleContextHolder.getLocale().getLanguage(), Locale.ENGLISH.getLanguage())) {
                     return format.getNameEn();
                 }else {
                     return format.getNameZh();
@@ -67,8 +65,8 @@ public enum AlbumFormat {
         return null;
     }
 
-    public static int getIdByName(String name, String lang) {
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+    public static int getIdByName(String name) {
+        if(StringUtils.equals(LocaleContextHolder.getLocale().getLanguage(), Locale.ENGLISH.getLanguage())) {
             for (AlbumFormat format : AlbumFormat.values()) {
                 if(StringUtils.equals(name, format.nameEn)) {
                     return format.id;
@@ -86,14 +84,12 @@ public enum AlbumFormat {
 
     public static List<Attribute> getAttributes(String json) {
 
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-
         List<Attribute> res = new ArrayList<>();
 
         List<Integer> ids = CommonUtil.ids2List(json);
 
         ids.forEach(id -> {
-            res.add(new Attribute(id, getNameById(id, lang)));
+            res.add(new Attribute(id, getNameById(id)));
         });
 
         return res;
@@ -107,11 +103,11 @@ public enum AlbumFormat {
      */
     public static List<Attribute> getAttributeSet(String lang) {
         List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (AlbumFormat item : AlbumFormat.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
             }
-        }else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+        }else if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (AlbumFormat item : AlbumFormat.values()) {
                 set.add(new Attribute(item.id, item.nameZh));
             }

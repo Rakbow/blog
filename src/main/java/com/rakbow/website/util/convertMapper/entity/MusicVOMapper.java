@@ -2,7 +2,7 @@ package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.CommonConstant;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.entity.music.AudioType;
 import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.data.vo.music.MusicVO;
@@ -147,8 +147,8 @@ public interface MusicVOMapper {
         musicVOBeta.setAlbumName(musicAlbumView.getAlbumName());
         musicVOBeta.setCover(QiniuImageUtil.getThumb70Url(musicAlbumView.getAlbumImages()));
 
-        musicVOBeta.setVisitCount(visitUtil.getVisit(EntityType.MUSIC.getId(), musicAlbumView.getId()));
-        musicVOBeta.setLikeCount(likeUtil.getLike(EntityType.MUSIC.getId(), musicAlbumView.getId()));
+        musicVOBeta.setVisitCount(visitUtil.getVisit(Entity.MUSIC.getId(), musicAlbumView.getId()));
+        musicVOBeta.setLikeCount(likeUtil.getLike(Entity.MUSIC.getId(), musicAlbumView.getId()));
 
         return musicVOBeta;
     }

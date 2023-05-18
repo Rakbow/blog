@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.emun.system.SystemLanguage;
@@ -91,49 +91,49 @@ public class ProductUtil {
     public static List<Integer> getCategoriesByEntityType (int entityType) {
 
         List<Integer> categories = new ArrayList<>();
-        if (entityType == EntityType.PRODUCT.getId()) {
-            categories.add(ProductCategory.UNCATEGORIZED.getId());
-            categories.add(ProductCategory.GAME.getId());
-            categories.add(ProductCategory.ANIMATION.getId());
-            categories.add(ProductCategory.OVA_OAD.getId());
-            categories.add(ProductCategory.TV_SERIES.getId());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
-            categories.add(ProductCategory.NOVEL.getId());
-            categories.add(ProductCategory.MANGA.getId());
-            categories.add(ProductCategory.PUBLICATION.getId());
-            categories.add(ProductCategory.MISC.getId());
-        }
-        if (entityType == EntityType.ALBUM.getId()) {
-            categories.add(ProductCategory.GAME.getId());
-            categories.add(ProductCategory.ANIMATION.getId());
-            categories.add(ProductCategory.OVA_OAD.getId());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
-            categories.add(ProductCategory.TV_SERIES.getId());
-        }
-        if (entityType == EntityType.BOOK.getId()) {
-            categories.add(ProductCategory.NOVEL.getId());
-            categories.add(ProductCategory.MANGA.getId());
-            categories.add(ProductCategory.PUBLICATION.getId());
-        }
-        if (entityType == EntityType.DISC.getId()) {
-            categories.add(ProductCategory.ANIMATION.getId());
-            categories.add(ProductCategory.OVA_OAD.getId());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
-            categories.add(ProductCategory.TV_SERIES.getId());
-        }
-        if (entityType == EntityType.GAME.getId()) {
-            categories.add(ProductCategory.GAME.getId());
-        }
-        if (entityType == EntityType.MERCH.getId()) {
+//        if (entityType == Entity.PRODUCT.getId()) {
+//            categories.add(ProductCategory.UNCATEGORIZED.getId());
+//            categories.add(ProductCategory.GAME.getId());
+//            categories.add(ProductCategory.ANIMATION.getId());
+//            categories.add(ProductCategory.OVA_OAD.getId());
+//            categories.add(ProductCategory.TV_SERIES.getId());
+//            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+//            categories.add(ProductCategory.NOVEL.getId());
+//            categories.add(ProductCategory.MANGA.getId());
+//            categories.add(ProductCategory.PUBLICATION.getId());
+//            categories.add(ProductCategory.MISC.getId());
+//        }
+        if (entityType == Entity.ALBUM.getId()) {
             categories.add(ProductCategory.GAME.getId());
             categories.add(ProductCategory.ANIMATION.getId());
             categories.add(ProductCategory.OVA_OAD.getId());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
             categories.add(ProductCategory.TV_SERIES.getId());
+        }
+        if (entityType == Entity.BOOK.getId()) {
             categories.add(ProductCategory.NOVEL.getId());
             categories.add(ProductCategory.MANGA.getId());
             categories.add(ProductCategory.PUBLICATION.getId());
         }
+        if (entityType == Entity.DISC.getId()) {
+            categories.add(ProductCategory.ANIMATION.getId());
+            categories.add(ProductCategory.OVA_OAD.getId());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+            categories.add(ProductCategory.TV_SERIES.getId());
+        }
+        if (entityType == Entity.GAME.getId()) {
+            categories.add(ProductCategory.GAME.getId());
+        }
+//        if (entityType == Entity.MERCH.getId()) {
+//            categories.add(ProductCategory.GAME.getId());
+//            categories.add(ProductCategory.ANIMATION.getId());
+//            categories.add(ProductCategory.OVA_OAD.getId());
+//            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
+//            categories.add(ProductCategory.TV_SERIES.getId());
+//            categories.add(ProductCategory.NOVEL.getId());
+//            categories.add(ProductCategory.MANGA.getId());
+//            categories.add(ProductCategory.PUBLICATION.getId());
+//        }
         return categories;
     }
 

@@ -2,6 +2,8 @@ package com.rakbow.website.controller.interceptor;
 
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
+import java.util.Locale;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -15,6 +17,8 @@ public class LocaleResolver extends CookieLocaleResolver {
         this.setCookieName("locale");
         //cookie有效期30天
         this.setCookieMaxAge(30*24*60*60);
+        //默认语言为中文
+        this.setDefaultLocale(Locale.CHINESE);
     }
 
 }

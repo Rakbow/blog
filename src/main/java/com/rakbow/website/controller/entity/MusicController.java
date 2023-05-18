@@ -7,7 +7,7 @@ import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
 import com.rakbow.website.service.AlbumService;
@@ -64,7 +64,7 @@ public class MusicController {
     public String getMusicDetail(@PathVariable("id") int id, Model model) {
         Music music = musicService.getMusicWithAuth(id);
         if (music == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MUSIC.getNameZh()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.MUSIC.getNameZh()));
             return "/error/404";
         }
         Album album = albumService.getAlbum(music.getAlbumId());
@@ -76,11 +76,11 @@ public class MusicController {
             model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
         }
         //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.MUSIC.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(Entity.MUSIC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MUSIC.getId(), id, music));
+        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.MUSIC.getId(), id, music));
         //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(music, EntityType.MUSIC.getId()));
+        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(music, Entity.MUSIC.getId()));
         //获取同属一张碟片的音频
         model.addAttribute("relatedMusics", musicService.getRelatedMusics(music, coverUrl));
         //获取所属专辑的信息

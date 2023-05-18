@@ -109,7 +109,7 @@
                                          class="search-input"></p-inputtext>
                         </div>
                         <div class="col-2" style="margin: auto;">
-                            <p-dropdown v-model="searchParams.entityType" :options="ENTITY_TYPE" option-label="label"
+                            <p-dropdown v-model="searchParams.entity" :options="ENTITY_TYPE" option-label="label"
                                         option-value="value" placeholder="类型">
                                 <template #value="slotProps">
                                     <div class="country-item country-item-value" v-if="slotProps.value">
@@ -145,7 +145,7 @@
                             </div>
                         </div>
                         <p-scrollpanel style="height: 530px">
-                            <div v-if="searchResult.entityType == 1" v-for="result of searchResult.data">
+                            <div v-if="searchResult.entity == 1" v-for="result of searchResult.data">
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/album/'+ result.id">
@@ -183,7 +183,7 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
-                            <div v-if="searchResult.entityType == 2" v-for="result of searchResult.data">
+                            <div v-if="searchResult.entity == 2" v-for="result of searchResult.data">
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/disc/'+ result.id">
@@ -228,7 +228,7 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
-                            <div v-if="searchResult.entityType == 3" v-for="result of searchResult.data">
+                            <div v-if="searchResult.entity == 3" v-for="result of searchResult.data">
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/book/'+ result.id">
@@ -277,7 +277,7 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
-                            <div v-if="searchResult.entityType == 4" v-for="result of searchResult.data">
+                            <div v-if="searchResult.entity == 4" v-for="result of searchResult.data">
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/merch/'+ result.id">
@@ -311,7 +311,7 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
-                            <div v-if="searchResult.entityType == 5" v-for="result of searchResult.data">
+                            <div v-if="searchResult.entity == 5" v-for="result of searchResult.data">
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/game/'+ result.id">
@@ -352,7 +352,7 @@
                                 </div>
                                 <p-divider></p-divider>
                             </div>
-                            <div v-if="searchResult.entityType == 9" v-for="result of searchResult.data">
+                            <div v-if="searchResult.entity == 9" v-for="result of searchResult.data">
                                 <div class="col-12">
                                     <div class="search-item">
                                         <a class="text-center" :href="'/db/music/'+ result.id">
@@ -581,7 +581,7 @@
 
             const searchParams = ref({
                 keyword: '',
-                entityType: 0,
+                entity: 0,
                 offset: 0,
                 limit: 10
             });

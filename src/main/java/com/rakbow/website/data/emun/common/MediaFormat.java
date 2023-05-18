@@ -1,7 +1,6 @@
 package com.rakbow.website.data.emun.common;
 
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.util.common.CommonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +9,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +54,7 @@ public enum MediaFormat {
     public static String getNameById(int id, String lang) {
         for (MediaFormat item : MediaFormat.values()) {
             if (item.getId() == id) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     return item.getNameEn();
                 }else {
                     return item.getNameZh();
@@ -65,7 +65,7 @@ public enum MediaFormat {
     }
 
     public static int getIdByName(String name, String lang) {
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (MediaFormat format : MediaFormat.values()) {
                 if(StringUtils.equals(name, format.nameEn)) {
                     return format.id;
@@ -83,11 +83,11 @@ public enum MediaFormat {
 
     public static List<Attribute> getAttributeSet(String lang) {
         List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             for (MediaFormat item : MediaFormat.values()) {
                 set.add(new Attribute(item.id, item.nameEn));
             }
-        }else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+        }else if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
             for (MediaFormat item : MediaFormat.values()) {
                 set.add(new Attribute(item.id, item.nameZh));
             }

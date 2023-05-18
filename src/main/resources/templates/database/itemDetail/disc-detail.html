@@ -530,7 +530,7 @@
             //region edit
             const like = () => {
                 let json = {
-                    entityType: ENTITY.DISC,
+                    entity: ENTITY.DISC,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -544,7 +544,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.DISC,
+                    entity: ENTITY.DISC,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
@@ -562,7 +562,7 @@
                     label: RKW_Web.ItemDetailOptionSpecEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, disc.value.spec);
+                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entity, disc.value.spec);
                     }
                 },
                 {
@@ -595,7 +595,7 @@
                 discEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
                     franchises: discEdit.value.franchises,
-                    entityType: ENTITY.DISC
+                    entity: ENTITY.DISC
                 };
                 HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -635,7 +635,7 @@
                 if(ev.value.length !== 0) {
                     let json = {
                         franchises: ev.value,
-                        entityType: ENTITY.DISC
+                        entity: ENTITY.DISC
                     };
                     HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {

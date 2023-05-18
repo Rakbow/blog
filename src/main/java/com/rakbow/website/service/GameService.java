@@ -7,7 +7,7 @@ import com.rakbow.website.dao.GameMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.game.GameVOBeta;
 import com.rakbow.website.entity.Game;
 import com.rakbow.website.util.common.CommonUtil;
@@ -58,7 +58,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addGame(Game game) {
         int id = gameMapper.addGame(game);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.GAME.getNameZh());
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.GAME.getNameZh());
     }
 
     /**
@@ -99,7 +99,7 @@ public class GameService {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(game.getImages()));
         gameMapper.deleteGame(game.getId());
-        visitUtil.deleteVisit(EntityType.GAME.getId(), game.getId());
+        visitUtil.deleteVisit(Entity.GAME.getId(), game.getId());
     }
 
     /**
@@ -111,7 +111,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGame(int id, Game game) {
         gameMapper.updateGame(id, game);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.GAME.getNameZh());
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.GAME.getNameZh());
     }
 
     //endregion

@@ -16,13 +16,11 @@ import com.rakbow.website.data.emun.entity.merch.MerchCategory;
 import com.rakbow.website.data.emun.entity.music.AudioType;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.emun.entry.EntryCategory;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
-import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.entity.*;
 import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.util.common.*;
@@ -41,6 +39,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -90,12 +89,12 @@ public class EntityService {
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
 
     private final List<Integer> searchEntityTypes = new ArrayList<>(){{
-        add(EntityType.ALBUM.getId());
-        add(EntityType.BOOK.getId());
-        add(EntityType.DISC.getId());
-        add(EntityType.GAME.getId());
-        add(EntityType.MERCH.getId());
-        add(EntityType.MUSIC.getId());
+        add(Entity.ALBUM.getId());
+        add(Entity.BOOK.getId());
+        add(Entity.DISC.getId());
+        add(Entity.GAME.getId());
+//        add(Entity.MERCH.getId());
+        add(Entity.MUSIC.getId());
     }};
 
     //endregion
@@ -146,30 +145,30 @@ public class EntityService {
         return pageInfo;
     }
 
-    /**
-     * 获取实体表数据
-     *
-     * @return JSONObject
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public JSONObject getItemAmount() {
-        JSONObject entityAmounts = new JSONObject();
-        int total = 0;
-        for (EntityType type : EntityType.ENTITY_TYPES) {
-            Object amount;
-            try {
-                amount = redisUtil.get("entity_amount:" + type.getId());
-            }
-            catch (Exception e) {
-                amount = 0;
-            }
-            total += Integer.parseInt(amount.toString());
-            entityAmounts.put(type.getNameEn().toLowerCase() + "Amount", amount);
-        }
-        entityAmounts.put("Total", total);
-        return entityAmounts;
-    }
+//    /**
+//     * 获取实体表数据
+//     *
+//     * @return JSONObject
+//     * @author rakbow
+//     */
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+//    public JSONObject getItemAmount() {
+//        JSONObject entityAmounts = new JSONObject();
+//        int total = 0;
+//        for (Entity type : Entity.ENTITY_TYPES) {
+//            Object amount;
+//            try {
+//                amount = redisUtil.get("entity_amount:" + type.getId());
+//            }
+//            catch (Exception e) {
+//                amount = 0;
+//            }
+//            total += Integer.parseInt(amount.toString());
+//            entityAmounts.put(type.getNameEn().toLowerCase() + "Amount", amount);
+//        }
+//        entityAmounts.put("Total", total);
+//        return entityAmounts;
+//    }
 
     /**
      * 获取浏览量最高的item
@@ -185,7 +184,7 @@ public class EntityService {
         List<Integer> ids = new ArrayList<>(visits.keySet());
 
         if(!ids.isEmpty()) {
-            if(entityType == EntityType.ALBUM.getId()) {
+            if(entityType == Entity.ALBUM.getId()) {
                 List<AlbumVOAlpha> items = albumVOMapper.toVOAlpha(albumMapper.getAlbums(ids));
 
                 for (AlbumVOAlpha item : items) {
@@ -193,7 +192,7 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == EntityType.BOOK.getId()) {
+            if(entityType == Entity.BOOK.getId()) {
                 List<BookVOBeta> items = bookVOMapper.book2VOBeta(bookMapper.getBooks(ids));
 
                 for (BookVOBeta item : items) {
@@ -201,7 +200,7 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == EntityType.DISC.getId()) {
+            if(entityType == Entity.DISC.getId()) {
                 List<DiscVOAlpha> items = discVOMapper.disc2VOAlpha(discMapper.getDiscs(ids));
 
                 for (DiscVOAlpha item : items) {
@@ -209,7 +208,7 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == EntityType.GAME.getId()) {
+            if(entityType == Entity.GAME.getId()) {
                 List<GameVOAlpha> items = gameVOMapper.game2VOAlpha(gameMapper.getGames(ids));
 
                 for (GameVOAlpha item : items) {
@@ -217,14 +216,14 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == EntityType.MERCH.getId()) {
-                List<MerchVOAlpha> items = merchVOMapper.merch2VOAlpha(merchMapper.getMerchs(ids));
-
-                for (MerchVOAlpha item : items) {
-                    item.setVisitNum(visits.get(item.getId()));
-                }
-                return JSON.parseArray(JSON.toJSONString(items));
-            }
+//            if(entityType == Entity.MERCH.getId()) {
+//                List<MerchVOAlpha> items = merchVOMapper.merch2VOAlpha(merchMapper.getMerchs(ids));
+//
+//                for (MerchVOAlpha item : items) {
+//                    item.setVisitNum(visits.get(item.getId()));
+//                }
+//                return JSON.parseArray(JSON.toJSONString(items));
+//            }
         }
 
         return null;
@@ -239,21 +238,21 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public JSONArray getJustAddedItems(int entityType, int limit) {
-        if(entityType == EntityType.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getId()) {
             return JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOBeta(albumMapper.getAlbumOrderByAddedTime(limit))));
         }
-        if(entityType == EntityType.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getId()) {
             return JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByAddedTime(limit))));
         }
-        if(entityType == EntityType.DISC.getId()) {
+        if(entityType == Entity.DISC.getId()) {
             return JSON.parseArray(JSON.toJSONString(discVOMapper.disc2VOBeta(discMapper.getDiscsOrderByAddedTime(limit))));
         }
-        if(entityType == EntityType.GAME.getId()) {
+        if(entityType == Entity.GAME.getId()) {
             return JSON.parseArray(JSON.toJSONString(gameVOMapper.game2VOBeta(gameMapper.getGamesOrderByAddedTime(limit))));
         }
-        if(entityType == EntityType.MERCH.getId()) {
-            return JSON.parseArray(JSON.toJSONString(merchVOMapper.merch2VOAlpha(merchMapper.getMerchsOrderByAddedTime(limit))));
-        }
+//        if(entityType == Entity.MERCH.getId()) {
+//            return JSON.parseArray(JSON.toJSONString(merchVOMapper.merch2VOAlpha(merchMapper.getMerchsOrderByAddedTime(limit))));
+//        }
         return null;
     }
 
@@ -269,44 +268,44 @@ public class EntityService {
     public void refreshRedisEmunData () {
 
         //common
-        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET_ZH, MediaFormat.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET_EN, MediaFormat.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET_ZH, MediaFormat.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET_EN, MediaFormat.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.REGION_SET_ZH, Region.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.REGION_SET_EN, Region.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.REGION_SET_ZH, Region.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.REGION_SET_EN, Region.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.LANGUAGE_SET_ZH, Language.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.LANGUAGE_SET_EN, Language.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.LANGUAGE_SET_ZH, Language.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.LANGUAGE_SET_EN, Language.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.COMPANY_ROLE_SET_ZH, CompanyRole.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.COMPANY_ROLE_SET_EN, CompanyRole.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.COMPANY_ROLE_SET_ZH, CompanyRole.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.COMPANY_ROLE_SET_EN, CompanyRole.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET_ZH, AlbumFormat.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET_EN, AlbumFormat.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET_ZH, AlbumFormat.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET_EN, AlbumFormat.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET_ZH, PublishFormat.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET_EN, PublishFormat.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET_ZH, PublishFormat.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET_EN, PublishFormat.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET_ZH, BookType.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET_EN, BookType.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET_ZH, BookType.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET_EN, BookType.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET_ZH, MerchCategory.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET_EN, MerchCategory.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET_ZH, MerchCategory.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET_EN, MerchCategory.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET_ZH, GamePlatform.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET_EN, GamePlatform.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET_ZH, GamePlatform.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET_EN, GamePlatform.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET_ZH, ReleaseType.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET_EN, ReleaseType.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET_ZH, ReleaseType.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET_EN, ReleaseType.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET_ZH, ProductCategory.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET_EN, ProductCategory.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET_ZH, ProductCategory.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET_EN, ProductCategory.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET_ZH, AudioType.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET_EN, AudioType.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET_ZH, AudioType.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET_EN, AudioType.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
-        redisUtil.set(RedisCacheConstant.ENTRY_CATEGORY_SET_ZH, EntryCategory.getAttributeSet(SystemLanguage.CHINESE.getCode()));
-        redisUtil.set(RedisCacheConstant.ENTRY_CATEGORY_SET_EN, EntryCategory.getAttributeSet(SystemLanguage.ENGLISH.getCode()));
+        redisUtil.set(RedisCacheConstant.ENTRY_CATEGORY_SET_ZH, EntryCategory.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(RedisCacheConstant.ENTRY_CATEGORY_SET_EN, EntryCategory.getAttributeSet(Locale.ENGLISH.getLanguage()));
 
     }
 
@@ -361,20 +360,20 @@ public class EntityService {
 
     /**
      * 更新数据库实体激活状态
-     * @param entityName,entityId,status 实体表名,实体id,状态
+     * @param tableName,entityId,status 实体表名,实体id,状态
      * @author rakbow
      */
-    public void updateItemStatus(String entityName, int entityId, int status) {
-        entityMapper.updateItemStatus(entityName, entityId, status);
+    public void updateItemStatus(String tableName, int entityId, int status) {
+        entityMapper.updateItemStatus(tableName, entityId, status);
     }
 
     /**
      * 批量更新数据库实体激活状态
-     * @param entityName,ids,status 实体表名,ids,状态
+     * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow
      */
-    public void updateItemsStatus(String entityName, List<Integer> ids, int status) {
-        entityMapper.updateItemsStatus(entityName, ids, status);
+    public void updateItemsStatus(String tableName, List<Integer> ids, int status) {
+        entityMapper.updateItemsStatus(tableName, ids, status);
     }
 
     /**
@@ -395,66 +394,61 @@ public class EntityService {
     /**
      * 更新描述
      *
-     * @param entityName,entityId 实体表名,实体id
+     * @param tableName,entityId 实体表名,实体id
      * @param description 描述json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemDescription(String entityName, int entityId, String description) {
-        entityMapper.updateItemDescription(entityName, entityId, description, DateUtil.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
+    public void updateItemDescription(String tableName, int entityId, String description) {
+        entityMapper.updateItemDescription(tableName, entityId, description, DateUtil.NOW_TIMESTAMP);
     }
 
     /**
      * 更新特典信息
      *
-     * @param entityName,entityId 实体表名,实体id
+     * @param tableName,entityId 实体表名,实体id
      * @param bonus 特典json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemBonus(String entityName, int entityId, String bonus) {
-        entityMapper.updateItemBonus(entityName, entityId, bonus, DateUtil.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_BONUS_SUCCESS;
+    public void updateItemBonus(String tableName, int entityId, String bonus) {
+        entityMapper.updateItemBonus(tableName, entityId, bonus, DateUtil.NOW_TIMESTAMP);
     }
 
     /**
      * 更新规格信息
      *
-     * @param entityName,entityId 实体表名,实体id
+     * @param tableName,entityId 实体表名,实体id
      * @param specs 规格json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemSpecs(String entityName, int entityId, String specs) {
-        entityMapper.updateItemSpecs(entityName, entityId, specs, DateUtil.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_SPEC_SUCCESS;
+    public void updateItemSpecs(String tableName, int entityId, String specs) {
+        entityMapper.updateItemSpecs(tableName, entityId, specs, DateUtil.NOW_TIMESTAMP);
     }
 
     /**
      * 更新关联企业信息
      *
-     * @param entityName,entityId 实体表名,实体id
+     * @param tableName,entityId 实体表名,实体id
      * @param companies 关联企业json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemCompanies(String entityName, int entityId, String companies) {
-        entityMapper.updateItemCompanies(entityName, entityId, companies, DateUtil.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_COMPANIES_SUCCESS;
+    public void updateItemCompanies(String tableName, int entityId, String companies) {
+        entityMapper.updateItemCompanies(tableName, entityId, companies, DateUtil.NOW_TIMESTAMP);
     }
 
     /**
      * 更新相关人员信息
      *
-     * @param entityName,entityId 实体表名,实体id
+     * @param tableName,entityId 实体表名,实体id
      * @param personnel 相关人员json数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemPersonnel(String entityName, String fieldName, int entityId, String personnel) {
-        entityMapper.updateItemPersonnel(entityName, fieldName, entityId, personnel, DateUtil.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_PERSONNEL_SUCCESS;
+    public void updateItemPersonnel(String tableName, String fieldName, int entityId, String personnel) {
+        entityMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateUtil.NOW_TIMESTAMP);
     }
 
     //endregion
@@ -464,13 +458,13 @@ public class EntityService {
     /**
      * 根据实体类型和实体Id获取图片
      *
-     * @param entityName,entityId 实体表名 实体id
+     * @param tableName,entityId 实体表名 实体id
      * @return JSONArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Image> getItemImages(String entityName, int entityId) {
-        return JSON.parseArray(entityMapper.getItemImages(entityName, entityId)).toJavaList(Image.class);
+    public List<Image> getItemImages(String tableName, int entityId) {
+        return JSON.parseArray(entityMapper.getItemImages(tableName, entityId)).toJavaList(Image.class);
     }
 
     /**
@@ -483,14 +477,14 @@ public class EntityService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult addItemImages(String entityName, int entityId, MultipartFile[] images, List<Image> originalImagesJson,
+    public ActionResult addItemImages(String tableName, int entityId, MultipartFile[] images, List<Image> originalImagesJson,
                                       List<Image> newImageInfos) {
         ActionResult res = new ActionResult();
         try{
-            ActionResult ar = qiniuImageUtil.commonAddImages(entityId, entityName, images, originalImagesJson, newImageInfos);
+            ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
             if(ar.state) {
                 JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
-                entityMapper.updateItemImages(entityName, entityId, finalImageJson.toJSONString(), DateUtil.NOW_TIMESTAMP);
+                entityMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateUtil.NOW_TIMESTAMP);
                 res.message = ApiInfo.INSERT_IMAGES_SUCCESS;
             }else {
                 throw new Exception(ar.message);
@@ -509,26 +503,26 @@ public class EntityService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemImages(String entityName, int entityId, String images) {
-        entityMapper.updateItemImages(entityName, entityId, images, DateUtil.NOW_TIMESTAMP);
+    public String updateItemImages(String tableName, int entityId, String images) {
+        entityMapper.updateItemImages(tableName, entityId, images, DateUtil.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_IMAGES_SUCCESS;
     }
 
     /**
      * 删除图片
      *
-     * @param entityName,entityId,images,deleteImages 实体表名,实体id,原图片信息,删除图片
+     * @param tableName,entityId,images,deleteImages 实体表名,实体id,原图片信息,删除图片
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteItemImages(String entityName, int entityId, JSONArray deleteImages) throws Exception {
+    public String deleteItemImages(String tableName, int entityId, JSONArray deleteImages) throws Exception {
 
-        JSONArray images = JSON.parseArray(JSON.toJSONString(getItemImages(entityName, entityId)));
+        JSONArray images = JSON.parseArray(JSON.toJSONString(getItemImages(tableName, entityId)));
 
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
-        entityMapper.updateItemImages(entityName, entityId, finalImageJson.toString(), DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateUtil.NOW_TIMESTAMP);
         return ApiInfo.DELETE_IMAGES_SUCCESS;
     }
 
@@ -545,7 +539,7 @@ public class EntityService {
     public SimpleSearchResult simpleSearch(String keyword, int entityType, int offset, int limit) {
         // String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
 
-        SimpleSearchResult res = new SimpleSearchResult(keyword, entityType, EntityType.getItemNameZhByIndex(entityType), offset, limit);
+        SimpleSearchResult res = new SimpleSearchResult(keyword, entityType, Entity.getTableName(entityType), offset, limit);
 
         if (keyword.isEmpty()) {
             return res;
@@ -555,42 +549,42 @@ public class EntityService {
             return res;
         }
 
-        if(entityType == EntityType.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getId()) {
             List<Album> albums = albumMapper.simpleSearch(keyword, limit, offset);
             if(!albums.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOGamma(albums))));
                 res.setTotal(albumMapper.simpleSearchCount(keyword));
             }
         }
-        if(entityType == EntityType.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getId()) {
             List<Book> books = bookMapper.simpleSearch(keyword, limit, offset);
             if(!books.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOGamma(books))));
                 res.setTotal(bookMapper.simpleSearchCount(keyword));
             }
         }
-        if(entityType == EntityType.DISC.getId()) {
+        if(entityType == Entity.DISC.getId()) {
             List<Disc> discs = discMapper.simpleSearch(keyword, limit, offset);
             if(!discs.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(discVOMapper.disc2VOGamma(discs))));
                 res.setTotal(discMapper.simpleSearchCount(keyword));
             }
         }
-        if(entityType == EntityType.GAME.getId()) {
+        if(entityType == Entity.GAME.getId()) {
             List<Game> games = gameMapper.simpleSearch(keyword, limit, offset);
             if(!games.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(gameVOMapper.game2VOGamma(games))));
                 res.setTotal(gameMapper.simpleSearchCount(keyword));
             }
         }
-        if(entityType == EntityType.MERCH.getId()) {
-            List<Merch> merchs = merchMapper.simpleSearch(keyword, limit, offset);
-            if(!merchs.isEmpty()) {
-                res.setData(JSON.parseArray(JSON.toJSONString(merchVOMapper.merch2VOGamma(merchs))));
-                res.setTotal(merchMapper.simpleSearchCount(keyword));
-            }
-        }
-       if(entityType == EntityType.MUSIC.getId()) {
+//        if(entityType == Entity.MERCH.getId()) {
+//            List<Merch> merchs = merchMapper.simpleSearch(keyword, limit, offset);
+//            if(!merchs.isEmpty()) {
+//                res.setData(JSON.parseArray(JSON.toJSONString(merchVOMapper.merch2VOGamma(merchs))));
+//                res.setTotal(merchMapper.simpleSearchCount(keyword));
+//            }
+//        }
+       if(entityType == Entity.MUSIC.getId()) {
            List<MusicAlbumView> musics = musicMapper.simpleSearch(keyword, limit, offset);
            if(!musics.isEmpty()) {
                res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));

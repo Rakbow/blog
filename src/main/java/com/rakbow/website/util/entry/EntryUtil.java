@@ -8,7 +8,6 @@ import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.CompanyRole;
 import com.rakbow.website.data.emun.entry.EntryCategory;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.SpringUtil;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -42,7 +42,7 @@ public class EntryUtil {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
         String key;
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             key = RedisCacheConstant.COMPANY_SET_EN;
         }else {
             key = RedisCacheConstant.COMPANY_SET_ZH;
@@ -129,7 +129,7 @@ public class EntryUtil {
 
         JSONArray attributes = new JSONArray();
         String key;
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
             key = EntryCategory.categoryMapEn.get(category);
         }else {
             key = EntryCategory.categoryMapZH.get(category);

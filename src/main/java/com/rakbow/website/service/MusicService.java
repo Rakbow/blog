@@ -7,7 +7,7 @@ import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.dao.MusicMapper;
 import com.rakbow.website.data.ActionResult;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.system.FileType;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
 import com.rakbow.website.entity.Music;
@@ -170,7 +170,7 @@ public class MusicService {
         }catch (Exception ex) {
             throw new Exception(ex);
         }
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.MUSIC.getNameZh());
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.MUSIC.getNameZh());
     }
 
     /**
@@ -184,7 +184,7 @@ public class MusicService {
             //删除对应music的音频文件
             deleteMusicAllFiles(music);
             musicMapper.deleteMusicById(music.getId());
-            visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId());
+            visitUtil.deleteVisit(Entity.MUSIC.getId(), music.getId());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -201,7 +201,7 @@ public class MusicService {
             List<Music> musics = getMusicsByAlbumId(albumId);
             //删除对应music的音频文件
             musics.forEach(this::deleteMusicAllFiles);
-            musics.forEach(music -> visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId()));
+            musics.forEach(music -> visitUtil.deleteVisit(Entity.MUSIC.getId(), music.getId()));
             musicMapper.deleteMusicByAlbumId(albumId);
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -226,7 +226,7 @@ public class MusicService {
                 //删除对应music的音频文件
                 deleteMusicAllFiles(music);
                 //删除浏览量数据
-                visitUtil.deleteVisit(EntityType.MUSIC.getId(), music.getId());
+                visitUtil.deleteVisit(Entity.MUSIC.getId(), music.getId());
                 //删除对应music
                 musicMapper.deleteMusicById(music.getId());
             });
@@ -336,7 +336,7 @@ public class MusicService {
         JSONArray addFiles = new JSONArray();
 
         //创建存储链接前缀
-        String filePath = "file/" + EntityType.MUSIC.getNameEn().toLowerCase() + "/" + id + "/";
+        String filePath = "file/" + Entity.MUSIC.getNameEn().toLowerCase() + "/" + id + "/";
 
         for (int i = 0; i < files.length; i++) {
 

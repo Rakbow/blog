@@ -8,9 +8,7 @@ import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.DataFinder;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -51,11 +50,11 @@ public class ProductService {
     //region ------基础增删改查------
 
     //新增作品
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addProduct(Product product) {
-        int id = productMapper.addProduct(product);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
-    }
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public String addProduct(Product product) {
+//        int id = productMapper.addProduct(product);
+//        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.PRODUCT.getNameZh());
+//    }
 
     //通过id查找作品
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
@@ -79,11 +78,11 @@ public class ProductService {
     }
 
     //更新作品信息
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateProduct(int id, Product product) {
-        productMapper.updateProduct(id, product);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.PRODUCT.getNameZh());
-    }
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public String updateProduct(int id, Product product) {
+//        productMapper.updateProduct(id, product);
+//        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.PRODUCT.getNameZh());
+//    }
 
     //删除作品
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -104,10 +103,10 @@ public class ProductService {
             products.forEach(product -> {
                 JSONObject jo = new JSONObject();
                 jo.put("value", product.getId());
-                if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+                if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
                     jo.put("label", product.getNameZh() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
                 }
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     jo.put("label", product.getNameEn() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
                 }
 

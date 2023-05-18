@@ -9,7 +9,7 @@ import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.entity.Entry;
 import com.rakbow.website.util.common.RedisUtil;
@@ -52,7 +52,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addEntry(Entry entry) {
         entryMapper.addEntry(entry);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ENTRY.getNameZh());
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.ENTRY.getNameZh());
     }
 
     /**
@@ -91,7 +91,7 @@ public class EntryService {
         qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(entry.getImages()));
         //删除专辑
         entryMapper.deleteEntry(entry.getId());
-        visitUtil.deleteVisit(EntityType.ENTRY.getId(), entry.getId());
+        visitUtil.deleteVisit(Entity.ENTRY.getId(), entry.getId());
     }
 
     /**
@@ -103,7 +103,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateEntry(int id, Entry entry) {
         entryMapper.updateEntry(id, entry);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ENTRY.getNameZh());
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.ENTRY.getNameZh());
     }
 
     //endregion

@@ -7,7 +7,7 @@ import com.rakbow.website.dao.DiscMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.disc.DiscVOBeta;
 import com.rakbow.website.entity.Disc;
 import com.rakbow.website.util.common.CommonUtil;
@@ -57,7 +57,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDisc(Disc disc) {
         int id = discMapper.addDisc(disc);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.DISC.getNameZh());
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.DISC.getNameZh());
     }
 
     /**
@@ -98,7 +98,7 @@ public class DiscService {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(disc.getImages()));
         discMapper.deleteDisc(disc.getId());
-        visitUtil.deleteVisit(EntityType.DISC.getId(), disc.getId());
+        visitUtil.deleteVisit(Entity.DISC.getId(), disc.getId());
     }
 
     /**
@@ -110,7 +110,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateDisc(int id, Disc disc) {
         discMapper.updateDisc(id, disc);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.DISC.getNameZh());
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.DISC.getNameZh());
     }
 
     //endregion

@@ -7,7 +7,7 @@ import com.rakbow.website.dao.FranchiseMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.entity.franchise.MetaInfo;
 import com.rakbow.website.entity.Franchise;
 import com.rakbow.website.util.common.RedisUtil;
@@ -39,12 +39,12 @@ public class FranchiseService {
 
     //region ------曾删改查------
 
-    //新增系列
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addFranchise(Franchise franchise){
-        int id = franchiseMapper.addFranchise(franchise);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
-    }
+//    //新增系列
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public String addFranchise(Franchise franchise){
+//        int id = franchiseMapper.addFranchise(franchise);
+//        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.FRANCHISE.getNameZh());
+//    }
 
     //通过id查找系列
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
@@ -68,11 +68,11 @@ public class FranchiseService {
     }
 
     //修改系列信息
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateFranchise(int id, Franchise franchise){
-        franchiseMapper.updateFranchise(id, franchise);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.FRANCHISE.getNameZh());
-    }
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+//    public String updateFranchise(int id, Franchise franchise){
+//        franchiseMapper.updateFranchise(id, franchise);
+//        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.FRANCHISE.getNameZh());
+//    }
 
     //删除系列
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)

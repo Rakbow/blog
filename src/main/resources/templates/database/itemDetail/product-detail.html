@@ -178,7 +178,7 @@
                                             <tr>
                                                 <td><strong>所属系列</strong></td>
                                                 <td>
-                                                    <a :href="'/db/franchise/' + product.franchise.value">
+                                                    <a :href="'/db/entry/' + product.franchise.value">
                                                         {{product.franchise.label}}
                                                     </a>
                                                 </td>
@@ -376,7 +376,7 @@
                              v-if="relatedProducts.length != 0"
                              v-for="relatedProduct of relatedProducts">
                             <div class="sidebar-panel-image-small-div product_info_bit_thumb mt-2">
-                                <a :href="'/db/product/'+ relatedProduct.id">
+                                <a :href="'/db/entry/' +  relatedProduct.id">
                                     <img class="sidebar-panel-image-small" :src="relatedProduct.cover.blackUrl" v-tooltip.bottom="'收录时间: ' + relatedProduct.addedTime + '编辑时间: ' + relatedProduct.editedTime">
                                 </a>
                             </div>
@@ -384,7 +384,7 @@
                                 <ul class="info_bit_small_other">
                                     <li>
                                         <a class="small_font"
-                                           :href="'/db/product/'+ relatedProduct.id ">
+                                           :href="'/db/entry/' +  relatedProduct.id ">
                                             <span class="text-truncate-2 mr-2">
                                                 {{relatedProduct.name}}
                                             </span>
@@ -896,7 +896,7 @@
             //region edit
             const like = () => {
                 let json = {
-                    entityType: ENTITY.PRODUCT,
+                    entity: ENTITY.PRODUCT,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -910,7 +910,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.PRODUCT,
+                    entity: ENTITY.PRODUCT,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };

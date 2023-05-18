@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.vo.RegionVO;
@@ -70,12 +70,12 @@ public class EntityConverter {
         return EntryUtil.getSpecs(json);
     }
 
-    static JSONObject getCover(String images, EntityType entityType) {
-        return CommonImageUtil.generateCover(images, entityType);
+    static JSONObject getCover(String images, Entity entity) {
+        return CommonImageUtil.generateCover(images, entity);
     }
 
-    static JSONObject getThumbCover(String images, EntityType entityType, int size) {
-        return CommonImageUtil.generateThumbCover(images, entityType, size);
+    static JSONObject getThumbCover(String images, Entity entity, int size) {
+        return CommonImageUtil.generateThumbCover(images, entity, size);
     }
 
     static long getVisitCount(int entityTypeId, int id) {

@@ -1,7 +1,7 @@
 package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.entity.merch.MerchCategory;
 import com.rakbow.website.data.vo.merch.MerchVO;
@@ -102,7 +102,7 @@ public interface MerchVOMapper {
         merchVOAlpha.setRegion(Region.getRegion(merch.getRegion()));
 
         //图片
-        merchVOAlpha.setCover(CommonImageUtil.generateCover(merch.getImages(), EntityType.MERCH));
+//        merchVOAlpha.setCover(CommonImageUtil.generateCover(merch.getImages(), Entity.MERCH));
 
         //审计字段
         merchVOAlpha.setAddedTime(DateUtil.timestampToString(merch.getAddedTime()));
@@ -160,7 +160,7 @@ public interface MerchVOMapper {
         merchVOBeta.setCategory(MerchCategory.getAttribute(merch.getCategory()));
 
         //图片
-        merchVOBeta.setCover(CommonImageUtil.generateThumbCover(merch.getImages(), EntityType.MERCH, 50));
+//        merchVOBeta.setCover(CommonImageUtil.generateThumbCover(merch.getImages(), Entity.MERCH, 50));
 
         //审计字段
         merchVOBeta.setAddedTime(DateUtil.timestampToString(merch.getAddedTime()));
@@ -221,8 +221,8 @@ public interface MerchVOMapper {
 
         merchVOGamma.setCover(QiniuImageUtil.getThumb70Url(merch.getImages()));
 
-        merchVOGamma.setVisitCount(visitUtil.getVisit(EntityType.MERCH.getId(), merch.getId()));
-        merchVOGamma.setLikeCount(likeUtil.getLike(EntityType.MERCH.getId(), merch.getId()));
+//        merchVOGamma.setVisitCount(visitUtil.getVisit(Entity.MERCH.getId(), merch.getId()));
+//        merchVOGamma.setLikeCount(likeUtil.getLike(Entity.MERCH.getId(), merch.getId()));
 
         return merchVOGamma;
     }

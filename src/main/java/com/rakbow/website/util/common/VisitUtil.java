@@ -1,8 +1,7 @@
 package com.rakbow.website.util.common;
 
 import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.data.emun.common.EntityType;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rakbow.website.data.emun.common.Entity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -156,30 +155,30 @@ public class VisitUtil {
 
     public String getEntityVisitRankingKeyName(int entityType) {
 
-        if(entityType == EntityType.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getId()) {
             return RedisCacheConstant.ALBUM_VISIT_RANKING;
         }
-        if(entityType == EntityType.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getId()) {
             return RedisCacheConstant.BOOK_VISIT_RANKING;
         }
-        if(entityType == EntityType.DISC.getId()) {
+        if(entityType == Entity.DISC.getId()) {
             return RedisCacheConstant.DISC_VISIT_RANKING;
         }
-        if(entityType == EntityType.GAME.getId()) {
+        if(entityType == Entity.GAME.getId()) {
             return RedisCacheConstant.GAME_VISIT_RANKING;
         }
-        if(entityType == EntityType.MERCH.getId()) {
-            return RedisCacheConstant.MERCH_VISIT_RANKING;
-        }
-        if(entityType == EntityType.MUSIC.getId()) {
+//        if(entityType == Entity.MERCH.getId()) {
+//            return RedisCacheConstant.MERCH_VISIT_RANKING;
+//        }
+        if(entityType == Entity.MUSIC.getId()) {
             return RedisCacheConstant.MUSIC_VISIT_RANKING;
         }
-        if(entityType == EntityType.PRODUCT.getId()) {
-            return RedisCacheConstant.PRODUCT_VISIT_RANKING;
-        }
-        if(entityType == EntityType.FRANCHISE.getId()) {
-            return RedisCacheConstant.FRANCHISE_VISIT_RANKING;
-        }
+//        if(entityType == Entity.PRODUCT.getId()) {
+//            return RedisCacheConstant.PRODUCT_VISIT_RANKING;
+//        }
+//        if(entityType == Entity.FRANCHISE.getId()) {
+//            return RedisCacheConstant.FRANCHISE_VISIT_RANKING;
+//        }
         return "";
     }
 

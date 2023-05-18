@@ -9,7 +9,7 @@ import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
@@ -66,7 +66,7 @@ public class AlbumController {
     public String getAlbumDetail(@PathVariable("id") int id, Model model) {
         Album album = albumService.getAlbumWithAuth(id);
         if (album == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.ALBUM.getNameZh()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.ALBUM.getNameZh()));
             return "/error/404";
         }
 
@@ -79,14 +79,14 @@ public class AlbumController {
         }
         if(AuthorityInterceptor.isJunior()) {
             //前端选项数据
-            model.addAttribute("options", entityUtil.getDetailOptions(EntityType.ALBUM.getId()));
+            model.addAttribute("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
         }
         //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, EntityType.ALBUM.getId()));
+        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.ALBUM.getId(), id, album));
+        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.ALBUM.getId(), id, album));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, EntityType.ALBUM, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
 
         return "/database/itemDetail/album-detail";
     }
@@ -165,7 +165,7 @@ public class AlbumController {
                 //删除专辑对应的music
                 musicService.deleteMusicsByAlbumIds(ids);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

@@ -3,9 +3,8 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
 import com.rakbow.website.entity.Game;
@@ -64,18 +63,18 @@ public class GameController {
     public String getGameDetail(@PathVariable("id") Integer id, Model model) {
         Game game = gameService.getGameWithAuth(id);
         if (game == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.GAME.getNameZh()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.GAME.getNameZh()));
             return "/error/404";
         }
         model.addAttribute("game", gameVOMapper.game2VO(game));
         //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.GAME.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(Entity.GAME.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(game, EntityType.GAME.getId()));
+        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(game, Entity.GAME.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.GAME.getId(), id, game));
+        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.GAME.getId(), id, game));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, EntityType.GAME, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, Entity.GAME, false));
         //获取相关游戏
         // model.addAttribute("relatedGames", gameService.getRelatedGames(id));
         return "/database/itemDetail/game-detail";
@@ -120,7 +119,7 @@ public class GameController {
                 //从数据库中删除专辑
                 gameService.deleteGame(game);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.GAME.getNameZh());
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.GAME.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

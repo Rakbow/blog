@@ -50,7 +50,7 @@
             </div>
             <div class="col-10 col-offset-2 pt-0 pb-0">
                 <p class="mb-0 a_with_underline" v-for="franchise of detailInfo.franchises">
-                    <a :href="'/db/franchise/'+ franchise.value">
+                    <a :href="'/db/entry/' +  franchise.value">
                         <span lang="en" style="display:inline">
                             {{franchise.label}}
                         </span>
@@ -62,7 +62,7 @@
             </div>
             <div class="col-10 col-offset-2 pt-0 pb-0">
                 <p class="mb-0 a_with_underline" v-for="product of detailInfo.products">
-                    <a :href="'/db/product/'+ product.value">
+                    <a :href="'/db/entry/' +  product.value">
                         <span lang="en" style="display:inline">
                             {{product.label}}
                         </span>

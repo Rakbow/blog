@@ -1,7 +1,7 @@
 package com.rakbow.website.util.convertMapper.entity;
 
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.entity.album.PublishFormat;
 import com.rakbow.website.data.vo.album.AlbumVO;
@@ -27,8 +27,8 @@ import java.util.List;
 public interface AlbumVOMapper {
 
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
-    EntityType entityType = EntityType.ALBUM;
-    int entityTypeId = EntityType.ALBUM.getId();
+    Entity ENTITY = Entity.ALBUM;
+    int entityTypeId = Entity.ALBUM.getId();
 
     //region single convert interface
 
@@ -61,7 +61,7 @@ public interface AlbumVOMapper {
      */
     @Mapping(target = "releaseDate", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getDate(album.getReleaseDate()))")
     @Mapping(target = "hasBonus", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getBool(album.getHasBonus()))")
-    @Mapping(target = "cover", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCover(album.getImages(), entityType))")
+    @Mapping(target = "cover", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCover(album.getImages(), ENTITY))")
     @Mapping(target = "products", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getProducts(album.getProducts()))")
     @Mapping(target = "franchises", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getFranchises(album.getFranchises()))")
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
@@ -82,7 +82,7 @@ public interface AlbumVOMapper {
      * @author rakbow
      */
     @Mapping(target = "releaseDate", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getDate(album.getReleaseDate()))")
-    @Mapping(target = "cover", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getThumbCover(album.getImages(), entityType, 50))")
+    @Mapping(target = "cover", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getThumbCover(album.getImages(), ENTITY, 50))")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "addedTime", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getVOTime(album.getAddedTime()))")
     @Mapping(target = "editedTime", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getVOTime(album.getEditedTime()))")

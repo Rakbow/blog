@@ -6,8 +6,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.data.*;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.system.DataActionType;
-import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.system.UserAuthority;
 import com.rakbow.website.data.image.Image;
 import com.rakbow.website.service.EntityService;
@@ -128,8 +128,8 @@ public class EntityController {
     //region 获取index初始数据
     @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
     @ResponseBody
-    public String getIndexInitData(@RequestBody String json, HttpServletRequest request) {
-        int entityType = JSON.parseObject(json).getIntValue("entityType");
+    public String getIndexInitData(@RequestBody JSONObject json, HttpServletRequest request) {
+        int entityType = json.getIntValue("entityType");
         JSONObject initData = entityUtil.getDetailOptions(entityType);
         initData.put("justAddedItems", entityService.getJustAddedItems(entityType, 5));
         initData.put("popularItems", entityService.getPopularItems(entityType, 9));
@@ -140,36 +140,37 @@ public class EntityController {
     //获取list初始数据
     @RequestMapping(value = "/get-list-init-data", method = RequestMethod.POST)
     @ResponseBody
-    public String getListInitData(@RequestBody String json, HttpServletRequest request) {
-        int entityType = JSON.parseObject(json).getIntValue("entityType");
+    public String getListInitData(@RequestBody JSONObject json, HttpServletRequest request) {
+        int entityType = json.getIntValue("entityType");
         JSONObject initData = entityUtil.getDetailOptions(entityType);
         initData.put("editAuth", UserAuthority.getUserOperationAuthority(AuthorityInterceptor.getCurrentUser()));
         return initData.toJSONString();
     }
     //endregion
 
-    @RequestMapping(path = "/get-entity-amount-info", method = RequestMethod.GET)
-    @ResponseBody
-    public String getEntityAmountInfo() {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = entityService.getItemAmount();
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
+//    @RequestMapping(path = "/get-entity-amount-info", method = RequestMethod.GET)
+//    @ResponseBody
+//    public String getEntityAmountInfo() {
+//        ApiResult res = new ApiResult();
+//        try {
+//            res.data = entityService.getItemAmount();
+//        } catch (Exception e) {
+//            res.setErrorMessage(e);
+//        }
+//        return JSON.toJSONString(res);
+//    }
+
+    //region search
 
     @RequestMapping(path = "/simple-search", method = RequestMethod.POST)
     @ResponseBody
-    public String simpleSearch(@RequestBody String json) {
+    public String simpleSearch(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            String keyword = JSON.parseObject(json).getString("keyword");
-            int entityType = JSON.parseObject(json).getInteger("entityType");
-            int offset = JSON.parseObject(json).getInteger("offset");
-            int limit = JSON.parseObject(json).getInteger("limit");
-
+            String keyword = json.getString("keyword");
+            int entityType = json.getInteger("entityType");
+            int offset = json.getInteger("offset");
+            int limit = json.getInteger("limit");
             res.data = entityService.simpleSearch(keyword, entityType, offset, limit);
         } catch (Exception e) {
             res.setErrorMessage(e);
@@ -177,150 +178,217 @@ public class EntityController {
         return JSON.toJSONString(res);
     }
 
-    //更改状态
+    //endregion
+
+    //region common update item info
+
+    //update item status
     @RequestMapping(value = "/update-item-status", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemStatus(@RequestBody String json) {
+    public String updateItemStatus(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            int entityId = JSON.parseObject(json).getIntValue("entityId");
-            boolean status = JSON.parseObject(json).getBoolean("status");
-
-            entityService.updateItemStatus(entityName, entityId, status?1:0);
-
-            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS_URL, EntityType.getItemNameZhByIndex(entityType));
+            String tableName = Entity.getTableName(json.getIntValue("entityType"));
+            int entityId = json.getIntValue("entityId");
+            boolean status = json.getBoolean("status");
+            entityService.updateItemStatus(tableName, entityId, status?1:0);
+            res.message = ApiInfo.UPDATE_ITEM_STATUS_URL;
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }
 
-    //批量更改状态
+    //update items status
     @RequestMapping(value = "/update-items-status", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemsStatus(@RequestBody String json) {
+    public String updateItemsStatus(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            JSONArray items = JSON.parseObject(json).getJSONArray("items");
-            boolean status = JSON.parseObject(json).getBoolean("status");
-
-            List<Integer> ids = new ArrayList<>();
-
-            for (Object item : items) {
-                ids.add(((JSONObject) item).getIntValue("id"));
-            }
-
-            entityService.updateItemsStatus(entityName, ids, status?1:0);
-            res.message = String.format(ApiInfo.UPDATE_ITEM_STATUS_URL, EntityType.getItemNameZhByIndex(entityType));
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新描述信息
-    @RequestMapping(path = "/update-description", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateItemsDescription(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            int entityId = JSON.parseObject(json).getInteger("entityId");
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            String description = JSON.parseObject(json).get("description").toString();
-            res.message = entityService.updateItemDescription(entityName, entityId, description);
+            String tableName = Entity.getTableName(json.getIntValue("entityType"));
+            List<Integer> ids = json.getList("ids", Integer.class);
+            boolean status = json.getBoolean("status");
+            entityService.updateItemsStatus(tableName, ids, status?1:0);
+            res.message = ApiInfo.UPDATE_ITEM_STATUS_URL;
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }
 
-    //更新特典信息
-    @RequestMapping(path = "/update-bonus", method = RequestMethod.POST)
+    //update item description
+    @RequestMapping(path = "/update-item-description", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemBonus(@RequestBody String json) {
+    public String updateItemsDescription(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            int entityId = JSON.parseObject(json).getInteger("entityId");
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            String bonus = JSON.parseObject(json).get("bonus").toString();
-            res.message = entityService.updateItemBonus(entityName, entityId, bonus);
+            int entityId = json.getInteger("entityId");
+            String entityName = Entity.getTableName(json.getIntValue("entityType"));
+            String description = json.get("description").toString();
+            entityService.updateItemDescription(entityName, entityId, description);
+            res.message = ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }
 
-    //更新规格信息
-    @RequestMapping(path = "/update-specs", method = RequestMethod.POST)
+    //update item bonus
+    @RequestMapping(path = "/update-item-bonus", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemSpec(@RequestBody String json) {
+    public String updateItemBonus(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            int entityId = JSON.parseObject(json).getInteger("entityId");
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            String spec = JSON.parseObject(json).get("spec").toString();
-            res.message = entityService.updateItemSpecs(entityName, entityId, spec);
+            int entityId = json.getInteger("entityId");
+            String tableName = Entity.getTableName(json.getIntValue("entityType"));
+            String bonus = json.getString("bonus");
+            entityService.updateItemBonus(tableName, entityId, bonus);
+            res.message = ApiInfo.UPDATE_BONUS_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }
 
-    //更新关联企业信息
-    @RequestMapping(path = "/update-companies", method = RequestMethod.POST)
+    //update item specs
+    @RequestMapping(path = "/update-item-specs", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemCompanies(@RequestBody String json) {
+    public String updateItemSpec(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            int entityId = JSON.parseObject(json).getInteger("entityId");
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            String companies = JSON.parseObject(json).get("companies").toString();
-            res.message = entityService.updateItemCompanies(entityName, entityId, companies);
+            int entityId = json.getInteger("entityId");
+            String tableName = Entity.getTableName(json.getIntValue("entityType"));
+            String spec = json.getString("spec");
+            entityService.updateItemSpecs(tableName, entityId, spec);
+            res.message = ApiInfo.UPDATE_SPEC_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }
 
-    //更新相关人员信息
-    @RequestMapping(path = "/update-personnel", method = RequestMethod.POST)
+    //update item companies
+    @RequestMapping(path = "/update-item-companies", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemPersonnel(@RequestBody String json) {
+    public String updateItemCompanies(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            int entityId = JSON.parseObject(json).getInteger("entityId");
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
+            int entityId = json.getInteger("entityId");
+            String entityName = Entity.getTableName(json.getIntValue("entityType"));
+            String companies = json.getString("companies");
+            entityService.updateItemCompanies(entityName, entityId, companies);
+            res.message = ApiInfo.UPDATE_COMPANIES_SUCCESS;
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //update item personnel
+    @RequestMapping(path = "/update-item-personnel", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemPersonnel(@RequestBody JSONObject json) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityId = json.getInteger("entityId");
+            int entityType = json.getIntValue("entityType");
+            String tableName = Entity.getTableName(entityType);
             String fieldName = "";
-            if(entityType == EntityType.ALBUM.getId()) {
+            if(entityType == Entity.ALBUM.getId()) {
                 fieldName = "artists";
-            }else if(entityType == EntityType.BOOK.getId()) {
+            }else if(entityType == Entity.BOOK.getId()) {
                 fieldName = "personnel";
             }
-            String personnel = JSON.parseObject(json).get("personnel").toString();
-            res.message = entityService.updateItemPersonnel(entityName, fieldName, entityId, personnel);
+            String personnel = json.getString("personnel");
+            entityService.updateItemPersonnel(tableName, fieldName, entityId, personnel);
+            res.message = ApiInfo.UPDATE_PERSONNEL_SUCCESS;
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);
     }
 
-    //点赞
-    @RequestMapping(path = "/like", method = RequestMethod.POST)
+    //endregion
+
+    //region image
+
+    //新增图片
+    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
     @ResponseBody
-    public String likeEntity(@RequestBody String json, HttpServletRequest request, HttpServletResponse response) {
+    public String addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            int entityType = JSON.parseObject(json).getIntValue("entityType");
-            int entityId = JSON.parseObject(json).getIntValue("entityId");
+            if (images == null || images.length == 0) throw new Exception(ApiInfo.INPUT_FILE_EMPTY);
+
+            String entityName = Entity.getTableName(entityType);
+
+            //原始图片信息json数组
+            List<Image> originalImages = entityService.getItemImages(entityName, entityId);
+            //新增图片的信息
+            List<Image> newImageInfos = JSON.parseArray(imageInfos).toJavaList(Image.class);
+
+            //检测数据合法性
+            CommonImageUtil.checkAddImages(newImageInfos, originalImages);
+
+            ActionResult ar = entityService.addItemImages(entityName, entityId, images, originalImages, newImageInfos);
+            if(!ar.state) throw new Exception(ar.message);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //更新图片，删除或更改信息
+    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateItemImages(@RequestBody JSONObject json) {
+        ApiResult res = new ApiResult();
+        try {
+            //获取图书id
+            int entityId = json.getInteger("entityId");
+            int action = json.getInteger("action");
+            String tableName = Entity.getTableName(json.getInteger("entityType"));
+
+            JSONArray images = json.getJSONArray("images");
+            for (int i = 0; i < images.size(); i++) {
+                images.getJSONObject(i).remove("thumbUrl");
+                images.getJSONObject(i).remove("thumbUrl50");
+            }
+
+            //更新图片信息
+            if (action == DataActionType.UPDATE.getId()) {
+
+                //检测是否存在多张封面
+                String errorMsg = CommonImageUtil.checkUpdateImages(images);
+                if (!StringUtils.isBlank(errorMsg)) {
+                    throw new Exception(errorMsg);
+                }
+
+                res.message = entityService.updateItemImages(tableName, entityId, images.toJSONString());
+            }//删除图片
+            else if (action == DataActionType.REAL_DELETE.getId()) {
+                res.message = entityService.deleteItemImages(tableName, entityId, images);
+            }else {
+                throw new Exception(ApiInfo.NOT_ACTION);
+            }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return JSON.toJSONString(res);
+    }
+
+    //endregion
+
+    //region other
+
+    //like
+    @RequestMapping(path = "/like", method = RequestMethod.POST)
+    @ResponseBody
+    public String likeEntity(@RequestBody JSONObject json, HttpServletRequest request, HttpServletResponse response) {
+        ApiResult res = new ApiResult();
+        try {
+            int entityType = json.getIntValue("entityType");
+            int entityId = json.getIntValue("entityId");
 
             // 从cookie中获取点赞token
             String likeToken = TokenInterceptor.getLikeToken();
@@ -334,80 +402,9 @@ public class EntityController {
             if(entityService.entityLike(entityType, entityId, likeToken)) {
                 res.message = ApiInfo.LIKE_SUCCESS;
             }else {
-                res.setErrorMessage(ApiInfo.LIKE_FAILED);
-                return JSON.toJSONString(res);
+                throw new Exception(ApiInfo.LIKE_FAILED);
             }
         }catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //region image
-
-    //新增图片
-    @RequestMapping(path = "/add-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
-        ApiResult res = new ApiResult();
-        try {
-            if (images == null || images.length == 0) throw new Exception(ApiInfo.INPUT_FILE_EMPTY);
-
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-
-            //原始图片信息json数组
-            List<Image> originalImages = entityService.getItemImages(entityName, entityId);
-            //新增图片的信息
-            List<Image> newImageInfos = JSON.parseArray(imageInfos).toJavaList(Image.class);
-
-            //检测数据合法性
-            CommonImageUtil.checkAddImages(newImageInfos, originalImages);
-
-            ActionResult ar = entityService.addItemImages(entityName, entityId, images, originalImages, newImageInfos);
-            if(!ar.state) throw new Exception(ar.message);
-            res.message = ar.message;
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return JSON.toJSONString(res);
-    }
-
-    //更新图片，删除或更改信息
-    @RequestMapping(path = "/update-images", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateItemImages(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            //获取图书id
-            int entityType = JSON.parseObject(json).getInteger("entityType");
-            int entityId = JSON.parseObject(json).getInteger("entityId");
-            int action = JSON.parseObject(json).getInteger("action");
-
-            String entityName = EntityType.getItemNameEnByIndex(entityType).toLowerCase();
-            JSONArray images = JSON.parseObject(json).getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-                images.getJSONObject(i).remove("thumbUrl50");
-            }
-
-            //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
-
-                //检测是否存在多张封面
-                String errorMsg = CommonImageUtil.checkUpdateImages(images);
-                if (!StringUtils.isBlank(errorMsg)) {
-                    res.setErrorMessage(errorMsg);
-                    return JSON.toJSONString(res);
-                }
-
-                res.message = entityService.updateItemImages(entityName, entityId, images.toJSONString());
-            }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
-                res.message = entityService.deleteItemImages(entityName, entityId, images);
-            }else {
-                res.setErrorMessage(ApiInfo.NOT_ACTION);
-            }
-        } catch (Exception e) {
             res.setErrorMessage(e);
         }
         return JSON.toJSONString(res);

@@ -664,7 +664,7 @@
                     label: RKW_Web.ItemDetailOptionSpecEditTitle,
                     icon: 'pi iconfont icon-miaoshu',
                     command: () => {
-                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editSpecs, option.value.specParameterSet);
+                        showSpecEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entity, book.value.editSpecs, option.value.specParameterSet);
                     }
                 },
                 {
@@ -685,14 +685,14 @@
                     label: RKW_Web.ItemDetailOptionCompaniesEditTitle,
                     icon: 'pi pi-building',
                     command: () => {
-                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editCompanies, option.value.companyRoleSet, option.value.companySet);
+                        showCompaniesEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entity, book.value.editCompanies, option.value.companyRoleSet, option.value.companySet);
                     }
                 },
                 {
                     label: RKW_Web.ItemDetailOptionPersonnelEditTitle,
                     icon: 'pi pi-users',
                     command: () => {
-                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entityType, book.value.editPersonnel, option.value.roleSet, option.value.personnelSet);
+                        showPersonnelEditDialog(toast, dialog, detailInfo.value.id, detailInfo.value.entity, book.value.editPersonnel, option.value.roleSet, option.value.personnelSet);
                     }
                 }
             ]);
@@ -714,7 +714,7 @@
                 bookEdit.value.franchises = label2value(detailInfo.value.franchises, option.value.franchiseSet).concat();
                 let json = {
                     franchises: bookEdit.value.franchises,
-                    entityType: ENTITY.BOOK
+                    entity: ENTITY.BOOK
                 };
                 HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -757,7 +757,7 @@
                 if(ev.value.length !== 0) {
                     let json = {
                         franchises: ev.value,
-                        entityType: ENTITY.BOOK
+                        entity: ENTITY.BOOK
                     };
                     HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {
@@ -800,7 +800,7 @@
             };
             const like = () => {
                 let json = {
-                    entityType: ENTITY.BOOK,
+                    entity: ENTITY.BOOK,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -814,7 +814,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.BOOK,
+                    entity: ENTITY.BOOK,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };

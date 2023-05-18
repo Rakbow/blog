@@ -16,7 +16,7 @@
         select
         <include refid="selectFields"></include>
         from entity_statistic
-        where entity_type = #{entityType} and entity_id = #{entityId}
+        where entity_type = #{entity} and entity_id = #{entityId}
     </select>
 
     <select id="getAll" resultType="EntityStatistic">
@@ -27,41 +27,41 @@
 
     <insert id="addStatistic">
         insert into entity_statistic (<include refid="insertFields"></include>)
-        values (#{entityType}, #{entityId}, #{visitCount}, #{likeCount}, #{collectCount}, #{status})
+        values (#{entity}, #{entityId}, #{visitCount}, #{likeCount}, #{collectCount}, #{status})
     </insert>
 
     <update id="updateVisitCount">
         update entity_statistic
         set
         visit_count = #{visitCount}
-        where entity_type = #{entityType} and entity_id = #{entityId}
+        where entity_type = #{entity} and entity_id = #{entityId}
     </update>
 
     <update id="updateLikeCount">
         update entity_statistic
         set
         like_count = #{likeCount}
-        where entity_type = #{entityType} and entity_id = #{entityId}
+        where entity_type = #{entity} and entity_id = #{entityId}
     </update>
 
     <update id="updateCollectCount">
         update entity_statistic
         set
         collect_count = #{collectCount}
-        where entity_type = #{entityType} and entity_id = #{entityId}
+        where entity_type = #{entity} and entity_id = #{entityId}
     </update>
 
     <delete id="deleteStatistic">
         delete
         from entity_statistic
-        where entity_type = #{entityType} and entity_id = #{entityId}
+        where entity_type = #{entity} and entity_id = #{entityId}
     </delete>
 
     <select id="getPopularItems" resultType="EntityStatistic">
         select
         <include refid="selectFields"></include>
         from entity_statistic
-        where entity_type = #{entityType} and status = 1
+        where entity_type = #{entity} and status = 1
         order by visit_count desc
         limit 10
     </select>

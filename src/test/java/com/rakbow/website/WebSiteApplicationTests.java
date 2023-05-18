@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.emun.common.EntityType;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
@@ -22,10 +21,12 @@ import com.rakbow.website.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 //import com.rakbow.website.util.convertMapper.GameVoMapper;
 
@@ -90,7 +91,7 @@ class WebSiteApplicationTests {
                     image.setUploadTime(imageJson.getString("uploadTime"));
                     images.add(image);
                 }
-                entityMapper.updateItemImages(EntityType.PRODUCT.getNameEn().toLowerCase(), product.getId(), JSON.toJSONString(images), product.getEditedTime());
+//                entityMapper.updateItemImages(Entity.PRODUCT.getNameEn().toLowerCase(), product.getId(), JSON.toJSONString(images), product.getEditedTime());
             }
         });
 
@@ -195,6 +196,16 @@ class WebSiteApplicationTests {
             }
 
         });
+    }
+
+    @Test
+    public void languageTest() {
+        System.out.println(LocaleContextHolder.getLocale().getLanguage());
+        System.out.println(Locale.JAPANESE.getLanguage());
+        System.out.println(Locale.CHINESE.getLanguage());
+        System.out.println(Locale.SIMPLIFIED_CHINESE.getLanguage());
+        System.out.println(Locale.TRADITIONAL_CHINESE.getLanguage());
+        System.out.println(Locale.ENGLISH.getLanguage());
     }
 
 }

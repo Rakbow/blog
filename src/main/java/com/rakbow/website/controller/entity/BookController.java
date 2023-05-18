@@ -6,7 +6,7 @@ import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
 import com.rakbow.website.entity.Book;
 import com.rakbow.website.service.*;
@@ -62,20 +62,20 @@ public class BookController {
     public String getBookDetail(@PathVariable("id") Integer id, Model model) {
         Book book = bookService.getBookWithAuth(id);
         if (book == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.BOOK.getNameZh()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.BOOK.getNameZh()));
             return "/error/404";
         }
         model.addAttribute("book", bookService.buildVO(book));
         if(AuthorityInterceptor.isJunior()) {
             //前端选项数据
-            model.addAttribute("options", entityUtil.getDetailOptions(EntityType.BOOK.getId()));
+            model.addAttribute("options", entityUtil.getDetailOptions(Entity.BOOK.getId()));
         }
         //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, EntityType.BOOK.getId()));
+        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, Entity.BOOK.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.BOOK.getId(), id, book));
+        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.BOOK.getId(), id, book));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 200, EntityType.BOOK, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 200, Entity.BOOK, false));
         //获取相关图书
         // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
         return "/database/itemDetail/book-detail";
@@ -120,7 +120,7 @@ public class BookController {
                 //从数据库中删除专辑
                 bookService.deleteBook(book);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.BOOK.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

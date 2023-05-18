@@ -132,7 +132,7 @@
                             <template #legend>
                                 <b>{{RKW_Web.ParentFranchise}}</b>
                             </template>
-                            <a :href="'/db/franchise/' + franchise.parentFranchise.id" style="color: #ceffff">
+                            <a :href="'/db/entry/' + franchise.parentFranchise.id" style="color: #ceffff">
                                 <span>{{franchise.parentFranchise.name}}</span>
                             </a>
                         </p-fieldset>
@@ -154,7 +154,7 @@
                                     <tr v-for="product in products">
                                         <td width="80px" class="label">{{product.releaseDate}}</td>
                                         <td>
-                                            <a :href="'/db/product/' + product.id">
+                                            <a :href="'/db/entry/' + product.id">
                                                 <span :class="'rakbow-product-category-' + product.category.id">
                                                     {{product.name}}
                                                 </span>
@@ -179,7 +179,7 @@
                                     <tbody>
                                         <tr v-for="childFranchise in franchise.childFranchiseInfos">
                                             <td>
-                                                <a :href="'/db/franchise/' + childFranchise.id" style="color: #ceffff">
+                                                <a :href="'/db/entry/' + childFranchise.id" style="color: #ceffff">
                                                     <span>{{childFranchise.name}}</span>
                                                 </a>
                                             </td>
@@ -318,7 +318,7 @@
             //region edit basic info
             const like = () => {
                 let json = {
-                    entityType: ENTITY.FRANCHISE,
+                    entity: ENTITY.FRANCHISE,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -332,7 +332,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.FRANCHISE,
+                    entity: ENTITY.FRANCHISE,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };

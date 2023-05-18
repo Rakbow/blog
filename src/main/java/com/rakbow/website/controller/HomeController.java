@@ -1,7 +1,6 @@
 package com.rakbow.website.controller;
 
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.util.common.MeiliSearchUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +32,8 @@ public class HomeController {
     private String imgPath;
     @Value("${website.path.audio}")
     private String audioPath;
-    @Resource
-    private MeiliSearchUtils meiliSearchUtils;
+//    @Resource
+//    private MeiliSearchUtils meiliSearchUtils;
 
     //endregion
 

@@ -11,7 +11,7 @@ import com.rakbow.website.data.bo.AlbumDiscBO;
 import com.rakbow.website.data.dto.AlbumDiscDTO;
 import com.rakbow.website.data.dto.AlbumTrackDTO;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.common.MediaFormat;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.vo.album.AlbumVO;
@@ -69,7 +69,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addAlbum(Album album) {
         int id = albumMapper.addAlbum(album);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.ALBUM.getNameZh());
     }
 
     /**
@@ -115,7 +115,7 @@ public class AlbumService {
                 qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
                 //删除专辑
                 albumMapper.deleteAlbumById(album.getId());
-                visitUtil.deleteVisit(EntityType.ALBUM.getId(), album.getId());
+                visitUtil.deleteVisit(Entity.ALBUM.getId(), album.getId());
             }
         }catch (Exception e) {
             throw new RuntimeException(e);
@@ -131,7 +131,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateAlbum(int id, Album album) {
         albumMapper.updateAlbum(id, album);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.ALBUM.getNameZh());
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.ALBUM.getNameZh());
     }
 
     //endregion

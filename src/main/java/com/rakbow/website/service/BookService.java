@@ -7,7 +7,7 @@ import com.rakbow.website.dao.BookMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.vo.book.BookVO;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.entity.Book;
@@ -59,7 +59,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addBook(Book book) {
         int id = bookMapper.addBook(book);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, EntityType.BOOK.getNameZh());
+        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.BOOK.getNameZh());
     }
 
     /**
@@ -100,7 +100,7 @@ public class BookService {
         //删除前先把服务器上对应图片全部删除
         qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(book.getImages()));
         bookMapper.deleteBook(book.getId());
-        visitUtil.deleteVisit(EntityType.BOOK.getId(), book.getId());
+        visitUtil.deleteVisit(Entity.BOOK.getId(), book.getId());
     }
 
     /**
@@ -112,7 +112,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBook(int id, Book book) {
         bookMapper.updateBook(id, book);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, EntityType.BOOK.getNameZh());
+        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.BOOK.getNameZh());
     }
 
     //endregion

@@ -2,11 +2,12 @@ package com.rakbow.website.data.emun.entity.merch;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -51,7 +52,7 @@ public enum MerchCategory {
     public static String getNameById(int id, String lang) {
         for (MerchCategory merchCategory : MerchCategory.values()) {
             if (merchCategory.id == id) {
-                if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
+                if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
                     return merchCategory.nameZh;
                 }else if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
                     return merchCategory.nameEn;

@@ -1,7 +1,7 @@
 package com.rakbow.website.util.convertMapper.entity;
 
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.common.Language;
 import com.rakbow.website.data.emun.entity.book.BookType;
 import com.rakbow.website.data.vo.LanguageVO;
@@ -32,8 +32,8 @@ import java.util.List;
 public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
-    EntityType entityType = EntityType.BOOK;
-    int entityTypeId = EntityType.BOOK.getId();
+    Entity ENTITY = Entity.BOOK;
+    int entityTypeId = Entity.BOOK.getId();
 
     //region single convert interface
 

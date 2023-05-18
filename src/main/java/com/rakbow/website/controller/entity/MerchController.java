@@ -3,9 +3,8 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.entity.Merch;
@@ -59,27 +58,27 @@ public class MerchController {
     //region ------获取页面------
 
     //获取单个周边商品详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMerchDetail(@PathVariable int id, Model model) {
-        Merch merch = merchService.getMerchWithAuth(id);
-        if (merch == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.MERCH.getNameZh()));
-            return "/error/404";
-        }
-        model.addAttribute("merch", merchVOMapper.merch2VO(merch));
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.MERCH.getId()));
-        //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(merch, EntityType.MERCH.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.MERCH.getId(), id, merch));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(merch.getImages(), 200, EntityType.MERCH, false));
-        //获取相关周边
-        // model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
-        return "/database/itemDetail/merch-detail";
-    }
+//    @UniqueVisitor
+//    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+//    public String getMerchDetail(@PathVariable int id, Model model) {
+//        Merch merch = merchService.getMerchWithAuth(id);
+//        if (merch == null) {
+//            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.MERCH.getNameZh()));
+//            return "/error/404";
+//        }
+//        model.addAttribute("merch", merchVOMapper.merch2VO(merch));
+//        //前端选项数据
+//        model.addAttribute("options", entityUtil.getDetailOptions(Entity.MERCH.getId()));
+//        //实体类通用信息
+//        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(merch, Entity.MERCH.getId()));
+//        //获取页面数据
+//        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.MERCH.getId(), id, merch));
+//        //图片相关
+//        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(merch.getImages(), 200, Entity.MERCH, false));
+//        //获取相关周边
+//        // model.addAttribute("relatedMerchs", merchService.getRelatedMerchs(id));
+//        return "/database/itemDetail/merch-detail";
+//    }
 
     //endregion
 
@@ -102,7 +101,7 @@ public class MerchController {
             Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
 
             //保存新增周边
-            res.message = merchService.addMerch(merch);
+//            res.message = merchService.addMerch(merch);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -110,22 +109,22 @@ public class MerchController {
     }
 
     //删除周边(单个/多个)
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    @ResponseBody
-    public String deleteMerch(@RequestBody String json) {
-        ApiResult res = new ApiResult();
-        try {
-            List<Merch> merchs = JSON.parseArray(json).toJavaList(Merch.class);
-            for (Merch merch : merchs) {
-                //从数据库中删除专辑
-                merchService.deleteMerch(merch);
-            }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.MERCH.getNameZh());
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return JSON.toJSONString(res);
-    }
+//    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+//    @ResponseBody
+//    public String deleteMerch(@RequestBody String json) {
+//        ApiResult res = new ApiResult();
+//        try {
+//            List<Merch> merchs = JSON.parseArray(json).toJavaList(Merch.class);
+//            for (Merch merch : merchs) {
+//                //从数据库中删除专辑
+//                merchService.deleteMerch(merch);
+//            }
+//            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.MERCH.getNameZh());
+//        } catch (Exception ex) {
+//            res.setErrorMessage(ex.getMessage());
+//        }
+//        return JSON.toJSONString(res);
+//    }
 
     //更新周边基础信息
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -146,7 +145,7 @@ public class MerchController {
             //修改编辑时间
             merch.setEditedTime(DateUtil.NOW_TIMESTAMP);
 
-            res.message = merchService.updateMerch(merch.getId(), merch);
+//            res.message = merchService.updateMerch(merch.getId(), merch);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

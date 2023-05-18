@@ -641,7 +641,7 @@
             //region edit basic info
             const like = () => {
                 let json = {
-                    entityType: ENTITY.GAME,
+                    entity: ENTITY.GAME,
                     entityId: detailInfo.value.id
                 }
                 HttpUtil.post(toast, LIKE_ITEM_URL, json)
@@ -655,7 +655,7 @@
             const updateStatus = () => {
                 editBlock.value = true;
                 let json = {
-                    entityType: ENTITY.GAME,
+                    entity: ENTITY.GAME,
                     entityId: detailInfo.value.id,
                     status: !detailInfo.value.status
                 };
@@ -713,7 +713,7 @@
                 gameEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
                     franchises: gameEdit.value.franchises,
-                    entityType: ENTITY.GAME
+                    entity: ENTITY.GAME
                 };
                 HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                     .then(res => {
@@ -754,7 +754,7 @@
                 if(ev.value.length !== 0) {
                     let json = {
                         franchises: ev.value,
-                        entityType: ENTITY.GAME
+                        entity: ENTITY.GAME
                     };
                     HttpUtil.post(null, GET_PRODUCT_SET_URL, json)
                         .then(res => {

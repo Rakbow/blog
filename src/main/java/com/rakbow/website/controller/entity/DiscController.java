@@ -3,9 +3,8 @@ package com.rakbow.website.controller.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.annotation.UniqueVisitor;
-import com.rakbow.website.controller.UserController;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.entity.Disc;
@@ -65,18 +64,18 @@ public class DiscController {
     public String getAlbumDetail(@PathVariable("id") int id, Model model) {
         Disc disc = discService.getDiscWithAuth(id);
         if (discService.getDisc(id) == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, EntityType.DISC.getNameZh()));
+            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.DISC.getNameZh()));
             return "/error/404";
         }
         model.addAttribute("disc", discVOMapper.disc2VO(disc));
         //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(EntityType.DISC.getId()));
+        model.addAttribute("options", entityUtil.getDetailOptions(Entity.DISC.getId()));
         //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(disc, EntityType.DISC.getId()));
+        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(disc, Entity.DISC.getId()));
         //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(EntityType.DISC.getId(), id, disc));
+        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.DISC.getId(), id, disc));
         //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, EntityType.DISC, false));
+        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, Entity.DISC, false));
         //获取相关碟片
         // model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
         return "/database/itemDetail/disc-detail";
@@ -149,7 +148,7 @@ public class DiscController {
                 //从数据库中删除专辑
                 discService.deleteDisc(disc);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, EntityType.DISC.getNameZh());
+            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.DISC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

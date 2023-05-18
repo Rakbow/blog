@@ -1,7 +1,7 @@
 package com.rakbow.website.task;
 
 import com.rakbow.website.dao.EntityMapper;
-import com.rakbow.website.data.emun.common.EntityType;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.util.common.RedisUtil;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
@@ -29,9 +29,9 @@ public class EntityAmountTask extends QuartzJobBean {
         // TODO
         System.out.println("------数据总数统计中------");
 
-        for (EntityType type : EntityType.ENTITY_TYPES) {
-            redisUtil.set("entity_amount:" + type.getId(), entityMapper.getItemAmount(type.getNameEn().toLowerCase()));
-        }
+//        for (Entity type : Entity.ENTITY_TYPES) {
+//            redisUtil.set("entity_amount:" + type.getId(), entityMapper.getItemAmount(type.getNameEn().toLowerCase()));
+//        }
 
         System.out.println("------数据总数统计完毕------");
     }

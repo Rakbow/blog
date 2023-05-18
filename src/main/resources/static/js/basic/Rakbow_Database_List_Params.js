@@ -553,7 +553,7 @@ const albumDbList = {
                 <template #body="slotProps">
                     <ul>
                         <li v-for="franchise in slotProps.data.franchises">
-                            <a :href="'/db/franchise/' + franchise.value ">
+                            <a :href="'/db/entry/' + franchise.value ">
                                 {{franchise.label}}
                             </a>
                         </li>
@@ -572,7 +572,7 @@ const albumDbList = {
                 <template #body="slotProps">
                     <ul>
                         <li v-for="product in slotProps.data.products">
-                            <a :href="'/db/product/' + product.value ">
+                            <a :href="'/db/entry/' + product.value ">
                                 {{product.label}}
                             </a>
                         </li>
@@ -1303,7 +1303,7 @@ const bookDbList = {
         <template #body="slotProps">
             <ul class="px-4">
                 <li v-for="franchise in slotProps.data.franchises">
-                    <a :href="'/db/franchise/' + franchise.value ">
+                    <a :href="'/db/entry/' + franchise.value ">
                         {{franchise.label}}
                     </a>
                 </li>
@@ -1323,7 +1323,7 @@ const bookDbList = {
         <template #body="slotProps">
             <ul class="px-4">
                 <li v-for="data in slotProps.data.products">
-                    <a :href="'/db/product/' + data.value">
+                    <a :href="'/db/entry/' + data.value">
                         {{data.label}}
                     </a>
                 </li>
@@ -2070,7 +2070,7 @@ const discDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="franchise in slotProps.data.franchises">
-                        <a :href="'/db/franchise/' + franchise.value ">
+                        <a :href="'/db/entry/' + franchise.value ">
                             {{franchise.label}}
                         </a>
                     </li>
@@ -2089,7 +2089,7 @@ const discDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="data in slotProps.data.products">
-                        <a :href="'/db/product/' + data.value">
+                        <a :href="'/db/entry/' + data.value">
                             {{data.label}}
                         </a>
                     </li>
@@ -2802,7 +2802,7 @@ const gameDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="franchise in slotProps.data.franchises">
-                        <a :href="'/db/franchise/' + franchise.value ">
+                        <a :href="'/db/entry/' + franchise.value ">
                             {{franchise.label}}
                         </a>
                     </li>
@@ -2821,7 +2821,7 @@ const gameDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="product in slotProps.data.products">
-                        <a :href="'/db/product/' + product.value ">
+                        <a :href="'/db/entry/' + product.value ">
                             {{product.label}}
                         </a>
                     </li>
@@ -3538,7 +3538,7 @@ const merchDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="franchise in slotProps.data.franchises">
-                        <a :href="'/db/franchise/' + franchise.value ">
+                        <a :href="'/db/entry/' + franchise.value ">
                             {{franchise.label}}
                         </a>
                     </li>
@@ -3558,7 +3558,7 @@ const merchDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="data in slotProps.data.products">
-                        <a :href="'/db/product/' + data.value">
+                        <a :href="'/db/entry/' + data.value">
                             {{data.label}}
                         </a>
                     </li>
@@ -4165,7 +4165,7 @@ const productDbList = {
             </p-column>
         <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 20rem">
             <template #body="slotProps">
-                <a :href="'/db/product/' + slotProps.data.id">
+                <a :href="'/db/entry/' + slotProps.data.id">
                     {{slotProps.data.name}}
                 </a>
             </template>
@@ -4192,7 +4192,7 @@ const productDbList = {
         </p-column>
         <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 10rem">
             <template #body="slotProps">
-                <a :href="'/db/franchise/' + slotProps.data.franchise.value">
+                <a :href="'/db/entry/' + slotProps.data.franchise.value">
                     {{slotProps.data.franchise.label}}
                 </a>
             </template>
@@ -4597,7 +4597,7 @@ const franchiseDbList = {
             </p-column>
     <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
         <template #body="slotProps">
-            <a :href="'/db/franchise/' + slotProps.data.id">
+            <a :href="'/db/entry/' + slotProps.data.id">
                 {{slotProps.data.name}}
             </a>
         </template>
