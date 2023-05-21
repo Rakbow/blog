@@ -3,23 +3,16 @@ package com.rakbow.website.util.entry;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.dao.EntryMapper;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.emun.common.CompanyRole;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.SpringUtil;
-import com.rakbow.website.util.convertMapper.entry.EntryConvertMapper;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -30,24 +23,11 @@ import java.util.Locale;
 @Component
 public class EntryUtil {
 
-    @Resource
-    private EntryMapper entryMapper;
-
-    private final EntryConvertMapper convertMapper = EntryConvertMapper.INSTANCES;
-
     public static JSONArray getCompanies(String json) {
         JSONArray orgCompanies = JSON.parseArray(json);
         if(orgCompanies.isEmpty()) return new JSONArray();
 
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
-        String key;
-        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-            key = RedisCacheConstant.COMPANY_SET_EN;
-        }else {
-            key = RedisCacheConstant.COMPANY_SET_ZH;
-        }
-        List<Attribute> allCompanies = JSON.parseArray(JSON.toJSONString(redisUtil.get(key))).toJavaList(Attribute.class);
+        List<Attribute> allCompanies = getAttributesForRedis(EntryCategory.COMPANY);
 
         JSONArray companies = new JSONArray();
         for (int i = 0; i < orgCompanies.size(); i++) {
@@ -75,8 +55,8 @@ public class EntryUtil {
     public static JSONArray getPersonnel(String json) {
         JSONArray orgPersonnel = JSON.parseArray(json);
         if(orgPersonnel.isEmpty()) return new JSONArray();
-        List<Attribute> allPersonnel = getAttributesForRedis(EntryCategory.PERSONNEL.getId());
-        List<Attribute> allRole = getAttributesForRedis(EntryCategory.ROLE.getId());
+        List<Attribute> allPersonnel = getAttributesForRedis(EntryCategory.PERSONNEL);
+        List<Attribute> allRole = getAttributesForRedis(EntryCategory.ROLE);
 
         JSONArray personnel = new JSONArray();
         for (int i = 0; i < orgPersonnel.size(); i++) {
@@ -108,7 +88,7 @@ public class EntryUtil {
     public static JSONArray getSpecs(String json) {
         JSONArray specs = JSON.parseArray(json);
         if(specs.isEmpty()) return new JSONArray();
-        List<Attribute> allSpecParameter = getAttributesForRedis(EntryCategory.SPEC_PARAMETER.getId());
+        List<Attribute> allSpecParameter = getAttributesForRedis(EntryCategory.SPEC_PARAM);
         for (int i = 0; i < specs.size(); i++) {
             JSONObject item = specs.getJSONObject(i);
 
@@ -118,26 +98,70 @@ public class EntryUtil {
         return specs;
     }
 
-    public static Attribute getSerial(int serial) {
-        List<Attribute> allPublications = getAttributesForRedis(EntryCategory.PUBLICATION.getId());
-        return DataFinder.findAttributeByValue(serial, allPublications);
+    public static List<Attribute> getSerials(String json) {
+
+        List<Attribute> serials = new ArrayList<>();
+
+        int[] ids = JSON.parseObject(json, int[].class);
+
+        if(ids.length == 0) return serials;
+
+        List<Attribute> allPublications = getAttributesForRedis(EntryCategory.PUBLICATION);
+
+        serials.addAll(DataFinder.findAttributesByValues(ids, allPublications));
+
+        return serials;
     }
 
-    public static List<Attribute> getAttributesForRedis(int category) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
+    public static List<Attribute> getClassifications(String json) {
 
-        JSONArray attributes = new JSONArray();
-        String key;
-        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-            key = EntryCategory.categoryMapEn.get(category);
-        }else {
-            key = EntryCategory.categoryMapZH.get(category);
+        List<Attribute> classifications = new ArrayList<>();
+
+        int[] ids = JSON.parseObject(json, int[].class);
+        List<Attribute> allClassifications = getAttributesForRedis(EntryCategory.CLASSIFICATION);
+
+        for(int id : ids) {
+            classifications.add(DataFinder.findAttributeByValue(id, allClassifications));
         }
 
-        attributes.addAll(JSON.parseArray(JSON.toJSONString(redisUtil.get(key))));
+        return classifications;
+    }
 
-        return attributes.toJavaList(Attribute.class);
+    public static List<Attribute> getFranchises(String json) {
+
+        List<Attribute> franchises = new ArrayList<>();
+
+        int[] ids = JSON.parseObject(json, int[].class);
+        List<Attribute> allFranchises = getAttributesForRedis(EntryCategory.FRANCHISE);
+
+        for(int id : ids) {
+            franchises.add(DataFinder.findAttributeByValue(id, allFranchises));
+        }
+
+        return franchises;
+    }
+
+    public static Attribute getFranchise(int id) {
+
+        List<Attribute> allFranchises = getAttributesForRedis(EntryCategory.FRANCHISE);
+
+        return DataFinder.findAttributeByValue(id, allFranchises);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Attribute> getAttributesForRedis(EntryCategory category) {
+        RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
+
+        List<Attribute> attributes = new ArrayList<>();
+
+        String key = category.getLocaleKey();
+
+        Object res = redisUtil.get(key);
+        if(res != null) {
+            attributes.addAll((List<Attribute>) redisUtil.get(key));
+        }
+
+        return attributes;
     }
 
 }

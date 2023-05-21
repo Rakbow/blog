@@ -1,7 +1,8 @@
 package com.rakbow.website.data.emun.entity.album;
 
+import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * @Description: 专辑分类
  */
 @AllArgsConstructor
-public enum AlbumFormat {
+public enum AlbumFormat implements MetaEmun {
     UNCATEGORIZED(0,"未分类", "Uncategorized"),
     VOCAL(1, "歌曲","Vocal"),
     OPENING_THEME(2, "片头曲","Opening Theme"),
@@ -86,33 +87,13 @@ public enum AlbumFormat {
 
         List<Attribute> res = new ArrayList<>();
 
-        List<Integer> ids = CommonUtil.ids2List(json);
+        int[] ids = JSON.parseObject(json, int[].class);
 
-        ids.forEach(id -> {
+        for(int id : ids) {
             res.add(new Attribute(id, getNameById(id)));
-        });
+        }
 
         return res;
-    }
-
-    /**
-     * 获取专辑分类数组
-     *
-     * @return list 专辑分类数组
-     * @author rakbow
-     */
-    public static List<Attribute> getAttributeSet(String lang) {
-        List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-            for (AlbumFormat item : AlbumFormat.values()) {
-                set.add(new Attribute(item.id, item.nameEn));
-            }
-        }else if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-            for (AlbumFormat item : AlbumFormat.values()) {
-                set.add(new Attribute(item.id, item.nameZh));
-            }
-        }
-        return set;
     }
 
 }

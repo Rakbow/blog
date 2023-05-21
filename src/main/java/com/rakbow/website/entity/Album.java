@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * @Project_name: website
@@ -51,16 +50,16 @@ public class Album extends MetaEntity {
         this.nameEn = "";
         this.barcode = "";
         this.releaseDate = null;
-        this.publishFormat = "{\"ids\":[]}";
-        this.albumFormat = "{\"ids\":[]}";
-        this.mediaFormat = "{\"ids\":[]}";
+        this.publishFormat = "[]";
+        this.albumFormat = "[]";
+        this.mediaFormat = "[]";
         this.price = 0;
         this.currencyUnit = "";
         this.companies = "[]";
         this.hasBonus = 0;
         this.bonus = "";
-        this.franchises = "{\"ids\":[]}";
-        this.products = "{\"ids\":[]}";
+        this.franchises = "[]";
+        this.products = "[]";
         this.setDescription("");
         this.setRemark("");
         this.artists = "[]";
@@ -70,37 +69,5 @@ public class Album extends MetaEntity {
         this.setEditedTime(DateUtil.NOW_TIMESTAMP);
         this.setStatus(1);
 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Album album = (Album) o;
-        return id == album.id &&
-                price == album.price &&
-                hasBonus == album.hasBonus &&
-                Objects.equals(catalogNo, album.catalogNo) &&
-                Objects.equals(name, album.name) &&
-                Objects.equals(nameZh, album.nameZh) &&
-                Objects.equals(nameEn, album.nameEn) &&
-                Objects.equals(barcode, album.barcode) &&
-                Objects.equals(releaseDate, album.releaseDate) &&
-                Objects.equals(publishFormat, album.publishFormat) &&
-                Objects.equals(albumFormat, album.albumFormat) &&
-                Objects.equals(mediaFormat, album.mediaFormat) &&
-                Objects.equals(currencyUnit, album.currencyUnit) &&
-                Objects.equals(companies, album.companies) &&
-                Objects.equals(bonus, album.bonus) &&
-                Objects.equals(franchises, album.franchises) &&
-                Objects.equals(products, album.products) &&
-                Objects.equals(artists, album.artists) &&
-                Objects.equals(trackInfo, album.trackInfo);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), id, catalogNo, name, nameZh, nameEn, barcode, releaseDate, publishFormat, albumFormat, mediaFormat, price, currencyUnit, companies, hasBonus, bonus, franchises, products, artists, trackInfo);
     }
 }

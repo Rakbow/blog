@@ -2,27 +2,24 @@ package com.rakbow.website.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.annotation.UniqueVisitor;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.common.Entity;
-import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.service.*;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.EntityUtil;
 import com.rakbow.website.util.convertMapper.entity.ProductVOMapper;
-import com.rakbow.website.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -204,11 +201,12 @@ public class ProductController {
      * */
     @RequestMapping(path = "/get-product-set", method = RequestMethod.POST)
     @ResponseBody
-    public String getAllProductByFranchiseId(@RequestBody String json, HttpServletRequest request){
+    public String getAllProductByFranchiseId(@RequestBody JSONObject json){
         ApiResult res = new ApiResult();
         try {
-            JSONObject param = JSON.parseObject(json);
-            res.data = productService.getProductSet(param.getList("franchises", Integer.class), param.getInteger("entityType"), CommonUtil.getLangByCookie(request));
+            List<Integer> franchiseIds = json.getList("franchises", Integer.class);
+            int entity = json.getIntValue("entity");
+            res.data = productService.getProductSet(franchiseIds, entity, LocaleContextHolder.getLocale().getLanguage());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -218,10 +216,9 @@ public class ProductController {
     @SuppressWarnings("unchecked")
     @RequestMapping(path = "/get-products", method = RequestMethod.POST)
     @ResponseBody
-    public String getProductsByFilter(@RequestBody String json, HttpServletRequest request){
+    public String getProductsByFilter(@RequestBody JSONObject json){
 
-        JSONObject param = JSON.parseObject(json);
-        QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
+        QueryParams queryParam = json.getObject("queryParams", QueryParams.class);
 
         SearchResult searchResult = productService.getProductsByFilter(queryParam);
 

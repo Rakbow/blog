@@ -956,10 +956,10 @@
                 let dataTmp = JSON.parse(JSON.stringify(album.value));
                 dataTmp.hasBonus = album.value.hasBonus ? 1 : 0;
                 albumEdit.value = dataTmp;
-                albumEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, option.value.mediaFormatSet).concat();
-                albumEdit.value.albumFormat = label2value(dataTmp.albumFormat, option.value.albumFormatSet).concat();
-                albumEdit.value.publishFormat = label2value(dataTmp.publishFormat, option.value.publishFormatSet).concat();
-                albumEdit.value.franchises = label2value(detailInfo.value.franchises, option.value.franchiseSet).concat();
+                albumEdit.value.mediaFormat = toValues(dataTmp.mediaFormat, option.value.mediaFormatSet).concat();
+                albumEdit.value.albumFormat = toValues(dataTmp.albumFormat, option.value.albumFormatSet).concat();
+                albumEdit.value.publishFormat = toValues(dataTmp.publishFormat, option.value.publishFormatSet).concat();
+                albumEdit.value.franchises = toValues(detailInfo.value.franchises, option.value.franchiseSet).concat();
                 let json = {
                     franchises: albumEdit.value.franchises,
                     entity: ENTITY.ALBUM
@@ -973,7 +973,7 @@
                             } else {
                                 productSelect.value = true;
                             }
-                            albumEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            albumEdit.value.products = toValues(detailInfo.value.products, productSet.value).concat();
                             displayEditDialog.value = true;
                         }
                     });

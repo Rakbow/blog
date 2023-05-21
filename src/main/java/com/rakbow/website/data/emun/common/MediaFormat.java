@@ -1,7 +1,8 @@
 package com.rakbow.website.data.emun.common;
 
+import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.util.common.CommonUtil;
+import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * @Description: 媒体类型
  */
 @AllArgsConstructor
-public enum MediaFormat {
+public enum MediaFormat implements MetaEmun {
     UNCATEGORIZED(0, "未分类", "Uncategorized"),
     CD(1, "CD", "CD"),
     DVD(2, "DVD", "DVD"),
@@ -81,31 +82,17 @@ public enum MediaFormat {
         return 0;
     }
 
-    public static List<Attribute> getAttributeSet(String lang) {
-        List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-            for (MediaFormat item : MediaFormat.values()) {
-                set.add(new Attribute(item.id, item.nameEn));
-            }
-        }else if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
-            for (MediaFormat item : MediaFormat.values()) {
-                set.add(new Attribute(item.id, item.nameZh));
-            }
-        }
-        return set;
-    }
-
     public static List<Attribute> getAttributes(String json) {
 
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
         List<Attribute> res = new ArrayList<>();
 
-        List<Integer> ids = CommonUtil.ids2List(json);
+        int[] ids = JSON.parseObject(json, int[].class);
 
-        ids.forEach(id -> {
+        for(int id : ids) {
             res.add(new Attribute(id, getNameById(id, lang)));
-        });
+        }
 
         return res;
     }

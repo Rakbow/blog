@@ -591,8 +591,8 @@
                 dataTmp.limited = disc.value.limited ? 1 : 0;
                 discEdit.value = dataTmp;
                 discEdit.value.region = dataTmp.region.code;
-                discEdit.value.mediaFormat = label2value(dataTmp.mediaFormat, mediaFormatSet.value).concat();
-                discEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                discEdit.value.mediaFormat = toValues(dataTmp.mediaFormat, mediaFormatSet.value).concat();
+                discEdit.value.franchises = toValues(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
                     franchises: discEdit.value.franchises,
                     entity: ENTITY.DISC
@@ -606,7 +606,7 @@
                             } else {
                                 productSelect.value = true;
                             }
-                            discEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            discEdit.value.products = toValues(detailInfo.value.products, productSet.value).concat();
                             displayEditDialog.value = true;
                         }
                     });

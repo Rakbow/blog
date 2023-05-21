@@ -5,14 +5,14 @@
 <mapper namespace="com.rakbow.website.dao.BookMapper">
 
     <sql id="selectFields">
-        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, personnel, authors,
-        companies, serial, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
+        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, personnel, authors,
+        companies, serials, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 
     <sql id="insertFields">
-        title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, publish_language, personnel, authors,
-        companies, serial, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
+        title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, personnel, authors,
+        companies, serials, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 
@@ -37,11 +37,11 @@
         <include refid="selectFields"></include>
         from book
         <where>
-        id in
+            id in
             <if test="ids != null and ids.size() != 0">
                 <foreach item="item" index="index" collection="ids" open="("
                          close=")" separator=",">
-                #{item}
+                    #{item}
                 </foreach>
             </if>
         </where>
@@ -60,7 +60,7 @@
         </selectKey>
         insert into book (<include refid="insertFields"></include>)
         values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{franchises}, #{products}, #{region},
-        #{publishLanguage}, #{personnel}, #{authors}, #{companies}, #{serial}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
+        #{lang}, #{personnel}, #{authors}, #{companies}, #{serials}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
         #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 
@@ -69,7 +69,7 @@
         set
         title = #{book.title}, title_en = #{book.titleEn}, title_zh = #{book.titleZh}, isbn_10 = #{book.isbn10},
         isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, franchises = #{book.franchises}, products = #{book.products},
-        region = #{book.region}, publish_language = #{book.publishLanguage}, serial = #{book.serial},
+        region = #{book.region}, lang = #{book.lang}, serials = #{book.serials},
         publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
         has_bonus = #{book.hasBonus}, remark = #{book.remark}, edited_time = #{book.editedTime}
         where id = #{book.id}
@@ -102,14 +102,17 @@
             <if test="isbn13 != null and isbn13 != '' ">
                 and isbn_13 like concat('%', #{isbn13}, '%')
             </if>
-            <if test="serial != null and serial != 0 ">
-                and serial = #{serial}
+            <if test="serials != null and serials.size() != 0">
+                <foreach item="item" index="index" collection="serials" open=""
+                         close="" separator="">
+                    and json_contains(book.serials, JSON_ARRAY( #{item} ))
+                </foreach>
             </if>
             <if test="region != null and region != '' ">
                 and region = #{region}
             </if>
-            <if test="publishLanguage != null and publishLanguage != '' ">
-                and publish_language = #{publishLanguage}
+            <if test="lang != null and lang != '' ">
+                and lang = #{lang}
             </if>
             <if test="bookType != 100 ">
                 and book_type = #{bookType}
@@ -117,13 +120,13 @@
             <if test="franchises != null and franchises.size() != 0">
                 <foreach item="item" index="index" collection="franchises" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(book.franchises, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(book.products, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="hasBonus != null and hasBonus != '' ">
@@ -186,14 +189,17 @@
             <if test="isbn13 != null and isbn13 != '' ">
                 and isbn_13 like concat('%', #{isbn13}, '%')
             </if>
-            <if test="serial != null and serial != 0 ">
-                and serial = #{serial}
+            <if test="serials != null and serials.size() != 0">
+                <foreach item="item" index="index" collection="serials" open=""
+                         close="" separator="">
+                    and json_contains(book.serials, JSON_ARRAY( #{item} ))
+                </foreach>
             </if>
             <if test="region != null and region != '' ">
                 and region = #{region}
             </if>
-            <if test="publishLanguage != null and publishLanguage != '' ">
-                and publish_language = #{publishLanguage}
+            <if test="lang != null and lang != '' ">
+                and lang = #{lang}
             </if>
             <if test="bookType != 100 ">
                 and book_type = #{bookType}
@@ -201,13 +207,13 @@
             <if test="franchises != null and franchises.size() != 0">
                 <foreach item="item" index="index" collection="franchises" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(book.franchises, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(book.products, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="hasBonus != null and hasBonus != '' ">

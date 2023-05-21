@@ -1,44 +1,3 @@
-//将{label, value}选项里value数组转为label数组
-const labelEn2valueArray = (xFormat, xFormatSet) => {
-    let tmp = [];
-    for (let item1 of xFormat) {
-        for (let item2 of xFormatSet) {
-            if (item1 === item2.labelEn) {
-                tmp.push(item2.value);
-            }
-        }
-    }
-    return tmp;
-}
-
-const value2Label = (value, xSet) => {
-    for (let item of xSet) {
-        if (value === item.value) {
-            return item.label;
-        }
-    }
-};
-
-const label2Value = (label, xSet) => {
-    for (let item of xSet) {
-        if (label === item.label) {
-            return item.value;
-        }
-    }
-}
-
-const value2LabelEnArray = (xFormat, xFormatSet) => {
-    let tmp = [];
-    for (let item1 of xFormat) {
-        for (let item2 of xFormatSet) {
-            if (item1 === item2.value) {
-                tmp.push(item2.labelEn);
-            }
-        }
-    }
-    return tmp;
-}
-
 //将date类型转为string类型
 function dateToString(date) {
     const year = date.getFullYear();
@@ -61,22 +20,26 @@ function JPY2CNY(jpy) {
         })
 }
 
-//根据选项set转换label -> value
-const commonLabel2value = (xFormat, xFormatSet) => {
-    let tmp = [];
-    for (let item1 of xFormat) {
-        for (let item2 of xFormatSet) {
-            if (item1 === item2.label) {
-                tmp.push(item2.value);
-            }
+const valueToLabel = (value, xSet) => {
+    for (let item of xSet) {
+        if (value === item.value) {
+            return item.label;
         }
+    }
+};
+
+const ToValues = (set) => {
+    let tmp = [];
+    if(set.length === 0) return tmp;
+    for(let item of set) {
+        tmp.push(item.value);
     }
     return tmp;
 };
 
-const label2value = (xFormat, xFormatSet) => {
+const toValues = (xFormat, xFormatSet) => {
+    let tmp = [];
     if(xFormat.length !==0 && xFormatSet.length !== 0) {
-        let tmp = [];
         for (let item1 of xFormat) {
             for (let item2 of xFormatSet) {
                 if (item2.value === item1.value) {
@@ -84,8 +47,8 @@ const label2value = (xFormat, xFormatSet) => {
                 }
             }
         }
-        return tmp;
     }
+    return tmp;
 };
 
 //根据图片url获取图片字节大小和长宽
@@ -192,7 +155,7 @@ const getSidebarPanelImageClass = (url) => {
     return (image.naturalWidth > image.naturalHeight) ? "sidebar-panel-image-middle-width" : "sidebar-panel-image-middle-height";
 };
 
-const dropdownValue2Label = (value, set) => {
+const dropdownvalueToLabel = (value, set) => {
     for (let item of set) {
         if (item.value === value) {
             return item.label;
@@ -256,7 +219,7 @@ const imageTypes = [
 ];
 
 const getImageTypeLabel = (type) => {
-    return value2Label(type, imageTypes);
+    return valueToLabel(type, imageTypes);
 };
 
 const getNameByCode = (code, regionSet) => {
@@ -359,7 +322,7 @@ const indexTabChange = (ev) => {
     })
 };
 
-const entityTypeValue2Label = (value) => {
+const entityTypevalueToLabel = (value) => {
     for (let entity of ENTITY_TYPE) {
         if (entity.value === value) {
             return entity.label;
@@ -375,7 +338,7 @@ const entityTypeValue2Icon = (value) => {
     }
 }
 
-const entityTypeValue2LabelEn = (value) => {
+const entityTypevalueToLabelEn = (value) => {
     for (let entity of ENTITY_TYPE) {
         if (entity.value === value.toString()) {
             return entity.labelEn.toLowerCase();

@@ -21,7 +21,7 @@ public class Merchandise extends MetaEntry {
 
     public Merchandise() {
         this.setId(0);
-        this.setCategory(EntryCategory.getAttribute(EntryCategory.MERCHANDISE.getId()));
+        this.setCategory(EntryCategory.getAttribute(EntryCategory.MERCH_TYPE.getId()));
         this.setName("");
         this.setNameEn("");
         this.setNameZh("");

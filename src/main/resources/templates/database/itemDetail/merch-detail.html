@@ -521,7 +521,7 @@
                 merchEdit.value = dataTmp;
                 merchEdit.value.region = dataTmp.region.code;
                 merchEdit.value.category = dataTmp.category.id;
-                merchEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                merchEdit.value.franchises = toValues(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
                     franchises: merchEdit.value.franchises,
                     entity: ENTITY.MERCH
@@ -535,7 +535,7 @@
                             } else {
                                 productSelect.value = true;
                             }
-                            merchEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            merchEdit.value.products = toValues(detailInfo.value.products, productSet.value).concat();
                             displayEditDialog.value = true;
                         }
                     });

@@ -181,7 +181,7 @@
                                                     <strong>{{RKW_Web.Language}}</strong>
                                                 </td>
                                                 <td>
-                                                    {{book.publishLanguage.name}}
+                                                    {{book.lang.name}}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -198,10 +198,12 @@
                                                     <i class="pi pi-book"></i>
                                                     <strong>{{RKW_Web.BookSerial}}</strong>
                                                 </td>
-                                                <td class="common-link">
-                                                    <a v-if="book.serial" :href="'/db/entry/' + book.serial.value">
-                                                        {{book.serial.label}}
-                                                    </a>
+                                                <td class="common-link" style="display:inline">
+                                                    <span v-if="book.serials" v-for="serial of book.serials">
+                                                        <a :href="'/db/entry/' + serial.value">
+                                                            {{serial.label}}&nbsp;
+                                                        </a>
+                                                    </span>
                                                     <span v-else> - </span>
                                                 </td>
                                             </tr>
@@ -499,7 +501,7 @@
                 </div>
                 <div class="field col">
                     <label class="mb-3">{{RKW_Web.Language}}<span style="color: red">*</span></label>
-                    <p-dropdown v-model="bookEdit.publishLanguage" :options="option.languageSet"
+                    <p-dropdown v-model="bookEdit.lang" :options="option.languageSet"
                                 option-label="name" option-value="code">
                     </p-dropdown>
                 </div>
@@ -542,9 +544,9 @@
                 </div>
                 <div class="field col">
                     <label>{{RKW_Web.BookSerial}}</label>
-                    <p-dropdown v-model="bookEdit.serial" :options="option.publicationSet"
-                                option-label="label" option-value="value">
-                    </p-dropdown>
+                    <p-multiselect v-model="bookEdit.serials" :options="option.publicationSet"
+                                   option-label="label" option-value="value" display="chip" :filter="true">
+                    </p-multiselect>
                 </div>
             </div>
             <div class="field">
@@ -706,12 +708,10 @@
                 dataTmp.hasBonus = book.value.hasBonus ? 1 : 0;
                 bookEdit.value = dataTmp;
                 bookEdit.value.bookType = dataTmp.bookType.value;
-                if(dataTmp.serial !== null) {
-                    bookEdit.value.serial = dataTmp.serial.value;
-                }
+                bookEdit.value.serials = ToValues(dataTmp.serials);
                 bookEdit.value.region = dataTmp.region.code;
-                bookEdit.value.publishLanguage = dataTmp.publishLanguage.code;
-                bookEdit.value.franchises = label2value(detailInfo.value.franchises, option.value.franchiseSet).concat();
+                bookEdit.value.lang = dataTmp.lang.code;
+                bookEdit.value.franchises = toValues(detailInfo.value.franchises, option.value.franchiseSet).concat();
                 let json = {
                     franchises: bookEdit.value.franchises,
                     entity: ENTITY.BOOK
@@ -725,7 +725,7 @@
                             } else {
                                 productSelect.value = true;
                             }
-                            bookEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            bookEdit.value.products = toValues(detailInfo.value.products, productSet.value).concat();
                             displayEditDialog.value = true;
                         }
                     });

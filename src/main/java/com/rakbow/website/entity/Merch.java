@@ -40,8 +40,8 @@ public class Merch extends MetaEntity {
         this.nameEn = "";
         this.nameZh = "";
         this.barcode = "";
-        this.franchises = "{\"ids\": []}";
-        this.products = "{\"ids\": []}";
+        this.franchises = "[]";
+        this.products = "[]";
         this.category = 0;
         this.releaseDate = null;
         this.price = 0;

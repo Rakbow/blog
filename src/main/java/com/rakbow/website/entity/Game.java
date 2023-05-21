@@ -41,8 +41,8 @@ public class Game extends MetaEntity {
         this.nameZh = "";
         this.nameEn = "";
         this.barcode = "";
-        this.franchises = "{\"ids\": []}";
-        this.products = "{\"ids\": []}";
+        this.franchises = "[]";
+        this.products = "[]";
         this.releaseDate = null;
         this.releaseType = 0;
         this.platform = 0;

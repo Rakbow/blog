@@ -1,6 +1,5 @@
 package com.rakbow.website.entity;
 
-import com.rakbow.website.data.Attribute;
 import com.rakbow.website.entity.common.MetaEntity;
 import com.rakbow.website.util.common.DateUtil;
 import lombok.Data;
@@ -29,11 +28,11 @@ public class Book extends MetaEntity {
     private String franchises;//所属系列
     private String products;//所属产品
     private String region;//地区
-    private String publishLanguage;//语言
+    private String lang;//语言
     private String personnel;
     private String authors;//作者（译者，插画，原作者等，json）
     private String companies;//相关企业
-    private int serial;//出版社
+    private String serials;//连载载体
     private Date publishDate;//出版日期
     private int price;//出版价格
     private String summary;//简介
@@ -50,14 +49,14 @@ public class Book extends MetaEntity {
         this.isbn10 = "";
         this.isbn13 = "";
         this.bookType = 0;
-        this.franchises = "{\"ids\": []}";
-        this.products = "{\"ids\": []}";
+        this.franchises = "[]";
+        this.products = "[]";
         this.region = "";
-        this.publishLanguage = "";
+        this.lang = "";
         this.personnel = "[]";
         this.authors = "[]";
         this.companies = "[]";
-        this.serial = 0;
+        this.serials = "[]";
         this.publishDate = null;
         this.price = 0;
         this.summary = "";

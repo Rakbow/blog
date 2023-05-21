@@ -1,11 +1,10 @@
 package com.rakbow.website.data.emun.common;
 
+import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Project_name: website
@@ -14,7 +13,7 @@ import java.util.List;
  * @Description:
  */
 @AllArgsConstructor
-public enum Entity {
+public enum Entity implements MetaEmun {
 
     ENTRY(0,"Entry", "Entry"),
     ALBUM(1,"专辑", "Album"),

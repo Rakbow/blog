@@ -1,7 +1,8 @@
 package com.rakbow.website;
 
 import com.rakbow.website.dao.*;
-import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.RedisKey;
+import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.entity.EntityStatistic;
 import com.rakbow.website.service.*;
 import com.rakbow.website.util.common.*;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Locale;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -60,10 +62,29 @@ public class RedisTests {
 
     @Test
     public void refreshData() {
+
+        redisUtil.set(String.format(RedisKey.REGION_SET, Region.getAttributeSet(Locale.ENGLISH.getLanguage())),
+                Region.getAttributeSet(Locale.ENGLISH.getLanguage()));
+        redisUtil.set(String.format(RedisKey.REGION_SET, Region.getAttributeSet(Locale.CHINESE.getLanguage())),
+                Region.getAttributeSet(Locale.CHINESE.getLanguage()));
+        redisUtil.set(String.format(RedisKey.LANGUAGE_SET, Region.getAttributeSet(Locale.ENGLISH.getLanguage())),
+                Region.getAttributeSet(Locale.ENGLISH.getLanguage()));
+        redisUtil.set(String.format(RedisKey.LANGUAGE_SET, Region.getAttributeSet(Locale.CHINESE.getLanguage())),
+                Region.getAttributeSet(Locale.CHINESE.getLanguage()));
+
+        // EmunUtil.refreshRedisEmunData();
+        // entryService.refreshRedisEntries(0);
+        // entryService.refreshRedisEntries(1);
+        // entryService.refreshRedisEntries(2);
+        // entryService.refreshRedisEntries(3);
+        // entryService.refreshRedisEntries(4);
+        // entryService.refreshRedisEntries(5);
+        // entryService.refreshRedisEntries(9);
+        // entryService.refreshRedisEntries(10);
+
         // entityService.refreshRedisEntries(EntryCategory.COMPANY);
         // productService.refreshRedisProducts();
         // franchiseService.refreshRedisFranchises();
-        entityService.refreshRedisEmunData();
         // entryService.refreshRedisEntries(EntryCategory.ROLE);
         // entryService.refreshRedisEntries(EntryCategory.PERSONNEL.getId());
         // entryService.refreshRedisEntries(EntryCategory.SPEC_PARAMETER);
@@ -73,7 +94,7 @@ public class RedisTests {
 
     @Test
     public void redisTest1() {
-        redisUtil.redisTemplate.opsForZSet().add(RedisCacheConstant.ALBUM_VISIT_RANKING, 1, 0);
+        redisUtil.redisTemplate.opsForZSet().add(RedisKey.ALBUM_VISIT_RANKING, 1, 0);
     }
 
     @Test

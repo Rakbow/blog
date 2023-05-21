@@ -227,7 +227,6 @@ public class BookService {
         String isbn13 = filter.getJSONObject("isbn13").getString("value");
         String region = filter.getJSONObject("region").getString("value");
         String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
-        int serial = filter.getJSONObject("serial").getIntValue("value");
 
         int bookType = 100;
         if (filter.getJSONObject("bookType").get("value") != null) {
@@ -236,6 +235,7 @@ public class BookService {
 
         List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
         List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        List<Integer> serials = filter.getJSONObject("serials").getList("value", Integer.class);
 
         String hasBonus;
         if (filter.getJSONObject("hasBonus").get("value") == null) {
@@ -245,10 +245,10 @@ public class BookService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serial, region, publishLanguage,
+        List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
                 bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
-        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, serial, region, publishLanguage,
+        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
                 bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior());
 
         return new SearchResult(total, books);
@@ -266,7 +266,7 @@ public class BookService {
         List<Integer> products = new ArrayList<>();
         products.add(productId);
 
-        List<Book> books = bookMapper.getBooksByFilter(null, null, null, 0,
+        List<Book> books = bookMapper.getBooksByFilter(null, null, null, null,
                 null, null, 100, null, products, null, false, "publishDate",
                 -1,  0, 0);
 

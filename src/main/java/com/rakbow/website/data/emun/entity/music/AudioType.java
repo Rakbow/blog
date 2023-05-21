@@ -1,13 +1,13 @@
 package com.rakbow.website.data.emun.entity.music;
 
 import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -16,7 +16,7 @@ import java.util.List;
  * @Description:
  */
 @AllArgsConstructor
-public enum AudioType {
+public enum AudioType implements MetaEmun {
     UNCATEGORIZED(0,"未分类", "Uncategorized"),
     VOCAL(1, "歌曲","Vocal"),
     INSTRUMENTAL(2, "歌曲(无伴奏)","Instrumental"),
@@ -33,7 +33,7 @@ public enum AudioType {
     public static String getNameById(int id, String lang){
         for (AudioType audioType : AudioType.values()) {
             if (audioType.getId() == id) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     return audioType.getNameEn();
                 }else {
                     return audioType.getNameZh();
@@ -46,25 +46,6 @@ public enum AudioType {
     public static Attribute getAttribute(int id) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         return new Attribute(id, getNameById(id, lang));
-    }
-
-    /**
-     * 获取音乐分类数组
-     * @author rakbow
-     * @return list
-     * */
-    public static List<Attribute> getAttributeSet(String lang){
-        List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
-            for (AudioType item : AudioType.values()) {
-                set.add(new Attribute(item.id, item.nameEn));
-            }
-        }else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
-            for (AudioType item : AudioType.values()) {
-                set.add(new Attribute(item.id, item.nameZh));
-            }
-        }
-        return set;
     }
 
 }

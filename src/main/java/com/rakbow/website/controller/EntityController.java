@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,7 +58,7 @@ public class EntityController {
     //获取在线数据库首页
     @RequestMapping(path = "", method = RequestMethod.GET)
     public String getDatabasePage(Model model) {
-        model.addAttribute("indexCoverUrl", redisUtil.get(RedisCacheConstant.INDEX_COVER_URL));
+        model.addAttribute("indexCoverUrl", redisUtil.get(RedisKey.INDEX_COVER_URL));
         return "database/database";
     }
 

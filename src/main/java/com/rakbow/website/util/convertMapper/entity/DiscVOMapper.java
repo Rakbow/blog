@@ -90,8 +90,8 @@ public interface DiscVOMapper {
         //
         // discVOAlpha.setRegion(Region.getRegion(disc.getRegion()));
         //
-        // discVOAlpha.setFranchises(FranchiseUtil.getFranchises(disc.getFranchises()));
-        // discVOAlpha.setProducts(ProductUtil.getProducts(disc.getProducts()));
+        // discVOAlpha.setFranchises(EntryUtil.getFranchises(disc.getFranchises()));
+        // discVOAlpha.setProducts(EntryUtil.getClassifications(disc.getProducts()));
         //
         // discVOAlpha.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
         //
@@ -198,8 +198,8 @@ public interface DiscVOMapper {
         //
         // discVOGamma.setRegion(Region.getRegion(disc.getRegion()));
         //
-        // discVOGamma.setFranchises(FranchiseUtil.getFranchises(disc.getFranchises()));
-        // discVOGamma.setProducts(ProductUtil.getProducts(disc.getProducts()));
+        // discVOGamma.setFranchises(EntryUtil.getFranchises(disc.getFranchises()));
+        // discVOGamma.setProducts(EntryUtil.getClassifications(disc.getProducts()));
         //
         // discVOGamma.setMediaFormat(MediaFormat.getAttributes(disc.getMediaFormat()));
         //

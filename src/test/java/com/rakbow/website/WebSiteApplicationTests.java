@@ -3,7 +3,6 @@ package com.rakbow.website;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.emun.entry.EntryCategory;
 import com.rakbow.website.data.image.Image;
@@ -109,20 +108,6 @@ class WebSiteApplicationTests {
         long t2 = System.currentTimeMillis();
         
         System.out.println(t2 - t1);
-    }
-
-    @Test
-    public void jacksonTest() throws JsonProcessingException {
-
-//        List<Album> albums = albumMapper.getAll();
-
-//         Album album = albumService.getAlbum(11);
-// //        String json = JsonUtil.toJson(album);
-//         JsonNode imagesJson = JsonUtil.toNode(album.getImages());
-//         System.out.println(imagesJson);
-//
-//         List<Image> images = JsonUtil.toList(imagesJson, Image.class);
-//         images.forEach(System.out::println);
     }
 
     @Test

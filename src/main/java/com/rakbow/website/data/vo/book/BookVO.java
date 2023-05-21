@@ -6,6 +6,8 @@ import com.rakbow.website.data.vo.LanguageVO;
 import com.rakbow.website.data.vo.RegionVO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Project_name: website
  * @Author: Rakbow
@@ -25,10 +27,10 @@ public class BookVO {
     private Attribute bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
     private RegionVO region;//地区
-    private LanguageVO publishLanguage;//语言
+    private LanguageVO lang;//语言
     private int price;//出版价格
     private String currencyUnit;//货币单位
-    private Attribute serial;//连载信息
+    private List<Attribute> serials;//连载信息
     private String summary;//简介
     private boolean hasBonus;//是否包含特典
     private String remark;//备注

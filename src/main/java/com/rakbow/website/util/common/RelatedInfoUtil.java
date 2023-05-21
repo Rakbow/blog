@@ -1,7 +1,7 @@
 package com.rakbow.website.util.common;
 
 import com.rakbow.website.data.EntityInfo;
-import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.RedisKey;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -86,7 +86,7 @@ public class RelatedInfoUtil {
      * 获取key,用于记录
      * */
     public String getRelatedKey(int entityType, int entityId) {
-        return RedisCacheConstant.ENTITY_RELATED_ITEM + RedisCacheConstant.SPLIT + entityType + RedisCacheConstant.SPLIT + entityId;
+        return RedisKey.ENTITY_RELATED_ITEM + RedisKey.SPLIT + entityType + RedisKey.SPLIT + entityId;
     }
 
 }

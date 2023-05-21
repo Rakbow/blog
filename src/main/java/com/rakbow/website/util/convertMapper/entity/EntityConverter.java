@@ -12,8 +12,6 @@ import com.rakbow.website.util.common.DateUtil;
 import com.rakbow.website.util.common.LikeUtil;
 import com.rakbow.website.util.common.SpringUtil;
 import com.rakbow.website.util.common.VisitUtil;
-import com.rakbow.website.util.entity.FranchiseUtil;
-import com.rakbow.website.util.entity.ProductUtil;
 import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
@@ -35,11 +33,11 @@ public class EntityConverter {
     }
 
     static List<Attribute> getProducts(String products) {
-        return ProductUtil.getProducts(products);
+        return EntryUtil.getClassifications(products);
     }
 
     static List<Attribute> getFranchises(String franchises) {
-        return FranchiseUtil.getFranchises(franchises);
+        return EntryUtil.getFranchises(franchises);
     }
 
     static List<Attribute> getMediaFormat(String formats) {

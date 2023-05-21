@@ -710,7 +710,7 @@
                 gameEdit.value.releaseType = dataTmp.releaseType.id;
                 gameEdit.value.region = dataTmp.region.code;
                 gameEdit.value.platform = dataTmp.platform.id;
-                gameEdit.value.franchises = label2value(detailInfo.value.franchises, franchiseSet.value).concat();
+                gameEdit.value.franchises = toValues(detailInfo.value.franchises, franchiseSet.value).concat();
                 let json = {
                     franchises: gameEdit.value.franchises,
                     entity: ENTITY.GAME
@@ -724,7 +724,7 @@
                             } else {
                                 productSelect.value = true;
                             }
-                            gameEdit.value.products = label2value(detailInfo.value.products, productSet.value).concat();
+                            gameEdit.value.products = toValues(detailInfo.value.products, productSet.value).concat();
                             displayEditDialog.value = true;
                         }
                     });

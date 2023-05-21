@@ -1,6 +1,6 @@
 package com.rakbow.website.util.common;
 
-import com.rakbow.website.data.RedisCacheConstant;
+import com.rakbow.website.data.RedisKey;
 import com.rakbow.website.data.emun.common.Entity;
 import org.springframework.stereotype.Component;
 
@@ -115,29 +115,29 @@ public class VisitUtil {
      */
     public void clearAllVisitRank() {
 
-        if(redisUtil.hasKey(RedisCacheConstant.ALBUM_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.ALBUM_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.ALBUM_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.ALBUM_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.BOOK_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.BOOK_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.BOOK_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.BOOK_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.DISC_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.DISC_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.DISC_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.DISC_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.GAME_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.GAME_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.GAME_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.GAME_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.MERCH_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MERCH_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.MERCH_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.MERCH_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.MUSIC_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.MUSIC_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.MUSIC_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.MUSIC_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.PRODUCT_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.PRODUCT_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.PRODUCT_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.PRODUCT_VISIT_RANKING, 0, -1);
         }
-        if(redisUtil.hasKey(RedisCacheConstant.FRANCHISE_VISIT_RANKING)) {
-            redisUtil.redisTemplate.opsForZSet().removeRange(RedisCacheConstant.FRANCHISE_VISIT_RANKING, 0, -1);
+        if(redisUtil.hasKey(RedisKey.FRANCHISE_VISIT_RANKING)) {
+            redisUtil.redisTemplate.opsForZSet().removeRange(RedisKey.FRANCHISE_VISIT_RANKING, 0, -1);
         }
 
     }
@@ -156,22 +156,22 @@ public class VisitUtil {
     public String getEntityVisitRankingKeyName(int entityType) {
 
         if(entityType == Entity.ALBUM.getId()) {
-            return RedisCacheConstant.ALBUM_VISIT_RANKING;
+            return RedisKey.ALBUM_VISIT_RANKING;
         }
         if(entityType == Entity.BOOK.getId()) {
-            return RedisCacheConstant.BOOK_VISIT_RANKING;
+            return RedisKey.BOOK_VISIT_RANKING;
         }
         if(entityType == Entity.DISC.getId()) {
-            return RedisCacheConstant.DISC_VISIT_RANKING;
+            return RedisKey.DISC_VISIT_RANKING;
         }
         if(entityType == Entity.GAME.getId()) {
-            return RedisCacheConstant.GAME_VISIT_RANKING;
+            return RedisKey.GAME_VISIT_RANKING;
         }
 //        if(entityType == Entity.MERCH.getId()) {
 //            return RedisCacheConstant.MERCH_VISIT_RANKING;
 //        }
         if(entityType == Entity.MUSIC.getId()) {
-            return RedisCacheConstant.MUSIC_VISIT_RANKING;
+            return RedisKey.MUSIC_VISIT_RANKING;
         }
 //        if(entityType == Entity.PRODUCT.getId()) {
 //            return RedisCacheConstant.PRODUCT_VISIT_RANKING;

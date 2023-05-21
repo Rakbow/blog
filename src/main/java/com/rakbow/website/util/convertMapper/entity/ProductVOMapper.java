@@ -3,15 +3,15 @@ package com.rakbow.website.util.convertMapper.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.data.vo.product.ProductVOBeta;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.DateUtil;
-import com.rakbow.website.util.entity.FranchiseUtil;
+import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
-import com.rakbow.website.data.CommonConstant;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -51,7 +51,7 @@ public interface ProductVOMapper {
         productVO.setRemark(product.getRemark());
 
         //关联信息
-        productVO.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
+        productVO.setFranchise(EntryUtil.getFranchise(product.getFranchise()));
 
         productVO.setOrganizations(JSON.parseArray(product.getOrganizations()));
         productVO.setStaffs(JSON.parseArray(product.getStaffs()));
@@ -147,7 +147,7 @@ public interface ProductVOMapper {
         productVOBeta.setCategory(ProductCategory.getAttribute(product.getCategory()));
 
         //关联信息
-        productVOBeta.setFranchise(FranchiseUtil.getFranchise(product.getFranchise()));
+        productVOBeta.setFranchise(EntryUtil.getFranchise(product.getFranchise()));
 
         productVOBeta.setCover(QiniuImageUtil.getThumb70Url(product.getImages()));
 

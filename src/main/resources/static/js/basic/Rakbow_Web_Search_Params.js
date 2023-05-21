@@ -37,7 +37,7 @@ const SearchPanel = {
             <template #value="slotProps">
                 <div class="country-item country-item-value" v-if="slotProps.value">
                     <i :class="entityTypeValue2Icon(slotProps.value)"></i>
-                    <span class="ml-1">{{entityTypeValue2Label(slotProps.value)}}</span>
+                    <span class="ml-1">{{entityTypevalueToLabel(slotProps.value)}}</span>
                 </div>
             </template>
             <template #option="slotProps">
@@ -325,7 +325,7 @@ const SearchPanel = {
             this.search();
         },
         entityTypeValue2Icon,
-        entityTypeValue2Label
+        entityTypevalueToLabel
     },
     components: {
         "p-button": primevue.button,

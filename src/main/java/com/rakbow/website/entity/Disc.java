@@ -45,12 +45,12 @@ public class Disc extends MetaEntity {
         this.nameEn = "";
         this.barcode = "";
         this.region = "";
-        this.franchises = "{\"ids\":[]}";
-        this.products = "{\"ids\":[]}";
+        this.franchises = "[]";
+        this.products = "[]";
         this.releaseDate = null;
         this.price = 0;
         this.currencyUnit = "";
-        this.mediaFormat = "{\"ids\":[]}";
+        this.mediaFormat = "[]";
         this.limited = 0;
         this.spec = "[]";
         this.hasBonus = 0;

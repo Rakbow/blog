@@ -48,9 +48,9 @@ public interface BookVOMapper {
     @Mapping(target = "currencyUnit", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCurrencyUnitByCode(book.getRegion()))")
     @Mapping(target = "hasBonus", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getBool(book.getHasBonus()))")
     @Mapping(target = "bookType", source = "bookType", qualifiedByName = "getBookType")
-    @Mapping(target = "serial", source = "serial", qualifiedByName = "getSerial")
+    @Mapping(target = "serials", source = "serials", qualifiedByName = "getSerials")
     @Mapping(target = "region", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getRegion(book.getRegion()))")
-    @Mapping(target = "publishLanguage", source = "publishLanguage", qualifiedByName = "getPublishLanguage")
+    @Mapping(target = "lang", source = "lang", qualifiedByName = "getLang")
     @Mapping(target = "authors", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getJSONArray(book.getAuthors()))")
     @Mapping(target = "spec", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getJSONArray(book.getSpec()))")
     @Mapping(target = "companies", expression = "java(com.rakbow.website.util.convertMapper.entity.EntityConverter.getCompanies(book.getCompanies()))")
@@ -94,14 +94,14 @@ public interface BookVOMapper {
         return BookType.getAttribute(bookType);
     }
 
-    @Named("getPublishLanguage")
-    default LanguageVO getPublishLanguage(String publishLanguage) {
-        return Language.getLanguage(publishLanguage);
+    @Named("getLang")
+    default LanguageVO getLang(String lang) {
+        return Language.getLanguage(lang);
     }
 
-    @Named("getSerial")
-    default Attribute getSerial(int serial) {
-        return EntryUtil.getSerial(serial);
+    @Named("getSerials")
+    default List<Attribute> getSerials(String serial) {
+        return EntryUtil.getSerials(serial);
     }
     //endregion
 
@@ -140,8 +140,8 @@ public interface BookVOMapper {
         // bookVOAlpha.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
         //
         // //关联信息
-        // bookVOAlpha.setProducts(ProductUtil.getProducts(book.getProducts()));
-        // bookVOAlpha.setFranchises(FranchiseUtil.getFranchises(book.getFranchises()));
+        // bookVOAlpha.setProducts(EntryUtil.getClassifications(book.getProducts()));
+        // bookVOAlpha.setFranchises(EntryUtil.getFranchises(book.getFranchises()));
         //
         // //将图片分割处理
         // bookVOAlpha.setCover(CommonImageUtil.generateBookCover(book.getImages(), EntityType.BOOK));
@@ -262,8 +262,8 @@ public interface BookVOMapper {
         // bookVOGamma.setPublishLanguage(Language.getLanguage(book.getPublishLanguage()));
         //
         // //关联信息
-        // bookVOGamma.setProducts(ProductUtil.getProducts(book.getProducts()));
-        // bookVOGamma.setFranchises(FranchiseUtil.getFranchises(book.getFranchises()));
+        // bookVOGamma.setProducts(EntryUtil.getClassifications(book.getProducts()));
+        // bookVOGamma.setFranchises(EntryUtil.getFranchises(book.getFranchises()));
         //
         // bookVOGamma.setCover(QiniuImageUtil.getThumb70Url(book.getImages()));
         //

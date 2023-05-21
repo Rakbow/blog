@@ -1,14 +1,13 @@
 package com.rakbow.website.data.emun.entity.product;
 
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.system.SystemLanguage;
+import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -17,7 +16,7 @@ import java.util.List;
  * @Description:
  */
 @AllArgsConstructor
-public enum ProductCategory {
+public enum ProductCategory implements MetaEmun {
     UNCATEGORIZED(0,"未分类", "Uncategorized"),
     GAME(1, "游戏", "Game"),
     ANIMATION(2, "TV动画/动画电影", "Animation"),
@@ -40,7 +39,7 @@ public enum ProductCategory {
     public static String getNameById(int id, String lang){
         for (ProductCategory item : ProductCategory.values()) {
             if (item.getId() == id) {
-                if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
+                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
                     return item.nameEn;
                 }else {
                     return item.nameZh;
@@ -53,26 +52,6 @@ public enum ProductCategory {
     public static Attribute getAttribute(int id) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         return new Attribute(id, getNameById(id, lang));
-    }
-
-    /**
-     * 获取作品分类数组
-     *
-     * @return list 作品分类数组
-     * @author rakbow
-     */
-    public static List<Attribute> getAttributeSet(String lang) {
-        List<Attribute> set = new ArrayList<>();
-        if(StringUtils.equals(lang, SystemLanguage.ENGLISH.getCode())) {
-            for (ProductCategory item : ProductCategory.values()) {
-                set.add(new Attribute(item.id, item.nameEn));
-            }
-        }else if(StringUtils.equals(lang, SystemLanguage.CHINESE.getCode())) {
-            for (ProductCategory item : ProductCategory.values()) {
-                set.add(new Attribute(item.id, item.nameZh));
-            }
-        }
-        return set;
     }
 
 }

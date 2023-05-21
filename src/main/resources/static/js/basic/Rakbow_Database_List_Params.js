@@ -1060,10 +1060,10 @@ const albumDbList = {
             let dataTmp = JSON.parse(JSON.stringify(data));
             this.itemEdit = dataTmp;
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
-            this.itemEdit.mediaFormat = label2value(dataTmp.mediaFormat, this.mediaFormatSet).concat();
-            this.itemEdit.albumFormat = label2value(dataTmp.albumFormat, this.albumFormatSet).concat();
-            this.itemEdit.publishFormat = label2value(dataTmp.publishFormat, this.publishFormatSet).concat();
-            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.mediaFormat = toValues(dataTmp.mediaFormat, this.mediaFormatSet).concat();
+            this.itemEdit.albumFormat = toValues(dataTmp.albumFormat, this.albumFormatSet).concat();
+            this.itemEdit.publishFormat = toValues(dataTmp.publishFormat, this.publishFormatSet).concat();
+            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.ALBUM
@@ -1077,7 +1077,7 @@ const albumDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -1839,7 +1839,7 @@ const bookDbList = {
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.publishLanguage = dataTmp.publishLanguage.code;
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
-            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.BOOK
@@ -1853,7 +1853,7 @@ const bookDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -2607,11 +2607,11 @@ const discDbList = {
         openEditDialog(data) {
             let dataTmp = JSON.parse(JSON.stringify(data));
             this.itemEdit = dataTmp;
-            this.itemEdit.mediaFormat = label2value(dataTmp.mediaFormat, this.mediaFormatSet).concat();
+            this.itemEdit.mediaFormat = toValues(dataTmp.mediaFormat, this.mediaFormatSet).concat();
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
             this.itemEdit.limited = dataTmp.limited ? 1 : 0;
             this.itemEdit.region = dataTmp.region.code;
-            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.DISC
@@ -2625,7 +2625,7 @@ const discDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -3290,7 +3290,7 @@ const gameDbList = {
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.platform = dataTmp.platform.id;
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
-            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.GAME
@@ -3304,7 +3304,7 @@ const gameDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -3992,7 +3992,7 @@ const merchDbList = {
             this.itemEdit.category = dataTmp.category.id;
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.notForSale = dataTmp.notForSale ? 1 : 0;
-            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.MERCH
@@ -4006,7 +4006,7 @@ const merchDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });

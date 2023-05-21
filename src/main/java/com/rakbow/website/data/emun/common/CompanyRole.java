@@ -1,7 +1,7 @@
 package com.rakbow.website.data.emun.common;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.website.data.Attribute;
+import com.rakbow.website.data.emun.MetaEmun;
 import com.rakbow.website.util.common.LocaleUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import lombok.Getter;
  * @Description:
  */
 @AllArgsConstructor
-public enum CompanyRole {
+public enum CompanyRole implements MetaEmun {
 
     UNCATEGORIZED(0, "未分类", "Uncategorized"),
     MANUFACTURER(1, "制造商", "Manufacturer"),
@@ -50,20 +50,6 @@ public enum CompanyRole {
 
     public static Attribute getAttribute(int id) {
         return new Attribute(id, getNameById(id));
-    }
-
-    public static JSONArray getAttributeSet(String lang) {
-        JSONArray set = new JSONArray();
-        if (LocaleUtil.isEn(lang)) {
-            for (CompanyRole item : CompanyRole.values()) {
-                set.add(new Attribute(item.id, item.nameEn));
-            }
-        } else if (LocaleUtil.isZh(lang)) {
-            for (CompanyRole item : CompanyRole.values()) {
-                set.add(new Attribute(item.id, item.nameZh));
-            }
-        }
-        return set;
     }
 
 }

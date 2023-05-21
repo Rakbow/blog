@@ -1,15 +1,5 @@
 package com.rakbow.website.util.entity;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.website.data.RedisCacheConstant;
-import com.rakbow.website.util.common.CommonUtil;
-import com.rakbow.website.util.common.DataFinder;
-import com.rakbow.website.util.common.RedisUtil;
-import com.rakbow.website.util.common.SpringUtil;
-
-import java.util.List;
-
 /**
  * @Project_name: website
  * @Author: Rakbow

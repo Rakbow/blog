@@ -6,7 +6,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.EntryMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.RedisCacheConstant;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.Entity;
@@ -157,7 +156,7 @@ public class EntryService {
     //endregion
 
     /**
-     * 刷新Redis缓存中的Companies数据
+     * 刷新Redis缓存中的Entry数据
      *
      * @author rakbow
      */
@@ -171,31 +170,8 @@ public class EntryService {
         JSONArray entriesEn = new JSONArray();
         entries.forEach(entry -> entriesEn.add(new Attribute(entry.getId(), entry.getNameEn())));
 
-        if(category == EntryCategory.FRANCHISE.getId()) {
-            redisUtil.set(RedisCacheConstant.FRANCHISE_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.FRANCHISE_SET_EN, entriesEn);
-        } else if(category == EntryCategory.ORIGIN.getId()) {
-            redisUtil.set(RedisCacheConstant.ORIGIN_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.ORIGIN_SET_EN, entriesEn);
-        } else if(category == EntryCategory.COMPANY.getId()) {
-            redisUtil.set(RedisCacheConstant.COMPANY_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.COMPANY_SET_EN, entriesEn);
-        } else if (category == EntryCategory.PERSONNEL.getId()) {
-            redisUtil.set(RedisCacheConstant.PERSONNEL_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.PERSONNEL_SET_EN, entriesEn);
-        } else if (category == EntryCategory.ROLE.getId()) {
-            redisUtil.set(RedisCacheConstant.ROLE_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.ROLE_SET_EN, entriesEn);
-        } else if (category == EntryCategory.MERCHANDISE.getId()) {
-            redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.MERCHANDISE_SET_EN, entriesEn);
-        } else if (category == EntryCategory.SPEC_PARAMETER.getId()) {
-            redisUtil.set(RedisCacheConstant.SPEC_PARAMETER_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.SPEC_PARAMETER_SET_EN, entriesEn);
-        } else if (category == EntryCategory.PUBLICATION.getId()) {
-            redisUtil.set(RedisCacheConstant.PUBLICATION_SET_ZH, entriesZh);
-            redisUtil.set(RedisCacheConstant.PUBLICATION_SET_EN, entriesEn);
-        }
+        redisUtil.set(EntryCategory.getZhRedisKeyById(category), entriesZh);
+        redisUtil.set(EntryCategory.getEnRedisKeyById(category), entriesEn);
     }
 
 }

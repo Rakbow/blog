@@ -6,24 +6,21 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.controller.interceptor.TokenInterceptor;
 import com.rakbow.website.dao.*;
 import com.rakbow.website.data.*;
-import com.rakbow.website.data.emun.entity.album.AlbumFormat;
-import com.rakbow.website.data.emun.entity.album.PublishFormat;
-import com.rakbow.website.data.emun.entity.book.BookType;
-import com.rakbow.website.data.emun.common.*;
-import com.rakbow.website.data.emun.entity.game.GamePlatform;
-import com.rakbow.website.data.emun.entity.game.ReleaseType;
-import com.rakbow.website.data.emun.entity.merch.MerchCategory;
-import com.rakbow.website.data.emun.entity.music.AudioType;
-import com.rakbow.website.data.emun.entity.product.ProductCategory;
-import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.book.BookVOBeta;
 import com.rakbow.website.data.vo.disc.DiscVOAlpha;
 import com.rakbow.website.data.vo.game.GameVOAlpha;
-import com.rakbow.website.entity.*;
+import com.rakbow.website.entity.Album;
+import com.rakbow.website.entity.Book;
+import com.rakbow.website.entity.Disc;
+import com.rakbow.website.entity.Game;
 import com.rakbow.website.entity.view.MusicAlbumView;
-import com.rakbow.website.util.common.*;
+import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.RedisUtil;
+import com.rakbow.website.util.common.VisitUtil;
 import com.rakbow.website.util.convertMapper.entity.*;
 import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.CommonImageUtil;
@@ -39,7 +36,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -261,55 +257,6 @@ public class EntityService {
     //region refresh redis data
 
     /**
-     * 刷新Redis缓存中的枚举类数据
-     *
-     * @author rakbow
-     */
-    public void refreshRedisEmunData () {
-
-        //common
-        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET_ZH, MediaFormat.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.MEDIA_FORMAT_SET_EN, MediaFormat.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.REGION_SET_ZH, Region.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.REGION_SET_EN, Region.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.LANGUAGE_SET_ZH, Language.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.LANGUAGE_SET_EN, Language.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.COMPANY_ROLE_SET_ZH, CompanyRole.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.COMPANY_ROLE_SET_EN, CompanyRole.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET_ZH, AlbumFormat.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.ALBUM_FORMAT_SET_EN, AlbumFormat.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET_ZH, PublishFormat.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.PUBLISH_FORMAT_SET_EN, PublishFormat.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET_ZH, BookType.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.BOOK_TYPE_SET_EN, BookType.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET_ZH, MerchCategory.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.MERCH_CATEGORY_SET_EN, MerchCategory.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET_ZH, GamePlatform.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.GAME_PLATFORM_SET_EN, GamePlatform.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET_ZH, ReleaseType.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.RELEASE_TYPE_SET_EN, ReleaseType.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET_ZH, ProductCategory.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.PRODUCT_CATEGORY_SET_EN, ProductCategory.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET_ZH, AudioType.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.AUDIO_TYPE_SET_EN, AudioType.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-        redisUtil.set(RedisCacheConstant.ENTRY_CATEGORY_SET_ZH, EntryCategory.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(RedisCacheConstant.ENTRY_CATEGORY_SET_EN, EntryCategory.getAttributeSet(Locale.ENGLISH.getLanguage()));
-
-    }
-
-    /**
      * 刷新Redis缓存中的搜索页首页图片连接地址
      *
      * @author rakbow
@@ -350,7 +297,7 @@ public class EntityService {
         indexCoverUrl.put("game", gameUrls);
         indexCoverUrl.put("merch", merchUrls);
 
-        redisUtil.set(RedisCacheConstant.INDEX_COVER_URL, indexCoverUrl);
+        redisUtil.set(RedisKey.INDEX_COVER_URL, indexCoverUrl);
 
     }
 

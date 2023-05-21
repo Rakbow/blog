@@ -118,31 +118,31 @@
             <if test="franchises != null and franchises.size() != 0">
                 <foreach item="item" index="index" collection="franchises" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.franchises, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.products, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="publishFormat != null and publishFormat.size() != 0">
                 <foreach item="item" index="index" collection="publishFormat" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.publish_format, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="albumFormat != null and albumFormat.size() != 0">
                 <foreach item="item" index="index" collection="albumFormat" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.album_format, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="mediaFormat != null and mediaFormat.size() != 0">
                 <foreach item="item" index="index" collection="mediaFormat" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.media_format, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="hasBonus != null and hasBonus != '' ">
@@ -205,31 +205,31 @@
             <if test="franchises != null and franchises.size() != 0">
                 <foreach item="item" index="index" collection="franchises" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.franchises, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="products != null and products.size() != 0">
                 <foreach item="item" index="index" collection="products" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.products, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="publishFormat != null and publishFormat.size() != 0">
                 <foreach item="item" index="index" collection="publishFormat" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(publish_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.publish_format, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="albumFormat != null and albumFormat.size() != 0">
                 <foreach item="item" index="index" collection="albumFormat" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(album_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.album_format, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="mediaFormat != null and mediaFormat.size() != 0">
                 <foreach item="item" index="index" collection="mediaFormat" open=""
                          close="" separator="">
-                    and json_contains(JSON_EXTRACT(cast(media_format as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                    and json_contains(album.media_format, JSON_ARRAY( #{item} ))
                 </foreach>
             </if>
             <if test="hasBonus != null and hasBonus != '' ">

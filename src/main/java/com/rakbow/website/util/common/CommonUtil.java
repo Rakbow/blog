@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.emun.image.ImageType;
 import com.rakbow.website.data.ApiInfo;
-import com.rakbow.website.data.emun.system.SystemLanguage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
@@ -191,19 +190,6 @@ public class CommonUtil {
             }
         }
         return keys;
-    }
-
-    public static String getLangByCookie(HttpServletRequest request) {
-        // 从cookie中获取语言
-        String lang = CookieUtil.getValue(request, "locale");
-
-        if (lang != null) {
-            if(StringUtils.equals(lang,  SystemLanguage.CHINESE.getCode())
-                    || StringUtils.equals(lang,  SystemLanguage.ENGLISH.getCode())) {
-                return lang;
-            }
-        }
-        return SystemLanguage.CHINESE.getCode();
     }
 
     //region ------暂时废弃------

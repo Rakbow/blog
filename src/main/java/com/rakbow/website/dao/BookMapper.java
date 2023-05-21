@@ -1,6 +1,5 @@
 package com.rakbow.website.dao;
 
-import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -24,13 +23,13 @@ public interface BookMapper {
     List<Book> getAll();
 
     //根据过滤条件搜索Book
-    List<Book> getBooksByFilter(String title, String isbn10, String isbn13, int serial, String region,
-                                String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
+    List<Book> getBooksByFilter(String title, String isbn10, String isbn13, List<Integer> serials, String region,
+                                String lang, int bookType, List<Integer> franchises, List<Integer> products,
                                 String hasBonus, boolean status, String sortField, int sortOrder, int first, int row);
 
     //超详细查询条数
-    int getBooksRowsByFilter(String title, String isbn10, String isbn13, int serial, String region,
-                             String publishLanguage, int bookType, List<Integer> franchises, List<Integer> products,
+    int getBooksRowsByFilter(String title, String isbn10, String isbn13, List<Integer> serials, String region,
+                             String lang, int bookType, List<Integer> franchises, List<Integer> products,
                              String hasBonus, boolean status);
 
     //新增Book

@@ -1,18 +1,17 @@
 package com.rakbow.website.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.common.Region;
-import com.rakbow.website.data.emun.entity.merch.MerchCategory;
 import com.rakbow.website.data.vo.merch.MerchVO;
 import com.rakbow.website.data.vo.merch.MerchVOAlpha;
 import com.rakbow.website.data.vo.merch.MerchVOBeta;
 import com.rakbow.website.data.vo.merch.MerchVOGamma;
 import com.rakbow.website.entity.Merch;
-import com.rakbow.website.util.common.*;
-import com.rakbow.website.util.entity.FranchiseUtil;
-import com.rakbow.website.util.file.CommonImageUtil;
-import com.rakbow.website.util.entity.ProductUtil;
+import com.rakbow.website.util.common.DateUtil;
+import com.rakbow.website.util.common.LikeUtil;
+import com.rakbow.website.util.common.SpringUtil;
+import com.rakbow.website.util.common.VisitUtil;
+import com.rakbow.website.util.entry.EntryUtil;
 import com.rakbow.website.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -58,7 +57,7 @@ public interface MerchVOMapper {
         merchVO.setRemark(merch.getRemark());
 
         //复杂字段
-        merchVO.setCategory(MerchCategory.getAttribute(merch.getCategory()));
+        // merchVO.setCategory(MerchCategory.getAttribute(merch.getCategory()));
         merchVO.setSpec(JSON.parseArray(merch.getSpec()));
 
         merchVO.setRegion(Region.getRegion(merch.getRegion()));
@@ -93,11 +92,11 @@ public interface MerchVOMapper {
         merchVOAlpha.setRemark(merch.getRemark());
 
         //关联信息
-        merchVOAlpha.setFranchises(FranchiseUtil.getFranchises(merch.getFranchises()));
-        merchVOAlpha.setProducts(ProductUtil.getProducts(merch.getProducts()));
+        merchVOAlpha.setFranchises(EntryUtil.getFranchises(merch.getFranchises()));
+        merchVOAlpha.setProducts(EntryUtil.getClassifications(merch.getProducts()));
 
         //复杂字段
-        merchVOAlpha.setCategory(MerchCategory.getAttribute(merch.getCategory()));
+        // merchVOAlpha.setCategory(MerchCategory.getAttribute(merch.getCategory()));
 
         merchVOAlpha.setRegion(Region.getRegion(merch.getRegion()));
 
@@ -153,11 +152,11 @@ public interface MerchVOMapper {
         merchVOBeta.setNotForSale(merch.getNotForSale() == 1);
 
         //关联信息
-        merchVOBeta.setFranchises(FranchiseUtil.getFranchises(merch.getFranchises()));
-        merchVOBeta.setProducts(ProductUtil.getProducts(merch.getProducts()));
+        merchVOBeta.setFranchises(EntryUtil.getFranchises(merch.getFranchises()));
+        merchVOBeta.setProducts(EntryUtil.getClassifications(merch.getProducts()));
 
         //复杂字段
-        merchVOBeta.setCategory(MerchCategory.getAttribute(merch.getCategory()));
+        // merchVOBeta.setCategory(MerchCategory.getAttribute(merch.getCategory()));
 
         //图片
 //        merchVOBeta.setCover(CommonImageUtil.generateThumbCover(merch.getImages(), Entity.MERCH, 50));
@@ -211,11 +210,11 @@ public interface MerchVOMapper {
         merchVOGamma.setNotForSale(merch.getNotForSale() == 1);
 
         //关联信息
-        merchVOGamma.setFranchises(FranchiseUtil.getFranchises(merch.getFranchises()));
-        merchVOGamma.setProducts(ProductUtil.getProducts(merch.getProducts()));
+        merchVOGamma.setFranchises(EntryUtil.getFranchises(merch.getFranchises()));
+        merchVOGamma.setProducts(EntryUtil.getClassifications(merch.getProducts()));
 
         //复杂字段
-        merchVOGamma.setCategory(MerchCategory.getAttribute(merch.getCategory()));
+        // merchVOGamma.setCategory(MerchCategory.getAttribute(merch.getCategory()));
 
         merchVOGamma.setRegion(Region.getRegion(merch.getRegion()));
 

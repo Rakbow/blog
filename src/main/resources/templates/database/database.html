@@ -114,7 +114,7 @@
                                 <template #value="slotProps">
                                     <div class="country-item country-item-value" v-if="slotProps.value">
                                         <i :class="entityTypeValue2Icon(slotProps.value)"></i>
-                                        <span class="ml-1">{{entityTypeValue2Label(slotProps.value)}}</span>
+                                        <span class="ml-1">{{entityTypevalueToLabel(slotProps.value)}}</span>
                                     </div>
                                 </template>
                                 <template #option="slotProps">
@@ -626,7 +626,7 @@
             return {
                 indexCoverUrl, goItemDb,
                 searchParams, searchResult, ENTITY_TYPE, entityAmountInfo, searchLoading,
-                search, pageChange, entityTypeValue2Icon, entityTypeValue2Label,
+                search, pageChange, entityTypeValue2Icon, entityTypevalueToLabel,
                 NOT_LOGIN_NAVBAR_ITEMS, LOGIN_NAVBAR_ITEMS,
             }
         },

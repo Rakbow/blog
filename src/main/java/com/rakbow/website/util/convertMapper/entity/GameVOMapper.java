@@ -89,8 +89,8 @@ public interface GameVOMapper {
         // gameVOAlpha.setRemark(game.getRemark());
         //
         // //关联信息
-        // gameVOAlpha.setProducts(ProductUtil.getProducts(game.getProducts()));
-        // gameVOAlpha.setFranchises(FranchiseUtil.getFranchises(game.getFranchises()));
+        // gameVOAlpha.setProducts(EntryUtil.getClassifications(game.getProducts()));
+        // gameVOAlpha.setFranchises(EntryUtil.getFranchises(game.getFranchises()));
         //
         // //复杂字段
         // gameVOAlpha.setRegion(Region.getRegion(game.getRegion()));
@@ -203,8 +203,8 @@ public interface GameVOMapper {
         // gameVOGamma.setHasBonus(game.getHasBonus() == 1);
         //
         // //关联信息
-        // gameVOGamma.setProducts(ProductUtil.getProducts(game.getProducts()));
-        // gameVOGamma.setFranchises(FranchiseUtil.getFranchises(game.getFranchises()));
+        // gameVOGamma.setProducts(EntryUtil.getClassifications(game.getProducts()));
+        // gameVOGamma.setFranchises(EntryUtil.getFranchises(game.getFranchises()));
         //
         // //复杂字段
         // gameVOGamma.setRegion(Region.getRegion(game.getRegion()));

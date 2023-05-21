@@ -133,6 +133,23 @@ public class DataFinder {
         return idx >= 0 ? attributes.get(idx) : null;
     }
 
+    public static List<Attribute> findAttributesByValues(int[] values, List<Attribute> attributes) {
+
+        List<Attribute> res = new ArrayList<>();
+
+        if(values.length == 0) return res;
+
+        Attribute finder = new Attribute();
+        for(int value : values) {
+            finder.setValue(value);
+            int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);
+            if(idx >= 0) {
+                res.add(attributes.get(idx));
+            }
+        }
+        return res;
+    }
+
     //endregion
 
 }
