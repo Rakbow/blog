@@ -8,7 +8,6 @@ import com.rakbow.website.dao.ProductMapper;
 import com.rakbow.website.data.ApiInfo;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
-import com.rakbow.website.data.emun.entity.product.ProductCategory;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.entity.Product;
 import com.rakbow.website.util.common.DataFinder;
@@ -104,10 +103,10 @@ public class ProductService {
                 JSONObject jo = new JSONObject();
                 jo.put("value", product.getId());
                 if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
-                    jo.put("label", product.getNameZh() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
+//                    jo.put("label", product.getNameZh() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
                 }
                 if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                    jo.put("label", product.getNameEn() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
+//                    jo.put("label", product.getNameEn() + "(" + ProductCategory.getNameById(product.getCategory(), lang) + ")");
                 }
 
                 productSet.add(jo);

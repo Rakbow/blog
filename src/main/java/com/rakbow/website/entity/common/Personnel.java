@@ -24,7 +24,7 @@ public class Personnel extends MetaEntry {
 
     public Personnel() {
         this.setId(0);
-        this.setCategory(EntryCategory.getAttribute(EntryCategory.PERSONNEL.getId()));
+        this.setCategory(EntryCategory.PERSONNEL.getAttribute());
         this.setName("");
         this.setNameEn("");
         this.setNameZh("");

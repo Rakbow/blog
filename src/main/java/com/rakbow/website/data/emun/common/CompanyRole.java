@@ -1,8 +1,5 @@
 package com.rakbow.website.data.emun.common;
 
-import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.MetaEmun;
-import com.rakbow.website.util.common.LocaleUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +10,7 @@ import lombok.Getter;
  * @Description:
  */
 @AllArgsConstructor
-public enum CompanyRole implements MetaEmun {
+public enum CompanyRole {
 
     UNCATEGORIZED(0, "未分类", "Uncategorized"),
     MANUFACTURER(1, "制造商", "Manufacturer"),
@@ -34,22 +31,5 @@ public enum CompanyRole implements MetaEmun {
     private final String nameZh;
     @Getter
     private final String nameEn;
-
-    public static String getNameById(int id) {
-        for (CompanyRole item : CompanyRole.values()) {
-            if (item.getId() == id) {
-                if (LocaleUtil.isEn()) {
-                    return item.nameEn;
-                } else if (LocaleUtil.isZh()) {
-                    return item.nameZh;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Attribute getAttribute(int id) {
-        return new Attribute(id, getNameById(id));
-    }
 
 }

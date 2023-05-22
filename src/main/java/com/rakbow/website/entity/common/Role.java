@@ -21,7 +21,7 @@ public class Role extends MetaEntry {
 
     public Role() {
         this.setId(0);
-        this.setCategory(EntryCategory.getAttribute(EntryCategory.ROLE.getId()));
+        this.setCategory(EntryCategory.ROLE.getAttribute());
         this.setName("");
         this.setNameEn("");
         this.setNameZh("");

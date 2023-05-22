@@ -1,16 +1,10 @@
 package com.rakbow.website.data.emun.entity.game;
 
-import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.util.Locale;
 
 @AllArgsConstructor
-public enum GamePlatform implements MetaEmun {
+public enum GamePlatform {
 
     UNKNOWN(0, "Unknown", "Unknown"),
     PC(1, "PC", "PC"),
@@ -48,23 +42,5 @@ public enum GamePlatform implements MetaEmun {
     private final String nameEn;
     @Getter
     private final String nameZh;
-
-    public static String getNameById(int id, String lang) {
-        for (GamePlatform item : GamePlatform.values()) {
-            if (item.getId() == id) {
-                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                    return item.getNameEn();
-                }else {
-                    return item.getNameZh();
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Attribute getAttribute(int id) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        return new Attribute(id, getNameById(id, lang));
-    }
 
 }

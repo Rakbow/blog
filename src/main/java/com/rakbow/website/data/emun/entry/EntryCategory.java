@@ -2,10 +2,8 @@ package com.rakbow.website.data.emun.entry;
 
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.RedisKey;
-import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
@@ -17,7 +15,7 @@ import java.util.Locale;
  * @Description:
  */
 @AllArgsConstructor
-public enum EntryCategory implements MetaEmun {
+public enum EntryCategory {
 
     FRANCHISE(0, "系列", "Franchise", RedisKey.FRANCHISE_SET),
     CLASSIFICATION(1, "分类", "Classification", RedisKey.CLASSIFICATION_SET),
@@ -40,6 +38,16 @@ public enum EntryCategory implements MetaEmun {
     @Getter
     private final String redisKey;
 
+    public Attribute getAttribute() {
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+        if(lang.equals(Locale.CHINESE.getLanguage())) {
+            return new Attribute(this.id, this.nameZh);
+        }else if(lang.equals(Locale.ENGLISH.getLanguage())) {
+            return new Attribute(this.id, this.nameEn);
+        }
+        return null;
+    }
+
     public String getLocaleKey() {
         return String.format(this.redisKey, LocaleContextHolder.getLocale().getLanguage());
     }
@@ -60,24 +68,6 @@ public enum EntryCategory implements MetaEmun {
             }
         }
         return null;
-    }
-
-    public static String getNameById(int id, String lang) {
-        for (EntryCategory item : EntryCategory.values()) {
-            if (item.getId() == id) {
-                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                    return item.nameEn;
-                }else {
-                    return item.nameZh;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Attribute getAttribute(int id) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        return new Attribute(id, getNameById(id, lang));
     }
 
 }

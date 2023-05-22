@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.CompanyRole;
 import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.util.common.DataFinder;
 import com.rakbow.website.util.common.RedisUtil;
 import com.rakbow.website.util.common.SpringUtil;
@@ -34,7 +35,7 @@ public class EntryUtil {
             JSONObject orgCompany = orgCompanies.getJSONObject(i);
             JSONObject company = new JSONObject();
 
-            company.put("role", CompanyRole.getAttribute(orgCompany.getIntValue("role")));
+            company.put("role", EnumUtil.getAttribute(CompanyRole.class, orgCompany.getIntValue("role")));
 
             List<Attribute> members = new ArrayList<>();
             List<Integer> memberIds = orgCompany.getList("members", Integer.class);

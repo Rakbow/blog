@@ -272,7 +272,7 @@ const albumIndex = {
                                         <div class="grid">
                                             <div class="col-8 p-1 ml-1">
                                             <span v-for="product of slotProps.data.products" style="display:inline">
-                                                <a class="no-text-decoration" :href="'/db/entry/' + product.value">
+                                                <a class="no-text-decoration" :href="'/db/product/' + product.value">
                                                     <i class="pi pi-tag ml-1" style="color: white"
                                                        v-tooltip.bottom="product.label"></i>
                                                 </a>
@@ -312,7 +312,7 @@ const albumIndex = {
                                 </span>
                                     <br/>
                                     <span v-for="product of slotProps.data.products" style="display:inline">
-                                    <a class="no-text-decoration" :href="'/db/entry/' + product.value">
+                                    <a class="no-text-decoration" :href="'/db/product/' + product.value">
                                         <p-chip :label="product.label"></p-chip>
                                         <!--                                        <i class="pi pi-tag ml-1" style="color: white"-->
                                         <!--                                           v-tooltip.bottom="product.label"></i>-->

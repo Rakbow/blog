@@ -2,7 +2,6 @@ package com.rakbow.website.data.emun.common;
 
 import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  * @Description: 媒体类型
  */
 @AllArgsConstructor
-public enum MediaFormat implements MetaEmun {
+public enum MediaFormat {
     UNCATEGORIZED(0, "未分类", "Uncategorized"),
     CD(1, "CD", "CD"),
     DVD(2, "DVD", "DVD"),

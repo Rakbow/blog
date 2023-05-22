@@ -4,6 +4,7 @@ import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.entity.album.AlbumFormat;
 import com.rakbow.website.data.emun.entity.album.PublishFormat;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.data.vo.album.AlbumVOBeta;
@@ -151,7 +152,7 @@ public interface AlbumVOMapper {
 
     @Named("getPublishFormat")
     default List<Attribute> getPublishFormat(String formats) {
-        return PublishFormat.getAttributes(formats);
+        return EnumUtil.getAttributes(PublishFormat.class, formats);
     }
 
     //endregion

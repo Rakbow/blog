@@ -553,7 +553,7 @@ const albumDbList = {
                 <template #body="slotProps">
                     <ul>
                         <li v-for="franchise in slotProps.data.franchises">
-                            <a :href="'/db/entry/' + franchise.value ">
+                            <a :href="'/db/franchise/' + franchise.value ">
                                 {{franchise.label}}
                             </a>
                         </li>
@@ -572,7 +572,7 @@ const albumDbList = {
                 <template #body="slotProps">
                     <ul>
                         <li v-for="product in slotProps.data.products">
-                            <a :href="'/db/entry/' + product.value ">
+                            <a :href="'/db/product/' + product.value ">
                                 {{product.label}}
                             </a>
                         </li>
@@ -1060,10 +1060,10 @@ const albumDbList = {
             let dataTmp = JSON.parse(JSON.stringify(data));
             this.itemEdit = dataTmp;
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
-            this.itemEdit.mediaFormat = toValues(dataTmp.mediaFormat, this.mediaFormatSet).concat();
-            this.itemEdit.albumFormat = toValues(dataTmp.albumFormat, this.albumFormatSet).concat();
-            this.itemEdit.publishFormat = toValues(dataTmp.publishFormat, this.publishFormatSet).concat();
-            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.mediaFormat = label2value(dataTmp.mediaFormat, this.mediaFormatSet).concat();
+            this.itemEdit.albumFormat = label2value(dataTmp.albumFormat, this.albumFormatSet).concat();
+            this.itemEdit.publishFormat = label2value(dataTmp.publishFormat, this.publishFormatSet).concat();
+            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.ALBUM
@@ -1077,7 +1077,7 @@ const albumDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -1303,7 +1303,7 @@ const bookDbList = {
         <template #body="slotProps">
             <ul class="px-4">
                 <li v-for="franchise in slotProps.data.franchises">
-                    <a :href="'/db/entry/' + franchise.value ">
+                    <a :href="'/db/franchise/' + franchise.value ">
                         {{franchise.label}}
                     </a>
                 </li>
@@ -1323,7 +1323,7 @@ const bookDbList = {
         <template #body="slotProps">
             <ul class="px-4">
                 <li v-for="data in slotProps.data.products">
-                    <a :href="'/db/entry/' + data.value">
+                    <a :href="'/db/product/' + data.value">
                         {{data.label}}
                     </a>
                 </li>
@@ -1839,7 +1839,7 @@ const bookDbList = {
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.publishLanguage = dataTmp.publishLanguage.code;
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
-            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.BOOK
@@ -1853,7 +1853,7 @@ const bookDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -2070,7 +2070,7 @@ const discDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="franchise in slotProps.data.franchises">
-                        <a :href="'/db/entry/' + franchise.value ">
+                        <a :href="'/db/franchise/' + franchise.value ">
                             {{franchise.label}}
                         </a>
                     </li>
@@ -2089,7 +2089,7 @@ const discDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="data in slotProps.data.products">
-                        <a :href="'/db/entry/' + data.value">
+                        <a :href="'/db/product/' + data.value">
                             {{data.label}}
                         </a>
                     </li>
@@ -2607,11 +2607,11 @@ const discDbList = {
         openEditDialog(data) {
             let dataTmp = JSON.parse(JSON.stringify(data));
             this.itemEdit = dataTmp;
-            this.itemEdit.mediaFormat = toValues(dataTmp.mediaFormat, this.mediaFormatSet).concat();
+            this.itemEdit.mediaFormat = label2value(dataTmp.mediaFormat, this.mediaFormatSet).concat();
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
             this.itemEdit.limited = dataTmp.limited ? 1 : 0;
             this.itemEdit.region = dataTmp.region.code;
-            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.DISC
@@ -2625,7 +2625,7 @@ const discDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -2802,7 +2802,7 @@ const gameDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="franchise in slotProps.data.franchises">
-                        <a :href="'/db/entry/' + franchise.value ">
+                        <a :href="'/db/franchise/' + franchise.value ">
                             {{franchise.label}}
                         </a>
                     </li>
@@ -2821,7 +2821,7 @@ const gameDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="product in slotProps.data.products">
-                        <a :href="'/db/entry/' + product.value ">
+                        <a :href="'/db/product/' + product.value ">
                             {{product.label}}
                         </a>
                     </li>
@@ -3290,7 +3290,7 @@ const gameDbList = {
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.platform = dataTmp.platform.id;
             this.itemEdit.hasBonus = dataTmp.hasBonus ? 1 : 0;
-            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.GAME
@@ -3304,7 +3304,7 @@ const gameDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -3538,7 +3538,7 @@ const merchDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="franchise in slotProps.data.franchises">
-                        <a :href="'/db/entry/' + franchise.value ">
+                        <a :href="'/db/franchise/' + franchise.value ">
                             {{franchise.label}}
                         </a>
                     </li>
@@ -3558,7 +3558,7 @@ const merchDbList = {
             <template #body="slotProps">
                 <ul class="px-4">
                     <li v-for="data in slotProps.data.products">
-                        <a :href="'/db/entry/' + data.value">
+                        <a :href="'/db/product/' + data.value">
                             {{data.label}}
                         </a>
                     </li>
@@ -3992,7 +3992,7 @@ const merchDbList = {
             this.itemEdit.category = dataTmp.category.id;
             this.itemEdit.region = dataTmp.region.code;
             this.itemEdit.notForSale = dataTmp.notForSale ? 1 : 0;
-            this.itemEdit.franchises = toValues(dataTmp.franchises, this.franchiseSet).concat();
+            this.itemEdit.franchises = label2value(dataTmp.franchises, this.franchiseSet).concat();
             let json = {
                 franchises: this.itemEdit.franchises,
                 entityType: ENTITY.MERCH
@@ -4006,7 +4006,7 @@ const merchDbList = {
                         } else {
                             this.productSelect = true;
                         }
-                        this.itemEdit.products = toValues(this.itemEdit.products, this.productSet).concat();
+                        this.itemEdit.products = label2value(this.itemEdit.products, this.productSet).concat();
                         this.displayEditDialog = true;
                     }
                 });
@@ -4165,7 +4165,7 @@ const productDbList = {
             </p-column>
         <p-column header="作品原名" field="name" :show-filter-menu="false" style="flex: 0 0 20rem">
             <template #body="slotProps">
-                <a :href="'/db/entry/' + slotProps.data.id">
+                <a :href="'/db/product/' + slotProps.data.id">
                     {{slotProps.data.name}}
                 </a>
             </template>
@@ -4192,7 +4192,7 @@ const productDbList = {
         </p-column>
         <p-column header="所属系列" field="franchise" :show-filter-menu="false" style="flex: 0 0 10rem">
             <template #body="slotProps">
-                <a :href="'/db/entry/' + slotProps.data.franchise.value">
+                <a :href="'/db/franchise/' + slotProps.data.franchise.value">
                     {{slotProps.data.franchise.label}}
                 </a>
             </template>
@@ -4597,7 +4597,7 @@ const franchiseDbList = {
             </p-column>
     <p-column header="名称" field="name" :show-filter-menu="false" style="flex: 0 0 15rem">
         <template #body="slotProps">
-            <a :href="'/db/entry/' + slotProps.data.id">
+            <a :href="'/db/franchise/' + slotProps.data.id">
                 {{slotProps.data.name}}
             </a>
         </template>

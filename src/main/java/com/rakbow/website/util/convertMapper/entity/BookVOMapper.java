@@ -4,6 +4,7 @@ import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.common.Language;
 import com.rakbow.website.data.emun.entity.book.BookType;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.data.vo.LanguageVO;
 import com.rakbow.website.data.vo.book.BookVO;
 import com.rakbow.website.data.vo.book.BookVOAlpha;
@@ -91,7 +92,7 @@ public interface BookVOMapper {
 
     @Named("getBookType")
     default Attribute getBookType(int bookType) {
-        return BookType.getAttribute(bookType);
+        return EnumUtil.getAttribute(BookType.class, bookType);
     }
 
     @Named("getLang")

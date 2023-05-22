@@ -27,7 +27,7 @@ public class Company extends MetaEntry {
 
     public Company() {
         this.setId(0);
-        this.setCategory(EntryCategory.getAttribute(EntryCategory.COMPANY.getId()));
+        this.setCategory(EntryCategory.COMPANY.getAttribute());
         this.setName("");
         this.setNameEn("");
         this.setNameZh("");

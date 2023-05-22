@@ -2,7 +2,6 @@ package com.rakbow.website.data.emun.entity.album;
 
 import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  * @Description: 专辑分类
  */
 @AllArgsConstructor
-public enum AlbumFormat implements MetaEmun {
+public enum AlbumFormat {
     UNCATEGORIZED(0,"未分类", "Uncategorized"),
     VOCAL(1, "歌曲","Vocal"),
     OPENING_THEME(2, "片头曲","Opening Theme"),

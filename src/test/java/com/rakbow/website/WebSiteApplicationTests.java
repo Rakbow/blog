@@ -4,7 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.dao.*;
+import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.emun.temp.BookRelatedType;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.data.image.Image;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
@@ -191,6 +194,29 @@ class WebSiteApplicationTests {
         System.out.println(Locale.SIMPLIFIED_CHINESE.getLanguage());
         System.out.println(Locale.TRADITIONAL_CHINESE.getLanguage());
         System.out.println(Locale.ENGLISH.getLanguage());
+    }
+
+    @Test
+    public void enumTest() {
+        try{
+        String idsJson = "[2, 4, 5, 7]";
+//
+        long t1 = System.currentTimeMillis();
+//        List<Attribute> res1 = BookRelatedType.getAttributes(idsJson);
+//            System.out.println(BookRelatedType.getAttribute(5));
+        long t2 = System.currentTimeMillis();
+        System.out.println(t2 - t1);
+//        res1.forEach(System.out::println);
+//
+        long t3 = System.currentTimeMillis();
+//        System.out.println(EnumUtil.getAttribute(BookRelatedType.class, 5));
+        List<Attribute> res2 = EnumUtil.getAttributes(BookRelatedType.class, idsJson);
+        long t4 = System.currentTimeMillis();
+        System.out.println(t4 - t3);
+//        res2.forEach(System.out::println);
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

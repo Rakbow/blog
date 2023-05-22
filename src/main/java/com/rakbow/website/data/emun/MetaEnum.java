@@ -14,13 +14,13 @@ import java.util.Locale;
  * @Create: 2023-05-19 19:02
  * @Description:
  */
-public interface MetaEmun {
+public interface MetaEnum {
 
     int getId();
     String getNameZh();
     String getNameEn();
 
-    static <T extends Enum<T> & MetaEmun> String getLocaleNameById(Class<T> enumClass, int id) {
+    static <T extends Enum<T> & MetaEnum> String getLocaleNameById(Class<T> enumClass, int id) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         for (T e : enumClass.getEnumConstants()) {
             if (e.getId() == id) {
@@ -34,7 +34,7 @@ public interface MetaEmun {
         return "Uncategorized";
     }
 
-    static <T extends Enum<T> & MetaEmun> List<Attribute> getAttributeSet(Class<T> enumClass, String lang) {
+    static <T extends Enum<T> & MetaEnum> List<Attribute> getAttributeSet(Class<T> enumClass, String lang) {
         List<Attribute> set = new ArrayList<>();
         for (T e : enumClass.getEnumConstants()) {
             if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {

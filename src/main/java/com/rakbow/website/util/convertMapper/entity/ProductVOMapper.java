@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.entity.product.ProductCategory;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.data.vo.product.ProductVO;
 import com.rakbow.website.data.vo.product.ProductVOAlpha;
 import com.rakbow.website.data.vo.product.ProductVOBeta;
@@ -47,7 +48,7 @@ public interface ProductVOMapper {
         productVO.setNameEn(product.getNameEn());
         productVO.setNameZh(product.getNameZh());
         productVO.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
-        productVO.setCategory(ProductCategory.getAttribute(product.getCategory()));
+        productVO.setCategory(EnumUtil.getAttribute(ProductCategory.class, product.getCategory()));
         productVO.setRemark(product.getRemark());
 
         //关联信息
@@ -79,7 +80,7 @@ public interface ProductVOMapper {
         productVOAlpha.setRemark(product.getRemark());
 
         //关联信息
-        productVOAlpha.setCategory(ProductCategory.getAttribute(product.getCategory()));
+        productVOAlpha.setCategory(EnumUtil.getAttribute(ProductCategory.class, product.getCategory()));
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
@@ -144,7 +145,7 @@ public interface ProductVOMapper {
         productVOBeta.setNameEn(product.getNameEn());
         productVOBeta.setNameZh(product.getNameZh());
         productVOBeta.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
-        productVOBeta.setCategory(ProductCategory.getAttribute(product.getCategory()));
+        productVOBeta.setCategory(EnumUtil.getAttribute(ProductCategory.class, product.getCategory()));
 
         //关联信息
         productVOBeta.setFranchise(EntryUtil.getFranchise(product.getFranchise()));

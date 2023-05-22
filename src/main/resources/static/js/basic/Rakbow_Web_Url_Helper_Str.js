@@ -3,11 +3,11 @@
 const UPDATE_ITEM_STATUS_URL = "/db/update-item-status";
 const UPDATE_ITEMS_STATUS_URL = "/db/update-items-status";
 const LIKE_ITEM_URL = "/db/like";
-const UPDATE_DESCRIPTION_URL = "/db/update-item-description";
-const UPDATE_BONUS_URL = "/db/update-item-bonus";
-const UPDATE_SPECS_URL = "/db/update-item-specs";
-const UPDATE_COMPANIES_URL = "/db/update-item-companies";
-const UPDATE_PERSONNEL_URL = "/db/update-item-personnel";
+const UPDATE_DESCRIPTION_URL = "/db/update-description";
+const UPDATE_BONUS_URL = "/db/update-bonus";
+const UPDATE_SPECS_URL = "/db/update-specs";
+const UPDATE_COMPANIES_URL = "/db/update-companies";
+const UPDATE_PERSONNEL_URL = "/db/update-personnel";
 const INSERT_IMAGES_URL = "/db/add-images";
 const UPDATE_IMAGES_URL = "/db/update-images";
 
@@ -148,22 +148,27 @@ const GET_FRANCHISES_URL = "/db/franchise/get-franchises";
 //region header
 
 const ENTITY = {
-    ENTRY: 0,
     ALBUM: 1,
-    BOOK: 2,
-    DISC: 3,
-    GAME: 4,
-    MUSIC: 5,
-    GOODS: 6,
-    FIGURE: 7
+    DISC: 2,
+    BOOK: 3,
+    MERCH: 4,
+    GAME: 5,
+    FRANCHISE: 6,
+    PRODUCT: 7,
+    MUSIC: 9,
+    ENTRY: 10
 };
 
 const ENTITY_TYPE = [
     {label: '专辑', labelEn: 'Album', value: '1', icon: 'pi iconfont icon-album'},
-    {label: '书籍', labelEn: 'Book', value: '2', icon: 'pi iconfont icon-book'},
-    {label: 'BD/DVD', labelEn: 'Disc', value: '3', icon: 'pi iconfont icon-Video-Disc'},
-    {label: '游戏', labelEn: 'Game', value: '4', icon: 'pi iconfont icon-youxi'},
-    {label: '音乐', labelEn: 'Music', value: '5', icon: 'pi iconfont icon-music'}
+    {label: 'BD/DVD', labelEn: 'Disc', value: '2', icon: 'pi iconfont icon-Video-Disc'},
+    {label: '书籍', labelEn: 'Book', value: '3', icon: 'pi iconfont icon-book'},
+    {label: '周边', labelEn: 'Merch', value: '4', icon: 'pi iconfont icon-yinshuabaozhuang'},
+    {label: '游戏', labelEn: 'Game', value: '5', icon: 'pi iconfont icon-youxi'},
+    // {label: '系列', labelEn: 'Franchise', value: '6', icon: 'pi pi-bookmark'},
+    // {label: '作品', labelEn: 'Product', value: '7', icon: 'pi pi-th-large'},
+    // {label: '文章', labelEn: 'Article', value: '8', icon: 'pi pi-bars'},
+    {label: '音乐', labelEn: 'Music', value: '9', icon: 'pi iconfont icon-music'}
 ];
 
 const PRODUCT_ORGANIZATION_FORMAT = [

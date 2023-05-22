@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.rakbow.website.data.CommonConstant;
 import com.rakbow.website.data.emun.common.Entity;
 import com.rakbow.website.data.emun.entity.music.AudioType;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.entity.view.MusicAlbumView;
 import com.rakbow.website.data.vo.music.MusicVO;
 import com.rakbow.website.data.vo.music.MusicVOAlpha;
@@ -51,7 +52,7 @@ public interface MusicVOMapper {
         musicVO.setDiscSerial(music.getDiscSerial());
         musicVO.setTrackSerial(music.getTrackSerial());
 
-        musicVO.setAudioType(AudioType.getAttribute(music.getAudioType()));
+        musicVO.setAudioType(EnumUtil.getAttribute(AudioType.class, music.getAudioType()));
 
         musicVO.setFiles(JSON.parseArray(music.getFiles()));
         musicVO.setUploadDisabled(musicVO.getFiles().size() >= 2);
@@ -138,7 +139,7 @@ public interface MusicVOMapper {
         musicVOBeta.setId(musicAlbumView.getId());
         musicVOBeta.setName(musicAlbumView.getName());
         musicVOBeta.setArtists(MusicUtil.getArtists(musicAlbumView));
-        musicVOBeta.setAudioType(AudioType.getAttribute(musicAlbumView.getAudioType()).getLabel());
+        musicVOBeta.setAudioType(EnumUtil.getAttribute(AudioType.class, musicAlbumView.getAudioType()).getLabel());
         musicVOBeta.setAudioLength(musicAlbumView.getAudioLength());
         musicVOBeta.setHasLrc(musicAlbumView.getHasLrc() == 1);
         musicVOBeta.setHasFile(musicAlbumView.getHasFile() == 1);

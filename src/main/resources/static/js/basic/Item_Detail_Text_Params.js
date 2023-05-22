@@ -347,7 +347,7 @@ const specEditPanel = {
                         <p-column :row-reorder="true"></p-column>
                         <p-column field="label" :header="RKW_Web.BookDetailEditSpecLabel">
                             <template #body="slotProps">
-                                {{valueToLabel(slotProps.data.label, itemSet)}}
+                                {{value2Label(slotProps.data.label, itemSet)}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-dropdown v-model="data[field]" :options="itemSet" option-label="label" 
@@ -460,7 +460,7 @@ const specEditPanel = {
                     }
                 });
         },
-        valueToLabel
+        value2Label
     },
     components: {
         "p-button": primevue.button,
@@ -524,7 +524,7 @@ const companiesEditPanel = {
                         <p-column :row-reorder="true"></p-column>
                         <p-column field="role" header="类型">
                             <template #body="slotProps">
-                                {{valueToLabel(slotProps.data.role, companyRoleSet)}}
+                                {{value2Label(slotProps.data.role, companyRoleSet)}}
                             </template>
                             <template #editor="{ data, field }">
                                 <p-dropdown v-model="data[field]" :options="companyRoleSet" option-label="label" 
@@ -648,7 +648,7 @@ const companiesEditPanel = {
                 });
         },
         commonValuesToLabels,
-        valueToLabel
+        value2Label
     },
     components: {
         "p-button": primevue.button,
@@ -722,7 +722,7 @@ const personnelEditPanel = {
                 </p-column>
                 <p-column field="role" header="角色">
                     <template #body="slotProps">
-                        {{valueToLabel(slotProps.data.role, roleSet)}}
+                        {{value2Label(slotProps.data.role, roleSet)}}
                     </template>
                     <template #editor="{ data, field }">
                         <p-dropdown v-model="data[field]" :options="roleSet" option-label="label" filter 
@@ -857,7 +857,7 @@ const personnelEditPanel = {
                 });
         },
         commonValuesToLabels,
-        valueToLabel
+        value2Label
     },
     components: {
         "p-button": primevue.button,

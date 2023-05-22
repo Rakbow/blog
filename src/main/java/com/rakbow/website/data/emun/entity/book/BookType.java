@@ -1,13 +1,7 @@
 package com.rakbow.website.data.emun.entity.book;
 
-import com.rakbow.website.data.Attribute;
-import com.rakbow.website.data.emun.MetaEmun;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.util.Locale;
 
 /**
  * @Project_name: website
@@ -16,7 +10,7 @@ import java.util.Locale;
  * @Description:
  */
 @AllArgsConstructor
-public enum BookType implements MetaEmun {
+public enum BookType {
 
     UNCATEGORIZED(0,"未分类", "Uncategorized"),
     NOVEL(1,"小说", "Novel"),
@@ -32,23 +26,5 @@ public enum BookType implements MetaEmun {
     private final String nameZh;
     @Getter
     private final String nameEn;
-
-    public static String getNameById(int id, String lang) {
-        for (BookType bookType : BookType.values()) {
-            if (bookType.id == id) {
-                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                    return bookType.nameEn;
-                }else {
-                    return bookType.nameZh;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Attribute getAttribute(int id) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        return new Attribute(id, BookType.getNameById(id, lang));
-    }
 
 }

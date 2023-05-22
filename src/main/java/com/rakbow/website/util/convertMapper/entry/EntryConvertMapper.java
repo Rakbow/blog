@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.website.data.Attribute;
 import com.rakbow.website.data.emun.common.Region;
 import com.rakbow.website.data.emun.entry.EntryCategory;
+import com.rakbow.website.data.emun.temp.EnumUtil;
 import com.rakbow.website.data.vo.RegionVO;
 import com.rakbow.website.data.vo.entry.EntryVOAlpha;
 import com.rakbow.website.entity.Entry;
@@ -97,7 +98,7 @@ public interface EntryConvertMapper {
 
     @Named("getCategory")
     default Attribute getVOCategory(int category) {
-        return EntryCategory.getAttribute(category);
+        return EnumUtil.getAttribute(EntryCategory.class, category);
     }
 
     @Named("getAlias")
