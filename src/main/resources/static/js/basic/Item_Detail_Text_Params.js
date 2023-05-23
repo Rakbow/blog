@@ -688,10 +688,19 @@ const personnelEditPanel = {
                     <span class="p-inputgroup-addon">
                         <i class="pi pi-users"></i>
                     </span>
-                    <p-multiselect v-model="item.members" :options="personnelSet"
-                            option-label="label" option-value="value" placeholder="成员"
-                            display="chip" :filter="true">
-                    </p-multiselect>
+                    <p-autocomplete v-model="item.members" :multiple="true" :delay="500"
+                    option-label="label" :suggestions="querySet" @complete="search">
+                        <template #option="slotProps">
+                            <div class="flex align-options-center">
+                                <img :alt="slotProps.option.label" src="/img/tmp/13.jpg" style="width: 18px" />
+                                <div>{{ slotProps.option.label }}</div>
+                            </div>
+                        </template>
+                    </p-autocomplete>
+<!--                    <p-multiselect v-model="item.members" :options="personnelSet"-->
+<!--                            option-label="label" option-value="value" placeholder="成员"-->
+<!--                            display="chip" :filter="true">-->
+<!--                    </p-multiselect>-->
                 </div>
             </div>
             <div class="col-2">
@@ -734,10 +743,19 @@ const personnelEditPanel = {
                         {{commonValuesToLabels(slotProps.data.members, personnelSet).join(", ")}}
                     </template>
                     <template #editor="{ data, field }">
-                        <p-multiselect v-model="data[field]" :options="personnelSet"
-                            option-label="label" option-value="value" placeholder="成员"
-                            display="chip" :filter="true">
-                        </p-multiselect>
+                        <p-autocomplete v-model="data[field]" :multiple="true" :delay="500"
+                        option-label="label" :suggestions="querySet" @complete="search">
+                            <template #option="slotProps">
+                                <div class="flex align-options-center">
+                                    <img :alt="slotProps.option.label" src="/img/tmp/13.jpg" style="width: 18px" />
+                                    <div>{{ slotProps.option.label }}</div>
+                                </div>
+                            </template>
+                        </p-autocomplete>
+<!--                        <p-multiselect v-model="data[field]" :options="personnelSet"-->
+<!--                            option-label="label" option-value="value" placeholder="成员"-->
+<!--                            display="chip" :filter="true">-->
+<!--                        </p-multiselect>-->
                     </template>
                 </p-column>
                 <p-column :row-editor="true" style="width:10%; min-width:8rem"
@@ -776,6 +794,7 @@ const personnelEditPanel = {
             tmpItems: [],
             menuModel: [{label: RKW_Web.Delete, icon: 'pi pi-fw pi-user-minus', command: () => this.deleteItem(this.selectedItem)}],
             editingRows: [],
+            querySet: [],
             RKW_Web,
         }
     },
@@ -793,6 +812,18 @@ const personnelEditPanel = {
 
     },
     methods: {
+        search(ev) {
+            setTimeout(() => {
+                if (!ev.query.trim().length) {
+                    this.querySet = [...this.personnelSet];
+                } else {
+                    this.querySet = this.personnelSet.filter((personnel) => {
+                        return personnel.label.toLowerCase().startsWith(ev.query.toLowerCase());
+                    });
+                }
+                console.log(this.item.members);
+            }, 300)
+        },
         onRowReorder(ev) {
             this.tmpItems = ev.value;
         },
@@ -869,5 +900,6 @@ const personnelEditPanel = {
         "p-multiselect": primevue.multiselect,
         "p-contextmenu": primevue.contextmenu,
         "p-checkbox": primevue.checkbox,
+        "p-autocomplete": primevue.autocomplete,
     }
 };
