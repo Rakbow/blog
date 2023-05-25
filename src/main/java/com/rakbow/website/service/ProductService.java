@@ -90,7 +90,7 @@ public class ProductService {
         return productMapper.deleteProduct(id);
     }
 
-    //通过系列Id获取所有作品的数组，供前端选项用
+    //通过系列id获取所有作品的数组，供前端选项用
     public JSONArray getProductSet(List<Integer> franchises, int entityType, String lang) {
 
         JSONArray productSet = new JSONArray();
