@@ -10,6 +10,7 @@ import com.rakbow.website.data.ApiResult;
 import com.rakbow.website.data.SearchResult;
 import com.rakbow.website.data.dto.QueryParams;
 import com.rakbow.website.data.emun.common.Entity;
+import com.rakbow.website.data.vo.album.AlbumVO;
 import com.rakbow.website.data.vo.album.AlbumVOAlpha;
 import com.rakbow.website.entity.Album;
 import com.rakbow.website.entity.Music;
@@ -94,6 +95,33 @@ public class AlbumController {
     //endregion
 
     //region ------基础增删改------
+
+    @RequestMapping(path = "/get-album-detail", method = RequestMethod.POST)
+    @ResponseBody
+    @UniqueVisitor
+    public String getAlbumDetailData(@RequestBody JSONObject param) {
+        ApiResult res = new ApiResult();
+        try {
+            int id = param.getIntValue("id");
+            Album album = albumService.getAlbumWithAuth(id);
+
+            if (album == null) {
+                res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED_404, Entity.ALBUM.getNameZh()));
+                return JSON.toJSONString(res);
+            }
+
+            List<Music> musics = musicService.getMusicsByAlbumId(id);
+
+            String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
+
+            AlbumVO albumVO = albumService.buildVO(album, musics);
+
+            res.data = albumVO;
+        }catch (Exception e) {
+            res.setErrorMessage(e.getMessage());
+        }
+        return JSON.toJSONString(res);
+    }
 
     //根据搜索条件获取专辑
     @SuppressWarnings("unchecked")

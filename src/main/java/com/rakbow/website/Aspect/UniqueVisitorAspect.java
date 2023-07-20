@@ -3,8 +3,6 @@ package com.rakbow.website.aspect;
 import com.rakbow.website.util.common.CommonUtil;
 import com.rakbow.website.util.common.CookieUtil;
 import org.apache.commons.lang3.ObjectUtils;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -50,6 +48,7 @@ public class UniqueVisitorAspect {
             visitToken = CommonUtil.generateUUID();
             Cookie cookie = new Cookie("visit_token", visitToken);
             cookie.setPath(contextPath);
+            assert response != null;
             response.addCookie(cookie);
         }
     }

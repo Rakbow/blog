@@ -30,12 +30,12 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     @Resource
     private UserService userService;
 
+    //每次请求前
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
 
         // 从cookie中获取凭证
         String ticket = CookieUtil.getValue(request, "ticket");
-
 
         if (ticket != null) {
             // 查询凭证
